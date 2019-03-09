@@ -14,7 +14,7 @@ import javax.swing.JSplitPane
 import javax.swing.SwingConstants
 import javax.swing.UIManager
 
-class PrimaryFrame(private val windowFrame: JFrame = JFrame()) {
+class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
 
     private val menuBarView by kodein.instance<MenuBarView>()
     private val leftScreenView by kodein.instance<LeftScreenView>()
@@ -22,8 +22,10 @@ class PrimaryFrame(private val windowFrame: JFrame = JFrame()) {
 
     fun init() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+
         initSubViews()
         initControllers()
+
         with(windowFrame) {
             title = "StrongDMM"
             size = Dimension(1024, 768)

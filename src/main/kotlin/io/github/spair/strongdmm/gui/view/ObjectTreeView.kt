@@ -6,24 +6,22 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 class ObjectTreeView : View {
 
-    val objectTree = JTree(DefaultMutableTreeNode("root"))
+    private val objectTree = JTree(DefaultMutableTreeNode("No open environment")).apply {
+        showsRootHandles = true
+    }
 
-    override fun init(): JComponent {
-        return objectTree.apply {
-            (objectTree.model.root as DefaultMutableTreeNode).let { root ->
-                root.add(DefaultMutableTreeNode("123").apply {
-                    add(DefaultMutableTreeNode("child1"))
-                })
-                root.add(DefaultMutableTreeNode("456").apply {
-                    add(DefaultMutableTreeNode("child2"))
-                })
-                root.add(DefaultMutableTreeNode("789").apply {
-                    add(DefaultMutableTreeNode("child3"))
-                })
-            }
+    override fun init(): JComponent = objectTree
+
+    fun populateTree(vararg nodes: DefaultMutableTreeNode) {
+        with(objectTree) {
+            isRootVisible = true
+            nodes.forEach { objectTree.add(it) }
             expandRow(0)
             isRootVisible = false
-            showsRootHandles = true
         }
     }
+}
+
+private fun JTree.add(node: DefaultMutableTreeNode) {
+    (model.root as DefaultMutableTreeNode).add(node)
 }

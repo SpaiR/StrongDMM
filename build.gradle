@@ -12,6 +12,10 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    implementation 'io.github.spair:byond-dme-parser:0.4'
+    implementation 'io.github.spair:dmm-io:1.5'
+
     implementation 'org.kodein.di:kodein-di-erased-jvm:6.1.0'
 }
 
