@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.gui.util
 
+import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.kodein
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.awt.BorderLayout
@@ -11,7 +11,7 @@ import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.concurrent.thread
 
-private val FRAME = kodein.direct.instance<PrimaryFrame>().windowFrame
+private val FRAME = DI.direct.instance<PrimaryFrame>().windowFrame
 
 fun chooseFileDialog(desc: String, ext: String, root: String = "."): File? {
     val fileChooser = JFileChooser(root).apply {

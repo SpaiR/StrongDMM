@@ -3,14 +3,13 @@ package io.github.spair.strongdmm.gui.controller
 import io.github.spair.byond.ByondTypes
 import io.github.spair.byond.dme.Dme
 import io.github.spair.byond.dme.DmeItem
+import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.view.ObjectTreeView
-import io.github.spair.strongdmm.kodein
+import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import javax.swing.tree.DefaultMutableTreeNode
 
-class ObjectTreeViewController : Controller {
-
-    private val objectTreeView by kodein.instance<ObjectTreeView>()
+class ObjectTreeViewController : ViewController<ObjectTreeView>(DI.direct.instance()) {
 
     override fun init() {
     }
@@ -31,7 +30,7 @@ class ObjectTreeViewController : Controller {
         addSubtypesToRoot(objRoot, obj, dme)
         addSubtypesToRoot(mobRoot, mob, dme)
 
-        objectTreeView.populateTree(areaRoot, turfRoot, objRoot, mobRoot)
+        view.populateTree(areaRoot, turfRoot, objRoot, mobRoot)
     }
 
     private fun addSubtypesToRoot(root: DefaultMutableTreeNode, dmeItem: DmeItem, dme: Dme) {

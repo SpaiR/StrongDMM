@@ -1,10 +1,10 @@
 package io.github.spair.strongdmm.gui
 
+import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.controller.Controller
 import io.github.spair.strongdmm.gui.view.LeftScreenView
 import io.github.spair.strongdmm.gui.view.MenuBarView
 import io.github.spair.strongdmm.gui.view.RightScreenView
-import io.github.spair.strongdmm.kodein
 import org.kodein.di.direct
 import org.kodein.di.erased.allInstances
 import org.kodein.di.erased.instance
@@ -16,9 +16,9 @@ import javax.swing.UIManager
 
 class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
 
-    private val menuBarView by kodein.instance<MenuBarView>()
-    private val leftScreenView by kodein.instance<LeftScreenView>()
-    private val rightScreenView by kodein.instance<RightScreenView>()
+    private val menuBarView by DI.instance<MenuBarView>()
+    private val leftScreenView by DI.instance<LeftScreenView>()
+    private val rightScreenView by DI.instance<RightScreenView>()
 
     fun init() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
@@ -47,6 +47,6 @@ class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
 
     // Controllers should be initialized after views
     private fun initControllers() {
-        kodein.direct.allInstances<Controller>().forEach(Controller::init)
+        DI.direct.allInstances<Controller>().forEach(Controller::init)
     }
 }

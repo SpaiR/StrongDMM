@@ -15,13 +15,9 @@ class ObjectTreeView : View {
     fun populateTree(vararg nodes: DefaultMutableTreeNode) {
         with(objectTree) {
             isRootVisible = true
-            nodes.forEach { objectTree.add(it) }
+            nodes.forEach { (objectTree.model.root as DefaultMutableTreeNode).add(it) }
             expandRow(0)
             isRootVisible = false
         }
     }
-}
-
-private fun JTree.add(node: DefaultMutableTreeNode) {
-    (model.root as DefaultMutableTreeNode).add(node)
 }

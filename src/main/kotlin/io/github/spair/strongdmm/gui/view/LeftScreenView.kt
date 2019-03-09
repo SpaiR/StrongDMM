@@ -1,6 +1,6 @@
 package io.github.spair.strongdmm.gui.view
 
-import io.github.spair.strongdmm.kodein
+import io.github.spair.strongdmm.DI
 import org.kodein.di.erased.instance
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -10,7 +10,7 @@ import javax.swing.JScrollPane
 
 class LeftScreenView : View {
 
-    private val objectTreeView by kodein.instance<ObjectTreeView>()
+    private val objectTreeView by DI.instance<ObjectTreeView>()
 
     override fun init(): JComponent {
         return JPanel().apply {

@@ -16,11 +16,11 @@ import org.kodein.di.erased.singleton
 
 // Entry point
 fun main() {
-    kodein.direct.instance<PrimaryFrame>().init()
+    DI.direct.instance<PrimaryFrame>().init()
 }
 
 // Application DI context
-val kodein = Kodein {
+val DI = Kodein {
     bind() from singleton { PrimaryFrame() }
 
     // Subviews
