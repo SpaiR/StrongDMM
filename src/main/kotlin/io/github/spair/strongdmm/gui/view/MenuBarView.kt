@@ -1,15 +1,12 @@
 package io.github.spair.strongdmm.gui.view
 
 import java.awt.Font
-import javax.swing.JComponent
-import javax.swing.JMenu
-import javax.swing.JMenuBar
-import javax.swing.JMenuItem
-import javax.swing.JSeparator
+import javax.swing.*
 
 class MenuBarView : View {
 
     val openEnvItem = JMenuItem("Open environment").plainFont()
+    val availableMapsItem = JMenuItem("Available maps").plainFont().apply { isEnabled = false }
     val exitMenuItem = JMenuItem("Exit").plainFont()
 
     override fun init(): JMenuBar {
@@ -21,6 +18,7 @@ class MenuBarView : View {
     private fun createFileItems(): Array<JComponent> {
         return arrayOf(
             openEnvItem,
+            availableMapsItem,
             JSeparator(),
             exitMenuItem
         )
