@@ -10,7 +10,7 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import java.awt.event.ActionListener
 
-class MenuBarViewController : ViewController<MenuBarView>(DI.direct.instance()) {
+class MenuBarController : ViewController<MenuBarView>(DI.direct.instance()) {
 
     private val environment by DI.instance<Environment>()
 

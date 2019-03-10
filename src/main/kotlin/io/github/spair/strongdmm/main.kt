@@ -1,9 +1,9 @@
 package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.controller.MapCanvasViewController
-import io.github.spair.strongdmm.gui.controller.MenuBarViewController
-import io.github.spair.strongdmm.gui.controller.ObjectTreeViewController
+import io.github.spair.strongdmm.gui.controller.MapCanvasController
+import io.github.spair.strongdmm.gui.controller.MenuBarController
+import io.github.spair.strongdmm.gui.controller.ObjectTreeController
 import io.github.spair.strongdmm.gui.view.*
 import io.github.spair.strongdmm.logic.Environment
 import org.kodein.di.Kodein
@@ -29,9 +29,9 @@ val DI = Kodein {
     bind() from singleton { MapCanvasView() }
 
     // Controllers
-    bind() from singleton { MenuBarViewController() }
-    bind() from singleton { ObjectTreeViewController() }
-    bind() from singleton { MapCanvasViewController() }
+    bind() from singleton { MenuBarController() }
+    bind() from singleton { ObjectTreeController() }
+    bind() from singleton { MapCanvasController() }
 
     // Logic
     bind() from singleton { Environment() }

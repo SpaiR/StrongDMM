@@ -9,7 +9,7 @@ import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import javax.swing.tree.DefaultMutableTreeNode
 
-class ObjectTreeViewController : ViewController<ObjectTreeView>(DI.direct.instance()) {
+class ObjectTreeController : ViewController<ObjectTreeView>(DI.direct.instance()) {
 
     override fun init() {
     }
