@@ -15,7 +15,7 @@ class LeftScreenView : View {
     override fun init(): JComponent {
         return JPanel().apply {
             layout = BorderLayout()
-            preferredSize = Dimension(250, Int.MAX_VALUE)
+            preferredSize = Dimension(350, Int.MAX_VALUE)
             add(JScrollPane(objectTreeView.init()))
         }
     }

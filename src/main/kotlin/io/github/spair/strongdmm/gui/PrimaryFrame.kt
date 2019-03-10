@@ -8,10 +8,9 @@ import io.github.spair.strongdmm.gui.view.RightScreenView
 import org.kodein.di.direct
 import org.kodein.di.erased.allInstances
 import org.kodein.di.erased.instance
+import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JFrame
-import javax.swing.JSplitPane
-import javax.swing.SwingConstants
 import javax.swing.UIManager
 
 class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
@@ -28,7 +27,7 @@ class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
 
         with(windowFrame) {
             title = "StrongDMM"
-            size = Dimension(1024, 768)
+            size = Dimension(1280, 768)
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
             setLocationRelativeTo(null)
             isVisible = true
@@ -38,11 +37,8 @@ class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
     // Some subviews can have it's own subviews
     private fun initSubViews() {
         windowFrame.jMenuBar = menuBarView.init()
-        windowFrame.add(
-            JSplitPane(
-                SwingConstants.VERTICAL, leftScreenView.init(), rightScreenView.init()
-            )
-        )
+        windowFrame.add(BorderLayout.WEST, leftScreenView.init())
+        windowFrame.add(BorderLayout.EAST, rightScreenView.init())
     }
 
     // Controllers should be initialized after views

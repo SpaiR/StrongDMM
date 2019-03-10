@@ -1,19 +1,18 @@
 package io.github.spair.strongdmm.gui.view
 
-import io.github.spair.strongdmm.DI
-import org.kodein.di.erased.instance
 import java.awt.BorderLayout
+import java.awt.Canvas
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class RightScreenView : View {
+class MapCanvasView : View {
 
-    private val mapCanvasView by DI.instance<MapCanvasView>()
+    val canvas = Canvas()
 
     override fun init(): JComponent {
         return JPanel().apply {
             layout = BorderLayout()
-            add(mapCanvasView.init())
+            add(canvas)
         }
     }
 }
