@@ -5,13 +5,13 @@ import javax.swing.*
 
 class MenuBarView : View {
 
-    val openEnvItem = JMenuItem("Open environment").plainFont()
-    val availableMapsItem = JMenuItem("Available maps").plainFont().apply { isEnabled = false }
-    val exitMenuItem = JMenuItem("Exit").plainFont()
+    val openEnvItem = createMenuItem("Open environment")
+    val availableMapsItem = createMenuItem("Available maps", false)
+    val exitMenuItem = createMenuItem("Exit")
 
     override fun init(): JMenuBar {
         return JMenuBar().apply {
-            createMenu("File", createFileItems())
+            add(createMenu("File", createFileItems()))
         }
     }
 
@@ -23,10 +23,13 @@ class MenuBarView : View {
             exitMenuItem
         )
     }
-}
 
-private fun JMenuBar.createMenu(name: String, items: Array<JComponent>) {
-    add(JMenu(name).addAll(*items))
-}
+    private fun createMenuItem(text: String, isEnabled: Boolean = true): JMenuItem {
+        return JMenuItem(text).apply {
+            font = font.deriveFont(Font.PLAIN)
+            this.isEnabled = isEnabled
+        }
+    }
 
-private fun JMenuItem.plainFont() = apply { font = font.deriveFont(Font.PLAIN) }
+    private fun createMenu(name: String, items: Array<JComponent>): JComponent = JMenu(name).addAll(*items)
+}
