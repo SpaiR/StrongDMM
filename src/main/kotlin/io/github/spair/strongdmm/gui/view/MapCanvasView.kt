@@ -7,7 +7,7 @@ import javax.swing.JPanel
 
 class MapCanvasView : View {
 
-    val canvas = Canvas()
+    val canvas = Canvas().apply { isVisible = true }
 
     override fun init(): JComponent {
         return JPanel().apply {

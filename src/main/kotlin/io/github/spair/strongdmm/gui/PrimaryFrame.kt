@@ -37,8 +37,8 @@ class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
     // Some subviews can have it's own subviews
     private fun initSubViews() {
         windowFrame.jMenuBar = menuBarView.init()
-        windowFrame.add(BorderLayout.WEST, leftScreenView.init())
-        windowFrame.add(BorderLayout.EAST, rightScreenView.init())
+        windowFrame.add(leftScreenView.init(), BorderLayout.WEST)
+        windowFrame.add(rightScreenView.init(), BorderLayout.CENTER)
     }
 
     // Controllers should be initialized after views

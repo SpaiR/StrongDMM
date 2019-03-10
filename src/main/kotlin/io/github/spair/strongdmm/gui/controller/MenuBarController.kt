@@ -24,16 +24,14 @@ class MenuBarController : ViewController<MenuBarView>(DI.direct.instance()) {
             runWithProgressBar("Parsing environment...") {
                 environment.parseAndPrepareEnv(dmeFile)
                 view.availableMapsItem.apply {
-                    addActionListener(openAvailableMapsAction(environment.availableMaps))
+                    addActionListener {
+                        showAvailableMapsDialog(environment.availableMaps)?.let {
+                            environment.openMap(it)
+                        }
+                    }
                     isEnabled = true
                 }
             }
-        }
-    }
-
-    private fun openAvailableMapsAction(availableMaps: List<String>) = ActionListener {
-        showAvailableMapsDialog(availableMaps)?.let {
-            println(it)
         }
     }
 }

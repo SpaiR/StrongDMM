@@ -26,6 +26,7 @@ fun chooseFileDialog(desc: String, ext: String, root: String = "."): File? {
     }
 }
 
+// Blocks main frame and does some blocking stuff while showing indeterminate progress bar
 fun runWithProgressBar(progressText: String, action: () -> Unit) {
     val dialog = JDialog(FRAME, null, true).apply {
         add(BorderLayout.NORTH, JLabel(progressText).apply { border = EmptyBorder(5, 5, 5, 5) })
