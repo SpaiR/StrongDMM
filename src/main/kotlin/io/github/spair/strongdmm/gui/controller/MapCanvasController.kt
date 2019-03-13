@@ -1,9 +1,9 @@
 package io.github.spair.strongdmm.gui.controller
 
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.gui.view.MapCanvasView
-import io.github.spair.strongdmm.logic.map.MapDrawerGL
+import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.render.MapDrawerGL
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 

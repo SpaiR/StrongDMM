@@ -6,6 +6,7 @@ import io.github.spair.strongdmm.gui.controller.MenuBarController
 import io.github.spair.strongdmm.gui.controller.ObjectTreeController
 import io.github.spair.strongdmm.gui.view.*
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.render.MapDrawerGL
 import org.kodein.di.Kodein
 import org.kodein.di.direct
 import org.kodein.di.erased.bind
@@ -14,7 +15,7 @@ import org.kodein.di.erased.singleton
 
 // Entry point
 fun main() {
-    DI.direct.instance<PrimaryFrame>().init()
+    primaryFrame().init()
 }
 
 // Application DI context
@@ -36,3 +37,5 @@ val DI = Kodein {
     // Logic
     bind() from singleton { Environment() }
 }
+
+fun primaryFrame() = DI.direct.instance<PrimaryFrame>()

@@ -30,7 +30,12 @@ class Dmm(dmmData: DmmData, dme: Dme) {
                     val dmeItem = dme.getItem(tileContent.type)
                     if (dmeItem != null) {
                         tileItems.add(
-                            TileItem(dme.getItem(tileContent.type), x, y, tileContent.vars)
+                            TileItem(
+                                dme.getItem(tileContent.type),
+                                x,
+                                y,
+                                tileContent.vars
+                            )
                         )
                     }
                 }
@@ -71,7 +76,8 @@ class TileItem(private val dmeItem: DmeItem, val x: Int, val y: Int, private val
 
     fun getVarFilePath(name: String) = getVarFilePathSafe(name).orElse(null)
 
-    fun getVarFilePathSafe(name: String) = VarWrapper.optionalFilePath(customVars.getOrDefault(name, dmeItem.getVar(name)))
+    fun getVarFilePathSafe(name: String) =
+        VarWrapper.optionalFilePath(customVars.getOrDefault(name, dmeItem.getVar(name)))
 
     fun getVarInt(name: String) = getVarIntSafe(name).orElse(null)
 

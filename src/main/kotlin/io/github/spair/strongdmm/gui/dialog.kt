@@ -1,9 +1,6 @@
-package io.github.spair.strongdmm.gui.util
+package io.github.spair.strongdmm.gui
 
-import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.PrimaryFrame
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
+import io.github.spair.strongdmm.primaryFrame
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.*
@@ -11,7 +8,7 @@ import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.concurrent.thread
 
-private val FRAME = DI.direct.instance<PrimaryFrame>().windowFrame
+private val FRAME = primaryFrame().windowFrame
 
 fun chooseFileDialog(desc: String, ext: String, root: String = "."): File? {
     val fileChooser = JFileChooser(root).apply {
@@ -40,6 +37,7 @@ fun runWithProgressBar(progressText: String, action: () -> Unit) {
     thread(start = true) {
         action()
         dialog.isVisible = false
+        dialog.dispose()
     }
 
     dialog.isVisible = true

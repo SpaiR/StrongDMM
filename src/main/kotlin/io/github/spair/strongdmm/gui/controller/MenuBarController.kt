@@ -1,9 +1,9 @@
 package io.github.spair.strongdmm.gui.controller
 
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.util.chooseFileDialog
-import io.github.spair.strongdmm.gui.util.runWithProgressBar
-import io.github.spair.strongdmm.gui.util.showAvailableMapsDialog
+import io.github.spair.strongdmm.gui.chooseFileDialog
+import io.github.spair.strongdmm.gui.runWithProgressBar
+import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.gui.view.MenuBarView
 import io.github.spair.strongdmm.logic.Environment
 import org.kodein.di.direct
