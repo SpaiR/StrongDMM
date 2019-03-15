@@ -10,6 +10,7 @@ import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import org.kodein.di.Kodein
 import org.kodein.di.direct
 import org.kodein.di.erased.bind
@@ -39,6 +40,7 @@ val DI = Kodein {
 
     // Logic
     bind() from singleton { Environment() }
+    bind() from singleton { DmiProvider() }
 }
 
 fun primaryFrame() = DI.direct.instance<PrimaryFrame>()

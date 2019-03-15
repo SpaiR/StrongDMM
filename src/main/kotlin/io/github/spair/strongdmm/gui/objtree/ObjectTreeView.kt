@@ -1,22 +1,21 @@
 package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.strongdmm.gui.common.View
-import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 
 class ObjectTreeView : View {
 
-    private val objectTree = JTree(DefaultMutableTreeNode("No open environment")).apply {
+    val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
         showsRootHandles = true
     }
 
-    override fun init(): JComponent = objectTree
+    override fun init() = objectTree
 
-    fun populateTree(vararg nodes: DefaultMutableTreeNode) {
+    fun populateTree(vararg nodes: ObjectTreeNode) {
         with(objectTree) {
             isRootVisible = true
-            nodes.forEach { (objectTree.model.root as DefaultMutableTreeNode).add(it) }
+            nodes.forEach { (model.root as DefaultMutableTreeNode).add(it) }
             expandRow(0)
             isRootVisible = false
         }

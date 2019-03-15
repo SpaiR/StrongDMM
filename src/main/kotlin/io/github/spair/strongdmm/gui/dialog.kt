@@ -47,9 +47,5 @@ fun showAvailableMapsDialog(availableMaps: List<String>): String? {
     val dmmList = JList(availableMaps.toTypedArray())
     val dialogPane = JScrollPane(dmmList)
     val res = JOptionPane.showConfirmDialog(FRAME, dialogPane, "Select map to open", JOptionPane.OK_CANCEL_OPTION)
-    return if (res != JOptionPane.CANCEL_OPTION) {
-        dmmList.selectedValue
-    } else {
-        null
-    }
+    return if (res != JOptionPane.CANCEL_OPTION) dmmList.selectedValue else null
 }

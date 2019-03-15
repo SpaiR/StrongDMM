@@ -26,6 +26,7 @@ class Environment {
 
         objectTreeController.populateTree(dme)
         findAvailableMaps(dmeFile.parentFile)
+        System.gc()
 
         println(System.currentTimeMillis() - s)
 
@@ -37,6 +38,8 @@ class Environment {
         val dmm = Dmm(dmmData, dme)
         mapCanvasController.selectMap(dmm)
     }
+
+    fun getAbsolutePath() = dme.absoluteRootPath!!
 
     private fun findAvailableMaps(rootFolder: File) {
         rootFolder.walkTopDown().forEach {

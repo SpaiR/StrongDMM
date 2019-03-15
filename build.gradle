@@ -24,6 +24,8 @@ dependencies {
 
     implementation 'org.lwjgl.lwjgl:lwjgl:2.9.3'
     implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.3'
+
+    implementation 'ar.com.hjg:pngj:2.1.0'
 }
 
 compileKotlin {
