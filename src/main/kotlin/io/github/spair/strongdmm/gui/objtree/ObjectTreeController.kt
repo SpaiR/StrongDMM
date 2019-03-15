@@ -1,10 +1,10 @@
-package io.github.spair.strongdmm.gui.controller
+package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.byond.ByondTypes
 import io.github.spair.byond.dme.Dme
 import io.github.spair.byond.dme.DmeItem
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.view.ObjectTreeView
+import io.github.spair.strongdmm.gui.common.ViewController
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import javax.swing.tree.DefaultMutableTreeNode

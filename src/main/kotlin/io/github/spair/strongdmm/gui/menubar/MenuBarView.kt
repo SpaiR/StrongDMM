@@ -1,5 +1,7 @@
-package io.github.spair.strongdmm.gui.view
+package io.github.spair.strongdmm.gui.menubar
 
+import io.github.spair.strongdmm.gui.common.View
+import io.github.spair.strongdmm.gui.common.addAll
 import java.awt.Font
 import javax.swing.*
 

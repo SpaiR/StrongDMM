@@ -1,6 +1,7 @@
-package io.github.spair.strongdmm.gui.view
+package io.github.spair.strongdmm.gui.common
 
 import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import org.kodein.di.erased.instance
 import java.awt.BorderLayout
 import java.awt.Dimension

@@ -1,10 +1,10 @@
-package io.github.spair.strongdmm.gui.controller
+package io.github.spair.strongdmm.gui.menubar
 
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.chooseFileDialog
+import io.github.spair.strongdmm.gui.common.ViewController
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
-import io.github.spair.strongdmm.gui.view.MenuBarView
 import io.github.spair.strongdmm.logic.Environment
 import org.kodein.di.direct
 import org.kodein.di.erased.instance

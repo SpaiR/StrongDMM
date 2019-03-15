@@ -1,5 +1,6 @@
-package io.github.spair.strongdmm.gui.view
+package io.github.spair.strongdmm.gui.mapcanvas
 
+import io.github.spair.strongdmm.gui.common.View
 import java.awt.BorderLayout
 import java.awt.Canvas
 import javax.swing.JComponent

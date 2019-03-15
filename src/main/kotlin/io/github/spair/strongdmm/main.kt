@@ -1,12 +1,15 @@
 package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.controller.MapCanvasController
-import io.github.spair.strongdmm.gui.controller.MenuBarController
-import io.github.spair.strongdmm.gui.controller.ObjectTreeController
-import io.github.spair.strongdmm.gui.view.*
+import io.github.spair.strongdmm.gui.common.LeftScreenView
+import io.github.spair.strongdmm.gui.common.RightScreenView
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
+import io.github.spair.strongdmm.gui.menubar.MenuBarController
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.gui.menubar.MenuBarView
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.render.MapDrawerGL
 import org.kodein.di.Kodein
 import org.kodein.di.direct
 import org.kodein.di.erased.bind
@@ -15,7 +18,7 @@ import org.kodein.di.erased.singleton
 
 // Entry point
 fun main() {
-    primaryFrame().init()
+    primaryFrame()
 }
 
 // Application DI context

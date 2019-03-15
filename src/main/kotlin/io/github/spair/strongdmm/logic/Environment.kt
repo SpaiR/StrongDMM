@@ -5,8 +5,8 @@ import io.github.spair.byond.dme.Dme
 import io.github.spair.byond.dme.parser.DmeParser
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.controller.MapCanvasController
-import io.github.spair.strongdmm.gui.controller.ObjectTreeController
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
 import io.github.spair.strongdmm.logic.map.Dmm
 import org.kodein.di.erased.instance
 import java.io.File

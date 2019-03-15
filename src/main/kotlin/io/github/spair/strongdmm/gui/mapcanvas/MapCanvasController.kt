@@ -1,7 +1,7 @@
-package io.github.spair.strongdmm.gui.controller
+package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.view.MapCanvasView
+import io.github.spair.strongdmm.gui.common.ViewController
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.MapDrawerGL
 import org.kodein.di.direct

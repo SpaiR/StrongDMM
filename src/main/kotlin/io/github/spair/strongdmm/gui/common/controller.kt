@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui.controller
+package io.github.spair.strongdmm.gui.common
 
 interface Controller {
     fun init()
