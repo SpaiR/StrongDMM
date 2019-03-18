@@ -18,21 +18,22 @@ class DmiProvider {
     }
 
     private val environment by DI.instance<Environment>()
-    private val dmiCache = mutableMapOf<String, Dmi>()
+    private val dmiCache = mutableMapOf<String, Dmi?>()
 
     fun getDmi(icon: String): Dmi? {
         if (icon.isEmpty()) {
             return null
         }
 
+        if (dmiCache.containsKey(icon)) {
+            return dmiCache[icon]
+        }
+
         val dmiFile = File(environment.getAbsolutePath() + File.separator + icon)
 
         if (!dmiFile.exists() || !dmiFile.isFile) {
+            dmiCache[icon] = null
             return null
-        }
-
-        if (dmiCache.containsKey(icon)) {
-            return dmiCache[icon]
         }
 
         val dmiImage: BufferedImage
@@ -56,7 +57,7 @@ class DmiProvider {
             val iconSprites = mutableListOf<IconSprite>()
 
             for (i in 0 until state.dirs * state.frames) {
-                iconSprites.add(IconSprite(dmi, dmiCols, spriteIndex++))
+                iconSprites.add(IconSprite(dmi, spriteIndex++))
             }
 
             with(state) {

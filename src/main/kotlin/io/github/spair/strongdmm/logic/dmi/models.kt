@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.dmi
 
+import io.github.spair.strongdmm.logic.render.createGlTexture
 import java.awt.Component
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -25,6 +26,8 @@ data class Dmi(
     val cols: Int,
     private val iconStates: Map<String, IconState>
 ) {
+    val glTextureId by lazy { createGlTexture(atlas) }
+
     fun getIconState(iconState: String) = iconStates[iconState] ?: iconStates[""]
 }
 
@@ -55,23 +58,35 @@ data class IconState(val name: String, val dirs: Int, val frames: Int, val sprit
     }
 }
 
-class IconSprite(private val dmi: Dmi, cols: Int, index: Int) : Icon {
+class IconSprite(private val dmi: Dmi, index: Int) : Icon {
 
-    val x1: Int
-    val y1: Int
-    val x2: Int
-    val y2: Int
+    // Classic icon position for top-down coordinate system
+    var x1: Int
+    var y1: Int
+    var x2: Int
+    var y2: Int
+
+    // UV mapping (used by OpenGL)
+    val u1: Float
+    val v1: Float
+    val u2: Float
+    val v2: Float
 
     val scaledIcon: ScaledIcon by lazy { ScaledIcon() }
 
     init {
-        val x = index % cols
-        val y = index / cols
+        val x = index % dmi.cols
+        val y = index / dmi.cols
 
         x1 = x * dmi.spriteWidth
         y1 = y * dmi.spriteHeight
         x2 = (x + 1) * dmi.spriteWidth
         y2 = (y + 1) * dmi.spriteHeight
+
+        u1 = x / dmi.cols.toFloat()
+        v1 = y / dmi.rows.toFloat()
+        u2 = (x + 1) / dmi.cols.toFloat()
+        v2 = (y + 1) / dmi.rows.toFloat()
     }
 
     override fun paintIcon(c: Component, g: Graphics, px: Int, py: Int) {
