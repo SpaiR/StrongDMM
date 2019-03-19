@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
 import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.render.FrameRenderer
+import io.github.spair.strongdmm.logic.render.FrameFormer
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import org.lwjgl.opengl.Display
@@ -12,15 +12,17 @@ import kotlin.concurrent.thread
 
 class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) {
 
-    private val frameRenderer by DI.instance<FrameRenderer>()
+    private val frameRenderer by DI.instance<FrameFormer>()
     private val inputProcessor by lazy { InputProcessor(this) }
 
     private var selectedMap: Dmm? = null
     private var glInitialized = false
 
-    var xViewOffset = 0f
-    var yViewOffset = 0f
+    // Visual offset to translate viewport
+    var xViewOff = 0f
+    var yViewOff = 0f
 
+    // Map offset with coords for bottom-left point of the screen
     var xMapOff = 0
     var yMapOff = 0
 
@@ -36,8 +38,8 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     }
 
     fun updateMapOffset() {
-        xMapOff = (-xViewOffset / selectedMap!!.iconSize + 0.5f).toInt()
-        yMapOff = (-yViewOffset / selectedMap!!.iconSize + 0.5f).toInt()
+        xMapOff = (-xViewOff / selectedMap!!.iconSize + 0.5f).toInt()
+        yMapOff = (-yViewOff / selectedMap!!.iconSize + 0.5f).toInt()
     }
 
     private fun initGLDisplay() {
@@ -72,7 +74,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             glOrtho(0.0, width.toDouble(), 0.0, height.toDouble(), 1.0, -1.0)
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
-            glTranslatef(xViewOffset, yViewOffset, 0f)
+            glTranslatef(xViewOff, yViewOff, 0f)
 
             // actual map rendering
             renderSelectedMap()

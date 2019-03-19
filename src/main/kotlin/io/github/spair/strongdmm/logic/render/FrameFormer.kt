@@ -8,7 +8,7 @@ import java.util.*
 
 private const val ADDITIONAL_VIEW_RANGE = 2
 
-class FrameRenderer {
+class FrameFormer {
 
     private val renderInstanceProvider by DI.instance<RenderInstanceProvider>()
 

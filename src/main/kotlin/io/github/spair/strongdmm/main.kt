@@ -11,7 +11,7 @@ import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.render.FrameRenderer
+import io.github.spair.strongdmm.logic.render.FrameFormer
 import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import org.kodein.di.Kodein
 import org.kodein.di.direct
@@ -43,7 +43,7 @@ val DI = Kodein {
     // Logic
     bind() from singleton { Environment() }
     bind() from singleton { DmiProvider() }
-    bind() from singleton { FrameRenderer() }
+    bind() from singleton { FrameFormer() }
     bind() from singleton { RenderInstanceProvider() }
 }
 

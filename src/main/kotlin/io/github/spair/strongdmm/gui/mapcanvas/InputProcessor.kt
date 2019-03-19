@@ -6,8 +6,8 @@ class InputProcessor(private val ctrl: MapCanvasController) {
 
     fun fire() {
         if (Mouse.isButtonDown(0)) {
-            ctrl.xViewOffset += Mouse.getDX()
-            ctrl.yViewOffset += Mouse.getDY()
+            ctrl.xViewOff += Mouse.getDX()
+            ctrl.yViewOff += Mouse.getDY()
             ctrl.updateMapOffset()
         }
     }
