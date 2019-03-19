@@ -15,10 +15,14 @@ class RenderInstanceProvider {
     private val loadedIcons = mutableSetOf<String>()
     private var locked = false
 
+    var hasInProcessImage = false
+
     fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
         val icon = tileItem.getVarFilePathSafe(ByondVars.ICON).orElse("")
 
         if (loadedIcons.contains(icon)) {
+            hasInProcessImage = false
+
             val iconState = tileItem.getVarTextSafe(ByondVars.ICON_STATE).orElse("")
             val dir = tileItem.getVarIntSafe(ByondVars.DIR).orElse(SOUTH)
 
@@ -33,12 +37,15 @@ class RenderInstanceProvider {
                 }
             } ?: RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
         } else {
+            hasInProcessImage = true
+
             if (!locked) {
                 locked = true
                 dmiProvider.getDmi(icon) // Just to load dmi in memory
                 loadedIcons.add(icon)
                 locked = false
             }
+
             return RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
         }
     }

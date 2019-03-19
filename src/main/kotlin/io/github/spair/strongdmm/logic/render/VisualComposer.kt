@@ -8,17 +8,33 @@ import java.util.*
 
 private const val ADDITIONAL_VIEW_RANGE = 2
 
-class FrameFormer {
+class VisualComposer {
 
-    private val renderInstanceProvider by DI.instance<RenderInstanceProvider>()
+    private val riProvider by DI.instance<RenderInstanceProvider>()
 
-    fun buildFrame(
+    private var xMapOffPrev: Int = 0
+    private var yMapOffPrev: Int = 0
+    private var horTilesNumPrev: Int = 0
+    private var verTilesNumPrev: Int = 0
+
+    private lateinit var riCache: TreeMap<Double, TreeMap<Double, List<RenderInstance>>>
+    private var updateCache = false
+
+    fun composeFrame(
         dmm: Dmm,
         xMapOff: Int,
         yMapOff: Int,
         horTilesNum: Int,
-        verTilesNum: Int
+        verTilesNum: Int,
+        forceUpdate: Boolean
     ): TreeMap<Double, TreeMap<Double, List<RenderInstance>>> {
+        if (!updateCache && !forceUpdate
+            && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
+            && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum) {
+            return riCache
+        }
+
+        updateCache = false
         val planesLayers = TreeMap<Double, TreeMap<Double, List<RenderInstance>>>()
 
         for (x in -ADDITIONAL_VIEW_RANGE until horTilesNum + ADDITIONAL_VIEW_RANGE) {
@@ -40,11 +56,21 @@ class FrameFormer {
                     val layer = tileItem.getVarDouble(ByondVars.LAYER)
 
                     planesLayers.computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { arrayListOf() }.let {
-                        (it as ArrayList).add(renderInstanceProvider.create(renderX, renderY, tileItem))
+                        (it as ArrayList).add(riProvider.create(renderX, renderY, tileItem))
+
+                        if (riProvider.hasInProcessImage) {
+                            updateCache = true
+                        }
                     }
                 }
             }
         }
+
+        riCache = planesLayers
+        xMapOffPrev = xMapOff
+        yMapOffPrev = yMapOff
+        horTilesNumPrev = horTilesNum
+        verTilesNumPrev = verTilesNum
 
         return planesLayers
     }

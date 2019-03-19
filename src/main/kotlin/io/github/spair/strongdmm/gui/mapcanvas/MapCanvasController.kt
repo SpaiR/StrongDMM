@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
 import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.render.FrameFormer
+import io.github.spair.strongdmm.logic.render.VisualComposer
 import io.github.spair.strongdmm.primaryFrame
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
@@ -15,7 +15,7 @@ import kotlin.concurrent.thread
 
 class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) {
 
-    private val frameRenderer by DI.instance<FrameFormer>()
+    private val visualComposer by DI.instance<VisualComposer>()
     private val inputProcessor = InputProcessor(this)
 
     private var selectedMap: Dmm? = null
@@ -39,6 +39,8 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         if (!glInitialized) {
             initGLDisplay()
         }
+
+        Frame.update(true)
     }
 
     fun updateViewAndMapOffset(x: Int, y: Int) {
@@ -128,7 +130,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         val horTilesNum = (Display.getWidth() / map.iconSize + 0.5f).toInt()
         val verTilesNum = (Display.getHeight() / map.iconSize + 0.5f).toInt()
 
-        val frameRenderInstances = frameRenderer.buildFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum)
+        val frameRenderInstances = visualComposer.composeFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
 
         frameRenderInstances.values.forEach { plane ->
