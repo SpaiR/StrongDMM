@@ -129,12 +129,17 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         val verTilesNum = (Display.getHeight() / map.iconSize + 0.5f).toInt()
 
         val frameRenderInstances = frameRenderer.buildFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum)
+        var bindedTexture = -1
 
         frameRenderInstances.values.forEach { plane ->
             plane.values.forEach { layer ->
                 layer.forEach { ri ->
                     glColor4f(ri.color.red, ri.color.green, ri.color.blue, ri.color.alpha)
-                    glBindTexture(GL_TEXTURE_2D, ri.textureId)
+
+                    if (ri.textureId != bindedTexture) {
+                        glBindTexture(GL_TEXTURE_2D, ri.textureId)
+                        bindedTexture = ri.textureId
+                    }
 
                     glPushMatrix()
                     glTranslatef(ri.locX, ri.locY, 0f)
