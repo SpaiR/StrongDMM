@@ -1,6 +1,5 @@
-package io.github.spair.strongdmm.logic.input
+package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import org.lwjgl.input.Mouse
 
 class InputProcessor(private val ctrl: MapCanvasController) {

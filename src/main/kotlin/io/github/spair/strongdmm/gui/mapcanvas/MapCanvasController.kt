@@ -2,7 +2,6 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
-import io.github.spair.strongdmm.logic.input.InputProcessor
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.FrameRenderer
 import org.kodein.di.direct
