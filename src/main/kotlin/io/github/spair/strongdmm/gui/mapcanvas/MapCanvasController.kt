@@ -37,8 +37,8 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     }
 
     fun updateMapOffset() {
-        xMapOff = -xViewOffset.toInt() / selectedMap!!.iconSize
-        yMapOff = -yViewOffset.toInt() / selectedMap!!.iconSize
+        xMapOff = (-xViewOffset / selectedMap!!.iconSize + 0.5f).toInt()
+        yMapOff = (-yViewOffset / selectedMap!!.iconSize + 0.5f).toInt()
     }
 
     private fun initGLDisplay() {
