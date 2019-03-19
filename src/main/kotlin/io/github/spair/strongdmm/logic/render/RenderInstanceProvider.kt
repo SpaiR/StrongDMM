@@ -6,15 +6,14 @@ import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.kodein.di.erased.instance
-import kotlin.concurrent.thread
 
 class RenderInstanceProvider {
 
     private val dmiProvider by DI.instance<DmiProvider>()
-    private val placeholderTextureId by lazy { createGlTexture(DmiProvider.PLACEHOLDER_IMAGE) }
+    private val placeholderTextureId = createGlTexture(DmiProvider.PLACEHOLDER_IMAGE)
 
     private val loadedIcons = mutableSetOf<String>()
-    private val inLoadingIcons = mutableSetOf<String>()
+    private var locked = false
 
     fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
         val icon = tileItem.getVarFilePathSafe(ByondVars.ICON).orElse("")
@@ -34,14 +33,11 @@ class RenderInstanceProvider {
                 }
             } ?: RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
         } else {
-            if (!inLoadingIcons.contains(icon)) {
-                inLoadingIcons.add(icon)
-
-                thread(start = true) {
-                    dmiProvider.getDmi(icon) // Just to load dmi in memory
-                    loadedIcons.add(icon)
-                    inLoadingIcons.remove(icon)
-                }
+            if (!locked) {
+                locked = true
+                dmiProvider.getDmi(icon) // Just to load dmi in memory
+                loadedIcons.add(icon)
+                locked = false
             }
             return RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
         }

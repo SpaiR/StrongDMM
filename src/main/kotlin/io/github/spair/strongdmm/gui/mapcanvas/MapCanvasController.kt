@@ -4,27 +4,31 @@ import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.FrameFormer
+import io.github.spair.strongdmm.primaryFrame
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import kotlin.concurrent.thread
 
 class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) {
 
     private val frameRenderer by DI.instance<FrameFormer>()
-    private val inputProcessor by lazy { InputProcessor(this) }
+    private val inputProcessor = InputProcessor(this)
 
     private var selectedMap: Dmm? = null
     private var glInitialized = false
+    private var frameInitialized = false
 
     // Visual offset to translate viewport
-    var xViewOff = 0f
-    var yViewOff = 0f
+    private var xViewOff = 0f
+    private var yViewOff = 0f
 
     // Map offset with coords for bottom-left point of the screen
-    var xMapOff = 0
-    var yMapOff = 0
+    private var xMapOff = 0
+    private var yMapOff = 0
 
     override fun init() {
     }
@@ -37,12 +41,27 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         }
     }
 
-    fun updateMapOffset() {
-        xMapOff = (-xViewOff / selectedMap!!.iconSize + 0.5f).toInt()
-        yMapOff = (-yViewOff / selectedMap!!.iconSize + 0.5f).toInt()
+    fun updateViewAndMapOffset(x: Int, y: Int) {
+        val xViewOffNew = xViewOff + x
+        val yViewOffNew = yViewOff + y
+
+        if (xViewOffNew != xViewOff || yViewOffNew != yViewOff) {
+            xViewOff = xViewOffNew
+            yViewOff = yViewOffNew
+
+            xMapOff = (-xViewOff / selectedMap!!.iconSize + 0.5f).toInt()
+            yMapOff = (-yViewOff / selectedMap!!.iconSize + 0.5f).toInt()
+
+            Frame.update()
+        }
     }
 
     private fun initGLDisplay() {
+        if (!frameInitialized) {
+            initFrameUpdateListeners()
+            frameInitialized = true
+        }
+
         thread(start = true) {
             glInitialized = true
             Display.setParent(view.canvas)
@@ -50,6 +69,20 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             startRenderLoop()
             Display.destroy()
             glInitialized = false
+        }
+    }
+
+    private fun initFrameUpdateListeners() {
+        // Update frames on simple window resize
+        view.canvas.addComponentListener(object : ComponentAdapter() {
+            override fun componentResized(e: ComponentEvent) {
+                Frame.update()
+            }
+        })
+
+        // Update frames when window minimized/maximized
+        primaryFrame().windowFrame.addWindowStateListener {
+            Frame.update()
         }
     }
 
@@ -62,24 +95,28 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         while (!Display.isCloseRequested() && selectedMap != null) {
-            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+            if (Frame.hasUpdates()) {
+                glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-            val width = Display.getWidth()
-            val height = Display.getHeight()
+                val width = Display.getWidth()
+                val height = Display.getHeight()
 
-            glViewport(0, 0, width, height)
+                glViewport(0, 0, width, height)
 
-            glMatrixMode(GL_PROJECTION)
-            glLoadIdentity()
-            glOrtho(0.0, width.toDouble(), 0.0, height.toDouble(), 1.0, -1.0)
-            glMatrixMode(GL_MODELVIEW)
-            glLoadIdentity()
-            glTranslatef(xViewOff, yViewOff, 0f)
+                glMatrixMode(GL_PROJECTION)
+                glLoadIdentity()
+                glOrtho(0.0, width.toDouble(), 0.0, height.toDouble(), 1.0, -1.0)
+                glMatrixMode(GL_MODELVIEW)
+                glLoadIdentity()
+                glTranslatef(xViewOff, yViewOff, 0f)
 
-            // actual map rendering
-            renderSelectedMap()
+                // actual map rendering
+                renderSelectedMap()
 
-            Display.update()
+                Display.update(false)
+            }
+
+            Display.processMessages()
             inputProcessor.fire()
             Display.sync(60)
         }
