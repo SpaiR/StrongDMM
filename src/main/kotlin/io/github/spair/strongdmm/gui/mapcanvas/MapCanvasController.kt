@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
+import io.github.spair.strongdmm.logic.input.InputProcessor
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.FrameRenderer
 import org.kodein.di.direct
@@ -13,8 +14,16 @@ import kotlin.concurrent.thread
 class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) {
 
     private val frameRenderer by DI.instance<FrameRenderer>()
+    private val inputProcessor by lazy { InputProcessor(this) }
+
     private var selectedMap: Dmm? = null
     private var glInitialized = false
+
+    var xViewOffset = 0f
+    var yViewOffset = 0f
+
+    var xMapOff = 0
+    var yMapOff = 0
 
     override fun init() {
     }
@@ -25,6 +34,11 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         if (!glInitialized) {
             initGLDisplay()
         }
+    }
+
+    fun updateMapOffset() {
+        xMapOff = -xViewOffset.toInt() / selectedMap!!.iconSize
+        yMapOff = -yViewOffset.toInt() / selectedMap!!.iconSize
     }
 
     private fun initGLDisplay() {
@@ -59,11 +73,13 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             glOrtho(0.0, width.toDouble(), 0.0, height.toDouble(), 1.0, -1.0)
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
+            glTranslatef(xViewOffset, yViewOffset, 0f)
 
             // actual map rendering
             renderSelectedMap()
 
             Display.update()
+            inputProcessor.fire()
             Display.sync(60)
         }
     }
@@ -74,7 +90,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         val horTilesNum = (Display.getWidth() / map.iconSize + 0.5f).toInt()
         val verTilesNum = (Display.getHeight() / map.iconSize + 0.5f).toInt()
 
-        val frameRenderInstances = frameRenderer.buildFrame(map, 0, 0, horTilesNum, verTilesNum)
+        val frameRenderInstances = frameRenderer.buildFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum)
 
         frameRenderInstances.values.forEach { plane ->
             plane.values.forEach { layer ->
