@@ -68,6 +68,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             glInitialized = true
             Display.setParent(view.canvas)
             Display.create()
+            Display.setVSyncEnabled(true)
             startRenderLoop()
             Display.destroy()
             glInitialized = false
