@@ -6,6 +6,7 @@ import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.kodein.di.erased.instance
+import kotlin.concurrent.thread
 
 class RenderInstanceProvider {
 
@@ -41,9 +42,11 @@ class RenderInstanceProvider {
 
             if (!locked) {
                 locked = true
-                dmiProvider.getDmi(icon) // Just to load dmi in memory
-                loadedIcons.add(icon)
-                locked = false
+                thread(start = true) {
+                    dmiProvider.getDmi(icon) // Just to load dmi in memory
+                    loadedIcons.add(icon)
+                    locked = false
+                }
             }
 
             return RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)

@@ -58,6 +58,8 @@ data class IconState(val name: String, val dirs: Int, val frames: Int, val sprit
     }
 }
 
+private const val UV_MARGIN = .000001f
+
 class IconSprite(private val dmi: Dmi, index: Int) : Icon {
 
     // Classic icon position for top-down coordinate system
@@ -83,10 +85,10 @@ class IconSprite(private val dmi: Dmi, index: Int) : Icon {
         x2 = (x + 1) * dmi.spriteWidth
         y2 = (y + 1) * dmi.spriteHeight
 
-        u1 = x / dmi.cols.toFloat()
-        v1 = y / dmi.rows.toFloat()
-        u2 = (x + 1) / dmi.cols.toFloat()
-        v2 = (y + 1) / dmi.rows.toFloat()
+        u1 = x / dmi.cols.toFloat() + UV_MARGIN
+        v1 = y / dmi.rows.toFloat() + UV_MARGIN
+        u2 = (x + 1) / dmi.cols.toFloat() - UV_MARGIN
+        v2 = (y + 1) / dmi.rows.toFloat() - UV_MARGIN
     }
 
     override fun paintIcon(c: Component, g: Graphics, px: Int, py: Int) {

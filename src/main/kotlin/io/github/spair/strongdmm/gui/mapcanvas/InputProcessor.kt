@@ -8,5 +8,9 @@ class InputProcessor(private val ctrl: MapCanvasController) {
         if (Mouse.isButtonDown(0)) {
             ctrl.updateViewAndMapOffset(Mouse.getDX(), Mouse.getDY())
         }
+
+        Mouse.getDWheel().takeIf { it != 0 }?.let {
+            ctrl.updateZoom(it > 0)
+        }
     }
 }

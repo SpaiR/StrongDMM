@@ -18,7 +18,7 @@ class VisualComposer {
     private var verTilesNumPrev: Int = 0
 
     private lateinit var riCache: TreeMap<Double, TreeMap<Double, List<RenderInstance>>>
-    private var updateCache = false
+    var hasIncompleteJob = false
 
     fun composeFrame(
         dmm: Dmm,
@@ -28,13 +28,13 @@ class VisualComposer {
         verTilesNum: Int,
         forceUpdate: Boolean
     ): TreeMap<Double, TreeMap<Double, List<RenderInstance>>> {
-        if (!updateCache && !forceUpdate
+        if (!hasIncompleteJob && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum) {
             return riCache
         }
 
-        updateCache = false
+        hasIncompleteJob = false
         val planesLayers = TreeMap<Double, TreeMap<Double, List<RenderInstance>>>()
 
         for (x in -ADDITIONAL_VIEW_RANGE until horTilesNum + ADDITIONAL_VIEW_RANGE) {
@@ -59,7 +59,7 @@ class VisualComposer {
                         (it as ArrayList).add(riProvider.create(renderX, renderY, tileItem))
 
                         if (riProvider.hasInProcessImage) {
-                            updateCache = true
+                            hasIncompleteJob = true
                         }
                     }
                 }
