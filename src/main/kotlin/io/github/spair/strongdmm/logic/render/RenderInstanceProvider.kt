@@ -24,17 +24,26 @@ class RenderInstanceProvider {
 
         if (loadedIcons.contains(icon)) {
             hasInProcessImage = false
-
-            val iconState = tileItem.getVarTextSafe(ByondVars.ICON_STATE).orElse("")
-            val dir = tileItem.getVarIntSafe(ByondVars.DIR).orElse(SOUTH)
-
             return dmiProvider.getDmi(icon)?.let { dmi ->
+
+                val iconState = tileItem.getVarTextSafe(ByondVars.ICON_STATE).orElse("")
+                val dir = tileItem.getVarIntSafe(ByondVars.DIR).orElse(SOUTH)
+
                 dmi.getIconState(iconState)?.getIconSprite(dir)?.let { s ->
+                    val color = extractColor(tileItem)
+                    val pixelX = tileItem.getVarIntSafe(ByondVars.PIXEL_X).orElse(0)
+                    val pixelY = tileItem.getVarIntSafe(ByondVars.PIXEL_Y).orElse(0)
+                    val plane = tileItem.getVarDouble(ByondVars.PLANE)
+                    val layer = tileItem.getVarDouble(ByondVars.LAYER)
+
                     RenderInstance(
-                        x.toFloat(), y.toFloat(),
+                        x.toFloat() + pixelX, y.toFloat() + pixelY,
                         dmi.glTextureId,
                         s.u1, s.v1, s.u2, s.v2,
-                        s.iconWidth.toFloat(), s.iconHeight.toFloat()
+                        s.iconWidth.toFloat(), s.iconHeight.toFloat(),
+                        color,
+                        tileItem.type,
+                        plane.toFloat(), layer.toFloat()
                     )
                 }
             } ?: RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)

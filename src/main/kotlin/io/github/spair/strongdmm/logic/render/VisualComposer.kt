@@ -4,7 +4,8 @@ import io.github.spair.byond.ByondVars
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.logic.map.Dmm
 import org.kodein.di.erased.instance
-import java.util.*
+import java.util.TreeMap
+import java.util.Collections
 
 private const val ADDITIONAL_VIEW_RANGE = 2
 
@@ -30,13 +31,13 @@ class VisualComposer {
     ): TreeMap<Double, TreeMap<Double, List<RenderInstance>>> {
         if (!hasIncompleteJob && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
-            && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum) {
-            return riCache
-        }
+            && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
+        ) return riCache
 
         hasIncompleteJob = false
         val planesLayers = TreeMap<Double, TreeMap<Double, List<RenderInstance>>>()
 
+        // Collect all items to self sorted map
         for (x in -ADDITIONAL_VIEW_RANGE until horTilesNum + ADDITIONAL_VIEW_RANGE) {
             for (y in -ADDITIONAL_VIEW_RANGE until verTilesNum + ADDITIONAL_VIEW_RANGE) {
                 val tileX = xMapOff + x
@@ -63,6 +64,13 @@ class VisualComposer {
                         }
                     }
                 }
+            }
+        }
+
+        // Sort items on the same layer
+        for (plane in planesLayers.values) {
+            for (layer in plane.values) {
+                Collections.sort(layer, RenderComparator)
             }
         }
 
