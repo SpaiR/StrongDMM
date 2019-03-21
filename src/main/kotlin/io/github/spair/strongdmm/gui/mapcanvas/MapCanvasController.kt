@@ -123,7 +123,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     }
 
     private fun startRenderLoop() {
-        glClearColor(1f, 1f, 1f, 1f)
+        glClearColor(0.25f, 0.25f, 0.5f , 1f)
 
         glEnable(GL_TEXTURE_2D)
 
