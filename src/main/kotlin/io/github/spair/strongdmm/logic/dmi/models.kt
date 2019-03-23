@@ -58,6 +58,8 @@ data class IconState(val name: String, val dirs: Int, val frames: Int, val sprit
     }
 }
 
+// This margin expands sprite during rendering,
+// so while zooming no gaps between sprites appear.
 private const val UV_MARGIN = .000001f
 
 class IconSprite(private val dmi: Dmi, index: Int) : Icon {

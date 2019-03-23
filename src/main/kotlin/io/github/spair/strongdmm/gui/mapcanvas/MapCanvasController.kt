@@ -164,10 +164,10 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         val horTilesNum = (getViewWidth() / map.iconSize + 0.5f).toInt()
         val verTilesNum = (getViewHeight() / map.iconSize + 0.5f).toInt()
 
-        val frameRenderInstances = visualComposer.composeFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
+        val renderInstances = visualComposer.composeFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
 
-        frameRenderInstances.values.forEach { plane ->
+        renderInstances.values.forEach { plane ->
             plane.values.forEach { layer ->
                 layer.forEach { ri ->
                     glColor4f(ri.color.red, ri.color.green, ri.color.blue, ri.color.alpha)

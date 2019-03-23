@@ -15,6 +15,10 @@ class DmiProvider {
 
     companion object {
         val PLACEHOLDER_IMAGE = ImageIO.read(DmiProvider::class.java.classLoader.getResource("placeholder.png"))!!
+
+        private val WIDTH_HEIGHT_PATTERN = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
+        private val STATE_PATTERN = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
+        private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
     }
 
     private val environment by DI.instance<Environment>()
@@ -133,21 +137,17 @@ class DmiProvider {
     }
 
     private fun extractMetadata(imageMeta: PngMetadata): Metadata {
-        val widthHeightPattern = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
-        val statePattern = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
-        val paramPattern = "(\\w+)\\s=\\s(.+)".toRegex()
-
         val textMeta = imageMeta.getTxtForKey("Description")
 
-        val widthHeight = widthHeightPattern.toPattern().matcher(textMeta).apply { find() }
+        val widthHeight = WIDTH_HEIGHT_PATTERN.toPattern().matcher(textMeta).apply { find() }
         val width = widthHeight.group(1)?.toInt() ?: 32
         val height = widthHeight.group(2)?.toInt() ?: 32
 
         val states = mutableListOf<MetadataState>()
 
-        with(statePattern.toPattern().matcher(textMeta)) {
+        with(STATE_PATTERN.toPattern().matcher(textMeta)) {
             while (find()) {
-                val stateParam = paramPattern.toPattern().matcher(group())
+                val stateParam = PARAM_PATTERN.toPattern().matcher(group())
 
                 var name = ""
                 var dirs = 1

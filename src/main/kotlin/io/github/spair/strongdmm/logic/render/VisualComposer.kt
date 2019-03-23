@@ -7,6 +7,12 @@ import org.kodein.di.erased.instance
 import java.util.TreeMap
 import java.util.Collections
 
+typealias RenderInstances = TreeMap<Double, TreeMap<Double, MutableList<RenderInstance>>>
+fun RenderInstances.get(plane: Double, layer: Double): MutableList<RenderInstance> {
+    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
+}
+
+// So we will look for things outside of viewport range to handle big objects (bigger then 32 px)
 private const val ADDITIONAL_VIEW_RANGE = 2
 
 class VisualComposer {
@@ -18,7 +24,7 @@ class VisualComposer {
     private var horTilesNumPrev: Int = 0
     private var verTilesNumPrev: Int = 0
 
-    private lateinit var riCache: TreeMap<Double, TreeMap<Double, List<RenderInstance>>>
+    private lateinit var riCache: RenderInstances
     var hasIncompleteJob = false
 
     fun composeFrame(
@@ -28,14 +34,14 @@ class VisualComposer {
         horTilesNum: Int,
         verTilesNum: Int,
         forceUpdate: Boolean
-    ): TreeMap<Double, TreeMap<Double, List<RenderInstance>>> {
+    ): RenderInstances {
         if (!hasIncompleteJob && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
         ) return riCache
 
         hasIncompleteJob = false
-        val planesLayers = TreeMap<Double, TreeMap<Double, List<RenderInstance>>>()
+        val planesLayers = RenderInstances()
 
         // Collect all items to self sorted map
         for (x in -ADDITIONAL_VIEW_RANGE until horTilesNum + ADDITIONAL_VIEW_RANGE) {
@@ -56,8 +62,8 @@ class VisualComposer {
                     val plane = tileItem.getVarDouble(ByondVars.PLANE)
                     val layer = tileItem.getVarDouble(ByondVars.LAYER)
 
-                    planesLayers.computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { arrayListOf() }.let {
-                        (it as ArrayList).add(riProvider.create(renderX, renderY, tileItem))
+                    planesLayers.get(plane, layer).let {
+                        it.add(riProvider.create(renderX, renderY, tileItem))
 
                         if (riProvider.hasInProcessImage) {
                             hasIncompleteJob = true
