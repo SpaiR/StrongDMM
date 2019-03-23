@@ -62,7 +62,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             Display.setParent(view.canvas)
             Display.create()
             Display.setVSyncEnabled(true)
-            startRenderLoop()
+            startRenderLoop()  // this is where the magic happens
             Display.destroy()
             glInitialized = false
         }
@@ -119,7 +119,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     }
 
     private fun renderSelectedMap() {
-        val map = selectedMap!!
+        val map = selectedMap!!  // to avoid some boilerplate
 
         val horTilesNum = (getViewWidth() / map.iconSize + 0.5f).toInt()
         val verTilesNum = (getViewHeight() / map.iconSize + 0.5f).toInt()

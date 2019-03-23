@@ -9,7 +9,7 @@ private val RGB_PATTERN = "rgb\\((.*),(.*),(.*)\\)".toRegex()
 private const val RGB_PREFIX = "rgb("
 
 fun extractColor(tileItem: TileItem): Color {
-    var colorValue = tileItem.getVarTextSafe(ByondVars.COLOR).orElse("")
+    var colorValue = tileItem.getVarText(ByondVars.COLOR) ?: ""
 
     if (ByondTypes.NULL == colorValue || colorValue.isEmpty()) {
         colorValue = ""
@@ -28,7 +28,7 @@ fun extractColor(tileItem: TileItem): Color {
         }
     }
 
-    val alpha = tileItem.getVarIntSafe(ByondVars.ALPHA).orElse(255) / 255f
+    val alpha = (tileItem.getVarInt(ByondVars.ALPHA) ?: 255) / 255f
 
     if (alpha == 1f && awtColor == null) {
         return DEFAULT_COLOR

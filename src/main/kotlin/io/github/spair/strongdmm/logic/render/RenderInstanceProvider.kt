@@ -20,21 +20,21 @@ class RenderInstanceProvider {
     var hasInProcessImage = false
 
     fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
-        val icon = tileItem.getVarFilePathSafe(ByondVars.ICON).orElse("")
+        val icon = tileItem.getVarPath(ByondVars.ICON) ?: ""
 
         if (loadedIcons.contains(icon)) {
             hasInProcessImage = false
             return dmiProvider.getDmi(icon)?.let { dmi ->
 
-                val iconState = tileItem.getVarTextSafe(ByondVars.ICON_STATE).orElse("")
-                val dir = tileItem.getVarIntSafe(ByondVars.DIR).orElse(SOUTH)
+                val iconState = tileItem.getVarText(ByondVars.ICON_STATE) ?: ""
+                val dir = tileItem.getVarInt(ByondVars.DIR) ?: SOUTH
 
                 dmi.getIconState(iconState)?.getIconSprite(dir)?.let { s ->
                     val color = extractColor(tileItem)
-                    val pixelX = tileItem.getVarIntSafe(ByondVars.PIXEL_X).orElse(0)
-                    val pixelY = tileItem.getVarIntSafe(ByondVars.PIXEL_Y).orElse(0)
-                    val plane = tileItem.getVarDouble(ByondVars.PLANE)
-                    val layer = tileItem.getVarDouble(ByondVars.LAYER)
+                    val pixelX = tileItem.getVarInt(ByondVars.PIXEL_X) ?: 0
+                    val pixelY = tileItem.getVarInt(ByondVars.PIXEL_Y) ?: 0
+                    val plane = tileItem.getVarDouble(ByondVars.PLANE)?.toFloat() ?: 0f
+                    val layer = tileItem.getVarDouble(ByondVars.LAYER)?.toFloat() ?: 0f
 
                     RenderInstance(
                         x.toFloat() + pixelX, y.toFloat() + pixelY,
@@ -43,7 +43,7 @@ class RenderInstanceProvider {
                         s.iconWidth.toFloat(), s.iconHeight.toFloat(),
                         color,
                         tileItem.type,
-                        plane.toFloat(), layer.toFloat()
+                        plane, layer
                     )
                 }
             } ?: RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)

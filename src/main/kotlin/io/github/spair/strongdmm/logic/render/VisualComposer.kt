@@ -59,8 +59,8 @@ class VisualComposer {
                 val renderY = (tileY - 1) * dmm.iconSize
 
                 for (tileItem in tile) {
-                    val plane = tileItem.getVarDouble(ByondVars.PLANE)
-                    val layer = tileItem.getVarDouble(ByondVars.LAYER)
+                    val plane = tileItem.getVarDouble(ByondVars.PLANE) ?: 0.0
+                    val layer = tileItem.getVarDouble(ByondVars.LAYER) ?: 0.0
 
                     planesLayers.get(plane, layer).let {
                         it.add(riProvider.create(renderX, renderY, tileItem))
