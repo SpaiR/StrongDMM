@@ -7,7 +7,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class RightScreenView : View {
+class CenterScreenView : View {
 
     private val mapCanvasView by DI.instance<MapCanvasView>()
 

@@ -2,7 +2,7 @@ package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.common.LeftScreenView
-import io.github.spair.strongdmm.gui.common.RightScreenView
+import io.github.spair.strongdmm.gui.common.CenterScreenView
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.menubar.MenuBarController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
@@ -32,7 +32,7 @@ val DI = Kodein {
     bind() from singleton { MenuBarView() }
     bind() from singleton { LeftScreenView() }
     bind() from singleton { ObjectTreeView() }
-    bind() from singleton { RightScreenView() }
+    bind() from singleton { CenterScreenView() }
     bind() from singleton { MapCanvasView() }
 
     // Controllers
