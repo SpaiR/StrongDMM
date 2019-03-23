@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-// Class to control frame stuff. Specifically: update rate.
-// Thus while we doesn't touch map, we won't spend any CPU to process stuff.
+// Class to control frame stuff.
+// Thus while we doesn't touch map, we won't spend any CPU to process things.
 object Frame {
 
     private const val NO_FRAMES_TO_UPD = 0
