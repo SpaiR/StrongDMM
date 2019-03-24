@@ -1,10 +1,13 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.byond.ByondTypes
+import io.github.spair.strongdmm.logic.dme.TYPE_AREA
+import io.github.spair.strongdmm.logic.dme.TYPE_MOB
+import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
+import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 
 object RenderComparator : Comparator<RenderInstance> {
 
-    private val RENDER_PRIORITY = arrayOf(ByondTypes.TURF, ByondTypes.OBJ, ByondTypes.MOB, ByondTypes.AREA)
+    private val RENDER_PRIORITY = arrayOf(TYPE_TURF, TYPE_OBJ, TYPE_MOB, TYPE_AREA)
 
     override fun compare(ri1: RenderInstance, ri2: RenderInstance): Int {
         val type1 = ri1.type

@@ -1,11 +1,8 @@
 package io.github.spair.strongdmm.gui.objtree
 
-import io.github.spair.byond.ByondTypes
-import io.github.spair.byond.ByondVars
-import io.github.spair.byond.dme.Dme
-import io.github.spair.byond.dme.DmeItem
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.common.ViewController
+import io.github.spair.strongdmm.logic.dme.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance
 
@@ -16,10 +13,10 @@ class ObjectTreeController : ViewController<ObjectTreeView>(DI.direct.instance()
     }
 
     fun populateTree(dme: Dme) {
-        val area = dme.getItem(ByondTypes.AREA)
-        val turf = dme.getItem(ByondTypes.TURF)
-        val obj = dme.getItem(ByondTypes.OBJ)
-        val mob = dme.getItem(ByondTypes.MOB)
+        val area = dme.getItem(TYPE_AREA)!!
+        val turf = dme.getItem(TYPE_TURF)!!
+        val obj = dme.getItem(TYPE_OBJ)!!
+        val mob = dme.getItem(TYPE_MOB)!!
 
         val areaRoot = createTreeNode(area)
         val turfRoot = createTreeNode(turf)
@@ -37,8 +34,8 @@ class ObjectTreeController : ViewController<ObjectTreeView>(DI.direct.instance()
     private fun getListOfSubtypes(dmeItem: DmeItem, dme: Dme): List<ObjectTreeNode> {
         val childList = mutableListOf<ObjectTreeNode>()
 
-        for (subtype in dmeItem.directSubtypes) {
-            val currentItem = dme.getItem(subtype)
+        for (subtype in dmeItem.children) {
+            val currentItem = dme.getItem(subtype)!!
             val currentRoot = createTreeNode(currentItem)
             childList.add(currentRoot)
             getListOfSubtypes(currentItem, dme).forEach { currentRoot.add(it) }
@@ -49,8 +46,8 @@ class ObjectTreeController : ViewController<ObjectTreeView>(DI.direct.instance()
 
     private fun createTreeNode(dmeItem: DmeItem): ObjectTreeNode {
         val nodeName = dmeItem.type.substringAfterLast('/')
-        val icon = dmeItem.getVarFilePathSafe(ByondVars.ICON).orElse("")
-        val iconState = dmeItem.getVarTextSafe(ByondVars.ICON_STATE).orElse("")
+        val icon = dmeItem.getVarText(VAR_ICON) ?: ""
+        val iconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
         return ObjectTreeNode(nodeName, icon, iconState)
     }
 }

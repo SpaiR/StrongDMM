@@ -33,7 +33,7 @@ class DmiProvider {
             return dmiCache[icon]
         }
 
-        val dmiFile = File(environment.getAbsolutePath() + File.separator + icon)
+        val dmiFile = File(environment.absoluteRootPath + File.separator + icon)
 
         if (!dmiFile.exists() || !dmiFile.isFile) {
             dmiCache[icon] = null

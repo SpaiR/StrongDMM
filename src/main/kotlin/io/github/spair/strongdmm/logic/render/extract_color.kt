@@ -1,7 +1,5 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.byond.ByondTypes
-import io.github.spair.byond.ByondVars
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.Color as AWTColor
 
@@ -9,11 +7,9 @@ private val RGB_PATTERN = "rgb\\((.*),(.*),(.*)\\)".toRegex()
 private const val RGB_PREFIX = "rgb("
 
 fun extractColor(tileItem: TileItem): Color {
-    var colorValue = tileItem.getVarText(ByondVars.COLOR) ?: ""
+    var colorValue = tileItem.color
 
-    if (ByondTypes.NULL == colorValue || colorValue.isEmpty()) {
-        colorValue = ""
-    } else if (colorValue.startsWith(RGB_PREFIX)) {
+    if (colorValue.startsWith(RGB_PREFIX)) {
         colorValue = parseRGBColor(colorValue)
     }
 
@@ -28,7 +24,7 @@ fun extractColor(tileItem: TileItem): Color {
         }
     }
 
-    val alpha = (tileItem.getVarInt(ByondVars.ALPHA) ?: 255) / 255f
+    val alpha = tileItem.alpha / 255f
 
     if (alpha == 1f && awtColor == null) {
         return DEFAULT_COLOR

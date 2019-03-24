@@ -1,18 +1,17 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.byond.ByondVars
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.logic.map.Dmm
 import org.kodein.di.erased.instance
-import java.util.TreeMap
-import java.util.Collections
+import java.util.*
 
-typealias RenderInstances = TreeMap<Double, TreeMap<Double, MutableList<RenderInstance>>>
-fun RenderInstances.get(plane: Double, layer: Double): MutableList<RenderInstance> {
+typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
+
+fun RenderInstances.get(plane: Float, layer: Float): MutableList<RenderInstance> {
     return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
 }
 
-// So we will look for things outside of viewport range to handle big objects (bigger then 32 px)
+// We will look for things outside of viewport range to handle big objects (bigger then 32 px)
 private const val ADDITIONAL_VIEW_RANGE = 2
 
 class VisualComposer {
@@ -59,10 +58,7 @@ class VisualComposer {
                 val renderY = (tileY - 1) * dmm.iconSize
 
                 for (tileItem in tile) {
-                    val plane = tileItem.getVarDouble(ByondVars.PLANE) ?: 0.0
-                    val layer = tileItem.getVarDouble(ByondVars.LAYER) ?: 0.0
-
-                    planesLayers.get(plane, layer).let {
+                    planesLayers.get(tileItem.plane, tileItem.layer).let {
                         it.add(riProvider.create(renderX, renderY, tileItem))
 
                         if (riProvider.hasInProcessImage) {

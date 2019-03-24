@@ -1,12 +1,11 @@
 package io.github.spair.strongdmm.logic
 
-import io.github.spair.byond.ByondFiles
-import io.github.spair.byond.dme.Dme
-import io.github.spair.byond.dme.parser.DmeParser
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
+import io.github.spair.strongdmm.logic.dme.Dme
+import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.map.Dmm
 import org.kodein.di.erased.instance
 import java.io.File
@@ -14,6 +13,8 @@ import java.io.File
 class Environment {
 
     private lateinit var dme: Dme
+
+    lateinit var absoluteRootPath: String
     val availableMaps = mutableListOf<String>()
 
     private val objectTreeController by DI.instance<ObjectTreeController>()
@@ -22,8 +23,9 @@ class Environment {
     fun parseAndPrepareEnv(dmeFile: File): Dme {
         val s = System.currentTimeMillis()
 
-        dme = DmeParser.parse(dmeFile)
+        dme = parseDme(dmeFile.absolutePath)
 
+        absoluteRootPath = dmeFile.parentFile.absolutePath
         objectTreeController.populateTree(dme)
         findAvailableMaps(dmeFile.parentFile)
         System.gc()
@@ -39,11 +41,9 @@ class Environment {
         mapCanvasController.selectMap(dmm)
     }
 
-    fun getAbsolutePath() = dme.absoluteRootPath!!
-
     private fun findAvailableMaps(rootFolder: File) {
         rootFolder.walkTopDown().forEach {
-            if (it.path.endsWith(ByondFiles.DMM_SUFFIX)) {
+            if (it.path.endsWith(".dmm")) {
                 availableMaps.add(it.path)
             }
         }
