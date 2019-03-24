@@ -22,6 +22,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     private var frameInitialized = false
 
     var selectedMap: Dmm? = null
+    var iconSize = 32
 
     // Visual offset to translate viewport
     var xViewOff = 0f
@@ -30,6 +31,10 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     // Map offset with coords for bottom-left point of the screen
     var xMapOff = 0
     var yMapOff = 0
+
+    // Coords of tile where the mouse is
+    var xMouseMap = 0
+    var yMouseMap = 0
 
     // Zooming stuff
     var viewZoom = 1f
@@ -43,6 +48,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
 
     fun selectMap(dmm: Dmm) {
         selectedMap = dmm
+        iconSize = dmm.iconSize
 
         if (!glInitialized) {
             initGLDisplay()
@@ -85,8 +91,6 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     private fun startRenderLoop() {
         glClearColor(0.25f, 0.25f, 0.5f , 1f)
 
-        glEnable(GL_TEXTURE_2D)
-
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -106,8 +110,9 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
                 glLoadIdentity()
                 glTranslatef(xViewOff, yViewOff, 0f)
 
-                // actual map rendering
+                // actual rendering
                 renderSelectedMap()
+                renderMousePosition()
 
                 Display.update(false)
             }
@@ -119,13 +124,13 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
     }
 
     private fun renderSelectedMap() {
-        val map = selectedMap!!  // to avoid some boilerplate
+        val horTilesNum = (getViewWidth() / iconSize + 0.5f).toInt()
+        val verTilesNum = (getViewHeight() / iconSize + 0.5f).toInt()
 
-        val horTilesNum = (getViewWidth() / map.iconSize + 0.5f).toInt()
-        val verTilesNum = (getViewHeight() / map.iconSize + 0.5f).toInt()
-
-        val renderInstances = visualComposer.composeFrame(map, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
+        val renderInstances = visualComposer.composeFrame(selectedMap!!, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
+
+        glEnable(GL_TEXTURE_2D)
 
         renderInstances.values.forEach { plane ->
             plane.values.forEach { layer ->
@@ -161,9 +166,27 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
             }
         }
 
+        glDisable(GL_TEXTURE_2D)
+
         if (visualComposer.hasIncompleteJob) {
             Frame.update()
         }
+    }
+
+    private fun renderMousePosition() {
+        val xPos = (xMouseMap - 1) * iconSize
+        val yPos = (yMouseMap - 1) * iconSize
+
+        glColor4f(1f, 1f, 1f, 0.25f)
+
+        glBegin(GL_QUADS)
+        run {
+            glVertex2i(xPos, yPos)
+            glVertex2i(xPos + iconSize, yPos)
+            glVertex2i(xPos + iconSize, yPos + iconSize)
+            glVertex2i(xPos, yPos + iconSize)
+        }
+        glEnd()
     }
 
     private fun getViewWidth() = Display.getWidth() * viewZoom.toDouble()

@@ -13,6 +13,8 @@ class InputProcessor(private val ctrl: MapCanvasController) {
         Mouse.getDWheel().takeIf { it != 0 }?.let {
             ctrl.updateZoom(it > 0)
         }
+
+        ctrl.updateMouseMapPosition()
     }
 
     private fun MapCanvasController.updateViewAndMapOffset(x: Int, y: Int) {
@@ -51,7 +53,19 @@ class InputProcessor(private val ctrl: MapCanvasController) {
     }
 
     private fun MapCanvasController.updateMapOffset() {
-        xMapOff = (-xViewOff / selectedMap!!.iconSize + 0.5f).toInt()
-        yMapOff = (-yViewOff / selectedMap!!.iconSize + 0.5f).toInt()
+        xMapOff = (-xViewOff / iconSize + 0.5f).toInt()
+        yMapOff = (-yViewOff / iconSize + 0.5f).toInt()
+    }
+
+    private fun MapCanvasController.updateMouseMapPosition() {
+        val xMouseMapNew = (Mouse.getX() * viewZoom - xViewOff).toInt() / iconSize + 1
+        val yMouseMapNew = (Mouse.getY() * viewZoom - yViewOff).toInt() / iconSize + 1
+
+        if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
+            xMouseMap = xMouseMapNew
+            yMouseMap = yMouseMapNew
+
+            Frame.update()
+        }
     }
 }
