@@ -148,16 +148,16 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
                     glBegin(GL_QUADS)
                     with(ri) {
                         glTexCoord2f(u2, v1)
-                        glVertex2f(width, height)
+                        glVertex2i(width, height)
 
                         glTexCoord2f(u1, v1)
-                        glVertex2f(0f, height)
+                        glVertex2i(0, height)
 
                         glTexCoord2f(u1, v2)
-                        glVertex2f(0f, 0f)
+                        glVertex2i(0, 0)
 
                         glTexCoord2f(u2, v2)
-                        glVertex2f(width, 0f)
+                        glVertex2i(width, 0)
                     }
                     glEnd()
 

@@ -30,7 +30,7 @@ class RenderInstanceProvider {
                         x.toFloat() + tileItem.pixelX, y.toFloat() + tileItem.pixelY,
                         dmi.glTextureId,
                         s.u1, s.v1, s.u2, s.v2,
-                        s.iconWidth.toFloat(), s.iconHeight.toFloat(),
+                        s.iconWidth, s.iconHeight,
                         color,
                         tileItem.type,
                         tileItem.plane, tileItem.layer
