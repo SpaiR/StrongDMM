@@ -12,7 +12,6 @@ class RenderInstanceProvider {
     private val placeholderTextureId = createGlTexture(DmiProvider.PLACEHOLDER_IMAGE)
     private val executor = Executors.newSingleThreadExecutor()
 
-    private val loadedIcons = mutableSetOf<String>()
     private var locked = false
 
     var hasInProcessImage = false
@@ -20,7 +19,7 @@ class RenderInstanceProvider {
     fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
         val icon = tileItem.icon
 
-        if (loadedIcons.contains(icon)) {
+        if (dmiProvider.hasIconInMemory(icon)) {
             hasInProcessImage = false
             return dmiProvider.getDmi(icon)?.let { dmi ->
                 dmi.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)?.let { s ->
@@ -44,7 +43,6 @@ class RenderInstanceProvider {
                 locked = true
                 executor.execute {
                     dmiProvider.getDmi(icon) // Just to load dmi in memory
-                    loadedIcons.add(icon)
                     locked = false
                 }
             }

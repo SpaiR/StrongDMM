@@ -24,6 +24,8 @@ class DmiProvider {
     private val environment by DI.instance<Environment>()
     private val dmiCache = mutableMapOf<String, Dmi?>()
 
+    fun hasIconInMemory(icon: String) = dmiCache.containsKey(icon) || icon.isEmpty()
+
     fun getDmi(icon: String): Dmi? {
         if (icon.isEmpty()) {
             return null
