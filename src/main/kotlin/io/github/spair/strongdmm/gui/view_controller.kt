@@ -1,4 +1,10 @@
-package io.github.spair.strongdmm.gui.common
+package io.github.spair.strongdmm.gui
+
+import javax.swing.JComponent
+
+interface View {
+    fun init(): JComponent
+}
 
 interface Controller {
     fun init()

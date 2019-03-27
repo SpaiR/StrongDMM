@@ -1,6 +1,6 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.gui.common.View
+import io.github.spair.strongdmm.gui.View
 import java.awt.BorderLayout
 import java.awt.Canvas
 import javax.swing.JComponent
@@ -23,7 +23,7 @@ class MapCanvasView : View {
     fun tryCloseTilePopup(): Boolean {
         if (tilePopup != null && tilePopup!!.isVisible) {
             SwingUtilities.invokeLater {
-                tilePopup!!.isVisible = false
+                tilePopup?.isVisible = false
                 tilePopup = null
             }
             return true

@@ -1,7 +1,6 @@
 package io.github.spair.strongdmm.gui.menubar
 
-import io.github.spair.strongdmm.gui.common.View
-import io.github.spair.strongdmm.gui.common.addAll
+import io.github.spair.strongdmm.gui.View
 import java.awt.Font
 import javax.swing.*
 
@@ -33,5 +32,7 @@ class MenuBarView : View {
         }
     }
 
-    private fun createMenu(name: String, items: Array<JComponent>): JComponent = JMenu(name).addAll(*items)
+    private fun createMenu(name: String, items: Array<JComponent>): JComponent = JMenu(name).apply {
+        items.forEach { add(it) }
+    }
 }

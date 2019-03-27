@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.menubar
 
 import io.github.spair.strongdmm.DI
 import io.github.spair.strongdmm.gui.chooseFileDialog
-import io.github.spair.strongdmm.gui.common.ViewController
+import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment

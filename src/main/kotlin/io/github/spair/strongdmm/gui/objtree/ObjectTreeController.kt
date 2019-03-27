@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.common.ViewController
+import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.logic.dme.*
 import org.kodein.di.direct
 import org.kodein.di.erased.instance

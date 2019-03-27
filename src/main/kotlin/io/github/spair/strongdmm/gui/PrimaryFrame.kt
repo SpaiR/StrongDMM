@@ -1,9 +1,6 @@
 package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.common.CenterScreenView
-import io.github.spair.strongdmm.gui.common.Controller
-import io.github.spair.strongdmm.gui.common.LeftScreenView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import org.kodein.di.direct
 import org.kodein.di.erased.allInstances

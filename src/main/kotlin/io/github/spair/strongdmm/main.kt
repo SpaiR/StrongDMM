@@ -1,8 +1,8 @@
 package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.common.CenterScreenView
-import io.github.spair.strongdmm.gui.common.LeftScreenView
+import io.github.spair.strongdmm.gui.CenterScreenView
+import io.github.spair.strongdmm.gui.LeftScreenView
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.menubar.MenuBarController

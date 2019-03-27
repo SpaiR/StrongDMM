@@ -1,6 +1,7 @@
-package io.github.spair.strongdmm.gui.common
+package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import org.kodein.di.erased.instance
 import java.awt.BorderLayout
@@ -8,6 +9,18 @@ import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JScrollPane
+
+class CenterScreenView : View {
+
+    private val mapCanvasView by DI.instance<MapCanvasView>()
+
+    override fun init(): JComponent {
+        return JPanel().apply {
+            layout = BorderLayout()
+            add(mapCanvasView.init())
+        }
+    }
+}
 
 class LeftScreenView : View {
 

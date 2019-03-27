@@ -1,6 +1,6 @@
 package io.github.spair.strongdmm.gui.objtree
 
-import io.github.spair.strongdmm.gui.common.View
+import io.github.spair.strongdmm.gui.View
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 
