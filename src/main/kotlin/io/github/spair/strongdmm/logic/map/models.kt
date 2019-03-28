@@ -40,7 +40,7 @@ class Tile(val x: Int, val y: Int, val tileItems: List<TileItem>) : Iterable<Til
     }
 }
 
-class TileItem(private val dmeItem: DmeItem, val x: Int, val y: Int, val customVars: Map<String, String>) {
+class TileItem(val dmeItem: DmeItem, val x: Int, val y: Int, val customVars: Map<String, String>) {
 
     val type: String = dmeItem.type
 

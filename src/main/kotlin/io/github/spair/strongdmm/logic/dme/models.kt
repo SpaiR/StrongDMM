@@ -13,6 +13,7 @@ data class DmeItem(
 
     private val lookedVars = mutableMapOf<String, String?>()
 
+    val parent get() = if (parentType.isNotEmpty()) environment.getItem(parentType) else null
     val parentType: String by lazy {
         when (type) {
             TYPE_DATUM -> ""

@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.gui.edit.ViewVariablesListener
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import org.kodein.di.erased.instance
@@ -108,7 +109,9 @@ class InputProcessor(private val ctrl: MapCanvasController) {
                     }
                 }
 
-                menu.add(JMenuItem("View Variables"))
+                menu.add(JMenuItem("View Variables")).apply {
+                    addActionListener(ViewVariablesListener(tileItem))
+                }
             }
         }
     }
