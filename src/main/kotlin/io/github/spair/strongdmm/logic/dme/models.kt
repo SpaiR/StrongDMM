@@ -7,7 +7,7 @@ data class Dme(val dmeItems: Map<String, DmeItem?>) {
 data class DmeItem(
     private val environment: Dme,
     val type: String,
-    val localVars: Map<String, String?>,
+    val vars: Map<String, String?>,
     val children: List<String>
 ) {
 
@@ -26,8 +26,8 @@ data class DmeItem(
     fun isType(type: String) = isType(this.type, type)
 
     fun getVar(name: String): String? {
-        if (localVars.containsKey(name)) {
-            return localVars[name]
+        if (vars.containsKey(name)) {
+            return vars[name]
         } else if (lookedVars.containsKey(name)) {
             return lookedVars[name]
         }
@@ -45,7 +45,7 @@ data class DmeItem(
     fun getVarInt(name: String) = getVar(name)?.toIntOrNull()
 
     override fun toString(): String {
-        return "DmeItem(type='$type', localVars=$localVars, children=$children)"
+        return "DmeItem(type='$type', vars=$vars, children=$children)"
     }
 }
 
