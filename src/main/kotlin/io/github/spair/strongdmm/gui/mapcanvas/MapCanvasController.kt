@@ -83,7 +83,7 @@ class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) 
         })
 
         // Update frames when window minimized/maximized
-        primaryFrame().windowFrame.addWindowStateListener {
+        primaryFrame().addWindowStateListener {
             Frame.update()
         }
     }

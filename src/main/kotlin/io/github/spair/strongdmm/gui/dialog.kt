@@ -8,8 +8,6 @@ import javax.swing.border.EmptyBorder
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.concurrent.thread
 
-private val FRAME = primaryFrame().windowFrame
-
 fun chooseFileDialog(desc: String, ext: String, root: String = "."): File? {
     val fileChooser = JFileChooser(root).apply {
         isAcceptAllFileFilterUsed = false
@@ -25,12 +23,12 @@ fun chooseFileDialog(desc: String, ext: String, root: String = "."): File? {
 
 // Blocks main frame and does some blocking stuff while showing indeterminate progress bar
 fun runWithProgressBar(progressText: String, action: () -> Unit) {
-    val dialog = JDialog(FRAME, null, true).apply {
+    val dialog = JDialog(primaryFrame(), null, true).apply {
         add(BorderLayout.NORTH, JLabel(progressText).apply { border = EmptyBorder(5, 5, 5, 5) })
         add(BorderLayout.SOUTH, JProgressBar().apply { isIndeterminate = true })
 
         setSize(300, 75)
-        setLocationRelativeTo(FRAME)
+        setLocationRelativeTo(primaryFrame())
         defaultCloseOperation = JDialog.DO_NOTHING_ON_CLOSE
     }
 
@@ -46,6 +44,6 @@ fun runWithProgressBar(progressText: String, action: () -> Unit) {
 fun showAvailableMapsDialog(availableMaps: List<String>): String? {
     val dmmList = JList(availableMaps.toTypedArray()).apply { border = EmptyBorder(5, 5, 5, 5) }
     val dialogPane = JScrollPane(dmmList)
-    val res = JOptionPane.showConfirmDialog(FRAME, dialogPane, "Select map to open", JOptionPane.OK_CANCEL_OPTION)
+    val res = JOptionPane.showConfirmDialog(primaryFrame(), dialogPane, "Select map to open", JOptionPane.OK_CANCEL_OPTION)
     return if (res != JOptionPane.CANCEL_OPTION) dmmList.selectedValue else null
 }

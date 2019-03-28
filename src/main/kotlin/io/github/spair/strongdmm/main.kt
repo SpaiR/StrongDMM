@@ -47,4 +47,4 @@ val DI = Kodein {
     bind() from singleton { RenderInstanceProvider() }
 }
 
-fun primaryFrame() = DI.direct.instance<PrimaryFrame>()
+fun primaryFrame() = DI.direct.instance<PrimaryFrame>().windowFrame
