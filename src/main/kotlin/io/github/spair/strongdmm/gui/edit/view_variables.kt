@@ -1,17 +1,13 @@
 package io.github.spair.strongdmm.gui.edit
 
-import io.github.spair.strongdmm.logic.dme.DmeItem
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.primaryFrame
-import java.awt.Color
-import java.awt.Component
-import java.awt.Font
+import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import javax.swing.JDialog
-import javax.swing.JScrollPane
-import javax.swing.JTable
+import javax.swing.*
+import javax.swing.border.EmptyBorder
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
@@ -25,14 +21,26 @@ class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
     override fun actionPerformed(e: ActionEvent) {
         val dialog = JDialog(primaryFrame(), "View Variables", true)
 
-        val table = JTable(ViewVariablesModel(tileItem)).apply {
+        val model = ViewVariablesModel(tileItem)
+        val table = JTable(model).apply {
             setDefaultRenderer(Any::class.java, ViewVariablesRenderer())
             autoCreateRowSorter = true
             tableHeader.reorderingAllowed = false
         }
 
+        val bottomPanel = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.Y_AXIS)
+            add(JPanel().apply {
+                layout = FlowLayout(FlowLayout.LEFT)
+                add(JCheckBox().apply { addActionListener { model.showOnlyInstanceVars = isSelected } })
+                add(JLabel("Show instance vars"))
+            })
+        }
+
         with(dialog) {
-            contentPane.add(JScrollPane(table))
+            rootPane.border = EmptyBorder(5, 5, 5, 5)
+            contentPane.add(JScrollPane(table), BorderLayout.CENTER)
+            contentPane.add(bottomPanel, BorderLayout.SOUTH)
             setSize(400, 450)
             setLocationRelativeTo(primaryFrame())
             isVisible = true
@@ -76,10 +84,15 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
 
     private val vars = mutableListOf<Var>()
 
+    var showOnlyInstanceVars = false
+        set(value) {
+            field = value
+            buildVars()
+            fireTableDataChanged()
+        }
+
     init {
-        tileItem.customVars.forEach { k, v -> addVar(k, v, true) }
-        collectVars(tileItem.dmeItem)
-        vars.sortBy { v -> v.name.get() }
+        buildVars()
     }
 
     override fun getRowCount() = vars.size
@@ -89,6 +102,17 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
         0 -> vars[rowIndex].name
         1 -> vars[rowIndex].value
         else -> null
+    }
+
+    private fun buildVars() {
+        vars.clear()
+        tileItem.customVars.forEach { k, v -> addVar(k, v, true) }
+
+        if (!showOnlyInstanceVars) {
+            collectVars(tileItem.dmeItem)
+        }
+
+        vars.sortBy { v -> v.name.get() }
     }
 
     private fun addVar(key: String, value: String?, isInstanceVar: Boolean = false) {
