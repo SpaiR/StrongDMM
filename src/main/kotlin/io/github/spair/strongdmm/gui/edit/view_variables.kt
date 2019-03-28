@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.gui.edit
 
 import io.github.spair.strongdmm.logic.dme.DmeItem
+import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.primaryFrame
 import java.awt.Color
@@ -14,7 +15,11 @@ import javax.swing.JTable
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
-private val HIDDEN_VARS = setOf("type", "parent_type", "vars", "x", "y", "z")
+private val HIDDEN_VARS = setOf(
+    VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_VIS_CONTENTS, VAR_CONTENTS, VAR_FILTERS,
+    VAR_LOC, VAR_MAPTEXT, VAR_MAPTEXT_WIDTH, VAR_MAPTEXT_HEIGHT, VAR_MAPTEXT_X, VAR_MAPTEXT_Y, VAR_OVERLAYS,
+    VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE
+)
 
 class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
     override fun actionPerformed(e: ActionEvent) {
