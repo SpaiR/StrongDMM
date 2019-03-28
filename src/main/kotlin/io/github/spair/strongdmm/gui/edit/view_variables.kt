@@ -27,6 +27,8 @@ class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
 
         val table = JTable(ViewVariablesModel(tileItem)).apply {
             setDefaultRenderer(Any::class.java, ViewVariablesRenderer())
+            autoCreateRowSorter = true
+            tableHeader.reorderingAllowed = false
         }
 
         with(dialog) {
