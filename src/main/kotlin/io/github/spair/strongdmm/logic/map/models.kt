@@ -22,7 +22,7 @@ class Dmm(dmmData: DmmData, dme: Dme) {
 
                 for (tileContent in dmmData.getTileContentByLocation(TileLocation.of(x, y))) {
                     dme.getItem(tileContent.type)?.let {
-                        tileItems.add(TileItem(dme.getItem(tileContent.type)!!, x, y, tileContent.vars))
+                        tileItems.add(TileItem(dme.getItem(tileContent.type)!!, x, y, tileContent.vars.toSortedMap()))
                     }
                 }
 
