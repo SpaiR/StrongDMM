@@ -24,7 +24,7 @@ fun parseDme(envPath: String): Dme {
 private fun traverseTreeRecurs(root: JsonObject, dme: Dme, dmeItems: MutableMap<String, DmeItem>) {
     val type = root.getPath()
 
-    val vars = with(root.getVars()) {
+    val localVars = with(root.getVars()) {
         val vars = mutableMapOf<String, String?>()
         forEach { def -> vars[def.getName()] = sanitizeVar(def.getValue()) }
         vars
@@ -41,7 +41,7 @@ private fun traverseTreeRecurs(root: JsonObject, dme: Dme, dmeItems: MutableMap<
         list
     }
 
-    dmeItems[type] = DmeItem(dme, type, vars.toSortedMap(), childrenList)
+    dmeItems[type] = DmeItem(dme, type, localVars, childrenList)
 }
 
 private fun sanitizeVar(value: String): String? {

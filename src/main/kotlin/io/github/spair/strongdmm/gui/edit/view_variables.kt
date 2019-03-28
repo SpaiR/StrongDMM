@@ -16,9 +16,9 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
 private val HIDDEN_VARS = setOf(
-    VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_VIS_CONTENTS, VAR_CONTENTS, VAR_FILTERS,
+    VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_CONTENTS, VAR_FILTERS,
     VAR_LOC, VAR_MAPTEXT, VAR_MAPTEXT_WIDTH, VAR_MAPTEXT_HEIGHT, VAR_MAPTEXT_X, VAR_MAPTEXT_Y, VAR_OVERLAYS,
-    VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE
+    VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE, VAR_VIS_CONTENTS, VAR_VIS_LOCS
 )
 
 class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
@@ -43,7 +43,6 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
 
     private val defaultFont = font.deriveFont(Font.PLAIN)
     private val boldFont = font.deriveFont(Font.BOLD)
-    private val defaultBack = background
 
     override fun getTableCellRendererComponent(
         table: JTable,
@@ -53,14 +52,12 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
         row: Int,
         column: Int
     ): Component {
-        background = defaultBack
         foreground = Color.BLACK
 
         val c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
-        if (value is TypeName || value is TypeValue) {
+        if (value is Val && value.isInstanceVar()) {
             c.font = boldFont
-            c.background = Color.GRAY
         } else {
             c.font = defaultFont
         }
@@ -75,43 +72,34 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
 
 private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() {
 
-    private val keys = mutableListOf<Val>()
-    private val vals = mutableListOf<Val>()
+    private val vars = mutableListOf<Var>()
 
     init {
-        if (tileItem.customVars.isNotEmpty()) {
-            addType("Instance variables")
-            tileItem.customVars.forEach(this::addVar)
-        }
-
+        tileItem.customVars.forEach { k, v -> addVar(k, v, true) }
         collectVars(tileItem.dmeItem)
+        vars.sortBy { v -> v.name.get() }
     }
 
-    override fun getRowCount() = keys.size
+    override fun getRowCount() = vars.size
     override fun getColumnCount() = 2
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int) = when (columnIndex) {
-        0 -> keys[rowIndex]
-        1 -> vals[rowIndex]
+        0 -> vars[rowIndex].name
+        1 -> vars[rowIndex].value
         else -> null
     }
 
-    private fun addType(type: String) {
-        keys.add(TypeName(type))
-        vals.add(TypeValue())
-    }
-
-    private fun addVar(key: String, value: String?) {
+    private fun addVar(key: String, value: String?, isInstanceVar: Boolean = false) {
         if (!HIDDEN_VARS.contains(key)) {
-            keys.add(VarName(key))
-            vals.add(VarValue(value ?: "null"))
+            vars.add(Var(VarName(key, isInstanceVar), VarValue(value ?: "null", isInstanceVar)))
         }
     }
 
     private fun collectVars(dmeItem: DmeItem) {
-        if (dmeItem.vars.isNotEmpty()) {
-            addType(dmeItem.type)
-            dmeItem.vars.forEach(this::addVar)
+        dmeItem.vars.forEach { k, v ->
+            if (vars.none { key -> key.name.get() == k }) {
+                addVar(k, v)
+            }
         }
 
         dmeItem.parent?.let { collectVars(it) }
@@ -120,26 +108,22 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
     override fun getColumnName(column: Int) = if (column == 0) "Name" else "Value"
 }
 
+private data class Var(val name: Val, val value: Val)
+
 private interface Val {
     fun get(): String
+    fun isInstanceVar(): Boolean
 }
 
-private abstract class StrVal : Val {
+private abstract class StrVal(private val isInstanceVar: Boolean) : Val {
     override fun toString() = " ${get()}"
+    override fun isInstanceVar() = isInstanceVar
 }
 
-private class TypeName(private val name: String) : StrVal() {
+private class VarName(private val name: String, isInstanceVar: Boolean = false) : StrVal(isInstanceVar) {
     override fun get() = name
 }
 
-private class TypeValue : StrVal() {
-    override fun get() = ""
-}
-
-private class VarName(private val name: String) : StrVal() {
-    override fun get() = name
-}
-
-private class VarValue(private val value: String) : StrVal() {
+private class VarValue(private val value: String, isInstanceVar: Boolean = false) : StrVal(isInstanceVar) {
     override fun get() = value
 }
