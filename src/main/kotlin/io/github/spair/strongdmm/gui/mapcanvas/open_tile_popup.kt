@@ -14,7 +14,7 @@ private val dmiProvider by diInstance<DmiProvider>()
 fun MapCanvasController.openTilePopup() {
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         selectedMap!!.getTile(xMouseMap, yMouseMap)!!.tileItems.forEach { tileItem ->
-            val menu = JMenu("${tileItem.getVar(VAR_NAME)} (${tileItem.type})").apply { popup.add(this) }
+            val menu = JMenu("${tileItem.getVarText(VAR_NAME)}  [${tileItem.type}]").apply { popup.add(this) }
 
             dmiProvider.getDmi(tileItem.icon)?.let { dmi ->
                 dmi.getIconState(tileItem.iconState)?.let { iconState ->
