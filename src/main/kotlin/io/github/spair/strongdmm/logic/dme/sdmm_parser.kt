@@ -15,7 +15,7 @@ import com.sun.jna.Native
  *   "localVars": [
  *     {
  *       "name": "{var_name}",
- *       "value: "{var_value"
+ *       "value: "{var_value}"
  *     }
  *   ],
  *   "children: [

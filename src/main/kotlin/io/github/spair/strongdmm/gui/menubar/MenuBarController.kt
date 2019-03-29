@@ -1,18 +1,17 @@
 package io.github.spair.strongdmm.gui.menubar
 
-import io.github.spair.strongdmm.DI
-import io.github.spair.strongdmm.gui.chooseFileDialog
+import io.github.spair.strongdmm.diDirect
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.ViewController
+import io.github.spair.strongdmm.gui.chooseFileDialog
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 import java.awt.event.ActionListener
 
-class MenuBarController : ViewController<MenuBarView>(DI.direct.instance()) {
+class MenuBarController : ViewController<MenuBarView>(diDirect()) {
 
-    private val environment by DI.instance<Environment>()
+    private val environment by diInstance<Environment>()
 
     override fun init() {
         view.openEnvItem.addActionListener(openEnvironmentAction())

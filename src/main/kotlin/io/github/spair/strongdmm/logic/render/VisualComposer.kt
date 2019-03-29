@@ -1,8 +1,7 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.map.Dmm
-import org.kodein.di.erased.instance
 import java.util.*
 
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
@@ -16,7 +15,7 @@ private const val ADDITIONAL_VIEW_RANGE = 2
 
 class VisualComposer {
 
-    private val riProvider by DI.instance<RenderInstanceProvider>()
+    private val riProvider by diInstance<RenderInstanceProvider>()
 
     private var xMapOffPrev: Int = 0
     private var yMapOffPrev: Int = 0

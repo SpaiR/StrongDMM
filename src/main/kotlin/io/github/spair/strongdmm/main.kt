@@ -1,8 +1,8 @@
 package io.github.spair.strongdmm
 
-import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.CenterScreenView
 import io.github.spair.strongdmm.gui.LeftScreenView
+import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.menubar.MenuBarController
@@ -15,6 +15,7 @@ import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import org.kodein.di.Kodein
 import org.kodein.di.direct
+import org.kodein.di.erased.allInstances
 import org.kodein.di.erased.bind
 import org.kodein.di.erased.instance
 import org.kodein.di.erased.singleton
@@ -47,4 +48,8 @@ val DI = Kodein {
     bind() from singleton { RenderInstanceProvider() }
 }
 
-fun primaryFrame() = DI.direct.instance<PrimaryFrame>().windowFrame
+inline fun <reified T : Any> diDirect() = DI.direct.instance<T>()
+inline fun <reified T : Any> diDirectAll() = DI.direct.allInstances<T>()
+inline fun <reified T : Any> diInstance() = DI.instance<T>()
+
+fun primaryFrame() = diDirect<PrimaryFrame>().windowFrame

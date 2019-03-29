@@ -1,14 +1,13 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.TileItem
-import org.kodein.di.erased.instance
 import java.util.concurrent.Executors
 
 class RenderInstanceProvider {
 
-    private val dmiProvider by DI.instance<DmiProvider>()
+    private val dmiProvider by diInstance<DmiProvider>()
     private val placeholderTextureId = createGlTexture(DmiProvider.PLACEHOLDER_IMAGE)
     private val executor = Executors.newSingleThreadExecutor()
 
@@ -19,7 +18,7 @@ class RenderInstanceProvider {
     fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
         val icon = tileItem.icon
 
-        if (dmiProvider.hasIconInMemory(icon)) {
+        if (dmiProvider.hasDmiInMemory(icon)) {
             hasInProcessImage = false
             return dmiProvider.getDmi(icon)?.let { dmi ->
                 dmi.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)?.let { s ->

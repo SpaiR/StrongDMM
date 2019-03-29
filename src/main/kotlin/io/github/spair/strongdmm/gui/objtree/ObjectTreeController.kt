@@ -1,15 +1,13 @@
 package io.github.spair.strongdmm.gui.objtree
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diDirect
 import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.logic.dme.*
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 
-class ObjectTreeController : ViewController<ObjectTreeView>(DI.direct.instance()) {
+class ObjectTreeController : ViewController<ObjectTreeView>(diDirect()) {
 
     override fun init() {
-        view.objectTree.cellRenderer = ObjectTreeRenderer(DI.direct.instance())
+        view.objectTree.cellRenderer = ObjectTreeRenderer(diDirect())
     }
 
     fun populateTree(dme: Dme) {

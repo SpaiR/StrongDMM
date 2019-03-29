@@ -1,13 +1,12 @@
 package io.github.spair.strongdmm.logic
 
 import io.github.spair.dmm.io.reader.DmmReader
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.map.Dmm
-import org.kodein.di.erased.instance
 import java.io.File
 
 class Environment {
@@ -17,8 +16,8 @@ class Environment {
     lateinit var absoluteRootPath: String
     val availableMaps = mutableListOf<String>()
 
-    private val objectTreeController by DI.instance<ObjectTreeController>()
-    private val mapCanvasController by DI.instance<MapCanvasController>()
+    private val objectTreeController by diInstance<ObjectTreeController>()
+    private val mapCanvasController by diInstance<MapCanvasController>()
 
     fun parseAndPrepareEnv(dmeFile: File): Dme {
         val s = System.currentTimeMillis()

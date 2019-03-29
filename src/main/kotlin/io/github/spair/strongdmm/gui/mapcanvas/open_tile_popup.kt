@@ -1,16 +1,15 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesListener
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import org.kodein.di.erased.instance
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 
-private val dmiProvider by DI.instance<DmiProvider>()
+private val dmiProvider by diInstance<DmiProvider>()
 
 fun MapCanvasController.openTilePopup() {
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->

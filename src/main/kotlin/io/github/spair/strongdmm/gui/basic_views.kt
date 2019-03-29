@@ -1,9 +1,8 @@
 package io.github.spair.strongdmm.gui
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import org.kodein.di.erased.instance
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -12,7 +11,7 @@ import javax.swing.JScrollPane
 
 class CenterScreenView : View {
 
-    private val mapCanvasView by DI.instance<MapCanvasView>()
+    private val mapCanvasView by diInstance<MapCanvasView>()
 
     override fun init(): JComponent {
         return JPanel().apply {
@@ -24,7 +23,7 @@ class CenterScreenView : View {
 
 class LeftScreenView : View {
 
-    private val objectTreeView by DI.instance<ObjectTreeView>()
+    private val objectTreeView by diInstance<ObjectTreeView>()
 
     override fun init(): JComponent {
         return JPanel().apply {

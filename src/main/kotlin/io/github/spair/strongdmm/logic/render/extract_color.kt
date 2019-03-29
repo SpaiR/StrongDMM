@@ -19,7 +19,7 @@ fun extractColor(tileItem: TileItem): Color {
         awtColor = AWTColor.decode(colorValue)
     } else if (!colorValue.isEmpty()) {
         val hex = ByondColor.hexFromColorName(colorValue)
-        if (hex.isNotEmpty()) {
+        if (hex != null) {
             awtColor = AWTColor.decode(hex)
         }
     }
@@ -53,32 +53,32 @@ private fun parseRGBColor(rgb: String): String {
 enum class ByondColor constructor(private val hex: String) {
 
     BLACK("#000000"),
-    SILVER("#C0C0C0"),
+    SILVER("#c0c0c0"),
     GRAY("#808080"), GREY(GRAY.hex),
-    WHITE("#FFFFFF"),
+    WHITE("#ffffff"),
     MAROON("#800000"),
-    RED("#FF0000"),
+    RED("#ff0000"),
     PURPLE("#800080"),
-    FUCHSIA("#FF00FF"), MAGENTA(FUCHSIA.hex),
-    GREEN("#00C000"),
-    LIME("#00FF00"),
+    FUCHSIA("#ff00ff"), MAGENTA(FUCHSIA.hex),
+    GREEN("#00c000"),
+    LIME("#00ff00"),
     OLIVE("#808000"),
     GOLD("#808000"),
-    YELLOW("#FFFF00"),
+    YELLOW("#ffff00"),
     NAVY("#000080"),
-    BLUE("#0000FF"),
+    BLUE("#0000ff"),
     TEAL("#008080"),
-    AQUA("#00FFFF"),
-    CYAN("#00FFFF");
+    AQUA("#00ffff"),
+    CYAN("#00ffff");
 
     companion object {
-        fun hexFromColorName(colorName: String): String {
+        fun hexFromColorName(colorName: String): String? {
             for (byondColor in values()) {
-                if (byondColor.name == colorName.toUpperCase()) {
+                if (byondColor.name.equals(colorName, true)) {
                     return byondColor.hex
                 }
             }
-            return ""
+            return null
         }
     }
 }

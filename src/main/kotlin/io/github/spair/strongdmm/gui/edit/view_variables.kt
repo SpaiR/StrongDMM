@@ -19,7 +19,7 @@ private val HIDDEN_VARS = setOf(
 
 class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
     override fun actionPerformed(e: ActionEvent) {
-        val dialog = JDialog(primaryFrame(), "View Variables", true)
+        val dialog = JDialog(primaryFrame(), "View Variables: ${tileItem.type}", true)
 
         val model = ViewVariablesModel(tileItem)
         val table = JTable(model).apply {

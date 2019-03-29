@@ -1,21 +1,20 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.DI
+import io.github.spair.strongdmm.diDirect
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import io.github.spair.strongdmm.primaryFrame
-import org.kodein.di.direct
-import org.kodein.di.erased.instance
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import kotlin.concurrent.thread
 
-class MapCanvasController : ViewController<MapCanvasView>(DI.direct.instance()) {
+class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
 
-    private val visualComposer by DI.instance<VisualComposer>()
+    private val visualComposer by diInstance<VisualComposer>()
     private val inputProcessor = InputProcessor(this)
 
     private var glInitialized = false
