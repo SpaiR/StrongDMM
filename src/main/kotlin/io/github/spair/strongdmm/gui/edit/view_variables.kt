@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import javax.swing.*
 import javax.swing.border.EmptyBorder
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
@@ -28,25 +30,40 @@ class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
             tableHeader.reorderingAllowed = false
         }
 
-        val bottomPanel = JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            add(JPanel().apply {
-                layout = FlowLayout(FlowLayout.LEFT)
-                add(JCheckBox().apply { addActionListener { model.showOnlyInstanceVars = isSelected } })
-                add(JLabel("Show instance vars"))
-            })
-        }
-
         with(dialog) {
             rootPane.border = EmptyBorder(5, 5, 5, 5)
-            contentPane.add(JScrollPane(table), BorderLayout.CENTER)
-            contentPane.add(bottomPanel, BorderLayout.SOUTH)
+
+            with(contentPane) {
+                add(createFilterField(model), BorderLayout.NORTH)
+                add(JScrollPane(table).apply { border = EmptyBorder(2, 0, 0, 0) }, BorderLayout.CENTER)
+                add(createBottomPanel(model), BorderLayout.SOUTH)
+            }
+
             setSize(400, 450)
             setLocationRelativeTo(primaryFrame())
             isVisible = true
             dispose()
         }
     }
+}
+
+private fun createFilterField(model: ViewVariablesModel) = JTextField().apply {
+    document.addDocumentListener(object : DocumentListener {
+        override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
+        override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
+        override fun changedUpdate(e: DocumentEvent) {
+            model.filter = text
+        }
+    })
+}
+
+private fun createBottomPanel(model: ViewVariablesModel) = JPanel().apply {
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
+    add(JPanel().apply {
+        layout = FlowLayout(FlowLayout.LEFT)
+        add(JCheckBox().apply { addActionListener { model.showOnlyInstanceVars = isSelected } })
+        add(JLabel("Show instance vars"))
+    })
 }
 
 private class ViewVariablesRenderer : DefaultTableCellRenderer() {
@@ -84,6 +101,13 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
 
     private val vars = mutableListOf<Var>()
 
+    var filter: String = ""
+        set(value) {
+            field = value
+            buildVars()
+            fireTableDataChanged()
+        }
+
     var showOnlyInstanceVars = false
         set(value) {
             field = value
@@ -117,6 +141,9 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
 
     private fun addVar(key: String, value: String?, isInstanceVar: Boolean = false) {
         if (!HIDDEN_VARS.contains(key)) {
+            if (filter.isNotEmpty() && !key.contains(filter)) {
+                return
+            }
             vars.add(Var(VarName(key, isInstanceVar), VarValue(value ?: "null", isInstanceVar)))
         }
     }
