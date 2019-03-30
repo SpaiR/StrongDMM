@@ -33,9 +33,11 @@ class MapCanvasView : View {
 
     fun createAndShowTilePopup(x:Int, y: Int, fillInAction: (JPopupMenu) -> Unit) {
         SwingUtilities.invokeLater {
-            tilePopup = JPopupMenu().apply { isLightWeightPopupEnabled = false }
-            fillInAction(tilePopup!!)
-            tilePopup!!.show(canvas, x, y)
+            tilePopup = JPopupMenu().apply {
+                isLightWeightPopupEnabled = false
+                fillInAction(this)
+                show(canvas, x, y)
+            }
         }
     }
 }

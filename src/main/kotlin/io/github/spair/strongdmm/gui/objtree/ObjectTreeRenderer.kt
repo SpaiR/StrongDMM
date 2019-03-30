@@ -12,8 +12,8 @@ class ObjectTreeRenderer(private val dmiProvider: DmiProvider) : DefaultTreeCell
     private val placeholderIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE.getScaledInstance(16, 16, Image.SCALE_FAST))
 
     override fun getTreeCellRendererComponent(
-        tree: JTree?,
-        value: Any?,
+        tree: JTree,
+        value: Any,
         sel: Boolean,
         expanded: Boolean,
         leaf: Boolean,

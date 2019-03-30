@@ -45,7 +45,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     override fun init() {
     }
 
-    fun selectMap(dmm: Dmm) {
+    fun switchMap(dmm: Dmm) {
         selectedMap = dmm
         iconSize = dmm.iconSize
 
@@ -110,7 +110,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
                 glTranslatef(xViewOff, yViewOff, 0f)
 
                 // actual rendering
-                renderSelectedMap()
+                renderMap()
                 renderMousePosition()
 
                 Display.update(false)
@@ -122,7 +122,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
         }
     }
 
-    private fun renderSelectedMap() {
+    private fun renderMap() {
         val horTilesNum = (getViewWidth() / iconSize + 0.5f).toInt()
         val verTilesNum = (getViewHeight() / iconSize + 0.5f).toInt()
 
@@ -167,6 +167,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
 
         glDisable(GL_TEXTURE_2D)
 
+        // Postponed images will be loaded in next frame
         if (visualComposer.hasIncompleteJob) {
             Frame.update()
         }
