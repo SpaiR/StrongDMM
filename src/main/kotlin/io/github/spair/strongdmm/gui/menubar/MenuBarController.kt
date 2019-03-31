@@ -8,6 +8,8 @@ import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.history.redoAction
+import io.github.spair.strongdmm.logic.history.undoAction
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
 
@@ -20,6 +22,17 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
         view.openEnvItem.addActionListener(openEnvironmentAction())
         view.saveItem.addActionListener(saveSelectedMapAction())
         view.exitMenuItem.addActionListener { System.exit(0) }
+
+        view.undoActionItem.addActionListener { undoAction() }
+        view.redoActionItem.addActionListener { redoAction() }
+    }
+
+    fun switchUndo(enabled: Boolean) {
+        view.undoActionItem.isEnabled = enabled
+    }
+
+    fun switchRedo(enabled: Boolean) {
+        view.redoActionItem.isEnabled = enabled
     }
 
     private fun openEnvironmentAction() = ActionListener {

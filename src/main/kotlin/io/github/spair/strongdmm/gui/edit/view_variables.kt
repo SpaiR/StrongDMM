@@ -1,6 +1,8 @@
 package io.github.spair.strongdmm.gui.edit
 
 import io.github.spair.strongdmm.logic.dme.*
+import io.github.spair.strongdmm.logic.history.EditVarsAction
+import io.github.spair.strongdmm.logic.history.addUndoAction
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.primaryFrame
 import java.awt.*
@@ -50,6 +52,7 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
         }
 
         if (saveChanges) {
+            addUndoAction(EditVarsAction(tileItem))
             model.tmpVars.forEach { k, v -> tileItem.customVars[k] = v }
             tileItem.updateFields()
         }
