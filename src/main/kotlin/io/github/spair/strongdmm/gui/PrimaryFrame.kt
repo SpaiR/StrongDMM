@@ -8,7 +8,7 @@ import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.UIManager
 
-class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
+class PrimaryFrame : JFrame() {
 
     private val menuBarView by diInstance<MenuBarView>()
     private val leftScreenView by diInstance<LeftScreenView>()
@@ -20,20 +20,18 @@ class PrimaryFrame(val windowFrame: JFrame = JFrame()) {
         initSubViews()
         initControllers()
 
-        with(windowFrame) {
-            title = "StrongDMM"
-            size = Dimension(1280, 768)
-            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-            setLocationRelativeTo(null)
-            isVisible = true
-        }
+        title = "StrongDMM"
+        size = Dimension(1280, 768)
+        defaultCloseOperation = EXIT_ON_CLOSE
+        setLocationRelativeTo(null)
+        isVisible = true
     }
 
     // Some subviews can have it's own subviews
     private fun initSubViews() {
-        windowFrame.jMenuBar = menuBarView.init()
-        windowFrame.add(leftScreenView.init(), BorderLayout.WEST)
-        windowFrame.add(centerScreenView.init(), BorderLayout.CENTER)
+        jMenuBar = menuBarView.init()
+        add(leftScreenView.init(), BorderLayout.WEST)
+        add(centerScreenView.init(), BorderLayout.CENTER)
     }
 
     // Controllers should be initialized after views

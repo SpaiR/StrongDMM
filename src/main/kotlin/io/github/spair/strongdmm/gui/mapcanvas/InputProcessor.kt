@@ -2,13 +2,13 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import org.lwjgl.input.Mouse
 
+private const val LMB = 0
+private const val RMB = 1
+
+const val OUT_OF_BOUNDS = -1
+
 // Class to consume and react on user input actions.
 class InputProcessor(private val ctrl: MapCanvasController) {
-
-    companion object {
-        private const val LMB = 0
-        private const val RMB = 1
-    }
 
     fun fire() {
         ctrl.updateMouseMapPosition()
@@ -80,8 +80,11 @@ class InputProcessor(private val ctrl: MapCanvasController) {
     }
 
     private fun MapCanvasController.updateMouseMapPosition() {
-        val xMouseMapNew = (Mouse.getX() * viewZoom - xViewOff).toInt() / iconSize + 1
-        val yMouseMapNew = (Mouse.getY() * viewZoom - yViewOff).toInt() / iconSize + 1
+        var xMouseMapNew = (Mouse.getX() * viewZoom - xViewOff).toInt() / iconSize + 1
+        var yMouseMapNew = (Mouse.getY() * viewZoom - yViewOff).toInt() / iconSize + 1
+
+        xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > selectedMap!!.maxX) OUT_OF_BOUNDS else xMouseMapNew
+        yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > selectedMap!!.maxY) OUT_OF_BOUNDS else yMouseMapNew
 
         if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
             xMouseMap = xMouseMapNew

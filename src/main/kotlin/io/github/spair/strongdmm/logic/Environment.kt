@@ -34,10 +34,14 @@ class Environment {
         return dme
     }
 
-    fun openMap(mapPath: String) {
-        val dmmData = DmmReader.readMap(File(mapPath))
-        val dmm = Dmm(dmmData, dme)
+    fun openMap(mapFile: File) {
+        val dmmData = DmmReader.readMap(mapFile)
+        val dmm = Dmm(mapFile.path, dmmData, dme)
         mapCanvasController.switchMap(dmm)
+    }
+
+    fun openMap(mapPath: String) {
+        openMap(File(mapPath))
     }
 
     private fun findAvailableMaps(rootFolder: File) {

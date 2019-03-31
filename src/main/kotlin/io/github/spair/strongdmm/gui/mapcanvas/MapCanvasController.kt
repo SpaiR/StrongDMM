@@ -174,6 +174,10 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     }
 
     private fun renderMousePosition() {
+        if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
+            return
+        }
+
         val xPos = (xMouseMap - 1) * iconSize
         val yPos = (yMouseMap - 1) * iconSize
 

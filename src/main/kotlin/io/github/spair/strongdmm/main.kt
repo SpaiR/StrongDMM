@@ -48,7 +48,7 @@ val DI = Kodein {
     bind() from singleton { RenderInstanceProvider() }
 }
 
-fun primaryFrame() = diDirect<PrimaryFrame>().windowFrame
+fun primaryFrame() = diDirect<PrimaryFrame>()
 
 inline fun <reified T : Any> diDirect() = DI.direct.instance<T>()
 inline fun <reified T : Any> diDirectAll() = DI.direct.allInstances<T>()

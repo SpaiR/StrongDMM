@@ -10,7 +10,7 @@ fun RenderInstances.get(plane: Float, layer: Float): MutableList<RenderInstance>
     return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
 }
 
-// We will look for things outside of viewport range to handle big objects (bigger then 32 px)
+// We will look for things outside of viewport range to handle big objects (bigger then /world/icon_size)
 private const val ADDITIONAL_VIEW_RANGE = 2
 
 class VisualComposer {
@@ -33,6 +33,7 @@ class VisualComposer {
         verTilesNum: Int,
         forceUpdate: Boolean
     ): RenderInstances {
+        // Use cached render instances
         if (!hasIncompleteJob && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum

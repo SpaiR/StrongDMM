@@ -4,8 +4,6 @@ import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.primaryFrame
 import java.awt.*
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
@@ -19,10 +17,12 @@ private val HIDDEN_VARS = setOf(
     VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE, VAR_VIS_CONTENTS, VAR_VIS_LOCS
 )
 
-class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
-    override fun actionPerformed(e: ActionEvent) {
-        val dialog = JDialog(primaryFrame(), "View Variables: ${tileItem.type}", true)
+class ViewVariablesDialog(private val tileItem: TileItem) {
 
+    private var saveChanges = false
+    private val dialog = JDialog(primaryFrame(), "View Variables: ${tileItem.type}", true)
+
+    fun open(): Boolean {
         val model = ViewVariablesModel(tileItem)
         val table = JTable(model).apply {
             setDefaultRenderer(Any::class.java, ViewVariablesRenderer())
@@ -44,32 +44,54 @@ class ViewVariablesListener(private val tileItem: TileItem) : ActionListener {
             isVisible = true
             dispose()
         }
-    }
-}
 
-private fun createFilterField(model: ViewVariablesModel) = JTextField().apply {
-    document.addDocumentListener(object : DocumentListener {
-        override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
-        override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
-        override fun changedUpdate(e: DocumentEvent) {
-            model.filter = text
+        if (table.isEditing) {
+            table.cellEditor.stopCellEditing()
         }
-    })
-}
 
-private fun createBottomPanel(model: ViewVariablesModel) = JPanel().apply {
-    layout = BoxLayout(this, BoxLayout.Y_AXIS)
-    add(JPanel().apply {
-        layout = FlowLayout(FlowLayout.LEFT)
-        add(JCheckBox().apply { addActionListener { model.showOnlyInstanceVars = isSelected } })
-        add(JLabel("Show instance vars"))
-    })
+        if (saveChanges) {
+            model.tmpVars.forEach { k, v -> tileItem.customVars[k] = v }
+            tileItem.updateFields()
+        }
+
+        return saveChanges
+    }
+
+    private fun createFilterField(model: ViewVariablesModel) = JTextField().apply {
+        document.addDocumentListener(object : DocumentListener {
+            override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
+            override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
+            override fun changedUpdate(e: DocumentEvent) {
+                model.filter = text
+            }
+        })
+    }
+
+    private fun createBottomPanel(model: ViewVariablesModel) = JPanel().apply {
+        layout = BoxLayout(this, BoxLayout.Y_AXIS)
+
+        add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+            add(JCheckBox().apply { addActionListener { model.showOnlyInstanceVars = isSelected } })
+            add(JLabel("Show instance vars"))
+        })
+
+        add(JPanel(BorderLayout()).apply {
+            add(JButton("OK").apply { addActionListener { closeDialog(true) } }, BorderLayout.WEST)
+            add(JButton("Cancel").apply { addActionListener { closeDialog(false) } }, BorderLayout.EAST)
+        })
+    }
+
+    private fun closeDialog(saveChanges: Boolean) {
+        this.saveChanges = saveChanges
+        dialog.isVisible = false
+    }
 }
 
 private class ViewVariablesRenderer : DefaultTableCellRenderer() {
 
     private val defaultFont = font.deriveFont(Font.PLAIN)
     private val boldFont = font.deriveFont(Font.BOLD)
+    private val emptyBorder = EmptyBorder(5, 5, 5, 5)
 
     override fun getTableCellRendererComponent(
         table: JTable,
@@ -79,19 +101,11 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
         row: Int,
         column: Int
     ): Component {
-        foreground = Color.BLACK
-
         val c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
 
-        if (value is Val && value.isInstanceVar()) {
-            c.font = boldFont
-        } else {
-            c.font = defaultFont
-        }
-
-        if (value is VarName) {
-            c.foreground = Color.RED
-        }
+        border = emptyBorder
+        font = if (value is Val && value.isInstanceVar()) boldFont else defaultFont
+        foreground = if (value is VarName) Color.RED else Color.BLACK
 
         return c
     }
@@ -99,7 +113,9 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
 
 private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() {
 
-    private val vars = mutableListOf<Var>()
+    private val displayVars = mutableListOf<Var>()
+
+    val tmpVars = mutableMapOf<String, String>() // vars will be added to instance on save
 
     var filter: String = ""
         set(value) {
@@ -119,42 +135,54 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
         buildVars()
     }
 
-    override fun getRowCount() = vars.size
+    override fun getRowCount() = displayVars.size
     override fun getColumnCount() = 2
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int) = when (columnIndex) {
-        0 -> vars[rowIndex].name
-        1 -> vars[rowIndex].value
+        0 -> displayVars[rowIndex].name
+        1 -> displayVars[rowIndex].value
         else -> null
     }
 
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int) = columnIndex == 1
+
+    override fun setValueAt(aValue: Any, rowIndex: Int, columnIndex: Int) {
+        if (displayVars[rowIndex].value.get() == aValue) {
+            return
+        }
+
+        val name = displayVars[rowIndex].name.get()
+        val value = aValue.toString().trim().let { if (it.isEmpty()) "null" else it }
+
+        tmpVars[name] = value
+        buildVars()
+    }
+
     private fun buildVars() {
-        vars.clear()
+        displayVars.clear()
+
+        tmpVars.forEach { k, v -> addVar(k, v, true) }
         tileItem.customVars.forEach { k, v -> addVar(k, v, true) }
 
         if (!showOnlyInstanceVars) {
             collectVars(tileItem.dmeItem)
         }
 
-        vars.sortBy { v -> v.name.get() }
+        displayVars.sortBy { v -> v.name.get() }
     }
 
-    private fun addVar(key: String, value: String?, isInstanceVar: Boolean = false) {
-        if (!HIDDEN_VARS.contains(key)) {
-            if (filter.isNotEmpty() && !key.contains(filter)) {
-                return
-            }
-            vars.add(Var(VarName(key, isInstanceVar), VarValue(value ?: "null", isInstanceVar)))
+    private fun addVar(key: String, value: String, isInstanceVar: Boolean = false) {
+        if (HIDDEN_VARS.contains(key) || (filter.isNotEmpty() && !key.contains(filter))) {
+            return
+        }
+
+        if (displayVars.none { k -> k.name.get() == key }) {
+            displayVars.add(Var(VarName(key, isInstanceVar), VarValue(value, isInstanceVar)))
         }
     }
 
     private fun collectVars(dmeItem: DmeItem) {
-        dmeItem.vars.forEach { k, v ->
-            if (vars.none { key -> key.name.get() == k }) {
-                addVar(k, v)
-            }
-        }
-
+        dmeItem.vars.forEach { k, v -> addVar(k, v) }
         dmeItem.parent?.let { collectVars(it) }
     }
 
@@ -169,7 +197,7 @@ private interface Val {
 }
 
 private abstract class StrVal(private val isInstanceVar: Boolean) : Val {
-    override fun toString() = " ${get()}"
+    override fun toString() = get()
     override fun isInstanceVar() = isInstanceVar
 }
 

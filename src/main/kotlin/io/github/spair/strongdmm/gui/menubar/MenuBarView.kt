@@ -6,8 +6,13 @@ import javax.swing.*
 
 class MenuBarView : View {
 
-    val openEnvItem = createMenuItem("Open environment")
-    val availableMapsItem = createMenuItem("Available maps", false)
+    val openEnvItem = createMenuItem("Open Environment...")
+
+    val openMapItem = createMenuItem("Open...", false)
+    val availableMapsItem = createMenuItem("Open from available", false)
+
+    val saveItem = createMenuItem("Save", false)
+
     val exitMenuItem = createMenuItem("Exit")
 
     override fun init(): JMenuBar {
@@ -19,7 +24,11 @@ class MenuBarView : View {
     private fun createFileItems(): Array<JComponent> {
         return arrayOf(
             openEnvItem,
+            JSeparator(),
+            openMapItem,
             availableMapsItem,
+            JSeparator(),
+            saveItem,
             JSeparator(),
             exitMenuItem
         )

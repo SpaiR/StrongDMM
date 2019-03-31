@@ -7,7 +7,7 @@ data class Dme(val dmeItems: Map<String, DmeItem?>) {
 data class DmeItem(
     private val environment: Dme,
     val type: String,
-    val vars: Map<String, String?>,
+    val vars: Map<String, String>,
     val children: List<String>
 ) {
 
@@ -41,7 +41,7 @@ data class DmeItem(
         }
     }
 
-    fun getVarText(name: String) = getVar(name)?.run { substring(1, length - 1) }
+    fun getVarText(name: String) = getVar(name)?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) }
     fun getVarFloat(name: String) = getVar(name)?.toFloatOrNull()
     fun getVarInt(name: String) = getVar(name)?.toIntOrNull()
 
