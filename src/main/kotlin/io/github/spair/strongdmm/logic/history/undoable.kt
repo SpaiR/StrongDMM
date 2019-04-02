@@ -14,6 +14,7 @@ private val REDO_STACK = Stack<Undoable>()
 private val ctrl by diInstance<MenuBarController>()
 
 fun addUndoAction(undoable: Undoable) {
+    REDO_STACK.clear()
     UNDO_STACK.push(undoable)
     ctrl.switchUndo(true)
 }
