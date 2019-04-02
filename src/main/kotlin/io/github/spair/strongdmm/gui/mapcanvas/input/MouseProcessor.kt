@@ -1,14 +1,20 @@
-package io.github.spair.strongdmm.gui.mapcanvas
+package io.github.spair.strongdmm.gui.mapcanvas.input
 
+import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.mapcanvas.Frame
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
+import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import org.lwjgl.input.Mouse
-
-private const val LMB = 0
-private const val RMB = 1
 
 const val OUT_OF_BOUNDS = -1
 
 // Class to consume and react on user input actions.
-class MouseProcessor(private val ctrl: MapCanvasController) {
+object MouseProcessor {
+
+    private const val LMB = 0
+    private const val RMB = 1
+
+    private val ctrl by diInstance<MapCanvasController>()
 
     fun fire() {
         ctrl.updateMouseMapPosition()

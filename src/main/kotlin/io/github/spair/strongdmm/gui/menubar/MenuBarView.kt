@@ -2,7 +2,10 @@ package io.github.spair.strongdmm.gui.menubar
 
 import io.github.spair.strongdmm.gui.View
 import java.awt.Font
+import java.awt.event.InputEvent
 import javax.swing.*
+
+const val SHORTCUT_CTRL_Q = "ctrl+q"
 
 class MenuBarView : View {
 
@@ -11,7 +14,7 @@ class MenuBarView : View {
     val openMapItem = createMenuItem("Open...", false)
     val availableMapsItem = createMenuItem("Open from available", false)
     val saveItem = createMenuItem("Save", false)
-    val exitMenuItem = createMenuItem("Exit")
+    val exitMenuItem = createMenuItem("Exit").addCtrlShortcut('Q')
 
     // Edit items
     val undoActionItem = createMenuItem("Undo", false)
@@ -49,5 +52,9 @@ class MenuBarView : View {
 
     private fun createMenu(name: String, items: Array<JComponent>): JComponent = JMenu(name).apply {
         items.forEach { add(it) }
+    }
+
+    private fun JMenuItem.addCtrlShortcut(char: Char) = apply {
+        accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.CTRL_DOWN_MASK)
     }
 }

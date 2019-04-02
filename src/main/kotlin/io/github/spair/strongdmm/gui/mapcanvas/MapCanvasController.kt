@@ -3,6 +3,9 @@ package io.github.spair.strongdmm.gui.mapcanvas
 import io.github.spair.strongdmm.diDirect
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.ViewController
+import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
+import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
+import io.github.spair.strongdmm.gui.mapcanvas.input.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import io.github.spair.strongdmm.primaryFrame
@@ -15,7 +18,6 @@ import kotlin.concurrent.thread
 class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
 
     private val visualComposer by diInstance<VisualComposer>()
-    private val mouseProcessor = MouseProcessor(this)
 
     private var glInitialized = false
     private var frameInitialized = false
@@ -117,7 +119,8 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
             }
 
             Display.processMessages()
-            mouseProcessor.fire()
+            KeyboardProcessor.fire()
+            MouseProcessor.fire()
             Display.sync(60)
         }
     }

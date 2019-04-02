@@ -12,6 +12,7 @@ import io.github.spair.strongdmm.logic.history.redoAction
 import io.github.spair.strongdmm.logic.history.undoAction
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
+import javax.swing.SwingUtilities
 
 class MenuBarController : ViewController<MenuBarView>(diDirect()) {
 
@@ -33,6 +34,15 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
 
     fun switchRedo(enabled: Boolean) {
         view.redoActionItem.isEnabled = enabled
+    }
+
+    // While map canvas is in focus, swing won't catch key events, so we fire them programmatically
+    fun fireShortcutEvent(shortcut: String) {
+        SwingUtilities.invokeLater {
+            when(shortcut) {
+                SHORTCUT_CTRL_Q -> view.exitMenuItem.doClick()
+            }
+        }
     }
 
     private fun openEnvironmentAction() = ActionListener {
