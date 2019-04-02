@@ -9,15 +9,15 @@ object KeyboardProcessor  {
     private val menuBarCtrl by diInstance<MenuBarController>()
 
     private val ctrlMappings = mapOf(
-        KEY_Q to SHORTCUT_CTRL_Q,
-        KEY_S to SHORTCUT_CTRL_S,
-        KEY_O to SHORTCUT_CTRL_O,
-        KEY_Z to SHORTCUT_CTRL_Z
+        KEY_Q to Shortcut.CTRL_Q,
+        KEY_S to Shortcut.CTRL_S,
+        KEY_O to Shortcut.CTRL_O,
+        KEY_Z to Shortcut.CTRL_Z
     )
 
     private val ctrlShiftMappings = mapOf(
-        KEY_O to SHORTCUT_CTRL_SHIFT_O,
-        KEY_Z to SHORTCUT_CTRL_SHIFT_Z
+        KEY_O to Shortcut.CTRL_SHIFT_O,
+        KEY_Z to Shortcut.CTRL_SHIFT_Z
     )
 
     fun fire() {
@@ -33,7 +33,7 @@ object KeyboardProcessor  {
             }
         }
     }
-    
+
     private fun isCtrlDown() = isKeyDown(KEY_LCONTROL) || isKeyDown(KEY_RCONTROL)
     private fun isShiftDown() = isKeyDown(KEY_LSHIFT) || isKeyDown(KEY_RSHIFT)
 }
