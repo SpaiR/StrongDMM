@@ -8,7 +8,7 @@ private const val RMB = 1
 const val OUT_OF_BOUNDS = -1
 
 // Class to consume and react on user input actions.
-class InputProcessor(private val ctrl: MapCanvasController) {
+class MouseProcessor(private val ctrl: MapCanvasController) {
 
     fun fire() {
         ctrl.updateMouseMapPosition()

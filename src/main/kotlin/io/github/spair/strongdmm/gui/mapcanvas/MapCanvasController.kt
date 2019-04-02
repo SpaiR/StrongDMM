@@ -15,7 +15,7 @@ import kotlin.concurrent.thread
 class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
 
     private val visualComposer by diInstance<VisualComposer>()
-    private val inputProcessor = InputProcessor(this)
+    private val mouseProcessor = MouseProcessor(this)
 
     private var glInitialized = false
     private var frameInitialized = false
@@ -117,7 +117,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
             }
 
             Display.processMessages()
-            inputProcessor.fire()
+            mouseProcessor.fire()
             Display.sync(60)
         }
     }
