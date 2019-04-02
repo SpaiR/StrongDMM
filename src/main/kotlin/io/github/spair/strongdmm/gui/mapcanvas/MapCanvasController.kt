@@ -5,7 +5,7 @@ import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
-import io.github.spair.strongdmm.gui.mapcanvas.input.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import io.github.spair.strongdmm.primaryFrame

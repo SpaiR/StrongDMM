@@ -4,9 +4,8 @@ import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.Frame
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
-
-const val OUT_OF_BOUNDS = -1
 
 // Class to consume and react on user input actions.
 object MouseProcessor {

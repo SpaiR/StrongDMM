@@ -4,6 +4,8 @@ import io.github.spair.dmm.io.*
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 
+const val OUT_OF_BOUNDS = -1
+
 class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
     val maxX: Int = initialDmmData.maxX

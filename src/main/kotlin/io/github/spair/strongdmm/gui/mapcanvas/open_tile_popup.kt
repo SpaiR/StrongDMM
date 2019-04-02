@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
-import io.github.spair.strongdmm.gui.mapcanvas.input.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import org.lwjgl.input.Mouse
