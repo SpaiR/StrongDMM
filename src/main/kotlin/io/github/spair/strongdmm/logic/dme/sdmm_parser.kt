@@ -12,14 +12,14 @@ import com.sun.jna.Native
  * Json contract:
  *  {
  *   "path": "{type_path}",
- *   "localVars": [
+ *   "vars": [
  *     {
  *       "name": "{var_name}",
  *       "value: "{var_value}"
  *     }
  *   ],
  *   "children: [
- *     ... << object with path, localVars and children field
+ *     ... << object with path, vars and children field
  *   ]
  *  }
  *

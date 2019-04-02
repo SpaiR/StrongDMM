@@ -50,13 +50,12 @@ data class DmeItem(
     }
 }
 
-fun isType(t1: String, t2: String): Boolean {
-    return t1.isNotEmpty() && t2.isNotEmpty() && when (t1) {
-        t2 -> true
-        TYPE_DATUM -> false // Root type can only be type of itself
-        TYPE_ATOM -> t2 == TYPE_DATUM
-        TYPE_ATOM_MOVABLE, TYPE_AREA, TYPE_TURF -> t2 == TYPE_DATUM || t2 == TYPE_ATOM
-        TYPE_OBJ, TYPE_MOB -> t2 == TYPE_DATUM || t2 == TYPE_ATOM || t2 == TYPE_ATOM_MOVABLE
-        else -> isType(t1.substringBeforeLast('/'), t2)
-    }
+tailrec fun isType(t1: String, t2: String): Boolean {
+    return if (t1.isEmpty() || t2.isEmpty()) false
+    else if (t1 == t2) true
+    else if (t1 == TYPE_DATUM) false // Root type can only be type of itself
+    else if (t1 == TYPE_ATOM) t2 == TYPE_DATUM
+    else if (t1 == TYPE_ATOM_MOVABLE || t1 == TYPE_AREA || t1 == TYPE_TURF) t2 == TYPE_DATUM || t2 == TYPE_ATOM
+    else if (t1 == TYPE_OBJ || t1 == TYPE_MOB) t2 == TYPE_DATUM || t2 == TYPE_ATOM || t2 == TYPE_ATOM_MOVABLE
+    else isType(t1.substringBeforeLast('/'), t2)
 }
