@@ -184,9 +184,12 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
         }
     }
 
-    private fun collectVars(dmeItem: DmeItem) {
+    private tailrec fun collectVars(dmeItem: DmeItem) {
         dmeItem.vars.forEach { k, v -> addVar(k, v) }
-        dmeItem.parent?.let { collectVars(it) }
+        val parent = dmeItem.parent
+        if (parent != null) {
+            collectVars(parent)
+        }
     }
 
     override fun getColumnName(column: Int) = if (column == 0) "Name" else "Value"
