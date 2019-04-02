@@ -5,20 +5,18 @@ import java.awt.Font
 import java.awt.event.InputEvent
 import javax.swing.*
 
-const val SHORTCUT_CTRL_Q = "ctrl+q"
-
 class MenuBarView : View {
 
     // File items
     val openEnvItem = createMenuItem("Open Environment...")
-    val openMapItem = createMenuItem("Open...", false)
-    val availableMapsItem = createMenuItem("Open from available", false)
-    val saveItem = createMenuItem("Save", false)
+    val openMapItem = createMenuItem("Open...", false).addCtrlShortcut('O')
+    val availableMapsItem = createMenuItem("Open from available", false).addCtrlShiftShortcut('O')
+    val saveItem = createMenuItem("Save", false).addCtrlShortcut('S')
     val exitMenuItem = createMenuItem("Exit").addCtrlShortcut('Q')
 
     // Edit items
-    val undoActionItem = createMenuItem("Undo", false)
-    val redoActionItem = createMenuItem("Redo", false)
+    val undoActionItem = createMenuItem("Undo", false).addCtrlShortcut('Z')
+    val redoActionItem = createMenuItem("Redo", false).addCtrlShiftShortcut('Z')
 
     override fun init(): JMenuBar {
         return JMenuBar().apply {
@@ -56,5 +54,9 @@ class MenuBarView : View {
 
     private fun JMenuItem.addCtrlShortcut(char: Char) = apply {
         accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.CTRL_DOWN_MASK)
+    }
+
+    private fun JMenuItem.addCtrlShiftShortcut(char: Char) = apply {
+        accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.CTRL_DOWN_MASK or InputEvent.SHIFT_DOWN_MASK)
     }
 }

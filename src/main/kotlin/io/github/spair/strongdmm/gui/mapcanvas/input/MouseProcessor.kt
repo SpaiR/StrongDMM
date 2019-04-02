@@ -7,33 +7,32 @@ import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 
-// Class to consume and react on user input actions.
 object MouseProcessor {
 
     private const val LMB = 0
     private const val RMB = 1
 
-    private val ctrl by diInstance<MapCanvasController>()
+    private val mapCanvasCtrl by diInstance<MapCanvasController>()
 
     fun fire() {
-        ctrl.updateMouseMapPosition()
+        mapCanvasCtrl.updateMouseMapPosition()
 
         if (Mouse.isButtonDown(LMB)) {
-            ctrl.updateViewAndMapOffset()
+            mapCanvasCtrl.updateViewAndMapOffset()
         }
 
         Mouse.getDWheel().takeIf { it != 0 }?.let {
-            ctrl.updateZoom(it > 0)
+            mapCanvasCtrl.updateZoom(it > 0)
         }
 
         while (Mouse.next()) {
             if (Mouse.getEventButtonState()) {
-                if (ctrl.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
+                if (mapCanvasCtrl.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
                     continue
                 }
 
                 if (Mouse.getEventButton() == RMB) {
-                    ctrl.openTilePopup()
+                    mapCanvasCtrl.openTilePopup()
                 }
             }
         }
@@ -56,7 +55,7 @@ object MouseProcessor {
     }
 
     private fun MapCanvasController.updateZoom(isZoomIn: Boolean) {
-        ctrl.view.tryCloseTilePopup()
+        mapCanvasCtrl.view.tryCloseTilePopup()
 
         if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
             return

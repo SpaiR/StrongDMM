@@ -39,8 +39,16 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
     // While map canvas is in focus, swing won't catch key events, so we fire them programmatically
     fun fireShortcutEvent(shortcut: String) {
         SwingUtilities.invokeLater {
-            when(shortcut) {
-                SHORTCUT_CTRL_Q -> view.exitMenuItem.doClick()
+            with(view) {
+                when (shortcut) {
+                    SHORTCUT_CTRL_O -> openMapItem.doClick()
+                    SHORTCUT_CTRL_SHIFT_O -> availableMapsItem.doClick()
+                    SHORTCUT_CTRL_S -> saveItem.doClick()
+                    SHORTCUT_CTRL_Q -> exitMenuItem.doClick()
+
+                    SHORTCUT_CTRL_Z -> undoActionItem.doClick()
+                    SHORTCUT_CTRL_SHIFT_Z -> redoActionItem.doClick()
+                }
             }
         }
     }
