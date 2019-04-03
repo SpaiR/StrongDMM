@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.gui.objtree
 
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import java.awt.Component
 import java.awt.Image
@@ -7,9 +8,10 @@ import javax.swing.ImageIcon
 import javax.swing.JTree
 import javax.swing.tree.DefaultTreeCellRenderer
 
-class ObjectTreeRenderer(private val dmiProvider: DmiProvider) : DefaultTreeCellRenderer() {
+object ObjectTreeRenderer : DefaultTreeCellRenderer() {
 
     private val placeholderIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE.getScaledInstance(16, 16, Image.SCALE_FAST))
+    private val dmiProvider by diInstance<DmiProvider>()
 
     override fun getTreeCellRendererComponent(
         tree: JTree,

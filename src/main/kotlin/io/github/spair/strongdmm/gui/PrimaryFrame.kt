@@ -8,13 +8,13 @@ import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.UIManager
 
-class PrimaryFrame : JFrame() {
+object PrimaryFrame : JFrame() {
 
     private val menuBarView by diInstance<MenuBarView>()
     private val leftScreenView by diInstance<LeftScreenView>()
     private val centerScreenView by diInstance<CenterScreenView>()
 
-    init {
+    fun init() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
         initSubViews()

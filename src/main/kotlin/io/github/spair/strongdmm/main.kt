@@ -22,13 +22,11 @@ import org.kodein.di.erased.singleton
 
 // Entry point
 fun main() {
-    primaryFrame()
+    PrimaryFrame.init()
 }
 
 // Application DI context
 val DI = Kodein {
-    bind() from singleton { PrimaryFrame() }
-
     // Subviews
     bind() from singleton { MenuBarView() }
     bind() from singleton { LeftScreenView() }
@@ -47,8 +45,6 @@ val DI = Kodein {
     bind() from singleton { VisualComposer() }
     bind() from singleton { RenderInstanceProvider() }
 }
-
-fun primaryFrame() = diDirect<PrimaryFrame>()
 
 inline fun <reified T : Any> diDirect() = DI.direct.instance<T>()
 inline fun <reified T : Any> diDirectAll() = DI.direct.allInstances<T>()

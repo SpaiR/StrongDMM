@@ -1,10 +1,10 @@
 package io.github.spair.strongdmm.gui.edit
 
+import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.history.EditVarsAction
 import io.github.spair.strongdmm.logic.history.addUndoAction
 import io.github.spair.strongdmm.logic.map.TileItem
-import io.github.spair.strongdmm.primaryFrame
 import java.awt.*
 import javax.swing.*
 import javax.swing.border.EmptyBorder
@@ -22,7 +22,7 @@ private val HIDDEN_VARS = setOf(
 class ViewVariablesDialog(private val tileItem: TileItem) {
 
     private var saveChanges = false
-    private val dialog = JDialog(primaryFrame(), "View Variables: ${tileItem.type}", true)
+    private val dialog = JDialog(PrimaryFrame, "View Variables: ${tileItem.type}", true)
 
     fun open(): Boolean {
         val model = ViewVariablesModel(tileItem)
@@ -42,7 +42,7 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
             }
 
             setSize(400, 450)
-            setLocationRelativeTo(primaryFrame())
+            setLocationRelativeTo(PrimaryFrame)
             isVisible = true
             dispose()
         }

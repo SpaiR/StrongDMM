@@ -7,7 +7,10 @@ import io.github.spair.strongdmm.logic.dme.*
 class ObjectTreeController : ViewController<ObjectTreeView>(diDirect()) {
 
     override fun init() {
-        view.objectTree.cellRenderer = ObjectTreeRenderer(diDirect())
+        with(view.objectTree) {
+            cellRenderer = ObjectTreeRenderer
+            addTreeSelectionListener(ObjectTreeSelectionListener)
+        }
     }
 
     fun populateTree(dme: Dme) {
@@ -46,6 +49,6 @@ class ObjectTreeController : ViewController<ObjectTreeView>(diDirect()) {
         val nodeName = dmeItem.type.substringAfterLast('/')
         val icon = dmeItem.getVarText(VAR_ICON) ?: ""
         val iconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
-        return ObjectTreeNode(nodeName, icon, iconState)
+        return ObjectTreeNode(nodeName, dmeItem.type, icon, iconState)
     }
 }
