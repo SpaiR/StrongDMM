@@ -15,6 +15,7 @@ private val ctrl by diInstance<MenuBarController>()
 
 fun addUndoAction(undoable: Undoable) {
     REDO_STACK.clear()
+    ctrl.switchRedo(false)
     UNDO_STACK.push(undoable)
     ctrl.switchUndo(true)
 }

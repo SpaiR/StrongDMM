@@ -1,7 +1,11 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-// Class to control frame stuff.
-// Thus while we doesn't touch map, we won't spend any CPU to process things.
+// Class to control frame update stuff.
+// Every time ::update method called, OpenGL will update map canvas during next two frames.
+// This approach helps to reduce CPU/GPU usage when nothing happens on the screen.
+//
+// While rendering VisualComposer tries to cache render instances information, so sometimes it's needed
+// to enforce update through that cache. To do that ::update with 'true' argument should be called.
 object Frame {
 
     private const val NO_FRAMES_TO_UPD = 0

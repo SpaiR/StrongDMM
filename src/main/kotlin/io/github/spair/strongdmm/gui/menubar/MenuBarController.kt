@@ -20,12 +20,14 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
     private val mapCanvasController by diInstance<MapCanvasController>()
 
     override fun init() {
-        view.openEnvItem.addActionListener(openEnvironmentAction())
-        view.saveItem.addActionListener(saveSelectedMapAction())
-        view.exitMenuItem.addActionListener { System.exit(0) }
+        with(view) {
+            openEnvItem.addActionListener(openEnvironmentAction())
+            saveItem.addActionListener(saveSelectedMapAction())
+            exitMenuItem.addActionListener { System.exit(0) }
 
-        view.undoActionItem.addActionListener { undoAction() }
-        view.redoActionItem.addActionListener { redoAction() }
+            undoActionItem.addActionListener { undoAction() }
+            redoActionItem.addActionListener { redoAction() }
+        }
     }
 
     fun switchUndo(enabled: Boolean) {

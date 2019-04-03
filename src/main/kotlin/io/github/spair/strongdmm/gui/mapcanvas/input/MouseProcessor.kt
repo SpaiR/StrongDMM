@@ -7,6 +7,9 @@ import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 
+// Singleton class to consume and process input from mouse.
+// Class handles input only in case, when map canvas is in focus.
+// For other cases (common swing flow) event driven developments is used.
 object MouseProcessor {
 
     private const val LMB = 0
@@ -55,7 +58,7 @@ object MouseProcessor {
     }
 
     private fun MapCanvasController.updateZoom(isZoomIn: Boolean) {
-        mapCanvasCtrl.view.tryCloseTilePopup()
+        view.tryCloseTilePopup()
 
         if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
             return

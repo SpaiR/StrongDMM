@@ -13,14 +13,13 @@ import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import javax.swing.SwingUtilities
 import kotlin.concurrent.thread
 
 class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
 
     private val visualComposer by diInstance<VisualComposer>()
-
     private var glInitialized = false
-    private var frameInitialized = false
 
     var selectedMap: Dmm? = null
     var iconSize = 32
@@ -45,6 +44,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     val maxZoomIn = 10
 
     override fun init() {
+        initFrameUpdateListeners()
     }
 
     fun switchMap(dmm: Dmm) {
@@ -59,11 +59,6 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     }
 
     private fun initGLDisplay() {
-        if (!frameInitialized) {
-            initFrameUpdateListeners()
-            frameInitialized = true
-        }
-
         thread(start = true) {
             glInitialized = true
             Display.setParent(view.canvas)
@@ -76,16 +71,18 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     }
 
     private fun initFrameUpdateListeners() {
-        // Update frames on simple window resize
-        view.canvas.addComponentListener(object : ComponentAdapter() {
-            override fun componentResized(e: ComponentEvent) {
+        SwingUtilities.invokeLater {
+            // Update frames on simple window resize
+            view.canvas.addComponentListener(object : ComponentAdapter() {
+                override fun componentResized(e: ComponentEvent) {
+                    Frame.update()
+                }
+            })
+
+            // Update frames when window minimized/maximized
+            primaryFrame().addWindowStateListener {
                 Frame.update()
             }
-        })
-
-        // Update frames when window minimized/maximized
-        primaryFrame().addWindowStateListener {
-            Frame.update()
         }
     }
 
