@@ -9,7 +9,7 @@ import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.io.File
 
-class Environment {
+object Environment {
 
     private lateinit var dme: Dme
 
@@ -37,7 +37,7 @@ class Environment {
     fun openMap(mapFile: File) {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile.path, dmmData, dme)
-        mapCanvasController.switchMap(dmm)
+        mapCanvasController.openMap(dmm)
     }
 
     fun openMap(mapPath: String) {

@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities
 
 class MenuBarController : ViewController<MenuBarView>(diDirect()) {
 
-    private val env by diInstance<Environment>()
     private val mapCanvasController by diInstance<MapCanvasController>()
 
     override fun init() {
@@ -57,14 +56,14 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
     private fun openEnvironmentAction() = ActionListener {
         chooseFileDialog("BYOND Environments (*.dme)", "dme")?.let { dmeFile ->
             runWithProgressBar("Parsing environment...") {
-                env.parseAndPrepareEnv(dmeFile)
+                Environment.parseAndPrepareEnv(dmeFile)
                 view.saveItem.isEnabled = true
 
                 view.openMapItem.apply {
                     isEnabled = true
                     addActionListener {
-                        chooseFileDialog("BYOND Maps (*.dmm)", "dmm", env.absoluteRootPath)?.let { dmmFile ->
-                            env.openMap(dmmFile)
+                        chooseFileDialog("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
+                            Environment.openMap(dmmFile)
                         }
                     }
                 }
@@ -72,8 +71,8 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
                 view.availableMapsItem.apply {
                     isEnabled = true
                     addActionListener {
-                        showAvailableMapsDialog(env.availableMaps)?.let {
-                            env.openMap(it)
+                        showAvailableMapsDialog(Environment.availableMaps)?.let {
+                            Environment.openMap(it)
                         }
                     }
                 }

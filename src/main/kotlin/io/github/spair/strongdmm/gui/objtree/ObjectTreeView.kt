@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.strongdmm.gui.View
+import javax.swing.JScrollPane
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 
@@ -10,7 +11,7 @@ class ObjectTreeView : View {
         showsRootHandles = true
     }
 
-    override fun init() = objectTree
+    override fun init() = JScrollPane(objectTree)
 
     fun populateTree(vararg nodes: ObjectTreeNode) {
         with(objectTree) {

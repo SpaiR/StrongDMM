@@ -3,7 +3,6 @@ package io.github.spair.strongdmm.logic.dmi
 import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.Environment
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
@@ -20,7 +19,6 @@ class DmiProvider {
         private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
     }
 
-    private val environment by diInstance<Environment>()
     private val dmiCache = mutableMapOf<String, Dmi?>()
 
     fun hasDmiInMemory(icon: String) = dmiCache.containsKey(icon) || icon.isEmpty()
@@ -34,7 +32,7 @@ class DmiProvider {
             return dmiCache[icon]
         }
 
-        val dmiFile = File(environment.absoluteRootPath + File.separator + icon)
+        val dmiFile = File(Environment.absoluteRootPath + File.separator + icon)
 
         if (!dmiFile.exists() || !dmiFile.isFile) {
             dmiCache[icon] = null

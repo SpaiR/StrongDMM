@@ -47,7 +47,7 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
         initFrameUpdateListeners()
     }
 
-    fun switchMap(dmm: Dmm) {
+    fun openMap(dmm: Dmm) {
         selectedMap = dmm
         iconSize = dmm.iconSize
 
