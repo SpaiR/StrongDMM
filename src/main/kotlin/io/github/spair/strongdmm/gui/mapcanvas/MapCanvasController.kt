@@ -2,13 +2,13 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.diDirect
 import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.VisualComposer
-import io.github.spair.strongdmm.gui.PrimaryFrame
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
 import java.awt.event.ComponentAdapter
@@ -63,7 +63,6 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
             glInitialized = true
             Display.setParent(view.canvas)
             Display.create()
-            Display.setVSyncEnabled(true)
             startRenderLoop()  // this is where the magic happens
             Display.destroy()
             glInitialized = false

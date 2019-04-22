@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.logic.history
 
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.menubar.MenuBarController
-import java.util.Stack
+import java.util.*
 
 interface Undoable {
     fun doAction(): Undoable

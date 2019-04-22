@@ -104,8 +104,9 @@ private class KeyGenerator(private val dmmData: DmmData) {
         var num = 1
 
         while (freeKeys > 0) {
-            if (!dmmData.hasTileContentByKey(numToKey(num)))
+            if (!dmmData.hasTileContentByKey(numToKey(num))) {
                 break
+            }
             num++
             freeKeys--
         }

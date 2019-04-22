@@ -29,7 +29,7 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_12
 }
 
 wrapper {

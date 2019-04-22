@@ -43,8 +43,8 @@ class DmiProvider {
         val imageMeta: Metadata
 
         with(PngReader(dmiFile)) {
-            dmiImage = extractAtlasImage(this)
-            imageMeta = extractMetadata(metadata)
+            dmiImage = extractAtlasImage()
+            imageMeta = metadata.extractMetadata()
             close()
         }
 
@@ -72,7 +72,7 @@ class DmiProvider {
         return dmi
     }
 
-    private fun extractAtlasImage(pngReader: PngReader) = with(pngReader) {
+    private fun PngReader.extractAtlasImage(): BufferedImage {
         val atlasImage = BufferedImage(imgInfo.cols, imgInfo.rows, BufferedImage.TYPE_INT_ARGB)
 
         val buffer = atlasImage.raster.dataBuffer as DataBufferInt
@@ -132,11 +132,11 @@ class DmiProvider {
             }
         }
 
-        atlasImage
+        return atlasImage
     }
 
-    private fun extractMetadata(imageMeta: PngMetadata): Metadata {
-        val textMeta = imageMeta.getTxtForKey("Description")
+    private fun PngMetadata.extractMetadata(): Metadata {
+        val textMeta = getTxtForKey("Description")
 
         val widthHeight = WIDTH_HEIGHT_PATTERN.toPattern().matcher(textMeta).apply { find() }
         val width = widthHeight.group(1)?.toInt() ?: 32
@@ -167,7 +167,7 @@ class DmiProvider {
             }
         }
 
-        return DmiProvider.Metadata(width, height, states)
+        return Metadata(width, height, states)
     }
 
     private data class Metadata(val spriteWidth: Int, val spriteHeight: Int, val states: List<MetadataState>)

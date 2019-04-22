@@ -51,9 +51,9 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
             table.cellEditor.stopCellEditing()
         }
 
-        if (saveChanges) {
+        if (saveChanges && model.tmpVars.isNotEmpty()) {
             addUndoAction(EditVarsAction(tileItem))
-            model.tmpVars.forEach { k, v -> tileItem.customVars[k] = v }
+            model.tmpVars.forEach { (k, v) -> tileItem.customVars[k] = v }
             tileItem.updateFields()
         }
 
@@ -164,8 +164,8 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
     private fun buildVars() {
         displayVars.clear()
 
-        tmpVars.forEach { k, v -> addVar(k, v, true) }
-        tileItem.customVars.forEach { k, v -> addVar(k, v, true) }
+        tmpVars.forEach { (k, v) -> addVar(k, v, true) }
+        tileItem.customVars.forEach { (k, v) -> addVar(k, v, true) }
 
         if (!showOnlyInstanceVars) {
             collectVars(tileItem.dmeItem)
@@ -185,7 +185,7 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
     }
 
     private tailrec fun collectVars(dmeItem: DmeItem) {
-        dmeItem.vars.forEach { k, v -> addVar(k, v) }
+        dmeItem.vars.forEach { (k, v) -> addVar(k, v) }
         val parent = dmeItem.parent
         if (parent != null) {
             collectVars(parent)

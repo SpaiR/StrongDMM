@@ -1,14 +1,18 @@
 package io.github.spair.strongdmm.gui.objtree
 
+import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.instancelist.InstanceListController
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
 
-object ObjectTreeSelectionListener : TreeSelectionListener {
+class ObjectTreeSelectionListener : TreeSelectionListener {
+
+    private val instanceListController by diInstance<InstanceListController>()
 
     override fun valueChanged(e: TreeSelectionEvent) {
         e.path.lastPathComponent.let {
             if (it is ObjectTreeNode) {
-                println(it.type)
+                instanceListController.findAndSelectInstancesByType(it.type)
             }
         }
     }

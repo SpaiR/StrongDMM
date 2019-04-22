@@ -2,15 +2,17 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.gui.instancelist.InstanceListController
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 
 private val dmiProvider by diInstance<DmiProvider>()
+private val instanceListController by diInstance<InstanceListController>()
 
 fun MapCanvasController.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
@@ -31,6 +33,7 @@ fun MapCanvasController.openTilePopup() {
                 addActionListener {
                     if (ViewVariablesDialog(tileItem).open()) {
                         Frame.update(true)
+                        instanceListController.updateSelectedInstanceInfo()
                     }
                 }
             }

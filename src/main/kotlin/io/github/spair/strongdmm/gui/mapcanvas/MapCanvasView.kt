@@ -14,8 +14,7 @@ class MapCanvasView : View {
     private var tilePopup: JPopupMenu? = null
 
     override fun init(): JComponent {
-        return JPanel().apply {
-            layout = BorderLayout()
+        return JPanel(BorderLayout()).apply {
             add(canvas)
         }
     }

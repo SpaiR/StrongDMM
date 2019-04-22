@@ -1,6 +1,8 @@
 package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
+import io.github.spair.strongdmm.gui.instancelist.InstanceListController
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.menubar.MenuBarController
@@ -8,6 +10,7 @@ import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.gui.tabbedmappanel.TabbedMapPanelView
+import io.github.spair.strongdmm.gui.tabbedobjpanel.TabbedObjectPanelController
 import io.github.spair.strongdmm.gui.tabbedobjpanel.TabbedObjectPanelView
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
@@ -31,11 +34,14 @@ val DI = Kodein {
     bind() from singleton { TabbedObjectPanelView() }
     bind() from singleton { TabbedMapPanelView() }
     bind() from singleton { ObjectTreeView() }
+    bind() from singleton { InstanceListView() }
     bind() from singleton { MapCanvasView() }
 
     // Controllers
     bind() from singleton { MenuBarController() }
     bind() from singleton { ObjectTreeController() }
+    bind() from singleton { TabbedObjectPanelController() }
+    bind() from singleton { InstanceListController() }
     bind() from singleton { MapCanvasController() }
 
     // Logic

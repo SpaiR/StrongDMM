@@ -7,8 +7,10 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 class ObjectTreeView : View {
 
-    val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
+    private val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
         showsRootHandles = true
+        cellRenderer = ObjectTreeRenderer()
+        addTreeSelectionListener(ObjectTreeSelectionListener())
     }
 
     override fun init() = JScrollPane(objectTree)

@@ -42,13 +42,13 @@ class MenuBarController : ViewController<MenuBarView>(diDirect()) {
         SwingUtilities.invokeLater {
             with(view) {
                 when (shortcut) {
-                    Shortcut.CTRL_O -> openMapItem.doClick()
-                    Shortcut.CTRL_S -> saveItem.doClick()
-                    Shortcut.CTRL_Q -> exitMenuItem.doClick()
-                    Shortcut.CTRL_Z -> undoActionItem.doClick()
-                    Shortcut.CTRL_SHIFT_O -> availableMapsItem.doClick()
-                    Shortcut.CTRL_SHIFT_Z -> redoActionItem.doClick()
-                }
+                    Shortcut.CTRL_O -> openMapItem
+                    Shortcut.CTRL_S -> saveItem
+                    Shortcut.CTRL_Q -> exitMenuItem
+                    Shortcut.CTRL_Z -> undoActionItem
+                    Shortcut.CTRL_SHIFT_O -> availableMapsItem
+                    Shortcut.CTRL_SHIFT_Z -> redoActionItem
+                }.doClick()
             }
         }
     }

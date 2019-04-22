@@ -58,14 +58,12 @@ object MouseProcessor {
     }
 
     private fun MapCanvasController.updateZoom(isZoomIn: Boolean) {
-        view.tryCloseTilePopup()
-
         if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
             return
         }
 
+        view.tryCloseTilePopup()
         currZoom += if (isZoomIn) 1 else -1
-
 
         if (isZoomIn) {
             viewZoom /= zoomFactor

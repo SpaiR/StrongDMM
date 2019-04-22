@@ -13,11 +13,11 @@ data class DmeItem(
 
     private val lookedVars = mutableMapOf<String, String?>()
 
-    val parent get() = if (parentType.isNotEmpty()) environment.getItem(parentType) else null
+    val parent get() = parentType?.let { environment.getItem(it) }
 
-    val parentType: String by lazy {
+    val parentType by lazy {
         when (type) {
-            TYPE_DATUM -> ""
+            TYPE_DATUM -> null
             TYPE_ATOM -> TYPE_DATUM
             TYPE_ATOM_MOVABLE, TYPE_AREA, TYPE_TURF -> TYPE_ATOM
             TYPE_OBJ, TYPE_MOB ->  TYPE_ATOM_MOVABLE
@@ -34,11 +34,9 @@ data class DmeItem(
             return lookedVars[name]
         }
 
-        return if (parentType.isNotEmpty()) {
-            val parent = environment.getItem(parentType)!!
+        return parentType?.let {
+            val parent = environment.getItem(it)!!
             parent.getVar(name).apply { lookedVars[name] = this }
-        } else {
-            null
         }
     }
 

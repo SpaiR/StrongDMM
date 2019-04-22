@@ -12,8 +12,7 @@ class TabbedMapPanelView : View {
     private val mapCanvasView by diInstance<MapCanvasView>()
 
     override fun init(): JComponent {
-        return JPanel().apply {
-            layout = BorderLayout()
+        return JPanel(BorderLayout()).apply {
             add(mapCanvasView.init())
         }
     }

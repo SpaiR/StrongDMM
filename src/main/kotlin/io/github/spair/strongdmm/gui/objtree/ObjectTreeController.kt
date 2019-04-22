@@ -6,13 +6,6 @@ import io.github.spair.strongdmm.logic.dme.*
 
 class ObjectTreeController : ViewController<ObjectTreeView>(diDirect()) {
 
-    override fun init() {
-        with(view.objectTree) {
-            cellRenderer = ObjectTreeRenderer
-            addTreeSelectionListener(ObjectTreeSelectionListener)
-        }
-    }
-
     fun populateTree(dme: Dme) {
         val area = dme.getItem(TYPE_AREA)!!
         val turf = dme.getItem(TYPE_TURF)!!

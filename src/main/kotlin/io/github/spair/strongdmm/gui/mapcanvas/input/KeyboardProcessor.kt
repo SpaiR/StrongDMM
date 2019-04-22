@@ -1,12 +1,13 @@
 package io.github.spair.strongdmm.gui.mapcanvas.input
 
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.menubar.*
+import io.github.spair.strongdmm.gui.menubar.MenuBarController
+import io.github.spair.strongdmm.gui.menubar.Shortcut
 import org.lwjgl.input.Keyboard
 
 // Singleton class to consume and process input from keyboard.
 // Class handles input only in case, when map canvas is in focus.
-// For other cases (common swing flow) event driven developments is use
+// For other cases (common swing flow) event driven developments is used.
 object KeyboardProcessor  {
 
     private val menuBarCtrl by diInstance<MenuBarController>()
@@ -26,6 +27,7 @@ object KeyboardProcessor  {
     fun fire() {
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) {
+                // Fire shortcut events
                 if (isCtrlDown()) {
                     if (isShiftDown()) {
                         ctrlShiftMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)

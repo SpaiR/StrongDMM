@@ -8,7 +8,7 @@ import javax.swing.ImageIcon
 import javax.swing.JTree
 import javax.swing.tree.DefaultTreeCellRenderer
 
-object ObjectTreeRenderer : DefaultTreeCellRenderer() {
+class ObjectTreeRenderer : DefaultTreeCellRenderer() {
 
     private val placeholderIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE.getScaledInstance(16, 16, Image.SCALE_FAST))
     private val dmiProvider by diInstance<DmiProvider>()

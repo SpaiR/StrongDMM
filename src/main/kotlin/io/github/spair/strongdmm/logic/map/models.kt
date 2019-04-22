@@ -40,7 +40,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
         getTile(location.x, location.y)?.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
-            tileItem.customVars.forEach { k, v -> tileObject.putVar(k, v) }
+            tileItem.customVars.forEach { (k, v) -> tileObject.putVar(k, v) }
             tileObjects.add(tileObject)
         }
 
@@ -48,6 +48,18 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         tileObjects.sortedWith(TileObjectComparator()).forEach(tileContent::addTileObject)
 
         return tileContent
+    }
+
+    fun getAllTileItemsByType(type: String): List<TileItem> {
+        val items = mutableListOf<TileItem>()
+
+        for (x in 1..maxX) {
+            for (y in 1..maxY) {
+                items.addAll(getTile(x, y)!!.tileItems.filter { it.type == type })
+            }
+        }
+
+        return items
     }
 }
 
