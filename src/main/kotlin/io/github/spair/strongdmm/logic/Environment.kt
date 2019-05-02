@@ -13,8 +13,8 @@ import java.io.File
 object Environment {
 
     lateinit var dme: Dme
-
-    var absoluteRootPath = String()
+    lateinit var absoluteRootPath: String
+    
     val availableMaps = mutableListOf<String>()
 
     private val objectTreeController by diInstance<ObjectTreeController>()

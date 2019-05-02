@@ -23,7 +23,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
                 for (tileContent in initialDmmData.getTileContentByLocation(TileLocation.of(x, y))) {
                     dme.getItem(tileContent.type)?.let {
-                        tileItems.add(TileItem(dme.getItem(tileContent.type)!!, x, y, tileContent.vars.toMutableMap()))
+                        tileItems.add(TileItem(it, x, y, tileContent.vars.toMutableMap()))
                     }
                 }
 

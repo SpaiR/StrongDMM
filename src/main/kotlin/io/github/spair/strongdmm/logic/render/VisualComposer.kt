@@ -59,7 +59,7 @@ class VisualComposer {
 
                 for (tileItem in tile) {
                     planesLayers.get(tileItem.plane, tileItem.layer).let {
-                        it.add(riProvider.create(renderX, renderY, tileItem))
+                        it.add(riProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem))
 
                         if (riProvider.hasInProcessImage) {
                             hasIncompleteJob = true

@@ -5,7 +5,7 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListController
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
 
-class ObjectTreeSelectionListener : TreeSelectionListener {
+class ObjectTreeSelectionListener(private val view: ObjectTreeView) : TreeSelectionListener {
 
     private val instanceListController by diInstance<InstanceListController>()
 
@@ -13,6 +13,7 @@ class ObjectTreeSelectionListener : TreeSelectionListener {
         e.path.lastPathComponent.let {
             if (it is ObjectTreeNode) {
                 instanceListController.findAndSelectInstancesByType(it.type)
+                view.setType(it.type)
             }
         }
     }

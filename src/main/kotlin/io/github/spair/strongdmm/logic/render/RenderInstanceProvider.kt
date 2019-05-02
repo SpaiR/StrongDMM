@@ -15,26 +15,24 @@ class RenderInstanceProvider {
 
     var hasInProcessImage = false
 
-    fun create(x: Int, y: Int, tileItem: TileItem): RenderInstance {
+    fun create(x: Float, y: Float, tileItem: TileItem): RenderInstance {
         val icon = tileItem.icon
 
         if (dmiProvider.hasDmiInMemory(icon)) {
             hasInProcessImage = false
             return dmiProvider.getDmi(icon)?.let { dmi ->
                 dmi.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)?.let { s ->
-                    val color = extractColor(tileItem)
-
                     RenderInstance(
-                        x.toFloat() + tileItem.pixelX, y.toFloat() + tileItem.pixelY,
+                        x + tileItem.pixelX, y + tileItem.pixelY,
                         dmi.glTextureId,
                         s.u1, s.v1, s.u2, s.v2,
                         s.iconWidth, s.iconHeight,
-                        color,
+                        extractColor(tileItem),
                         tileItem.type,
                         tileItem.plane, tileItem.layer
                     )
                 }
-            } ?: RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
+            } ?: RenderInstance(x, y, placeholderTextureId)
         } else {
             hasInProcessImage = true
 
@@ -46,7 +44,7 @@ class RenderInstanceProvider {
                 }
             }
 
-            return RenderInstance(x.toFloat(), y.toFloat(), placeholderTextureId)
+            return RenderInstance(x, y, placeholderTextureId)
         }
     }
 }

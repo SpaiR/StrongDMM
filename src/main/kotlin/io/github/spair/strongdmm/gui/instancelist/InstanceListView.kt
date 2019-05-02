@@ -57,6 +57,6 @@ class InstanceListView : View {
     }
 
     private fun setEmptyInstanceVars() {
-        customVariablesLabel.text = "<html>empty (instance with initial vars)</html>"
+        customVariablesLabel.text = "empty (instance with initial vars)"
     }
 }

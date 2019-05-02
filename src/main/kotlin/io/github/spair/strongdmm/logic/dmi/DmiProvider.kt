@@ -43,9 +43,15 @@ class DmiProvider {
         val imageMeta: Metadata
 
         with(PngReader(dmiFile)) {
-            dmiImage = extractAtlasImage()
-            imageMeta = metadata.extractMetadata()
-            close()
+            try {
+                dmiImage = extractAtlasImage()
+                imageMeta = metadata.extractMetadata()
+            } catch (e: Exception) {
+                dmiCache[icon] = null
+                return null
+            } finally {
+                close()
+            }
         }
 
         val dmiCols = dmiImage.width / imageMeta.spriteWidth

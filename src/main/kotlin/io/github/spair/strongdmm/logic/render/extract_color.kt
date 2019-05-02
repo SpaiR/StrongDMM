@@ -17,7 +17,7 @@ fun extractColor(tileItem: TileItem): Color {
 
     if (colorValue.startsWith("#")) {
         awtColor = AWTColor.decode(colorValue)
-    } else if (!colorValue.isEmpty()) {
+    } else if (colorValue.isNotEmpty()) {
         val hex = ByondColor.hexFromColorName(colorValue)
         if (hex != null) {
             awtColor = AWTColor.decode(hex)
