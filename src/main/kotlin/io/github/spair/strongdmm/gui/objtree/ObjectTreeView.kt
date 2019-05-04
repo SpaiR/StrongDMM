@@ -51,52 +51,14 @@ class ObjectTreeView : View {
         typeField.text = type
     }
 
-    private fun JPanel.addSearchRow() {
-        add(JButton("-").apply {
-            border = EmptyBorder(4, 10, 4, 10)
-
-            addActionListener {
-                var row = objectTree.rowCount - 1
-                while (row-- > 0) {
-                    objectTree.collapseRow(row)
-                }
-            }
-        })
-
-        add(JTextField("", 28).apply {
-            document.addDocumentListener(object : DocumentListener {
-                override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
-                override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
-                override fun changedUpdate(e: DocumentEvent) {
-                    searchPath = text
-                    foundNodes = null
-                }
-            })
-
-            addKeyListener(object : KeyAdapter() {
-                override fun keyPressed(e: KeyEvent) {
-                    if(e.keyCode == KeyEvent.VK_ENTER) {
-                        findAndSelectPath()
-                    }
-                }
-            })
-        })
-
-        add(JButton("Search").apply {
-            addActionListener {
-                findAndSelectPath()
-            }
-        })
-    }
-
-    private fun findAndSelectPath() {
-        if (searchPath.isEmpty()) {
+    fun findAndSelectPath(typePath: String, update: Boolean = false) {
+        if (typePath.isEmpty()) {
             return
         }
 
         val nodes: List<DefaultMutableTreeNode>
 
-        if (foundNodes == null) {
+        if (update || foundNodes == null) {
             val e = (objectTree.model.root as DefaultMutableTreeNode).depthFirstEnumeration()
             nodes = mutableListOf()
 
@@ -108,7 +70,7 @@ class ObjectTreeView : View {
                     continue
                 }
 
-                (node as ObjectTreeNode).takeIf { it.type.contains(searchPath) }?.let {
+                (node as ObjectTreeNode).takeIf { it.type.contains(typePath) }?.let {
                     nodes.add(it)
                 }
             }
@@ -138,5 +100,43 @@ class ObjectTreeView : View {
             objectTree.selectionPath = it
             objectTree.scrollPathToVisible(it)
         }
+    }
+
+    private fun JPanel.addSearchRow() {
+        add(JButton("-").apply {
+            border = EmptyBorder(4, 10, 4, 10)
+
+            addActionListener {
+                var row = objectTree.rowCount - 1
+                while (row-- > 0) {
+                    objectTree.collapseRow(row)
+                }
+            }
+        })
+
+        add(JTextField("", 28).apply {
+            document.addDocumentListener(object : DocumentListener {
+                override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
+                override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
+                override fun changedUpdate(e: DocumentEvent) {
+                    searchPath = text
+                    foundNodes = null
+                }
+            })
+
+            addKeyListener(object : KeyAdapter() {
+                override fun keyPressed(e: KeyEvent) {
+                    if(e.keyCode == KeyEvent.VK_ENTER) {
+                        findAndSelectPath(searchPath)
+                    }
+                }
+            })
+        })
+
+        add(JButton("Search").apply {
+            addActionListener {
+                findAndSelectPath(searchPath)
+            }
+        })
     }
 }
