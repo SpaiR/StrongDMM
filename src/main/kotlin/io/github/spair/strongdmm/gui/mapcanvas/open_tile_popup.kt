@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListController
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
@@ -14,7 +15,7 @@ import javax.swing.JMenuItem
 
 private val dmiProvider by diInstance<DmiProvider>()
 private val instanceListController by diInstance<InstanceListController>()
-private val objectTreeView by diInstance<ObjectTreeView>()
+private val objectTreeController by diInstance<ObjectTreeController>()
 
 fun MapCanvasController.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
@@ -33,7 +34,7 @@ fun MapCanvasController.openTilePopup() {
 
             menu.add(JMenuItem("Make Active Object").apply {
                 addActionListener {
-                    objectTreeView.findAndSelectPath(tileItem.type, true)
+                    objectTreeController.findAndSelectItemInstance(tileItem)
                 }
             })
 

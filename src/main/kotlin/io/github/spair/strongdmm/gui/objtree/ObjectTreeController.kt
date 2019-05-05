@@ -1,10 +1,20 @@
 package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.strongdmm.diDirect
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.ViewController
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.logic.dme.*
+import io.github.spair.strongdmm.logic.map.TileItem
 
 class ObjectTreeController : ViewController<ObjectTreeView>(diDirect()) {
+
+    private val instanceListView by diInstance<InstanceListView>()
+
+    fun findAndSelectItemInstance(tileItem: TileItem) {
+        view.findAndSelectPath(tileItem.type, true)
+        instanceListView.selectInstanceByCustomVars(tileItem.customVars)
+    }
 
     fun populateTree(dme: Dme) {
         val area = dme.getItem(TYPE_AREA)!!

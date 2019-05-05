@@ -35,6 +35,16 @@ class InstanceListView : View {
         }
     }
 
+    fun selectInstanceByCustomVars(customVars: Map<String, String>) {
+        val model = instanceList.model as DefaultListModel<ListItemInstance>
+        for (i in 0 until model.size()) {
+            if (model[i].customVars == customVars) {
+                instanceList.selectedIndex = i
+                break
+            }
+        }
+    }
+
     fun addItemInstances(instances: Collection<ListItemInstance>) {
         with(instanceList.model as DefaultListModel) {
             clear()

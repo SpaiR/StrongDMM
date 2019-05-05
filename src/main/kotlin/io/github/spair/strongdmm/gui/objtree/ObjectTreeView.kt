@@ -17,7 +17,7 @@ class ObjectTreeView : View {
 
     private var searchPath = ""
     private var foundNodes: List<DefaultMutableTreeNode>? = null
-    private val typeField = JTextField("no type selected", 37).apply {
+    private val typeField = JTextField("no type selected", 30).apply {
         isEditable = false
         border = EmptyBorder(0, 0, 0, 0)
     }
@@ -87,11 +87,13 @@ class ObjectTreeView : View {
 
         var path = nodes[0].path
 
-        objectTree.selectionPath?.lastPathComponent?.let { selectedNode ->
-            for (i in 0..nodes.size) {
-                if ((i + 1) < nodes.size && nodes[i] === selectedNode) {
-                    path = nodes[i + 1].path
-                    break
+        if (!update) {
+            objectTree.selectionPath?.lastPathComponent?.let { selectedNode ->
+                for (i in 0..nodes.size) {
+                    if ((i + 1) < nodes.size && nodes[i] === selectedNode) {
+                        path = nodes[i + 1].path
+                        break
+                    }
                 }
             }
         }
@@ -114,7 +116,7 @@ class ObjectTreeView : View {
             }
         })
 
-        add(JTextField("", 28).apply {
+        add(JTextField("", 24).apply {
             document.addDocumentListener(object : DocumentListener {
                 override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
                 override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
