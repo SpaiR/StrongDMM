@@ -1,8 +1,12 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
+import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
 import java.awt.Canvas
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JPopupMenu
@@ -11,12 +15,34 @@ import javax.swing.SwingUtilities
 class MapCanvasView : View {
 
     val canvas = Canvas().apply { isVisible = true }
-    private var tilePopup: JPopupMenu? = null
 
-    override fun init(): JComponent {
+    private var tilePopup: JPopupMenu? = null
+    private val mapGLRenderer = MapGLRenderer(this)
+
+    override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             add(canvas)
         }
+    }
+
+    override fun initLogic() {
+        SwingUtilities.invokeLater {
+            // Update frames on simple window resize
+            canvas.addComponentListener(object : ComponentAdapter() {
+                override fun componentResized(e: ComponentEvent) {
+                    Frame.update()
+                }
+            })
+
+            // Update frames when window minimized/maximized
+            PrimaryFrame.addWindowStateListener {
+                Frame.update()
+            }
+        }
+    }
+
+    fun openMap(dmm: Dmm) {
+        mapGLRenderer.switchMap(dmm)
     }
 
     fun tryCloseTilePopup(): Boolean {
@@ -39,4 +65,6 @@ class MapCanvasView : View {
             }
         }
     }
+
+    fun getSelectedMap() = mapGLRenderer.selectedMap
 }

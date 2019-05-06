@@ -1,7 +1,6 @@
-package io.github.spair.strongdmm.gui.tabbedobjpanel
+package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import java.awt.BorderLayout
@@ -12,25 +11,28 @@ import javax.swing.JTabbedPane
 
 class TabbedObjectPanelView : View {
 
-    private val tabbedPanel = JTabbedPane()
-
     private val objectTreeView by diInstance<ObjectTreeView>()
     private val instanceListView by diInstance<InstanceListView>()
 
-    override fun init(): JComponent {
+    private val tabbedPanel = JTabbedPane()
+
+    private var instanceTabbedInitialized = false
+
+    override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             preferredSize = Dimension(350, Int.MAX_VALUE)
             add(tabbedPanel.apply {
-                addTab("Tree", objectTreeView.init())
+                addTab("Tree", objectTreeView.initComponent())
             })
         }
     }
 
-    fun initializeInstanceTab(initialCount: Int) {
-        tabbedPanel.addTab("Instance ($initialCount)", instanceListView.init())
-    }
-
-    fun changeInstanceCount(count: Int) {
-        tabbedPanel.setTitleAt(1, "Instance ($count)")
+    fun setInstanceCount(count: Int) {
+        if (instanceTabbedInitialized) {
+            tabbedPanel.setTitleAt(1, "Instance ($count)")
+        } else {
+            tabbedPanel.addTab("Instance ($count)", instanceListView.initComponent())
+            instanceTabbedInitialized = true
+        }
     }
 }

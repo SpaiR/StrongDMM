@@ -2,8 +2,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
-import io.github.spair.strongdmm.gui.instancelist.InstanceListController
-import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
@@ -14,10 +13,10 @@ import javax.swing.JMenu
 import javax.swing.JMenuItem
 
 private val dmiProvider by diInstance<DmiProvider>()
-private val instanceListController by diInstance<InstanceListController>()
-private val objectTreeController by diInstance<ObjectTreeController>()
+private val instanceListView by diInstance<InstanceListView>()
+private val objectTreeView by diInstance<ObjectTreeView>()
 
-fun MapCanvasController.openTilePopup() {
+fun MapGLRenderer.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
         return
     }
@@ -34,7 +33,7 @@ fun MapCanvasController.openTilePopup() {
 
             menu.add(JMenuItem("Make Active Object").apply {
                 addActionListener {
-                    objectTreeController.findAndSelectItemInstance(tileItem)
+                    objectTreeView.findAndSelectItemInstance(tileItem)
                 }
             })
 
@@ -42,7 +41,7 @@ fun MapCanvasController.openTilePopup() {
                 addActionListener {
                     if (ViewVariablesDialog(tileItem).open()) {
                         Frame.update(true)
-                        instanceListController.updateSelectedInstanceInfo()
+                        instanceListView.updateSelectedInstanceInfo()
                     }
                 }
             }

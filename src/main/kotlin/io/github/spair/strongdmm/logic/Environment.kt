@@ -2,9 +2,9 @@ package io.github.spair.strongdmm.logic
 
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.instancelist.InstanceListController
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
-import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -17,9 +17,9 @@ object Environment {
     
     val availableMaps = mutableListOf<String>()
 
-    private val objectTreeController by diInstance<ObjectTreeController>()
-    private val mapCanvasController by diInstance<MapCanvasController>()
-    private val instanceListController by diInstance<InstanceListController>()
+    private val objectTreeView by diInstance<ObjectTreeView>()
+    private val mapCanvasView by diInstance<MapCanvasView>()
+    private val instanceListView by diInstance<InstanceListView>()
 
     fun parseAndPrepareEnv(dmeFile: File): Dme {
         val s = System.currentTimeMillis()
@@ -27,7 +27,7 @@ object Environment {
         dme = parseDme(dmeFile.absolutePath)
 
         absoluteRootPath = dmeFile.parentFile.absolutePath
-        objectTreeController.populateTree(dme)
+        objectTreeView.populateTree(dme)
         findAvailableMaps(dmeFile.parentFile)
         System.gc()
 
@@ -39,8 +39,8 @@ object Environment {
     fun openMap(mapFile: File) {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile.path, dmmData, dme)
-        mapCanvasController.openMap(dmm)
-        instanceListController.updateSelectedInstanceInfo()
+        mapCanvasView.openMap(dmm)
+        instanceListView.updateSelectedInstanceInfo()
     }
 
     fun openMap(mapPath: String) {

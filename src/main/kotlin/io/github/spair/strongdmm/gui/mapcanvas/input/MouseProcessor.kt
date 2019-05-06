@@ -1,47 +1,44 @@
 package io.github.spair.strongdmm.gui.mapcanvas.input
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.Frame
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
+import io.github.spair.strongdmm.gui.mapcanvas.MapGLRenderer
 import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 
-// Singleton class to consume and process input from mouse.
+private const val LMB = 0
+private const val RMB = 1
+
+// Class to consume and process input from mouse.
 // Class handles input only in case, when map canvas is in focus.
 // For other cases (common swing flow) event driven developments is used.
-object MouseProcessor {
-
-    private const val LMB = 0
-    private const val RMB = 1
-
-    private val mapCanvasCtrl by diInstance<MapCanvasController>()
+class MouseProcessor(private val renderer: MapGLRenderer) {
 
     fun fire() {
-        mapCanvasCtrl.updateMouseMapPosition()
+        renderer.updateMouseMapPosition()
 
         if (Mouse.isButtonDown(LMB)) {
-            mapCanvasCtrl.updateViewAndMapOffset()
+            renderer.updateViewAndMapOffset()
         }
 
         Mouse.getDWheel().takeIf { it != 0 }?.let {
-            mapCanvasCtrl.updateZoom(it > 0)
+            renderer.updateZoom(it > 0)
         }
 
         while (Mouse.next()) {
             if (Mouse.getEventButtonState()) {
-                if (mapCanvasCtrl.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
+                if (renderer.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
                     continue
                 }
 
                 if (Mouse.getEventButton() == RMB) {
-                    mapCanvasCtrl.openTilePopup()
+                    renderer.openTilePopup()
                 }
             }
         }
     }
 
-    private fun MapCanvasController.updateViewAndMapOffset() {
+    private fun MapGLRenderer.updateViewAndMapOffset() {
         val x = Mouse.getDX()
         val y = Mouse.getDY()
 
@@ -57,7 +54,7 @@ object MouseProcessor {
         }
     }
 
-    private fun MapCanvasController.updateZoom(isZoomIn: Boolean) {
+    private fun MapGLRenderer.updateZoom(isZoomIn: Boolean) {
         if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
             return
         }
@@ -79,12 +76,12 @@ object MouseProcessor {
         Frame.update()
     }
 
-    private fun MapCanvasController.updateMapOffset() {
+    private fun MapGLRenderer.updateMapOffset() {
         xMapOff = (-xViewOff / iconSize + 0.5f).toInt()
         yMapOff = (-yViewOff / iconSize + 0.5f).toInt()
     }
 
-    private fun MapCanvasController.updateMouseMapPosition() {
+    private fun MapGLRenderer.updateMouseMapPosition() {
         var xMouseMapNew = (Mouse.getX() * viewZoom - xViewOff).toInt() / iconSize + 1
         var yMouseMapNew = (Mouse.getY() * viewZoom - yViewOff).toInt() / iconSize + 1
 

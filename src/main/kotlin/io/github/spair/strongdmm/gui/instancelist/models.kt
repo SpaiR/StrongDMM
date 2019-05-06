@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.instancelist
 
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 
-data class ListItemInstance(
+data class ItemInstance(
     val name: String,
     val icon: String,
     val iconState: String,

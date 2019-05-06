@@ -1,17 +1,12 @@
 package io.github.spair.strongdmm
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.instancelist.InstanceListController
+import io.github.spair.strongdmm.gui.TabbedMapPanelView
+import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasController
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
-import io.github.spair.strongdmm.gui.menubar.MenuBarController
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
-import io.github.spair.strongdmm.gui.objtree.ObjectTreeController
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import io.github.spair.strongdmm.gui.tabbedmappanel.TabbedMapPanelView
-import io.github.spair.strongdmm.gui.tabbedobjpanel.TabbedObjectPanelController
-import io.github.spair.strongdmm.gui.tabbedobjpanel.TabbedObjectPanelView
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import io.github.spair.strongdmm.logic.render.VisualComposer
@@ -29,7 +24,7 @@ fun main() {
 
 // Application DI context
 val DI = Kodein {
-    // Subviews
+    // Views
     bind() from singleton { MenuBarView() }
     bind() from singleton { TabbedObjectPanelView() }
     bind() from singleton { TabbedMapPanelView() }
@@ -37,19 +32,11 @@ val DI = Kodein {
     bind() from singleton { InstanceListView() }
     bind() from singleton { MapCanvasView() }
 
-    // Controllers
-    bind() from singleton { MenuBarController() }
-    bind() from singleton { ObjectTreeController() }
-    bind() from singleton { TabbedObjectPanelController() }
-    bind() from singleton { InstanceListController() }
-    bind() from singleton { MapCanvasController() }
-
     // Logic
     bind() from singleton { DmiProvider() }
     bind() from singleton { VisualComposer() }
     bind() from singleton { RenderInstanceProvider() }
 }
 
-inline fun <reified T : Any> diDirect() = DI.direct.instance<T>()
 inline fun <reified T : Any> diDirectAll() = DI.direct.allInstances<T>()
 inline fun <reified T : Any> diInstance() = DI.instance<T>()

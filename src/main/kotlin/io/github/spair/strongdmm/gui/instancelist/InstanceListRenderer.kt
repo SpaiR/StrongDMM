@@ -20,7 +20,7 @@ class InstanceListRenderer : DefaultListCellRenderer() {
         cellHasFocus: Boolean
     ): Component {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        val instance = value as ListItemInstance
+        val instance = value as ItemInstance
 
         name = instance.name
         icon = dmiProvider.getDmi(instance.icon)?.getIconState(instance.iconState)?.getIconSprite(instance.dir) ?: placeholderIcon

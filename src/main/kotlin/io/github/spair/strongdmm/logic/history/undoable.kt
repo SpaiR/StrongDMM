@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.logic.history
 
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.menubar.MenuBarController
+import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import java.util.*
 
 interface Undoable {
@@ -11,21 +11,21 @@ interface Undoable {
 private val UNDO_STACK = Stack<Undoable>()
 private val REDO_STACK = Stack<Undoable>()
 
-private val ctrl by diInstance<MenuBarController>()
+private val view by diInstance<MenuBarView>()
 
 fun addUndoAction(undoable: Undoable) {
     REDO_STACK.clear()
-    ctrl.switchRedo(false)
+    view.switchRedo(false)
     UNDO_STACK.push(undoable)
-    ctrl.switchUndo(true)
+    view.switchUndo(true)
 }
 
 fun undoAction() {
     if (UNDO_STACK.isNotEmpty()) {
         REDO_STACK.push(UNDO_STACK.pop().doAction())
 
-        ctrl.switchUndo(UNDO_STACK.isNotEmpty())
-        ctrl.switchRedo(true)
+        view.switchUndo(UNDO_STACK.isNotEmpty())
+        view.switchRedo(true)
     }
 }
 
@@ -33,7 +33,7 @@ fun redoAction() {
     if (REDO_STACK.isNotEmpty()) {
         UNDO_STACK.push(REDO_STACK.pop().doAction())
 
-        ctrl.switchRedo(REDO_STACK.isNotEmpty())
-        ctrl.switchUndo(true)
+        view.switchRedo(REDO_STACK.isNotEmpty())
+        view.switchUndo(true)
     }
 }

@@ -1,6 +1,13 @@
 package io.github.spair.strongdmm.gui.instancelist
 
+import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.dme.VAR_ICON
+import io.github.spair.strongdmm.logic.dme.VAR_ICON_STATE
+import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -9,7 +16,13 @@ import javax.swing.border.EmptyBorder
 
 class InstanceListView : View {
 
-    private val instanceList = JList<ListItemInstance>(DefaultListModel<ListItemInstance>()).apply {
+    private val mapCanvasView by diInstance<MapCanvasView>()
+    private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
+
+    private var selectedType = ""
+
+    private val customVariablesLabel = JLabel()
+    private val instanceList = JList<ItemInstance>(DefaultListModel<ItemInstance>()).apply {
         cellRenderer = InstanceListRenderer()
 
         addListSelectionListener {
@@ -17,9 +30,7 @@ class InstanceListView : View {
         }
     }
 
-    private val customVariablesLabel = JLabel()
-
-    override fun init(): JComponent {
+    override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             add(JScrollPane(instanceList), BorderLayout.CENTER)
             add(JPanel().apply {
@@ -36,7 +47,7 @@ class InstanceListView : View {
     }
 
     fun selectInstanceByCustomVars(customVars: Map<String, String>) {
-        val model = instanceList.model as DefaultListModel<ListItemInstance>
+        val model = instanceList.model as DefaultListModel<ItemInstance>
         for (i in 0 until model.size()) {
             if (model[i].customVars == customVars) {
                 instanceList.selectedIndex = i
@@ -45,12 +56,43 @@ class InstanceListView : View {
         }
     }
 
-    fun addItemInstances(instances: Collection<ListItemInstance>) {
+    fun findAndSelectInstancesByType(type: String) {
+        selectedType = type
+
+        val items = LinkedHashSet<ItemInstance>()
+        val dmeItem = Environment.dme.getItem(type)!!
+
+        items.add(
+            ItemInstance(
+                dmeItem.getVar(VAR_NAME) ?: "",
+                dmeItem.getVarText(VAR_ICON) ?: "",
+                dmeItem.getVarText(VAR_ICON_STATE) ?: ""
+            )
+        )
+
+        mapCanvasView.getSelectedMap()?.let { dmm ->
+            dmm.getAllTileItemsByType(type).forEach { tileItem ->
+                items.add(ItemInstance(
+                    tileItem.getVar(VAR_NAME) ?: "", tileItem.icon, tileItem.iconState, tileItem.dir, tileItem.customVars)
+                )
+            }
+        }
+
         with(instanceList.model as DefaultListModel) {
             clear()
-            instances.forEach { addElement(it) }
+            items.forEach {
+                addElement(it)
+            }
         }
+
         instanceList.selectedIndex = 0
+        tabbedObjectPanelView.setInstanceCount(items.size)
+    }
+
+    fun updateSelectedInstanceInfo() {
+        if (selectedType.isNotEmpty()) {
+            findAndSelectInstancesByType(selectedType)
+        }
     }
 
     private fun showInstanceVars(variables: Map<String, String>) {

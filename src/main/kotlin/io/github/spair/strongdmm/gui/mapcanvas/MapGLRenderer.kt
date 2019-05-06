@@ -1,9 +1,6 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.diDirect
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.ViewController
 import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -11,12 +8,12 @@ import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import javax.swing.SwingUtilities
 import kotlin.concurrent.thread
 
-class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
+class MapGLRenderer(val view: MapCanvasView) {
+
+    private val keyboardProcessor = KeyboardProcessor()
+    private val mouseProcessor = MouseProcessor(this)
 
     private val visualComposer by diInstance<VisualComposer>()
     private var glInitialized = false
@@ -43,13 +40,9 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
     val maxZoomOut = 0
     val maxZoomIn = 10
 
-    override fun init() {
-        initFrameUpdateListeners()
-    }
-
-    fun openMap(dmm: Dmm) {
-        selectedMap = dmm
-        iconSize = dmm.iconSize
+    fun switchMap(map: Dmm) {
+        selectedMap = map
+        iconSize = map.iconSize
 
         if (!glInitialized) {
             initGLDisplay()
@@ -66,22 +59,6 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
             startRenderLoop()  // this is where the magic happens
             Display.destroy()
             glInitialized = false
-        }
-    }
-
-    private fun initFrameUpdateListeners() {
-        SwingUtilities.invokeLater {
-            // Update frames on simple window resize
-            view.canvas.addComponentListener(object : ComponentAdapter() {
-                override fun componentResized(e: ComponentEvent) {
-                    Frame.update()
-                }
-            })
-
-            // Update frames when window minimized/maximized
-            PrimaryFrame.addWindowStateListener {
-                Frame.update()
-            }
         }
     }
 
@@ -115,8 +92,8 @@ class MapCanvasController : ViewController<MapCanvasView>(diDirect()) {
             }
 
             Display.processMessages()
-            KeyboardProcessor.fire()
-            MouseProcessor.fire()
+            keyboardProcessor.fire()
+            mouseProcessor.fire()
             Display.sync(60)
         }
     }
