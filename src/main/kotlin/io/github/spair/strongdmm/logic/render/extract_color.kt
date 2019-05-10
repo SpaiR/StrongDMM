@@ -50,7 +50,7 @@ private fun parseRGBColor(rgb: String): String {
 }
 
 // Colors predefined in BYOND
-enum class ByondColor constructor(private val hex: String) {
+private enum class ByondColor constructor(private val hex: String) {
 
     BLACK("#000000"),
     SILVER("#c0c0c0"),

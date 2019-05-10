@@ -31,7 +31,15 @@ class ObjectTreeView : View {
     private val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
         showsRootHandles = true
         cellRenderer = ObjectTreeRenderer()
-        addTreeSelectionListener(ObjectTreeSelectionListener(this@ObjectTreeView))
+
+        addTreeSelectionListener { e ->
+            e.path.lastPathComponent.let {
+                if (it is ObjectTreeNode) {
+                    instanceListView.findAndSelectInstancesByType(it.type)
+                    typeField.text = it.type
+                }
+            }
+        }
     }
 
     override fun initComponent() = JPanel(BorderLayout()).apply {
@@ -91,10 +99,6 @@ class ObjectTreeView : View {
         val icon = dmeItem.getVarText(VAR_ICON) ?: ""
         val iconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
         return ObjectTreeNode(nodeName, dmeItem.type, icon, iconState)
-    }
-
-    fun setType(type: String) {
-        typeField.text = type
     }
 
     fun findAndSelectPath(typePath: String, update: Boolean = false) {

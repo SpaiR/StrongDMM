@@ -1,6 +1,6 @@
 package io.github.spair.strongdmm.logic.render
 
-data class RenderInstance(
+class RenderInstance(
     val locX: Float,
     val locY: Float,
     val textureId: Int,
@@ -16,5 +16,5 @@ data class RenderInstance(
     val layer: Float = 0f
 )
 
-data class Color(val red: Float = 1f, val green: Float = 1f, val blue: Float = 1f, val alpha: Float = 1f)
+class Color(val red: Float = 1f, val green: Float = 1f, val blue: Float = 1f, val alpha: Float = 1f)
 val DEFAULT_COLOR = Color()

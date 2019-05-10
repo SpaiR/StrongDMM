@@ -16,23 +16,17 @@ class TabbedObjectPanelView : View {
 
     private val tabbedPanel = JTabbedPane()
 
-    private var instanceTabbedInitialized = false
-
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             preferredSize = Dimension(350, Int.MAX_VALUE)
             add(tabbedPanel.apply {
                 addTab("Tree", objectTreeView.initComponent())
+                addTab("Instance (empty)", instanceListView.initComponent())
             })
         }
     }
 
     fun setInstanceCount(count: Int) {
-        if (instanceTabbedInitialized) {
-            tabbedPanel.setTitleAt(1, "Instance ($count)")
-        } else {
-            tabbedPanel.addTab("Instance ($count)", instanceListView.initComponent())
-            instanceTabbedInitialized = true
-        }
+        tabbedPanel.setTitleAt(1, "Instance ($count)")
     }
 }

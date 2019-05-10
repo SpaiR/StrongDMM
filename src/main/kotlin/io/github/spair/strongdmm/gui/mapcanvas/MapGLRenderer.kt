@@ -12,10 +12,11 @@ import kotlin.concurrent.thread
 
 class MapGLRenderer(val view: MapCanvasView) {
 
+    private val visualComposer by diInstance<VisualComposer>()
+
     private val keyboardProcessor = KeyboardProcessor()
     private val mouseProcessor = MouseProcessor(this)
 
-    private val visualComposer by diInstance<VisualComposer>()
     private var glInitialized = false
 
     var selectedMap: Dmm? = null
