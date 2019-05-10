@@ -8,6 +8,7 @@ import org.lwjgl.input.Mouse
 
 private const val LMB = 0
 private const val RMB = 1
+private const val MMB = 2
 
 // Class to consume and process input from mouse.
 // Class handles input only in case, when map canvas is in focus.
@@ -17,7 +18,7 @@ class MouseProcessor(private val renderer: MapGLRenderer) {
     fun fire() {
         renderer.updateMouseMapPosition()
 
-        if (Mouse.isButtonDown(LMB)) {
+        if (Mouse.isButtonDown(MMB)) {
             renderer.updateViewAndMapOffset()
         }
 
