@@ -8,7 +8,7 @@ import org.lwjgl.input.Keyboard
 // Class to consume and process input from keyboard.
 // Class handles input only in case, when map canvas is in focus.
 // For other cases (common swing flow) event driven developments is used.
-class KeyboardProcessor {
+object KeyboardProcessor {
 
     private val menuBarView by diInstance<MenuBarView>()
 
@@ -41,6 +41,6 @@ class KeyboardProcessor {
 
     private fun fireShortcut(shortcut: Shortcut) = menuBarView.fireShortcutEvent(shortcut)
 
-    private fun isCtrlDown() = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)
-    private fun isShiftDown() = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)
+    fun isCtrlDown() = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)
+    fun isShiftDown() = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)
 }

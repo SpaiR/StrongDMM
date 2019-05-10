@@ -14,9 +14,6 @@ class MapGLRenderer(val view: MapCanvasView) {
 
     private val visualComposer by diInstance<VisualComposer>()
 
-    private val keyboardProcessor = KeyboardProcessor()
-    private val mouseProcessor = MouseProcessor(this)
-
     private var glInitialized = false
 
     var selectedMap: Dmm? = null
@@ -40,6 +37,10 @@ class MapGLRenderer(val view: MapCanvasView) {
     var currZoom = 5
     val maxZoomOut = 0
     val maxZoomIn = 10
+
+    init {
+        MouseProcessor.renderer = this
+    }
 
     fun switchMap(map: Dmm) {
         selectedMap = map
@@ -93,8 +94,8 @@ class MapGLRenderer(val view: MapCanvasView) {
             }
 
             Display.processMessages()
-            keyboardProcessor.fire()
-            mouseProcessor.fire()
+            KeyboardProcessor.fire()
+            MouseProcessor.fire()
             Display.sync(60)
         }
     }

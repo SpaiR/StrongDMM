@@ -6,14 +6,16 @@ import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 
-private const val LMB = 0
-private const val RMB = 1
-private const val MMB = 2
-
 // Class to consume and process input from mouse.
 // Class handles input only in case, when map canvas is in focus.
 // For other cases (common swing flow) event driven developments is used.
-class MouseProcessor(private val renderer: MapGLRenderer) {
+object MouseProcessor {
+
+    lateinit var renderer: MapGLRenderer
+
+    private const val LMB = 0
+    private const val RMB = 1
+    private const val MMB = 2
 
     fun fire() {
         renderer.updateMouseMapPosition()
