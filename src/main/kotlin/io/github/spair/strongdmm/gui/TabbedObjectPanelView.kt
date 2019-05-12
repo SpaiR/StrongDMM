@@ -3,13 +3,14 @@ package io.github.spair.strongdmm.gui
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
+import io.github.spair.strongdmm.logic.EnvCleanable
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class TabbedObjectPanelView : View {
+class TabbedObjectPanelView : View, EnvCleanable {
 
     private val objectTreeView by diInstance<ObjectTreeView>()
     private val instanceListView by diInstance<InstanceListView>()
@@ -19,6 +20,10 @@ class TabbedObjectPanelView : View {
     private val typeField = JTextField("no type selected", 30).apply {
         isEditable = false
         border = EmptyBorder(0, 0, 0, 0)
+    }
+
+    override fun clean() {
+        tabbedPanel.setTitleAt(1, "Instance (empty)")
     }
 
     override fun initComponent(): JComponent {
@@ -41,5 +46,9 @@ class TabbedObjectPanelView : View {
 
     fun setType(type: String) {
         typeField.text = type
+    }
+
+    fun clearType() {
+        typeField.text = "no type selected"
     }
 }

@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
 import java.awt.Canvas
@@ -12,12 +13,17 @@ import javax.swing.JPanel
 import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 
-class MapCanvasView : View {
+class MapCanvasView : View, EnvCleanable {
 
     val canvas = Canvas().apply { isVisible = true }
 
     private var tilePopup: JPopupMenu? = null
     private val mapGLRenderer = MapGLRenderer(this)
+
+    override fun clean() {
+        tryCloseTilePopup()
+        mapGLRenderer.selectedMap = null
+    }
 
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {

@@ -4,10 +4,12 @@ import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.map.TileItem
+import io.github.spair.strongdmm.logic.render.createGlTexture
+import org.lwjgl.opengl.GL11
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.io.File
+import java.util.*
 import javax.imageio.ImageIO
 
 class DmiProvider {
@@ -20,7 +22,19 @@ class DmiProvider {
         private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
     }
 
-    private val dmiCache = mutableMapOf<String, Dmi?>()
+    var placeholderTextureId = -1
+
+    private var dmiCache = Collections.synchronizedMap<String, Dmi?>(mutableMapOf())
+
+    fun initTextures() {
+        placeholderTextureId = createGlTexture(PLACEHOLDER_IMAGE)
+    }
+
+    fun clearTextures() {
+        GL11.glDeleteTextures(placeholderTextureId)
+        dmiCache.values.forEach { dmi -> dmi?.let { GL11.glDeleteTextures(it.glTextureId) } }
+        dmiCache.clear()
+    }
 
     fun hasDmiInMemory(icon: String) = dmiCache.containsKey(icon) || icon.isEmpty()
 

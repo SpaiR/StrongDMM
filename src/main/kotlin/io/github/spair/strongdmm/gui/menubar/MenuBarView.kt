@@ -7,8 +7,7 @@ import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.history.redoAction
-import io.github.spair.strongdmm.logic.history.undoAction
+import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.Font
 import java.awt.event.ActionListener
@@ -39,11 +38,13 @@ class MenuBarView : View {
 
     override fun initLogic() {
         openEnvItem.addActionListener(openEnvironmentAction())
+        openMapItem.addActionListener(openMapAction())
+        availableMapsItem.addActionListener(openMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
         exitMenuItem.addActionListener { System.exit(0) }
 
-        undoActionItem.addActionListener { undoAction() }
-        redoActionItem.addActionListener { redoAction() }
+        undoActionItem.addActionListener { History.undoAction() }
+        redoActionItem.addActionListener { History.redoAction() }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
@@ -89,25 +90,21 @@ class MenuBarView : View {
             runWithProgressBar("Parsing environment...") {
                 Environment.parseAndPrepareEnv(dmeFile)
                 saveItem.isEnabled = true
-
-                openMapItem.apply {
-                    isEnabled = true
-                    addActionListener {
-                        chooseFileDialog("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
-                            Environment.openMap(dmmFile)
-                        }
-                    }
-                }
-
-                availableMapsItem.apply {
-                    isEnabled = true
-                    addActionListener {
-                        showAvailableMapsDialog(Environment.availableMaps)?.let {
-                            Environment.openMap(it)
-                        }
-                    }
-                }
+                openMapItem.isEnabled = true
+                availableMapsItem.isEnabled = true
             }
+        }
+    }
+
+    private fun openMapAction() = ActionListener {
+        chooseFileDialog("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
+            Environment.openMap(dmmFile)
+        }
+    }
+
+    private fun openMapFromAvailableAction() = ActionListener {
+        showAvailableMapsDialog(Environment.availableMaps)?.let {
+            Environment.openMap(it)
         }
     }
 

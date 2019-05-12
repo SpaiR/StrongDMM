@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.mapcanvas
 import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
+import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.VisualComposer
@@ -13,6 +14,7 @@ import kotlin.concurrent.thread
 class MapGLRenderer(val view: MapCanvasView) {
 
     private val visualComposer by diInstance<VisualComposer>()
+    private val dmiProvider by diInstance<DmiProvider>()
 
     private var glInitialized = false
 
@@ -65,7 +67,10 @@ class MapGLRenderer(val view: MapCanvasView) {
             glInitialized = true
             Display.setParent(view.canvas)
             Display.create()
+            dmiProvider.initTextures()
             startRenderLoop()  // this is where the magic happens
+            dmiProvider.clearTextures()
+            visualComposer.clearCache()
             Display.destroy()
             glInitialized = false
         }

@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
@@ -15,9 +16,10 @@ import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
 
-class ObjectTreeView : View {
+class ObjectTreeView : View, EnvCleanable {
 
     private val instanceListView by diInstance<InstanceListView>()
     private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
@@ -37,6 +39,13 @@ class ObjectTreeView : View {
                 }
             }
         }
+    }
+
+    override fun clean() {
+        foundNodes = null
+        objectTree.model = DefaultTreeModel(SimpleTreeNode("Loading new environment..."))
+        objectTree.isRootVisible = true
+        tabbedObjectPanelView.clearType()
     }
 
     override fun initComponent() = JPanel(BorderLayout()).apply {

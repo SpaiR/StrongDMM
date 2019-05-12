@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.VAR_ICON
 import io.github.spair.strongdmm.logic.dme.VAR_ICON_STATE
@@ -14,7 +15,7 @@ import java.awt.FlowLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class InstanceListView : View {
+class InstanceListView : View, EnvCleanable {
 
     private val mapCanvasView by diInstance<MapCanvasView>()
     private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
@@ -31,6 +32,12 @@ class InstanceListView : View {
                 selectedInstance = it
             }
         }
+    }
+
+    override fun clean() {
+        selectedInstance = null
+        (instanceList.model as DefaultListModel).clear()
+        setEmptyInstanceVars()
     }
 
     override fun initComponent(): JComponent {

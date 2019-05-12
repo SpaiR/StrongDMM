@@ -12,18 +12,18 @@ import org.lwjgl.opengl.Display
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 
-private val dmiProvider by diInstance<DmiProvider>()
-private val instanceListView by diInstance<InstanceListView>()
-private val objectTreeView by diInstance<ObjectTreeView>()
-
 fun MapGLRenderer.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
         return
     }
 
+    val dmiProvider by diInstance<DmiProvider>()
+    val instanceListView by diInstance<InstanceListView>()
+    val objectTreeView by diInstance<ObjectTreeView>()
+
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         selectedMap!!.getTile(xMouseMap, yMouseMap)!!.tileItems.forEach { tileItem ->
-            val menu = JMenu("${tileItem.getVarText(VAR_NAME)}  [${tileItem.type}]").apply { popup.add(this) }
+            val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
 
             dmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
                 menu.icon = spite.scaledIcon

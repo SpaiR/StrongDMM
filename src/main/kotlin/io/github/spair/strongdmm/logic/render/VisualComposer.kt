@@ -22,8 +22,13 @@ class VisualComposer {
     private var horTilesNumPrev: Int = 0
     private var verTilesNumPrev: Int = 0
 
-    private lateinit var riCache: RenderInstances
+    private var riCache: RenderInstances? = null
     var hasIncompleteJob = false
+
+    fun clearCache() {
+        riCache = null
+        hasIncompleteJob = false
+    }
 
     fun composeFrame(
         dmm: Dmm,
@@ -34,10 +39,11 @@ class VisualComposer {
         forceUpdate: Boolean
     ): RenderInstances {
         // Use cached render instances
-        if (!hasIncompleteJob && !forceUpdate
+        if (riCache != null
+            && !hasIncompleteJob && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
-        ) return riCache
+        ) return riCache!!
 
         hasIncompleteJob = false
         val planesLayers = RenderInstances()

@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.gui.edit
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.history.EditVarsAction
-import io.github.spair.strongdmm.logic.history.addUndoAction
+import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.*
 import javax.swing.*
@@ -12,12 +12,6 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
-
-private val HIDDEN_VARS = setOf(
-    VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_CONTENTS, VAR_FILTERS,
-    VAR_LOC, VAR_MAPTEXT, VAR_MAPTEXT_WIDTH, VAR_MAPTEXT_HEIGHT, VAR_MAPTEXT_X, VAR_MAPTEXT_Y, VAR_OVERLAYS,
-    VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE, VAR_VIS_CONTENTS, VAR_VIS_LOCS
-)
 
 class ViewVariablesDialog(private val tileItem: TileItem) {
 
@@ -52,7 +46,7 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
         }
 
         if (saveChanges && model.tmpVars.isNotEmpty()) {
-            addUndoAction(EditVarsAction(tileItem))
+            History.addUndoAction(EditVarsAction(tileItem))
             model.tmpVars.forEach { (k, v) -> tileItem.customVars[k] = v }
             tileItem.updateFields()
         }
@@ -115,6 +109,14 @@ private class ViewVariablesRenderer : DefaultTableCellRenderer() {
 }
 
 private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() {
+
+    companion object {
+        private val HIDDEN_VARS = setOf(
+            VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_CONTENTS, VAR_FILTERS,
+            VAR_LOC, VAR_MAPTEXT, VAR_MAPTEXT_WIDTH, VAR_MAPTEXT_HEIGHT, VAR_MAPTEXT_X, VAR_MAPTEXT_Y, VAR_OVERLAYS,
+            VAR_UNDERLAYS, VAR_VERBS, VAR_APPEARANCE, VAR_VIS_CONTENTS, VAR_VIS_LOCS
+        )
+    }
 
     private val displayVars = mutableListOf<Var>()
 

@@ -9,10 +9,10 @@ import java.util.*
 
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
 
-private val dmiProvider by diInstance<DmiProvider>()
-private val objectTreeView by diInstance<ObjectTreeView>()
-
 fun MapGLRenderer.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
+    val dmiProvider by diInstance<DmiProvider>()
+    val objectTreeView by diInstance<ObjectTreeView>()
+
     val instances = mutableListOf<RenderInstance>()
 
     renderInstances.values.forEach { plane ->

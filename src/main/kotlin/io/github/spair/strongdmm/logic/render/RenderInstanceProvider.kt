@@ -1,19 +1,25 @@
 package io.github.spair.strongdmm.logic.render
 
 import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.util.concurrent.Executors
 
-class RenderInstanceProvider {
+class RenderInstanceProvider : EnvCleanable {
 
     private val dmiProvider by diInstance<DmiProvider>()
-    private val placeholderTextureId = createGlTexture(DmiProvider.PLACEHOLDER_IMAGE)
-    private val executor = Executors.newSingleThreadExecutor()
 
+    private var executor = Executors.newSingleThreadExecutor()
     private var locked = false
 
     var hasInProcessImage = false
+
+    override fun clean() {
+        executor.shutdownNow()
+        executor = Executors.newSingleThreadExecutor()
+        locked = false
+    }
 
     fun create(x: Float, y: Float, tileItem: TileItem): RenderInstance {
         val icon = tileItem.icon
@@ -27,11 +33,11 @@ class RenderInstanceProvider {
                         dmi.glTextureId,
                         s.u1, s.v1, s.u2, s.v2,
                         s.iconWidth, s.iconHeight,
-                        extractColor(tileItem),
+                        ColorExtractor.extractColor(tileItem),
                         tileItem
                     )
                 }
-            } ?: RenderInstance(x, y, placeholderTextureId, tileItem = tileItem)
+            } ?: RenderInstance(x, y, dmiProvider.placeholderTextureId, tileItem = tileItem)
         } else {
             hasInProcessImage = true
 
@@ -43,7 +49,7 @@ class RenderInstanceProvider {
                 }
             }
 
-            return RenderInstance(x, y, placeholderTextureId, tileItem = tileItem)
+            return RenderInstance(x, y, dmiProvider.placeholderTextureId, tileItem = tileItem)
         }
     }
 }

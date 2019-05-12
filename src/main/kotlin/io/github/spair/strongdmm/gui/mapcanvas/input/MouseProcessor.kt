@@ -97,13 +97,15 @@ object MouseProcessor {
         var xMouseMapNew = xMouse.toInt() / iconSize + 1
         var yMouseMapNew = yMouse.toInt() / iconSize + 1
 
-        xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > selectedMap!!.maxX) OUT_OF_BOUNDS else xMouseMapNew
-        yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > selectedMap!!.maxY) OUT_OF_BOUNDS else yMouseMapNew
+        selectedMap?.let { map ->
+            xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > map.maxX) OUT_OF_BOUNDS else xMouseMapNew
+            yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > map.maxY) OUT_OF_BOUNDS else yMouseMapNew
 
-        if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
-            xMouseMap = xMouseMapNew
-            yMouseMap = yMouseMapNew
-            Frame.update()
+            if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
+                xMouseMap = xMouseMapNew
+                yMouseMap = yMouseMapNew
+                Frame.update()
+            }
         }
     }
 }

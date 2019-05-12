@@ -26,11 +26,11 @@ fun main() {
 val DI = Kodein {
     // Views
     bind() from singleton { MenuBarView() }
-    bind() from singleton { TabbedObjectPanelView() }
-    bind() from singleton { TabbedMapPanelView() }
     bind() from singleton { ObjectTreeView() }
     bind() from singleton { InstanceListView() }
     bind() from singleton { MapCanvasView() }
+    bind() from singleton { TabbedObjectPanelView() }
+    bind() from singleton { TabbedMapPanelView() }
 
     // Logic
     bind() from singleton { DmiProvider() }
