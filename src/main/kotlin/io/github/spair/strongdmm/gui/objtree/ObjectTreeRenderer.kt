@@ -25,7 +25,7 @@ class ObjectTreeRenderer : DefaultTreeCellRenderer() {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus)
 
         if (value is ObjectTreeNode) {
-            icon = dmiProvider.getDmi(value.icon)?.getIconState(value.iconState)?.getIconSprite()?.scaledIcon ?: placeholderIcon
+            icon = dmiProvider.getSpriteFromDmi(value.icon, value.iconState)?.scaledIcon ?: placeholderIcon
         } else {
             icon = null
         }

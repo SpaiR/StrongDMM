@@ -4,6 +4,7 @@ import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.io.File
@@ -22,6 +23,10 @@ class DmiProvider {
     private val dmiCache = mutableMapOf<String, Dmi?>()
 
     fun hasDmiInMemory(icon: String) = dmiCache.containsKey(icon) || icon.isEmpty()
+
+    fun getSpriteFromDmi(icon: String, iconState: String, dir: Int = SOUTH, frame: Int = 0): IconSprite? {
+        return getDmi(icon)?.getIconState(iconState)?.getIconSprite(dir, frame)
+    }
 
     fun getDmi(icon: String): Dmi? {
         if (icon.isEmpty()) {

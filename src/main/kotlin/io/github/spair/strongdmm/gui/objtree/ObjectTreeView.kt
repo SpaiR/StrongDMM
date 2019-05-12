@@ -1,13 +1,13 @@
 package io.github.spair.strongdmm.gui.objtree
 
 import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.*
@@ -20,13 +20,10 @@ import javax.swing.tree.TreePath
 class ObjectTreeView : View {
 
     private val instanceListView by diInstance<InstanceListView>()
+    private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
 
     private var searchPath = ""
     private var foundNodes: List<DefaultMutableTreeNode>? = null
-    private val typeField = JTextField("no type selected", 30).apply {
-        isEditable = false
-        border = EmptyBorder(0, 0, 0, 0)
-    }
 
     private val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
         showsRootHandles = true
@@ -36,7 +33,7 @@ class ObjectTreeView : View {
             e.path.lastPathComponent.let {
                 if (it is ObjectTreeNode) {
                     instanceListView.findAndSelectInstancesByType(it.type)
-                    typeField.text = it.type
+                    tabbedObjectPanelView.setType(it.type)
                 }
             }
         }
@@ -44,11 +41,9 @@ class ObjectTreeView : View {
 
     override fun initComponent() = JPanel(BorderLayout()).apply {
         add(JScrollPane(objectTree), BorderLayout.CENTER)
-        add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+        add(JPanel().apply {
             preferredSize = Dimension(Int.MAX_VALUE, 60)
             addSearchRow()
-            add(JLabel("<html><b>Type:</b></html>"))
-            add(typeField)
         }, BorderLayout.SOUTH)
     }
 
@@ -101,7 +96,7 @@ class ObjectTreeView : View {
         return ObjectTreeNode(nodeName, dmeItem.type, icon, iconState)
     }
 
-    fun findAndSelectPath(typePath: String, update: Boolean = false) {
+    private fun findAndSelectPath(typePath: String, update: Boolean = false) {
         if (typePath.isEmpty()) {
             return
         }

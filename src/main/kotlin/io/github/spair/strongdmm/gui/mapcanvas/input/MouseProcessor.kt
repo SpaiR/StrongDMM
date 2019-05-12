@@ -18,7 +18,7 @@ object MouseProcessor {
     private const val MMB = 2
 
     fun fire() {
-        renderer.updateMouseMapPosition()
+        renderer.updateMousePosition()
 
         if (Mouse.isButtonDown(MMB)) {
             renderer.updateViewAndMapOffset()
@@ -34,8 +34,14 @@ object MouseProcessor {
                     continue
                 }
 
-                if (Mouse.getEventButton() == RMB) {
-                    renderer.openTilePopup()
+                when (Mouse.getEventButton()) {
+                    LMB -> {
+                        if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown()) {
+                            renderer.selectItem = true
+                            Frame.update()
+                        }
+                    }
+                    RMB -> renderer.openTilePopup()
                 }
             }
         }
@@ -84,9 +90,12 @@ object MouseProcessor {
         yMapOff = (-yViewOff / iconSize + 0.5f).toInt()
     }
 
-    private fun MapGLRenderer.updateMouseMapPosition() {
-        var xMouseMapNew = (Mouse.getX() * viewZoom - xViewOff).toInt() / iconSize + 1
-        var yMouseMapNew = (Mouse.getY() * viewZoom - yViewOff).toInt() / iconSize + 1
+    private fun MapGLRenderer.updateMousePosition() {
+        xMouse = Mouse.getX() * viewZoom - xViewOff
+        yMouse = Mouse.getY() * viewZoom - yViewOff
+
+        var xMouseMapNew = xMouse.toInt() / iconSize + 1
+        var yMouseMapNew = yMouse.toInt() / iconSize + 1
 
         xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > selectedMap!!.maxX) OUT_OF_BOUNDS else xMouseMapNew
         yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > selectedMap!!.maxY) OUT_OF_BOUNDS else yMouseMapNew

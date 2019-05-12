@@ -28,11 +28,10 @@ class RenderInstanceProvider {
                         s.u1, s.v1, s.u2, s.v2,
                         s.iconWidth, s.iconHeight,
                         extractColor(tileItem),
-                        tileItem.type,
-                        tileItem.plane, tileItem.layer
+                        tileItem
                     )
                 }
-            } ?: RenderInstance(x, y, placeholderTextureId)
+            } ?: RenderInstance(x, y, placeholderTextureId, tileItem = tileItem)
         } else {
             hasInProcessImage = true
 
@@ -44,7 +43,7 @@ class RenderInstanceProvider {
                 }
             }
 
-            return RenderInstance(x, y, placeholderTextureId)
+            return RenderInstance(x, y, placeholderTextureId, tileItem = tileItem)
         }
     }
 }

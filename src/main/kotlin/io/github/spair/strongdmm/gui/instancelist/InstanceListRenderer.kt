@@ -23,7 +23,7 @@ class InstanceListRenderer : DefaultListCellRenderer() {
         val instance = value as ItemInstance
 
         name = instance.name
-        icon = dmiProvider.getDmi(instance.icon)?.getIconState(instance.iconState)?.getIconSprite(instance.dir) ?: placeholderIcon
+        icon = dmiProvider.getSpriteFromDmi(instance.icon, instance.iconState, instance.dir) ?: placeholderIcon
 
         return this
     }

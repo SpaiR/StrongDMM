@@ -21,7 +21,7 @@ object Environment {
     private val mapCanvasView by diInstance<MapCanvasView>()
     private val instanceListView by diInstance<InstanceListView>()
 
-    fun parseAndPrepareEnv(dmeFile: File): Dme {
+    fun parseAndPrepareEnv(dmeFile: File) {
         val s = System.currentTimeMillis()
 
         dme = parseDme(dmeFile.absolutePath)
@@ -32,8 +32,6 @@ object Environment {
         System.gc()
 
         println(System.currentTimeMillis() - s)
-
-        return dme
     }
 
     fun openMap(mapFile: File) {

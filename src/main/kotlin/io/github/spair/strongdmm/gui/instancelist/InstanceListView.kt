@@ -19,14 +19,17 @@ class InstanceListView : View {
     private val mapCanvasView by diInstance<MapCanvasView>()
     private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
 
-    private var selectedType = ""
+    private var selectedInstance: ItemInstance? = null
 
     private val customVariablesLabel = JLabel()
     private val instanceList = JList<ItemInstance>(DefaultListModel<ItemInstance>()).apply {
         cellRenderer = InstanceListRenderer()
 
         addListSelectionListener {
-            selectedValue?.let { showInstanceVars(it.customVars) }
+            selectedValue?.let {
+                showInstanceVars(it.customVars)
+                selectedInstance = it
+            }
         }
     }
 
@@ -57,32 +60,29 @@ class InstanceListView : View {
     }
 
     fun findAndSelectInstancesByType(type: String) {
-        selectedType = type
-
         val items = LinkedHashSet<ItemInstance>()
         val dmeItem = Environment.dme.getItem(type)!!
-
-        items.add(
-            ItemInstance(
-                dmeItem.getVar(VAR_NAME) ?: "",
-                dmeItem.getVarText(VAR_ICON) ?: "",
-                dmeItem.getVarText(VAR_ICON_STATE) ?: ""
-            )
+        val initialInstance = ItemInstance(
+            dmeItem.getVar(VAR_NAME) ?: "",
+            dmeItem.getVarText(VAR_ICON) ?: "",
+            dmeItem.getVarText(VAR_ICON_STATE) ?: "",
+            dmeItem.type
         )
 
+        selectedInstance = initialInstance
+        items.add(initialInstance)
+
         mapCanvasView.getSelectedMap()?.let { dmm ->
-            dmm.getAllTileItemsByType(type).forEach { tileItem ->
+            dmm.getAllTileItemsByType(type).forEach {
                 items.add(ItemInstance(
-                    tileItem.getVar(VAR_NAME) ?: "", tileItem.icon, tileItem.iconState, tileItem.dir, tileItem.customVars)
+                    it.getVar(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)
                 )
             }
         }
 
         with(instanceList.model as DefaultListModel) {
             clear()
-            items.forEach {
-                addElement(it)
-            }
+            items.forEach { addElement(it) }
         }
 
         instanceList.selectedIndex = 0
@@ -90,8 +90,8 @@ class InstanceListView : View {
     }
 
     fun updateSelectedInstanceInfo() {
-        if (selectedType.isNotEmpty()) {
-            findAndSelectInstancesByType(selectedType)
+        if (selectedInstance != null) {
+            findAndSelectInstancesByType(selectedInstance!!.type)
         }
     }
 

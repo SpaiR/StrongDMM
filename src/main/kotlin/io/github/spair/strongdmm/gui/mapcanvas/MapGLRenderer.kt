@@ -38,6 +38,13 @@ class MapGLRenderer(val view: MapCanvasView) {
     val maxZoomOut = 0
     val maxZoomIn = 10
 
+    // Coords of pixel on the map where the mouse is
+    var xMouse = 0f
+    var yMouse = 0f
+
+    // When true, while next rendering loop, top item under the mouse will be selected
+    var selectItem = false
+
     init {
         MouseProcessor.renderer = this
     }
@@ -148,6 +155,11 @@ class MapGLRenderer(val view: MapCanvasView) {
         // Postponed images will be loaded in next frame
         if (visualComposer.hasIncompleteJob) {
             Frame.update()
+        }
+
+        if (selectItem) {
+            selectItem = false
+            findAndSelectItemUnderMouse(renderInstances)
         }
     }
 

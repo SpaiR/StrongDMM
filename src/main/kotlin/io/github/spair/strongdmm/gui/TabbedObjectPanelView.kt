@@ -5,9 +5,9 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import java.awt.BorderLayout
 import java.awt.Dimension
-import javax.swing.JComponent
-import javax.swing.JPanel
-import javax.swing.JTabbedPane
+import java.awt.FlowLayout
+import javax.swing.*
+import javax.swing.border.EmptyBorder
 
 class TabbedObjectPanelView : View {
 
@@ -16,6 +16,11 @@ class TabbedObjectPanelView : View {
 
     private val tabbedPanel = JTabbedPane()
 
+    private val typeField = JTextField("no type selected", 30).apply {
+        isEditable = false
+        border = EmptyBorder(0, 0, 0, 0)
+    }
+
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             preferredSize = Dimension(350, Int.MAX_VALUE)
@@ -23,10 +28,18 @@ class TabbedObjectPanelView : View {
                 addTab("Tree", objectTreeView.initComponent())
                 addTab("Instance (empty)", instanceListView.initComponent())
             })
+            add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+                add(JLabel("<html><b>Type:</b></html>"))
+                add(typeField)
+            }, BorderLayout.SOUTH)
         }
     }
 
     fun setInstanceCount(count: Int) {
         tabbedPanel.setTitleAt(1, "Instance ($count)")
+    }
+
+    fun setType(type: String) {
+        typeField.text = type
     }
 }

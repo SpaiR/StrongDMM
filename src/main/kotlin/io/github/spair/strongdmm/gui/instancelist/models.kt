@@ -6,6 +6,7 @@ data class ItemInstance(
     val name: String,
     val icon: String,
     val iconState: String,
+    val type: String,
     val dir: Int = SOUTH,
     val customVars: Map<String, String> = emptyMap()
 ) {

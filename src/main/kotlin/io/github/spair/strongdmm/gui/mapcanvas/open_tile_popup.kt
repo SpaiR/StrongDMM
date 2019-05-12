@@ -25,13 +25,11 @@ fun MapGLRenderer.openTilePopup() {
         selectedMap!!.getTile(xMouseMap, yMouseMap)!!.tileItems.forEach { tileItem ->
             val menu = JMenu("${tileItem.getVarText(VAR_NAME)}  [${tileItem.type}]").apply { popup.add(this) }
 
-            dmiProvider.getDmi(tileItem.icon)?.let { dmi ->
-                dmi.getIconState(tileItem.iconState)?.let { iconState ->
-                    menu.icon = iconState.getIconSprite(tileItem.dir).scaledIcon
-                }
+            dmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
+                menu.icon = spite.scaledIcon
             }
 
-            menu.add(JMenuItem("Make Active Object").apply {
+            menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
                 addActionListener {
                     objectTreeView.findAndSelectItemInstance(tileItem)
                 }
