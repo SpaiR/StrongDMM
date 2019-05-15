@@ -1,6 +1,8 @@
 package io.github.spair.strongdmm.logic.map
 
 import io.github.spair.dmm.io.*
+import io.github.spair.strongdmm.gui.instancelist.ItemInstance
+import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 
@@ -27,8 +29,15 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
                     }
                 }
 
-                tiles[y - 1][x - 1] = Tile(x, y, tileItems.toList())
+                tiles[y - 1][x - 1] = Tile(x, y, tileItems)
             }
+        }
+    }
+
+    fun addInstanceToMap(itemInstance: ItemInstance, x: Int, y: Int) {
+        getTile(x, y)?.let { tile ->
+            val dmeItem = Environment.dme.getItem(itemInstance.type)!!
+            tile.tileItems.add(TileItem(dmeItem, x, y, itemInstance.customVars.toMutableMap()))
         }
     }
 
@@ -63,7 +72,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
     }
 }
 
-class Tile(val x: Int, val y: Int, val tileItems: List<TileItem>) : Iterable<TileItem> {
+class Tile(val x: Int, val y: Int, val tileItems: MutableList<TileItem>) : Iterable<TileItem> {
     override fun iterator(): Iterator<TileItem> {
         return tileItems.iterator()
     }

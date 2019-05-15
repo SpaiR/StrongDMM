@@ -16,7 +16,7 @@ import javax.swing.border.EmptyBorder
 
 object InstanceListView : View, EnvCleanable {
 
-    private var selectedInstance: ItemInstance? = null
+    var selectedInstance: ItemInstance? = null
 
     private val customVariablesLabel = JLabel()
     private val instanceList = JList<ItemInstance>(DefaultListModel<ItemInstance>()).apply {

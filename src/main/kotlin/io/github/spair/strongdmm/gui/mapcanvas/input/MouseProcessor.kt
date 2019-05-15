@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.mapcanvas.input
 
 import io.github.spair.strongdmm.gui.mapcanvas.Frame
 import io.github.spair.strongdmm.gui.mapcanvas.MapGLRenderer
+import io.github.spair.strongdmm.gui.mapcanvas.addItemToMap
 import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
@@ -39,6 +40,8 @@ object MouseProcessor {
                         if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown()) {
                             renderer.selectItem = true
                             Frame.update()
+                        } else {
+                            renderer.addItemToMap()
                         }
                     }
                     RMB -> renderer.openTilePopup()
