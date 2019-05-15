@@ -3,7 +3,6 @@ package io.github.spair.strongdmm.logic
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.diDirectAll
 import io.github.spair.strongdmm.diInstance
-import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
@@ -16,7 +15,6 @@ object Environment {
 
     private val objectTreeView by diInstance<ObjectTreeView>()
     private val mapCanvasView by diInstance<MapCanvasView>()
-    private val instanceListView by diInstance<InstanceListView>()
 
     lateinit var dme: Dme
     lateinit var absoluteRootPath: String
@@ -44,7 +42,6 @@ object Environment {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile.path, dmmData, dme)
         mapCanvasView.openMap(dmm)
-        instanceListView.updateSelectedInstanceInfo()
     }
 
     fun openMap(mapPath: String) {

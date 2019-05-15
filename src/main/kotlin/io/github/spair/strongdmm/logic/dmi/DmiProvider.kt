@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.io.File
-import java.util.*
 import javax.imageio.ImageIO
 
 class DmiProvider {
@@ -24,7 +23,7 @@ class DmiProvider {
 
     var placeholderTextureId = -1
 
-    private var dmiCache = Collections.synchronizedMap<String, Dmi?>(mutableMapOf())
+    private var dmiCache = mutableMapOf<String, Dmi?>()
 
     fun initTextures() {
         placeholderTextureId = createGlTexture(PLACEHOLDER_IMAGE)

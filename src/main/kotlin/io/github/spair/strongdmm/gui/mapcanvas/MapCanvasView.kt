@@ -1,7 +1,9 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
+import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
@@ -14,6 +16,8 @@ import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 
 class MapCanvasView : View, EnvCleanable {
+
+    private val instanceListView by diInstance<InstanceListView>()
 
     val canvas = Canvas().apply { isVisible = true }
 
@@ -49,6 +53,7 @@ class MapCanvasView : View, EnvCleanable {
 
     fun openMap(dmm: Dmm) {
         mapGLRenderer.switchMap(dmm)
+        instanceListView.updateSelectedInstanceInfo()
     }
 
     fun tryCloseTilePopup(): Boolean {
