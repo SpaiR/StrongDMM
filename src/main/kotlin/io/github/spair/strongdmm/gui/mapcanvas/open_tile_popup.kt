@@ -5,6 +5,8 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
+import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
+import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
@@ -33,6 +35,7 @@ fun MapGLRenderer.openTilePopup() {
             menu.add(JMenuItem("Delete")).apply {
                 addActionListener {
                     selectedMap!!.deleteTileItem(tileItem)
+                    History.addUndoAction(DeleteTileItemAction(selectedMap!!, tileItem))
                     Frame.update(true)
                     InstanceListView.updateSelectedInstanceInfo()
                 }

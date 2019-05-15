@@ -34,11 +34,8 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
     }
 
-    fun addInstance(itemInstance: ItemInstance, x: Int, y: Int) {
-        getTile(x, y)?.let { tile ->
-            val dmeItem = Environment.dme.getItem(itemInstance.type)!!
-            tile.tileItems.add(TileItem(dmeItem, x, y, itemInstance.customVars.toMutableMap()))
-        }
+    fun placeTileItem(tileItem: TileItem) {
+        getTile(tileItem.x, tileItem.y)?.tileItems?.add(tileItem)
     }
 
     fun deleteTileItem(tileItem: TileItem) {
@@ -83,6 +80,12 @@ class Tile(val x: Int, val y: Int, val tileItems: MutableList<TileItem>) : Itera
 }
 
 class TileItem(val dmeItem: DmeItem, val x: Int, val y: Int, val customVars: MutableMap<String, String>) {
+
+    companion object {
+        fun fromInstance(instance: ItemInstance, x: Int, y: Int): TileItem {
+            return TileItem(Environment.dme.getItem(instance.type)!!, x, y, instance.customVars.toMutableMap())
+        }
+    }
 
     val type: String = dmeItem.type
 
