@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
@@ -15,9 +14,7 @@ import javax.swing.JPanel
 import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 
-class MapCanvasView : View, EnvCleanable {
-
-    private val instanceListView by diInstance<InstanceListView>()
+object MapCanvasView : View, EnvCleanable {
 
     val canvas = Canvas().apply { isVisible = true }
 
@@ -32,28 +29,26 @@ class MapCanvasView : View, EnvCleanable {
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             add(canvas)
-        }
-    }
 
-    override fun initLogic() {
-        SwingUtilities.invokeLater {
-            // Update frames on simple window resize
-            canvas.addComponentListener(object : ComponentAdapter() {
-                override fun componentResized(e: ComponentEvent) {
+            SwingUtilities.invokeLater {
+                // Update frames on simple window resize
+                canvas.addComponentListener(object : ComponentAdapter() {
+                    override fun componentResized(e: ComponentEvent) {
+                        Frame.update()
+                    }
+                })
+
+                // Update frames when window minimized/maximized
+                PrimaryFrame.addWindowStateListener {
                     Frame.update()
                 }
-            })
-
-            // Update frames when window minimized/maximized
-            PrimaryFrame.addWindowStateListener {
-                Frame.update()
             }
         }
     }
 
     fun openMap(dmm: Dmm) {
         mapGLRenderer.switchMap(dmm)
-        instanceListView.updateSelectedInstanceInfo()
+        InstanceListView.updateSelectedInstanceInfo()
     }
 
     fun tryCloseTilePopup(): Boolean {

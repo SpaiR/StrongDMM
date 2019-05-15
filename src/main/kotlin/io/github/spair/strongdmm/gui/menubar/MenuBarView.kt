@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.menubar
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.chooseFileDialog
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
@@ -14,9 +13,7 @@ import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import javax.swing.*
 
-class MenuBarView : View {
-
-    private val mapCanvasView by diInstance<MapCanvasView>()
+object MenuBarView : View {
 
     // File items
     private val openEnvItem = createMenuItem("Open Environment...")
@@ -33,10 +30,12 @@ class MenuBarView : View {
         return JMenuBar().apply {
             add(createMenu("File", createFileItems()))
             add(createMenu("Edit", createEditItems()))
+
+            initLogic()
         }
     }
 
-    override fun initLogic() {
+    private fun initLogic() {
         openEnvItem.addActionListener(openEnvironmentAction())
         openMapItem.addActionListener(openMapAction())
         availableMapsItem.addActionListener(openMapFromAvailableAction())
@@ -109,7 +108,7 @@ class MenuBarView : View {
     }
 
     private fun saveSelectedMapAction() = ActionListener {
-        mapCanvasView.getSelectedMap()?.let { saveMap(it) }
+        MapCanvasView.getSelectedMap()?.let { saveMap(it) }
     }
 
     private fun createMenuItem(text: String, isEnabled: Boolean = true): JMenuItem {

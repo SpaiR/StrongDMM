@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.instancelist
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import java.awt.Component
 import javax.swing.DefaultListCellRenderer
@@ -10,7 +9,6 @@ import javax.swing.JList
 class InstanceListRenderer : DefaultListCellRenderer() {
 
     private val placeholderIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE)
-    private val dmiProvider by diInstance<DmiProvider>()
 
     override fun getListCellRendererComponent(
         list: JList<*>,
@@ -23,7 +21,7 @@ class InstanceListRenderer : DefaultListCellRenderer() {
         val instance = value as ItemInstance
 
         name = instance.name
-        icon = dmiProvider.getSpriteFromDmi(instance.icon, instance.iconState, instance.dir) ?: placeholderIcon
+        icon = DmiProvider.getSpriteFromDmi(instance.icon, instance.iconState, instance.dir) ?: placeholderIcon
 
         return this
     }

@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.TileItem
@@ -10,9 +9,6 @@ import java.util.*
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
 
 fun MapGLRenderer.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
-    val dmiProvider by diInstance<DmiProvider>()
-    val objectTreeView by diInstance<ObjectTreeView>()
-
     val instances = mutableListOf<RenderInstance>()
 
     renderInstances.values.forEach { plane ->
@@ -32,7 +28,7 @@ fun MapGLRenderer.findAndSelectItemUnderMouse(renderInstances: RenderInstances) 
         val pixelY = (ri.width - (yMouse - ri.locY)).toInt()
 
         val item = ri.tileItem
-        val isOpaque = dmiProvider.getSpriteFromDmi(item.icon, item.iconState, item.dir)?.isOpaquePixel(pixelX, pixelY)
+        val isOpaque = DmiProvider.getSpriteFromDmi(item.icon, item.iconState, item.dir)?.isOpaquePixel(pixelX, pixelY)
             ?: true   // When there is no sprite for item we are using placeholder which is always opaque
 
         if (isOpaque) {
@@ -41,6 +37,6 @@ fun MapGLRenderer.findAndSelectItemUnderMouse(renderInstances: RenderInstances) 
     }
 
     selectedItem?.let {
-        objectTreeView.findAndSelectItemInstance(it)
+        ObjectTreeView.findAndSelectItemInstance(it)
     }
 }

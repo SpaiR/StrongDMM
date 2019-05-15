@@ -1,21 +1,18 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.util.*
 
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
 
-fun RenderInstances.get(plane: Float, layer: Float): MutableList<RenderInstance> {
+private fun RenderInstances.get(plane: Float, layer: Float): MutableList<RenderInstance> {
     return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
 }
 
-// We will look for things outside of viewport range to handle big objects (bigger then /world/icon_size)
-private const val ADDITIONAL_VIEW_RANGE = 2
+object VisualComposer {
 
-class VisualComposer {
-
-    private val riProvider by diInstance<RenderInstanceProvider>()
+    // We will look for things outside of viewport range to handle big objects (bigger then /world/icon_size)
+    private const val ADDITIONAL_VIEW_RANGE = 2
 
     private var xMapOffPrev: Int = 0
     private var yMapOffPrev: Int = 0
@@ -65,9 +62,9 @@ class VisualComposer {
 
                 for (tileItem in tile) {
                     planesLayers.get(tileItem.plane, tileItem.layer).let {
-                        it.add(riProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem))
+                        it.add(RenderInstanceProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem))
 
-                        if (riProvider.hasInProcessImage) {
+                        if (RenderInstanceProvider.hasInProcessImage) {
                             hasIncompleteJob = true
                         }
                     }

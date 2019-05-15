@@ -16,7 +16,6 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.kodein.di:kodein-di-erased-jvm:6.1.0'
     
     implementation 'io.github.spair:dmm-io:1.5'
 

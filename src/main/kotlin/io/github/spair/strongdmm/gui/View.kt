@@ -4,5 +4,4 @@ import javax.swing.JComponent
 
 interface View {
     fun initComponent(): JComponent
-    fun initLogic() {}
 }

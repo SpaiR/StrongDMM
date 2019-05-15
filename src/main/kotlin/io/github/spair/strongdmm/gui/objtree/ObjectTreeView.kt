@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.objtree
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
@@ -19,10 +18,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
 
-class ObjectTreeView : View, EnvCleanable {
-
-    private val instanceListView by diInstance<InstanceListView>()
-    private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
+object ObjectTreeView : View, EnvCleanable {
 
     private var searchPath = ""
     private var foundNodes: List<DefaultMutableTreeNode>? = null
@@ -34,8 +30,8 @@ class ObjectTreeView : View, EnvCleanable {
         addTreeSelectionListener { e ->
             e.path.lastPathComponent.let {
                 if (it is ObjectTreeNode) {
-                    instanceListView.findAndSelectInstancesByType(it.type)
-                    tabbedObjectPanelView.setType(it.type)
+                    InstanceListView.findAndSelectInstancesByType(it.type)
+                    TabbedObjectPanelView.setType(it.type)
                 }
             }
         }
@@ -45,7 +41,6 @@ class ObjectTreeView : View, EnvCleanable {
         foundNodes = null
         objectTree.model = DefaultTreeModel(SimpleTreeNode("Loading new environment..."))
         objectTree.isRootVisible = true
-        tabbedObjectPanelView.clearType()
     }
 
     override fun initComponent() = JPanel(BorderLayout()).apply {
@@ -58,7 +53,7 @@ class ObjectTreeView : View, EnvCleanable {
 
     fun findAndSelectItemInstance(tileItem: TileItem) {
         findAndSelectPath(tileItem.type, true)
-        instanceListView.selectInstanceByCustomVars(tileItem.customVars)
+        InstanceListView.selectInstanceByCustomVars(tileItem.customVars)
     }
 
     fun populateTree(dme: Dme) {

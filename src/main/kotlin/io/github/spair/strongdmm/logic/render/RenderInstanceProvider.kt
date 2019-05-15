@@ -1,14 +1,11 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.util.concurrent.Executors
 
-class RenderInstanceProvider : EnvCleanable {
-
-    private val dmiProvider by diInstance<DmiProvider>()
+object RenderInstanceProvider : EnvCleanable {
 
     private var executor = Executors.newSingleThreadExecutor()
     private var locked = false
@@ -24,9 +21,9 @@ class RenderInstanceProvider : EnvCleanable {
     fun create(x: Float, y: Float, tileItem: TileItem): RenderInstance {
         val icon = tileItem.icon
 
-        if (dmiProvider.hasDmiInMemory(icon)) {
+        if (DmiProvider.hasDmiInMemory(icon)) {
             hasInProcessImage = false
-            return dmiProvider.getDmi(icon)?.let { dmi ->
+            return DmiProvider.getDmi(icon)?.let { dmi ->
                 dmi.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)?.let { s ->
                     RenderInstance(
                         x + tileItem.pixelX, y + tileItem.pixelY,
@@ -37,19 +34,19 @@ class RenderInstanceProvider : EnvCleanable {
                         tileItem
                     )
                 }
-            } ?: RenderInstance(x, y, dmiProvider.placeholderTextureId, tileItem = tileItem)
+            } ?: RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItem = tileItem)
         } else {
             hasInProcessImage = true
 
             if (!locked) {
                 locked = true
                 executor.execute {
-                    dmiProvider.getDmi(icon) // Just to load dmi in memory
+                    DmiProvider.getDmi(icon) // Just to load dmi in memory
                     locked = false
                 }
             }
 
-            return RenderInstance(x, y, dmiProvider.placeholderTextureId, tileItem = tileItem)
+            return RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItem = tileItem)
         }
     }
 }

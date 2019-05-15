@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
@@ -12,9 +11,6 @@ import org.lwjgl.opengl.GL11.*
 import kotlin.concurrent.thread
 
 class MapGLRenderer(val view: MapCanvasView) {
-
-    private val visualComposer by diInstance<VisualComposer>()
-    private val dmiProvider by diInstance<DmiProvider>()
 
     private var glInitialized = false
 
@@ -67,10 +63,10 @@ class MapGLRenderer(val view: MapCanvasView) {
             glInitialized = true
             Display.setParent(view.canvas)
             Display.create()
-            dmiProvider.initTextures()
+            DmiProvider.initTextures()
             startRenderLoop()  // this is where the magic happens
-            dmiProvider.clearTextures()
-            visualComposer.clearCache()
+            DmiProvider.clearTextures()
+            VisualComposer.clearCache()
             Display.destroy()
             glInitialized = false
         }
@@ -116,7 +112,7 @@ class MapGLRenderer(val view: MapCanvasView) {
         val horTilesNum = (getViewWidth() / iconSize + 0.5f).toInt()
         val verTilesNum = (getViewHeight() / iconSize + 0.5f).toInt()
 
-        val renderInstances = visualComposer.composeFrame(selectedMap!!, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
+        val renderInstances = VisualComposer.composeFrame(selectedMap!!, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
 
         glEnable(GL_TEXTURE_2D)
@@ -158,7 +154,7 @@ class MapGLRenderer(val view: MapCanvasView) {
         glDisable(GL_TEXTURE_2D)
 
         // Postponed images will be loaded in next frame
-        if (visualComposer.hasIncompleteJob) {
+        if (VisualComposer.hasIncompleteJob) {
             Frame.update()
         }
 

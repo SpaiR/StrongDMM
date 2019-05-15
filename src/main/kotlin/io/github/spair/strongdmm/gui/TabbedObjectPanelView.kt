@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.EnvCleanable
@@ -10,10 +9,7 @@ import java.awt.FlowLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class TabbedObjectPanelView : View, EnvCleanable {
-
-    private val objectTreeView by diInstance<ObjectTreeView>()
-    private val instanceListView by diInstance<InstanceListView>()
+object TabbedObjectPanelView : View, EnvCleanable {
 
     private val tabbedPanel = JTabbedPane()
 
@@ -24,14 +20,15 @@ class TabbedObjectPanelView : View, EnvCleanable {
 
     override fun clean() {
         tabbedPanel.setTitleAt(1, "Instance (empty)")
+        typeField.text = "no type selected"
     }
 
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             preferredSize = Dimension(350, Int.MAX_VALUE)
             add(tabbedPanel.apply {
-                addTab("Tree", objectTreeView.initComponent())
-                addTab("Instance (empty)", instanceListView.initComponent())
+                addTab("Tree", ObjectTreeView.initComponent())
+                addTab("Instance (empty)", InstanceListView.initComponent())
             })
             add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
                 add(JLabel("<html><b>Type:</b></html>"))
@@ -46,9 +43,5 @@ class TabbedObjectPanelView : View, EnvCleanable {
 
     fun setType(type: String) {
         typeField.text = type
-    }
-
-    fun clearType() {
-        typeField.text = "no type selected"
     }
 }

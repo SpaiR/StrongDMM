@@ -1,20 +1,18 @@
 package io.github.spair.strongdmm.logic
 
 import io.github.spair.dmm.io.reader.DmmReader
-import io.github.spair.strongdmm.diDirectAll
-import io.github.spair.strongdmm.diInstance
+import io.github.spair.strongdmm.gui.TabbedObjectPanelView
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import java.io.File
 
 object Environment {
-
-    private val objectTreeView by diInstance<ObjectTreeView>()
-    private val mapCanvasView by diInstance<MapCanvasView>()
 
     lateinit var dme: Dme
     lateinit var absoluteRootPath: String
@@ -22,8 +20,7 @@ object Environment {
 
     fun parseAndPrepareEnv(dmeFile: File) {
         if (Environment::dme.isInitialized) {
-            History.clearActions()
-            diDirectAll<EnvCleanable>().forEach(EnvCleanable::clean)
+            cleanEnvironmentResources()
         }
 
         val s = System.currentTimeMillis()
@@ -31,7 +28,7 @@ object Environment {
         dme = parseDme(dmeFile.absolutePath)
         absoluteRootPath = dmeFile.parentFile.absolutePath
         findAvailableMaps(dmeFile.parentFile)
-        objectTreeView.populateTree(dme)
+        ObjectTreeView.populateTree(dme)
 
         System.gc()
 
@@ -41,7 +38,7 @@ object Environment {
     fun openMap(mapFile: File) {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile.path, dmmData, dme)
-        mapCanvasView.openMap(dmm)
+        MapCanvasView.openMap(dmm)
     }
 
     fun openMap(mapPath: String) {
@@ -58,5 +55,14 @@ object Environment {
         }
 
         availableMaps = mapPaths
+    }
+
+    private fun cleanEnvironmentResources() {
+        History.clearActions()
+        MapCanvasView.clean()
+        ObjectTreeView.clean()
+        InstanceListView.clean()
+        TabbedObjectPanelView.clean()
+        RenderInstanceProvider.clean()
     }
 }

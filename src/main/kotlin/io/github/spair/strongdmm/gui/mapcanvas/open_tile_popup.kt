@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.mapcanvas
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
@@ -17,21 +16,17 @@ fun MapGLRenderer.openTilePopup() {
         return
     }
 
-    val dmiProvider by diInstance<DmiProvider>()
-    val instanceListView by diInstance<InstanceListView>()
-    val objectTreeView by diInstance<ObjectTreeView>()
-
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         selectedMap!!.getTile(xMouseMap, yMouseMap)!!.tileItems.forEach { tileItem ->
             val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
 
-            dmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
+            DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
                 menu.icon = spite.scaledIcon
             }
 
             menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
                 addActionListener {
-                    objectTreeView.findAndSelectItemInstance(tileItem)
+                    ObjectTreeView.findAndSelectItemInstance(tileItem)
                 }
             })
 
@@ -39,7 +34,7 @@ fun MapGLRenderer.openTilePopup() {
                 addActionListener {
                     if (ViewVariablesDialog(tileItem).open()) {
                         Frame.update(true)
-                        instanceListView.updateSelectedInstanceInfo()
+                        InstanceListView.updateSelectedInstanceInfo()
                     }
                 }
             }

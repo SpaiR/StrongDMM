@@ -1,6 +1,5 @@
 package io.github.spair.strongdmm.gui.instancelist
 
-import io.github.spair.strongdmm.diInstance
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
@@ -15,10 +14,7 @@ import java.awt.FlowLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class InstanceListView : View, EnvCleanable {
-
-    private val mapCanvasView by diInstance<MapCanvasView>()
-    private val tabbedObjectPanelView by diInstance<TabbedObjectPanelView>()
+object InstanceListView : View, EnvCleanable {
 
     private var selectedInstance: ItemInstance? = null
 
@@ -79,7 +75,7 @@ class InstanceListView : View, EnvCleanable {
         selectedInstance = initialInstance
         items.add(initialInstance)
 
-        mapCanvasView.getSelectedMap()?.let { dmm ->
+        MapCanvasView.getSelectedMap()?.let { dmm ->
             dmm.getAllTileItemsByType(type).forEach {
                 items.add(ItemInstance(
                     it.getVar(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)
@@ -93,7 +89,7 @@ class InstanceListView : View, EnvCleanable {
         }
 
         instanceList.selectedIndex = 0
-        tabbedObjectPanelView.setInstanceCount(items.size)
+        TabbedObjectPanelView.setInstanceCount(items.size)
     }
 
     fun updateSelectedInstanceInfo() {
