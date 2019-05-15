@@ -30,6 +30,14 @@ fun MapGLRenderer.openTilePopup() {
                 }
             })
 
+            menu.add(JMenuItem("Delete")).apply {
+                addActionListener {
+                    selectedMap!!.deleteTileItem(tileItem)
+                    Frame.update(true)
+                    InstanceListView.updateSelectedInstanceInfo()
+                }
+            }
+
             menu.add(JMenuItem("View Variables")).apply {
                 addActionListener {
                     if (ViewVariablesDialog(tileItem).open()) {

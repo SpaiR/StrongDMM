@@ -34,11 +34,15 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
     }
 
-    fun addInstanceToMap(itemInstance: ItemInstance, x: Int, y: Int) {
+    fun addInstance(itemInstance: ItemInstance, x: Int, y: Int) {
         getTile(x, y)?.let { tile ->
             val dmeItem = Environment.dme.getItem(itemInstance.type)!!
             tile.tileItems.add(TileItem(dmeItem, x, y, itemInstance.customVars.toMutableMap()))
         }
+    }
+
+    fun deleteTileItem(tileItem: TileItem) {
+        getTile(tileItem.x, tileItem.y)!!.tileItems.remove(tileItem)
     }
 
     fun getTile(x: Int, y: Int) = if (x in 1..maxX && y in 1..maxY) tiles[y - 1][x - 1] else null
