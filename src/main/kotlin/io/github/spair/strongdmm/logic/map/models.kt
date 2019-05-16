@@ -37,10 +37,10 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
     fun placeTileItem(tileItem: TileItem) {
         val tile = getTile(tileItem.x, tileItem.y)!!
 
-        // Specific BYOND behaviour: tile can have only one area or turf
+        // Specific BYOND behaviour: tile can has only one area or turf
         val typeToSanitize = when {
             tileItem.isType(TYPE_AREA) -> TYPE_AREA
-            tileItem.isType(TYPE_TURF) -> TYPE_AREA
+            tileItem.isType(TYPE_TURF) -> TYPE_TURF
             else -> null
         }
 
@@ -59,7 +59,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
     fun deleteTileItem(tileItem: TileItem) {
         getTile(tileItem.x, tileItem.y)!!.tileItems.remove(tileItem)
 
-        // Specific BYOND behaviour: tile always SHOULD has turf or area
+        // Specific BYOND behaviour: tile always should has turf or area
         val varToGetItemType = when {
             tileItem.isType(TYPE_AREA) -> VAR_AREA
             tileItem.isType(TYPE_TURF) -> VAR_TURF

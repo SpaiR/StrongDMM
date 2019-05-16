@@ -12,10 +12,12 @@ import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.TileItem
+import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
 import javax.swing.JMenuItem
+import javax.swing.JSeparator
 
 fun MapGLRenderer.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
@@ -23,7 +25,41 @@ fun MapGLRenderer.openTilePopup() {
     }
 
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
-        selectedMap!!.getTile(xMouseMap, yMouseMap)!!.tileItems.sortedWith(TileItemsPopupComparator()).forEach { tileItem ->
+        val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
+
+        JMenuItem("Cut").apply {
+            popup.add(this)
+            addActionListener {
+                TileOperation.cut(selectedMap!!, tile)
+                Frame.update(true)
+            }
+        }
+        JMenuItem("Copy").apply {
+            popup.add(this)
+            addActionListener {
+                TileOperation.copy(tile)
+            }
+        }
+        JMenuItem("Paste").apply {
+            isEnabled = TileOperation.hasTileInBuffer()
+            popup.add(this)
+            addActionListener {
+                TileOperation.paste(selectedMap!!, tile.x, tile.y)
+                Frame.update(true)
+            }
+        }
+        JMenuItem("Delete").apply {
+            popup.add(this)
+            addActionListener {
+                TileOperation.delete(selectedMap!!, tile)
+                Frame.update(true)
+            }
+        }
+
+        popup.add(JSeparator())
+
+        // Tile items
+        tile.tileItems.sortedWith(TileItemsPopupComparator()).forEach { tileItem ->
             val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
 
             DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
