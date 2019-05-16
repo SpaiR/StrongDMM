@@ -10,6 +10,7 @@ import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.TileReplaceAction
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.logic.map.TileOperation
@@ -30,6 +31,7 @@ fun MapGLRenderer.openTilePopup() {
         JMenuItem("Cut").apply {
             popup.add(this)
             addActionListener {
+                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.cut(selectedMap!!, tile)
                 Frame.update(true)
             }
@@ -44,6 +46,7 @@ fun MapGLRenderer.openTilePopup() {
             isEnabled = TileOperation.hasTileInBuffer()
             popup.add(this)
             addActionListener {
+                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.paste(selectedMap!!, tile.x, tile.y)
                 Frame.update(true)
             }
@@ -51,6 +54,7 @@ fun MapGLRenderer.openTilePopup() {
         JMenuItem("Delete").apply {
             popup.add(this)
             addActionListener {
+                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.delete(selectedMap!!, tile)
                 Frame.update(true)
             }
