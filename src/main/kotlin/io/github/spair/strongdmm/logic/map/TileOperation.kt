@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.logic.map
 
 object TileOperation {
 
-    private var tileObjectsBuffer = mutableListOf<TileItem>()
+    private var tileObjectsBuffer = listOf<TileItem>()
 
     fun hasTileInBuffer() = tileObjectsBuffer.isNotEmpty()
 
@@ -12,19 +12,19 @@ object TileOperation {
     }
 
     fun copy(tile: Tile) {
-        tileObjectsBuffer = tile.tileItems.toMutableList()
+        tileObjectsBuffer = tile.getTileItems()
     }
 
     fun paste(map: Dmm, x: Int, y: Int) {
         map.getTile(x, y)?.let { tile ->
-            tile.tileItems.clear()
+            tile.clearTileItems()
             tileObjectsBuffer.forEach { tileItem ->
-                tile.tileItems.add(TileItem(tileItem.dmeItem, x, y, tileItem.customVars.toMutableMap()))
+                tile.addTileItem(TileItem(tileItem.dmeItem, x, y, tileItem.customVars))
             }
         }
     }
 
     fun delete(map: Dmm, tile: Tile) {
-        tile.tileItems.toList().forEach { map.deleteTileItem(it) }
+        tile.getTileItems().forEach { map.deleteTileItem(it) }
     }
 }

@@ -12,7 +12,7 @@ fun saveMap(dmm: Dmm) {
     // sanitize custom vars from values equals to defined in code
     for (x in 1..dmm.maxX) {
         for (y in 1..dmm.maxY) {
-            dmm.getTile(x, y)!!.tileItems.forEach { tileItem ->
+            dmm.getTile(x, y)!!.forEach { tileItem ->
                 tileItem.customVars.keys.toSet().forEach { name ->
                     if (tileItem.customVars[name] == tileItem.dmeItem.getVar(name)) {
                         tileItem.customVars.remove(name)

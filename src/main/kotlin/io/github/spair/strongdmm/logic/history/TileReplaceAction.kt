@@ -8,13 +8,13 @@ class TileReplaceAction(private val map: Dmm, tile: Tile) : Undoable {
 
     private val x = tile.x
     private val y = tile.y
-    private val tileObjects = tile.tileItems.toList()
+    private val tileObjects = tile.getTileItems()
 
     override fun doAction(): Undoable {
         val tile = map.getTile(x, y)!!
         val reverseAction = TileReplaceAction(map, tile)
-        tile.tileItems.clear()
-        tile.tileItems.addAll(tileObjects)
+        tile.clearTileItems()
+        tile.addTileItems(tileObjects)
         Frame.update(true)
         return reverseAction
     }

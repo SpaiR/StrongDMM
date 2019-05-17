@@ -18,7 +18,7 @@ const val NORTHWEST = 9
 const val SOUTHEAST = 6
 const val SOUTHWEST = 10
 
-data class Dmi(
+class Dmi(
     val atlas: BufferedImage,
     val spriteWidth: Int,
     val spriteHeight: Int,
@@ -31,7 +31,7 @@ data class Dmi(
     fun getIconState(iconState: String) = iconStates[iconState] ?: iconStates[""]
 }
 
-data class IconState(val name: String, val dirs: Int, val frames: Int, val sprites: List<IconSprite>) {
+class IconState(val name: String, val dirs: Int, val frames: Int, val sprites: List<IconSprite>) {
 
     fun getIconSprite() = getIconSprite(SOUTH)
     fun getIconSprite(dir: Int) = getIconSprite(dir, 0)

@@ -8,8 +8,8 @@ import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
 import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.TileItem
@@ -28,42 +28,41 @@ fun MapGLRenderer.openTilePopup() {
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
 
-        JMenuItem("Cut").apply {
-            popup.add(this)
+        popup.add(JMenuItem("Cut").apply {
             addActionListener {
                 History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.cut(selectedMap!!, tile)
                 Frame.update(true)
             }
-        }
-        JMenuItem("Copy").apply {
-            popup.add(this)
+        })
+
+        popup.add(JMenuItem("Copy").apply {
             addActionListener {
                 TileOperation.copy(tile)
             }
-        }
-        JMenuItem("Paste").apply {
+        })
+
+        popup.add(JMenuItem("Paste").apply {
             isEnabled = TileOperation.hasTileInBuffer()
-            popup.add(this)
             addActionListener {
                 History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.paste(selectedMap!!, tile.x, tile.y)
                 Frame.update(true)
             }
-        }
-        JMenuItem("Delete").apply {
-            popup.add(this)
+        })
+
+        popup.add(JMenuItem("Delete").apply {
             addActionListener {
                 History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
                 TileOperation.delete(selectedMap!!, tile)
                 Frame.update(true)
             }
-        }
+        })
 
         popup.add(JSeparator())
 
         // Tile items
-        tile.tileItems.sortedWith(TileItemsPopupComparator()).forEach { tileItem ->
+        tile.getTileItems().sortedWith(TileItemsPopupComparator()).forEach { tileItem ->
             val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
 
             DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
@@ -79,7 +78,7 @@ fun MapGLRenderer.openTilePopup() {
             menu.add(JMenuItem("Delete")).apply {
                 addActionListener {
                     selectedMap!!.deleteTileItem(tileItem)
-                    History.addUndoAction(DeleteTileItemAction(selectedMap!!, tileItem))
+                    History.addUndoAction(PlaceTileItemAction(selectedMap!!, tileItem))
                     Frame.update(true)
                     InstanceListView.updateSelectedInstanceInfo()
                 }

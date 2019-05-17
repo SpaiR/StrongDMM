@@ -75,7 +75,7 @@ object VisualComposer {
         // Sort items on the same layer
         for (plane in planesLayers.values) {
             for (layer in plane.values) {
-                Collections.sort(layer, RenderComparator)
+                layer.sortWith(RenderComparator)
             }
         }
 

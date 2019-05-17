@@ -197,7 +197,7 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
     override fun getColumnName(column: Int) = if (column == 0) "Name" else "Value"
 }
 
-private data class Var(val name: Val, val value: Val)
+private class Var(val name: Val, val value: Val)
 
 private interface Val {
     fun get(): String

@@ -65,8 +65,9 @@ object InstanceListView : View, EnvCleanable {
     fun findAndSelectInstancesByType(type: String) {
         val items = LinkedHashSet<ItemInstance>()
         val dmeItem = Environment.dme.getItem(type)!!
+
         val initialInstance = ItemInstance(
-            dmeItem.getVar(VAR_NAME) ?: "",
+            dmeItem.getVarText(VAR_NAME) ?: "",
             dmeItem.getVarText(VAR_ICON) ?: "",
             dmeItem.getVarText(VAR_ICON_STATE) ?: "",
             dmeItem.type
@@ -75,26 +76,29 @@ object InstanceListView : View, EnvCleanable {
         selectedInstance = initialInstance
         items.add(initialInstance)
 
+        val instances = mutableSetOf<ItemInstance>()
+
         MapCanvasView.getSelectedMap()?.let { dmm ->
             dmm.getAllTileItemsByType(type).forEach {
-                items.add(ItemInstance(
-                    it.getVar(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)
+                instances.add(ItemInstance(
+                    it.getVarText(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)
                 )
             }
         }
 
-        with(instanceList.model as DefaultListModel) {
-            clear()
-            items.forEach { addElement(it) }
-        }
+        items.addAll(instances.sortedBy { it.name }.sortedBy { it.customVars.size }.sortedBy { it.iconState })
+
+        val model = instanceList.model as DefaultListModel
+        model.clear()
+        items.forEach(model::addElement)
 
         instanceList.selectedIndex = 0
         TabbedObjectPanelView.setInstanceCount(items.size)
     }
 
     fun updateSelectedInstanceInfo() {
-        if (selectedInstance != null) {
-            findAndSelectInstancesByType(selectedInstance!!.type)
+        selectedInstance?.let {
+            findAndSelectInstancesByType(it.type)
         }
     }
 

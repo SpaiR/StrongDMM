@@ -192,6 +192,6 @@ object DmiProvider {
         return Metadata(width, height, states)
     }
 
-    private data class Metadata(val spriteWidth: Int, val spriteHeight: Int, val states: List<MetadataState>)
-    private data class MetadataState(val name: String, val dirs: Int, val frames: Int)
+    private class Metadata(val spriteWidth: Int, val spriteHeight: Int, val states: List<MetadataState>)
+    private class MetadataState(val name: String, val dirs: Int, val frames: Int)
 }
