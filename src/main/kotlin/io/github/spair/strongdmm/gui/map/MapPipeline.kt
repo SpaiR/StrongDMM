@@ -1,5 +1,7 @@
 package io.github.spair.strongdmm.gui.map
 
+import io.github.spair.strongdmm.gui.map.select.AddTileSelect
+import io.github.spair.strongdmm.gui.map.select.TileSelect
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
@@ -13,6 +15,8 @@ import kotlin.concurrent.thread
 class MapPipeline(val view: MapView) {
 
     private var glInitialized = false
+
+    var tileSelect: TileSelect = AddTileSelect()
 
     var selectedMap: Dmm? = null
     var iconSize = 32
@@ -41,7 +45,7 @@ class MapPipeline(val view: MapView) {
     var yMouse = 0f
 
     // When true, while next rendering loop, top item under the mouse will be selected
-    var selectItem = false
+    var isSelectItem = false
 
     init {
         MouseProcessor.mapPipeline = this
@@ -97,6 +101,7 @@ class MapPipeline(val view: MapView) {
                 // actual rendering
                 renderMap()
                 renderMousePosition()
+                tileSelect.render(iconSize)
 
                 Display.update(false)
             }
@@ -158,8 +163,8 @@ class MapPipeline(val view: MapView) {
             Frame.update()
         }
 
-        if (selectItem) {
-            selectItem = false
+        if (isSelectItem) {
+            isSelectItem = false
             findAndSelectItemUnderMouse(renderInstances)
         }
     }

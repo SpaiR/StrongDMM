@@ -14,7 +14,11 @@ object Frame {
     private var updateCounter = DEFAULT_FRAMES_TO_UPD
     private var isForced = false  // Will enforce VisualComposer to provide new render instances
 
-    fun update(isForced: Boolean = false) {
+    fun update() {
+        updateCounter = DEFAULT_FRAMES_TO_UPD
+    }
+
+    fun update(isForced: Boolean) {
         this.isForced = isForced
         updateCounter = DEFAULT_FRAMES_TO_UPD
     }

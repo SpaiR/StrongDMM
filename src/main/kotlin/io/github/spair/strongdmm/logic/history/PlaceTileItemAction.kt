@@ -6,8 +6,8 @@ import io.github.spair.strongdmm.logic.map.TileItem
 
 class PlaceTileItemAction(private val map: Dmm, private val tileItem: TileItem) : Undoable {
     override fun doAction(): Undoable {
-        map.placeTileItem(tileItem)
+        val reverseAction = map.placeTileItemWithUndoable(tileItem)
         Frame.update(true)
-        return DeleteTileItemAction(map, tileItem)
+        return reverseAction
     }
 }

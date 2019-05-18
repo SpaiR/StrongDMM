@@ -5,6 +5,9 @@ import io.github.spair.strongdmm.gui.instancelist.ItemInstance
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.SOUTH
+import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
+import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.history.Undoable
 
 const val OUT_OF_BOUNDS = -1
 
@@ -34,9 +37,9 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
     }
 
-    // optional return item item is one of replaceable type (turf or area)
+    // optional return item is one of replaceable type (turf or area)
     fun placeTileItem(tileItem: TileItem): TileItem? {
-        val tile = getTile(tileItem.x, tileItem.y)!!
+        val tile = getTile(tileItem.x, tileItem.y) ?: return null
 
         // Specific BYOND behaviour: tile can have only one area or turf
         val typeToSanitize = when {
@@ -59,6 +62,14 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
         tile.addTileItem(tileItem)
         return removedItem
+    }
+
+    // if item from `placeTileItem` is not null then it means that we placed replaceable type (turf or area)
+    // to undo this action we need to place removed item back
+    fun placeTileItemWithUndoable(tileItem: TileItem): Undoable {
+        return placeTileItem(tileItem)?.let {
+            PlaceTileItemAction(this, it)
+        } ?: DeleteTileItemAction(this, tileItem)
     }
 
     fun deleteTileItem(tileItem: TileItem) {
