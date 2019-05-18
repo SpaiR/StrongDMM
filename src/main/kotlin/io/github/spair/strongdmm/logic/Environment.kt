@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.logic
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
-import io.github.spair.strongdmm.gui.mapcanvas.MapView
+import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme

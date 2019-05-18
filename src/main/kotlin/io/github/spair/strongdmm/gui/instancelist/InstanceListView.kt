@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.instancelist
 
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
-import io.github.spair.strongdmm.gui.mapcanvas.MapView
+import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.VAR_ICON

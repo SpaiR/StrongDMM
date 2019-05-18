@@ -1,6 +1,6 @@
 package io.github.spair.strongdmm.logic.dme
 
-class Dme(val dmeItems: Map<String, DmeItem?>) {
+class Dme(private val dmeItems: Map<String, DmeItem?>) {
     fun getItem(type: String) = dmeItems[type]
 }
 

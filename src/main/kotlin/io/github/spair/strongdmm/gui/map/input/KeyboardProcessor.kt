@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui.mapcanvas.input
+package io.github.spair.strongdmm.gui.map.input
 
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.menubar.Shortcut

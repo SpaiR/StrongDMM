@@ -1,7 +1,7 @@
-package io.github.spair.strongdmm.gui.mapcanvas
+package io.github.spair.strongdmm.gui.map
 
-import io.github.spair.strongdmm.gui.mapcanvas.input.KeyboardProcessor
-import io.github.spair.strongdmm.gui.mapcanvas.input.MouseProcessor
+import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
+import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS

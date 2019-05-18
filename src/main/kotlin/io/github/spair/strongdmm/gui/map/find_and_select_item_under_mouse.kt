@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui.mapcanvas
+package io.github.spair.strongdmm.gui.map
 
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dmi.DmiProvider

@@ -1,9 +1,9 @@
-package io.github.spair.strongdmm.gui.mapcanvas.input
+package io.github.spair.strongdmm.gui.map.input
 
-import io.github.spair.strongdmm.gui.mapcanvas.Frame
-import io.github.spair.strongdmm.gui.mapcanvas.MapPipeline
-import io.github.spair.strongdmm.gui.mapcanvas.placeItemOnMap
-import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
+import io.github.spair.strongdmm.gui.map.Frame
+import io.github.spair.strongdmm.gui.map.MapPipeline
+import io.github.spair.strongdmm.gui.map.placeItemOnMap
+import io.github.spair.strongdmm.gui.map.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 

@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui.mapcanvas
+package io.github.spair.strongdmm.gui.map
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View

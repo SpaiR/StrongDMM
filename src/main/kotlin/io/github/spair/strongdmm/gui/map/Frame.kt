@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui.mapcanvas
+package io.github.spair.strongdmm.gui.map
 
 // Class to control frame update stuff.
 // Every time ::update method called, OpenGL will update map canvas during next two frames.
