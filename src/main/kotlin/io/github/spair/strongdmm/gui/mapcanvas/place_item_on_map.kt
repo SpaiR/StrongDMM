@@ -6,7 +6,7 @@ import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.map.TileItem
 
-fun MapGLRenderer.placeItemOnMap() {
+fun MapPipeline.placeItemOnMap() {
     selectedMap?.let { map ->
         InstanceListView.selectedInstance?.let { selectedInstance ->
             val tileItem = TileItem.fromInstance(selectedInstance, xMouseMap, yMouseMap)

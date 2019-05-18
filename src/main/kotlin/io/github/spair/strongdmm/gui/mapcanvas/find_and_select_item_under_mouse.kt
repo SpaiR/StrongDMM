@@ -8,7 +8,7 @@ import java.util.*
 
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
 
-fun MapGLRenderer.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
+fun MapPipeline.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
     val instances = mutableListOf<RenderInstance>()
 
     renderInstances.values.forEach { plane ->

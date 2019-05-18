@@ -10,7 +10,7 @@ import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
 import kotlin.concurrent.thread
 
-class MapGLRenderer(val view: MapCanvasView) {
+class MapPipeline(val view: MapView) {
 
     private var glInitialized = false
 
@@ -44,7 +44,7 @@ class MapGLRenderer(val view: MapCanvasView) {
     var selectItem = false
 
     init {
-        MouseProcessor.renderer = this
+        MouseProcessor.mapPipeline = this
     }
 
     fun switchMap(map: Dmm) {

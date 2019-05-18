@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.logic
 import io.github.spair.dmm.io.reader.DmmReader
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.gui.mapcanvas.MapView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
@@ -38,7 +38,7 @@ object Environment {
     fun openMap(mapFile: File) {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile.path, dmmData, dme)
-        MapCanvasView.openMap(dmm)
+        MapView.openMap(dmm)
     }
 
     fun openMap(mapPath: String) {
@@ -59,7 +59,7 @@ object Environment {
 
     private fun cleanEnvironmentResources() {
         History.clearActions()
-        MapCanvasView.clean()
+        MapView.clean()
         ObjectTreeView.clean()
         InstanceListView.clean()
         TabbedObjectPanelView.clean()

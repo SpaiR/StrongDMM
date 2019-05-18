@@ -20,7 +20,7 @@ import javax.swing.JMenu
 import javax.swing.JMenuItem
 import javax.swing.JSeparator
 
-fun MapGLRenderer.openTilePopup() {
+fun MapPipeline.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
         return
     }

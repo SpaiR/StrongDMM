@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.instancelist
 
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.View
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.gui.mapcanvas.MapView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.VAR_ICON
@@ -78,7 +78,7 @@ object InstanceListView : View, EnvCleanable {
 
         val instances = mutableSetOf<ItemInstance>()
 
-        MapCanvasView.getSelectedMap()?.let { dmm ->
+        MapView.getSelectedMap()?.let { dmm ->
             dmm.getAllTileItemsByType(type).forEach {
                 instances.add(ItemInstance(
                     it.getVarText(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)

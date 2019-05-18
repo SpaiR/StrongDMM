@@ -14,16 +14,16 @@ import javax.swing.JPanel
 import javax.swing.JPopupMenu
 import javax.swing.SwingUtilities
 
-object MapCanvasView : View, EnvCleanable {
+object MapView : View, EnvCleanable {
 
     val canvas = Canvas().apply { isVisible = true }
 
     private var tilePopup: JPopupMenu? = null
-    private val mapGLRenderer = MapGLRenderer(this)
+    private val pipeline = MapPipeline(this)
 
     override fun clean() {
         tryCloseTilePopup()
-        mapGLRenderer.selectedMap = null
+        pipeline.selectedMap = null
     }
 
     override fun initComponent(): JComponent {
@@ -47,7 +47,7 @@ object MapCanvasView : View, EnvCleanable {
     }
 
     fun openMap(dmm: Dmm) {
-        mapGLRenderer.switchMap(dmm)
+        pipeline.switchMap(dmm)
         InstanceListView.updateSelectedInstanceInfo()
     }
 
@@ -72,5 +72,5 @@ object MapCanvasView : View, EnvCleanable {
         }
     }
 
-    fun getSelectedMap() = mapGLRenderer.selectedMap
+    fun getSelectedMap() = pipeline.selectedMap
 }

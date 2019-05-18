@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.gui.mapcanvas.input
 
 import io.github.spair.strongdmm.gui.mapcanvas.Frame
-import io.github.spair.strongdmm.gui.mapcanvas.MapGLRenderer
+import io.github.spair.strongdmm.gui.mapcanvas.MapPipeline
 import io.github.spair.strongdmm.gui.mapcanvas.placeItemOnMap
 import io.github.spair.strongdmm.gui.mapcanvas.openTilePopup
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
@@ -12,45 +12,46 @@ import org.lwjgl.input.Mouse
 // For other cases (common swing flow) event driven developments is used.
 object MouseProcessor {
 
-    lateinit var renderer: MapGLRenderer
+    lateinit var mapPipeline: MapPipeline
 
     private const val LMB = 0
     private const val RMB = 1
     private const val MMB = 2
 
     fun fire() {
-        renderer.updateMousePosition()
+        mapPipeline.updateMousePosition()
 
         if (Mouse.isButtonDown(MMB)) {
-            renderer.updateViewAndMapOffset()
+            mapPipeline.updateViewAndMapOffset()
         }
 
         Mouse.getDWheel().takeIf { it != 0 }?.let {
-            renderer.updateZoom(it > 0)
+            mapPipeline.updateZoom(it > 0)
         }
 
+        // clicks handling
         while (Mouse.next()) {
             if (Mouse.getEventButtonState()) {
-                if (renderer.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
+                if (mapPipeline.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
                     continue
                 }
 
                 when (Mouse.getEventButton()) {
                     LMB -> {
                         if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown()) {
-                            renderer.selectItem = true
+                            mapPipeline.selectItem = true
                             Frame.update()
                         } else {
-                            renderer.placeItemOnMap()
+                            mapPipeline.placeItemOnMap()
                         }
                     }
-                    RMB -> renderer.openTilePopup()
+                    RMB -> mapPipeline.openTilePopup()
                 }
             }
         }
     }
 
-    private fun MapGLRenderer.updateViewAndMapOffset() {
+    private fun MapPipeline.updateViewAndMapOffset() {
         val x = Mouse.getDX()
         val y = Mouse.getDY()
 
@@ -66,7 +67,7 @@ object MouseProcessor {
         }
     }
 
-    private fun MapGLRenderer.updateZoom(isZoomIn: Boolean) {
+    private fun MapPipeline.updateZoom(isZoomIn: Boolean) {
         if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
             return
         }
@@ -88,12 +89,12 @@ object MouseProcessor {
         Frame.update()
     }
 
-    private fun MapGLRenderer.updateMapOffset() {
+    private fun MapPipeline.updateMapOffset() {
         xMapOff = (-xViewOff / iconSize + 0.5f).toInt()
         yMapOff = (-yViewOff / iconSize + 0.5f).toInt()
     }
 
-    private fun MapGLRenderer.updateMousePosition() {
+    private fun MapPipeline.updateMousePosition() {
         xMouse = Mouse.getX() * viewZoom - xViewOff
         yMouse = Mouse.getY() * viewZoom - yViewOff
 

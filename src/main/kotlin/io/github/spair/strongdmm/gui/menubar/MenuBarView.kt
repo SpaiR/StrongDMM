@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.gui.menubar
 
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.chooseFileDialog
-import io.github.spair.strongdmm.gui.mapcanvas.MapCanvasView
+import io.github.spair.strongdmm.gui.mapcanvas.MapView
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
@@ -108,7 +108,7 @@ object MenuBarView : View {
     }
 
     private fun saveSelectedMapAction() = ActionListener {
-        MapCanvasView.getSelectedMap()?.let { saveMap(it) }
+        MapView.getSelectedMap()?.let { saveMap(it) }
     }
 
     private fun createMenuItem(text: String, isEnabled: Boolean = true): JMenuItem {
