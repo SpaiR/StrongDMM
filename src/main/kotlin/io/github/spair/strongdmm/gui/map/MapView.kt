@@ -3,6 +3,9 @@ package io.github.spair.strongdmm.gui.map
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
+import io.github.spair.strongdmm.gui.map.select.AddTileSelect
+import io.github.spair.strongdmm.gui.map.select.FillTileSelect
+import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
@@ -69,6 +72,13 @@ object MapView : View, EnvCleanable {
                 fillInAction(this)
                 show(canvas, x, y)
             }
+        }
+    }
+
+    fun switchSelectMode(selectType: SelectType) {
+        when (selectType) {
+            SelectType.ADD -> pipeline.tileSelect = AddTileSelect()
+            SelectType.FILL -> pipeline.tileSelect = FillTileSelect()
         }
     }
 

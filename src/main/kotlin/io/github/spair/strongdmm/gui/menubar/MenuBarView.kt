@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.menubar
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.chooseFileDialog
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
@@ -16,15 +17,17 @@ import javax.swing.*
 object MenuBarView : View {
 
     // File items
-    private val openEnvItem = createMenuItem("Open Environment...")
-    private val openMapItem = createMenuItem("Open...", false).addCtrlShortcut('O')
-    private val availableMapsItem = createMenuItem("Open from available", false).addCtrlShiftShortcut('O')
-    private val saveItem = createMenuItem("Save", false).addCtrlShortcut('S')
-    private val exitMenuItem = createMenuItem("Exit").addCtrlShortcut('Q')
+    private val openEnvItem = createButton("Open Environment...")
+    private val openMapItem = createButton("Open...", false).addCtrlShortcut('O')
+    private val availableMapsItem = createButton("Open from available", false).addCtrlShiftShortcut('O')
+    private val saveItem = createButton("Save", false).addCtrlShortcut('S')
+    private val exitMenuItem = createButton("Exit").addCtrlShortcut('Q')
 
     // Edit items
-    private val undoActionItem = createMenuItem("Undo", false).addCtrlShortcut('Z')
-    private val redoActionItem = createMenuItem("Redo", false).addCtrlShiftShortcut('Z')
+    private val undoActionItem = createButton("Undo", false).addCtrlShortcut('Z')
+    private val redoActionItem = createButton("Redo", false).addCtrlShiftShortcut('Z')
+    private val addSelectModeItem = createRadioButton("Add Select Mode", true)
+    private val fillSelectModeItem = createRadioButton("Fill Select Mode")
 
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
@@ -44,6 +47,18 @@ object MenuBarView : View {
 
         undoActionItem.addActionListener { History.undoAction() }
         redoActionItem.addActionListener { History.redoAction() }
+        ButtonGroup().run {
+            add(addSelectModeItem.apply {
+                addActionListener {
+                    MapView.switchSelectMode(SelectType.ADD)
+                }
+            })
+            add(fillSelectModeItem.apply {
+                addActionListener {
+                    MapView.switchSelectMode(SelectType.FILL)
+                }
+            })
+        }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
@@ -59,7 +74,10 @@ object MenuBarView : View {
 
     private fun createEditItems() = arrayOf<JComponent>(
         undoActionItem,
-        redoActionItem
+        redoActionItem,
+        JSeparator(),
+        addSelectModeItem,
+        fillSelectModeItem
     )
 
     fun switchUndo(enabled: Boolean) {
@@ -111,10 +129,15 @@ object MenuBarView : View {
         MapView.getSelectedMap()?.let { saveMap(it) }
     }
 
-    private fun createMenuItem(text: String, isEnabled: Boolean = true): JMenuItem {
+    private fun createButton(text: String, isEnabled: Boolean = true): JMenuItem {
         return JMenuItem(text).apply {
-            font = font.deriveFont(Font.PLAIN)
             this.isEnabled = isEnabled
+        }
+    }
+
+    private fun createRadioButton(text: String, isSelected: Boolean = false): JRadioButtonMenuItem {
+        return JRadioButtonMenuItem(text).apply {
+            this.isSelected = isSelected
         }
     }
 
