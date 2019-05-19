@@ -19,7 +19,7 @@ object Frame {
     }
 
     fun update(isForced: Boolean) {
-        this.isForced = isForced
+        if (isForced) this.isForced = isForced
         updateCounter = DEFAULT_FRAMES_TO_UPD
     }
 

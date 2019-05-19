@@ -143,6 +143,15 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
         tileItems.remove(tileItem)
     }
 
+    fun findTopmostTileItem(typeToFind: String): TileItem? {
+        for (item in tileItems.reversed()) {
+            if (item.isType(typeToFind)) {
+                return item
+            }
+        }
+        return null
+    }
+
     fun clearTileItems() {
         tileItems.clear()
     }

@@ -2,7 +2,12 @@ package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.Frame
-import io.github.spair.strongdmm.logic.history.*
+import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
+import io.github.spair.strongdmm.logic.dme.*
+import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.MultipleAction
+import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11.*
@@ -17,11 +22,49 @@ class AddTileSelect : TileSelect {
             return
         }
 
-        InstanceListView.selectedInstance?.let {
-            val tileItem = TileItem.fromInstance(it, x, y)
+        val isForced = if (KeyboardProcessor.isShiftDown()) {
+            deleteTopmostItem(map, x, y)
+        } else {
+            placeSelectedInstance(map, x, y)
+        }
+
+        Frame.update(isForced)
+    }
+
+    private fun deleteTopmostItem(map: Dmm, x: Int, y: Int): Boolean {
+        val instance = InstanceListView.selectedInstance
+        val tile = map.getTile(x, y)
+
+        if (instance != null && tile != null) {
+            val typeToRemove = when {
+                isType(instance.type, TYPE_TURF) -> TYPE_TURF
+                isType(instance.type, TYPE_AREA) -> TYPE_AREA
+                isType(instance.type, TYPE_MOB) -> TYPE_MOB
+                else -> TYPE_OBJ
+            }
+
+            val topmostItem = tile.findTopmostTileItem(typeToRemove)
+
+            if (topmostItem != null) {
+                map.deleteTileItem(topmostItem)
+                reverseActions.add(PlaceTileItemAction(map, topmostItem))
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun placeSelectedInstance(map: Dmm, x: Int, y: Int): Boolean {
+        val instance = InstanceListView.selectedInstance
+
+        if (instance != null) {
+            val tileItem = TileItem.fromInstance(instance, x, y)
             reverseActions.add(map.placeTileItemWithUndoable(tileItem))
-            Frame.update(true)
-        } ?: Frame.update()
+            return true
+        }
+
+        return false
     }
 
     override fun onStop() {

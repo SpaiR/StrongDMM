@@ -3,23 +3,21 @@ package io.github.spair.strongdmm.gui.map
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import io.github.spair.strongdmm.logic.dme.TYPE_AREA
-import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
-import io.github.spair.strongdmm.logic.dme.TYPE_TURF
-import io.github.spair.strongdmm.logic.dme.VAR_NAME
+import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.history.EditVarsAction
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
+import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
-import io.github.spair.strongdmm.logic.map.TileItem
+import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
 import javax.swing.JMenuItem
-import javax.swing.JSeparator
+import javax.swing.JPopupMenu
 
 fun MapPipeline.openTilePopup() {
     if (xMouseMap == OUT_OF_BOUNDS || yMouseMap == OUT_OF_BOUNDS) {
@@ -29,89 +27,132 @@ fun MapPipeline.openTilePopup() {
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
 
-        popup.add(JMenuItem("Undo").apply {
-            isEnabled = History.hasUndoActions()
-            addActionListener { History.undoAction() }
-        })
+        with(popup) {
+            addResetActions()
+            addSeparator()
+            addTileActions(selectedMap!!, tile)
+            addSeparator()
 
-        popup.add(JMenuItem("Redo").apply {
-            isEnabled = History.hasRedoActions()
-            addActionListener { History.redoAction() }
-        })
+            if (addOptionalSelectedInstanceActions(selectedMap!!, tile)) {
+                addSeparator()
+            }
 
-        popup.add(JSeparator())
+            addTileItemsActions(selectedMap!!, tile)
+        }
+    }
+}
 
-        popup.add(JMenuItem("Cut").apply {
-            addActionListener {
-                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
-                TileOperation.cut(selectedMap!!, tile)
+private fun JPopupMenu.addResetActions() {
+    add(JMenuItem("Undo").apply {
+        isEnabled = History.hasUndoActions()
+        addActionListener { History.undoAction() }
+    })
+
+    add(JMenuItem("Redo").apply {
+        isEnabled = History.hasRedoActions()
+        addActionListener { History.redoAction() }
+    })
+}
+
+private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
+    add(JMenuItem("Cut").apply {
+        addActionListener {
+            History.addUndoAction(TileReplaceAction(map, currentTile))
+            TileOperation.cut(map, currentTile)
+            Frame.update(true)
+        }
+    })
+
+    add(JMenuItem("Copy").apply {
+        addActionListener {
+            TileOperation.copy(currentTile)
+        }
+    })
+
+    add(JMenuItem("Paste").apply {
+        isEnabled = TileOperation.hasTileInBuffer()
+        addActionListener {
+            History.addUndoAction(TileReplaceAction(map, currentTile))
+            TileOperation.paste(map, currentTile.x, currentTile.y)
+            Frame.update(true)
+        }
+    })
+
+    add(JMenuItem("Delete").apply {
+        addActionListener {
+            History.addUndoAction(TileReplaceAction(map, currentTile))
+            TileOperation.delete(map, currentTile)
+            Frame.update(true)
+        }
+    })
+}
+
+private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile: Tile): Boolean {
+    val selectedInstance = InstanceListView.selectedInstance ?: return false
+
+    val selectedType = when {
+        isType(selectedInstance.type, TYPE_TURF) -> TYPE_TURF
+        isType(selectedInstance.type, TYPE_AREA) -> TYPE_AREA
+        isType(selectedInstance.type, TYPE_MOB) -> TYPE_MOB
+        else -> TYPE_OBJ
+    }
+
+    val selectedTypeName = selectedType.substring(1)
+
+    add(JMenuItem("Delete Topmost $selectedTypeName").apply {
+        addActionListener {
+            val topmostItem = currentTile.findTopmostTileItem(selectedType)
+
+            if (topmostItem != null) {
+                map.deleteTileItem(topmostItem)
+                History.addUndoAction(PlaceTileItemAction(map, topmostItem))
                 Frame.update(true)
             }
-        })
+        }
+    })
 
-        popup.add(JMenuItem("Copy").apply {
+    return true
+}
+
+private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
+    currentTile.getTileItems().forEach { tileItem ->
+        val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
+            this@addTileItemsActions.add(this)
+        }
+
+        DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
+            menu.icon = spite.scaledIcon
+        }
+
+        menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
             addActionListener {
-                TileOperation.copy(tile)
+                ObjectTreeView.findAndSelectItemInstance(tileItem)
             }
         })
 
-        popup.add(JMenuItem("Paste").apply {
-            isEnabled = TileOperation.hasTileInBuffer()
+        menu.add(JMenuItem("Reset to Default").apply {
             addActionListener {
-                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
-                TileOperation.paste(selectedMap!!, tile.x, tile.y)
+                History.addUndoAction(EditVarsAction(tileItem))
+                tileItem.reset()
                 Frame.update(true)
+                InstanceListView.updateSelectedInstanceInfo()
             }
         })
 
-        popup.add(JMenuItem("Delete").apply {
+        menu.add(JMenuItem("Delete")).apply {
             addActionListener {
-                History.addUndoAction(TileReplaceAction(selectedMap!!, tile))
-                TileOperation.delete(selectedMap!!, tile)
+                map.deleteTileItem(tileItem)
+                History.addUndoAction(PlaceTileItemAction(map, tileItem))
                 Frame.update(true)
+                InstanceListView.updateSelectedInstanceInfo()
             }
-        })
+        }
 
-        popup.add(JSeparator())
-
-        // Tile items
-        tile.getTileItems().forEach { tileItem ->
-            val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
-
-            DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
-                menu.icon = spite.scaledIcon
-            }
-
-            menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
-                addActionListener {
-                    ObjectTreeView.findAndSelectItemInstance(tileItem)
-                }
-            })
-
-            menu.add(JMenuItem("Reset to Default").apply {
-                addActionListener {
-                    History.addUndoAction(EditVarsAction(tileItem))
-                    tileItem.reset()
+        menu.add(JMenuItem("View Variables")).apply {
+            addActionListener {
+                if (ViewVariablesDialog(tileItem).open()) {
                     Frame.update(true)
                     InstanceListView.updateSelectedInstanceInfo()
-                }
-            })
-
-            menu.add(JMenuItem("Delete")).apply {
-                addActionListener {
-                    selectedMap!!.deleteTileItem(tileItem)
-                    History.addUndoAction(PlaceTileItemAction(selectedMap!!, tileItem))
-                    Frame.update(true)
-                    InstanceListView.updateSelectedInstanceInfo()
-                }
-            }
-
-            menu.add(JMenuItem("View Variables")).apply {
-                addActionListener {
-                    if (ViewVariablesDialog(tileItem).open()) {
-                        Frame.update(true)
-                        InstanceListView.updateSelectedInstanceInfo()
-                    }
                 }
             }
         }
