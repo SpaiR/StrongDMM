@@ -122,15 +122,21 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
 class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>) : Iterable<TileItem> {
 
+    init {
+        tileItems.sortWith(TileObjectsComparator)
+    }
+
     fun getTileItems() = tileItems.toList()
     fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
 
     fun addTileItem(tileItem: TileItem) {
         tileItems.add(tileItem)
+        tileItems.sortWith(TileObjectsComparator)
     }
 
     fun addTileItems(tileItems: Collection<TileItem>) {
         this.tileItems.addAll(tileItems)
+        this.tileItems.sortWith(TileObjectsComparator)
     }
 
     fun removeTileItem(tileItem: TileItem) {
@@ -187,4 +193,15 @@ class TileItem(val dmeItem: DmeItem, val x: Int, val y: Int, customVars: Map<Str
     fun getVarText(name: String): String? = customVars[name]?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) } ?: dmeItem.getVarText(name)
     fun getVarInt(name: String): Int? = customVars[name]?.toIntOrNull() ?: dmeItem.getVarInt(name)
     fun getVarFloat(name: String): Float? = customVars[name]?.toFloatOrNull() ?: dmeItem.getVarFloat(name)
+}
+
+private object TileObjectsComparator : Comparator<TileItem> {
+    override fun compare(o1: TileItem, o2: TileItem): Int {
+        return if (o1.isType(TYPE_AREA)) -1
+        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_OBJ)) 0
+        else if (o1.isType(TYPE_OBJ) && (o2.isType(TYPE_MOB) || o2.isType(TYPE_TURF))) -1
+        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_AREA)) 1
+        else if (o1.isType(TYPE_MOB) && o2.isType(TYPE_TURF)) -1
+        else 1
+    }
 }

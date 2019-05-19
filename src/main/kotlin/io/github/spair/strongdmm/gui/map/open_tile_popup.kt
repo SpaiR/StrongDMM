@@ -62,7 +62,7 @@ fun MapPipeline.openTilePopup() {
         popup.add(JSeparator())
 
         // Tile items
-        tile.getTileItems().sortedWith(TileItemsPopupComparator()).forEach { tileItem ->
+        tile.getTileItems().forEach { tileItem ->
             val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply { popup.add(this) }
 
             DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
@@ -93,15 +93,5 @@ fun MapPipeline.openTilePopup() {
                 }
             }
         }
-    }
-}
-
-private class TileItemsPopupComparator : Comparator<TileItem> {
-    override fun compare(o1: TileItem, o2: TileItem): Int {
-        return if (o1.isType(TYPE_AREA)) -1
-        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_OBJ)) 0
-        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_TURF)) -1
-        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_AREA)) 1
-        else 1
     }
 }
