@@ -28,6 +28,18 @@ fun MapPipeline.openTilePopup() {
     view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
 
+        popup.add(JMenuItem("Undo").apply {
+            isEnabled = History.hasUndoActions()
+            addActionListener { History.undoAction() }
+        })
+
+        popup.add(JMenuItem("Redo").apply {
+            isEnabled = History.hasRedoActions()
+            addActionListener { History.redoAction() }
+        })
+
+        popup.add(JSeparator())
+
         popup.add(JMenuItem("Cut").apply {
             addActionListener {
                 History.addUndoAction(TileReplaceAction(selectedMap!!, tile))

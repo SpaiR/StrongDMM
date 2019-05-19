@@ -39,4 +39,7 @@ object History {
         UNDO_STACK.clear()
         MenuBarView.switchUndo(false)
     }
+
+    fun hasUndoActions() = UNDO_STACK.isNotEmpty()
+    fun hasRedoActions() = REDO_STACK.isNotEmpty()
 }

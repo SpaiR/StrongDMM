@@ -25,8 +25,11 @@ class AddTileSelect : TileSelect {
     }
 
     override fun onStop() {
-        History.addUndoAction(MultipleAction(reverseActions.toList()))
-        reverseActions.clear()
+        if (reverseActions.isNotEmpty()) {
+            History.addUndoAction(MultipleAction(reverseActions.toList()))
+            reverseActions.clear()
+        }
+
         coordsBuffer.clear()
         Frame.update()
     }
