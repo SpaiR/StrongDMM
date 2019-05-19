@@ -187,6 +187,11 @@ class TileItem(val dmeItem: DmeItem, val x: Int, val y: Int, customVars: Map<Str
         color = getVarText(VAR_COLOR) ?: ""
     }
 
+    fun reset() {
+        customVars.clear()
+        updateFields()
+    }
+
     fun isType(type: String) = dmeItem.isType(type)
 
     fun getVar(name: String): String? = customVars[name] ?: dmeItem.getVar(name)

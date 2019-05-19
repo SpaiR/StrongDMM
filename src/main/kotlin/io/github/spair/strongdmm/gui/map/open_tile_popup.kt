@@ -8,6 +8,7 @@ import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
 import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
+import io.github.spair.strongdmm.logic.history.EditVarsAction
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
@@ -84,6 +85,15 @@ fun MapPipeline.openTilePopup() {
             menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
                 addActionListener {
                     ObjectTreeView.findAndSelectItemInstance(tileItem)
+                }
+            })
+
+            menu.add(JMenuItem("Reset to Default").apply {
+                addActionListener {
+                    History.addUndoAction(EditVarsAction(tileItem))
+                    tileItem.reset()
+                    Frame.update(true)
+                    InstanceListView.updateSelectedInstanceInfo()
                 }
             })
 
