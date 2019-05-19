@@ -40,6 +40,11 @@ object MouseProcessor {
                 xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > map.maxX) OUT_OF_BOUNDS else xMouseMapNew
                 yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > map.maxY) OUT_OF_BOUNDS else yMouseMapNew
 
+                if (xMouseMapNew == OUT_OF_BOUNDS || yMouseMapNew == OUT_OF_BOUNDS) {
+                    xMouseMapNew = OUT_OF_BOUNDS
+                    yMouseMapNew = OUT_OF_BOUNDS
+                }
+
                 if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
                     xMouseMap = xMouseMapNew
                     yMouseMap = yMouseMapNew
@@ -63,7 +68,7 @@ object MouseProcessor {
                 if (tileChanged || mapPipeline.tileSelect.isEmpty()) {
                     tileChanged = false
                     mapPipeline.selectedMap?.let {
-                        mapPipeline.tileSelect.onAdd(it, mapPipeline.xMouseMap, mapPipeline.yMouseMap)
+                        mapPipeline.tileSelect.onAdd(mapPipeline.xMouseMap, mapPipeline.yMouseMap)
                     }
                 }
             }

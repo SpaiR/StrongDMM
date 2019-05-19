@@ -99,7 +99,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 
     val selectedTypeName = selectedType.substring(1)
 
-    add(JMenuItem("Delete Topmost $selectedTypeName").apply {
+    add(JMenuItem("Delete Topmost $selectedTypeName (Shift+Click)").apply {
         addActionListener {
             val topmostItem = currentTile.findTopmostTileItem(selectedType)
 
