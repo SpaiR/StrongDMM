@@ -9,7 +9,6 @@ import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.saveMap
-import java.awt.Font
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import javax.swing.*

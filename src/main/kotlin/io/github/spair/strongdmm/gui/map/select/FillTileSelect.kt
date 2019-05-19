@@ -3,8 +3,11 @@ package io.github.spair.strongdmm.gui.map.select
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
+import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
+import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11
@@ -12,6 +15,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class FillTileSelect : TileSelect {
+
+    private var isDeleteMode = false
 
     private var xStart = 0
     private var yStart = 0
@@ -27,6 +32,7 @@ class FillTileSelect : TileSelect {
         if (isEmpty()) {
             xStart = x
             yStart = y
+            isDeleteMode = KeyboardProcessor.isShiftDown()
         }
 
         xBorder = x
@@ -41,6 +47,59 @@ class FillTileSelect : TileSelect {
     }
 
     override fun onStop() {
+        val isForced = if (isDeleteMode) deleteTopmostItems() else placeSelectedInstances()
+
+        isDeleteMode = false
+
+        xStart = 0
+        yStart = 0
+        xBorder = 0
+        yBorder = 0
+
+        x1 = 0
+        y1 = 0
+        x2 = 0
+        y2 = 0
+
+        Frame.update(isForced)
+    }
+
+    private fun deleteTopmostItems(): Boolean {
+        val instance = InstanceListView.selectedInstance
+
+        if (instance != null) {
+            val map = MapView.getSelectedMap()!!
+            val typeToRemove = when {
+                isType(instance.type, TYPE_TURF) -> TYPE_TURF
+                isType(instance.type, TYPE_AREA) -> TYPE_AREA
+                isType(instance.type, TYPE_MOB) -> TYPE_MOB
+                else -> TYPE_OBJ
+            }
+
+            val reverseActions = mutableListOf<Undoable>()
+
+            for (x in x1..x2) {
+                for (y in y1..y2) {
+                    val tile = map.getTile(x, y)
+                    val topmostItem = tile?.findTopmostTileItem(typeToRemove)
+
+                    if (topmostItem != null) {
+                        map.deleteTileItem(topmostItem)
+                        reverseActions.add(PlaceTileItemAction(map, topmostItem))
+                    }
+                }
+            }
+
+            if (reverseActions.isNotEmpty()) {
+                History.addUndoAction(MultipleAction(reverseActions))
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun placeSelectedInstances(): Boolean {
         val selectedInstance = InstanceListView.selectedInstance
 
         if (selectedInstance != null) {
@@ -55,19 +114,10 @@ class FillTileSelect : TileSelect {
             }
 
             History.addUndoAction(MultipleAction(reverseActions))
+            return true
         }
 
-        xStart = 0
-        yStart = 0
-        xBorder = 0
-        yBorder = 0
-
-        x1 = 0
-        y1 = 0
-        x2 = 0
-        y2 = 0
-
-        Frame.update(selectedInstance != null)
+        return false
     }
 
     override fun isEmpty() = xStart == 0 || yStart == 0

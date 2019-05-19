@@ -16,19 +16,18 @@ class AddTileSelect : TileSelect {
 
     private val coordsBuffer = mutableSetOf<CoordPoint>()
     private val reverseActions = mutableListOf<Undoable>()
+    private var isDeleteMode = false
 
     override fun onAdd(x: Int, y: Int) {
+        if (isEmpty()) {
+            isDeleteMode = KeyboardProcessor.isShiftDown()
+        }
+
         if (!coordsBuffer.add(CoordPoint(x, y))) {
             return
         }
 
-        val isForced = if (KeyboardProcessor.isShiftDown()) {
-            deleteTopmostItem(x, y)
-        } else {
-            placeSelectedInstance(x, y)
-        }
-
-        Frame.update(isForced)
+        Frame.update(if (isDeleteMode) deleteTopmostItem(x, y) else placeSelectedInstance(x, y))
     }
 
     private fun deleteTopmostItem(x: Int, y: Int): Boolean {
@@ -75,6 +74,7 @@ class AddTileSelect : TileSelect {
             reverseActions.clear()
         }
 
+        isDeleteMode = false
         coordsBuffer.clear()
         Frame.update()
     }
