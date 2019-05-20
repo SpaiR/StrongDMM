@@ -58,7 +58,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
     add(JMenuItem("Cut").apply {
         addActionListener {
             History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.cut(map, currentTile)
+            TileOperation.cut(currentTile)
             Frame.update(true)
         }
     })
@@ -73,7 +73,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
         isEnabled = TileOperation.hasTileInBuffer()
         addActionListener {
             History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.paste(map, currentTile.x, currentTile.y)
+            TileOperation.paste(currentTile.x, currentTile.y)
             Frame.update(true)
         }
     })
@@ -81,7 +81,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
     add(JMenuItem("Delete").apply {
         addActionListener {
             History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.delete(map, currentTile)
+            TileOperation.delete(currentTile)
             Frame.update(true)
         }
     })
@@ -104,7 +104,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
             val topmostItem = currentTile.findTopmostTileItem(selectedType)
 
             if (topmostItem != null) {
-                map.deleteTileItem(topmostItem)
+                currentTile.deleteTileItem(topmostItem)
                 History.addUndoAction(PlaceTileItemAction(map, topmostItem))
                 Frame.update(true)
             }
@@ -141,7 +141,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
         menu.add(JMenuItem("Delete")).apply {
             addActionListener {
-                map.deleteTileItem(tileItem)
+                currentTile.deleteTileItem(tileItem)
                 History.addUndoAction(PlaceTileItemAction(map, tileItem))
                 Frame.update(true)
                 InstanceListView.updateSelectedInstanceInfo()

@@ -18,11 +18,12 @@ class AddTileSelect : TileSelect {
     private val reverseActions = mutableListOf<Undoable>()
     private var isDeleteMode = false
 
-    override fun onAdd(x: Int, y: Int) {
-        if (isEmpty()) {
-            isDeleteMode = KeyboardProcessor.isShiftDown()
-        }
+    override fun onStart(x: Int, y: Int) {
+        isDeleteMode = KeyboardProcessor.isShiftDown()
+        Frame.update()
+    }
 
+    override fun onAdd(x: Int, y: Int) {
         if (!coordsBuffer.add(CoordPoint(x, y))) {
             return
         }
@@ -46,7 +47,7 @@ class AddTileSelect : TileSelect {
             val topmostItem = tile.findTopmostTileItem(typeToRemove)
 
             if (topmostItem != null) {
-                map.deleteTileItem(topmostItem)
+                tile.deleteTileItem(topmostItem)
                 reverseActions.add(PlaceTileItemAction(map, topmostItem))
                 return true
             }

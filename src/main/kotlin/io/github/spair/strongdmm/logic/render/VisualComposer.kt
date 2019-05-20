@@ -60,7 +60,7 @@ object VisualComposer {
                 val renderX = (tileX - 1) * dmm.iconSize
                 val renderY = (tileY - 1) * dmm.iconSize
 
-                for (tileItem in tile) {
+                for (tileItem in tile.getTileItems()) {
                     planesLayers.get(tileItem.plane, tileItem.layer).let {
                         it.add(RenderInstanceProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem))
 

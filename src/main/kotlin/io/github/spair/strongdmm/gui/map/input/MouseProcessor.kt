@@ -64,8 +64,9 @@ object MouseProcessor {
         if (Mouse.isButtonDown(LMB)) {
             if (!lmbWasPressed) {
                 lmbWasPressed = true
+                mapPipeline.tileSelect.onStart(mapPipeline.xMouseMap, mapPipeline.yMouseMap)
             } else {
-                if (tileChanged || mapPipeline.tileSelect.isEmpty()) {
+                if (tileChanged) {
                     tileChanged = false
                     mapPipeline.selectedMap?.let {
                         mapPipeline.tileSelect.onAdd(mapPipeline.xMouseMap, mapPipeline.yMouseMap)

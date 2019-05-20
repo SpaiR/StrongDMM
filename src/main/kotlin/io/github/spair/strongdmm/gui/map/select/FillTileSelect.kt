@@ -20,28 +20,24 @@ class FillTileSelect : TileSelect {
 
     private var xStart = 0
     private var yStart = 0
-    private var xBorder = 0
-    private var yBorder = 0
 
     private var x1 = 0
     private var y1 = 0
     private var x2 = 0
     private var y2 = 0
 
+    override fun onStart(x: Int, y: Int) {
+        xStart = x
+        yStart = y
+        isDeleteMode = KeyboardProcessor.isShiftDown()
+        Frame.update()
+    }
+
     override fun onAdd(x: Int, y: Int) {
-        if (isEmpty()) {
-            xStart = x
-            yStart = y
-            isDeleteMode = KeyboardProcessor.isShiftDown()
-        }
-
-        xBorder = x
-        yBorder = y
-
-        x1 = min(xStart, xBorder)
-        y1 = min(yStart, yBorder)
-        x2 = max(xStart, xBorder)
-        y2 = max(yStart, yBorder)
+        x1 = min(xStart, x)
+        y1 = min(yStart, y)
+        x2 = max(xStart, x)
+        y2 = max(yStart, y)
 
         Frame.update()
     }
@@ -53,8 +49,6 @@ class FillTileSelect : TileSelect {
 
         xStart = 0
         yStart = 0
-        xBorder = 0
-        yBorder = 0
 
         x1 = 0
         y1 = 0
@@ -84,7 +78,7 @@ class FillTileSelect : TileSelect {
                     val topmostItem = tile?.findTopmostTileItem(typeToRemove)
 
                     if (topmostItem != null) {
-                        map.deleteTileItem(topmostItem)
+                        tile.deleteTileItem(topmostItem)
                         reverseActions.add(PlaceTileItemAction(map, topmostItem))
                     }
                 }

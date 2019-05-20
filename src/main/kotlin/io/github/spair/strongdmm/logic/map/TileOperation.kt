@@ -1,30 +1,32 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.strongdmm.gui.map.MapView
+
 object TileOperation {
 
     private var tileObjectsBuffer = listOf<TileItem>()
 
     fun hasTileInBuffer() = tileObjectsBuffer.isNotEmpty()
 
-    fun cut(map: Dmm, tile: Tile) {
+    fun cut(tile: Tile) {
         copy(tile)
-        tileObjectsBuffer.forEach { map.deleteTileItem(it) }
+        tileObjectsBuffer.forEach { tile.deleteTileItem(it) }
     }
 
     fun copy(tile: Tile) {
         tileObjectsBuffer = tile.getTileItems()
     }
 
-    fun paste(map: Dmm, x: Int, y: Int) {
-        map.getTile(x, y)?.let { tile ->
-            tile.clearTileItems()
+    fun paste(x: Int, y: Int) {
+        MapView.getSelectedMap()!!.getTile(x, y)?.let { tile ->
+            tile.clearTile()
             tileObjectsBuffer.forEach { tileItem ->
-                tile.addTileItem(TileItem(tileItem.dmeItem, x, y, tileItem.customVars))
+                tile.placeTileItem(TileItem.fromTileItem(tileItem, x, y))
             }
         }
     }
 
-    fun delete(map: Dmm, tile: Tile) {
-        tile.getTileItems().forEach { map.deleteTileItem(it) }
+    fun delete(tile: Tile) {
+        tile.clearTile()
     }
 }

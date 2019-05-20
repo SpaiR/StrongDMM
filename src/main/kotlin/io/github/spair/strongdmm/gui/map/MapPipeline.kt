@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.map
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.gui.map.select.AddTileSelect
+import io.github.spair.strongdmm.gui.map.select.PickTileSelect
 import io.github.spair.strongdmm.gui.map.select.TileSelect
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm

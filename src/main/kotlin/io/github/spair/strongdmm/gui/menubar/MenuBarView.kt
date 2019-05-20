@@ -27,6 +27,7 @@ object MenuBarView : View {
     private val redoActionItem = createButton("Redo", false).addCtrlShiftShortcut('Z')
     private val addSelectModeItem = createRadioButton("Add Select Mode", true)
     private val fillSelectModeItem = createRadioButton("Fill Select Mode")
+    private val pickSelectModeItem = createRadioButton("Pick Select Mode")
 
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
@@ -57,6 +58,11 @@ object MenuBarView : View {
                     MapView.switchSelectMode(SelectType.FILL)
                 }
             })
+            add(pickSelectModeItem.apply {
+                addActionListener {
+                    MapView.switchSelectMode(SelectType.PICK)
+                }
+            })
         }
     }
 
@@ -76,7 +82,8 @@ object MenuBarView : View {
         redoActionItem,
         JSeparator(),
         addSelectModeItem,
-        fillSelectModeItem
+        fillSelectModeItem,
+        pickSelectModeItem
     )
 
     fun switchUndo(enabled: Boolean) {

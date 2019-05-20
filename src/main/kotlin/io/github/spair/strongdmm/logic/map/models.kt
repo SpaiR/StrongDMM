@@ -37,56 +37,12 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
     }
 
-    // optional return item is one of replaceable type (turf or area)
-    fun placeTileItem(tileItem: TileItem): TileItem? {
-        val tile = getTile(tileItem.x, tileItem.y) ?: return null
-
-        // Specific BYOND behaviour: tile can have only one area or turf
-        val typeToSanitize = when {
-            tileItem.isType(TYPE_AREA) -> TYPE_AREA
-            tileItem.isType(TYPE_TURF) -> TYPE_TURF
-            else -> null
-        }
-
-        var removedItem: TileItem? = null
-
-        if (typeToSanitize != null) {
-            for (item in tile) {
-                if (item.isType(typeToSanitize)) {
-                    tile.removeTileItem(item)
-                    removedItem = item
-                    break
-                }
-            }
-        }
-
-        tile.addTileItem(tileItem)
-        return removedItem
-    }
-
     // if item from `placeTileItem` is not null then it means that we placed replaceable type (turf or area)
     // to undo this action we need to place removed item back
     fun placeTileItemWithUndoable(tileItem: TileItem): Undoable {
-        return placeTileItem(tileItem)?.let {
+        return getTile(tileItem.x, tileItem.y)?.placeTileItem(tileItem)?.let {
             PlaceTileItemAction(this, it)
         } ?: DeleteTileItemAction(this, tileItem)
-    }
-
-    fun deleteTileItem(tileItem: TileItem) {
-        getTile(tileItem.x, tileItem.y)!!.removeTileItem(tileItem)
-
-        // Specific BYOND behaviour: tile always should have turf or area
-        val varToGetItemType = when {
-            tileItem.isType(TYPE_AREA) -> VAR_AREA
-            tileItem.isType(TYPE_TURF) -> VAR_TURF
-            else -> null
-        }
-
-        if (varToGetItemType != null) {
-            val world = Environment.dme.getItem(TYPE_WORLD)!!
-            val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
-            placeTileItem(TileItem(basicItem, tileItem.x, tileItem.y))
-        }
     }
 
     fun getTile(x: Int, y: Int) = if (x in 1..maxX && y in 1..maxY) tiles[y - 1][x - 1] else null
@@ -134,13 +90,58 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
         tileItems.sortWith(TileObjectsComparator)
     }
 
-    fun addTileItems(tileItems: Collection<TileItem>) {
-        this.tileItems.addAll(tileItems)
-        this.tileItems.sortWith(TileObjectsComparator)
+    fun placeTileItem(tileItem: TileItem): TileItem? {
+        // Specific BYOND behaviour: tile can have only one area or turf
+        val typeToSanitize = when {
+            tileItem.isType(TYPE_AREA) -> TYPE_AREA
+            tileItem.isType(TYPE_TURF) -> TYPE_TURF
+            else -> null
+        }
+
+        var removedItem: TileItem? = null
+
+        if (typeToSanitize != null) {
+            for (item in tileItems) {
+                if (item.isType(typeToSanitize)) {
+                    tileItems.remove(item)
+                    removedItem = item
+                    break
+                }
+            }
+        }
+
+        addTileItem(tileItem.apply {
+            x = this@Tile.x
+            y = this@Tile.y
+        })
+
+        return removedItem
     }
 
-    fun removeTileItem(tileItem: TileItem) {
+    fun placeTileItems(tileItems: Collection<TileItem>) {
+        tileItems.forEach { placeTileItem(it) }
+    }
+
+    fun replaceTileItems(tileItems: Collection<TileItem>) {
+        clearTile()
+        placeTileItems(tileItems)
+    }
+
+    fun deleteTileItem(tileItem: TileItem) {
         tileItems.remove(tileItem)
+
+        // Specific BYOND behaviour: tile always should have turf or area
+        val varToGetItemType = when {
+            tileItem.isType(TYPE_AREA) -> VAR_AREA
+            tileItem.isType(TYPE_TURF) -> VAR_TURF
+            else -> null
+        }
+
+        if (varToGetItemType != null) {
+            val world = Environment.dme.getItem(TYPE_WORLD)!!
+            val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
+            addTileItem(TileItem(basicItem, tileItem.x, tileItem.y))
+        }
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {
@@ -152,8 +153,8 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
         return null
     }
 
-    fun clearTileItems() {
-        tileItems.clear()
+    fun clearTile() {
+        tileItems.toList().forEach { deleteTileItem(it) }
     }
 
     override fun iterator(): Iterator<TileItem> {
@@ -161,13 +162,16 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
     }
 }
 
-class TileItem(val dmeItem: DmeItem, val x: Int, val y: Int, customVars: Map<String, String>? = null) {
+class TileItem(val dmeItem: DmeItem, var x: Int, var y: Int, customVars: Map<String, String>? = null) {
 
     val customVars: MutableMap<String, String> = customVars?.toMutableMap() ?: mutableMapOf()
 
     companion object {
         fun fromInstance(instance: ItemInstance, x: Int, y: Int): TileItem {
             return TileItem(Environment.dme.getItem(instance.type)!!, x, y, instance.customVars)
+        }
+        fun fromTileItem(tileItem: TileItem, x: Int, y: Int): TileItem {
+            return TileItem(tileItem.dmeItem, x, y, tileItem.customVars)
         }
     }
 

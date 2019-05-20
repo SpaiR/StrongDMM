@@ -5,6 +5,7 @@ import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.select.AddTileSelect
 import io.github.spair.strongdmm.gui.map.select.FillTileSelect
+import io.github.spair.strongdmm.gui.map.select.PickTileSelect
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -79,7 +80,9 @@ object MapView : View, EnvCleanable {
         when (selectType) {
             SelectType.ADD -> pipeline.tileSelect = AddTileSelect()
             SelectType.FILL -> pipeline.tileSelect = FillTileSelect()
+            SelectType.PICK -> pipeline.tileSelect = PickTileSelect()
         }
+        Frame.update()
     }
 
     fun getSelectedMap() = pipeline.selectedMap
