@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.gui.map.select.AddTileSelect
 import io.github.spair.strongdmm.gui.map.select.PickTileSelect
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.TileSelect
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -16,8 +17,6 @@ import kotlin.concurrent.thread
 class MapPipeline(val view: MapView) {
 
     private var glInitialized = false
-
-    var tileSelect: TileSelect = AddTileSelect()
 
     var selectedMap: Dmm? = null
     var iconSize = 32
@@ -102,7 +101,7 @@ class MapPipeline(val view: MapView) {
                 // actual rendering
                 renderMap()
                 renderMousePosition()
-                tileSelect.render(iconSize)
+                SelectOperation.render(iconSize)
 
                 Display.update(false)
             }

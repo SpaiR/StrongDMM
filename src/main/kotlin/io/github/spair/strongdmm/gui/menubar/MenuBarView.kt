@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.menubar
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.chooseFileDialog
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
@@ -50,17 +51,17 @@ object MenuBarView : View {
         ButtonGroup().run {
             add(addSelectModeItem.apply {
                 addActionListener {
-                    MapView.switchSelectMode(SelectType.ADD)
+                    SelectOperation.switchSelectMode(SelectType.ADD)
                 }
             })
             add(fillSelectModeItem.apply {
                 addActionListener {
-                    MapView.switchSelectMode(SelectType.FILL)
+                    SelectOperation.switchSelectMode(SelectType.FILL)
                 }
             })
             add(pickSelectModeItem.apply {
                 addActionListener {
-                    MapView.switchSelectMode(SelectType.PICK)
+                    SelectOperation.switchSelectMode(SelectType.PICK)
                 }
             })
         }

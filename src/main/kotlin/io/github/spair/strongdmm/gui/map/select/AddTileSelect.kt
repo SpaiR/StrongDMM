@@ -83,7 +83,7 @@ class AddTileSelect : TileSelect {
     override fun isEmpty() = coordsBuffer.isEmpty()
 
     override fun render(iconSize: Int) {
-        if (coordsBuffer.isEmpty()) {
+        if (isEmpty()) {
             return
         }
 

@@ -38,7 +38,6 @@ class FillTileSelect : TileSelect {
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-
         Frame.update()
     }
 

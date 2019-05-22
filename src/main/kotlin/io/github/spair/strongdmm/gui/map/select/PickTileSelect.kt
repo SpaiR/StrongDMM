@@ -45,10 +45,7 @@ class PickTileSelect : TileSelect {
         }
     }
 
-    override fun onStop() {
-        mode.onStop()
-    }
-
+    override fun onStop() = mode.onStop()
     override fun isEmpty() = x1 == 0 || y1 == 0 || x2 == 0 || y2 == 0
 
     override fun render(iconSize: Int) {
@@ -96,13 +93,8 @@ class PickTileSelect : TileSelect {
             mode = ManipulateMode()
         }
 
-        override fun isEmpty(): Boolean {
-            throw UnsupportedOperationException()
-        }
-
-        override fun render(iconSize: Int) {
-            throw UnsupportedOperationException()
-        }
+        override fun isEmpty() = throw UnsupportedOperationException()
+        override fun render(iconSize: Int) = throw UnsupportedOperationException()
     }
 
     private inner class ManipulateMode : TileSelect {
@@ -110,7 +102,7 @@ class PickTileSelect : TileSelect {
         private var xClickStart = 0
         private var yClickStart = 0
 
-        private var selectedTiles = mutableMapOf<CoordPoint, List<TileItem>>()
+        private var selectedTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
         private var previousTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
 
         override fun onStart(x: Int, y: Int) {
@@ -121,7 +113,7 @@ class PickTileSelect : TileSelect {
 
             selectedCoords.forEach {
                 val tile = map.getTile(it.x, it.y)!!
-                selectedTiles[it] = tile.getTileItems()
+                selectedTiles.add(Pair(it, tile.getTileItems()))
                 tile.clearTile()
             }
         }
@@ -183,12 +175,7 @@ class PickTileSelect : TileSelect {
             selectedTiles.clear()
         }
 
-        override fun isEmpty(): Boolean {
-            throw UnsupportedOperationException()
-        }
-
-        override fun render(iconSize: Int) {
-            throw UnsupportedOperationException()
-        }
+        override fun isEmpty() = throw UnsupportedOperationException()
+        override fun render(iconSize: Int) = throw UnsupportedOperationException()
     }
 }
