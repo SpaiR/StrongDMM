@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
+import io.github.spair.strongdmm.gui.menubar.MenuBarView
 
 object SelectOperation : TileSelect {
 
@@ -12,7 +13,7 @@ object SelectOperation : TileSelect {
     override fun isEmpty() = tileSelect.isEmpty()
     override fun render(iconSize: Int) = tileSelect.render(iconSize)
 
-    fun switchSelectMode(selectType: SelectType) {
+    fun switchSelectType(selectType: SelectType) {
         when (selectType) {
             SelectType.ADD -> tileSelect = AddTileSelect()
             SelectType.FILL -> tileSelect = FillTileSelect()
@@ -25,5 +26,6 @@ object SelectOperation : TileSelect {
         tileSelect = PickTileSelect().apply {
             selectArea(x1, y1, x2, y2)
         }
+        MenuBarView.switchSelectType(SelectType.PICK)
     }
 }

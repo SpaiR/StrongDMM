@@ -51,17 +51,17 @@ object MenuBarView : View {
         ButtonGroup().run {
             add(addSelectModeItem.apply {
                 addActionListener {
-                    SelectOperation.switchSelectMode(SelectType.ADD)
+                    SelectOperation.switchSelectType(SelectType.ADD)
                 }
             })
             add(fillSelectModeItem.apply {
                 addActionListener {
-                    SelectOperation.switchSelectMode(SelectType.FILL)
+                    SelectOperation.switchSelectType(SelectType.FILL)
                 }
             })
             add(pickSelectModeItem.apply {
                 addActionListener {
-                    SelectOperation.switchSelectMode(SelectType.PICK)
+                    SelectOperation.switchSelectType(SelectType.PICK)
                 }
             })
         }
@@ -107,6 +107,14 @@ object MenuBarView : View {
                 Shortcut.CTRL_SHIFT_Z -> redoActionItem
             }.doClick()
         }
+    }
+
+    fun switchSelectType(selectType: SelectType) {
+        when (selectType) {
+            SelectType.ADD -> addSelectModeItem
+            SelectType.FILL -> fillSelectModeItem
+            SelectType.PICK -> pickSelectModeItem
+        }.isSelected = true
     }
 
     private fun openEnvironmentAction() = ActionListener {

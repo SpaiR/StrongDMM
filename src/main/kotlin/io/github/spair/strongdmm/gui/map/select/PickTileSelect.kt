@@ -2,9 +2,7 @@ package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapView
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.MultipleAction
-import io.github.spair.strongdmm.logic.history.TileReplaceAction
+import io.github.spair.strongdmm.logic.history.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11
 import kotlin.math.max
@@ -173,16 +171,38 @@ class PickTileSelect : TileSelect {
         }
 
         override fun onStop() {
-            val reverseActions = mutableListOf<TileReplaceAction>()
+            val reverseActions = mutableListOf<Undoable>()
             val map = MapView.getSelectedMap()!!
 
+            var x21 = Int.MAX_VALUE
+            var y21 = Int.MAX_VALUE
+            var x22 = Int.MIN_VALUE
+            var y22 = Int.MIN_VALUE
+
             previousTiles.forEach { (coord, tileItems) ->
-                reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
-            }
-            selectedTiles.forEach { (coord, tileItems) ->
+                x21 = min(x21, coord.x)
+                y21 = min(y21, coord.y)
+                x22 = max(x22, coord.x)
+                y22 = max(y22, coord.y)
+
                 reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
             }
 
+            var x11 = Int.MAX_VALUE
+            var y11 = Int.MAX_VALUE
+            var x12 = Int.MIN_VALUE
+            var y12 = Int.MIN_VALUE
+
+            selectedTiles.forEach { (coord, tileItems) ->
+                x11 = min(x11, coord.x)
+                y11 = min(y11, coord.y)
+                x12 = max(x12, coord.x)
+                y12 = max(y12, coord.y)
+
+                reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
+            }
+
+            reverseActions.add(PickAreaAction(x11, y11, x12, y12, x21, y21, x22, y22))
             History.addUndoAction(MultipleAction(reverseActions))
 
             selectedTiles.clear()
