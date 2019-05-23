@@ -20,4 +20,10 @@ object SelectOperation : TileSelect {
         }
         Frame.update()
     }
+
+    fun pickArea(x1: Int, y1: Int, x2: Int, y2: Int) {
+        tileSelect = PickTileSelect().apply {
+            selectArea(x1, y1, x2, y2)
+        }
+    }
 }

@@ -21,6 +21,25 @@ class PickTileSelect : TileSelect {
 
     private val selectedCoords = mutableSetOf<CoordPoint>()
 
+    fun selectArea(x1: Int, y1: Int, x2: Int, y2: Int) {
+        this.x1 = x1
+        this.y1 = y1
+        this.x2 = x2
+        this.y2 = y2
+        updateSelectedCoords()
+        onStop()
+        Frame.update()
+    }
+
+    private fun updateSelectedCoords() {
+        selectedCoords.clear()
+        for (xS in x1..x2) {
+            for (yS in y1..y2) {
+                selectedCoords.add(CoordPoint(xS, yS))
+            }
+        }
+    }
+
     override fun onStart(x: Int, y: Int) {
         if (selectedCoords.isNotEmpty() && !selectedCoords.contains(CoordPoint(x, y))) {
             mode = PickMode()
@@ -36,13 +55,7 @@ class PickTileSelect : TileSelect {
 
     override fun onAdd(x: Int, y: Int) {
         mode.onAdd(x, y)
-
-        selectedCoords.clear()
-        for (xS in x1..x2) {
-            for (yS in y1..y2) {
-                selectedCoords.add(CoordPoint(xS, yS))
-            }
-        }
+        updateSelectedCoords()
     }
 
     override fun onStop() = mode.onStop()
