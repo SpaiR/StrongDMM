@@ -59,7 +59,7 @@ object MouseProcessor {
     }
 
     private fun handleTileSelection() {
-        if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown()) {
+        if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown() || (KeyboardProcessor.isAltDown())) {
             return  // no tile selection with those modifiers
         }
 
@@ -84,7 +84,7 @@ object MouseProcessor {
     }
 
     private fun handleMouseMapMovement() {
-        if (Mouse.isButtonDown(MMB)) {
+        if (Mouse.isButtonDown(MMB) || (Mouse.isButtonDown(LMB) && KeyboardProcessor.isAltDown())) {
             val x = Mouse.getDX()
             val y = Mouse.getDY()
 

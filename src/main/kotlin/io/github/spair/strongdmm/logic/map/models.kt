@@ -37,7 +37,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
     }
 
-    // if item from `placeTileItem` is not null then it means that we placed replaceable type (turf or area)
+    // if item from `placeTileItem` is not null then it means that we've placed replaceable type (turf or area)
     // to undo this action we need to place removed item back
     fun placeTileItemWithUndoable(tileItem: TileItem): Undoable {
         return getTile(tileItem.x, tileItem.y)?.placeTileItem(tileItem)?.let {
@@ -51,7 +51,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         val tileContent = TileContent()
         val tileObjects = mutableListOf<TileObject>()
 
-        getTile(location.x, location.y)?.forEach { tileItem ->
+        getTile(location.x, location.y)?.getTileItems()?.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
             tileItem.customVars.forEach { (k, v) -> tileObject.putVar(k, v) }
             tileObjects.add(tileObject)
@@ -76,7 +76,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
     }
 }
 
-class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>) : Iterable<TileItem> {
+class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>) {
 
     init {
         tileItems.sortWith(TileObjectsComparator)
@@ -86,6 +86,8 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
     fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
 
     fun addTileItem(tileItem: TileItem) {
+        tileItem.x = x
+        tileItem.y = y
         tileItems.add(tileItem)
         tileItems.sortWith(TileObjectsComparator)
     }
@@ -110,11 +112,7 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
             }
         }
 
-        addTileItem(tileItem.apply {
-            x = this@Tile.x
-            y = this@Tile.y
-        })
-
+        addTileItem(tileItem)
         return removedItem
     }
 
@@ -155,10 +153,6 @@ class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>)
 
     fun clearTile() {
         tileItems.toList().forEach { deleteTileItem(it) }
-    }
-
-    override fun iterator(): Iterator<TileItem> {
-        return tileItems.iterator()
     }
 }
 

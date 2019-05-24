@@ -5,14 +5,22 @@ import io.github.spair.dmm.io.TileLocation
 import java.io.File
 
 fun saveMap(dmm: Dmm) {
-    val outputDmmData = createDmmData(dmm.initialDmmData)
+    val outputDmmData = DmmData().apply {
+        dmm.initialDmmData.let { dmmData ->
+            maxX = dmmData.maxX
+            maxY = dmmData.maxY
+            keyLength = dmmData.keyLength
+            isTgm = dmmData.isTgm
+        }
+    }
+
     val unusedKeys = dmm.initialDmmData.keys.toMutableSet()
     val keyGenerator = KeyGenerator(outputDmmData)
 
     // sanitize custom vars from values equals to defined in code
     for (x in 1..dmm.maxX) {
         for (y in 1..dmm.maxY) {
-            dmm.getTile(x, y)!!.forEach { tileItem ->
+            dmm.getTile(x, y)!!.getTileItems().forEach { tileItem ->
                 tileItem.customVars.keys.toSet().forEach { name ->
                     if (tileItem.customVars[name] == tileItem.dmeItem.getVar(name)) {
                         tileItem.customVars.remove(name)
@@ -80,13 +88,6 @@ fun saveMap(dmm: Dmm) {
     }
 }
 
-private fun createDmmData(initialDmmData: DmmData) = DmmData().apply {
-    maxX = initialDmmData.maxX
-    maxY = initialDmmData.maxY
-    keyLength = initialDmmData.keyLength
-    isTgm = initialDmmData.isTgm
-}
-
 private class KeyGenerator(private val dmmData: DmmData) {
 
     private val limit = 65530
@@ -112,7 +113,7 @@ private class KeyGenerator(private val dmmData: DmmData) {
         }
 
         if (num > limit) {
-            throw IllegalStateException("Maximum available num values is 65530. Current num: $num")
+            throw IllegalStateException("Maximum available num values is $limit. Current num: $num")
         }
 
         return numToKey(num)

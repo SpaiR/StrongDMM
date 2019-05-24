@@ -10,9 +10,7 @@ object PrimaryFrame : JFrame() {
 
     fun init() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-
         initViews()
-
         title = "StrongDMM"
         size = Dimension(1280, 768)
         defaultCloseOperation = EXIT_ON_CLOSE

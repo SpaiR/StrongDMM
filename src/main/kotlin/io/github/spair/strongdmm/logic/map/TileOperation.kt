@@ -10,7 +10,7 @@ object TileOperation {
 
     fun cut(tile: Tile) {
         copy(tile)
-        tileObjectsBuffer.forEach { tile.deleteTileItem(it) }
+        tile.clearTile()
     }
 
     fun copy(tile: Tile) {
