@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
+import io.github.spair.strongdmm.logic.map.CoordArea
 
 object SelectOperation : TileSelect {
 
@@ -22,10 +23,13 @@ object SelectOperation : TileSelect {
         Frame.update()
     }
 
-    fun pickArea(x1: Int, y1: Int, x2: Int, y2: Int) {
+    fun pickArea(coordArea: CoordArea) {
         tileSelect = PickTileSelect().apply {
-            selectArea(x1, y1, x2, y2)
+            selectArea(coordArea.x1, coordArea.y1, coordArea.x2, coordArea.y2)
         }
         MenuBarView.switchSelectType(SelectType.PICK)
     }
+
+    fun isPickType() = tileSelect is PickTileSelect
+    fun getPickedTiles() = (tileSelect as? PickTileSelect)?.getSelectedTiles()
 }

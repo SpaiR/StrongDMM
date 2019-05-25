@@ -3,6 +3,8 @@ package io.github.spair.strongdmm.gui.map.select
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.logic.history.*
+import io.github.spair.strongdmm.logic.map.CoordPoint
+import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11
 import kotlin.math.max
@@ -18,13 +20,36 @@ class PickTileSelect : TileSelect {
     private var y2 = 0
 
     private val selectedCoords = mutableSetOf<CoordPoint>()
+    private val previousTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
+
+    fun getSelectedTiles(): List<Tile> {
+        val map = MapView.getSelectedMap()!!
+        val tiles = mutableListOf<Tile>()
+
+        selectedCoords.forEach { (x, y) ->
+            tiles.add(map.getTile(x, y)!!)
+        }
+
+        return tiles
+    }
 
     fun selectArea(x1: Int, y1: Int, x2: Int, y2: Int) {
         this.x1 = x1
         this.y1 = y1
         this.x2 = x2
         this.y2 = y2
+
         updateSelectedCoords()
+        previousTiles.clear()
+
+        val map = MapView.getSelectedMap()!!
+
+        selectedCoords.forEach {
+            map.getTile(it.x, it.y)?.let { tile ->
+                previousTiles.add(CoordPoint(it.x, it.y) to tile.getTileItems())
+            }
+        }
+
         onStop()
         Frame.update()
     }
@@ -41,6 +66,7 @@ class PickTileSelect : TileSelect {
     override fun onStart(x: Int, y: Int) {
         if (selectedCoords.isNotEmpty() && !selectedCoords.contains(CoordPoint(x, y))) {
             mode = PickMode()
+            previousTiles.clear()
             selectedCoords.clear()
             x1 = 0
             y1 = 0
@@ -114,7 +140,6 @@ class PickTileSelect : TileSelect {
         private var yClickStart = 0
 
         private var selectedTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
-        private var previousTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
 
         override fun onStart(x: Int, y: Int) {
             xClickStart = x
@@ -123,9 +148,10 @@ class PickTileSelect : TileSelect {
             val map = MapView.getSelectedMap()!!
 
             selectedCoords.forEach {
-                val tile = map.getTile(it.x, it.y)!!
-                selectedTiles.add(Pair(it, tile.getTileItems()))
-                tile.clearTile()
+                map.getTile(it.x, it.y)?.let { tile ->
+                    selectedTiles.add(Pair(it, tile.getTileItems()))
+                    tile.clearTile()
+                }
             }
         }
 
@@ -150,16 +176,17 @@ class PickTileSelect : TileSelect {
             selectedTiles.forEach { (coord, selectedTileItems) ->
                 val newX = coord.x + xShift
                 val newY = coord.y + yShift
-                val newTile = map.getTile(newX, newY)!!
 
-                xMin = min(xMin, newX)
-                yMin = min(yMin, newY)
-                xMax = max(xMax, newX)
-                yMax = max(yMax, newY)
+                map.getTile(newX, newY)?.let { newTile ->
+                    xMin = min(xMin, newX)
+                    yMin = min(yMin, newY)
+                    xMax = max(xMax, newX)
+                    yMax = max(yMax, newY)
 
-                previousTiles.add(Pair(CoordPoint(newX, newY), newTile.getTileItems()))
+                    previousTiles.add(Pair(CoordPoint(newX, newY), newTile.getTileItems()))
 
-                newTile.replaceTileItems(selectedTileItems)
+                    newTile.replaceTileItems(selectedTileItems)
+                }
             }
 
             x1 = xMin

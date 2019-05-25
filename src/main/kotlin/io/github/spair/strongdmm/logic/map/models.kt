@@ -8,6 +8,7 @@ import io.github.spair.strongdmm.logic.dmi.SOUTH
 import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
+import java.util.concurrent.CopyOnWriteArrayList
 
 const val OUT_OF_BOUNDS = -1
 
@@ -76,11 +77,12 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
     }
 }
 
-class Tile(val x: Int, val y: Int, private val tileItems: MutableList<TileItem>) {
+class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
 
-    init {
-        tileItems.sortWith(TileObjectsComparator)
-    }
+    private val tileItems: MutableList<TileItem> = CopyOnWriteArrayList(tileItems.sortedWith(TileObjectsComparator))
+
+    // the only place to use this method is a render loop, otherwise `::getTileItems()` should be used
+    fun getTileItemsUnsafe() = tileItems
 
     fun getTileItems() = tileItems.toList()
     fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
@@ -216,4 +218,10 @@ private object TileObjectsComparator : Comparator<TileItem> {
         else if (o1.isType(TYPE_MOB) && o2.isType(TYPE_TURF)) -1
         else 1
     }
+}
+
+data class CoordPoint(val x: Int, val y: Int)
+
+data class CoordArea(val x1: Int, val y1: Int, val x2: Int, val y2: Int) {
+    fun shiftToPoint(x: Int, y: Int) = CoordArea(x, y, x + x2 - x1, y + y2 - y1)
 }

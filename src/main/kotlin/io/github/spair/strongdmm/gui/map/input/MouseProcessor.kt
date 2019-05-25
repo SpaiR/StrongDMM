@@ -5,7 +5,6 @@ import io.github.spair.strongdmm.gui.map.MapPipeline
 import io.github.spair.strongdmm.gui.map.openTilePopup
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
-import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 
 // Class to consume and process input from mouse.
@@ -64,6 +63,10 @@ object MouseProcessor {
         }
 
         if (Mouse.isButtonDown(LMB)) {
+            if (mapPipeline.xMouseMap == OUT_OF_BOUNDS || mapPipeline.yMouseMap == OUT_OF_BOUNDS) {
+                return
+            }
+
             if (!lmbWasPressed) {
                 lmbWasPressed = true
                 SelectOperation.onStart(mapPipeline.xMouseMap, mapPipeline.yMouseMap)

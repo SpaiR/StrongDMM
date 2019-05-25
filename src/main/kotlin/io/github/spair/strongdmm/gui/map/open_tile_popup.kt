@@ -2,17 +2,13 @@ package io.github.spair.strongdmm.gui.map
 
 import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
+import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.history.EditVarsAction
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
-import io.github.spair.strongdmm.logic.history.TileReplaceAction
-import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
-import io.github.spair.strongdmm.logic.map.Tile
-import io.github.spair.strongdmm.logic.map.TileOperation
+import io.github.spair.strongdmm.logic.history.*
+import io.github.spair.strongdmm.logic.map.*
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
@@ -55,36 +51,93 @@ private fun JPopupMenu.addResetActions() {
 }
 
 private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
+    fun getPickedTiles() = SelectOperation.getPickedTiles()?.takeIf { it.isNotEmpty() }
+
+    fun prepareReverseActions(pickedTiles: List<Tile>, fromCurrentTile: Boolean = true): CoordArea {
+        val reverseActions = mutableListOf<Undoable>()
+        val tilesArea = getAreaOfTiles(pickedTiles).let {
+            if (fromCurrentTile) it.shiftToPoint(currentTile.x, currentTile.y) else it
+        }
+
+        for (x in tilesArea.x1..tilesArea.x2) {
+            for (y in tilesArea.y1..tilesArea.y2) {
+                map.getTile(x, y)?.let { reverseActions.add(TileReplaceAction(map, it)) }
+            }
+        }
+
+        History.addUndoAction(MultipleAction(reverseActions))
+        return tilesArea
+    }
+
     add(JMenuItem("Cut").apply {
         addActionListener {
-            History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.cut(currentTile)
+            val pickedTiles = getPickedTiles()
+
+            if (pickedTiles != null) {
+                prepareReverseActions(pickedTiles, false)
+                TileOperation.cut(pickedTiles)
+            } else {
+                History.addUndoAction(TileReplaceAction(map, currentTile))
+                TileOperation.cut(currentTile)
+            }
+
             Frame.update(true)
         }
     })
 
     add(JMenuItem("Copy").apply {
         addActionListener {
-            TileOperation.copy(currentTile)
+            val pickedTiles = getPickedTiles()
+
+            if (pickedTiles != null) {
+                TileOperation.copy(pickedTiles)
+            } else {
+                TileOperation.copy(currentTile)
+            }
         }
     })
 
     add(JMenuItem("Paste").apply {
         isEnabled = TileOperation.hasTileInBuffer()
         addActionListener {
-            History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.paste(currentTile.x, currentTile.y)
+            val pickedTiles = getPickedTiles()
+
+            if (pickedTiles != null) {
+                val tilesArea = prepareReverseActions(pickedTiles)
+                SelectOperation.pickArea(tilesArea)
+                TileOperation.paste(map, tilesArea.x1, tilesArea.y1)
+            } else {
+                History.addUndoAction(TileReplaceAction(map, currentTile))
+                TileOperation.paste(map, currentTile.x, currentTile.y)
+            }
+
             Frame.update(true)
         }
     })
 
     add(JMenuItem("Delete").apply {
         addActionListener {
-            History.addUndoAction(TileReplaceAction(map, currentTile))
-            TileOperation.delete(currentTile)
+            val pickedTiles = getPickedTiles()
+
+            if (pickedTiles != null) {
+                prepareReverseActions(pickedTiles, false)
+                TileOperation.delete(pickedTiles)
+            } else {
+                History.addUndoAction(TileReplaceAction(map, currentTile))
+                TileOperation.delete(currentTile)
+            }
+
             Frame.update(true)
         }
     })
+
+    if (SelectOperation.isPickType()) {
+        add(JMenuItem("Deselect").apply {
+            addActionListener {
+                SelectOperation.switchSelectType(SelectType.PICK)
+            }
+        })
+    }
 }
 
 private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile: Tile): Boolean {

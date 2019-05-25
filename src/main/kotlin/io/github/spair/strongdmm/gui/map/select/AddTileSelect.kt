@@ -9,6 +9,7 @@ import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
+import io.github.spair.strongdmm.logic.map.CoordPoint
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11.*
 
