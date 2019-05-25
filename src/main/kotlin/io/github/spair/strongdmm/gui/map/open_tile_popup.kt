@@ -20,7 +20,7 @@ fun MapPipeline.openTilePopup() {
         return
     }
 
-    view.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
+    MapView.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
 
         with(popup) {

@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.map.input
 
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapPipeline
+import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.openTilePopup
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
@@ -115,7 +116,7 @@ object MouseProcessor {
                     return
                 }
 
-                view.tryCloseTilePopup()
+                MapView.tryCloseTilePopup()
                 currZoom += if (isZoomIn) 1 else -1
 
                 if (isZoomIn) {
@@ -137,7 +138,7 @@ object MouseProcessor {
     private fun handleClicks() {
         while (Mouse.next()) {
             if (Mouse.getEventButtonState()) {
-                if (mapPipeline.view.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
+                if (MapView.tryCloseTilePopup() && Mouse.getEventButton() != RMB) {
                     continue
                 }
 

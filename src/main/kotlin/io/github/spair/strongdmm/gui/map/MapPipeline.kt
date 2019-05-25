@@ -9,9 +9,10 @@ import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
+import java.awt.Canvas
 import kotlin.concurrent.thread
 
-class MapPipeline(val view: MapView) {
+class MapPipeline(private val canvas: Canvas) {
 
     private var glInitialized = false
 
@@ -62,7 +63,7 @@ class MapPipeline(val view: MapView) {
     private fun initGLDisplay() {
         thread(start = true) {
             glInitialized = true
-            Display.setParent(view.canvas)
+            Display.setParent(canvas)
             Display.create()
             DmiProvider.initTextures()
             startRenderLoop()  // this is where the magic happens
