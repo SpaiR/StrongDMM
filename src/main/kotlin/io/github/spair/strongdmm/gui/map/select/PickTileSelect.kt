@@ -2,7 +2,10 @@ package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapView
-import io.github.spair.strongdmm.logic.history.*
+import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.MultipleAction
+import io.github.spair.strongdmm.logic.history.TileReplaceAction
+import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.CoordPoint
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem

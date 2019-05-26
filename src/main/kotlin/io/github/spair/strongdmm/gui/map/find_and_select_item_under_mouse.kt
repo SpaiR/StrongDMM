@@ -4,9 +4,7 @@ import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.logic.render.RenderInstance
-import java.util.*
-
-typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
+import io.github.spair.strongdmm.logic.render.RenderInstances
 
 fun MapPipeline.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
     val instances = mutableListOf<RenderInstance>()
