@@ -108,6 +108,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
                 TileOperation.paste(map, tilesArea.x1, tilesArea.y1)
             } else {
                 History.addUndoAction(TileReplaceAction(map, currentTile))
+                SelectOperation.pickArea(currentTile.x, currentTile.y)
                 TileOperation.paste(map, currentTile.x, currentTile.y)
             }
 

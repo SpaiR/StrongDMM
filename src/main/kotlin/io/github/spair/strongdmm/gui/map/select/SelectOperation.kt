@@ -23,6 +23,8 @@ object SelectOperation : TileSelect {
         Frame.update()
     }
 
+    fun pickArea(x: Int, y: Int) = pickArea(CoordArea(x, y, x, y))
+
     fun pickArea(coordArea: CoordArea) {
         tileSelect = PickTileSelect().apply {
             selectArea(coordArea.x1, coordArea.y1, coordArea.x2, coordArea.y2)
