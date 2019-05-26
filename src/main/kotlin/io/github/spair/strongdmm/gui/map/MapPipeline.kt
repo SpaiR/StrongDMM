@@ -107,7 +107,7 @@ class MapPipeline(private val canvas: Canvas) {
             Display.processMessages()
             KeyboardProcessor.fire()
             MouseProcessor.fire()
-            Display.sync(60)
+            Display.sync(30)
         }
     }
 
