@@ -229,7 +229,6 @@ class PickTileSelect : TileSelect {
                 reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
             }
 
-            reverseActions.add(PickAreaAction(x11, y11, x12, y12, x21, y21, x22, y22))
             History.addUndoAction(MultipleAction(reverseActions))
 
             selectedTiles.clear()
