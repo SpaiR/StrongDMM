@@ -87,6 +87,8 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     fun getTileItems() = tileItems.toList()
     fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
 
+    fun getVisibleTileItems() = tileItems.filter { !LayersManager.isHiddenType(it.type) }
+
     fun addTileItem(tileItem: TileItem, sort: Boolean = true) {
         tileItem.x = x
         tileItem.y = y
@@ -121,6 +123,11 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         return removedItem
     }
 
+    fun placeTileItems(tileItems: List<TileItem>) {
+        tileItems.forEach { placeTileItem(it, false) }
+        this.tileItems.sortWith(TileObjectsComparator)
+    }
+
     fun replaceTileItems(tileItems: List<TileItem>) {
         clearTile()
         tileItems.forEach { placeTileItem(it, false) }
@@ -145,7 +152,7 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     }
 
     fun clearTile() {
-        tileItems.toList().forEach { deleteTileItem(it) }
+        getVisibleTileItems().forEach { deleteTileItem(it) }
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {

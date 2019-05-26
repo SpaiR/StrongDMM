@@ -22,7 +22,7 @@ object TileOperation {
 
     fun copy(tiles: Collection<Tile>) {
         tilesBuffer.clear()
-        tiles.forEach { tilesBuffer[CoordPoint(it.x, it.y)] = it.getTileItems() }
+        tiles.forEach { tilesBuffer[CoordPoint(it.x, it.y)] = it.getVisibleTileItems() }
     }
 
     fun paste(map: Dmm, x: Int, y: Int) {

@@ -7,6 +7,7 @@ import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
 import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.CoordPoint
+import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11
@@ -49,7 +50,7 @@ class PickTileSelect : TileSelect {
 
         selectedCoords.forEach {
             map.getTile(it.x, it.y)?.let { tile ->
-                previousTiles[CoordPoint(it.x, it.y)] = tile.getTileItems()
+                previousTiles[CoordPoint(it.x, it.y)] = tile.getVisibleTileItems()
             }
         }
 
@@ -152,7 +153,7 @@ class PickTileSelect : TileSelect {
 
             selectedCoords.forEach {
                 map.getTile(it.x, it.y)?.let { tile ->
-                    selectedTiles[it] = tile.getTileItems()
+                    selectedTiles[it] = tile.getVisibleTileItems()
                     tile.clearTile()
                 }
             }
@@ -186,7 +187,7 @@ class PickTileSelect : TileSelect {
                     xMax = max(xMax, newX)
                     yMax = max(yMax, newY)
 
-                    previousTiles[CoordPoint(newX, newY)] = newTile.getTileItems()
+                    previousTiles[CoordPoint(newX, newY)] = newTile.getVisibleTileItems()
 
                     newTile.replaceTileItems(selectedTileItems)
                 }

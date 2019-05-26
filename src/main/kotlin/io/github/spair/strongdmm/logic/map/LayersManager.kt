@@ -7,6 +7,8 @@ object LayersManager {
 
     private val hiddenTypes = mutableSetOf<String>()
 
+    fun getHiddenTypes() = hiddenTypes.toTypedArray()
+
     fun toggleType(type: String) {
         if (!hiddenTypes.add(type)) {
             hiddenTypes.remove(type)
