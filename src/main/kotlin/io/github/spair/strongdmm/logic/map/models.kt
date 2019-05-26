@@ -87,14 +87,17 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     fun getTileItems() = tileItems.toList()
     fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
 
-    fun addTileItem(tileItem: TileItem) {
+    fun addTileItem(tileItem: TileItem, sort: Boolean = true) {
         tileItem.x = x
         tileItem.y = y
         tileItems.add(tileItem)
-        tileItems.sortWith(TileObjectsComparator)
+
+        if (sort) {
+            tileItems.sortWith(TileObjectsComparator)
+        }
     }
 
-    fun placeTileItem(tileItem: TileItem): TileItem? {
+    fun placeTileItem(tileItem: TileItem, sort: Boolean = true): TileItem? {
         // Specific BYOND behaviour: tile can have only one area or turf
         val typeToSanitize = when {
             tileItem.isType(TYPE_AREA) -> TYPE_AREA
@@ -114,17 +117,14 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
             }
         }
 
-        addTileItem(tileItem)
+        addTileItem(tileItem, sort)
         return removedItem
     }
 
-    fun placeTileItems(tileItems: Collection<TileItem>) {
-        tileItems.forEach { placeTileItem(it) }
-    }
-
-    fun replaceTileItems(tileItems: Collection<TileItem>) {
+    fun replaceTileItems(tileItems: List<TileItem>) {
         clearTile()
-        placeTileItems(tileItems)
+        tileItems.forEach { placeTileItem(it, false) }
+        this.tileItems.sortWith(TileObjectsComparator)
     }
 
     fun deleteTileItem(tileItem: TileItem) {
@@ -140,8 +140,12 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         if (varToGetItemType != null) {
             val world = Environment.dme.getItem(TYPE_WORLD)!!
             val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
-            addTileItem(TileItem(basicItem, tileItem.x, tileItem.y))
+            addTileItem(TileItem(basicItem, tileItem.x, tileItem.y), false)
         }
+    }
+
+    fun clearTile() {
+        tileItems.toList().forEach { deleteTileItem(it) }
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {
@@ -151,10 +155,6 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
             }
         }
         return null
-    }
-
-    fun clearTile() {
-        tileItems.toList().forEach { deleteTileItem(it) }
     }
 }
 

@@ -40,11 +40,13 @@ object TileOperation {
             for ((xIndex, xTile) in (coordArea.x1..coordArea.x2).withIndex()) {
                 map.getTile(xTile, yTile)?.let { tile ->
                     val tileItems = tilesBuffer[CoordPoint(xInit + xIndex, yInit + yIndex)]!!
+                    val newTileItems = mutableListOf<TileItem>()
 
-                    tile.clearTile()
                     tileItems.forEach { tileItem ->
-                        tile.placeTileItem(TileItem.fromTileItem(tileItem, xTile, yTile))
+                        newTileItems.add(TileItem.fromTileItem(tileItem, xTile, yTile))
                     }
+
+                    tile.replaceTileItems(newTileItems)
                 }
             }
         }
