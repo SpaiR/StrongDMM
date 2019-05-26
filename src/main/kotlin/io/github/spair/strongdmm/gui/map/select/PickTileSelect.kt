@@ -7,7 +7,6 @@ import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
 import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.CoordPoint
-import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import org.lwjgl.opengl.GL11

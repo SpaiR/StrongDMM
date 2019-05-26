@@ -9,6 +9,9 @@ import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.TYPE_AREA
+import io.github.spair.strongdmm.logic.dme.TYPE_MOB
+import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
+import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
@@ -34,6 +37,9 @@ object MenuBarView : View {
 
     // Layers items
     private val toggleAreaActionItem = createRadioButton("Area", true).addCtrlShortcut('1')
+    private val toggleTurfActionItem = createRadioButton("Turf", true).addCtrlShortcut('2')
+    private val toggleObjActionItem = createRadioButton("Obj", true).addCtrlShortcut('3')
+    private val toggleMobActionItem = createRadioButton("Mob", true).addCtrlShortcut('4')
 
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
@@ -76,6 +82,9 @@ object MenuBarView : View {
 
         // Layers
         toggleAreaActionItem.addActionListener { LayersManager.toggleType(TYPE_AREA) }
+        toggleTurfActionItem.addActionListener { LayersManager.toggleType(TYPE_TURF) }
+        toggleObjActionItem.addActionListener { LayersManager.toggleType(TYPE_OBJ) }
+        toggleMobActionItem.addActionListener { LayersManager.toggleType(TYPE_MOB) }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
@@ -99,7 +108,10 @@ object MenuBarView : View {
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(
-        toggleAreaActionItem
+        toggleAreaActionItem,
+        toggleTurfActionItem,
+        toggleObjActionItem,
+        toggleMobActionItem
     )
 
     fun switchUndo(enabled: Boolean) {
@@ -124,6 +136,9 @@ object MenuBarView : View {
                 Shortcut.ALT_2 -> fillSelectModeItem
                 Shortcut.ALT_3 -> pickSelectModeItem
                 Shortcut.CTRL_1 -> toggleAreaActionItem
+                Shortcut.CTRL_2 -> toggleTurfActionItem
+                Shortcut.CTRL_3 -> toggleObjActionItem
+                Shortcut.CTRL_4 -> toggleMobActionItem
             }.doClick()
         }
     }
