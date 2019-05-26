@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.history
 
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import java.util.*
 
@@ -18,7 +19,7 @@ object History {
     fun undoAction() {
         if (UNDO_STACK.isNotEmpty()) {
             REDO_STACK.push(UNDO_STACK.pop().doAction())
-
+            SelectOperation.depickArea()
             MenuBarView.switchUndo(UNDO_STACK.isNotEmpty())
             MenuBarView.switchRedo(true)
         }
@@ -27,7 +28,7 @@ object History {
     fun redoAction() {
         if (REDO_STACK.isNotEmpty()) {
             UNDO_STACK.push(REDO_STACK.pop().doAction())
-
+            SelectOperation.depickArea()
             MenuBarView.switchRedo(REDO_STACK.isNotEmpty())
             MenuBarView.switchUndo(true)
         }

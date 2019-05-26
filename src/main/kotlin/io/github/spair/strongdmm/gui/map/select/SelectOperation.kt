@@ -30,6 +30,12 @@ object SelectOperation : TileSelect {
         MenuBarView.switchSelectType(SelectType.PICK)
     }
 
+    fun depickArea() {
+        if (isPickType()) {
+            tileSelect = PickTileSelect()
+        }
+    }
+
     fun isPickType() = tileSelect is PickTileSelect
     fun getPickedTiles() = (tileSelect as? PickTileSelect)?.getSelectedTiles()
 }
