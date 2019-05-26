@@ -20,7 +20,7 @@ class PickTileSelect : TileSelect {
     private var y2 = 0
 
     private val selectedCoords = mutableSetOf<CoordPoint>()
-    private val previousTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
+    private val previousTiles = mutableMapOf<CoordPoint, List<TileItem>>()
 
     fun getSelectedTiles(): List<Tile> {
         val map = MapView.getSelectedMap()!!
@@ -46,7 +46,7 @@ class PickTileSelect : TileSelect {
 
         selectedCoords.forEach {
             map.getTile(it.x, it.y)?.let { tile ->
-                previousTiles.add(CoordPoint(it.x, it.y) to tile.getTileItems())
+                previousTiles[CoordPoint(it.x, it.y)] = tile.getTileItems()
             }
         }
 
@@ -139,7 +139,7 @@ class PickTileSelect : TileSelect {
         private var xClickStart = 0
         private var yClickStart = 0
 
-        private var selectedTiles = mutableListOf<Pair<CoordPoint, List<TileItem>>>()
+        private var selectedTiles = mutableMapOf<CoordPoint, List<TileItem>>()
 
         override fun onStart(x: Int, y: Int) {
             xClickStart = x
@@ -149,7 +149,7 @@ class PickTileSelect : TileSelect {
 
             selectedCoords.forEach {
                 map.getTile(it.x, it.y)?.let { tile ->
-                    selectedTiles.add(Pair(it, tile.getTileItems()))
+                    selectedTiles[it] = tile.getTileItems()
                     tile.clearTile()
                 }
             }
@@ -183,7 +183,7 @@ class PickTileSelect : TileSelect {
                     xMax = max(xMax, newX)
                     yMax = max(yMax, newY)
 
-                    previousTiles.add(Pair(CoordPoint(newX, newY), newTile.getTileItems()))
+                    previousTiles[CoordPoint(newX, newY)] = newTile.getTileItems()
 
                     newTile.replaceTileItems(selectedTileItems)
                 }
@@ -201,32 +201,14 @@ class PickTileSelect : TileSelect {
             val reverseActions = mutableListOf<Undoable>()
             val map = MapView.getSelectedMap()!!
 
-            var x21 = Int.MAX_VALUE
-            var y21 = Int.MAX_VALUE
-            var x22 = Int.MIN_VALUE
-            var y22 = Int.MIN_VALUE
-
-            previousTiles.forEach { (coord, tileItems) ->
-                x21 = min(x21, coord.x)
-                y21 = min(y21, coord.y)
-                x22 = max(x22, coord.x)
-                y22 = max(y22, coord.y)
-
+            selectedTiles.forEach { (coord, tileItems) ->
                 reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
             }
 
-            var x11 = Int.MAX_VALUE
-            var y11 = Int.MAX_VALUE
-            var x12 = Int.MIN_VALUE
-            var y12 = Int.MIN_VALUE
-
-            selectedTiles.forEach { (coord, tileItems) ->
-                x11 = min(x11, coord.x)
-                y11 = min(y11, coord.y)
-                x12 = max(x12, coord.x)
-                y12 = max(y12, coord.y)
-
-                reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
+            previousTiles.forEach { (coord, tileItems) ->
+                if (!selectedTiles.containsKey(coord)) {
+                    reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileItems))
+                }
             }
 
             History.addUndoAction(MultipleAction(reverseActions))
