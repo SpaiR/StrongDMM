@@ -26,9 +26,9 @@ object MenuBarView : View {
     // Edit items
     private val undoActionItem = createButton("Undo", false).addCtrlShortcut('Z')
     private val redoActionItem = createButton("Redo", false).addCtrlShiftShortcut('Z')
-    private val addSelectModeItem = createRadioButton("Add Select Mode", true)
-    private val fillSelectModeItem = createRadioButton("Fill Select Mode")
-    private val pickSelectModeItem = createRadioButton("Pick Select Mode")
+    private val addSelectModeItem = createRadioButton("Add Select Mode", true).addAltShortcut('1')
+    private val fillSelectModeItem = createRadioButton("Fill Select Mode").addAltShortcut('2')
+    private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
@@ -105,6 +105,9 @@ object MenuBarView : View {
                 Shortcut.CTRL_Z -> undoActionItem
                 Shortcut.CTRL_SHIFT_O -> availableMapsItem
                 Shortcut.CTRL_SHIFT_Z -> redoActionItem
+                Shortcut.ALT_1 -> addSelectModeItem
+                Shortcut.ALT_2 -> fillSelectModeItem
+                Shortcut.ALT_3 -> pickSelectModeItem
             }.doClick()
         }
     }
@@ -166,5 +169,9 @@ object MenuBarView : View {
 
     private fun JMenuItem.addCtrlShiftShortcut(char: Char) = apply {
         accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.CTRL_DOWN_MASK or InputEvent.SHIFT_DOWN_MASK)
+    }
+
+    private fun JMenuItem.addAltShortcut(char: Char) = apply {
+        accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.ALT_DOWN_MASK)
     }
 }

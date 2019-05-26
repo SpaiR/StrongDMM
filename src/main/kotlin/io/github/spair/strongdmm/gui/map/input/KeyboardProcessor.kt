@@ -21,6 +21,12 @@ object KeyboardProcessor {
         Keyboard.KEY_Z to Shortcut.CTRL_SHIFT_Z
     )
 
+    private val altMappings = mapOf(
+        Keyboard.KEY_1 to Shortcut.ALT_1,
+        Keyboard.KEY_2 to Shortcut.ALT_2,
+        Keyboard.KEY_3 to Shortcut.ALT_3
+    )
+
     fun fire() {
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) {
@@ -31,6 +37,9 @@ object KeyboardProcessor {
                     } else {
                         ctrlMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
                     }
+                }
+                if (isAltDown()) {
+                    altMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
                 }
             }
         }
