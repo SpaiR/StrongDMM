@@ -8,7 +8,9 @@ import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.dme.TYPE_AREA
 import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
@@ -30,22 +32,28 @@ object MenuBarView : View {
     private val fillSelectModeItem = createRadioButton("Fill Select Mode").addAltShortcut('2')
     private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
+    // Layers items
+    private val toggleAreaActionItem = createRadioButton("Area", true).addCtrlShortcut('1')
+
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
             add(createMenu("File", createFileItems()))
             add(createMenu("Edit", createEditItems()))
+            add(createMenu("Layers", createLayersItems()))
 
             initLogic()
         }
     }
 
     private fun initLogic() {
+        // File
         openEnvItem.addActionListener(openEnvironmentAction())
         openMapItem.addActionListener(openMapAction())
         availableMapsItem.addActionListener(openMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
         exitMenuItem.addActionListener { System.exit(0) }
 
+        // Edit
         undoActionItem.addActionListener { History.undoAction() }
         redoActionItem.addActionListener { History.redoAction() }
         ButtonGroup().run {
@@ -65,6 +73,9 @@ object MenuBarView : View {
                 }
             })
         }
+
+        // Layers
+        toggleAreaActionItem.addActionListener { LayersManager.toggleType(TYPE_AREA) }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
@@ -85,6 +96,10 @@ object MenuBarView : View {
         addSelectModeItem,
         fillSelectModeItem,
         pickSelectModeItem
+    )
+
+    private fun createLayersItems() = arrayOf<JComponent>(
+        toggleAreaActionItem
     )
 
     fun switchUndo(enabled: Boolean) {
@@ -108,6 +123,7 @@ object MenuBarView : View {
                 Shortcut.ALT_1 -> addSelectModeItem
                 Shortcut.ALT_2 -> fillSelectModeItem
                 Shortcut.ALT_3 -> pickSelectModeItem
+                Shortcut.CTRL_1 -> toggleAreaActionItem
             }.doClick()
         }
     }

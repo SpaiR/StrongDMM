@@ -13,7 +13,8 @@ object KeyboardProcessor {
         Keyboard.KEY_Q to Shortcut.CTRL_Q,
         Keyboard.KEY_S to Shortcut.CTRL_S,
         Keyboard.KEY_O to Shortcut.CTRL_O,
-        Keyboard.KEY_Z to Shortcut.CTRL_Z
+        Keyboard.KEY_Z to Shortcut.CTRL_Z,
+        Keyboard.KEY_1 to Shortcut.CTRL_1
     )
 
     private val ctrlShiftMappings = mapOf(

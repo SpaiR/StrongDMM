@@ -9,7 +9,7 @@ class DmeItem(
     val type: String,
     val vars: Map<String, String>,
     val children: List<String>
-) {
+    ) {
 
     private val lookedVars = mutableMapOf<String, String?>()
 
@@ -48,7 +48,3 @@ class DmeItem(
         return "DmeItem(type='$type', vars=$vars, children=$children)"
     }
 }
-
-// This 'isType' doesn't handle datum/atom and so on, since map editor doesn't place those types on the map,
-// so additional checks would result into obsolete overhead.
-fun isType(t1: String, t2: String) = t1.startsWith(t2)
