@@ -30,7 +30,7 @@ class FillTileSelect : TileSelect {
         xStart = x
         yStart = y
         isDeleteMode = KeyboardProcessor.isShiftDown()
-        Frame.update()
+        onAdd(x, y)
     }
 
     override fun onAdd(x: Int, y: Int) {

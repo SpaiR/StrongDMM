@@ -21,7 +21,7 @@ class AddTileSelect : TileSelect {
 
     override fun onStart(x: Int, y: Int) {
         isDeleteMode = KeyboardProcessor.isShiftDown()
-        Frame.update()
+        onAdd(x, y)
     }
 
     override fun onAdd(x: Int, y: Int) {
