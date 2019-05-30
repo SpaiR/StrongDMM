@@ -6,7 +6,6 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
-import io.github.spair.strongdmm.logic.dme.IsTypeCache
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -65,6 +64,5 @@ object Environment {
         InstanceListView.clean()
         TabbedObjectPanelView.clean()
         RenderInstanceProvider.clean()
-        IsTypeCache.clean()
     }
 }
