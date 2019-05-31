@@ -41,8 +41,7 @@ object KeyboardProcessor {
                     } else {
                         ctrlMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
                     }
-                }
-                if (isAltDown()) {
+                } else if (isAltDown()) {
                     altMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
                 }
             }

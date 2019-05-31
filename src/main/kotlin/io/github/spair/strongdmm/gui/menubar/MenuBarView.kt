@@ -63,21 +63,9 @@ object MenuBarView : View {
         undoActionItem.addActionListener { History.undoAction() }
         redoActionItem.addActionListener { History.redoAction() }
         ButtonGroup().run {
-            add(addSelectModeItem.apply {
-                addActionListener {
-                    SelectOperation.switchSelectType(SelectType.ADD)
-                }
-            })
-            add(fillSelectModeItem.apply {
-                addActionListener {
-                    SelectOperation.switchSelectType(SelectType.FILL)
-                }
-            })
-            add(pickSelectModeItem.apply {
-                addActionListener {
-                    SelectOperation.switchSelectType(SelectType.PICK)
-                }
-            })
+            add(addSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
+            add(fillSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
+            add(pickSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.PICK) } })
         }
 
         // Layers
@@ -126,15 +114,18 @@ object MenuBarView : View {
     fun fireShortcutEvent(shortcut: Shortcut) {
         SwingUtilities.invokeLater {
             when (shortcut) {
+                // File
                 Shortcut.CTRL_O -> openMapItem
                 Shortcut.CTRL_S -> saveItem
                 Shortcut.CTRL_Q -> exitMenuItem
                 Shortcut.CTRL_Z -> undoActionItem
+                // Edit
                 Shortcut.CTRL_SHIFT_O -> availableMapsItem
                 Shortcut.CTRL_SHIFT_Z -> redoActionItem
                 Shortcut.ALT_1 -> addSelectModeItem
                 Shortcut.ALT_2 -> fillSelectModeItem
                 Shortcut.ALT_3 -> pickSelectModeItem
+                // Layers
                 Shortcut.CTRL_1 -> toggleAreaActionItem
                 Shortcut.CTRL_2 -> toggleTurfActionItem
                 Shortcut.CTRL_3 -> toggleObjActionItem
