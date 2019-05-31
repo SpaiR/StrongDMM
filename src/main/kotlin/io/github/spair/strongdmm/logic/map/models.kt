@@ -134,6 +134,12 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         this.tileItems.sortWith(TileObjectsComparator)
     }
 
+    fun replaceVisibleTileItems(tileItems: List<TileItem>) {
+        clearVisibleTile()
+        tileItems.forEach { placeTileItem(it, false) }
+        this.tileItems.sortWith(TileObjectsComparator)
+    }
+
     fun deleteTileItem(tileItem: TileItem) {
         tileItems.remove(tileItem)
 
@@ -152,6 +158,10 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     }
 
     fun clearTile() {
+        getTileItems().forEach { deleteTileItem(it) }
+    }
+
+    fun clearVisibleTile() {
         getVisibleTileItems().forEach { deleteTileItem(it) }
     }
 

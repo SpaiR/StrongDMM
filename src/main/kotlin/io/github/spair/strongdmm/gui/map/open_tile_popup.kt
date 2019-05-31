@@ -52,32 +52,14 @@ private fun JPopupMenu.addResetActions() {
 private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
     fun getPickedTiles() = SelectOperation.getPickedTiles()?.takeIf { it.isNotEmpty() }
 
-    fun prepareReverseActions(pickedTiles: List<Tile>, fromCurrentTile: Boolean = true): CoordArea {
-        val reverseActions = mutableListOf<Undoable>()
-        val tilesArea = getAreaOfTiles(pickedTiles).let {
-            if (fromCurrentTile) it.shiftToPoint(currentTile.x, currentTile.y) else it
-        }
-
-        for (x in tilesArea.x1..tilesArea.x2) {
-            for (y in tilesArea.y1..tilesArea.y2) {
-                map.getTile(x, y)?.let { reverseActions.add(TileReplaceAction(map, it)) }
-            }
-        }
-
-        History.addUndoAction(MultipleAction(reverseActions))
-        return tilesArea
-    }
-
     add(JMenuItem("Cut").apply {
         addActionListener {
             val pickedTiles = getPickedTiles()
 
             if (pickedTiles != null) {
-                prepareReverseActions(pickedTiles, false)
-                TileOperation.cut(pickedTiles)
+                TileOperation.cut(map, pickedTiles)
             } else {
-                History.addUndoAction(TileReplaceAction(map, currentTile))
-                TileOperation.cut(currentTile)
+                TileOperation.cut(map, currentTile)
             }
 
             Frame.update(true)
@@ -99,18 +81,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
     add(JMenuItem("Paste").apply {
         isEnabled = TileOperation.hasTileInBuffer()
         addActionListener {
-            val pickedTiles = getPickedTiles()
-
-            if (pickedTiles != null) {
-                val tilesArea = prepareReverseActions(pickedTiles)
-                SelectOperation.pickArea(tilesArea)
-                TileOperation.paste(map, tilesArea.x1, tilesArea.y1)
-            } else {
-                History.addUndoAction(TileReplaceAction(map, currentTile))
-                SelectOperation.pickArea(currentTile.x, currentTile.y)
-                TileOperation.paste(map, currentTile.x, currentTile.y)
-            }
-
+            TileOperation.paste(map, currentTile.x, currentTile.y) { SelectOperation.pickArea(it) }
             Frame.update(true)
         }
     })
@@ -120,11 +91,9 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
             val pickedTiles = getPickedTiles()
 
             if (pickedTiles != null) {
-                prepareReverseActions(pickedTiles, false)
-                TileOperation.delete(pickedTiles)
+                TileOperation.delete(map, pickedTiles)
             } else {
-                History.addUndoAction(TileReplaceAction(map, currentTile))
-                TileOperation.delete(currentTile)
+                TileOperation.delete(map, currentTile)
             }
 
             Frame.update(true)
