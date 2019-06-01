@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.menubar
 
 import io.github.spair.strongdmm.gui.View
 import io.github.spair.strongdmm.gui.chooseFileDialog
+import io.github.spair.strongdmm.gui.edit.LayersFilter
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
@@ -36,6 +37,7 @@ object MenuBarView : View {
     private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
     // Layers items
+    private val layersFilterActionItem = createButton("Layers Filter", false)
     private val toggleAreaActionItem = createRadioButton("Area", true).addCtrlShortcut('1')
     private val toggleTurfActionItem = createRadioButton("Turf", true).addCtrlShortcut('2')
     private val toggleObjActionItem = createRadioButton("Obj", true).addCtrlShortcut('3')
@@ -69,6 +71,7 @@ object MenuBarView : View {
         }
 
         // Layers
+        layersFilterActionItem.addActionListener { LayersFilter().open() }
         toggleAreaActionItem.addActionListener { LayersManager.toggleType(TYPE_AREA) }
         toggleTurfActionItem.addActionListener { LayersManager.toggleType(TYPE_TURF) }
         toggleObjActionItem.addActionListener { LayersManager.toggleType(TYPE_OBJ) }
@@ -96,6 +99,8 @@ object MenuBarView : View {
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(
+        layersFilterActionItem,
+        JSeparator(),
         toggleAreaActionItem,
         toggleTurfActionItem,
         toggleObjActionItem,
@@ -142,13 +147,23 @@ object MenuBarView : View {
         }.isSelected = true
     }
 
+    fun switchBasicLayers(type: String, isSelected: Boolean) {
+        when (type) {
+            TYPE_AREA -> toggleAreaActionItem
+            TYPE_TURF -> toggleTurfActionItem
+            TYPE_OBJ -> toggleObjActionItem
+            TYPE_MOB -> toggleMobActionItem
+            else -> null
+        }?.isSelected = isSelected
+    }
+
     private fun openEnvironmentAction() = ActionListener {
         chooseFileDialog("BYOND Environments (*.dme)", "dme")?.let { dmeFile ->
             runWithProgressBar("Parsing environment...") {
                 Environment.parseAndPrepareEnv(dmeFile)
-                saveItem.isEnabled = true
-                openMapItem.isEnabled = true
-                availableMapsItem.isEnabled = true
+                arrayOf(saveItem, openMapItem, availableMapsItem, layersFilterActionItem).forEach {
+                    it.isEnabled = true
+                }
             }
         }
     }

@@ -6,8 +6,13 @@ import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.history.*
-import io.github.spair.strongdmm.logic.map.*
+import io.github.spair.strongdmm.logic.history.EditVarsAction
+import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.logic.map.Tile
+import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
