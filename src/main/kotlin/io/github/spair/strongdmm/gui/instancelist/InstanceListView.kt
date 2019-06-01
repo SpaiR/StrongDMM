@@ -39,13 +39,16 @@ object InstanceListView : View, EnvCleanable {
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
             add(JScrollPane(instanceList), BorderLayout.CENTER)
-            add(JPanel().apply {
+            add(JPanel(BorderLayout()).apply {
                 preferredSize = Dimension(Int.MAX_VALUE, 200)
-                layout = BoxLayout(this, BoxLayout.Y_AXIS)
                 border = EmptyBorder(5, 5, 5, 5)
 
-                add(JLabel("<html><h4>Instance variables:</h4></html>"))
-                add(JScrollPane(JPanel(FlowLayout(FlowLayout.LEFT)).apply { add(customVariablesLabel) }))
+                add(JLabel("<html><h4>Instance variables:</h4></html>"), BorderLayout.NORTH)
+                add(JScrollPane(
+                    JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+                        add(customVariablesLabel)
+                    }
+                ))
 
                 setEmptyInstanceVars()
             }, BorderLayout.SOUTH)
