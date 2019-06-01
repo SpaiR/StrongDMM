@@ -12,7 +12,7 @@ import javax.swing.border.EmptyBorder
 object TabbedObjectPanelView : View, EnvCleanable {
 
     private val tabbedPanel = JTabbedPane()
-    private val typeField = JTextField("no type selected", 20).apply {
+    private val typeField = JTextField("no type selected", 30).apply {
         isEditable = false
         border = EmptyBorder(0, 0, 0, 0)
     }
@@ -24,7 +24,7 @@ object TabbedObjectPanelView : View, EnvCleanable {
 
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
-            preferredSize = Dimension(275, Int.MAX_VALUE)
+            preferredSize = Dimension(350, Int.MAX_VALUE)
             add(tabbedPanel.apply {
                 addTab("Tree", ObjectTreeView.initComponent())
                 addTab("Instance (empty)", InstanceListView.initComponent())
