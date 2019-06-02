@@ -33,7 +33,7 @@ class AddTileSelect : TileSelect {
     }
 
     private fun deleteTopmostItem(x: Int, y: Int): Boolean {
-        val map = MapView.getSelectedMap()!!
+        val map = MapView.getSelectedDmm()!!
         val instance = InstanceListView.selectedInstance
         val tile = map.getTile(x, y)
 
@@ -61,7 +61,7 @@ class AddTileSelect : TileSelect {
         val instance = InstanceListView.selectedInstance
 
         if (instance != null) {
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
             val tileItem = TileItem.fromInstance(instance, x, y)
             reverseActions.add(map.placeTileItemWithUndoable(tileItem))
             return true

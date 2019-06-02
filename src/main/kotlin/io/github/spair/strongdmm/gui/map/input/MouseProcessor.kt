@@ -19,6 +19,10 @@ object MouseProcessor {
     private const val RMB = 1
     private const val MMB = 2
 
+    private const val MAX_ZOOM_OUT = 0
+    private const val MAX_ZOOM_IN = 10
+    private const val ZOOM_FACTOR = 1.5f
+
     private var lmbWasPressed = false
     private var tileChanged = false
 
@@ -32,15 +36,15 @@ object MouseProcessor {
 
     private fun updateMousePosition() {
         mapPipeline.run {
-            xMouse = Mouse.getX() * viewZoom - xViewOff
-            yMouse = Mouse.getY() * viewZoom - yViewOff
+            selectedMapData?.let { map ->
+                xMouse = Mouse.getX() * map.viewZoom - map.xViewOff
+                yMouse = Mouse.getY() * map.viewZoom - map.yViewOff
 
-            var xMouseMapNew = xMouse.toInt() / iconSize + 1
-            var yMouseMapNew = yMouse.toInt() / iconSize + 1
+                var xMouseMapNew = xMouse.toInt() / iconSize + 1
+                var yMouseMapNew = yMouse.toInt() / iconSize + 1
 
-            selectedMap?.let { map ->
-                xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > map.maxX) OUT_OF_BOUNDS else xMouseMapNew
-                yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > map.maxY) OUT_OF_BOUNDS else yMouseMapNew
+                xMouseMapNew = if (xMouseMapNew < 1 || xMouseMapNew > map.dmm.maxX) OUT_OF_BOUNDS else xMouseMapNew
+                yMouseMapNew = if (yMouseMapNew < 1 || yMouseMapNew > map.dmm.maxY) OUT_OF_BOUNDS else yMouseMapNew
 
                 if (xMouseMapNew == OUT_OF_BOUNDS || yMouseMapNew == OUT_OF_BOUNDS) {
                     xMouseMapNew = OUT_OF_BOUNDS
@@ -74,7 +78,7 @@ object MouseProcessor {
             } else {
                 if (tileChanged) {
                     tileChanged = false
-                    mapPipeline.selectedMap?.let {
+                    mapPipeline.selectedMapData?.let {
                         SelectOperation.onAdd(mapPipeline.xMouseMap, mapPipeline.yMouseMap)
                     }
                 }
@@ -93,15 +97,17 @@ object MouseProcessor {
             val y = Mouse.getDY()
 
             mapPipeline.run {
-                val xViewOffNew = xViewOff + x * viewZoom
-                val yViewOffNew = yViewOff + y * viewZoom
+                selectedMapData?.let { map ->
+                    val xViewOffNew = map.xViewOff + x * map.viewZoom
+                    val yViewOffNew = map.yViewOff + y * map.viewZoom
 
-                if (xViewOffNew != xViewOff || yViewOffNew != yViewOff) {
-                    xViewOff = xViewOffNew
-                    yViewOff = yViewOffNew
+                    if (xViewOffNew != map.xViewOff || yViewOffNew != map.yViewOff) {
+                        map.xViewOff = xViewOffNew
+                        map.yViewOff = yViewOffNew
 
-                    updateMapOffset()
-                    Frame.update()
+                        updateMapOffset()
+                        Frame.update()
+                    }
                 }
             }
         }
@@ -110,27 +116,29 @@ object MouseProcessor {
     private fun handleZooming() {
         Mouse.getDWheel().takeIf { it != 0 }?.let { zoomOffset ->
             mapPipeline.run {
-                val isZoomIn = zoomOffset > 0
+                selectedMapData?.let { map ->
+                    val isZoomIn = zoomOffset > 0
 
-                if ((!isZoomIn && currZoom - 1 < maxZoomOut) || (isZoomIn && currZoom + 1 > maxZoomIn)) {
-                    return
+                    if ((!isZoomIn && map.currZoom - 1 < MAX_ZOOM_OUT) || (isZoomIn && map.currZoom + 1 > MAX_ZOOM_IN)) {
+                        return
+                    }
+
+                    MapView.tryCloseTilePopup()
+                    map.currZoom += if (isZoomIn) 1 else -1
+
+                    if (isZoomIn) {
+                        map.viewZoom /= ZOOM_FACTOR
+                        map.xViewOff -= Mouse.getX() * map.viewZoom / 2
+                        map.yViewOff -= Mouse.getY() * map.viewZoom / 2
+                    } else {
+                        map.xViewOff += Mouse.getX() * map.viewZoom / 2
+                        map.yViewOff += Mouse.getY() * map.viewZoom / 2
+                        map.viewZoom *= ZOOM_FACTOR
+                    }
+
+                    updateMapOffset()
+                    Frame.update()
                 }
-
-                MapView.tryCloseTilePopup()
-                currZoom += if (isZoomIn) 1 else -1
-
-                if (isZoomIn) {
-                    viewZoom /= zoomFactor
-                    xViewOff -= Mouse.getX() * viewZoom / 2
-                    yViewOff -= Mouse.getY() * viewZoom / 2
-                } else {
-                    xViewOff += Mouse.getX() * viewZoom / 2
-                    yViewOff += Mouse.getY() * viewZoom / 2
-                    viewZoom *= zoomFactor
-                }
-
-                updateMapOffset()
-                Frame.update()
             }
         }
     }
@@ -156,7 +164,9 @@ object MouseProcessor {
     }
 
     private fun MapPipeline.updateMapOffset() {
-        xMapOff = (-xViewOff / iconSize + 0.5f).toInt()
-        yMapOff = (-yViewOff / iconSize + 0.5f).toInt()
+        selectedMapData?.let { map ->
+            map.xMapOff = (-map.xViewOff / iconSize + 0.5f).toInt()
+            map.yMapOff = (-map.yViewOff / iconSize + 0.5f).toInt()
+        }
     }
 }

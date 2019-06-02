@@ -61,7 +61,7 @@ class FillTileSelect : TileSelect {
         val instance = InstanceListView.selectedInstance
 
         if (instance != null) {
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
             val typeToRemove = when {
                 isType(instance.type, TYPE_TURF) -> TYPE_TURF
                 isType(instance.type, TYPE_AREA) -> TYPE_AREA
@@ -96,7 +96,7 @@ class FillTileSelect : TileSelect {
         val selectedInstance = InstanceListView.selectedInstance
 
         if (selectedInstance != null) {
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
             val reverseActions = mutableListOf<Undoable>()
 
             for (x in x1..x2) {

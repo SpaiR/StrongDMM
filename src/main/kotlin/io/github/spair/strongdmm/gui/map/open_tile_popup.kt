@@ -25,19 +25,20 @@ fun MapPipeline.openTilePopup() {
     }
 
     MapView.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
-        val tile = selectedMap!!.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
+        val dmm = selectedMapData!!.dmm
+        val tile = dmm.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
 
         with(popup) {
             addResetActions()
             addSeparator()
-            addTileActions(selectedMap!!, tile)
+            addTileActions(dmm, tile)
             addSeparator()
 
-            if (addOptionalSelectedInstanceActions(selectedMap!!, tile)) {
+            if (addOptionalSelectedInstanceActions(dmm, tile)) {
                 addSeparator()
             }
 
-            addTileItemsActions(selectedMap!!, tile)
+            addTileItemsActions(dmm, tile)
         }
     }
 }

@@ -49,7 +49,7 @@ object ColorExtractor {
         val alpha = tileItem.alpha / 255f
 
         if (alpha == 1f && awtColor == null) {
-            return DEFAULT_COLOR
+            return DefaultColor
         }
 
         return if (awtColor != null) {

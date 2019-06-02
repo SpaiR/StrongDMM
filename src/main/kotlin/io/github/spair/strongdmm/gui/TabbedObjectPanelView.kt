@@ -11,7 +11,9 @@ import javax.swing.border.EmptyBorder
 
 object TabbedObjectPanelView : View, EnvCleanable {
 
-    private val tabbedPanel = JTabbedPane()
+    private val tabbedPanel = JTabbedPane().apply {
+        isFocusable = false
+    }
     private val typeField = JTextField("no type selected", 30).apply {
         isEditable = false
         border = EmptyBorder(0, 0, 0, 0)

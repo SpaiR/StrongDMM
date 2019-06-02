@@ -12,9 +12,9 @@ class RenderInstance(
     val v2: Float = 1f,
     val width: Int = 32,
     val height: Int = 32,
-    val color: Color = DEFAULT_COLOR,
+    val color: Color = DefaultColor,
     val tileItem: TileItem
 )
 
-class Color(val red: Float = 1f, val green: Float = 1f, val blue: Float = 1f, val alpha: Float = 1f)
-val DEFAULT_COLOR = Color()
+open class Color(val red: Float = 1f, val green: Float = 1f, val blue: Float = 1f, val alpha: Float = 1f)
+object DefaultColor : Color()

@@ -8,11 +8,15 @@ import io.github.spair.strongdmm.logic.dmi.SOUTH
 import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
+import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
 const val OUT_OF_BOUNDS = -1
 
-class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
+class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
+
+    val mapName: String = mapFile.nameWithoutExtension
+    val mapPath: String = mapFile.path
 
     val maxX: Int = initialDmmData.maxX
     val maxY: Int = initialDmmData.maxY
@@ -29,7 +33,7 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
 
                 for (tileContent in initialDmmData.getTileContentByLocation(TileLocation.of(x, y))) {
                     dme.getItem(tileContent.type)?.let {
-                        tileItems.add(TileItem(it, x, y, tileContent.vars))
+                        tileItems.add(TileItem(it.type, x, y, tileContent.vars))
                     }
                 }
 
@@ -74,6 +78,17 @@ class Dmm(val mapPath: String, val initialDmmData: DmmData, dme: Dme) {
         }
 
         return items
+    }
+
+    override fun equals(other: Any?) = when {
+        other == null -> false
+        this === other -> true
+        other !is Dmm -> false
+        else -> mapPath == other.mapPath
+    }
+
+    override fun hashCode(): Int {
+        return mapPath.hashCode()
     }
 }
 
@@ -153,7 +168,7 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         if (varToGetItemType != null) {
             val world = Environment.dme.getItem(TYPE_WORLD)!!
             val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
-            addTileItem(TileItem(basicItem, tileItem.x, tileItem.y), false)
+            addTileItem(TileItem(basicItem.type, tileItem.x, tileItem.y), false)
         }
     }
 
@@ -175,20 +190,19 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     }
 }
 
-class TileItem(val dmeItem: DmeItem, var x: Int, var y: Int, customVars: Map<String, String>? = null) {
+class TileItem(val type: String, var x: Int, var y: Int, customVars: Map<String, String>? = null) {
 
+    val dmeItem: DmeItem get() = Environment.dme.getItem(type)!!
     val customVars: MutableMap<String, String> = customVars?.toMutableMap() ?: mutableMapOf()
 
     companion object {
         fun fromInstance(instance: ItemInstance, x: Int, y: Int): TileItem {
-            return TileItem(Environment.dme.getItem(instance.type)!!, x, y, instance.customVars)
+            return TileItem(Environment.dme.getItem(instance.type)!!.type, x, y, instance.customVars)
         }
         fun fromTileItem(tileItem: TileItem, x: Int, y: Int): TileItem {
-            return TileItem(tileItem.dmeItem, x, y, tileItem.customVars)
+            return TileItem(tileItem.type, x, y, tileItem.customVars)
         }
     }
-
-    val type: String = dmeItem.type
 
     // Vars extensively used during rendering
     var icon = getVarText(VAR_ICON) ?: ""
@@ -218,7 +232,7 @@ class TileItem(val dmeItem: DmeItem, var x: Int, var y: Int, customVars: Map<Str
         updateFields()
     }
 
-    fun isType(type: String) = dmeItem.isType(type)
+    fun isType(otherType: String) = isType(type, otherType)
 
     fun getVar(name: String): String? = customVars[name] ?: dmeItem.getVar(name)
     fun getVarText(name: String): String? = customVars[name]?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) } ?: dmeItem.getVarText(name)

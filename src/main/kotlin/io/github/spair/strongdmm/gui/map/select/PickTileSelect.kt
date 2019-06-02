@@ -25,7 +25,7 @@ class PickTileSelect : TileSelect {
     private val previousTiles = mutableMapOf<CoordPoint, TileData>()
 
     fun getSelectedTiles(): List<Tile> {
-        val map = MapView.getSelectedMap()!!
+        val map = MapView.getSelectedDmm()!!
         val tiles = mutableListOf<Tile>()
 
         selectedCoords.forEach { (x, y) ->
@@ -44,7 +44,7 @@ class PickTileSelect : TileSelect {
         updateSelectedCoords()
         previousTiles.clear()
 
-        val map = MapView.getSelectedMap()!!
+        val map = MapView.getSelectedDmm()!!
 
         selectedCoords.forEach {
             map.getTile(it.x, it.y)?.let { tile ->
@@ -147,7 +147,7 @@ class PickTileSelect : TileSelect {
             xClickStart = x
             yClickStart = y
 
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
 
             selectedCoords.forEach {
                 map.getTile(it.x, it.y)?.let { tile ->
@@ -158,7 +158,7 @@ class PickTileSelect : TileSelect {
         }
 
         override fun onAdd(x: Int, y: Int) {
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
 
             val xShift = x - xClickStart
             val yShift = y - yClickStart
@@ -198,7 +198,7 @@ class PickTileSelect : TileSelect {
 
         override fun onStop() {
             val reverseActions = mutableListOf<Undoable>()
-            val map = MapView.getSelectedMap()!!
+            val map = MapView.getSelectedDmm()!!
 
             selectedTiles.forEach { (coord, tileData) ->
                 map.getTile(coord.x, coord.y)?.let { tile ->

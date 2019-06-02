@@ -3,19 +3,26 @@ package io.github.spair.strongdmm.gui
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Insets
 import javax.swing.JFrame
 import javax.swing.UIManager
 
 object PrimaryFrame : JFrame() {
 
     fun init() {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+        initUI()
         initViews()
         title = "StrongDMM"
         size = Dimension(1280, 768)
         defaultCloseOperation = EXIT_ON_CLOSE
         setLocationRelativeTo(null)
         isVisible = true
+    }
+
+    private fun initUI() {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+        UIManager.getDefaults()["TabbedPane.contentBorderInsets"] = Insets(0, 0, 0, 0)
+        UIManager.getDefaults()["TabbedPane.tabAreaInsets"] = Insets(0, 0, 0, 0)
     }
 
     // Views have it's own subviews

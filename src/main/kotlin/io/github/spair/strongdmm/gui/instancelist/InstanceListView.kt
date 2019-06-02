@@ -81,7 +81,7 @@ object InstanceListView : View, EnvCleanable {
 
         val instances = mutableSetOf<ItemInstance>()
 
-        MapView.getSelectedMap()?.let { dmm ->
+        MapView.getSelectedDmm()?.let { dmm ->
             dmm.getAllTileItemsByType(type).forEach {
                 instances.add(ItemInstance(
                     it.getVarText(VAR_NAME) ?: "", it.icon, it.iconState, it.type, it.dir, it.customVars)

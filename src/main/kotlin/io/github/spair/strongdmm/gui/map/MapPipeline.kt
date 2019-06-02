@@ -16,27 +16,14 @@ class MapPipeline(private val canvas: Canvas) {
 
     private var glInitialized = false
 
-    var selectedMap: Dmm? = null
+    private val maps = linkedMapOf<Int, MapRenderData>()
+
+    var selectedMapData: MapRenderData? = null
     var iconSize = 32
-
-    // Visual offset to translate viewport
-    var xViewOff = 0f
-    var yViewOff = 0f
-
-    // Map offset with coords for bottom-left point of the screen
-    var xMapOff = 0
-    var yMapOff = 0
 
     // Coords of tile where the mouse is
     var xMouseMap = 0
     var yMouseMap = 0
-
-    // Zooming stuff
-    var viewZoom = 1f
-    val zoomFactor = 1.5f
-    var currZoom = 5
-    val maxZoomOut = 0
-    val maxZoomIn = 10
 
     // Coords of pixel on the map where the mouse is
     var xMouse = 0f
@@ -49,8 +36,20 @@ class MapPipeline(private val canvas: Canvas) {
         MouseProcessor.mapPipeline = this
     }
 
+    fun switchMap(hash: Int) {
+        maps[hash]?.let { switchMap(it.dmm) }
+    }
+
     fun switchMap(map: Dmm) {
-        selectedMap = map
+        val hash = map.hashCode()
+
+        if (maps.containsKey(hash)) {
+            selectedMapData = maps.getValue(hash)
+        } else {
+            selectedMapData = MapRenderData(map)
+            maps[hash] = selectedMapData!!
+        }
+
         iconSize = map.iconSize
 
         if (!glInitialized) {
@@ -58,6 +57,46 @@ class MapPipeline(private val canvas: Canvas) {
         }
 
         Frame.update(true)
+    }
+
+    fun closeMap(map: Dmm) {
+        val hash = map.hashCode()
+
+        if (!maps.containsKey(hash)) {
+            return
+        }
+
+        val mapData = maps.getValue(hash)
+
+        if (selectedMapData === mapData) {
+            var selectedMapIndex = 0
+
+            for ((index, mapHash) in maps.keys.withIndex()) {
+                if (mapHash == hash) {
+                    selectedMapIndex = index
+                    break
+                }
+            }
+
+            if (maps.size > 1) {
+                val index = if (selectedMapIndex == 0) {
+                    1
+                } else {
+                    if (maps.size >= selectedMapIndex + 2) {
+                        selectedMapIndex + 1
+                    } else {
+                        selectedMapIndex - 1
+                    }
+                }
+
+                selectedMapData = maps.values.toTypedArray()[index]
+                Frame.update(true)
+            } else {
+                selectedMapData = null
+            }
+        }
+
+        maps.remove(hash)
     }
 
     private fun initGLDisplay() {
@@ -80,7 +119,7 @@ class MapPipeline(private val canvas: Canvas) {
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        while (!Display.isCloseRequested() && selectedMap != null) {
+        while (!Display.isCloseRequested() && selectedMapData != null) {
             if (Frame.hasUpdates()) {
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
@@ -94,7 +133,7 @@ class MapPipeline(private val canvas: Canvas) {
                 glOrtho(0.0, getViewWidth(), 0.0, getViewHeight(), 1.0, -1.0)
                 glMatrixMode(GL_MODELVIEW)
                 glLoadIdentity()
-                glTranslatef(xViewOff, yViewOff, 0f)
+                glTranslatef(selectedMapData!!.xViewOff, selectedMapData!!.yViewOff, 0f)
 
                 // actual rendering
                 renderMap()
@@ -115,7 +154,11 @@ class MapPipeline(private val canvas: Canvas) {
         val horTilesNum = (getViewWidth() / iconSize + 0.5f).toInt()
         val verTilesNum = (getViewHeight() / iconSize + 0.5f).toInt()
 
-        val renderInstances = VisualComposer.composeFrame(selectedMap!!, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
+        val dmm = selectedMapData!!.dmm
+        val xMapOff = selectedMapData!!.xMapOff
+        val yMapOff = selectedMapData!!.yMapOff
+
+        val renderInstances = VisualComposer.composeFrame(dmm, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
 
         glEnable(GL_TEXTURE_2D)
@@ -187,6 +230,6 @@ class MapPipeline(private val canvas: Canvas) {
         glEnd()
     }
 
-    private fun getViewWidth() = Display.getWidth() * viewZoom.toDouble()
-    private fun getViewHeight() = Display.getHeight() * viewZoom.toDouble()
+    private fun getViewWidth() = Display.getWidth() * selectedMapData!!.viewZoom.toDouble()
+    private fun getViewHeight() = Display.getHeight() * selectedMapData!!.viewZoom.toDouble()
 }

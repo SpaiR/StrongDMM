@@ -181,7 +181,7 @@ object MenuBarView : View {
     }
 
     private fun saveSelectedMapAction() = ActionListener {
-        MapView.getSelectedMap()?.let { saveMap(it) }
+        MapView.getSelectedDmm()?.let { saveMap(it) }
     }
 
     private fun createButton(text: String, isEnabled: Boolean = true): JMenuItem {

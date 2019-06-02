@@ -23,7 +23,7 @@ object MapView : View, EnvCleanable {
 
     override fun clean() {
         tryCloseTilePopup()
-        pipeline.selectedMap = null
+        pipeline.selectedMapData = null
     }
 
     override fun initComponent(): JComponent {
@@ -51,6 +51,15 @@ object MapView : View, EnvCleanable {
         InstanceListView.updateSelectedInstanceInfo()
     }
 
+    fun closeMap(dmm: Dmm) {
+        pipeline.closeMap(dmm)
+        InstanceListView.updateSelectedInstanceInfo()
+    }
+
+    fun openMap(hash: Int) {
+        pipeline.switchMap(hash)
+    }
+
     fun tryCloseTilePopup(): Boolean {
         if (tilePopup != null && tilePopup!!.isVisible) {
             SwingUtilities.invokeLater {
@@ -72,5 +81,5 @@ object MapView : View, EnvCleanable {
         }
     }
 
-    fun getSelectedMap() = pipeline.selectedMap
+    fun getSelectedDmm() = pipeline.selectedMapData?.dmm
 }
