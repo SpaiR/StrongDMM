@@ -16,14 +16,14 @@ object TabbedMapPanelView : View {
         isFocusable = false
 
         addChangeListener {
-            if (indexHashList.isNotEmpty() && !isTabAddEvent && selectedIndex != -1) {
+            if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
                 MapView.openMap(indexHashList[selectedIndex])
             }
-            isTabAddEvent = false
+            isMiscEvent = false
         }
     }
 
-    private var isTabAddEvent = false
+    private var isMiscEvent = false
 
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
@@ -48,6 +48,7 @@ object TabbedMapPanelView : View {
             isContentAreaFilled = false
 
             addActionListener {
+                isMiscEvent = true
                 Environment.closeMap(dmm)
                 mapTabs.remove(indexHashList.indexOf(mapHash))
                 indexHashList.remove(mapHash)
@@ -55,7 +56,7 @@ object TabbedMapPanelView : View {
         })
 
         SwingUtilities.invokeLater {
-            isTabAddEvent = true
+            isMiscEvent = true
 
             mapTabs.addTab(null, JPanel().apply {
                 Dimension(Int.MAX_VALUE, 0).let {

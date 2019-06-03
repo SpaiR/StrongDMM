@@ -51,8 +51,8 @@ object MapView : View, EnvCleanable {
         InstanceListView.updateSelectedInstanceInfo()
     }
 
-    fun closeMap(dmm: Dmm) {
-        pipeline.closeMap(dmm)
+    fun closeMap(hash: Int) {
+        pipeline.closeMap(hash)
         InstanceListView.updateSelectedInstanceInfo()
     }
 

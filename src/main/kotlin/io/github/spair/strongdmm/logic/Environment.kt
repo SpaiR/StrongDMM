@@ -56,7 +56,7 @@ object Environment {
 
     fun closeMap(dmm: Dmm) {
         openedMaps.remove(dmm.mapPath)
-        MapView.closeMap(dmm)
+        MapView.closeMap(dmm.hashCode())
     }
 
     private fun findAvailableMaps(rootFolder: File) {

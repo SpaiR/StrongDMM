@@ -59,9 +59,7 @@ class MapPipeline(private val canvas: Canvas) {
         Frame.update(true)
     }
 
-    fun closeMap(map: Dmm) {
-        val hash = map.hashCode()
-
+    fun closeMap(hash: Int) {
         if (!maps.containsKey(hash)) {
             return
         }
