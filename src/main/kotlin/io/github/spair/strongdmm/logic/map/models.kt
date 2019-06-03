@@ -58,7 +58,7 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
         getTile(location.x, location.y)?.getTileItems()?.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
-            tileItem.customVars.forEach { (k, v) -> tileObject.putVar(k, v) }
+            tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
             tileObjects.add(tileObject)
         }
 
@@ -193,7 +193,10 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
 class TileItem(val type: String, var x: Int, var y: Int, customVars: Map<String, String>? = null) {
 
     val dmeItem: DmeItem get() = Environment.dme.getItem(type)!!
-    val customVars: MutableMap<String, String> = customVars?.toMutableMap() ?: mutableMapOf()
+    val customVars: Map<String, String>?
+        get() = customVarsBacked
+
+    private var customVarsBacked: MutableMap<String, String>? = customVars?.takeIf { it.isNotEmpty() }?.let { HashMap(it) }
 
     companion object {
         fun fromInstance(instance: ItemInstance, x: Int, y: Int): TileItem {
@@ -227,17 +230,38 @@ class TileItem(val type: String, var x: Int, var y: Int, customVars: Map<String,
         color = getVarText(VAR_COLOR) ?: ""
     }
 
+    fun addVar(name: String, value: String) {
+        if (customVarsBacked == null) {
+            customVarsBacked = HashMap()
+        }
+        customVarsBacked!![name] = value
+    }
+
+    fun removeVar(name: String) {
+        customVarsBacked?.let { vars ->
+            vars.remove(name)
+            if (vars.isEmpty()) {
+                customVarsBacked = null
+            }
+        }
+    }
+
     fun reset() {
-        customVars.clear()
+        customVarsBacked?.clear()
+        updateFields()
+    }
+
+    fun resetWithVars(newVars: Map<String, String>?) {
+        customVarsBacked = newVars?.takeIf { it.isNotEmpty() }?.let { HashMap(it) }
         updateFields()
     }
 
     fun isType(otherType: String) = isType(type, otherType)
 
-    fun getVar(name: String): String? = customVars[name] ?: dmeItem.getVar(name)
-    fun getVarText(name: String): String? = customVars[name]?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) } ?: dmeItem.getVarText(name)
-    fun getVarInt(name: String): Int? = customVars[name]?.toIntOrNull() ?: dmeItem.getVarInt(name)
-    fun getVarFloat(name: String): Float? = customVars[name]?.toFloatOrNull() ?: dmeItem.getVarFloat(name)
+    fun getVar(name: String): String? = customVarsBacked?.get(name) ?: dmeItem.getVar(name)
+    fun getVarText(name: String): String? = customVarsBacked?.get(name)?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) } ?: dmeItem.getVarText(name)
+    fun getVarInt(name: String): Int? = customVarsBacked?.get(name)?.toIntOrNull() ?: dmeItem.getVarInt(name)
+    fun getVarFloat(name: String): Float? = customVarsBacked?.get(name)?.toFloatOrNull() ?: dmeItem.getVarFloat(name)
 }
 
 private object TileObjectsComparator : Comparator<TileItem> {

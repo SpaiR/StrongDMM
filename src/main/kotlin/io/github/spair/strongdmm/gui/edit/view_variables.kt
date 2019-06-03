@@ -47,7 +47,7 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
 
         if (saveChanges && model.tmpVars.isNotEmpty()) {
             History.addUndoAction(EditVarsAction(tileItem))
-            model.tmpVars.forEach { (k, v) -> tileItem.customVars[k] = v }
+            model.tmpVars.forEach { (k, v) -> tileItem.addVar(k, v) }
             tileItem.updateFields()
         }
 
@@ -167,7 +167,7 @@ private class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() 
         displayVars.clear()
 
         tmpVars.forEach { (k, v) -> addVar(k, v, true) }
-        tileItem.customVars.forEach { (k, v) -> addVar(k, v, true) }
+        tileItem.customVars?.forEach { (k, v) -> addVar(k, v, true) }
 
         if (!showOnlyInstanceVars) {
             collectVars(tileItem.dmeItem)

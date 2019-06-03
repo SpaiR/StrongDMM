@@ -8,6 +8,7 @@ import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.VAR_ICON
 import io.github.spair.strongdmm.logic.dme.VAR_ICON_STATE
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
+import io.github.spair.strongdmm.logic.dmi.SOUTH
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -55,7 +56,7 @@ object InstanceListView : View, EnvCleanable {
         }
     }
 
-    fun selectInstanceByCustomVars(customVars: Map<String, String>) {
+    fun selectInstanceByCustomVars(customVars: Map<String, String>?) {
         val model = instanceList.model as DefaultListModel<ItemInstance>
         for (i in 0 until model.size()) {
             if (model[i].customVars == customVars) {
@@ -73,7 +74,9 @@ object InstanceListView : View, EnvCleanable {
             dmeItem.getVarText(VAR_NAME) ?: "",
             dmeItem.getVarText(VAR_ICON) ?: "",
             dmeItem.getVarText(VAR_ICON_STATE) ?: "",
-            dmeItem.type
+            dmeItem.type,
+            SOUTH,
+            null
         )
 
         selectedInstance = initialInstance
@@ -89,7 +92,7 @@ object InstanceListView : View, EnvCleanable {
             }
         }
 
-        items.addAll(instances.sortedBy { it.name }.sortedBy { it.customVars.size }.sortedBy { it.iconState })
+        items.addAll(instances.sortedBy { it.name }.sortedBy { it.customVars?.size }.sortedBy { it.iconState })
 
         val model = instanceList.model as DefaultListModel
         model.clear()
@@ -105,8 +108,8 @@ object InstanceListView : View, EnvCleanable {
         }
     }
 
-    private fun showInstanceVars(variables: Map<String, String>) {
-        if (variables.isEmpty()) {
+    private fun showInstanceVars(variables: Map<String, String>?) {
+        if (variables == null || variables.isEmpty()) {
             setEmptyInstanceVars()
             return
         }

@@ -6,11 +6,11 @@ import io.github.spair.strongdmm.logic.map.TileItem
 
 class EditVarsAction(private val tileItem: TileItem) : Undoable {
 
-    private val initialVars = tileItem.customVars.toMap()
+    private val initialVars = tileItem.customVars?.toMap()
 
     override fun doAction(): Undoable {
         val reverseAction = EditVarsAction(tileItem)
-        tileItem.customVars.apply { clear() }.putAll(initialVars)
+        tileItem.resetWithVars(initialVars)
         tileItem.updateFields()
         Frame.update(true)
         InstanceListView.updateSelectedInstanceInfo()
