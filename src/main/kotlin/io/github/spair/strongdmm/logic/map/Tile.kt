@@ -18,8 +18,6 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
     fun getVisibleTileItems() = tileItems.filter { !LayersManager.isHiddenType(it.type) }
 
     fun addTileItem(tileItem: TileItem, sort: Boolean = true) {
-        tileItem.x = x
-        tileItem.y = y
         tileItems.add(tileItem)
 
         if (sort) {
@@ -81,7 +79,7 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         if (varToGetItemType != null) {
             val world = Environment.dme.getItem(TYPE_WORLD)!!
             val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
-            addTileItem(TileItem(basicItem.type, tileItem.x, tileItem.y), false)
+            addTileItem(TileItem(basicItem.type), false)
         }
     }
 

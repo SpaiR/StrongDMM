@@ -53,7 +53,7 @@ object TileOperation {
                     val newTileItems = mutableListOf<TileItem>()
 
                     tileItems.forEach { tileItem ->
-                        newTileItems.add(TileItem.fromTileItem(tileItem, xTile, yTile))
+                        newTileItems.add(TileItem.fromTileItem(tileItem))
                     }
 
                     val tileItemsBefore = tile.getTileItems()

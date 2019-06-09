@@ -133,7 +133,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 
             if (topmostItem != null) {
                 currentTile.deleteTileItem(topmostItem)
-                History.addUndoAction(PlaceTileItemAction(map, topmostItem))
+                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, topmostItem))
                 Frame.update(true)
             }
         }
@@ -170,7 +170,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
         menu.add(JMenuItem("Delete")).apply {
             addActionListener {
                 currentTile.deleteTileItem(tileItem)
-                History.addUndoAction(PlaceTileItemAction(map, tileItem))
+                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, tileItem))
                 Frame.update(true)
                 InstanceListView.updateSelectedInstanceInfo()
             }

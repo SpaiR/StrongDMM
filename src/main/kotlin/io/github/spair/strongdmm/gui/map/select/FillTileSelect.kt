@@ -78,7 +78,7 @@ class FillTileSelect : TileSelect {
 
                     if (topmostItem != null) {
                         tile.deleteTileItem(topmostItem)
-                        reverseActions.add(PlaceTileItemAction(map, topmostItem))
+                        reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem))
                     }
                 }
             }
@@ -101,8 +101,8 @@ class FillTileSelect : TileSelect {
 
             for (x in x1..x2) {
                 for (y in y1..y2) {
-                    val tileItem = TileItem.fromInstance(selectedInstance, x, y)
-                    reverseActions.add(map.placeTileItemWithUndoable(tileItem))
+                    val tileItem = TileItem.fromInstance(selectedInstance)
+                    reverseActions.add(map.placeTileItemWithUndoable(x, y, tileItem))
                 }
             }
 

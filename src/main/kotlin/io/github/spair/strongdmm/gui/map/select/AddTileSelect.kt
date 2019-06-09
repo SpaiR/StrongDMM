@@ -49,7 +49,7 @@ class AddTileSelect : TileSelect {
 
             if (topmostItem != null) {
                 tile.deleteTileItem(topmostItem)
-                reverseActions.add(PlaceTileItemAction(map, topmostItem))
+                reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem))
                 return true
             }
         }
@@ -62,8 +62,8 @@ class AddTileSelect : TileSelect {
 
         if (instance != null) {
             val map = MapView.getSelectedDmm()!!
-            val tileItem = TileItem.fromInstance(instance, x, y)
-            reverseActions.add(map.placeTileItemWithUndoable(tileItem))
+            val tileItem = TileItem.fromInstance(instance)
+            reverseActions.add(map.placeTileItemWithUndoable(x, y, tileItem))
             return true
         }
 

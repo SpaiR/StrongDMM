@@ -5,7 +5,7 @@ import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 
-class TileItem(val type: String, var x: Int, var y: Int, customVars: Map<String, String>? = null) {
+class TileItem(val type: String, customVars: Map<String, String>? = null) {
 
     val dmeItem: DmeItem get() = Environment.dme.getItem(type)!!
     val customVars: Map<String, String>?
@@ -14,15 +14,15 @@ class TileItem(val type: String, var x: Int, var y: Int, customVars: Map<String,
     private var customVarsBacked: MutableMap<String, String>? = customVars?.takeIf { it.isNotEmpty() }?.let { HashMap(it) }
 
     companion object {
-        fun fromInstance(instance: ItemInstance, x: Int, y: Int): TileItem {
+        fun fromInstance(instance: ItemInstance): TileItem {
             return TileItem(
                 Environment.dme.getItem(
                     instance.type
-                )!!.type, x, y, instance.customVars
+                )!!.type,instance.customVars
             )
         }
-        fun fromTileItem(tileItem: TileItem, x: Int, y: Int): TileItem {
-            return TileItem(tileItem.type, x, y, tileItem.customVars)
+        fun fromTileItem(tileItem: TileItem): TileItem {
+            return TileItem(tileItem.type, tileItem.customVars)
         }
     }
 
