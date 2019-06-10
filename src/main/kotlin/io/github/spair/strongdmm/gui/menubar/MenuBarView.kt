@@ -107,6 +107,11 @@ object MenuBarView : View {
         toggleMobActionItem
     )
 
+    fun updateUndoable() {
+        undoActionItem.isEnabled = History.hasUndoActions()
+        redoActionItem.isEnabled = History.hasRedoActions()
+    }
+
     fun switchUndo(enabled: Boolean) {
         undoActionItem.isEnabled = enabled
     }

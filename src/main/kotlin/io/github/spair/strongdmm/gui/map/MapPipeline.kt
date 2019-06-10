@@ -16,7 +16,7 @@ class MapPipeline(private val canvas: Canvas) {
 
     private var glInitialized = false
 
-    private val maps = linkedMapOf<Int, MapRenderData>()
+    val maps = linkedMapOf<Int, MapRenderData>()
 
     var selectedMapData: MapRenderData? = null
     var iconSize = 32

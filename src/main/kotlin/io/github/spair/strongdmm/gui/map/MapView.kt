@@ -82,4 +82,5 @@ object MapView : View, EnvCleanable {
     }
 
     fun getSelectedDmm() = pipeline.selectedMapData?.dmm
+    fun getOpenedMaps(): List<Dmm> = pipeline.maps.values.map { it.dmm }
 }

@@ -5,11 +5,13 @@ import io.github.spair.strongdmm.gui.TabbedMapPanelView
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.map.TileItemProvider
 import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import java.io.File
 
@@ -56,7 +58,16 @@ object Environment {
 
     fun closeMap(dmm: Dmm) {
         openedMaps.remove(dmm.mapPath)
+
         MapView.closeMap(dmm.hashCode())
+        MapView.getOpenedMaps().let { openedMaps ->
+            TileItemProvider.clearUnusedItems(openedMaps)
+            History.clearUnusedActions(openedMaps)
+        }
+
+        MenuBarView.updateUndoable()
+
+        System.gc()
     }
 
     private fun findAvailableMaps(rootFolder: File) {

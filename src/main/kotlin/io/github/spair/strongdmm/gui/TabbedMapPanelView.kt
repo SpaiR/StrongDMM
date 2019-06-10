@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
@@ -18,6 +19,7 @@ object TabbedMapPanelView : View {
         addChangeListener {
             if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
                 MapView.openMap(indexHashList[selectedIndex])
+                MenuBarView.updateUndoable()
             }
             isMiscEvent = false
         }
