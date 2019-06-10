@@ -9,7 +9,7 @@ import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
-import io.github.spair.strongdmm.logic.map.TileItem
+import io.github.spair.strongdmm.logic.map.TileItemProvider
 import org.lwjgl.opengl.GL11
 import kotlin.math.max
 import kotlin.math.min
@@ -78,7 +78,7 @@ class FillTileSelect : TileSelect {
 
                     if (topmostItem != null) {
                         tile.deleteTileItem(topmostItem)
-                        reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem))
+                        reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem.id))
                     }
                 }
             }
@@ -101,7 +101,7 @@ class FillTileSelect : TileSelect {
 
             for (x in x1..x2) {
                 for (y in y1..y2) {
-                    val tileItem = TileItem.fromInstance(selectedInstance)
+                    val tileItem = TileItemProvider.getOrCreate(selectedInstance.type, selectedInstance.customVars)
                     reverseActions.add(map.placeTileItemWithUndoable(x, y, tileItem))
                 }
             }

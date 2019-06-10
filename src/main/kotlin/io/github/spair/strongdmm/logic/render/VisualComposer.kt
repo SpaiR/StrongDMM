@@ -2,7 +2,8 @@ package io.github.spair.strongdmm.logic.render
 
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.LayersManager
-import java.util.*
+import io.github.spair.strongdmm.logic.map.TileItemProvider
+import java.util.TreeMap
 
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
 
@@ -61,7 +62,9 @@ object VisualComposer {
                 val renderX = (tileX - 1) * dmm.iconSize
                 val renderY = (tileY - 1) * dmm.iconSize
 
-                for (tileItem in tile.getTileItemsUnsafe()) {
+                for (tileItemId in tile.unsafeGetTileItemsIDs()) {
+                    val tileItem = TileItemProvider.getByID(tileItemId)
+
                     if (LayersManager.isHiddenType(tileItem.type)) {
                         continue
                     }

@@ -4,28 +4,23 @@ import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.*
 import java.util.concurrent.CopyOnWriteArrayList
 
-class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
+class Tile(val x: Int, val y: Int, tileItemsIDs: List<Int>) {
 
-    private val tileItems: MutableList<TileItem> =
-        CopyOnWriteArrayList(tileItems.sortedWith(TileObjectsComparator))
+    private val tileItemsIDs: MutableList<Int> = CopyOnWriteArrayList(tileItemsIDs)
 
-    // the only place to use this method is a render loop, otherwise `::getTileItems()` should be used
-    fun getTileItemsUnsafe() = tileItems
+    val tileItems: List<TileItem>
+        get() = TileItemProvider.getByIDs(tileItemsIDs)
 
-    fun getTileItems() = tileItems.toList()
-    fun getTileItemsByType(type: String) = tileItems.filter { it.type == type }
+    // the only place to use this method is a render loop, otherwise `::getTileItemsIDs()` should be used
+    fun unsafeGetTileItemsIDs(): List<Int> = tileItemsIDs
 
-    fun getVisibleTileItems() = tileItems.filter { !LayersManager.isHiddenType(it.type) }
+    fun getTileItemsIDs(): List<Int> = tileItemsIDs.toList()
+    fun getTileItemsByType(type: String): List<TileItem> = tileItems.filter { it.type == type }
 
-    fun addTileItem(tileItem: TileItem, sort: Boolean = true) {
-        tileItems.add(tileItem)
+    fun getVisibleTileItems(): List<TileItem> = tileItems.filter { !LayersManager.isHiddenType(it.type) }
+    fun getVisibleTileItemsIDs(): List<Int> = getVisibleTileItems().map { it.id }
 
-        if (sort) {
-            tileItems.sortWith(TileObjectsComparator)
-        }
-    }
-
-    fun placeTileItem(tileItem: TileItem, sort: Boolean = true): TileItem? {
+    fun placeTileItem(tileItem: TileItem): TileItem? {
         // Specific BYOND behaviour: tile can have only one area or turf
         val typeToSanitize = when {
             tileItem.isType(TYPE_AREA) -> TYPE_AREA
@@ -36,38 +31,39 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         var removedItem: TileItem? = null
 
         if (typeToSanitize != null) {
-            for (item in tileItems) {
+            for (id in tileItemsIDs) {
+                val item = TileItemProvider.getByID(id)
                 if (item.isType(typeToSanitize)) {
-                    tileItems.remove(item)
+                    tileItemsIDs.remove(id)
                     removedItem = item
                     break
                 }
             }
         }
 
-        addTileItem(tileItem, sort)
+        tileItemsIDs.add(tileItem.id)
         return removedItem
     }
 
-    fun placeTileItems(tileItems: List<TileItem>) {
-        tileItems.forEach { placeTileItem(it, false) }
-        this.tileItems.sortWith(TileObjectsComparator)
+    fun swapTileItem(which: Int, with: Int) {
+        tileItemsIDs.remove(which)
+        tileItemsIDs.add(with)
     }
 
-    fun replaceTileItems(tileItems: List<TileItem>) {
-        clearTile()
-        tileItems.forEach { placeTileItem(it, false) }
-        this.tileItems.sortWith(TileObjectsComparator)
+    fun fullReplaceTileItemsByIDs(tileItemsIDs: List<Int>) {
+        with(this.tileItemsIDs) {
+            clear()
+            addAll(tileItemsIDs)
+        }
     }
 
-    fun replaceVisibleTileItems(tileItems: List<TileItem>) {
-        clearVisibleTile()
-        tileItems.forEach { placeTileItem(it, false) }
-        this.tileItems.sortWith(TileObjectsComparator)
+    fun replaceOnlyVisibleTileItemsByIDs(tileItemsIDs: List<Int>) {
+        deleteVisibleTileItems()
+        tileItemsIDs.forEach { placeTileItem(TileItemProvider.getByID(it)) }
     }
 
     fun deleteTileItem(tileItem: TileItem) {
-        tileItems.remove(tileItem)
+        tileItemsIDs.remove(tileItem.id)
 
         // Specific BYOND behaviour: tile always should have turf or area
         val varToGetItemType = when {
@@ -79,29 +75,61 @@ class Tile(val x: Int, val y: Int, tileItems: List<TileItem>) {
         if (varToGetItemType != null) {
             val world = Environment.dme.getItem(TYPE_WORLD)!!
             val basicItem = Environment.dme.getItem(world.getVar(varToGetItemType)!!)!!
-            addTileItem(TileItem(basicItem.type), false)
+            tileItemsIDs.add(TileItemProvider.getOrCreate(basicItem.type, null).id)
         }
     }
 
-    fun clearTile() {
-        getTileItems().forEach { deleteTileItem(it) }
+    fun deleteTileItemByID(tileItemID: Int) {
+        deleteTileItem(TileItemProvider.getByID(tileItemID))
     }
 
-    fun clearVisibleTile() {
+    fun deleteVisibleTileItems() {
         getVisibleTileItems().forEach { deleteTileItem(it) }
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {
-        for (item in tileItems.reversed()) {
+        for (item in tileItems.sortedWith(TileItemsComparator).reversed()) {
             if (item.isType(typeToFind)) {
                 return item
             }
         }
         return null
     }
+
+    // Will replace tile item with the new on, which will have new vars
+    fun setTileItemVars(tileItem: TileItem, newVars: Map<String, String>?): TileItem {
+        val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
+        tileItemsIDs.remove(tileItem.id)
+        tileItemsIDs.add(newTileItem.id)
+        return newTileItem
+    }
+
+    // Will replace tile item with the new on, which will have new vars
+    fun addTileItemVars(tileItem: TileItem, vars: Map<String, String>?): TileItem {
+        val newVars = if (vars != null) {
+            tileItem.customVars?.toMutableMap()?.apply { putAll(vars) } ?: vars
+        } else {
+            null
+        }
+
+        val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
+        tileItemsIDs.remove(tileItem.id)
+        tileItemsIDs.add(newTileItem.id)
+        return newTileItem
+    }
+
+    // Will replace tile item with the new on, which will have new vars
+    fun removeTileItemVar(tileItem: TileItem, varName: String): TileItem {
+        val newVars = tileItem.customVars?.toMutableMap()?.apply { remove(varName) }
+        val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
+        tileItemsIDs.remove(tileItem.id)
+        tileItemsIDs.add(newTileItem.id)
+        return newTileItem
+    }
 }
 
-private object TileObjectsComparator : Comparator<TileItem> {
+// area -> obj -> mob -> turf
+object TileItemsComparator : Comparator<TileItem> {
     override fun compare(o1: TileItem, o2: TileItem): Int {
         return if (o1.isType(TYPE_AREA)) -1
         else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_OBJ)) 0

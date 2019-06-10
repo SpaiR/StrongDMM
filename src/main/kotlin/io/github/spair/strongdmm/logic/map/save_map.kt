@@ -20,10 +20,12 @@ fun saveMap(dmm: Dmm) {
     // sanitize custom vars from values equals to defined in code
     for (x in 1..dmm.maxX) {
         for (y in 1..dmm.maxY) {
-            dmm.getTile(x, y)!!.getTileItems().forEach { tileItem ->
-                tileItem.customVars?.keys?.toSet()?.forEach { name ->
-                    if (tileItem.customVars!![name] == tileItem.dmeItem.getVar(name)) {
-                        tileItem.removeVar(name)
+            dmm.getTile(x, y)!!.let { tile ->
+                tile.tileItems.forEach { tileItem ->
+                    tileItem.customVars?.keys?.forEach { name ->
+                        if (tileItem.customVars[name] == tileItem.dmeItem.getVar(name)) {
+                            tile.removeTileItemVar(tileItem, name)
+                        }
                     }
                 }
             }

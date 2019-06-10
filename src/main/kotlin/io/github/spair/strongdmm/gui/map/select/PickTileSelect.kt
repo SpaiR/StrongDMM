@@ -16,13 +16,13 @@ class PickTileSelect : TileSelect {
 
     private var mode: TileSelect = PickMode()
 
-    private var x1 = 0
-    private var y1 = 0
-    private var x2 = 0
-    private var y2 = 0
+    private var x1: Int = 0
+    private var y1: Int = 0
+    private var x2: Int = 0
+    private var y2: Int = 0
 
-    private val selectedCoords = mutableSetOf<CoordPoint>()
-    private val previousTiles = mutableMapOf<CoordPoint, TileData>()
+    private val selectedCoords: MutableSet<CoordPoint> = mutableSetOf()
+    private val previousTiles: MutableMap<CoordPoint, TileData> = mutableMapOf()
 
     fun getSelectedTiles(): List<Tile> {
         val map = MapView.getSelectedDmm()!!
@@ -152,7 +152,7 @@ class PickTileSelect : TileSelect {
             selectedCoords.forEach {
                 map.getTile(it.x, it.y)?.let { tile ->
                     selectedTiles[it] = TileData(tile)
-                    tile.clearVisibleTile()
+                    tile.deleteVisibleTileItems()
                 }
             }
         }
@@ -164,7 +164,7 @@ class PickTileSelect : TileSelect {
             val yShift = y - yClickStart
 
             previousTiles.forEach { (coord, tileData) ->
-                map.getTile(coord.x, coord.y)?.replaceVisibleTileItems(tileData.visibleTiles)
+                map.getTile(coord.x, coord.y)?.replaceOnlyVisibleTileItemsByIDs(tileData.visibleTileItemsIDs)
             }
             previousTiles.clear()
 
@@ -184,7 +184,7 @@ class PickTileSelect : TileSelect {
                     yMax = max(yMax, newY)
 
                     previousTiles[CoordPoint(newX, newY)] = TileData(newTile)
-                    newTile.replaceVisibleTileItems(tileData.visibleTiles)
+                    newTile.replaceOnlyVisibleTileItemsByIDs(tileData.visibleTileItemsIDs)
                 }
             }
 
@@ -202,14 +202,16 @@ class PickTileSelect : TileSelect {
 
             selectedTiles.forEach { (coord, tileData) ->
                 map.getTile(coord.x, coord.y)?.let { tile ->
-                    reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileData.allTiles, tile.getTileItems()))
+                    reverseActions.add(
+                        TileReplaceAction(map, coord.x, coord.y, tileData.allTileItemsIDs, tile.getTileItemsIDs())
+                    )
                 }
             }
 
             previousTiles.forEach { (coord, tileData) ->
                 if (!selectedTiles.containsKey(coord)) {
                     map.getTile(coord.x, coord.y)?.let { tile ->
-                        reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileData.allTiles, tile.getTileItems()))
+                        reverseActions.add(TileReplaceAction(map, coord.x, coord.y, tileData.allTileItemsIDs, tile.getTileItemsIDs()))
                     }
                 }
             }
@@ -224,7 +226,7 @@ class PickTileSelect : TileSelect {
     }
 
     private class TileData(tile: Tile) {
-        val allTiles = tile.getTileItems()
-        val visibleTiles = tile.getVisibleTileItems()
+        val allTileItemsIDs: List<Int> = tile.getTileItemsIDs()
+        val visibleTileItemsIDs = tile.getVisibleTileItemsIDs()
     }
 }

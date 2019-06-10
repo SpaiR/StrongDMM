@@ -2,7 +2,7 @@ package io.github.spair.strongdmm.logic.history
 
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
-import java.util.*
+import java.util.Stack
 
 object History {
 

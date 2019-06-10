@@ -9,9 +9,9 @@ import kotlin.math.min
 
 object TileOperation {
 
-    private val tilesBuffer = mutableMapOf<CoordPoint, List<TileItem>>()
+    private val tilesBuffer: MutableMap<CoordPoint, List<Int>> = hashMapOf()
 
-    fun hasTileInBuffer() = tilesBuffer.isNotEmpty()
+    fun hasTileInBuffer(): Boolean = tilesBuffer.isNotEmpty()
 
     fun cut(map: Dmm, tile: Tile) {
         cut(map, listOf(tile))
@@ -28,7 +28,7 @@ object TileOperation {
 
     fun copy(tiles: Collection<Tile>) {
         tilesBuffer.clear()
-        tiles.forEach { tilesBuffer[CoordPoint(it.x, it.y)] = it.getVisibleTileItems() }
+        tiles.forEach { tilesBuffer[CoordPoint(it.x, it.y)] = it.getVisibleTileItemsIDs() }
     }
 
     fun paste(map: Dmm, x: Int, y: Int, areaAction: (coordArea: CoordArea) -> Unit) {
@@ -49,16 +49,10 @@ object TileOperation {
         for ((yIndex, yTile) in (coordArea.y1..coordArea.y2).withIndex()) {
             for ((xIndex, xTile) in (coordArea.x1..coordArea.x2).withIndex()) {
                 map.getTile(xTile, yTile)?.let { tile ->
-                    val tileItems = tilesBuffer[CoordPoint(xInit + xIndex, yInit + yIndex)]!!
-                    val newTileItems = mutableListOf<TileItem>()
-
-                    tileItems.forEach { tileItem ->
-                        newTileItems.add(TileItem.fromTileItem(tileItem))
-                    }
-
-                    val tileItemsBefore = tile.getTileItems()
-                    tile.replaceVisibleTileItems(newTileItems)
-                    reverseActions.add(TileReplaceAction(map, tile.x, tile.y, tileItemsBefore, tile.getTileItems()))
+                    val tileItemsIDs = tilesBuffer[CoordPoint(xInit + xIndex, yInit + yIndex)]!!
+                    val tileItemsIDsBefore = tile.getTileItemsIDs()
+                    tile.replaceOnlyVisibleTileItemsByIDs(tileItemsIDs)
+                    reverseActions.add(TileReplaceAction(map, xTile, yTile, tileItemsIDsBefore, tile.getTileItemsIDs()))
                 }
             }
         }
@@ -74,9 +68,9 @@ object TileOperation {
         val reverseActions = mutableListOf<Undoable>()
 
         tiles.forEach { tile ->
-            val tileItemsBefore = tile.getTileItems()
-            tile.clearVisibleTile()
-            reverseActions.add(TileReplaceAction(map, tile.x, tile.y, tileItemsBefore, tile.getTileItems()))
+            val tileItemsIDsBefore = tile.getTileItemsIDs()
+            tile.deleteVisibleTileItems()
+            reverseActions.add(TileReplaceAction(map, tile.x, tile.y, tileItemsIDsBefore, tile.getTileItemsIDs()))
         }
 
         History.addUndoAction(MultipleAction(reverseActions))

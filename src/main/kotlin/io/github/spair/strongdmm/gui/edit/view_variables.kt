@@ -2,8 +2,9 @@ package io.github.spair.strongdmm.gui.edit
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.logic.dme.*
-import io.github.spair.strongdmm.logic.history.EditVarsAction
 import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.history.SwapTileItemAction
+import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.*
 import javax.swing.*
@@ -13,7 +14,7 @@ import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
-class ViewVariablesDialog(private val tileItem: TileItem) {
+class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem) {
 
     private var saveChanges = false
     private val dialog = JDialog(PrimaryFrame, "View Variables: ${tileItem.type}", true)
@@ -46,9 +47,8 @@ class ViewVariablesDialog(private val tileItem: TileItem) {
         }
 
         if (saveChanges && model.tmpVars.isNotEmpty()) {
-            History.addUndoAction(EditVarsAction(tileItem))
-            model.tmpVars.forEach { (k, v) -> tileItem.addVar(k, v) }
-            tileItem.updateFields()
+            val newTileItem = tile.addTileItemVars(tileItem, model.tmpVars)
+            History.addUndoAction(SwapTileItemAction(tile, tileItem.id, newTileItem.id))
         }
 
         return saveChanges

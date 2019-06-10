@@ -6,9 +6,9 @@ import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.history.EditVarsAction
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.history.SwapTileItemAction
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.map.Tile
@@ -133,7 +133,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 
             if (topmostItem != null) {
                 currentTile.deleteTileItem(topmostItem)
-                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, topmostItem))
+                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, topmostItem.id))
                 Frame.update(true)
             }
         }
@@ -143,7 +143,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.getTileItems().forEach { tileItem ->
+    currentTile.tileItems.forEach { tileItem ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }
@@ -160,8 +160,8 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
         menu.add(JMenuItem("Reset to Default").apply {
             addActionListener {
-                History.addUndoAction(EditVarsAction(tileItem))
-                tileItem.reset()
+                val newTileItem = currentTile.setTileItemVars(tileItem, null)
+                History.addUndoAction(SwapTileItemAction(currentTile, tileItem.id, newTileItem.id))
                 Frame.update(true)
                 InstanceListView.updateSelectedInstanceInfo()
             }
@@ -170,7 +170,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
         menu.add(JMenuItem("Delete")).apply {
             addActionListener {
                 currentTile.deleteTileItem(tileItem)
-                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, tileItem))
+                History.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, tileItem.id))
                 Frame.update(true)
                 InstanceListView.updateSelectedInstanceInfo()
             }
@@ -178,7 +178,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
         menu.add(JMenuItem("View Variables")).apply {
             addActionListener {
-                if (ViewVariablesDialog(tileItem).open()) {
+                if (ViewVariablesDialog(currentTile, tileItem).open()) {
                     Frame.update(true)
                     InstanceListView.updateSelectedInstanceInfo()
                 }

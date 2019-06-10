@@ -10,7 +10,7 @@ import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
 import io.github.spair.strongdmm.logic.map.CoordPoint
-import io.github.spair.strongdmm.logic.map.TileItem
+import io.github.spair.strongdmm.logic.map.TileItemProvider
 import org.lwjgl.opengl.GL11.*
 
 class AddTileSelect : TileSelect {
@@ -49,7 +49,7 @@ class AddTileSelect : TileSelect {
 
             if (topmostItem != null) {
                 tile.deleteTileItem(topmostItem)
-                reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem))
+                reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem.id))
                 return true
             }
         }
@@ -62,7 +62,7 @@ class AddTileSelect : TileSelect {
 
         if (instance != null) {
             val map = MapView.getSelectedDmm()!!
-            val tileItem = TileItem.fromInstance(instance)
+            val tileItem = TileItemProvider.getOrCreate(instance.type, instance.customVars)
             reverseActions.add(map.placeTileItemWithUndoable(x, y, tileItem))
             return true
         }

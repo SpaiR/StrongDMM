@@ -25,20 +25,15 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
         for (x in 1..maxX) {
             for (y in 1..maxY) {
-                val tileItems = mutableListOf<TileItem>()
+                val tileItemsIDs = mutableListOf<Int>()
 
-                for (tileContent in initialDmmData.getTileContentByLocation(
-                    TileLocation.of(
-                        x,
-                        y
-                    )
-                )) {
-                    dme.getItem(tileContent.type)?.let {
-                        tileItems.add(TileItem(it.type, tileContent.vars))
+                for (tileContent in initialDmmData.getTileContentByLocation(TileLocation.of(x, y))) {
+                    if (dme.getItem(tileContent.type) != null) {
+                        tileItemsIDs.add(TileItemProvider.getOrCreate(tileContent.type, tileContent.vars).id)
                     }
                 }
 
-                tiles[y - 1][x - 1] = Tile(x, y, tileItems)
+                tiles[y - 1][x - 1] = Tile(x, y, tileItemsIDs)
             }
         }
     }
@@ -47,8 +42,12 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
     // to undo this action we need to place removed item back
     fun placeTileItemWithUndoable(x: Int, y: Int, tileItem: TileItem): Undoable {
         return getTile(x, y)?.placeTileItem(tileItem)?.let {
-            PlaceTileItemAction(this, x, y, it)
-        } ?: DeleteTileItemAction(this, x, y, tileItem)
+            PlaceTileItemAction(this, x, y, it.id)
+        } ?: DeleteTileItemAction(this, x, y, tileItem.id)
+    }
+
+    fun placeTileItemWithUndoableByID(x: Int, y: Int, tileItemID: Int): Undoable {
+        return placeTileItemWithUndoable(x, y, TileItemProvider.getByID(tileItemID))
     }
 
     fun getTile(x: Int, y: Int) = if (x in 1..maxX && y in 1..maxY) tiles[y - 1][x - 1] else null
@@ -57,7 +56,7 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
         val tileContent = TileContent()
         val tileObjects = mutableListOf<TileObject>()
 
-        getTile(location.x, location.y)?.getTileItems()?.forEach { tileItem ->
+        getTile(location.x, location.y)?.tileItems?.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
             tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
             tileObjects.add(tileObject)
