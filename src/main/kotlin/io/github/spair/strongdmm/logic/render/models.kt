@@ -1,7 +1,5 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.logic.map.TileItem
-
 class RenderInstance(
     val locX: Float,
     val locY: Float,
@@ -13,7 +11,7 @@ class RenderInstance(
     val width: Int = 32,
     val height: Int = 32,
     val color: Color = DefaultColor,
-    val tileItem: TileItem
+    val tileItemID: Int
 )
 
 open class Color(val red: Float = 1f, val green: Float = 1f, val blue: Float = 1f, val alpha: Float = 1f)

@@ -31,10 +31,10 @@ object RenderInstanceProvider : EnvCleanable {
                         s.u1, s.v1, s.u2, s.v2,
                         s.iconWidth, s.iconHeight,
                         ColorExtractor.extractColor(tileItem),
-                        tileItem
+                        tileItem.id
                     )
                 }
-            } ?: RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItem = tileItem)
+            } ?: RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
         } else {
             hasInProcessImage = true
 
@@ -46,7 +46,7 @@ object RenderInstanceProvider : EnvCleanable {
                 }
             }
 
-            return RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItem = tileItem)
+            return RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
         }
     }
 }
