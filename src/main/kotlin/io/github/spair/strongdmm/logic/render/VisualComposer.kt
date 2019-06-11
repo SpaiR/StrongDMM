@@ -62,7 +62,11 @@ object VisualComposer {
                 val renderX = (tileX - 1) * dmm.iconSize
                 val renderY = (tileY - 1) * dmm.iconSize
 
-                for (tileItemId in tile.unsafeGetTileItemsIDs()) {
+                for (tileItemId in tile.unsafeTileItemsIDs()) {
+                    if (tileItemId == 0) {
+                        continue
+                    }
+
                     val tileItem = TileItemProvider.getByID(tileItemId)
 
                     if (LayersManager.isHiddenType(tileItem.type)) {

@@ -7,8 +7,8 @@ class TileReplaceAction(
     private val map: Dmm,
     private val x: Int,
     private val y: Int,
-    private val tileItemsIDsBefore: List<Int>,
-    private val tileItemsIDsAfter: List<Int>
+    private val tileItemsIDsBefore: IntArray,
+    private val tileItemsIDsAfter: IntArray
 ) : Undoable {
     override fun doAction(): Undoable {
         val tile = map.getTile(x, y)!!

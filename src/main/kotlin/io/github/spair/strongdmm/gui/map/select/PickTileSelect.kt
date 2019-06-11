@@ -226,7 +226,7 @@ class PickTileSelect : TileSelect {
     }
 
     private class TileData(tile: Tile) {
-        val allTileItemsIDs: List<Int> = tile.getTileItemsIDs()
+        val allTileItemsIDs: IntArray = tile.getTileItemsIDs()
         val visibleTileItemsIDs = tile.getVisibleTileItemsIDs()
     }
 }

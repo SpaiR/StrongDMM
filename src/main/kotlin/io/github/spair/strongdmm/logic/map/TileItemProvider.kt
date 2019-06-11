@@ -12,7 +12,7 @@ object TileItemProvider {
 
     fun getByID(id: Int): TileItem = tileItems.getValue(id)
 
-    fun getByIDs(ids: List<Int>): List<TileItem> {
+    fun getByIDs(ids: IntArray): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
         ids.forEach { tileItems.add(this.tileItems.getValue(it)) }
         return tileItems
@@ -25,7 +25,7 @@ object TileItemProvider {
             for (x in 1..dmm.maxX) {
                 for (y in 1..dmm.maxY) {
                     val tile = dmm.getTile(x, y)!!
-                    usedItems.addAll(tile.getTileItemsIDs())
+                    usedItems.addAll(tile.getTileItemsIDs().toList())
                 }
             }
         }

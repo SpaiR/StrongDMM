@@ -9,7 +9,7 @@ import kotlin.math.min
 
 object TileOperation {
 
-    private val tilesBuffer: MutableMap<CoordPoint, List<Int>> = hashMapOf()
+    private val tilesBuffer: MutableMap<CoordPoint, IntArray> = hashMapOf()
 
     fun hasTileInBuffer(): Boolean = tilesBuffer.isNotEmpty()
 

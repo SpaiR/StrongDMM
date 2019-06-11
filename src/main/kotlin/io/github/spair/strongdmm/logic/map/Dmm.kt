@@ -25,11 +25,11 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
         for (x in 1..maxX) {
             for (y in 1..maxY) {
-                val tileItemsIDs = mutableListOf<Int>()
+                var tileItemsIDs = IntArray(0)
 
                 for (tileContent in initialDmmData.getTileContentByLocation(TileLocation.of(x, y))) {
                     if (dme.getItem(tileContent.type) != null) {
-                        tileItemsIDs.add(TileItemProvider.getOrCreate(tileContent.type, tileContent.vars).id)
+                        tileItemsIDs += TileItemProvider.getOrCreate(tileContent.type, tileContent.vars).id
                     }
                 }
 

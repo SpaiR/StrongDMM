@@ -103,7 +103,6 @@ class IconSprite(private val dmi: Dmi, index: Int) : Icon {
     fun isOpaquePixel(x: Int, y: Int) = dmi.atlas.getRGB(x1 + x, y1 + y) shr 24 != 0x00
 
     inner class ScaledIcon(private val scaledSize: Int = 16) : Icon {
-
         override fun paintIcon(c: Component, g: Graphics, px: Int, py: Int) {
             (g as Graphics2D).run {
                 setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR)
