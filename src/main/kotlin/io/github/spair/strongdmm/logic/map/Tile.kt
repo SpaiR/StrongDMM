@@ -81,7 +81,12 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
             val tmpArr = IntArray(tileItemsIDs.size - 1)
             var counter = 0
 
-            tileItemsIDs.forEach { tileItemID ->
+            for (tileItemID in tileItemsIDs) {
+                // Sometimes it's happens
+                if (counter != tmpArr.size) {
+                    break
+                }
+
                 if (tileItemID != tileItem.id) {
                     tmpArr[counter++] = tileItemID
                 }

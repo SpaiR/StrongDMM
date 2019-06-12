@@ -28,7 +28,7 @@ object ColorExtractor {
         "aqua" to "#00ffff", "cyan" to "#00ffff"
     )
 
-    fun extractColor(tileItem: TileItem): Color {
+    fun extractAndSetColor(riAddress: Long, tileItem: TileItem) {
         var colorValue = tileItem.color
 
         if (colorValue.startsWith(RGB_PREFIX)) {
@@ -49,13 +49,14 @@ object ColorExtractor {
         val alpha = tileItem.alpha / 255f
 
         if (alpha == 1f && awtColor == null) {
-            return DefaultColor
+            RenderInstanceStruct.setColor(riAddress)
+            return
         }
 
-        return if (awtColor != null) {
-            Color(awtColor.red / 255f, awtColor.green / 255f, awtColor.blue / 255f, alpha)
+        if (awtColor != null) {
+            RenderInstanceStruct.setColor(riAddress, awtColor.red / 255f, awtColor.green / 255f, awtColor.blue / 255f, alpha)
         } else {
-            Color(alpha = alpha)
+            RenderInstanceStruct.setColor(riAddress, colorAlpha = alpha)
         }
     }
 

@@ -18,23 +18,31 @@ object RenderInstanceProvider : EnvCleanable {
         locked = false
     }
 
-    fun create(x: Float, y: Float, tileItem: TileItem): RenderInstance {
+    fun create(x: Float, y: Float, tileItem: TileItem): Long {
         val icon = tileItem.icon
+        val riAddress = RenderInstanceStruct.allocate()
 
         if (DmiProvider.hasDmiInMemory(icon)) {
             hasInProcessImage = false
-            return DmiProvider.getDmi(icon)?.let { dmi ->
-                dmi.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)?.let { s ->
-                    RenderInstance(
-                        x + tileItem.pixelX, y + tileItem.pixelY,
-                        dmi.glTextureId,
-                        s.u1, s.v1, s.u2, s.v2,
-                        s.iconWidth, s.iconHeight,
-                        ColorExtractor.extractColor(tileItem),
-                        tileItem.id
-                    )
-                }
-            } ?: RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
+
+            val dmi = DmiProvider.getDmi(icon)
+            val sprite = dmi?.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)
+
+            if (sprite != null) {
+                RenderInstanceStruct.setMajor(
+                    riAddress,
+                    x + tileItem.pixelX, y + tileItem.pixelY,
+                    dmi.glTextureId,
+                    sprite.u1, sprite.v1, sprite.u2, sprite.v2,
+                    sprite.iconWidth, sprite.iconHeight,
+                    tileItem.id
+                )
+
+                ColorExtractor.extractAndSetColor(riAddress, tileItem)
+            } else {
+                RenderInstanceStruct.setMajor(riAddress, x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
+                RenderInstanceStruct.setColor(riAddress)
+            }
         } else {
             hasInProcessImage = true
 
@@ -46,7 +54,10 @@ object RenderInstanceProvider : EnvCleanable {
                 }
             }
 
-            return RenderInstance(x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
+            RenderInstanceStruct.setMajor(riAddress, x, y, DmiProvider.placeholderTextureId, tileItemID = tileItem.id)
+            RenderInstanceStruct.setColor(riAddress)
         }
+
+        return riAddress
     }
 }

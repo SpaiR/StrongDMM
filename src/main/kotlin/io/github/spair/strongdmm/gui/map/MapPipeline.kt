@@ -6,6 +6,7 @@ import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.logic.render.RenderInstanceStruct
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import org.lwjgl.opengl.Display
 import org.lwjgl.opengl.GL11.*
@@ -163,19 +164,37 @@ class MapPipeline(private val canvas: Canvas) {
 
         renderInstances.values.forEach { plane ->
             plane.values.forEach { layer ->
-                layer.forEach { ri ->
-                    glColor4f(ri.color.red, ri.color.green, ri.color.blue, ri.color.alpha)
+                layer.forEach { riAddress ->
+                    val colorRed = RenderInstanceStruct.getColorRed(riAddress)
+                    val colorGreen = RenderInstanceStruct.getColorGreen(riAddress)
+                    val colorBlue = RenderInstanceStruct.getColorBlue(riAddress)
+                    val colorAlpha = RenderInstanceStruct.getColorAlpha(riAddress)
 
-                    if (ri.textureId != bindedTexture) {
-                        glBindTexture(GL_TEXTURE_2D, ri.textureId)
-                        bindedTexture = ri.textureId
+                    glColor4f(colorRed, colorGreen, colorBlue, colorAlpha)
+
+                    val textureId = RenderInstanceStruct.getTextureId(riAddress)
+
+                    if (textureId != bindedTexture) {
+                        glBindTexture(GL_TEXTURE_2D, textureId)
+                        bindedTexture = textureId
                     }
 
+                    val locX = RenderInstanceStruct.getLocX(riAddress)
+                    val locY = RenderInstanceStruct.getLocY(riAddress)
+
                     glPushMatrix()
-                    glTranslatef(ri.locX, ri.locY, 0f)
+                    glTranslatef(locX, locY, 0f)
+
+                    val width = RenderInstanceStruct.getWidth(riAddress)
+                    val height = RenderInstanceStruct.getHeight(riAddress)
+
+                    val u1 = RenderInstanceStruct.getU1(riAddress)
+                    val v1 = RenderInstanceStruct.getV1(riAddress)
+                    val u2 = RenderInstanceStruct.getU2(riAddress)
+                    val v2 = RenderInstanceStruct.getV2(riAddress)
 
                     glBegin(GL_QUADS)
-                    with(ri) {
+                    run {
                         glTexCoord2f(u2, v1)
                         glVertex2i(width, height)
 

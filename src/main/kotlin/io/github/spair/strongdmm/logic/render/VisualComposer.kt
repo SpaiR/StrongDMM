@@ -5,10 +5,10 @@ import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import java.util.TreeMap
 
-typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<RenderInstance>>>
+typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<Long>>>
 
-private fun RenderInstances.get(plane: Float, layer: Float): MutableList<RenderInstance> {
-    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
+private fun RenderInstances.get(plane: Float, layer: Float): MutableList<Long> {
+    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { ArrayList(1000) }
 }
 
 object VisualComposer {
@@ -22,9 +22,11 @@ object VisualComposer {
     private var verTilesNumPrev: Int = 0
 
     private var riCache: RenderInstances? = null
+
     var hasIncompleteJob = false
 
     fun clearCache() {
+        deallocateCache()
         riCache = null
         hasIncompleteJob = false
     }
@@ -44,8 +46,10 @@ object VisualComposer {
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
         ) return riCache!!
 
+        deallocateCache()
         hasIncompleteJob = false
-        val planesLayers = RenderInstances()
+
+        val planeLayers = RenderInstances()
 
         // Collect all items to self sorted map
         for (x in -ADDITIONAL_VIEW_RANGE until horTilesNum + ADDITIONAL_VIEW_RANGE) {
@@ -73,30 +77,40 @@ object VisualComposer {
                         continue
                     }
 
-                    planesLayers.get(tileItem.plane, tileItem.layer).let {
-                        it.add(RenderInstanceProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem))
+                    planeLayers.get(tileItem.plane, tileItem.layer).add(
+                        RenderInstanceProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem)
+                    )
 
-                        if (RenderInstanceProvider.hasInProcessImage) {
-                            hasIncompleteJob = true
-                        }
+                    if (RenderInstanceProvider.hasInProcessImage) {
+                        hasIncompleteJob = true
                     }
                 }
             }
         }
 
         // Sort items on the same layer
-        for (plane in planesLayers.values) {
-            for (layer in plane.values) {
+        planeLayers.values.forEach { layers ->
+            layers.values.forEach { layer ->
                 layer.sortWith(RenderComparator)
             }
         }
 
-        riCache = planesLayers
+        riCache = planeLayers
         xMapOffPrev = xMapOff
         yMapOffPrev = yMapOff
         horTilesNumPrev = horTilesNum
         verTilesNumPrev = verTilesNum
 
-        return planesLayers
+        return planeLayers
+    }
+
+    private fun deallocateCache() {
+        if (riCache != null) {
+            riCache!!.values.forEach { planes ->
+                planes.values.forEach { layers ->
+                    RenderInstanceStruct.deallocate(layers)
+                }
+            }
+        }
     }
 }

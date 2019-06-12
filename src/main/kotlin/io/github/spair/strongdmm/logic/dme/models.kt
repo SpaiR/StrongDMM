@@ -1,5 +1,8 @@
 package io.github.spair.strongdmm.logic.dme
 
+const val NON_EXISTENT_FLOAT: Float = -99999999999999999999999999999999999999f
+const val NON_EXISTENT_INT: Int = -999999999
+
 class Dme(private val dmeItems: Map<String, DmeItem?>) {
     fun getItem(type: String) = dmeItems[type]
 }
@@ -9,13 +12,13 @@ class DmeItem(
     val type: String,
     val vars: Map<String, String>,
     val children: List<String>
-    ) {
-
+) {
     private val lookedVars = mutableMapOf<String, String?>()
 
-    val parent get() = parentType?.let { environment.getItem(it) }
+    val parent
+        get() = parentType?.let { environment.getItem(it) }
 
-    val parentType by lazy {
+    private val parentType by lazy {
         when (type) {
             TYPE_DATUM -> null
             TYPE_ATOM -> TYPE_DATUM
@@ -24,8 +27,6 @@ class DmeItem(
             else -> type.substringBeforeLast('/')
         }
     }
-
-    fun isType(type: String) = isType(this.type, type)
 
     fun getVar(name: String): String? {
         if (vars.containsKey(name)) {
@@ -41,8 +42,22 @@ class DmeItem(
     }
 
     fun getVarText(name: String) = getVar(name)?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) }
-    fun getVarFloat(name: String) = getVar(name)?.toFloatOrNull()
-    fun getVarInt(name: String) = getVar(name)?.toIntOrNull()
+
+    fun getVarFloat(name: String): Float {
+        return try {
+            getVar(name)?.toFloat() ?: NON_EXISTENT_FLOAT
+        } catch (e: NumberFormatException) {
+            NON_EXISTENT_FLOAT
+        }
+    }
+
+    fun getVarInt(name: String): Int {
+        return try {
+            getVar(name)?.toInt() ?: NON_EXISTENT_INT
+        } catch (e: NumberFormatException) {
+            NON_EXISTENT_INT
+        }
+    }
 
     override fun toString(): String {
         return "DmeItem(type='$type', vars=$vars, children=$children)"
