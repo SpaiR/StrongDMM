@@ -82,11 +82,6 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
             var counter = 0
 
             for (tileItemID in tileItemsIDs) {
-                // Sometimes it's happens
-                if (counter != tmpArr.size) {
-                    break
-                }
-
                 if (tileItemID != tileItem.id) {
                     tmpArr[counter++] = tileItemID
                 }
@@ -142,14 +137,3 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
     }
 }
 
-// area -> obj -> mob -> turf
-object TileItemsComparator : Comparator<TileItem> {
-    override fun compare(o1: TileItem, o2: TileItem): Int {
-        return if (o1.isType(TYPE_AREA)) -1
-        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_OBJ)) 0
-        else if (o1.isType(TYPE_OBJ) && (o2.isType(TYPE_MOB) || o2.isType(TYPE_TURF))) -1
-        else if (o1.isType(TYPE_OBJ) && o2.isType(TYPE_AREA)) 1
-        else if (o1.isType(TYPE_MOB) && o2.isType(TYPE_TURF)) -1
-        else 1
-    }
-}

@@ -18,7 +18,7 @@ object RenderInstanceProvider : EnvCleanable {
         locked = false
     }
 
-    fun create(x: Float, y: Float, tileItem: TileItem): Long {
+    fun allocateRenderInstance(x: Float, y: Float, tileItem: TileItem): Long {
         val icon = tileItem.icon
         val riAddress = RenderInstanceStruct.allocate()
 

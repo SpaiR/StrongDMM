@@ -32,12 +32,7 @@ object VisualComposer {
     }
 
     fun composeFrame(
-        dmm: Dmm,
-        xMapOff: Int,
-        yMapOff: Int,
-        horTilesNum: Int,
-        verTilesNum: Int,
-        forceUpdate: Boolean
+        dmm: Dmm, xMapOff: Int, yMapOff: Int, horTilesNum: Int, verTilesNum: Int, forceUpdate: Boolean
     ): RenderInstances {
         // Use cached render instances
         if (riCache != null
@@ -78,7 +73,7 @@ object VisualComposer {
                     }
 
                     planeLayers.get(tileItem.plane, tileItem.layer).add(
-                        RenderInstanceProvider.create(renderX.toFloat(), renderY.toFloat(), tileItem)
+                        RenderInstanceProvider.allocateRenderInstance(renderX.toFloat(), renderY.toFloat(), tileItem)
                     )
 
                     if (RenderInstanceProvider.hasInProcessImage) {

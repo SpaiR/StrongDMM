@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
@@ -10,7 +11,7 @@ import java.awt.FlowLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-object TabbedMapPanelView : View {
+object TabbedMapPanelView : View, EnvCleanable {
 
     private val indexHashList = mutableListOf<Int>()
     private val mapTabs = JTabbedPane().apply {
@@ -32,6 +33,11 @@ object TabbedMapPanelView : View {
             add(mapTabs, BorderLayout.NORTH)
             add(MapView.initComponent())
         }
+    }
+
+    override fun clean() {
+        mapTabs.removeAll()
+        indexHashList.clear()
     }
 
     fun addMapTab(dmm: Dmm) {

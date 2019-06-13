@@ -54,7 +54,13 @@ object ColorExtractor {
         }
 
         if (awtColor != null) {
-            RenderInstanceStruct.setColor(riAddress, awtColor.red / 255f, awtColor.green / 255f, awtColor.blue / 255f, alpha)
+            RenderInstanceStruct.setColor(
+                riAddress,
+                awtColor.red / 255f,
+                awtColor.green / 255f,
+                awtColor.blue / 255f,
+                alpha
+            )
         } else {
             RenderInstanceStruct.setColor(riAddress, colorAlpha = alpha)
         }

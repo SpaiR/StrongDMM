@@ -1,10 +1,15 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.strongdmm.logic.EnvCleanable
 import java.util.Objects
 
-object TileItemProvider {
+object TileItemProvider : EnvCleanable {
 
     private val tileItems: MutableMap<Int, TileItem> = hashMapOf()
+
+    override fun clean() {
+        tileItems.clear()
+    }
 
     fun getOrCreate(type: String, vars: Map<String, String>?): TileItem {
         return tileItems.computeIfAbsent(Objects.hash(type, vars)) { TileItem(it, type, vars) }

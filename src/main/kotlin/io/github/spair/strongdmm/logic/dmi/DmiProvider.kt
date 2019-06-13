@@ -14,12 +14,11 @@ import javax.imageio.ImageIO
 object DmiProvider {
 
     val PLACEHOLDER_IMAGE = ImageIO.read(DmiProvider::class.java.classLoader.getResource("placeholder.png"))!!
+    var placeholderTextureId = -1
 
     private val WIDTH_HEIGHT_PATTERN = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
     private val STATE_PATTERN = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
     private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
-
-    var placeholderTextureId = -1
 
     private var dmiCache = mutableMapOf<String, Dmi?>()
 

@@ -83,11 +83,14 @@ object Environment {
     }
 
     private fun cleanEnvironmentResources() {
-        History.clearActions()
+        openedMaps.clear()
+        History.clean()
         MapView.clean()
         ObjectTreeView.clean()
         InstanceListView.clean()
         TabbedObjectPanelView.clean()
         RenderInstanceProvider.clean()
+        TileItemProvider.clean()
+        TabbedMapPanelView.clean()
     }
 }

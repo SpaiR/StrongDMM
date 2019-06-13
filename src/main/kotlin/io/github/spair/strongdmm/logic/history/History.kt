@@ -3,12 +3,22 @@ package io.github.spair.strongdmm.logic.history
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.util.Stack
 
-object History {
+object History : EnvCleanable {
 
     private val mapsStacks: MutableMap<Dmm?, Stacks> = hashMapOf()
+
+    override fun clean() {
+        with(getStacks()) {
+            redoStack.clear()
+            MenuBarView.switchRedo(false)
+            undoStack.clear()
+            MenuBarView.switchUndo(false)
+        }
+    }
 
     fun addUndoAction(undoable: Undoable) {
         with(getStacks()) {
@@ -38,15 +48,6 @@ object History {
                 MenuBarView.switchRedo(redoStack.isNotEmpty())
                 MenuBarView.switchUndo(true)
             }
-        }
-    }
-
-    fun clearActions() {
-        with(getStacks()) {
-            redoStack.clear()
-            MenuBarView.switchRedo(false)
-            undoStack.clear()
-            MenuBarView.switchUndo(false)
         }
     }
 
