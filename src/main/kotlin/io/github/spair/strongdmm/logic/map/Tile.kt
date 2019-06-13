@@ -80,10 +80,13 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         } else {
             val tmpArr = IntArray(tileItemsIDs.size - 1)
             var counter = 0
+            var deleted = false
 
             for (tileItemID in tileItemsIDs) {
-                if (tileItemID != tileItem.id) {
+                if (tileItemID != tileItem.id || deleted) {
                     tmpArr[counter++] = tileItemID
+                } else {
+                    deleted = true
                 }
             }
 

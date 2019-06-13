@@ -50,6 +50,7 @@ object Environment {
 
         MapView.openMap(dmm)
         TabbedMapPanelView.addMapTab(dmm)
+        MenuBarView.updateUndoable()
     }
 
     fun openMap(mapPath: String) {
