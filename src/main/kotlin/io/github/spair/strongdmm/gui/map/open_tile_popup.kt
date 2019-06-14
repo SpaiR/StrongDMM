@@ -9,10 +9,7 @@ import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.SwapTileItemAction
-import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
-import io.github.spair.strongdmm.logic.map.Tile
-import io.github.spair.strongdmm.logic.map.TileOperation
+import io.github.spair.strongdmm.logic.map.*
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
@@ -27,6 +24,8 @@ fun MapPipeline.openTilePopup() {
     MapView.createAndShowTilePopup(Mouse.getX(), Display.getHeight() - Mouse.getY()) { popup ->
         val dmm = selectedMapData!!.dmm
         val tile = dmm.getTile(xMouseMap, yMouseMap) ?: return@createAndShowTilePopup
+
+        SelectOperation.depickAreaIfNotInBounds(xMouseMap, yMouseMap)
 
         with(popup) {
             addResetActions()
@@ -68,6 +67,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
                 TileOperation.cut(map, currentTile)
             }
 
+            SelectOperation.depickArea()
             Frame.update(true)
         }
     })
@@ -102,6 +102,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
                 TileOperation.delete(map, currentTile)
             }
 
+            SelectOperation.depickArea()
             Frame.update(true)
         }
     })
@@ -143,7 +144,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.tileItems.forEach { tileItem ->
+    currentTile.tileItems.sortedWith(TileItemsComparator).forEach { tileItem ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }

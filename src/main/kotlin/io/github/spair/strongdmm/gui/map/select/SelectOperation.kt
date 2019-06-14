@@ -33,6 +33,25 @@ object SelectOperation : TileSelect {
     fun depickArea() {
         if (isPickType()) {
             tileSelect = PickTileSelect()
+            Frame.update()
+        }
+    }
+
+    fun depickAreaIfNotInBounds(x: Int, y: Int) {
+        if (isPickType()) {
+            var inBounds = false
+
+            for (tile in getPickedTiles()!!) {
+                if (tile.x == x && tile.y == y) {
+                    inBounds = true
+                    break
+                }
+            }
+
+            if (!inBounds) {
+                depickArea()
+                Frame.update()
+            }
         }
     }
 
