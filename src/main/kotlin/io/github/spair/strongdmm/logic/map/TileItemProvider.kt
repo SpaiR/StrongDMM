@@ -12,7 +12,8 @@ object TileItemProvider : EnvCleanable {
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>?): TileItem {
-        return tileItems.computeIfAbsent(Objects.hash(type, vars)) { TileItem(it, type, vars) }
+        val hash = Objects.hash(type, vars)
+        return tileItems.getOrPut(Objects.hash(type, vars)) { TileItem(hash, type, vars) }
     }
 
     fun getByID(id: Int): TileItem = tileItems.getValue(id)

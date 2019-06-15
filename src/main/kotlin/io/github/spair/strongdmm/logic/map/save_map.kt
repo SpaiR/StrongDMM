@@ -22,10 +22,16 @@ fun saveMap(dmm: Dmm) {
         for (y in 1..dmm.maxY) {
             dmm.getTile(x, y)!!.let { tile ->
                 tile.tileItems.forEach { tileItem ->
-                    tileItem.customVars?.keys?.forEach { name ->
-                        if (tileItem.customVars[name] == tileItem.dmeItem.getVar(name)) {
-                            tile.removeTileItemVar(tileItem, name)
+                    val newVars = mutableMapOf<String, String>()
+
+                    tileItem.customVars?.forEach { (name, value) ->
+                        if (value != tileItem.dmeItem.getVar(name)) {
+                            newVars[name] = value
                         }
+                    }
+
+                    if (tileItem.customVars != newVars) {
+                        tile.setTileItemVars(tileItem, (if (newVars.isEmpty()) null else newVars))
                     }
                 }
             }
