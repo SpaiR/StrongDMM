@@ -8,25 +8,36 @@ import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
+import java.awt.Font
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 object TabbedMapPanelView : View, EnvCleanable {
 
-    private val indexHashList = mutableListOf<Int>()
-    private val mapTabs = JTabbedPane().apply {
-        isFocusable = false
+    private val mapTabs: JTabbedPane = JTabbedPane()
+    private val indexHashList: MutableList<Int> = mutableListOf()
 
-        addChangeListener {
-            if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
-                MapView.openMap(indexHashList[selectedIndex])
-                MenuBarView.updateUndoable()
+    private var isMiscEvent: Boolean = false
+    private var previousIndex: Int = -1
+
+    init {
+        with(mapTabs) {
+            isFocusable = false
+
+            addChangeListener {
+                if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
+                    MapView.openMap(indexHashList[selectedIndex])
+                    MenuBarView.updateUndoable()
+                }
+
+                getTab(previousIndex)?.toggleBoldFont(false)
+                previousIndex = selectedIndex
+                getTab(selectedIndex)?.toggleBoldFont(true)
+
+                isMiscEvent = false
             }
-            isMiscEvent = false
         }
     }
-
-    private var isMiscEvent = false
 
     override fun initComponent(): JComponent {
         return JPanel(BorderLayout()).apply {
@@ -41,27 +52,13 @@ object TabbedMapPanelView : View, EnvCleanable {
     }
 
     fun addMapTab(dmm: Dmm) {
-        val tabContent = JPanel(FlowLayout(FlowLayout.CENTER, 4, 0)).apply {
-            isOpaque = false
-        }
-
-        val mapHash = dmm.hashCode()
+        val mapTab = MapTab(dmm)
         val tabIndex = mapTabs.tabCount
 
-        indexHashList.add(mapHash)
+        getTab(previousIndex)?.toggleBoldFont(false)
 
-        tabContent.add(JLabel(dmm.mapName))
-        tabContent.add(JButton("x").apply {
-            border = EmptyBorder(0, 4, 0, 4)
-            isContentAreaFilled = false
-
-            addActionListener {
-                isMiscEvent = true
-                Environment.closeMap(dmm)
-                mapTabs.remove(indexHashList.indexOf(mapHash))
-                indexHashList.remove(mapHash)
-            }
-        })
+        previousIndex = tabIndex
+        indexHashList.add(dmm.hashCode())
 
         SwingUtilities.invokeLater {
             isMiscEvent = true
@@ -74,8 +71,48 @@ object TabbedMapPanelView : View, EnvCleanable {
                 }
             })
 
-            mapTabs.setTabComponentAt(tabIndex, tabContent)
+            mapTabs.setTabComponentAt(tabIndex, mapTab)
             mapTabs.selectedIndex = mapTabs.tabCount - 1
+        }
+    }
+
+    private fun getTab(index: Int): MapTab? {
+        return if (index < 0 || index >= mapTabs.tabCount) null else mapTabs.getTabComponentAt(index) as? MapTab
+    }
+
+    private class MapTab(dmm: Dmm) : JPanel(FlowLayout(FlowLayout.CENTER, 4, 0)) {
+
+        private val plainFont: Font = font.deriveFont(Font.PLAIN)
+        private val boldFont: Font = font.deriveFont(Font.BOLD)
+
+        private val label: JLabel = JLabel(dmm.mapName)
+        private val closeButton: JButton = JButton("x")
+
+        init {
+            isOpaque = false
+
+            with(closeButton) {
+                border = EmptyBorder(0, 4, 0, 4)
+                isContentAreaFilled = false
+
+                val mapHash = dmm.hashCode()
+
+                addActionListener {
+                    isMiscEvent = true
+                    Environment.closeMap(dmm)
+                    mapTabs.remove(indexHashList.indexOf(mapHash))
+                    indexHashList.remove(mapHash)
+                }
+            }
+
+            add(label)
+            add(closeButton)
+
+            toggleBoldFont(true)
+        }
+
+        fun toggleBoldFont(enable: Boolean) {
+            label.font = if (enable) boldFont else plainFont
         }
     }
 }
