@@ -13,7 +13,7 @@ import java.util.TreeMap
 typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<Long>>>
 
 private fun RenderInstances.get(plane: Float, layer: Float): MutableList<Long> {
-    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { ArrayList(1000) }
+    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
 }
 
 object VisualComposer {
