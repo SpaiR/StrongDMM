@@ -36,6 +36,9 @@ object MenuBarView : View {
     private val fillSelectModeItem = createRadioButton("Fill Select Mode").addAltShortcut('2')
     private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
+    // Options
+    private val synchronizMaps = createRadioButton("Synchronize Maps")
+
     // Layers items
     private val layersFilterActionItem = createButton("Layers Filter", false)
     private val toggleAreaActionItem = createRadioButton("Area", true).addCtrlShortcut('1')
@@ -47,6 +50,7 @@ object MenuBarView : View {
         return JMenuBar().apply {
             add(createMenu("File", createFileItems()))
             add(createMenu("Edit", createEditItems()))
+            add(createMenu("Options", createOptionsItems()))
             add(createMenu("Layers", createLayersItems()))
 
             initLogic()
@@ -60,6 +64,9 @@ object MenuBarView : View {
         availableMapsItem.addActionListener(openMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
         exitMenuItem.addActionListener { System.exit(0) }
+
+        // Options
+        synchronizMaps.addActionListener { MapView.switchMapsSync() }
 
         // Edit
         undoActionItem.addActionListener { History.undoAction() }
@@ -96,6 +103,10 @@ object MenuBarView : View {
         addSelectModeItem,
         fillSelectModeItem,
         pickSelectModeItem
+    )
+
+    private fun createOptionsItems() = arrayOf<JComponent>(
+        synchronizMaps
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(

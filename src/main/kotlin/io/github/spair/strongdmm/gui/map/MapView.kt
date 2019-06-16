@@ -24,7 +24,7 @@ object MapView : View, EnvCleanable {
     override fun clean() {
         tryCloseTilePopup()
         pipeline.selectedMapData = null
-        pipeline.maps.clear()
+        pipeline.openedMaps.clear()
     }
 
     override fun initComponent(): JComponent {
@@ -83,5 +83,17 @@ object MapView : View, EnvCleanable {
     }
 
     fun getSelectedDmm() = pipeline.selectedMapData?.dmm
-    fun getOpenedMaps(): List<Dmm> = pipeline.maps.values.map { it.dmm }
+    fun getOpenedMaps(): List<Dmm> = pipeline.openedMaps.values.map { it.dmm }
+
+    fun switchMapsSync() {
+        with(pipeline) {
+            synchronizeMaps = !synchronizeMaps
+
+            if (synchronizeMaps && openedMaps.size > 1) {
+                selectedMapData?.let {
+                    triggerMapSync(it)
+                }
+            }
+        }
+    }
 }

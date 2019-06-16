@@ -164,9 +164,13 @@ object MouseProcessor {
     }
 
     private fun MapPipeline.updateMapOffset() {
-        selectedMapData?.let { map ->
-            map.xMapOff = (-map.xViewOff / iconSize + 0.5f).toInt()
-            map.yMapOff = (-map.yViewOff / iconSize + 0.5f).toInt()
+        selectedMapData?.let { selectedMap ->
+            selectedMap.xMapOff = (-selectedMap.xViewOff / iconSize + 0.5f).toInt()
+            selectedMap.yMapOff = (-selectedMap.yViewOff / iconSize + 0.5f).toInt()
+
+            if (synchronizeMaps) {
+                triggerMapSync(selectedMap)
+            }
         }
     }
 }

@@ -17,10 +17,13 @@ class MapPipeline(private val canvas: Canvas) {
 
     private var glInitialized = false
 
-    val maps = linkedMapOf<Int, MapRenderData>()
+    val openedMaps = linkedMapOf<Int, MapRenderData>()
 
     var selectedMapData: MapRenderData? = null
     var iconSize = 32
+
+    // When true, all maps will have the same view coordinates
+    var synchronizeMaps: Boolean = false
 
     // Coords of tile where the mouse is
     var xMouseMap = 0
@@ -38,17 +41,23 @@ class MapPipeline(private val canvas: Canvas) {
     }
 
     fun switchMap(hash: Int) {
-        maps[hash]?.let { switchMap(it.dmm) }
+        openedMaps[hash]?.let { switchMap(it.dmm) }
     }
 
     fun switchMap(map: Dmm) {
         val hash = map.hashCode()
 
-        if (maps.containsKey(hash)) {
-            selectedMapData = maps.getValue(hash)
+        if (openedMaps.containsKey(hash)) {
+            selectedMapData = openedMaps.getValue(hash)
         } else {
-            selectedMapData = MapRenderData(map)
-            maps[hash] = selectedMapData!!
+            val newMap = MapRenderData(map)
+            openedMaps[hash] = newMap
+
+            if (synchronizeMaps && selectedMapData != null) {
+                triggerMapSync(selectedMapData!!)
+            }
+
+            selectedMapData = newMap
         }
 
         iconSize = map.iconSize
@@ -61,41 +70,55 @@ class MapPipeline(private val canvas: Canvas) {
     }
 
     fun closeMap(hash: Int) {
-        if (!maps.containsKey(hash)) {
+        if (!openedMaps.containsKey(hash)) {
             return
         }
 
-        val mapData = maps.getValue(hash)
+        val mapData = openedMaps.getValue(hash)
 
         if (selectedMapData === mapData) {
             var selectedMapIndex = 0
 
-            for ((index, mapHash) in maps.keys.withIndex()) {
+            for ((index, mapHash) in openedMaps.keys.withIndex()) {
                 if (mapHash == hash) {
                     selectedMapIndex = index
                     break
                 }
             }
 
-            if (maps.size > 1) {
+            if (openedMaps.size > 1) {
                 val index = if (selectedMapIndex == 0) {
                     1
                 } else {
-                    if (maps.size >= selectedMapIndex + 2) {
+                    if (openedMaps.size >= selectedMapIndex + 2) {
                         selectedMapIndex + 1
                     } else {
                         selectedMapIndex - 1
                     }
                 }
 
-                selectedMapData = maps.values.toTypedArray()[index]
+                selectedMapData = openedMaps.values.toTypedArray()[index]
                 Frame.update(true)
             } else {
                 selectedMapData = null
             }
         }
 
-        maps.remove(hash)
+        openedMaps.remove(hash)
+    }
+
+    fun triggerMapSync(selectedMap: MapRenderData) {
+        openedMaps.values.forEach { openedMap ->
+            if (openedMap !== selectedMap) {
+                openedMap.xMapOff = selectedMap.xMapOff
+                openedMap.yMapOff = selectedMap.yMapOff
+
+                openedMap.viewZoom = selectedMap.viewZoom
+
+                openedMap.xViewOff = selectedMap.xViewOff
+                openedMap.yViewOff = selectedMap.yViewOff
+            }
+        }
     }
 
     private fun initGLDisplay() {
