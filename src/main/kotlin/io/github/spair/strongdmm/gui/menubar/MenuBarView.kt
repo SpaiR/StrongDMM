@@ -37,6 +37,7 @@ object MenuBarView : View {
     // Options
     private val nextMap = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
     private val prevMap = createButton("Prev Map").addCtrlShortcut(KeyEvent.VK_LEFT)
+    private val frameAreas = createRadioButton("Frame Areas", true)
     private val synchronizeMaps = createRadioButton("Synchronize Maps")
 
     // Layers items
@@ -68,6 +69,7 @@ object MenuBarView : View {
         // Options
         nextMap.addActionListener { TabbedMapPanelView.selectNextMap() }
         prevMap.addActionListener { TabbedMapPanelView.selectPrevMap() }
+        frameAreas.addActionListener { MapView.switchAreasFraming() }
         synchronizeMaps.addActionListener { MapView.switchMapsSync() }
 
         // Edit
@@ -111,7 +113,8 @@ object MenuBarView : View {
         nextMap,
         prevMap,
         JSeparator(),
-        synchronizeMaps
+        synchronizeMaps,
+        frameAreas
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(

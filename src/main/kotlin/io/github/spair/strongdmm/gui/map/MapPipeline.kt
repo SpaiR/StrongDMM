@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.gui.map
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
-import io.github.spair.strongdmm.logic.dmi.DmiProvider
+import io.github.spair.strongdmm.logic.dmi.*
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.RenderInstanceStruct
@@ -24,6 +24,8 @@ class MapPipeline(private val canvas: Canvas) {
 
     // When true, all maps will have the same view coordinates
     var synchronizeMaps: Boolean = false
+    // When true, all areas borders will be visible
+    var drawAreasBorder: Boolean = true
 
     // Coords of tile where the mouse is
     var xMouseMap = 0
@@ -180,8 +182,10 @@ class MapPipeline(private val canvas: Canvas) {
         val xMapOff = selectedMapData!!.xMapOff
         val yMapOff = selectedMapData!!.yMapOff
 
-        val renderInstances = VisualComposer.composeFrame(dmm, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced())
         var bindedTexture = -1
+        val renderInstances = VisualComposer.composeFrame(
+            dmm, xMapOff, yMapOff, horTilesNum, verTilesNum, Frame.isForced(), drawAreasBorder
+        )
 
         glEnable(GL_TEXTURE_2D)
 
@@ -248,6 +252,10 @@ class MapPipeline(private val canvas: Canvas) {
             isSelectItem = false
             findAndSelectItemUnderMouse(renderInstances)
         }
+
+        if (drawAreasBorder) {
+            renderAreasBorder()
+        }
     }
 
     private fun renderMousePosition() {
@@ -267,6 +275,37 @@ class MapPipeline(private val canvas: Canvas) {
             glVertex2i(xPos + iconSize, yPos + iconSize)
             glVertex2i(xPos, yPos + iconSize)
         }
+        glEnd()
+    }
+
+    private fun renderAreasBorder() {
+        glColor4f(0.8f, 0.8f, 0.8f, 1f)
+        glLineWidth(1.5f)
+        glBegin(GL_LINES)
+
+        VisualComposer.framedAreas.forEach { framedArea ->
+            val x = framedArea.x
+            val y = framedArea.y
+            val dir = framedArea.dir
+
+            if ((dir and WEST) != 0) {
+                glVertex2i(x, y)
+                glVertex2i(x, y + iconSize)
+            }
+            if ((dir and EAST) != 0) {
+                glVertex2i(x + iconSize, y)
+                glVertex2i(x + iconSize, y + iconSize)
+            }
+            if ((dir and SOUTH) != 0) {
+                glVertex2i(x, y)
+                glVertex2i(x + iconSize, y)
+            }
+            if ((dir and NORTH) != 0) {
+                glVertex2i(x, y + iconSize)
+                glVertex2i(x + iconSize, y + iconSize)
+            }
+        }
+
         glEnd()
     }
 

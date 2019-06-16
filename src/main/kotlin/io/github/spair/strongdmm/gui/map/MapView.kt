@@ -96,4 +96,9 @@ object MapView : View, EnvCleanable {
             }
         }
     }
+
+    fun switchAreasFraming() {
+        pipeline.drawAreasBorder = !pipeline.drawAreasBorder
+        Frame.update()
+    }
 }
