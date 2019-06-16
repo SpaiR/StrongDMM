@@ -23,19 +23,4 @@ object TileItemProvider : EnvCleanable {
         ids.forEach { tileItems.add(this.tileItems.getValue(it)) }
         return tileItems
     }
-
-    fun clearUnusedItems(openedMaps: List<Dmm>) {
-        val usedItems = mutableSetOf<Int>()
-
-        openedMaps.forEach { dmm ->
-            for (x in 1..dmm.maxX) {
-                for (y in 1..dmm.maxY) {
-                    val tile = dmm.getTile(x, y)!!
-                    usedItems.addAll(tile.getTileItemsIDs().toList())
-                }
-            }
-        }
-
-        tileItems.keys.filter { it !in usedItems }.forEach { tileItems.remove(it) }
-    }
 }

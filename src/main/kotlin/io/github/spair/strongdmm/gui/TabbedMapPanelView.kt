@@ -76,6 +76,10 @@ object TabbedMapPanelView : View, EnvCleanable {
         }
     }
 
+    fun markMapModified(isModified: Boolean) {
+        getTab(mapTabs.selectedIndex)?.toggleModifiedMark(isModified)
+    }
+
     private fun getTab(index: Int): MapTab? {
         return if (index < 0 || index >= mapTabs.tabCount) null else mapTabs.getTabComponentAt(index) as? MapTab
     }
@@ -87,6 +91,8 @@ object TabbedMapPanelView : View, EnvCleanable {
 
         private val label: JLabel = JLabel(dmm.mapName)
         private val closeButton: JButton = JButton("x")
+
+        private var hasModifiedMark: Boolean = false
 
         init {
             isOpaque = false
@@ -113,6 +119,16 @@ object TabbedMapPanelView : View, EnvCleanable {
 
         fun toggleBoldFont(enable: Boolean) {
             label.font = if (enable) boldFont else plainFont
+        }
+
+        fun toggleModifiedMark(isModified: Boolean) {
+            if (isModified && !hasModifiedMark) {
+                hasModifiedMark = true
+                label.text = label.text + " *"
+            } else if (!isModified && hasModifiedMark) {
+                hasModifiedMark = false
+                label.text = label.text.substring(0..(label.text.length - 3))
+            }
         }
     }
 }

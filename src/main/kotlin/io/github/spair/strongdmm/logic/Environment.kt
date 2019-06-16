@@ -59,16 +59,9 @@ object Environment {
 
     fun closeMap(dmm: Dmm) {
         openedMaps.remove(dmm.mapPath)
-
         MapView.closeMap(dmm.hashCode())
-        MapView.getOpenedMaps().let { openedMaps ->
-            TileItemProvider.clearUnusedItems(openedMaps)
-            History.clearUnusedActions(openedMaps)
-        }
-
+        History.clearUnusedActions(MapView.getOpenedMaps())
         MenuBarView.updateUndoable()
-
-        System.gc()
     }
 
     private fun findAvailableMaps(rootFolder: File) {

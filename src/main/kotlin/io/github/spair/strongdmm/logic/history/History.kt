@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.history
 
+import io.github.spair.strongdmm.gui.TabbedMapPanelView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
@@ -26,6 +27,8 @@ object History : EnvCleanable {
             MenuBarView.switchRedo(false)
             undoStack.push(undoable)
             MenuBarView.switchUndo(true)
+
+            TabbedMapPanelView.markMapModified(true)
         }
     }
 
@@ -36,6 +39,10 @@ object History : EnvCleanable {
                 SelectOperation.depickArea()
                 MenuBarView.switchUndo(undoStack.isNotEmpty())
                 MenuBarView.switchRedo(true)
+
+                if (undoStack.isEmpty()) {
+                    TabbedMapPanelView.markMapModified(false)
+                }
             }
         }
     }
@@ -47,6 +54,8 @@ object History : EnvCleanable {
                 SelectOperation.depickArea()
                 MenuBarView.switchRedo(redoStack.isNotEmpty())
                 MenuBarView.switchUndo(true)
+
+                TabbedMapPanelView.markMapModified(true)
             }
         }
     }
