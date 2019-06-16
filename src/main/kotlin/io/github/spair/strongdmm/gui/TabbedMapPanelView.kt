@@ -80,6 +80,21 @@ object TabbedMapPanelView : View, EnvCleanable {
         getTab(mapTabs.selectedIndex)?.toggleModifiedMark(isModified)
     }
 
+    fun selectNextMap() {
+        switchMap(mapTabs.selectedIndex + 1)
+    }
+
+    fun selectPrevMap() {
+        switchMap(mapTabs.selectedIndex - 1)
+    }
+
+    private fun switchMap(index: Int) {
+        if (indexHashList.isNotEmpty() && index >= 0 && index <= mapTabs.tabCount - 1) {
+            previousIndex = mapTabs.selectedIndex
+            mapTabs.selectedIndex = index
+        }
+    }
+
     private fun getTab(index: Int): MapTab? {
         return if (index < 0 || index >= mapTabs.tabCount) null else mapTabs.getTabComponentAt(index) as? MapTab
     }

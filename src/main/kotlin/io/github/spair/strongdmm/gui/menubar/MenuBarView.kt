@@ -1,13 +1,10 @@
 package io.github.spair.strongdmm.gui.menubar
 
-import io.github.spair.strongdmm.gui.View
-import io.github.spair.strongdmm.gui.chooseFileDialog
+import io.github.spair.strongdmm.gui.*
 import io.github.spair.strongdmm.gui.edit.LayersFilter
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
-import io.github.spair.strongdmm.gui.runWithProgressBar
-import io.github.spair.strongdmm.gui.showAvailableMapsDialog
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.dme.TYPE_AREA
 import io.github.spair.strongdmm.logic.dme.TYPE_MOB
@@ -18,6 +15,7 @@ import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
 import javax.swing.*
 
 object MenuBarView : View {
@@ -37,7 +35,9 @@ object MenuBarView : View {
     private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
     // Options
-    private val synchronizMaps = createRadioButton("Synchronize Maps")
+    private val nextMap = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
+    private val prevMap = createButton("Prev Map").addCtrlShortcut(KeyEvent.VK_LEFT)
+    private val synchronizeMaps = createRadioButton("Synchronize Maps")
 
     // Layers items
     private val layersFilterActionItem = createButton("Layers Filter", false)
@@ -66,7 +66,9 @@ object MenuBarView : View {
         exitMenuItem.addActionListener { System.exit(0) }
 
         // Options
-        synchronizMaps.addActionListener { MapView.switchMapsSync() }
+        nextMap.addActionListener { TabbedMapPanelView.selectNextMap() }
+        prevMap.addActionListener { TabbedMapPanelView.selectPrevMap() }
+        synchronizeMaps.addActionListener { MapView.switchMapsSync() }
 
         // Edit
         undoActionItem.addActionListener { History.undoAction() }
@@ -106,7 +108,10 @@ object MenuBarView : View {
     )
 
     private fun createOptionsItems() = arrayOf<JComponent>(
-        synchronizMaps
+        nextMap,
+        prevMap,
+        JSeparator(),
+        synchronizeMaps
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(
@@ -140,6 +145,9 @@ object MenuBarView : View {
                 Shortcut.CTRL_S -> saveItem
                 Shortcut.CTRL_Q -> exitMenuItem
                 Shortcut.CTRL_Z -> undoActionItem
+                // Options
+                Shortcut.CTRL_LEFT_ARROW -> prevMap
+                Shortcut.CTRL_RIGHT_ARROW -> nextMap
                 // Edit
                 Shortcut.CTRL_SHIFT_O -> availableMapsItem
                 Shortcut.CTRL_SHIFT_Z -> redoActionItem
@@ -218,6 +226,10 @@ object MenuBarView : View {
 
     private fun JMenuItem.addCtrlShortcut(char: Char) = apply {
         accelerator = KeyStroke.getKeyStroke(char.toInt(), InputEvent.CTRL_DOWN_MASK)
+    }
+
+    private fun JMenuItem.addCtrlShortcut(char: Int) = apply {
+        accelerator = KeyStroke.getKeyStroke(char, InputEvent.CTRL_DOWN_MASK)
     }
 
     private fun JMenuItem.addCtrlShiftShortcut(char: Char) = apply {
