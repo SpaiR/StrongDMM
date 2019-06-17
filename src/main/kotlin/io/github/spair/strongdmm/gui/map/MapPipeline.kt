@@ -307,6 +307,7 @@ class MapPipeline(private val canvas: Canvas) {
         }
 
         glEnd()
+        glLineWidth(1f)
     }
 
     private fun getViewWidth() = Display.getWidth() * selectedMapData!!.viewZoom.toDouble()
