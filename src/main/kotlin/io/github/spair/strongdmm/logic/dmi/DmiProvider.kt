@@ -20,7 +20,7 @@ object DmiProvider {
     private val STATE_PATTERN = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
     private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
 
-    private var dmiCache = mutableMapOf<String, Dmi?>()
+    private val dmiCache = mutableMapOf<String, Dmi?>()
 
     fun initTextures() {
         placeholderTextureId = createGlTexture(PLACEHOLDER_IMAGE)
@@ -31,8 +31,6 @@ object DmiProvider {
         dmiCache.values.forEach { dmi -> dmi?.let { GL11.glDeleteTextures(it.glTextureId) } }
         dmiCache.clear()
     }
-
-    fun hasDmiInMemory(icon: String) = dmiCache.containsKey(icon) || icon.isEmpty()
 
     fun getSpriteFromDmi(icon: String, iconState: String, dir: Int = SOUTH, frame: Int = 0): IconSprite? {
         return getDmi(icon)?.getIconState(iconState)?.getIconSprite(dir, frame)

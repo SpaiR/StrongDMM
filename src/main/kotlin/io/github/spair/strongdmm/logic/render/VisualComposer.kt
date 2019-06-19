@@ -29,14 +29,12 @@ object VisualComposer {
 
     private var riCache: RenderInstances? = null
 
-    var hasIncompleteJob = false
     val framedAreas: MutableList<FramedArea> = mutableListOf()
 
     fun clearCache() {
         deallocateCache()
         framedAreas.clear()
         riCache = null
-        hasIncompleteJob = false
     }
 
     fun composeFrame(
@@ -44,7 +42,7 @@ object VisualComposer {
     ): RenderInstances {
         // Use cached render instances
         if (riCache != null
-            && !hasIncompleteJob && !forceUpdate
+            && !forceUpdate
             && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
             && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
             && drawAreasBorderPrev == drawAreasBorder
@@ -52,7 +50,6 @@ object VisualComposer {
 
         deallocateCache()
         framedAreas.clear()
-        hasIncompleteJob = false
 
         val planeLayers = RenderInstances()
 
@@ -88,10 +85,6 @@ object VisualComposer {
                     planeLayers.get(tileItem.plane, tileItem.layer).add(
                         RenderInstanceProvider.allocateRenderInstance(renderX.toFloat(), renderY.toFloat(), tileItem)
                     )
-
-                    if (RenderInstanceProvider.hasInProcessImage) {
-                        hasIncompleteJob = true
-                    }
                 }
 
                 // Collect data to draw areas borders

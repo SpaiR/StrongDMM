@@ -13,6 +13,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
 
     fun getTileItemsIDs(): IntArray = tileItemsIDs.copyOf()
     fun getTileItemsByType(type: String): List<TileItem> = tileItems.filter { it.type == type }
+    fun getAllTileItemsIsType(type: String): List<TileItem> = tileItems.filter { it.isType(type) }
 
     fun getVisibleTileItems(): List<TileItem> = tileItems.filter { !LayersManager.isHiddenType(it.type) }
     fun getVisibleTileItemsIDs(): IntArray = getVisibleTileItems().map { it.id }.toIntArray()

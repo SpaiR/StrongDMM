@@ -7,6 +7,7 @@ import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.logic.dmi.*
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import io.github.spair.strongdmm.logic.render.RenderInstanceStruct
 import io.github.spair.strongdmm.logic.render.VisualComposer
 import org.lwjgl.opengl.Display
@@ -19,6 +20,9 @@ class MapPipeline(private val canvas: Canvas) {
     private var glInitialized = false
 
     val openedMaps = linkedMapOf<Int, MapRenderData>()
+    val loadedMaps = mutableSetOf<String>()
+
+    @Volatile var mapLoadingInProcess = false
 
     var selectedMapData: MapRenderData? = null
     var iconSize = 32
@@ -147,6 +151,12 @@ class MapPipeline(private val canvas: Canvas) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         while (!Display.isCloseRequested() && selectedMapData != null) {
+            if (loadedMaps.add(selectedMapData!!.dmm.mapPath)) {
+                RenderInstanceProvider.loadMapIcons(selectedMapData!!.dmm)
+            }
+
+            mapLoadingInProcess = false
+
             if (Frame.hasUpdates()) {
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
@@ -245,11 +255,6 @@ class MapPipeline(private val canvas: Canvas) {
         }
 
         glDisable(GL_TEXTURE_2D)
-
-        // Postponed images will be loaded in next frame
-        if (VisualComposer.hasIncompleteJob) {
-            Frame.update()
-        }
 
         if (isSelectItem) {
             isSelectItem = false

@@ -81,6 +81,18 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
         return items
     }
 
+    fun getAllTileItemsIsType(type: String): List<TileItem> {
+        val items = mutableListOf<TileItem>()
+
+        for (x in 1..maxX) {
+            for (y in 1..maxY) {
+                items.addAll(getTile(x, y)!!.getAllTileItemsIsType(type))
+            }
+        }
+
+        return items
+    }
+
     override fun equals(other: Any?) = when {
         other == null -> false
         this === other -> true

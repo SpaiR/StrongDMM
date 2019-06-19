@@ -7,12 +7,12 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
+import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
-import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import java.io.File
 
 object Environment {
@@ -48,7 +48,14 @@ object Environment {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile, dmmData, dme)
 
-        MapView.openMap(dmm)
+        runWithProgressBar("Loading ${dmm.mapName}...") {
+            MapView.openMap(dmm)
+
+            while (MapView.isMapLoadingInProcess()) {
+                continue
+            }
+        }
+
         TabbedMapPanelView.addMapTab(dmm)
         MenuBarView.updateUndoable()
     }
@@ -83,7 +90,6 @@ object Environment {
         ObjectTreeView.clean()
         InstanceListView.clean()
         TabbedObjectPanelView.clean()
-        RenderInstanceProvider.clean()
         TileItemProvider.clean()
         TabbedMapPanelView.clean()
     }

@@ -25,6 +25,7 @@ object MapView : View, EnvCleanable {
         tryCloseTilePopup()
         pipeline.selectedMapData = null
         pipeline.openedMaps.clear()
+        pipeline.loadedMaps.clear()
     }
 
     override fun initComponent(): JComponent {
@@ -48,6 +49,7 @@ object MapView : View, EnvCleanable {
     }
 
     fun openMap(dmm: Dmm) {
+        pipeline.mapLoadingInProcess = true
         pipeline.switchMap(dmm)
         InstanceListView.updateSelectedInstanceInfo()
     }
@@ -101,4 +103,6 @@ object MapView : View, EnvCleanable {
         pipeline.drawAreasBorder = !pipeline.drawAreasBorder
         Frame.update()
     }
+
+    fun isMapLoadingInProcess(): Boolean = pipeline.mapLoadingInProcess
 }
