@@ -43,6 +43,7 @@ object TabbedMapPanelView : View, EnvCleanable {
         return JPanel(BorderLayout()).apply {
             add(mapTabs, BorderLayout.NORTH)
             add(MapView.initComponent())
+            add(StatusView.initComponent(), BorderLayout.SOUTH)
         }
     }
 

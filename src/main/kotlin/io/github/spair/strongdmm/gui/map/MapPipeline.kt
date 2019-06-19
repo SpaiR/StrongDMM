@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.gui.map
 
+import io.github.spair.strongdmm.gui.StatusView
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
@@ -126,6 +127,7 @@ class MapPipeline(private val canvas: Canvas) {
     private fun initGLDisplay() {
         thread(start = true) {
             glInitialized = true
+            StatusView.showStatus()
             Display.setParent(canvas)
             Display.create()
             DmiProvider.initTextures()
@@ -133,6 +135,7 @@ class MapPipeline(private val canvas: Canvas) {
             DmiProvider.clearTextures()
             VisualComposer.clearCache()
             Display.destroy()
+            StatusView.hideStatus()
             glInitialized = false
         }
     }

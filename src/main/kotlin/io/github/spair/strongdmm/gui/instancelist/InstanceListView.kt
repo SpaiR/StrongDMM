@@ -10,6 +10,7 @@ import io.github.spair.strongdmm.logic.dme.VAR_ICON_STATE
 import io.github.spair.strongdmm.logic.dme.VAR_NAME
 import io.github.spair.strongdmm.logic.dmi.SOUTH
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
@@ -42,14 +43,19 @@ object InstanceListView : View, EnvCleanable {
             add(JScrollPane(instanceList), BorderLayout.CENTER)
             add(JPanel(BorderLayout()).apply {
                 preferredSize = Dimension(Int.MAX_VALUE, 200)
-                border = EmptyBorder(5, 5, 5, 5)
+                border = BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY),
+                    EmptyBorder(5, 5, 5, 5)
+                )
 
                 add(JLabel("<html><h4>Instance variables:</h4></html>"), BorderLayout.NORTH)
                 add(JScrollPane(
                     JPanel(FlowLayout(FlowLayout.LEFT)).apply {
                         add(customVariablesLabel)
                     }
-                ))
+                ).apply {
+                    border = BorderFactory.createMatteBorder(1, 0, 1, 0, Color.GRAY)
+                })
 
                 setEmptyInstanceVars()
             }, BorderLayout.SOUTH)

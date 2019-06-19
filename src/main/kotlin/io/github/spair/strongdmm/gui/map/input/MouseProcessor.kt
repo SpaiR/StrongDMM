@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.gui.map.input
 
+import io.github.spair.strongdmm.gui.StatusView
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapPipeline
 import io.github.spair.strongdmm.gui.map.MapView
@@ -54,6 +55,8 @@ object MouseProcessor {
                 if (xMouseMapNew != xMouseMap || yMouseMapNew != yMouseMap) {
                     xMouseMap = xMouseMapNew
                     yMouseMap = yMouseMapNew
+
+                    StatusView.updateCoords(xMouseMap, yMouseMap)
 
                     tileChanged = true
                     Frame.update()

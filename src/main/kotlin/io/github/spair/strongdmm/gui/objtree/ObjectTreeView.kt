@@ -7,6 +7,7 @@ import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -46,7 +47,8 @@ object ObjectTreeView : View, EnvCleanable {
     override fun initComponent() = JPanel(BorderLayout()).apply {
         add(JScrollPane(objectTree), BorderLayout.CENTER)
         add(JPanel().apply {
-            preferredSize = Dimension(Int.MAX_VALUE, 60)
+            border = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY)
+            preferredSize = Dimension(Int.MAX_VALUE, 40)
             addSearchRow()
         }, BorderLayout.SOUTH)
     }

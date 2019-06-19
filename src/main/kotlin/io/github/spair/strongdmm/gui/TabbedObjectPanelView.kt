@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import java.awt.BorderLayout
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
@@ -32,6 +33,7 @@ object TabbedObjectPanelView : View, EnvCleanable {
                 addTab("Instance (empty)", InstanceListView.initComponent())
             })
             add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+                border = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY)
                 add(JLabel("<html><b>Type:</b></html>"))
                 add(typeField)
             }, BorderLayout.SOUTH)
