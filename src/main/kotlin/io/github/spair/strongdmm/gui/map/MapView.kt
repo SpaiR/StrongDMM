@@ -25,7 +25,6 @@ object MapView : View, EnvCleanable {
         tryCloseTilePopup()
         pipeline.selectedMapData = null
         pipeline.openedMaps.clear()
-        pipeline.loadedMaps.clear()
     }
 
     override fun initComponent(): JComponent {

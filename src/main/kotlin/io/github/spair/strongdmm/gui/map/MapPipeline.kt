@@ -20,7 +20,6 @@ class MapPipeline(private val canvas: Canvas) {
     private var glInitialized = false
 
     val openedMaps = linkedMapOf<Int, MapRenderData>()
-    val loadedMaps = mutableSetOf<String>()
 
     @Volatile var mapLoadingInProcess = false
 
@@ -131,7 +130,6 @@ class MapPipeline(private val canvas: Canvas) {
     private fun initGLDisplay() {
         thread(start = true) {
             glInitialized = true
-            StatusView.showStatus()
             Display.setParent(canvas)
             Display.create()
             DmiProvider.initTextures()
@@ -139,7 +137,7 @@ class MapPipeline(private val canvas: Canvas) {
             DmiProvider.clearTextures()
             VisualComposer.clearCache()
             Display.destroy()
-            StatusView.hideStatus()
+            StatusView.updateCoords(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
             glInitialized = false
         }
     }
@@ -151,11 +149,10 @@ class MapPipeline(private val canvas: Canvas) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         while (!Display.isCloseRequested() && selectedMapData != null) {
-            if (loadedMaps.add(selectedMapData!!.dmm.mapPath)) {
+            if (mapLoadingInProcess) {
                 RenderInstanceProvider.loadMapIcons(selectedMapData!!.dmm)
+                mapLoadingInProcess = false
             }
-
-            mapLoadingInProcess = false
 
             if (Frame.hasUpdates()) {
                 glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)

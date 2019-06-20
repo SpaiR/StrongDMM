@@ -1,19 +1,19 @@
 package io.github.spair.strongdmm.logic
 
 import io.github.spair.dmm.io.reader.DmmReader
-import io.github.spair.strongdmm.gui.TabbedMapPanelView
-import io.github.spair.strongdmm.gui.TabbedObjectPanelView
+import io.github.spair.strongdmm.gui.*
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import io.github.spair.strongdmm.gui.runWithProgressBar
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import java.io.File
+import javax.swing.SwingUtilities
+import kotlin.concurrent.thread
 
 object Environment {
 
@@ -48,16 +48,21 @@ object Environment {
         val dmmData = DmmReader.readMap(mapFile)
         val dmm = Dmm(mapFile, dmmData, dme)
 
-        runWithProgressBar("Loading ${dmm.mapName}...") {
-            MapView.openMap(dmm)
+        StatusView.showLoader("Loading ${dmm.mapName}..")
+        PrimaryFrame.isEnabled = false
+        MapView.openMap(dmm)
 
+        thread(start = true) {
             while (MapView.isMapLoadingInProcess()) {
-                continue
+                Thread.yield()
             }
-        }
 
-        TabbedMapPanelView.addMapTab(dmm)
-        MenuBarView.updateUndoable()
+            PrimaryFrame.isEnabled = true
+            StatusView.hideLoader()
+
+            TabbedMapPanelView.addMapTab(dmm)
+            MenuBarView.updateUndoable()
+        }
     }
 
     fun openMap(mapPath: String) {
