@@ -135,6 +135,7 @@ class MapPipeline(private val canvas: Canvas) {
             DmiProvider.initTextures()
             startRenderLoop()  // this is where the magic happens
             DmiProvider.clearTextures()
+            RenderInstanceProvider.clearTextures()
             VisualComposer.clearCache()
             Display.destroy()
             StatusView.updateCoords(OUT_OF_BOUNDS, OUT_OF_BOUNDS)

@@ -1,41 +1,71 @@
 package io.github.spair.strongdmm.logic.render
 
+import io.github.spair.strongdmm.logic.dme.TYPE_AREA
+import io.github.spair.strongdmm.logic.dme.TYPE_MOB
+import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
+import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItem
 import io.github.spair.strongdmm.logic.map.TileItemProvider
+import org.lwjgl.opengl.GL11
 
 object RenderInstanceProvider {
 
+    private val renderDataCache: MutableMap<String, RenderData> = hashMapOf()
+
+    fun clearTextures() {
+        renderDataCache.values.forEach { data -> data.let { GL11.glDeleteTextures(it.glTextureId) } }
+        renderDataCache.clear()
+    }
+
     fun loadMapIcons(dmm: Dmm) {
-        val atoms = mutableSetOf<Int>()
+        val area = mutableSetOf<Int>()
+        val turf = mutableSetOf<Int>()
+        val objs = mutableSetOf<Int>()
+        val mobs = mutableSetOf<Int>()
 
         for (x in 1..dmm.maxX) {
             for (y in 1..dmm.maxY) {
                 val tile = dmm.getTile(x, y)!!
-                atoms.addAll(tile.getTileItemsIDs().toTypedArray())
+                area.addAll(tile.getAllTileItemsIsType(TYPE_AREA).map { it.id })
+                turf.addAll(tile.getAllTileItemsIsType(TYPE_TURF).map { it.id })
+                objs.addAll(tile.getAllTileItemsIsType(TYPE_OBJ).map { it.id })
+                mobs.addAll(tile.getAllTileItemsIsType(TYPE_MOB).map { it.id })
             }
         }
 
-        atoms.forEach {
-            DmiProvider.getDmi(TileItemProvider.getByID(it).icon)?.glTextureId
+        arrayOf(area, turf, objs, mobs).forEach { atoms ->
+            atoms.forEach {
+                val tileItem = TileItemProvider.getByID(it)
+                val dmi = DmiProvider.getDmi(tileItem.icon)
+                val sprite = dmi?.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)
+
+                if (sprite != null) {
+                    val key = tileItem.icon + tileItem.iconState + tileItem.dir
+                    renderDataCache[key] = RenderData(
+                        dmi.glTextureId, sprite.u1, sprite.v1, sprite.u2, sprite.v2, sprite.iconWidth, sprite.iconHeight
+                    )
+                }
+            }
         }
+
+        DmiProvider.cleanCache()
+        System.gc()
     }
 
     fun allocateRenderInstance(x: Float, y: Float, tileItem: TileItem): Long {
-        val icon = tileItem.icon
         val riAddress = RenderInstanceStruct.allocate()
+        val key = tileItem.icon + tileItem.iconState + tileItem.dir
+        val renderData = renderDataCache[key]
 
-        val dmi = DmiProvider.getDmi(icon)
-        val sprite = dmi?.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)
-
-        if (sprite != null) {
+        if (renderData != null) {
             RenderInstanceStruct.setMajor(
                 riAddress,
                 x + tileItem.pixelX, y + tileItem.pixelY,
-                dmi.glTextureId,
-                sprite.u1, sprite.v1, sprite.u2, sprite.v2,
-                sprite.iconWidth, sprite.iconHeight,
+                renderData.glTextureId,
+                renderData.u1, renderData.v1, renderData.u2, renderData.v2,
+                renderData.iconWidth, renderData.iconHeight,
                 tileItem.id
             )
 
@@ -47,4 +77,14 @@ object RenderInstanceProvider {
 
         return riAddress
     }
+
+    private class RenderData(
+        val glTextureId: Int,
+        val u1: Float,
+        val v1: Float,
+        val u2: Float,
+        val v2: Float,
+        val iconWidth: Int,
+        val iconHeight: Int
+    )
 }

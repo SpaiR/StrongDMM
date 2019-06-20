@@ -3,12 +3,15 @@ package io.github.spair.strongdmm.logic.dmi
 import ar.com.hjg.pngj.ImageLineInt
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.LoadingCache
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.render.createGlTexture
 import org.lwjgl.opengl.GL11
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferInt
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 
 object DmiProvider {
@@ -20,7 +23,14 @@ object DmiProvider {
     private val STATE_PATTERN = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
     private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
 
-    private val dmiCache = mutableMapOf<String, Dmi?>()
+    private val dmiCache: LoadingCache<String, Dmi?> = Caffeine.newBuilder()
+        .expireAfterAccess(5, TimeUnit.SECONDS)
+        .build { icon -> createDmi(icon) }
+
+    fun cleanCache() {
+        dmiCache.invalidateAll()
+        dmiCache.cleanUp()
+    }
 
     fun initTextures() {
         placeholderTextureId = createGlTexture(PLACEHOLDER_IMAGE)
@@ -28,8 +38,7 @@ object DmiProvider {
 
     fun clearTextures() {
         GL11.glDeleteTextures(placeholderTextureId)
-        dmiCache.values.forEach { dmi -> dmi?.let { GL11.glDeleteTextures(it.glTextureId) } }
-        dmiCache.clear()
+        cleanCache()
     }
 
     fun getSpriteFromDmi(icon: String, iconState: String, dir: Int = SOUTH, frame: Int = 0): IconSprite? {
@@ -37,18 +46,13 @@ object DmiProvider {
     }
 
     fun getDmi(icon: String): Dmi? {
-        if (icon.isEmpty()) {
-            return null
-        }
+        return if (icon.isEmpty()) null else dmiCache[icon]
+    }
 
-        if (dmiCache.containsKey(icon)) {
-            return dmiCache[icon]
-        }
-
+    private fun createDmi(icon: String): Dmi? {
         val dmiFile = File(Environment.absoluteRootPath + File.separator + icon)
 
         if (!dmiFile.exists() || !dmiFile.isFile) {
-            dmiCache[icon] = null
             return null
         }
 
@@ -60,7 +64,6 @@ object DmiProvider {
                 dmiImage = extractAtlasImage()
                 imageMeta = metadata.extractMetadata()
             } catch (e: Exception) {
-                dmiCache[icon] = null
                 return null
             } finally {
                 close()
@@ -87,7 +90,6 @@ object DmiProvider {
             }
         }
 
-        dmiCache[icon] = dmi
         return dmi
     }
 
