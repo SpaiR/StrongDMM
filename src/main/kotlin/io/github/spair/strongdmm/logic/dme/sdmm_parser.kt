@@ -40,8 +40,6 @@ private object SpacemanDmmParser {
     }
 }
 
-
-
 fun parseEnvToJson(envPath: String): String {
     return SpacemanDmmParser.api.parseEnv(envPath)
 }

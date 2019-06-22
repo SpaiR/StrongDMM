@@ -5,7 +5,6 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Insets
 import javax.imageio.ImageIO
-import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.UIManager
 

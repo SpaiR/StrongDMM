@@ -2,7 +2,6 @@ package io.github.spair.strongdmm.gui.common
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import java.awt.BorderLayout
-import java.awt.Component
 import java.io.File
 import javax.swing.JDialog
 import javax.swing.JFileChooser
