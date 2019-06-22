@@ -4,10 +4,14 @@ import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Insets
+import javax.imageio.ImageIO
+import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.UIManager
 
 object PrimaryFrame : JFrame() {
+
+    val ICON = ImageIO.read(PrimaryFrame::class.java.classLoader.getResource("icon.png"))
 
     fun init() {
         initUI()
@@ -23,6 +27,7 @@ object PrimaryFrame : JFrame() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
         UIManager.getDefaults()["TabbedPane.contentBorderInsets"] = Insets(0, 0, 0, 0)
         UIManager.getDefaults()["TabbedPane.tabAreaInsets"] = Insets(0, 0, 0, 0)
+        iconImage = ICON
     }
 
     // Views have it's own subviews

@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.gui.common
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import java.awt.BorderLayout
+import java.awt.Component
 import java.io.File
 import javax.swing.JDialog
 import javax.swing.JFileChooser
@@ -18,7 +19,7 @@ object Dialog {
             addChoosableFileFilter(FileNameExtensionFilter(desc, ext))
         }
 
-        return if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        return if (fileChooser.showOpenDialog(PrimaryFrame) == JFileChooser.APPROVE_OPTION) {
             fileChooser.selectedFile
         } else {
             null
@@ -35,7 +36,7 @@ object Dialog {
             isIndeterminate = true
         }
 
-        val dialog = JDialog(PrimaryFrame, null, true).apply {
+        val dialog = JDialog(PrimaryFrame, "Abandon all hope, ye who enter here", true).apply {
             add(progressLabel, BorderLayout.NORTH)
             add(progressBar, BorderLayout.SOUTH)
 
