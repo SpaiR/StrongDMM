@@ -73,7 +73,7 @@ object MapView : View, EnvCleanable {
         return false
     }
 
-    fun createAndShowTilePopup(x:Int, y: Int, fillInAction: (JPopupMenu) -> Unit) {
+    fun createAndShowTilePopup(x: Int, y: Int, fillInAction: (JPopupMenu) -> Unit) {
         SwingUtilities.invokeLater {
             tilePopup = JPopupMenu().apply {
                 isLightWeightPopupEnabled = false

@@ -38,14 +38,20 @@ object VisualComposer {
     }
 
     fun composeFrame(
-        dmm: Dmm, xMapOff: Int, yMapOff: Int, horTilesNum: Int, verTilesNum: Int, forceUpdate: Boolean, drawAreasBorder: Boolean
+        dmm: Dmm,
+        xMapOff: Int,
+        yMapOff: Int,
+        horTilesNum: Int,
+        verTilesNum: Int,
+        forceUpdate: Boolean,
+        drawAreasBorder: Boolean
     ): RenderInstances {
         // Use cached render instances
-        if (riCache != null
-            && !forceUpdate
-            && xMapOffPrev == xMapOff && yMapOffPrev == yMapOff
-            && horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum
-            && drawAreasBorderPrev == drawAreasBorder
+        if (riCache != null &&
+            !forceUpdate &&
+            xMapOffPrev == xMapOff && yMapOffPrev == yMapOff &&
+            horTilesNumPrev == horTilesNum && verTilesNumPrev == verTilesNum &&
+            drawAreasBorderPrev == drawAreasBorder
         ) return riCache!!
 
         deallocateCache()

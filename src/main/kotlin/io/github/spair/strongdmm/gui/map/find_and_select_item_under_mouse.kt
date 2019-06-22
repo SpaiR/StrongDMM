@@ -38,7 +38,7 @@ fun MapPipeline.findAndSelectItemUnderMouse(renderInstances: RenderInstances) {
 
         val item = TileItemProvider.getByID(tileItemID)
         val isOpaque = DmiProvider.getSpriteFromDmi(item.icon, item.iconState, item.dir)?.isOpaquePixel(pixelX, pixelY)
-            ?: true   // When there is no sprite for item we are using placeholder which is always opaque
+            ?: true // When there is no sprite for item we are using placeholder which is always opaque
 
         if (isOpaque) {
             selectedItem = item

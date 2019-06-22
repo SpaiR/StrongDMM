@@ -18,7 +18,7 @@ object StatusView : View {
         with(statusPanel) {
             layout = BoxLayout(this, BoxLayout.LINE_AXIS)
             border = BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(1, 0,0, 0, Color.GRAY),
+                BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY),
                 EmptyBorder(5, 5, 5, 5)
             )
         }

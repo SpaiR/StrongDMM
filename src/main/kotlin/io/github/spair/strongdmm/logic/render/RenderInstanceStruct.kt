@@ -8,7 +8,7 @@ object RenderInstanceStruct {
 
     // Number of bytes for int32/float32 primitive type.
     private const val SIZE: Int = 4
-    private const val FULL_STRUCT_CAPACITY: Long = SIZE * 14L  // allocation size for 14 members
+    private const val FULL_STRUCT_CAPACITY: Long = SIZE * 14L // allocation size for 14 members
 
     // Bytes offset for all (14) struct members.
     private const val LOC_X_POS = SIZE * 0
@@ -105,4 +105,3 @@ object RenderInstanceStruct {
         return f.get(null) as Unsafe
     }
 }
-

@@ -67,7 +67,7 @@ object MouseProcessor {
 
     private fun handleTileSelection() {
         if (KeyboardProcessor.isCtrlDown() && KeyboardProcessor.isShiftDown() || (KeyboardProcessor.isAltDown())) {
-            return  // no tile selection with those modifiers
+            return // no tile selection with those modifiers
         }
 
         if (Mouse.isButtonDown(LMB)) {

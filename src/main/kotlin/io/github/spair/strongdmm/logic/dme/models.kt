@@ -23,7 +23,7 @@ class DmeItem(
             TYPE_DATUM -> null
             TYPE_ATOM -> TYPE_DATUM
             TYPE_ATOM_MOVABLE, TYPE_AREA, TYPE_TURF -> TYPE_ATOM
-            TYPE_OBJ, TYPE_MOB ->  TYPE_ATOM_MOVABLE
+            TYPE_OBJ, TYPE_MOB -> TYPE_ATOM_MOVABLE
             else -> type.substringBeforeLast('/')
         }
     }
@@ -66,4 +66,4 @@ class DmeItem(
 
 // This 'isType' doesn't handle datum/atom and so on, since map editor doesn't place those types on the map,
 // so additional checks would result into obsolete overhead.
-fun isType(t1: String, t2: String) =  t1.startsWith(t2)
+fun isType(t1: String, t2: String) = t1.startsWith(t2)

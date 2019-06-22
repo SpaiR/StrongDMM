@@ -179,7 +179,7 @@ object ObjectTreeView : View, EnvCleanable {
 
             addKeyListener(object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
-                    if(e.keyCode == KeyEvent.VK_ENTER) {
+                    if (e.keyCode == KeyEvent.VK_ENTER) {
                         findAndSelectPath(searchPath)
                     }
                 }

@@ -94,7 +94,6 @@ class AddTileSelect : TileSelect {
             val xPos = (coordPoint.x - 1) * iconSize
             val yPos = (coordPoint.y - 1) * iconSize
 
-
             glBegin(GL_LINE_LOOP)
             run {
                 glVertex2i(xPos, yPos)

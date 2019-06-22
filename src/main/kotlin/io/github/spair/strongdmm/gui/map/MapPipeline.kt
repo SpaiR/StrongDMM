@@ -133,7 +133,7 @@ class MapPipeline(private val canvas: Canvas) {
             Display.setParent(canvas)
             Display.create()
             DmiProvider.initTextures()
-            startRenderLoop()  // this is where the magic happens
+            startRenderLoop() // this is where the magic happens
             DmiProvider.clearTextures()
             RenderInstanceProvider.clearTextures()
             VisualComposer.clearCache()
@@ -144,7 +144,7 @@ class MapPipeline(private val canvas: Canvas) {
     }
 
     private fun startRenderLoop() {
-        glClearColor(0.25f, 0.25f, 0.5f , 1f)
+        glClearColor(0.25f, 0.25f, 0.5f, 1f)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)

@@ -140,4 +140,3 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return newTileItem
     }
 }
-

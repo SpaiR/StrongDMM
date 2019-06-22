@@ -152,7 +152,7 @@ class LayersFilter {
                 } else {
                     LayersManager.removeVisibleType(childType)
                 }
-                
+
                 LayersManager.removeHiddenType(childType)
             } else {
                 LayersManager.removeVisibleType(childType)
@@ -189,7 +189,7 @@ class LayersFilter {
 
             addKeyListener(object : KeyAdapter() {
                 override fun keyPressed(e: KeyEvent) {
-                    if(e.keyCode == KeyEvent.VK_ENTER) {
+                    if (e.keyCode == KeyEvent.VK_ENTER) {
                         findAndSelectPath()
                     }
                 }

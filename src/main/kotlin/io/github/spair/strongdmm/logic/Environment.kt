@@ -1,7 +1,10 @@
 package io.github.spair.strongdmm.logic
 
 import io.github.spair.dmm.io.reader.DmmReader
-import io.github.spair.strongdmm.gui.*
+import io.github.spair.strongdmm.gui.PrimaryFrame
+import io.github.spair.strongdmm.gui.StatusView
+import io.github.spair.strongdmm.gui.TabbedMapPanelView
+import io.github.spair.strongdmm.gui.TabbedObjectPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
@@ -12,7 +15,6 @@ import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import java.io.File
-import javax.swing.SwingUtilities
 import kotlin.concurrent.thread
 
 object Environment {

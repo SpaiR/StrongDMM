@@ -12,7 +12,7 @@ object Frame {
     private const val DEFAULT_FRAMES_TO_UPD = 2 // To render everything properly we need 2 frames
 
     private var updateCounter = DEFAULT_FRAMES_TO_UPD
-    private var isForced = false  // Will enforce VisualComposer to provide new render instances
+    private var isForced = false // Will enforce VisualComposer to provide new render instances
 
     fun update() {
         updateCounter = DEFAULT_FRAMES_TO_UPD
