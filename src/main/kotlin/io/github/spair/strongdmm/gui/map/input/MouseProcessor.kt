@@ -1,12 +1,12 @@
 package io.github.spair.strongdmm.gui.map.input
 
+import io.github.spair.strongdmm.common.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.gui.StatusView
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapPipeline
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.openTilePopup
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import org.lwjgl.input.Mouse
 
 // Class to consume and process input from mouse.
@@ -172,7 +172,7 @@ object MouseProcessor {
             selectedMap.yMapOff = (-selectedMap.yViewOff / iconSize + 0.5f).toInt()
 
             if (synchronizeMaps) {
-                triggerMapSync(selectedMap)
+                syncOpenedMaps(selectedMap)
             }
         }
     }

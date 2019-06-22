@@ -8,11 +8,11 @@ package io.github.spair.strongdmm.gui.map
 // to enforce update through that cache. To do that ::update with 'true' argument should be called.
 object Frame {
 
-    private const val NO_FRAMES_TO_UPD = 0
-    private const val DEFAULT_FRAMES_TO_UPD = 2 // To render everything properly we need 2 frames
+    private const val NO_FRAMES_TO_UPD: Int = 0
+    private const val DEFAULT_FRAMES_TO_UPD: Int = 2 // To render everything properly we need 2 frames
 
-    private var updateCounter = DEFAULT_FRAMES_TO_UPD
-    private var isForced = false // Will enforce VisualComposer to provide new render instances
+    private var updateCounter: Int = DEFAULT_FRAMES_TO_UPD
+    private var isForced: Boolean = false // Will enforce VisualComposer to provide new render instances
 
     fun update() {
         updateCounter = DEFAULT_FRAMES_TO_UPD
@@ -23,9 +23,9 @@ object Frame {
         updateCounter = DEFAULT_FRAMES_TO_UPD
     }
 
-    fun hasUpdates() = updateCounter-- >= NO_FRAMES_TO_UPD
+    fun hasUpdates(): Boolean = updateCounter-- >= NO_FRAMES_TO_UPD
 
-    fun isForced() = if (isForced) {
+    fun isForced(): Boolean = if (isForced) {
         isForced = false
         true
     } else {

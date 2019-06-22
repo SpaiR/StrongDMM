@@ -1,10 +1,12 @@
 package io.github.spair.strongdmm.gui
 
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.common.OUT_OF_BOUNDS
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.View
 import java.awt.Color
 import java.awt.Font
 import javax.swing.*
-import javax.swing.border.EmptyBorder
+import javax.swing.BorderFactory.createCompoundBorder
 
 object StatusView : View {
 
@@ -17,9 +19,9 @@ object StatusView : View {
     init {
         with(statusPanel) {
             layout = BoxLayout(this, BoxLayout.LINE_AXIS)
-            border = BorderFactory.createCompoundBorder(
+            border = createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY),
-                EmptyBorder(5, 5, 5, 5)
+                BorderUtil.createEmptyBorder(5)
             )
         }
 

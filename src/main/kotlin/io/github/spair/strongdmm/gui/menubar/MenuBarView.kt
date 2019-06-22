@@ -1,15 +1,19 @@
 package io.github.spair.strongdmm.gui.menubar
 
-import io.github.spair.strongdmm.gui.*
+import io.github.spair.strongdmm.common.TYPE_AREA
+import io.github.spair.strongdmm.common.TYPE_MOB
+import io.github.spair.strongdmm.common.TYPE_OBJ
+import io.github.spair.strongdmm.common.TYPE_TURF
+import io.github.spair.strongdmm.gui.PrimaryFrame
+import io.github.spair.strongdmm.gui.TabbedMapPanelView
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.Dialog
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.edit.LayersFilter
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.dme.TYPE_AREA
-import io.github.spair.strongdmm.logic.dme.TYPE_MOB
-import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
-import io.github.spair.strongdmm.logic.dme.TYPE_TURF
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
@@ -17,6 +21,7 @@ import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
+import kotlin.system.exitProcess
 
 object MenuBarView : View {
 
@@ -64,7 +69,7 @@ object MenuBarView : View {
         openMapItem.addActionListener(openMapAction())
         availableMapsItem.addActionListener(openMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
-        exitMenuItem.addActionListener { System.exit(0) }
+        exitMenuItem.addActionListener { exitProcess(0) }
 
         // Options
         nextMap.addActionListener { TabbedMapPanelView.selectNextMap() }
@@ -185,8 +190,8 @@ object MenuBarView : View {
     }
 
     private fun openEnvironmentAction() = ActionListener {
-        chooseFileDialog("BYOND Environments (*.dme)", "dme")?.let { dmeFile ->
-            runWithProgressBar("Parsing environment...") {
+        Dialog.chooseFile("BYOND Environments (*.dme)", "dme")?.let { dmeFile ->
+            Dialog.runWithProgressBar("Parsing environment...") {
                 Environment.parseAndPrepareEnv(dmeFile)
                 arrayOf(saveItem, openMapItem, availableMapsItem, layersFilterActionItem).forEach {
                     it.isEnabled = true
@@ -196,19 +201,31 @@ object MenuBarView : View {
     }
 
     private fun openMapAction() = ActionListener {
-        chooseFileDialog("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
+        Dialog.chooseFile("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
             Environment.openMap(dmmFile)
         }
     }
 
     private fun openMapFromAvailableAction() = ActionListener {
-        showAvailableMapsDialog(Environment.availableMaps)?.let {
-            Environment.openMap(it)
+        val dmmList = JList(Environment.availableMaps.toTypedArray())
+        dmmList.border = BorderUtil.createEmptyBorder(5)
+
+        val dialogPane = JScrollPane(dmmList)
+        val result = JOptionPane.showConfirmDialog(PrimaryFrame, dialogPane, "Select map to open", JOptionPane.OK_CANCEL_OPTION)
+
+        if (result != JOptionPane.CANCEL_OPTION) {
+            Environment.openMap(dmmList.selectedValue)
         }
     }
 
     private fun saveSelectedMapAction() = ActionListener {
         MapView.getSelectedDmm()?.let { saveMap(it) }
+    }
+
+    // /// Util shit below
+
+    private fun createMenu(name: String, items: Array<JComponent>) = JMenu(name).apply {
+        items.forEach { add(it) }
     }
 
     private fun createButton(text: String, isEnabled: Boolean = true): JMenuItem {
@@ -221,10 +238,6 @@ object MenuBarView : View {
         return JRadioButtonMenuItem(text).apply {
             this.isSelected = isSelected
         }
-    }
-
-    private fun createMenu(name: String, items: Array<JComponent>) = JMenu(name).apply {
-        items.forEach { add(it) }
     }
 
     private fun JMenuItem.addCtrlShortcut(char: Char) = apply {

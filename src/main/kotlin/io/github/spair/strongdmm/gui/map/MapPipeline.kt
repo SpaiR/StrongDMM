@@ -1,12 +1,12 @@
 package io.github.spair.strongdmm.gui.map
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.StatusView
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
 import io.github.spair.strongdmm.gui.map.input.MouseProcessor
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
-import io.github.spair.strongdmm.logic.dmi.*
+import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.map.OUT_OF_BOUNDS
 import io.github.spair.strongdmm.logic.render.RenderInstanceProvider
 import io.github.spair.strongdmm.logic.render.RenderInstanceStruct
 import io.github.spair.strongdmm.logic.render.VisualComposer
@@ -17,17 +17,21 @@ import kotlin.concurrent.thread
 
 class MapPipeline(private val canvas: Canvas) {
 
-    private var glInitialized = false
+    var selectedMapData: MapRenderData? = null
+    var iconSize = DEFAULT_ICON_SIZE
+    val openedMaps: MutableMap<Int, MapRenderData> = mutableMapOf()
 
-    val openedMaps = linkedMapOf<Int, MapRenderData>()
+    // Marks that our OpenGL context is initialized.
+    private var glInitialized: Boolean = false
 
+    // When true, we are in a process of opening new map.
+    // That means that we are loading textures for all objects on the map.
+    // Volatile because it's accessed from differed threads.
     @Volatile var mapLoadingInProcess = false
 
-    var selectedMapData: MapRenderData? = null
-    var iconSize = 32
-
-    // When true, all maps will have the same view coordinates
+    // When true, all opened maps will have the same view coordinates
     var synchronizeMaps: Boolean = false
+
     // When true, all areas borders will be visible
     var drawAreasBorder: Boolean = true
 
@@ -40,9 +44,10 @@ class MapPipeline(private val canvas: Canvas) {
     var yMouse = 0f
 
     // When true, while next rendering loop, top item under the mouse will be selected
-    var isSelectItem = false
+    var isSelectItem: Boolean = false
 
     init {
+        // some ugly shit here...
         MouseProcessor.mapPipeline = this
     }
 
@@ -60,7 +65,7 @@ class MapPipeline(private val canvas: Canvas) {
             openedMaps[hash] = newMap
 
             if (synchronizeMaps && selectedMapData != null) {
-                triggerMapSync(selectedMapData!!)
+                syncOpenedMaps(selectedMapData!!)
             }
 
             selectedMapData = newMap
@@ -82,6 +87,7 @@ class MapPipeline(private val canvas: Canvas) {
 
         val mapData = openedMaps.getValue(hash)
 
+        // Do some clean up work if we are closing selected map
         if (selectedMapData === mapData) {
             var selectedMapIndex = 0
 
@@ -92,6 +98,7 @@ class MapPipeline(private val canvas: Canvas) {
                 }
             }
 
+            // Switch selected map to the one which is on the left side, or right if no other. Do nothing if no other maps.
             if (openedMaps.size > 1) {
                 val index = if (selectedMapIndex == 0) {
                     1
@@ -113,7 +120,7 @@ class MapPipeline(private val canvas: Canvas) {
         openedMaps.remove(hash)
     }
 
-    fun triggerMapSync(selectedMap: MapRenderData) {
+    fun syncOpenedMaps(selectedMap: MapRenderData) {
         openedMaps.values.forEach { openedMap ->
             if (openedMap !== selectedMap) {
                 openedMap.xMapOff = selectedMap.xMapOff
@@ -129,16 +136,23 @@ class MapPipeline(private val canvas: Canvas) {
 
     private fun initGLDisplay() {
         thread(start = true) {
+            // OpenGL initialization
             glInitialized = true
             Display.setParent(canvas)
             Display.create()
             DmiProvider.initTextures()
-            startRenderLoop() // this is where the magic happens
+
+            // This is where the magic happens
+            startRenderLoop()
+
+            // Clean environment after all maps were closed
             DmiProvider.clearTextures()
             RenderInstanceProvider.clearTextures()
             VisualComposer.clearCache()
-            Display.destroy()
             StatusView.updateCoords(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
+
+            // OpenGL destroying
+            Display.destroy()
             glInitialized = false
         }
     }
@@ -170,7 +184,7 @@ class MapPipeline(private val canvas: Canvas) {
                 glLoadIdentity()
                 glTranslatef(selectedMapData!!.xViewOff, selectedMapData!!.yViewOff, 0f)
 
-                // actual rendering
+                // Actual rendering
                 renderMap()
                 renderMousePosition()
                 SelectOperation.render(iconSize)
@@ -178,9 +192,12 @@ class MapPipeline(private val canvas: Canvas) {
                 Display.update(false)
             }
 
+            // Handle user input
             Display.processMessages()
             KeyboardProcessor.fire()
             MouseProcessor.fire()
+
+            // 30 fps looks smooth enough and at the same time it consumes less resources
             Display.sync(30)
         }
     }
@@ -286,6 +303,7 @@ class MapPipeline(private val canvas: Canvas) {
 
     private fun renderAreasBorder() {
         glColor4f(0.8f, 0.8f, 0.8f, 1f)
+
         glLineWidth(1.5f)
         glBegin(GL_LINES)
 
@@ -316,6 +334,7 @@ class MapPipeline(private val canvas: Canvas) {
         glLineWidth(1f)
     }
 
-    private fun getViewWidth() = Display.getWidth() * selectedMapData!!.viewZoom.toDouble()
-    private fun getViewHeight() = Display.getHeight() * selectedMapData!!.viewZoom.toDouble()
+    // Calculate and return actual view width with respect of zoom.
+    private fun getViewWidth(): Double = Display.getWidth() * selectedMapData!!.viewZoom.toDouble()
+    private fun getViewHeight(): Double = Display.getHeight() * selectedMapData!!.viewZoom.toDouble()
 }

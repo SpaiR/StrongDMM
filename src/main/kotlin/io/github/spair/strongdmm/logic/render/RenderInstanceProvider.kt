@@ -1,9 +1,9 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.logic.dme.TYPE_AREA
-import io.github.spair.strongdmm.logic.dme.TYPE_MOB
-import io.github.spair.strongdmm.logic.dme.TYPE_OBJ
-import io.github.spair.strongdmm.logic.dme.TYPE_TURF
+import io.github.spair.strongdmm.common.TYPE_AREA
+import io.github.spair.strongdmm.common.TYPE_MOB
+import io.github.spair.strongdmm.common.TYPE_OBJ
+import io.github.spair.strongdmm.common.TYPE_TURF
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItem

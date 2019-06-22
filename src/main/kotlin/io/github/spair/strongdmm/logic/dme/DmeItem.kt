@@ -1,11 +1,6 @@
 package io.github.spair.strongdmm.logic.dme
 
-const val NON_EXISTENT_FLOAT: Float = -99999999999999999999999999999999999999f
-const val NON_EXISTENT_INT: Int = -999999999
-
-class Dme(private val dmeItems: Map<String, DmeItem?>) {
-    fun getItem(type: String) = dmeItems[type]
-}
+import io.github.spair.strongdmm.common.*
 
 class DmeItem(
     private val environment: Dme,
@@ -13,10 +8,8 @@ class DmeItem(
     val vars: Map<String, String>,
     val children: List<String>
 ) {
-    private val lookedVars = mutableMapOf<String, String?>()
 
-    val parent
-        get() = parentType?.let { environment.getItem(it) }
+    private val lookedVars = mutableMapOf<String, String?>()
 
     private val parentType by lazy {
         when (type) {
@@ -27,6 +20,8 @@ class DmeItem(
             else -> type.substringBeforeLast('/')
         }
     }
+
+    fun getParent(): DmeItem? = parentType?.let { environment.getItem(it) }
 
     fun getVar(name: String): String? {
         if (vars.containsKey(name)) {
@@ -63,7 +58,3 @@ class DmeItem(
         return "DmeItem(type='$type', vars=$vars, children=$children)"
     }
 }
-
-// This 'isType' doesn't handle datum/atom and so on, since map editor doesn't place those types on the map,
-// so additional checks would result into obsolete overhead.
-fun isType(t1: String, t2: String) = t1.startsWith(t2)

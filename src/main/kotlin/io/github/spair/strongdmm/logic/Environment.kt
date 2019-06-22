@@ -23,14 +23,12 @@ object Environment {
     lateinit var absoluteRootPath: String
     lateinit var availableMaps: List<String>
 
-    private val openedMaps = mutableSetOf<String>()
+    private val openedMaps: MutableSet<String> = mutableSetOf()
 
     fun parseAndPrepareEnv(dmeFile: File) {
         if (Environment::dme.isInitialized) {
             cleanEnvironmentResources()
         }
-
-        val s = System.currentTimeMillis()
 
         dme = parseDme(dmeFile.absolutePath)
         absoluteRootPath = dmeFile.parentFile.absolutePath
@@ -38,12 +36,10 @@ object Environment {
         ObjectTreeView.populateTree(dme)
 
         System.gc()
-
-        println(System.currentTimeMillis() - s)
     }
 
     fun openMap(mapFile: File) {
-        if (!openedMaps.add(mapFile.path)) {
+        if (!mapFile.isFile || !openedMaps.add(mapFile.path)) {
             return
         }
 
@@ -54,6 +50,7 @@ object Environment {
         PrimaryFrame.isEnabled = false
         MapView.openMap(dmm)
 
+        // Let it load map without interruptions from user side
         thread(start = true) {
             while (MapView.isMapLoadingInProcess()) {
                 Thread.yield()

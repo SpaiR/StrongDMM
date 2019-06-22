@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.render
 
+import io.github.spair.strongdmm.common.DEFAULT_ICON_SIZE
 import sun.misc.Unsafe
 
 // This class is the mostly used class during rendering flow and here it's represented as a raw struct data.
@@ -62,8 +63,8 @@ object RenderInstanceStruct {
         v1: Float = 0f,
         u2: Float = 1f,
         v2: Float = 1f,
-        width: Int = 32,
-        height: Int = 32,
+        width: Int = DEFAULT_ICON_SIZE,
+        height: Int = DEFAULT_ICON_SIZE,
         tileItemID: Int = 0
     ) {
         with(UNSAFE) {

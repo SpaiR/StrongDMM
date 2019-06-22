@@ -1,10 +1,11 @@
 package io.github.spair.strongdmm.logic.map
 
 import io.github.spair.dmm.io.*
+import io.github.spair.strongdmm.common.DEFAULT_ICON_SIZE
+import io.github.spair.strongdmm.common.NON_EXISTENT_INT
+import io.github.spair.strongdmm.common.TYPE_WORLD
+import io.github.spair.strongdmm.common.VAR_ICON_SIZE
 import io.github.spair.strongdmm.logic.dme.Dme
-import io.github.spair.strongdmm.logic.dme.NON_EXISTENT_INT
-import io.github.spair.strongdmm.logic.dme.TYPE_WORLD
-import io.github.spair.strongdmm.logic.dme.VAR_ICON_SIZE
 import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.Undoable
@@ -17,7 +18,7 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
     val maxX: Int = initialDmmData.maxX
     val maxY: Int = initialDmmData.maxY
-    val iconSize: Int = dme.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE).let { if (it == NON_EXISTENT_INT) 32 else it }
+    val iconSize: Int = dme.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE).let { if (it == NON_EXISTENT_INT) DEFAULT_ICON_SIZE else it }
 
     private val tiles: Array<Array<Tile?>>
 
@@ -57,7 +58,7 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
         val tileContent = TileContent()
         val tileObjects = mutableListOf<TileObject>()
 
-        getTile(location.x, location.y)?.tileItems?.forEach { tileItem ->
+        getTile(location.x, location.y)?.getTileItems()?.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
             tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
             tileObjects.add(tileObject)
@@ -75,18 +76,6 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
         for (x in 1..maxX) {
             for (y in 1..maxY) {
                 items.addAll(getTile(x, y)!!.getTileItemsByType(type))
-            }
-        }
-
-        return items
-    }
-
-    fun getAllTileItemsIsType(type: String): List<TileItem> {
-        val items = mutableListOf<TileItem>()
-
-        for (x in 1..maxX) {
-            for (y in 1..maxY) {
-                items.addAll(getTile(x, y)!!.getAllTileItemsIsType(type))
             }
         }
 

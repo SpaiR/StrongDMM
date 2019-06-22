@@ -1,10 +1,16 @@
 package io.github.spair.strongdmm.gui.edit
 
+import io.github.spair.strongdmm.common.TYPE_AREA
+import io.github.spair.strongdmm.common.TYPE_MOB
+import io.github.spair.strongdmm.common.TYPE_OBJ
+import io.github.spair.strongdmm.common.TYPE_TURF
 import io.github.spair.strongdmm.gui.PrimaryFrame
+import io.github.spair.strongdmm.gui.common.BorderUtil
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.dme.*
+import io.github.spair.strongdmm.logic.dme.Dme
+import io.github.spair.strongdmm.logic.dme.DmeItem
 import io.github.spair.strongdmm.logic.map.LayersManager
 import org.scijava.swing.checkboxtree.CheckBoxNodeData
 import org.scijava.swing.checkboxtree.CheckBoxNodeEditor
@@ -13,7 +19,6 @@ import java.awt.BorderLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.*
-import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.event.TreeModelEvent
@@ -24,11 +29,11 @@ import javax.swing.tree.TreePath
 
 class LayersFilter {
 
-    private val dialog = JDialog(PrimaryFrame, "Layers Filter", true)
-    private val typesModel = DefaultTreeModel(DefaultMutableTreeNode("invisible root"))
-    private val typesTree = JTree(typesModel)
+    private val dialog: JDialog = JDialog(PrimaryFrame, "Layers Filter", true)
+    private val typesModel: DefaultTreeModel = DefaultTreeModel(DefaultMutableTreeNode("invisible root"))
+    private val typesTree: JTree = JTree(typesModel)
 
-    private var searchPath = ""
+    private var searchPath: String = ""
     private var foundNodes: List<DefaultMutableTreeNode>? = null
 
     init {
@@ -43,7 +48,7 @@ class LayersFilter {
             isRootVisible = false
         }
 
-        // to listen checkbox events
+        // To listen checkbox events
         typesModel.addTreeModelListener(object : TreeModelListener {
             override fun treeNodesInserted(e: TreeModelEvent) {}
             override fun treeStructureChanged(e: TreeModelEvent) {}
@@ -130,7 +135,12 @@ class LayersFilter {
             }
         }
 
-        if (mainType in arrayOf(TYPE_AREA, TYPE_TURF, TYPE_OBJ, TYPE_MOB)) {
+        if (mainType in arrayOf(
+                TYPE_AREA,
+                TYPE_TURF,
+                TYPE_OBJ,
+                TYPE_MOB
+            )) {
             MenuBarView.switchBasicLayers(mainType, isChecked)
         }
 
@@ -165,9 +175,10 @@ class LayersFilter {
         Frame.update(true)
     }
 
-    private fun addSearchRow() = JPanel().apply {
+    private fun addSearchRow(): JPanel = JPanel().apply {
         add(JButton("-").apply {
-            border = EmptyBorder(4, 10, 4, 10)
+            border = BorderUtil.createEmptyBorder(4, 10, 4, 10)
+
             addActionListener {
                 foundNodes = null
                 var row = typesTree.rowCount - 1
@@ -202,6 +213,7 @@ class LayersFilter {
 
         add(JButton("Reset").apply {
             toolTipText = "This will reset all filters you've set up"
+
             addActionListener {
                 LayersManager.reset()
 

@@ -8,7 +8,7 @@ import javax.swing.JList
 
 class InstanceListRenderer : DefaultListCellRenderer() {
 
-    private val placeholderIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE)
+    private val placeholderIcon: ImageIcon = ImageIcon(DmiProvider.PLACEHOLDER_IMAGE)
 
     override fun getListCellRendererComponent(
         list: JList<*>,

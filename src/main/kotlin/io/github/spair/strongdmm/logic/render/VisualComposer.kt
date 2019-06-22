@@ -1,20 +1,9 @@
 package io.github.spair.strongdmm.logic.render
 
-import io.github.spair.strongdmm.logic.dme.TYPE_AREA
-import io.github.spair.strongdmm.logic.dmi.EAST
-import io.github.spair.strongdmm.logic.dmi.NORTH
-import io.github.spair.strongdmm.logic.dmi.SOUTH
-import io.github.spair.strongdmm.logic.dmi.WEST
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.TileItemProvider
-import java.util.TreeMap
-
-typealias RenderInstances = TreeMap<Float, TreeMap<Float, MutableList<Long>>>
-
-private fun RenderInstances.get(plane: Float, layer: Float): MutableList<Long> {
-    return computeIfAbsent(plane) { TreeMap() }.computeIfAbsent(layer) { mutableListOf() }
-}
 
 object VisualComposer {
 
@@ -128,7 +117,7 @@ object VisualComposer {
 
     private fun isFramedBorder(dmm: Dmm, x: Int, y: Int, currentAreaType: String): Boolean {
         dmm.getTile(x, y)?.let { tile ->
-            tile.tileItems.find { it.isType(TYPE_AREA) }?.let { area ->
+            tile.getTileItems().find { it.isType(TYPE_AREA) }?.let { area ->
                 return currentAreaType != area.type
             }
         }

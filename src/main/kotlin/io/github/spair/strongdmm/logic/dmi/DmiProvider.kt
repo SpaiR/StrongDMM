@@ -5,6 +5,8 @@ import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
+import io.github.spair.strongdmm.common.DEFAULT_ICON_SIZE
+import io.github.spair.strongdmm.common.SOUTH
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.render.createGlTexture
 import org.lwjgl.opengl.GL11
@@ -16,12 +18,12 @@ import javax.imageio.ImageIO
 
 object DmiProvider {
 
-    val PLACEHOLDER_IMAGE = ImageIO.read(DmiProvider::class.java.classLoader.getResource("placeholder.png"))!!
-    var placeholderTextureId = -1
+    val PLACEHOLDER_IMAGE: BufferedImage = ImageIO.read(DmiProvider::class.java.classLoader.getResource("placeholder.png"))!!
+    var placeholderTextureId: Int = -1
 
-    private val WIDTH_HEIGHT_PATTERN = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
-    private val STATE_PATTERN = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
-    private val PARAM_PATTERN = "(\\w+)\\s=\\s(.+)".toRegex()
+    private val WIDTH_HEIGHT_PATTERN: Regex = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
+    private val STATE_PATTERN: Regex = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
+    private val PARAM_PATTERN: Regex = "(\\w+)\\s=\\s(.+)".toRegex()
 
     private val dmiCache: LoadingCache<String, Dmi?> = Caffeine.newBuilder()
         .expireAfterAccess(5, TimeUnit.SECONDS)
@@ -160,8 +162,8 @@ object DmiProvider {
         val textMeta = getTxtForKey("Description")
 
         val widthHeight = WIDTH_HEIGHT_PATTERN.toPattern().matcher(textMeta).apply { find() }
-        val width = widthHeight.group(1)?.toInt() ?: 32
-        val height = widthHeight.group(2)?.toInt() ?: 32
+        val width = widthHeight.group(1)?.toInt() ?: DEFAULT_ICON_SIZE
+        val height = widthHeight.group(2)?.toInt() ?: DEFAULT_ICON_SIZE
 
         val states = mutableListOf<MetadataState>()
 

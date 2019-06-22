@@ -24,10 +24,10 @@ object SelectOperation : TileSelect {
     }
 
     fun pickArea(coordArea: CoordArea) {
+        MenuBarView.switchSelectType(SelectType.PICK)
         tileSelect = PickTileSelect().apply {
             selectArea(coordArea.x1, coordArea.y1, coordArea.x2, coordArea.y2)
         }
-        MenuBarView.switchSelectType(SelectType.PICK)
     }
 
     fun depickArea() {
@@ -50,7 +50,6 @@ object SelectOperation : TileSelect {
 
             if (!inBounds) {
                 depickArea()
-                Frame.update()
             }
         }
     }

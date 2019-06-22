@@ -1,10 +1,9 @@
 package io.github.spair.strongdmm.gui.map.select
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.Frame
-import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
-import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
@@ -15,9 +14,9 @@ import org.lwjgl.opengl.GL11.*
 
 class AddTileSelect : TileSelect {
 
-    private val coordsBuffer = mutableSetOf<CoordPoint>()
-    private val reverseActions = mutableListOf<Undoable>()
-    private var isDeleteMode = false
+    private val coordsBuffer: MutableSet<CoordPoint> = mutableSetOf()
+    private val reverseActions: MutableList<Undoable> = mutableListOf()
+    private var isDeleteMode: Boolean = false
 
     override fun onStart(x: Int, y: Int) {
         isDeleteMode = KeyboardProcessor.isShiftDown()
@@ -33,15 +32,23 @@ class AddTileSelect : TileSelect {
     }
 
     private fun deleteTopmostItem(x: Int, y: Int): Boolean {
-        val map = MapView.getSelectedDmm()!!
         val instance = InstanceListView.selectedInstance
-        val tile = map.getTile(x, y)
+        val tile = getSelectedMap().getTile(x, y)
 
         if (instance != null && tile != null) {
             val typeToRemove = when {
-                isType(instance.type, TYPE_TURF) -> TYPE_TURF
-                isType(instance.type, TYPE_AREA) -> TYPE_AREA
-                isType(instance.type, TYPE_MOB) -> TYPE_MOB
+                isType(
+                    instance.type,
+                    TYPE_TURF
+                ) -> TYPE_TURF
+                isType(
+                    instance.type,
+                    TYPE_AREA
+                ) -> TYPE_AREA
+                isType(
+                    instance.type,
+                    TYPE_MOB
+                ) -> TYPE_MOB
                 else -> TYPE_OBJ
             }
 
@@ -49,7 +56,7 @@ class AddTileSelect : TileSelect {
 
             if (topmostItem != null) {
                 tile.deleteTileItem(topmostItem)
-                reverseActions.add(PlaceTileItemAction(map, tile.x, tile.y, topmostItem.id))
+                reverseActions.add(PlaceTileItemAction(getSelectedMap(), tile.x, tile.y, topmostItem.id))
                 return true
             }
         }
@@ -61,9 +68,8 @@ class AddTileSelect : TileSelect {
         val instance = InstanceListView.selectedInstance
 
         if (instance != null) {
-            val map = MapView.getSelectedDmm()!!
             val tileItem = TileItemProvider.getOrCreate(instance.type, instance.customVars)
-            reverseActions.add(map.placeTileItemWithUndoable(x, y, tileItem))
+            reverseActions.add(getSelectedMap().placeTileItemWithUndoable(x, y, tileItem))
             return true
         }
 
@@ -81,7 +87,7 @@ class AddTileSelect : TileSelect {
         Frame.update()
     }
 
-    override fun isEmpty() = coordsBuffer.isEmpty()
+    override fun isEmpty(): Boolean = coordsBuffer.isEmpty()
 
     override fun render(iconSize: Int) {
         if (isEmpty()) {

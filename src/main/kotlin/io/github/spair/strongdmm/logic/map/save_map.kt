@@ -3,6 +3,9 @@ package io.github.spair.strongdmm.logic.map
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.dmm.io.TileLocation
 import java.io.File
+import kotlin.math.floor
+import kotlin.math.min
+import kotlin.math.pow
 
 fun saveMap(dmm: Dmm) {
     val outputDmmData = DmmData().apply {
@@ -21,7 +24,7 @@ fun saveMap(dmm: Dmm) {
     for (x in 1..dmm.maxX) {
         for (y in 1..dmm.maxY) {
             dmm.getTile(x, y)!!.let { tile ->
-                tile.tileItems.forEach { tileItem ->
+                tile.getTileItems().forEach { tileItem ->
                     val newVars = mutableMapOf<String, String>()
 
                     tileItem.customVars?.forEach { (name, value) ->
@@ -98,10 +101,10 @@ fun saveMap(dmm: Dmm) {
 
 private class KeyGenerator(private val dmmData: DmmData) {
 
-    private val limit = 65530
-    private val base = 52
+    private val limit: Int = 65530
+    private val base: Int = 52
 
-    private val base52keys = charArrayOf(
+    private val base52keys: CharArray = charArrayOf(
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -109,7 +112,7 @@ private class KeyGenerator(private val dmmData: DmmData) {
     )
 
     fun createKey(): String {
-        var freeKeys = Math.min(limit.toDouble(), Math.pow(base.toDouble(), dmmData.keyLength.toDouble())) - dmmData.keys.size
+        var freeKeys = min(limit.toDouble(), base.toDouble().pow(dmmData.keyLength.toDouble())) - dmmData.keys.size
         var num = 1
 
         while (freeKeys > 0) {
@@ -133,7 +136,7 @@ private class KeyGenerator(private val dmmData: DmmData) {
 
         while (currentNum > 0) {
             result.insert(0, base52keys[currentNum % base])
-            currentNum = Math.floor(currentNum.toDouble() / base).toInt()
+            currentNum = floor(currentNum.toDouble() / base).toInt()
         }
 
         val keyLength = dmmData.keyLength

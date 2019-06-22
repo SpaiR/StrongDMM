@@ -1,5 +1,7 @@
 package io.github.spair.strongdmm.gui
 
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.EnvCleanable
@@ -10,7 +12,6 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.Font
 import javax.swing.*
-import javax.swing.border.EmptyBorder
 
 object TabbedMapPanelView : View, EnvCleanable {
 
@@ -114,7 +115,7 @@ object TabbedMapPanelView : View, EnvCleanable {
             isOpaque = false
 
             with(closeButton) {
-                border = EmptyBorder(0, 4, 0, 4)
+                border = BorderUtil.createEmptyBorder(left = 4, right = 4)
                 isContentAreaFilled = false
 
                 val mapHash = dmm.hashCode()

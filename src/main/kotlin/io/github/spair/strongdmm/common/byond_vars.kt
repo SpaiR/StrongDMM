@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.logic.dme
+package io.github.spair.strongdmm.common
 
 // Relevant for 12.12.2018
 

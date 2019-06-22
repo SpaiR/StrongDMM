@@ -1,15 +1,18 @@
 package io.github.spair.strongdmm.gui.map
 
-import io.github.spair.strongdmm.gui.edit.ViewVariablesDialog
+import io.github.spair.strongdmm.common.*
+import io.github.spair.strongdmm.gui.edit.variables.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.history.SwapTileItemAction
-import io.github.spair.strongdmm.logic.map.*
+import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.map.Tile
+import io.github.spair.strongdmm.logic.map.TileItemsComparator
+import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
@@ -120,9 +123,18 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
     val selectedInstance = InstanceListView.selectedInstance ?: return false
 
     val selectedType = when {
-        isType(selectedInstance.type, TYPE_TURF) -> TYPE_TURF
-        isType(selectedInstance.type, TYPE_AREA) -> TYPE_AREA
-        isType(selectedInstance.type, TYPE_MOB) -> TYPE_MOB
+        isType(
+            selectedInstance.type,
+            TYPE_TURF
+        ) -> TYPE_TURF
+        isType(
+            selectedInstance.type,
+            TYPE_AREA
+        ) -> TYPE_AREA
+        isType(
+            selectedInstance.type,
+            TYPE_MOB
+        ) -> TYPE_MOB
         else -> TYPE_OBJ
     }
 
@@ -144,7 +156,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.tileItems.sortedWith(TileItemsComparator).forEach { tileItem ->
+    currentTile.getTileItems().sortedWith(TileItemsComparator).forEach { tileItem ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }

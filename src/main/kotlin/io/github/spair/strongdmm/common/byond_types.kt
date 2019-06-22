@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.logic.dme
+package io.github.spair.strongdmm.common
 
 const val TYPE_DATUM = "/datum"
 const val TYPE_WORLD = "/world"

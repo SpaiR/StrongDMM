@@ -1,10 +1,13 @@
 package io.github.spair.strongdmm.gui.objtree
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
-import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.logic.EnvCleanable
-import io.github.spair.strongdmm.logic.dme.*
+import io.github.spair.strongdmm.logic.dme.Dme
+import io.github.spair.strongdmm.logic.dme.DmeItem
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
 import java.awt.Color
@@ -12,7 +15,6 @@ import java.awt.Dimension
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.*
-import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.tree.DefaultMutableTreeNode
@@ -21,18 +23,22 @@ import javax.swing.tree.TreePath
 
 object ObjectTreeView : View, EnvCleanable {
 
-    private var searchPath = ""
+    private var searchPath: String = ""
     private var foundNodes: List<DefaultMutableTreeNode>? = null
 
-    private val objectTree = JTree(SimpleTreeNode("No open environment")).apply {
-        showsRootHandles = true
-        cellRenderer = ObjectTreeRenderer()
+    private val objectTree = JTree(SimpleTreeNode("No open environment"))
 
-        addTreeSelectionListener { e ->
-            e.path.lastPathComponent.let {
-                if (it is ObjectTreeNode) {
-                    InstanceListView.findAndSelectInstancesByType(it.type)
-                    TabbedObjectPanelView.setType(it.type)
+    init {
+        with(objectTree) {
+            showsRootHandles = true
+            cellRenderer = ObjectTreeRenderer()
+
+            addTreeSelectionListener { e ->
+                e.path.lastPathComponent.let {
+                    if (it is ObjectTreeNode) {
+                        InstanceListView.findAndSelectInstancesByType(it.type)
+                        TabbedObjectPanelView.setType(it.type)
+                    }
                 }
             }
         }
@@ -44,7 +50,7 @@ object ObjectTreeView : View, EnvCleanable {
         objectTree.isRootVisible = true
     }
 
-    override fun initComponent() = JPanel(BorderLayout()).apply {
+    override fun initComponent(): JPanel = JPanel(BorderLayout()).apply {
         add(JScrollPane(objectTree), BorderLayout.CENTER)
         add(JPanel().apply {
             border = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY)
@@ -157,7 +163,7 @@ object ObjectTreeView : View, EnvCleanable {
 
     private fun JPanel.addSearchRow() {
         add(JButton("-").apply {
-            border = EmptyBorder(4, 10, 4, 10)
+            border = BorderUtil.createEmptyBorder(4, 10, 4, 10)
 
             addActionListener {
                 var row = objectTree.rowCount - 1

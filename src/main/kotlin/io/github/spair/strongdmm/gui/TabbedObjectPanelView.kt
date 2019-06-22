@@ -1,5 +1,7 @@
 package io.github.spair.strongdmm.gui
 
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.EnvCleanable
@@ -8,7 +10,6 @@ import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
-import javax.swing.border.EmptyBorder
 
 object TabbedObjectPanelView : View, EnvCleanable {
 
@@ -17,7 +18,7 @@ object TabbedObjectPanelView : View, EnvCleanable {
     }
     private val typeField = JTextField("no type selected", 30).apply {
         isEditable = false
-        border = EmptyBorder(0, 0, 0, 0)
+        border = BorderUtil.createEmptyBorder()
     }
 
     override fun clean() {

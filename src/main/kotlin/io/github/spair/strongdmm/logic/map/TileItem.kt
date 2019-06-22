@@ -1,8 +1,8 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.dme.*
-import io.github.spair.strongdmm.logic.dmi.SOUTH
+import io.github.spair.strongdmm.logic.dme.DmeItem
 import java.util.Collections
 
 class TileItem(val id: Int, val type: String, customVars: Map<String, String>? = null) {
@@ -18,7 +18,7 @@ class TileItem(val id: Int, val type: String, customVars: Map<String, String>? =
     val layer: Float = getVarFloat(VAR_LAYER).let { if (it == NON_EXISTENT_FLOAT) 0f else it }
     val pixelX: Int = getVarInt(VAR_PIXEL_X).let { if (it == NON_EXISTENT_INT) 0 else it }
     val pixelY: Int = getVarInt(VAR_PIXEL_Y).let { if (it == NON_EXISTENT_INT) 0 else it }
-    val dir: Int = getVarInt(VAR_DIR).let { if (it == NON_EXISTENT_INT) SOUTH else it }
+    val dir: Int = getVarInt(VAR_DIR).let { if (it == NON_EXISTENT_INT) DEFAULT_DIR else it }
     val color: String = getVarText(VAR_COLOR) ?: ""
 
     fun isType(otherType: String): Boolean = isType(type, otherType)

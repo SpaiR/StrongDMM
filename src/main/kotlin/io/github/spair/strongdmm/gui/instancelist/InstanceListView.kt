@@ -1,33 +1,37 @@
 package io.github.spair.strongdmm.gui.instancelist
 
+import io.github.spair.strongdmm.common.DEFAULT_DIR
+import io.github.spair.strongdmm.common.VAR_ICON
+import io.github.spair.strongdmm.common.VAR_ICON_STATE
+import io.github.spair.strongdmm.common.VAR_NAME
 import io.github.spair.strongdmm.gui.TabbedObjectPanelView
-import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.dme.VAR_ICON
-import io.github.spair.strongdmm.logic.dme.VAR_ICON_STATE
-import io.github.spair.strongdmm.logic.dme.VAR_NAME
-import io.github.spair.strongdmm.logic.dmi.SOUTH
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
-import javax.swing.border.EmptyBorder
 
 object InstanceListView : View, EnvCleanable {
 
     var selectedInstance: ItemInstance? = null
 
-    private val customVariablesLabel = JLabel()
-    private val instanceList = JList<ItemInstance>(DefaultListModel<ItemInstance>()).apply {
-        cellRenderer = InstanceListRenderer()
+    private val customVariablesLabel: JLabel = JLabel()
+    private val instanceList: JList<ItemInstance> = JList<ItemInstance>(DefaultListModel<ItemInstance>())
 
-        addListSelectionListener {
-            selectedValue?.let {
-                showInstanceVars(it.customVars)
-                selectedInstance = it
+    init {
+        with(instanceList) {
+            cellRenderer = InstanceListRenderer()
+
+            addListSelectionListener {
+                selectedValue?.let {
+                    showInstanceVars(it.customVars)
+                    selectedInstance = it
+                }
             }
         }
     }
@@ -43,9 +47,10 @@ object InstanceListView : View, EnvCleanable {
             add(JScrollPane(instanceList), BorderLayout.CENTER)
             add(JPanel(BorderLayout()).apply {
                 preferredSize = Dimension(Int.MAX_VALUE, 200)
+
                 border = BorderFactory.createCompoundBorder(
                     BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY),
-                    EmptyBorder(5, 5, 5, 5)
+                    BorderUtil.createEmptyBorder(5)
                 )
 
                 add(JLabel("<html><h4>Instance variables:</h4></html>"), BorderLayout.NORTH)
@@ -81,7 +86,7 @@ object InstanceListView : View, EnvCleanable {
             dmeItem.getVarText(VAR_ICON) ?: "",
             dmeItem.getVarText(VAR_ICON_STATE) ?: "",
             dmeItem.type,
-            SOUTH,
+            DEFAULT_DIR,
             null
         )
 

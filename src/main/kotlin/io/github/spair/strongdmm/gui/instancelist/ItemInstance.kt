@@ -8,5 +8,5 @@ data class ItemInstance(
     val dir: Int,
     val customVars: Map<String, String>?
 ) {
-    override fun toString() = name
+    override fun toString(): String = name
 }

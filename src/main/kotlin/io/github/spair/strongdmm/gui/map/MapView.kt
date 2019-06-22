@@ -1,7 +1,7 @@
 package io.github.spair.strongdmm.gui.map
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
-import io.github.spair.strongdmm.gui.View
+import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -19,7 +19,7 @@ object MapView : View, EnvCleanable {
     private val canvas = Canvas().apply { isVisible = true }
 
     private var tilePopup: JPopupMenu? = null
-    private val pipeline = MapPipeline(canvas)
+    private val pipeline: MapPipeline = MapPipeline(canvas)
 
     override fun clean() {
         tryCloseTilePopup()
@@ -83,7 +83,7 @@ object MapView : View, EnvCleanable {
         }
     }
 
-    fun getSelectedDmm() = pipeline.selectedMapData?.dmm
+    fun getSelectedDmm(): Dmm? = pipeline.selectedMapData?.dmm
     fun getOpenedMaps(): List<Dmm> = pipeline.openedMaps.values.map { it.dmm }
 
     fun switchMapsSync() {
@@ -92,7 +92,7 @@ object MapView : View, EnvCleanable {
 
             if (synchronizeMaps && openedMaps.size > 1) {
                 selectedMapData?.let {
-                    triggerMapSync(it)
+                    syncOpenedMaps(it)
                 }
             }
         }

@@ -1,7 +1,6 @@
 package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
-import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.TileReplaceAction
@@ -25,7 +24,7 @@ class PickTileSelect : TileSelect {
     private val previousTiles: MutableMap<CoordPoint, TileData> = mutableMapOf()
 
     fun getSelectedTiles(): List<Tile> {
-        val map = MapView.getSelectedDmm()!!
+        val map = getSelectedMap()
         val tiles = mutableListOf<Tile>()
 
         selectedCoords.forEach { (x, y) ->
@@ -44,7 +43,7 @@ class PickTileSelect : TileSelect {
         updateSelectedCoords()
         previousTiles.clear()
 
-        val map = MapView.getSelectedDmm()!!
+        val map = getSelectedMap()
 
         selectedCoords.forEach {
             map.getTile(it.x, it.y)?.let { tile ->
@@ -132,22 +131,22 @@ class PickTileSelect : TileSelect {
             mode = ManipulateMode()
         }
 
-        override fun isEmpty() = throw UnsupportedOperationException()
+        override fun isEmpty(): Boolean = throw UnsupportedOperationException()
         override fun render(iconSize: Int) = throw UnsupportedOperationException()
     }
 
     private inner class ManipulateMode : TileSelect {
 
-        private var xClickStart = 0
-        private var yClickStart = 0
+        private var xClickStart: Int = 0
+        private var yClickStart: Int = 0
 
-        private var selectedTiles = mutableMapOf<CoordPoint, TileData>()
+        private var selectedTiles: MutableMap<CoordPoint, TileData> = mutableMapOf()
 
         override fun onStart(x: Int, y: Int) {
             xClickStart = x
             yClickStart = y
 
-            val map = MapView.getSelectedDmm()!!
+            val map = getSelectedMap()
 
             selectedCoords.forEach {
                 map.getTile(it.x, it.y)?.let { tile ->
@@ -158,8 +157,7 @@ class PickTileSelect : TileSelect {
         }
 
         override fun onAdd(x: Int, y: Int) {
-            val map = MapView.getSelectedDmm()!!
-
+            val map = getSelectedMap()
             val xShift = x - xClickStart
             val yShift = y - yClickStart
 
@@ -197,8 +195,8 @@ class PickTileSelect : TileSelect {
         }
 
         override fun onStop() {
+            val map = getSelectedMap()
             val reverseActions = mutableListOf<Undoable>()
-            val map = MapView.getSelectedDmm()!!
 
             selectedTiles.forEach { (coord, tileData) ->
                 map.getTile(coord.x, coord.y)?.let { tile ->
@@ -217,11 +215,10 @@ class PickTileSelect : TileSelect {
             }
 
             History.addUndoAction(MultipleAction(reverseActions))
-
             selectedTiles.clear()
         }
 
-        override fun isEmpty() = throw UnsupportedOperationException()
+        override fun isEmpty(): Boolean = throw UnsupportedOperationException()
         override fun render(iconSize: Int) = throw UnsupportedOperationException()
     }
 

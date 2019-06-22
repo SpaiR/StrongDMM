@@ -1,10 +1,9 @@
 package io.github.spair.strongdmm.gui.map.select
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.Frame
-import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
-import io.github.spair.strongdmm.logic.dme.*
 import io.github.spair.strongdmm.logic.history.History
 import io.github.spair.strongdmm.logic.history.MultipleAction
 import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
@@ -16,15 +15,15 @@ import kotlin.math.min
 
 class FillTileSelect : TileSelect {
 
-    private var isDeleteMode = false
+    private var isDeleteMode: Boolean = false
 
-    private var xStart = 0
-    private var yStart = 0
+    private var xStart: Int = 0
+    private var yStart: Int = 0
 
-    private var x1 = 0
-    private var y1 = 0
-    private var x2 = 0
-    private var y2 = 0
+    private var x1: Int = 0
+    private var y1: Int = 0
+    private var x2: Int = 0
+    private var y2: Int = 0
 
     override fun onStart(x: Int, y: Int) {
         xStart = x
@@ -61,15 +60,24 @@ class FillTileSelect : TileSelect {
         val instance = InstanceListView.selectedInstance
 
         if (instance != null) {
-            val map = MapView.getSelectedDmm()!!
             val typeToRemove = when {
-                isType(instance.type, TYPE_TURF) -> TYPE_TURF
-                isType(instance.type, TYPE_AREA) -> TYPE_AREA
-                isType(instance.type, TYPE_MOB) -> TYPE_MOB
+                isType(
+                    instance.type,
+                    TYPE_TURF
+                ) -> TYPE_TURF
+                isType(
+                    instance.type,
+                    TYPE_AREA
+                ) -> TYPE_AREA
+                isType(
+                    instance.type,
+                    TYPE_MOB
+                ) -> TYPE_MOB
                 else -> TYPE_OBJ
             }
 
             val reverseActions = mutableListOf<Undoable>()
+            val map = getSelectedMap()
 
             for (x in x1..x2) {
                 for (y in y1..y2) {
@@ -96,8 +104,8 @@ class FillTileSelect : TileSelect {
         val selectedInstance = InstanceListView.selectedInstance
 
         if (selectedInstance != null) {
-            val map = MapView.getSelectedDmm()!!
             val reverseActions = mutableListOf<Undoable>()
+            val map = getSelectedMap()
 
             for (x in x1..x2) {
                 for (y in y1..y2) {
@@ -113,7 +121,7 @@ class FillTileSelect : TileSelect {
         return false
     }
 
-    override fun isEmpty() = xStart == 0 || yStart == 0
+    override fun isEmpty(): Boolean = xStart == 0 || yStart == 0
 
     override fun render(iconSize: Int) {
         if (isEmpty()) {

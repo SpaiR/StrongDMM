@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.gui
+package io.github.spair.strongdmm.gui.common
 
 import javax.swing.JComponent
 

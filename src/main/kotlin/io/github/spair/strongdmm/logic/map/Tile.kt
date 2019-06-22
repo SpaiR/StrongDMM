@@ -1,21 +1,20 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.dme.*
 
 class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
 
-    val tileItems: List<TileItem>
-        get() = TileItemProvider.getByIDs(tileItemsIDs)
+    fun getTileItems(): List<TileItem> = TileItemProvider.getByIDs(tileItemsIDs)
 
     // The only place to use this method is a render loop, otherwise `::getTileItemsIDs()` should be used.
     fun unsafeTileItemsIDs(): IntArray = tileItemsIDs
-
     fun getTileItemsIDs(): IntArray = tileItemsIDs.copyOf()
-    fun getTileItemsByType(type: String): List<TileItem> = tileItems.filter { it.type == type }
-    fun getAllTileItemsIsType(type: String): List<TileItem> = tileItems.filter { it.isType(type) }
 
-    fun getVisibleTileItems(): List<TileItem> = tileItems.filter { !LayersManager.isHiddenType(it.type) }
+    fun getTileItemsByType(type: String): List<TileItem> = getTileItems().filter { it.type == type }
+    fun getAllTileItemsIsType(type: String): List<TileItem> = getTileItems().filter { it.isType(type) }
+
+    fun getVisibleTileItems(): List<TileItem> = getTileItems().filter { !LayersManager.isHiddenType(it.type) }
     fun getVisibleTileItemsIDs(): IntArray = getVisibleTileItems().map { it.id }.toIntArray()
 
     fun placeTileItem(tileItem: TileItem): TileItem? {
@@ -104,7 +103,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {
-        for (item in tileItems.sortedWith(TileItemsComparator).reversed()) {
+        for (item in getTileItems().sortedWith(TileItemsComparator).reversed()) {
             if (item.isType(typeToFind)) {
                 return item
             }
@@ -127,14 +126,6 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
             null
         }
 
-        val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
-        swapTileItem(tileItem.id, newTileItem.id)
-        return newTileItem
-    }
-
-    // Will replace tile item with the new on, which will have new vars
-    fun removeTileItemVar(tileItem: TileItem, varName: String): TileItem {
-        val newVars = tileItem.customVars?.toMutableMap()?.apply { remove(varName) }
         val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
         swapTileItem(tileItem.id, newTileItem.id)
         return newTileItem
