@@ -127,6 +127,7 @@ class MapPipeline(private val canvas: Canvas) {
                 openedMap.yMapOff = selectedMap.yMapOff
 
                 openedMap.viewZoom = selectedMap.viewZoom
+                openedMap.currZoom = selectedMap.currZoom
 
                 openedMap.xViewOff = selectedMap.xViewOff
                 openedMap.yViewOff = selectedMap.yViewOff
