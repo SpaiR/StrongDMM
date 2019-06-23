@@ -15,10 +15,10 @@ all of that was made to make the process of migrating to the new editor fast and
 
 ### Features
 * Usage of [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser to get parse environment. That means that StrongDMM has full of support
-of sophisticated BYOND syntax and can work with stuff like definition through macroses etc.
+of sophisticated BYOND syntax and can work with stuff like definition through macros, etc.
 * Much specific display filters! Separate menu with which you can hide and show exactly what you want.
     * Example: [GIF](https://imgur.com/a/e8apLGT)
-* Built in map merger. This thing will minimize changes on file, so result diff won't be too big. The algorithm itself is similar that TG uses. 
+* Built in map merger. This thing will minimize changes on file, so result diff won't be too big. The algorithm itself is similar that TG uses.
 * Map file cleanings. StrongDMM will sanitize variables which declared for specific instance on map, but have the same value in environment.
 That means that all instances which were made by providing same variable as in environment, will be deleted from map and replaced with initial object.
 * Simplified way of looking through the instances. Now you can view instances variables in selection menu.
@@ -35,7 +35,7 @@ Divide your z-levels in different files and use **Map Synchronization** option.
 
 ### How to install
 Open [releases](https://github.com/SpaiR/StrongDMM/releases) page and download distribution package you want.
-No dependencies required, all packages are fully self containable. 
+No dependencies required, all packages are fully self containable.
 
 
 ### Credits
