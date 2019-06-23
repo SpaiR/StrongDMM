@@ -103,7 +103,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
     }
 
     fun findTopmostTileItem(typeToFind: String): TileItem? {
-        for (item in getTileItems().sortedWith(TileItemsComparator).reversed()) {
+        for (item in getVisibleTileItems().sortedWith(TileItemsComparator).reversed()) {
             if (item.isType(typeToFind)) {
                 return item
             }
