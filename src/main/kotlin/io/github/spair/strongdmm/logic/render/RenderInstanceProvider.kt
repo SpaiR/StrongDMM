@@ -12,10 +12,10 @@ import org.lwjgl.opengl.GL11
 
 object RenderInstanceProvider {
 
-    private val renderDataCache: MutableMap<String, RenderData> = hashMapOf()
+    private val renderDataCache: MutableMap<String, RenderData?> = hashMapOf()
 
     fun clearTextures() {
-        renderDataCache.values.forEach { data -> data.let { GL11.glDeleteTextures(it.glTextureId) } }
+        renderDataCache.values.forEach { data -> data?.let { GL11.glDeleteTextures(it.glTextureId) } }
         renderDataCache.clear()
     }
 
@@ -37,16 +37,7 @@ object RenderInstanceProvider {
 
         arrayOf(area, turf, objs, mobs).forEach { atoms ->
             atoms.forEach {
-                val tileItem = TileItemProvider.getByID(it)
-                val dmi = DmiProvider.getDmi(tileItem.icon)
-                val sprite = dmi?.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)
-
-                if (sprite != null) {
-                    val key = tileItem.icon + tileItem.iconState + tileItem.dir
-                    renderDataCache[key] = RenderData(
-                        dmi.glTextureId, sprite.u1, sprite.v1, sprite.u2, sprite.v2, sprite.iconWidth, sprite.iconHeight
-                    )
-                }
+                cacheRenderData(TileItemProvider.getByID(it))
             }
         }
 
@@ -57,6 +48,11 @@ object RenderInstanceProvider {
     fun allocateRenderInstance(x: Float, y: Float, tileItem: TileItem): Long {
         val riAddress = RenderInstanceStruct.allocate()
         val key = tileItem.icon + tileItem.iconState + tileItem.dir
+
+        if (!renderDataCache.containsKey(key)) {
+            cacheRenderData(tileItem)
+        }
+
         val renderData = renderDataCache[key]
 
         if (renderData != null) {
@@ -76,6 +72,20 @@ object RenderInstanceProvider {
         }
 
         return riAddress
+    }
+
+    private fun cacheRenderData(tileItem: TileItem) {
+        val dmi = DmiProvider.getDmi(tileItem.icon)
+        val sprite = dmi?.getIconState(tileItem.iconState)?.getIconSprite(tileItem.dir)
+        val key = tileItem.icon + tileItem.iconState + tileItem.dir
+
+        if (sprite != null) {
+            renderDataCache[key] = RenderData(
+                dmi.glTextureId, sprite.u1, sprite.v1, sprite.u2, sprite.v2, sprite.iconWidth, sprite.iconHeight
+            )
+        } else {
+            renderDataCache[key] = null
+        }
     }
 
     private class RenderData(
