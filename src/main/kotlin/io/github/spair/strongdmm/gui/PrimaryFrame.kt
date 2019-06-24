@@ -10,8 +10,6 @@ import javax.swing.UIManager
 
 object PrimaryFrame : JFrame() {
 
-    val ICON = ImageIO.read(PrimaryFrame::class.java.classLoader.getResource("icon.png"))
-
     fun init() {
         initUI()
         initViews()
@@ -26,7 +24,7 @@ object PrimaryFrame : JFrame() {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
         UIManager.getDefaults()["TabbedPane.contentBorderInsets"] = Insets(0, 0, 0, 0)
         UIManager.getDefaults()["TabbedPane.tabAreaInsets"] = Insets(0, 0, 0, 0)
-        iconImage = ICON
+        iconImage = ImageIO.read(PrimaryFrame::class.java.classLoader.getResource("icon.png"))
     }
 
     // Views have it's own subviews
