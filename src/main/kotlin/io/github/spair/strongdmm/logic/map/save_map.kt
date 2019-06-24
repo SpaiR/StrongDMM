@@ -20,14 +20,18 @@ fun saveMap(dmm: Dmm) {
     val unusedKeys = dmm.initialDmmData.keys.toMutableSet()
     val keyGenerator = KeyGenerator(outputDmmData)
 
-    // sanitize custom vars from values equals to defined in code
+    // Sanitize custom vars from values defined in the code
     for (x in 1..dmm.maxX) {
         for (y in 1..dmm.maxY) {
             dmm.getTile(x, y)!!.let { tile ->
-                tile.getTileItems().forEach { tileItem ->
+                for (tileItem in tile.getTileItems()) {
+                    if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
+                        continue // We won't find default vars for sure
+                    }
+
                     val newVars = mutableMapOf<String, String>()
 
-                    tileItem.customVars?.forEach { (name, value) ->
+                    tileItem.customVars.forEach { (name, value) ->
                         if (value != tileItem.dmeItem.getVar(name)) {
                             newVars[name] = value
                         }
