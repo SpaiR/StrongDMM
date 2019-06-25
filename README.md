@@ -14,19 +14,19 @@ all of that was made to make the process of migrating to the new editor fast and
 
 
 ### Features
-* Usage of [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser to get parse environment. That means that StrongDMM has full of support
+* Usage of [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser to parse environment. That means that StrongDMM has full support
 of sophisticated BYOND syntax and can work with stuff like definition through macros, etc.
 * Much specific display filters! Separate menu with which you can hide and show exactly what you want.
     * Example: [GIF](https://imgur.com/a/e8apLGT)
-* Built in map merger. This thing will minimize changes on file, so result diff won't be too big. The algorithm itself is similar that TG uses.
+* Built in map merger. This thing will minimize changes in file, so resulted diff won't be too big. The algorithm itself is similar that uses TG codebase.
 * Map file cleanings. StrongDMM will sanitize variables which declared for specific instance on map, but have the same value in environment.
-That means that all instances which were made by providing same variable as in environment, will be deleted from map and replaced with initial object.
+That means that all instances which were made by providing same variable as in code, will be deleted from the map and replaced with initial object.
 * Simplified way of looking through the instances. Now you can view instances variables in selection menu.
     * Example: [PNG](https://imgur.com/a/PykpCmw)
-* Improved variables editing. Searching and ability to show only instances variables.
+* Improved variables editing. Searching and ability to show only instance variables.
     * Example: [GIF](https://imgur.com/a/ew38gYU)
-* Map synchronization. You can open different maps in different files and work with them like if they are in the same file, but on different z levels.
-* TGM support out of the box. You don't need to manually convert map format after editing.
+* Map synchronization. You can open different maps in different files and work with them like if they are in the same file, but on different z-levels.
+* TGM support out of the box. You don't need to manually convert map after editing.
 
 **Disclaimer!**<br>
 StrongDMM doesn't support multi-z map files. It was done on purpose. Multi-z maps are absolutely unmaintainable from the perspective of Open Source contribution.
