@@ -1,9 +1,9 @@
 package io.github.spair.strongdmm.logic.map
 
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.MultipleAction
-import io.github.spair.strongdmm.logic.history.TileReplaceAction
-import io.github.spair.strongdmm.logic.history.Undoable
+import io.github.spair.strongdmm.logic.action.ActionController
+import io.github.spair.strongdmm.logic.action.MultipleAction
+import io.github.spair.strongdmm.logic.action.TileReplaceAction
+import io.github.spair.strongdmm.logic.action.Undoable
 import kotlin.math.max
 import kotlin.math.min
 
@@ -57,7 +57,7 @@ object TileOperation {
             }
         }
 
-        History.addUndoAction(MultipleAction(reverseActions))
+        ActionController.addUndoAction(MultipleAction(reverseActions))
     }
 
     fun delete(map: Dmm, tile: Tile) {
@@ -73,7 +73,7 @@ object TileOperation {
             reverseActions.add(TileReplaceAction(map, tile.x, tile.y, tileItemsIDsBefore, tile.getTileItemsIDs()))
         }
 
-        History.addUndoAction(MultipleAction(reverseActions))
+        ActionController.addUndoAction(MultipleAction(reverseActions))
     }
 
     private fun getAreaOfTiles(tilesCoords: Set<CoordPoint>): CoordArea {

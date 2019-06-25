@@ -14,7 +14,7 @@ import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.Environment
-import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
@@ -78,8 +78,8 @@ object MenuBarView : View {
         synchronizeMaps.addActionListener { MapView.switchMapsSync() }
 
         // Edit
-        undoActionItem.addActionListener { History.undoAction() }
-        redoActionItem.addActionListener { History.redoAction() }
+        undoActionItem.addActionListener { ActionController.undoAction() }
+        redoActionItem.addActionListener { ActionController.redoAction() }
         ButtonGroup().run {
             add(addSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
             add(fillSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
@@ -132,8 +132,8 @@ object MenuBarView : View {
     )
 
     fun updateUndoable() {
-        undoActionItem.isEnabled = History.hasUndoActions()
-        redoActionItem.isEnabled = History.hasRedoActions()
+        undoActionItem.isEnabled = ActionController.hasUndoActions()
+        redoActionItem.isEnabled = ActionController.hasRedoActions()
     }
 
     fun switchUndo(enabled: Boolean) {
@@ -219,7 +219,10 @@ object MenuBarView : View {
     }
 
     private fun saveSelectedMapAction() = ActionListener {
-        MapView.getSelectedDmm()?.let { saveMap(it) }
+        MapView.getSelectedDmm()?.let {
+            ActionController.resetActionBalance(it)
+            saveMap(it)
+        }
     }
 
     // /// Util shit below

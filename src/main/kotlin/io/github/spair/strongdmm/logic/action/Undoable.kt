@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.logic.history
+package io.github.spair.strongdmm.logic.action
 
 interface Undoable {
     fun doAction(): Undoable

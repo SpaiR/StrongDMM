@@ -1,10 +1,10 @@
 package io.github.spair.strongdmm.gui.map.select
 
 import io.github.spair.strongdmm.gui.map.Frame
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.MultipleAction
-import io.github.spair.strongdmm.logic.history.TileReplaceAction
-import io.github.spair.strongdmm.logic.history.Undoable
+import io.github.spair.strongdmm.logic.action.ActionController
+import io.github.spair.strongdmm.logic.action.MultipleAction
+import io.github.spair.strongdmm.logic.action.TileReplaceAction
+import io.github.spair.strongdmm.logic.action.Undoable
 import io.github.spair.strongdmm.logic.map.CoordPoint
 import io.github.spair.strongdmm.logic.map.Tile
 import org.lwjgl.opengl.GL11
@@ -214,7 +214,7 @@ class PickTileSelect : TileSelect {
                 }
             }
 
-            History.addUndoAction(MultipleAction(reverseActions))
+            ActionController.addUndoAction(MultipleAction(reverseActions))
             selectedTiles.clear()
         }
 

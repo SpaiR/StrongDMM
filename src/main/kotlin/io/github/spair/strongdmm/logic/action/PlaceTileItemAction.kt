@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.logic.history
+package io.github.spair.strongdmm.logic.action
 
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.logic.map.Dmm

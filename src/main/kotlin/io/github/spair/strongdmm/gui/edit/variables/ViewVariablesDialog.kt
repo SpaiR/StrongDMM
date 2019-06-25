@@ -2,8 +2,8 @@ package io.github.spair.strongdmm.gui.edit.variables
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.common.BorderUtil
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.SwapTileItemAction
+import io.github.spair.strongdmm.logic.action.ActionController
+import io.github.spair.strongdmm.logic.action.SwapTileItemAction
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
@@ -50,7 +50,7 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
 
         if (saveChanges && model.tmpVars.isNotEmpty()) {
             val newTileItem = tile.addTileItemVars(tileItem, model.tmpVars)
-            History.addUndoAction(SwapTileItemAction(tile, tileItem.id, newTileItem.id))
+            ActionController.addUndoAction(SwapTileItemAction(tile, tileItem.id, newTileItem.id))
         }
 
         return saveChanges

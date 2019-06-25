@@ -6,9 +6,9 @@ import io.github.spair.strongdmm.common.NON_EXISTENT_INT
 import io.github.spair.strongdmm.common.TYPE_WORLD
 import io.github.spair.strongdmm.common.VAR_ICON_SIZE
 import io.github.spair.strongdmm.logic.dme.Dme
-import io.github.spair.strongdmm.logic.history.DeleteTileItemAction
-import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
-import io.github.spair.strongdmm.logic.history.Undoable
+import io.github.spair.strongdmm.logic.action.DeleteTileItemAction
+import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.action.Undoable
 import java.io.File
 
 class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {

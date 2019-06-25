@@ -4,10 +4,10 @@ import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
-import io.github.spair.strongdmm.logic.history.History
-import io.github.spair.strongdmm.logic.history.MultipleAction
-import io.github.spair.strongdmm.logic.history.PlaceTileItemAction
-import io.github.spair.strongdmm.logic.history.Undoable
+import io.github.spair.strongdmm.logic.action.ActionController
+import io.github.spair.strongdmm.logic.action.MultipleAction
+import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
+import io.github.spair.strongdmm.logic.action.Undoable
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import org.lwjgl.opengl.GL11
 import kotlin.math.max
@@ -92,7 +92,7 @@ class FillTileSelect : TileSelect {
             }
 
             if (reverseActions.isNotEmpty()) {
-                History.addUndoAction(MultipleAction(reverseActions))
+                ActionController.addUndoAction(MultipleAction(reverseActions))
                 return true
             }
         }
@@ -114,7 +114,7 @@ class FillTileSelect : TileSelect {
                 }
             }
 
-            History.addUndoAction(MultipleAction(reverseActions))
+            ActionController.addUndoAction(MultipleAction(reverseActions))
             return true
         }
 

@@ -1,4 +1,4 @@
-package io.github.spair.strongdmm.logic.history
+package io.github.spair.strongdmm.logic.action
 
 class MultipleAction(private val actions: List<Undoable>) : Undoable {
     override fun doAction(): Undoable {

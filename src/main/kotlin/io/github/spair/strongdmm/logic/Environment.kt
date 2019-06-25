@@ -11,7 +11,7 @@ import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.parseDme
-import io.github.spair.strongdmm.logic.history.History
+import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import java.io.File
@@ -71,7 +71,7 @@ object Environment {
     fun closeMap(dmm: Dmm) {
         openedMaps.remove(dmm.mapPath)
         MapView.closeMap(dmm.hashCode())
-        History.clearUnusedActions(MapView.getOpenedMaps())
+        ActionController.clearUnusedActions(MapView.getOpenedMaps())
         MenuBarView.updateUndoable()
     }
 
@@ -89,7 +89,7 @@ object Environment {
 
     private fun cleanEnvironmentResources() {
         openedMaps.clear()
-        History.clean()
+        ActionController.clean()
         MapView.clean()
         ObjectTreeView.clean()
         InstanceListView.clean()
