@@ -12,12 +12,16 @@ object TileItemProvider : EnvCleanable {
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>?): TileItem {
-        var varsAggregation = ""
+        var varsAggregation: String? = null
 
         // Custom hashcode logic here, since default produces a lot of collisions with similar vars.
         // For example 'pixel_x = 26 pixel_y = 26' and 'pixel_x = 24 pixel_y = 24' will produce same hashcode.
-        vars?.toSortedMap()?.forEach { (value, key) ->
-            varsAggregation += "$value$key"
+        if (vars != null && vars.isNotEmpty()) {
+            varsAggregation = buildString {
+                vars.toSortedMap().forEach { (value, key) ->
+                    append(value).append(key)
+                }
+            }
         }
 
         val hash = Objects.hash(type, varsAggregation)
