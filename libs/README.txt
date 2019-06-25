@@ -1,4 +1,7 @@
-All (for all platforms) native libraries needed to run application.
+All native libraries which you need to run application locally.
+Only for Windows and Linux systems with x64 arch since I really don't see the point to support x32 systems.
 
-Most interesting of them is sdmmparser which is actually a small library which provides parsed '.dme' objects.
-Library uses parser called SpacemanDMM. Parser itself could be found by next link: https://github.com/SpaceManiac/SpacemanDMM
+Except two files - all is needed for lwjgl.
+Two exceptional files, libsdmmparser64.so and sdmmparser64.dll, are small libraries for Linux and Windows appropriately.
+Library itself is used to parse BYOND environemt and get JSON representation of it to use it inside of editor.
+Under the hood they are using SpacemanDMM library which could be found by next link: https://github.com/SpaceManiac/SpacemanDMM
