@@ -1,12 +1,15 @@
 package io.github.spair.strongdmm.gui
 
 import io.github.spair.strongdmm.gui.common.BorderUtil
+import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.Dmm
+import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -121,8 +124,18 @@ object TabbedMapPanelView : View, EnvCleanable {
                 val mapHash = dmm.hashCode()
 
                 addActionListener {
+                    if (ActionController.hasChanges(dmm)) {
+                        val answer = Dialog.askToSaveMap(dmm.mapName)
+                        if (answer == Dialog.MAP_SAVE_YES) {
+                            saveMap(dmm)
+                        } else if (answer == Dialog.MAP_SAVE_CANCEL) {
+                            return@addActionListener
+                        }
+                    }
+
                     isMiscEvent = true
                     Environment.closeMap(dmm)
+                    ActionController.resetActionBalance(dmm)
                     mapTabs.remove(indexHashList.indexOf(mapHash))
                     indexHashList.remove(mapHash)
                 }

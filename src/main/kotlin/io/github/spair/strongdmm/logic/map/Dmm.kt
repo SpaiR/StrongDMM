@@ -5,10 +5,10 @@ import io.github.spair.strongdmm.common.DEFAULT_ICON_SIZE
 import io.github.spair.strongdmm.common.NON_EXISTENT_INT
 import io.github.spair.strongdmm.common.TYPE_WORLD
 import io.github.spair.strongdmm.common.VAR_ICON_SIZE
-import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.action.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.action.Undoable
+import io.github.spair.strongdmm.logic.dme.Dme
 import java.io.File
 
 class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {

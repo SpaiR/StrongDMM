@@ -21,7 +21,6 @@ import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import javax.swing.*
-import kotlin.system.exitProcess
 
 object MenuBarView : View {
 
@@ -69,7 +68,7 @@ object MenuBarView : View {
         openMapItem.addActionListener(openMapAction())
         availableMapsItem.addActionListener(openMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
-        exitMenuItem.addActionListener { exitProcess(0) }
+        exitMenuItem.addActionListener { PrimaryFrame.handleWindowClosing() }
 
         // Options
         nextMap.addActionListener { TabbedMapPanelView.selectNextMap() }

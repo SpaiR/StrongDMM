@@ -27,6 +27,11 @@ object ActionController : EnvCleanable {
         TabbedMapPanelView.markMapModified(false)
     }
 
+    fun hasChanges(map: Dmm): Boolean {
+        val mapHash = map.hashCode()
+        return if (actionBalance.containsKey(mapHash)) actionBalance[mapHash] != 0 else false
+    }
+
     fun addUndoAction(undoable: Undoable) {
         with(getStacks()) {
             redoStack.clear()

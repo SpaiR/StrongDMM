@@ -3,14 +3,15 @@ package io.github.spair.strongdmm.gui.common
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import java.awt.BorderLayout
 import java.io.File
-import javax.swing.JDialog
-import javax.swing.JFileChooser
-import javax.swing.JLabel
-import javax.swing.JProgressBar
+import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.concurrent.thread
 
 object Dialog {
+
+    const val MAP_SAVE_YES: Int = 0
+    const val MAP_SAVE_NO: Int = 1
+    const val MAP_SAVE_CANCEL: Int = 2
 
     fun chooseFile(desc: String, ext: String, root: String = "."): File? {
         val fileChooser = JFileChooser(root).apply {
@@ -51,5 +52,15 @@ object Dialog {
         }
 
         dialog.isVisible = true
+    }
+
+    fun askToSaveMap(mapName: String): Int {
+        return JOptionPane.showConfirmDialog(
+            PrimaryFrame,
+            "Map $mapName has been modified. Save changes?",
+            "Save $mapName?",
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        )
     }
 }

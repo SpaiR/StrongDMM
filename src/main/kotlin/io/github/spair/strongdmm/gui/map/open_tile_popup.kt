@@ -5,10 +5,10 @@ import io.github.spair.strongdmm.gui.edit.variables.ViewVariablesDialog
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
-import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.action.SwapTileItemAction
+import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItemsComparator
