@@ -46,12 +46,12 @@ fun MapPipeline.openTilePopup() {
 }
 
 private fun JPopupMenu.addResetActions() {
-    add(JMenuItem("Undo").apply {
+    add(JMenuItem("Undo (Ctrl+Z)").apply {
         isEnabled = ActionController.hasUndoActions()
         addActionListener { ActionController.undoAction() }
     })
 
-    add(JMenuItem("Redo").apply {
+    add(JMenuItem("Redo (Ctrl+Shift+Z)").apply {
         isEnabled = ActionController.hasRedoActions()
         addActionListener { ActionController.redoAction() }
     })
