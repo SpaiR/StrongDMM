@@ -31,7 +31,8 @@ object MenuBarView : View {
     private val openMapBtn = createButton("Open Map...", false).addCtrlShortcut('O')
     private val availableMapsBtn = createButton("Open Available Map", false).addCtrlShiftShortcut('O')
     private val recentMapsMenu = createMenu("Recent Maps", isEnabled = false)
-    private val saveItemBtn = createButton("Save", false).addCtrlShortcut('S')
+    private val saveBtn = createButton("Save", false).addCtrlShortcut('S')
+    private val saveAllBtn = createButton("Save All", false).addCtrlShiftShortcut('S')
     private val exitMenuBtn = createButton("Exit").addCtrlShortcut('Q')
 
     // Edit items
@@ -70,7 +71,8 @@ object MenuBarView : View {
         openEnvBtn.addActionListener(createOpenEnvironmentAction())
         openMapBtn.addActionListener(createOpenMapAction())
         availableMapsBtn.addActionListener(createOpenMapFromAvailableAction())
-        saveItemBtn.addActionListener(createSaveSelectedMapAction())
+        saveBtn.addActionListener(createSaveSelectedMapAction())
+        saveAllBtn.addActionListener(createSaveAllMapsAction())
         exitMenuBtn.addActionListener { PrimaryFrame.handleWindowClosing() }
 
         // Options
@@ -104,7 +106,8 @@ object MenuBarView : View {
         availableMapsBtn,
         recentMapsMenu,
         JSeparator(),
-        saveItemBtn,
+        saveBtn,
+        saveAllBtn,
         JSeparator(),
         exitMenuBtn
     )
@@ -154,7 +157,8 @@ object MenuBarView : View {
             when (shortcut) {
                 // File
                 Shortcut.CTRL_O -> openMapBtn
-                Shortcut.CTRL_S -> saveItemBtn
+                Shortcut.CTRL_S -> saveBtn
+                Shortcut.CTRL_SHIFT_S -> saveAllBtn
                 Shortcut.CTRL_Q -> exitMenuBtn
                 Shortcut.CTRL_Z -> undoActionBtn
                 // Options
@@ -224,11 +228,18 @@ object MenuBarView : View {
         }
     }
 
+    private fun createSaveAllMapsAction() = ActionListener {
+        MapView.getOpenedMaps().forEach {
+            ActionController.resetActionBalance(it)
+            saveMap(it)
+        }
+    }
+
     private fun openEnvironment(dmeFilePath: String) {
         Dialog.runWithProgressBar("Parsing environment...") {
             Environment.parseAndPrepareEnv(dmeFilePath)
 
-            arrayOf(saveItemBtn, openMapBtn, availableMapsBtn, layersFilterActionBtn, recentMapsMenu).forEach {
+            arrayOf(saveBtn, saveAllBtn, openMapBtn, availableMapsBtn, layersFilterActionBtn, recentMapsMenu).forEach {
                 it.isEnabled = true
             }
 

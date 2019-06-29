@@ -24,7 +24,7 @@ object ActionController : EnvCleanable {
 
     fun resetActionBalance(map: Dmm) {
         actionBalance[map.hashCode()] = 0
-        TabbedMapPanelView.markMapModified(false)
+        TabbedMapPanelView.markMapModified(map, false)
     }
 
     fun hasChanges(map: Dmm): Boolean {
@@ -96,7 +96,7 @@ object ActionController : EnvCleanable {
     }
 
     private fun handleBalance(value: Int) {
-        TabbedMapPanelView.markMapModified(value != 0)
+        TabbedMapPanelView.markMapModified(MapView.getSelectedDmm()!!, value != 0)
     }
 
     fun clearUnusedActions(openedMaps: List<Dmm>) {

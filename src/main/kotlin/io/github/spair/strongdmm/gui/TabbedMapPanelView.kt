@@ -81,8 +81,8 @@ object TabbedMapPanelView : View, EnvCleanable {
         }
     }
 
-    fun markMapModified(isModified: Boolean) {
-        getTab(mapTabs.selectedIndex)?.toggleModifiedMark(isModified)
+    fun markMapModified(dmm: Dmm, isModified: Boolean) {
+        getTab(dmm.mapPath)?.toggleModifiedMark(isModified)
     }
 
     fun selectNextMap() {
@@ -104,7 +104,19 @@ object TabbedMapPanelView : View, EnvCleanable {
         return if (index < 0 || index >= mapTabs.tabCount) null else mapTabs.getTabComponentAt(index) as? MapTab
     }
 
+    private fun getTab(mapPath: String): MapTab? {
+        for (index in 0 until mapTabs.tabCount) {
+            val tab = mapTabs.getTabComponentAt(index) as MapTab
+            if (tab.mapPath == mapPath) {
+                return tab
+            }
+        }
+        return null
+    }
+
     private class MapTab(dmm: Dmm) : JPanel(FlowLayout(FlowLayout.CENTER, 4, 0)) {
+
+        val mapPath: String = dmm.mapPath
 
         private val plainFont: Font = font.deriveFont(Font.PLAIN)
         private val boldFont: Font = font.deriveFont(Font.BOLD)
