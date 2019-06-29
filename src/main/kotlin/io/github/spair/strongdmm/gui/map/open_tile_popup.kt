@@ -11,7 +11,7 @@ import io.github.spair.strongdmm.logic.action.SwapTileItemAction
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.Tile
-import io.github.spair.strongdmm.logic.map.TileItemsComparator
+import io.github.spair.strongdmm.logic.map.TileItemComparator
 import io.github.spair.strongdmm.logic.map.TileOperation
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
@@ -156,7 +156,7 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.getTileItems().sortedWith(TileItemsComparator).forEach { tileItem ->
+    currentTile.getTileItems().sortedWith(TileItemComparator).forEach { tileItem ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }

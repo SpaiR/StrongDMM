@@ -24,7 +24,7 @@ import javax.swing.tree.TreePath
 object ObjectTreeView : View, EnvCleanable {
 
     private var searchPath: String = ""
-    private var foundNodes: List<DefaultMutableTreeNode>? = null
+    private var cachedNodes: List<ObjectTreeNode>? = null
 
     private val objectTree = JTree(SimpleTreeNode("No open environment"))
 
@@ -45,7 +45,7 @@ object ObjectTreeView : View, EnvCleanable {
     }
 
     override fun clean() {
-        foundNodes = null
+        cachedNodes = null
         objectTree.model = DefaultTreeModel(SimpleTreeNode("Loading new environment..."))
         objectTree.isRootVisible = true
     }
@@ -60,7 +60,7 @@ object ObjectTreeView : View, EnvCleanable {
     }
 
     fun findAndSelectItemInstance(tileItem: TileItem) {
-        findAndSelectPath(tileItem.type, true)
+        findAndSelectPath(tileItem.type, update = true, strict = true)
         InstanceListView.selectInstanceByCustomVars(tileItem.customVars)
     }
 
@@ -108,34 +108,43 @@ object ObjectTreeView : View, EnvCleanable {
         return ObjectTreeNode(nodeName, dmeItem.type, icon, iconState)
     }
 
-    private fun findAndSelectPath(typePath: String, update: Boolean = false) {
+    private fun findAndSelectPath(typePath: String, update: Boolean = false, strict: Boolean = false) {
         if (typePath.isEmpty()) {
             return
         }
 
-        val nodes: List<DefaultMutableTreeNode>
+        val nodes: List<ObjectTreeNode>
 
-        if (update || foundNodes == null) {
+        if (update || cachedNodes == null) {
             val e = (objectTree.model.root as DefaultMutableTreeNode).depthFirstEnumeration()
-            nodes = mutableListOf()
+            val foundNodes = mutableListOf<ObjectTreeNode>()
 
             while (e.hasMoreElements()) {
-                val node = e.nextElement()
+                val nextElement = e.nextElement()
 
-                if (node is SimpleTreeNode) {
-                    nodes.add(node)
+                if (nextElement is SimpleTreeNode) {
                     continue
                 }
 
-                (node as ObjectTreeNode).takeIf { it.type.contains(typePath) }?.let {
-                    nodes.add(it)
+                val node = nextElement as ObjectTreeNode
+
+                if (node.type.contains(typePath)) {
+                    foundNodes.add(node)
+                    if (strict && node.type == typePath) {
+                        break
+                    }
                 }
             }
 
-            nodes.sortBy { if (it is ObjectTreeNode) it.type else it.toString() }
-            foundNodes = nodes
+            nodes = if (strict) {
+                foundNodes.filter { it.type == typePath }
+            } else {
+                foundNodes.sortedWith(ObjectTreeNodeComparator)
+            }
+
+            cachedNodes = nodes
         } else {
-            nodes = foundNodes!!
+            nodes = cachedNodes!!
         }
 
         if (nodes.isEmpty()) {
@@ -179,7 +188,7 @@ object ObjectTreeView : View, EnvCleanable {
                 override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
                 override fun changedUpdate(e: DocumentEvent) {
                     searchPath = text
-                    foundNodes = null
+                    cachedNodes = null
                 }
             })
 
