@@ -28,9 +28,9 @@ object MenuBarView : View {
     // File items
     private val openEnvBtn = createButton("Open Environment...")
     private val recentEnvMenu = createMenu("Recent Environments")
-    private val openMapBtn = createButton("Open map...", false).addCtrlShortcut('O')
-    private val availableMapsBtn = createButton("Open map from available", false).addCtrlShiftShortcut('O')
-    private val recentMapsMenu = createMenu("Recent maps", isEnabled = false)
+    private val openMapBtn = createButton("Open Map...", false).addCtrlShortcut('O')
+    private val availableMapsBtn = createButton("Open Available Map", false).addCtrlShiftShortcut('O')
+    private val recentMapsMenu = createMenu("Recent Maps", isEnabled = false)
     private val saveItemBtn = createButton("Save", false).addCtrlShortcut('S')
     private val exitMenuBtn = createButton("Exit").addCtrlShortcut('Q')
 
