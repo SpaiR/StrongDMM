@@ -93,6 +93,10 @@ object TabbedMapPanelView : View, EnvCleanable {
         switchMap(mapTabs.selectedIndex - 1)
     }
 
+    fun closeMap(dmm: Dmm) {
+        getTab(dmm.mapPath)?.close()
+    }
+
     private fun switchMap(index: Int) {
         if (indexHashList.isNotEmpty() && index >= 0 && index <= mapTabs.tabCount - 1) {
             previousIndex = mapTabs.selectedIndex
@@ -114,7 +118,7 @@ object TabbedMapPanelView : View, EnvCleanable {
         return null
     }
 
-    private class MapTab(dmm: Dmm) : JPanel(FlowLayout(FlowLayout.CENTER, 4, 0)) {
+    private class MapTab(private val dmm: Dmm) : JPanel(FlowLayout(FlowLayout.CENTER, 4, 0)) {
 
         val mapPath: String = dmm.mapPath
 
@@ -132,25 +136,7 @@ object TabbedMapPanelView : View, EnvCleanable {
             with(closeButton) {
                 border = BorderUtil.createEmptyBorder(left = 4, right = 4)
                 isContentAreaFilled = false
-
-                val mapHash = dmm.hashCode()
-
-                addActionListener {
-                    if (ActionController.hasChanges(dmm)) {
-                        val answer = Dialog.askToSaveMap(dmm.mapName)
-                        if (answer == Dialog.MAP_SAVE_YES) {
-                            saveMap(dmm)
-                        } else if (answer == Dialog.MAP_SAVE_CANCEL) {
-                            return@addActionListener
-                        }
-                    }
-
-                    isMiscEvent = true
-                    Environment.closeMap(dmm)
-                    ActionController.resetActionBalance(dmm)
-                    mapTabs.remove(indexHashList.indexOf(mapHash))
-                    indexHashList.remove(mapHash)
-                }
+                addActionListener { close() }
             }
 
             add(label)
@@ -171,6 +157,26 @@ object TabbedMapPanelView : View, EnvCleanable {
                 hasModifiedMark = false
                 label.text = label.text.substring(0..(label.text.length - 3))
             }
+        }
+
+        fun close() {
+            if (ActionController.hasChanges(dmm)) {
+                val answer = Dialog.askToSaveMap(dmm.mapName)
+                if (answer == Dialog.MAP_SAVE_YES) {
+                    saveMap(dmm)
+                } else if (answer == Dialog.MAP_SAVE_CANCEL) {
+                    return
+                }
+            }
+
+            isMiscEvent = true
+
+            Environment.closeMap(dmm)
+            ActionController.resetActionBalance(dmm)
+
+            val mapHash = dmm.hashCode()
+            mapTabs.remove(indexHashList.indexOf(mapHash))
+            indexHashList.remove(mapHash)
         }
     }
 }

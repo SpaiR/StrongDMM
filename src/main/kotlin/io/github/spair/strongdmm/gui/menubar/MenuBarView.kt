@@ -33,6 +33,8 @@ object MenuBarView : View {
     private val recentMapsMenu = createMenu("Recent Maps", isEnabled = false)
     private val saveBtn = createButton("Save", false).addCtrlShortcut('S')
     private val saveAllBtn = createButton("Save All", false).addCtrlShiftShortcut('S')
+    private val closeBtn = createButton("Close", false).addCtrlShortcut('W')
+    private val closeAllBtn = createButton("Close All", false).addCtrlShiftShortcut('W')
     private val exitMenuBtn = createButton("Exit").addCtrlShortcut('Q')
 
     // Edit items
@@ -55,6 +57,12 @@ object MenuBarView : View {
     private val toggleObjActionOpt = createRadioButton("Obj", true).addCtrlShortcut('3')
     private val toggleMobActionOpt = createRadioButton("Mob", true).addCtrlShortcut('4')
 
+    // Enabled when environment becomes available
+    private val envDependentButtons = arrayOf(
+        saveBtn, saveAllBtn, openMapBtn, closeBtn, closeAllBtn,
+        availableMapsBtn, layersFilterActionBtn, recentMapsMenu
+    )
+
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
             add(createMenu("File", createFileItems()))
@@ -73,6 +81,8 @@ object MenuBarView : View {
         availableMapsBtn.addActionListener(createOpenMapFromAvailableAction())
         saveBtn.addActionListener(createSaveSelectedMapAction())
         saveAllBtn.addActionListener(createSaveAllMapsAction())
+        closeBtn.addActionListener(createCloseMapAction())
+        closeAllBtn.addActionListener(createCloseAllMapsAction())
         exitMenuBtn.addActionListener { PrimaryFrame.handleWindowClosing() }
 
         // Options
@@ -108,6 +118,9 @@ object MenuBarView : View {
         JSeparator(),
         saveBtn,
         saveAllBtn,
+        JSeparator(),
+        closeBtn,
+        closeAllBtn,
         JSeparator(),
         exitMenuBtn
     )
@@ -159,13 +172,15 @@ object MenuBarView : View {
                 Shortcut.CTRL_O -> openMapBtn
                 Shortcut.CTRL_S -> saveBtn
                 Shortcut.CTRL_SHIFT_S -> saveAllBtn
+                Shortcut.CTRL_W -> closeBtn
+                Shortcut.CTRL_SHIFT_W -> closeAllBtn
                 Shortcut.CTRL_Q -> exitMenuBtn
-                Shortcut.CTRL_Z -> undoActionBtn
                 // Options
                 Shortcut.CTRL_LEFT_ARROW -> prevMapBtn
                 Shortcut.CTRL_RIGHT_ARROW -> nextMapBtn
                 // Edit
                 Shortcut.CTRL_SHIFT_O -> availableMapsBtn
+                Shortcut.CTRL_Z -> undoActionBtn
                 Shortcut.CTRL_SHIFT_Z -> redoActionBtn
                 Shortcut.ALT_1 -> addSelectModeOpt
                 Shortcut.ALT_2 -> fillSelectModeOpt
@@ -235,15 +250,24 @@ object MenuBarView : View {
         }
     }
 
+    private fun createCloseMapAction() = ActionListener {
+        MapView.getSelectedDmm()?.let {
+            TabbedMapPanelView.closeMap(it)
+        }
+    }
+
+    private fun createCloseAllMapsAction() = ActionListener {
+        MapView.getOpenedMaps().forEach {
+            TabbedMapPanelView.closeMap(it)
+        }
+    }
+
     private fun openEnvironment(dmeFilePath: String) {
         Dialog.runWithProgressBar("Parsing environment...") {
             Environment.parseAndPrepareEnv(dmeFilePath)
-
-            arrayOf(saveBtn, saveAllBtn, openMapBtn, availableMapsBtn, layersFilterActionBtn, recentMapsMenu).forEach {
-                it.isEnabled = true
-            }
-
             Workspace.addRecentEnvironment(dmeFilePath)
+
+            envDependentButtons.forEach { it.isEnabled = true }
             updateRecentEnvironments()
             updateRecentMaps()
         }
