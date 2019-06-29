@@ -30,14 +30,7 @@ private interface SDMMParser : Library {
 }
 
 private object SpacemanDmmParser {
-
-    val api: SDMMParser
-
-    init {
-        val is64bit = System.getProperty("os.arch").indexOf("64") != -1
-        val osSuffix = if (is64bit) "64" else "32"
-        api = Native.load("sdmmparser$osSuffix", SDMMParser::class.java)
-    }
+    val api: SDMMParser = Native.load("sdmmparser64", SDMMParser::class.java)
 }
 
 fun parseEnvToJson(envPath: String): String {
