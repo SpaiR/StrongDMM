@@ -1,0 +1,99 @@
+/**
+ * This file contains source code of sdmmparser64 library. Library is used to parse BYOND environment and return it in a form of JSON.
+ * Copyright (c) 2019, SpaiR.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+extern crate dreammaker as dm;
+extern crate serde;
+
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
+
+use dm::constants::Constant;
+use dm::objtree::TypeRef;
+use dm::Context;
+
+use std::os::raw::c_char;
+use std::ffi::{CStr,CString};
+use std::str;
+use std::mem;
+
+#[derive(Serialize)]
+pub struct ObjectTreeType {
+    pub path: String,
+    pub vars: Vec<ObjectTreeVar>,
+    pub children: Vec<ObjectTreeType>,
+}
+
+#[derive(Serialize)]
+pub struct ObjectTreeVar {
+    pub name: String,
+    pub value: String,
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern fn parseEnv(path: *const c_char) -> *const c_char {
+    let env_path = to_string(path);
+    let objtree = match Context::default().parse_environment(env_path.as_ref()) {
+        Ok(t) => t,
+        Err(_e) => return to_ptr("error".to_owned())
+    };
+    let root = recurse_objtree(objtree.root());
+    let json = serde_json::to_string(&root).unwrap();
+    to_ptr(json)
+}
+
+fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
+    let mut entry = ObjectTreeType {
+        path: ty.path.to_owned(),
+        vars: Vec::new(),
+        children: Vec::new(),
+    };
+
+    for (name, var) in ty.vars.iter() {
+        entry.vars.push(ObjectTreeVar {
+            name: name.to_owned(),
+            value: var
+                .value
+                .constant
+                .as_ref()
+                .unwrap_or(Constant::null())
+                .to_string(),
+        });
+    }
+
+    for child in ty.children() {
+        entry.children.push(recurse_objtree(child));
+    }
+
+    entry
+}
+
+/// Convert a native string to a Rust string
+fn to_string(pointer: *const c_char) -> String {
+    let slice = unsafe { CStr::from_ptr(pointer).to_bytes() };
+    str::from_utf8(slice).unwrap().to_string()
+}
+
+/// Convert a Rust string to a native string
+fn to_ptr(string: String) -> *const c_char {
+    let cs = CString::new(string.as_bytes()).unwrap();
+    let ptr = cs.as_ptr();
+    // Tell Rust not to clean up the string while we still have a pointer to it.
+    // Otherwise, we'll get a segfault.
+    mem::forget(cs);
+    ptr
+}
