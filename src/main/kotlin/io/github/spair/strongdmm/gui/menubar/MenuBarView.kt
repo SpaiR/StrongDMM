@@ -26,33 +26,33 @@ import javax.swing.*
 object MenuBarView : View {
 
     // File items
-    private val openEnvItem = createButton("Open Environment...")
-    private val recentEnvironmentsItem = createMenu("Recent Environments")
-    private val openMapItem = createButton("Open map...", false).addCtrlShortcut('O')
-    private val availableMapsItem = createButton("Open map from available", false).addCtrlShiftShortcut('O')
-    private val recentMapsItem = createMenu("Recent maps", isEnabled = false)
-    private val saveItem = createButton("Save", false).addCtrlShortcut('S')
-    private val exitMenuItem = createButton("Exit").addCtrlShortcut('Q')
+    private val openEnvBtn = createButton("Open Environment...")
+    private val recentEnvMenu = createMenu("Recent Environments")
+    private val openMapBtn = createButton("Open map...", false).addCtrlShortcut('O')
+    private val availableMapsBtn = createButton("Open map from available", false).addCtrlShiftShortcut('O')
+    private val recentMapsMenu = createMenu("Recent maps", isEnabled = false)
+    private val saveItemBtn = createButton("Save", false).addCtrlShortcut('S')
+    private val exitMenuBtn = createButton("Exit").addCtrlShortcut('Q')
 
     // Edit items
-    private val undoActionItem = createButton("Undo", false).addCtrlShortcut('Z')
-    private val redoActionItem = createButton("Redo", false).addCtrlShiftShortcut('Z')
-    private val addSelectModeItem = createRadioButton("Add Select Mode", true).addAltShortcut('1')
-    private val fillSelectModeItem = createRadioButton("Fill Select Mode").addAltShortcut('2')
-    private val pickSelectModeItem = createRadioButton("Pick Select Mode").addAltShortcut('3')
+    private val undoActionBtn = createButton("Undo", false).addCtrlShortcut('Z')
+    private val redoActionBtn = createButton("Redo", false).addCtrlShiftShortcut('Z')
+    private val addSelectModeOpt = createRadioButton("Add Select Mode", true).addAltShortcut('1')
+    private val fillSelectModeOpt = createRadioButton("Fill Select Mode").addAltShortcut('2')
+    private val pickSelectModeOpt = createRadioButton("Pick Select Mode").addAltShortcut('3')
 
     // Options
-    private val nextMap = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
-    private val prevMap = createButton("Prev Map").addCtrlShortcut(KeyEvent.VK_LEFT)
-    private val frameAreas = createRadioButton("Frame Areas", true)
-    private val synchronizeMaps = createRadioButton("Synchronize Maps")
+    private val nextMapBtn = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
+    private val prevMapBtn = createButton("Prev Map").addCtrlShortcut(KeyEvent.VK_LEFT)
+    private val frameAreasOpt = createRadioButton("Frame Areas", true)
+    private val syncMapsOpt = createRadioButton("Synchronize Maps")
 
     // Layers items
-    private val layersFilterActionItem = createButton("Layers Filter", false)
-    private val toggleAreaActionItem = createRadioButton("Area", true).addCtrlShortcut('1')
-    private val toggleTurfActionItem = createRadioButton("Turf", true).addCtrlShortcut('2')
-    private val toggleObjActionItem = createRadioButton("Obj", true).addCtrlShortcut('3')
-    private val toggleMobActionItem = createRadioButton("Mob", true).addCtrlShortcut('4')
+    private val layersFilterActionBtn = createButton("Layers Filter", false)
+    private val toggleAreaActionOpt = createRadioButton("Area", true).addCtrlShortcut('1')
+    private val toggleTurfActionOpt = createRadioButton("Turf", true).addCtrlShortcut('2')
+    private val toggleObjActionOpt = createRadioButton("Obj", true).addCtrlShortcut('3')
+    private val toggleMobActionOpt = createRadioButton("Mob", true).addCtrlShortcut('4')
 
     override fun initComponent(): JMenuBar {
         return JMenuBar().apply {
@@ -67,85 +67,85 @@ object MenuBarView : View {
 
     private fun initLogic() {
         // File
-        openEnvItem.addActionListener(createOpenEnvironmentAction())
-        openMapItem.addActionListener(createOpenMapAction())
-        availableMapsItem.addActionListener(createOpenMapFromAvailableAction())
-        saveItem.addActionListener(saveSelectedMapAction())
-        exitMenuItem.addActionListener { PrimaryFrame.handleWindowClosing() }
+        openEnvBtn.addActionListener(createOpenEnvironmentAction())
+        openMapBtn.addActionListener(createOpenMapAction())
+        availableMapsBtn.addActionListener(createOpenMapFromAvailableAction())
+        saveItemBtn.addActionListener(createSaveSelectedMapAction())
+        exitMenuBtn.addActionListener { PrimaryFrame.handleWindowClosing() }
 
         // Options
-        nextMap.addActionListener { TabbedMapPanelView.selectNextMap() }
-        prevMap.addActionListener { TabbedMapPanelView.selectPrevMap() }
-        frameAreas.addActionListener { MapView.switchAreasFraming() }
-        synchronizeMaps.addActionListener { MapView.switchMapsSync() }
+        nextMapBtn.addActionListener { TabbedMapPanelView.selectNextMap() }
+        prevMapBtn.addActionListener { TabbedMapPanelView.selectPrevMap() }
+        frameAreasOpt.addActionListener { MapView.switchAreasFraming() }
+        syncMapsOpt.addActionListener { MapView.switchMapsSync() }
 
         // Edit
-        undoActionItem.addActionListener { ActionController.undoAction() }
-        redoActionItem.addActionListener { ActionController.redoAction() }
+        undoActionBtn.addActionListener { ActionController.undoAction() }
+        redoActionBtn.addActionListener { ActionController.redoAction() }
         ButtonGroup().run {
-            add(addSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
-            add(fillSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
-            add(pickSelectModeItem.apply { addActionListener { SelectOperation.switchSelectType(SelectType.PICK) } })
+            add(addSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
+            add(fillSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
+            add(pickSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.PICK) } })
         }
 
         // Layers
-        layersFilterActionItem.addActionListener { LayersFilter().open() }
-        toggleAreaActionItem.addActionListener { LayersManager.toggleType(TYPE_AREA) }
-        toggleTurfActionItem.addActionListener { LayersManager.toggleType(TYPE_TURF) }
-        toggleObjActionItem.addActionListener { LayersManager.toggleType(TYPE_OBJ) }
-        toggleMobActionItem.addActionListener { LayersManager.toggleType(TYPE_MOB) }
+        layersFilterActionBtn.addActionListener { LayersFilter().open() }
+        toggleAreaActionOpt.addActionListener { LayersManager.toggleType(TYPE_AREA) }
+        toggleTurfActionOpt.addActionListener { LayersManager.toggleType(TYPE_TURF) }
+        toggleObjActionOpt.addActionListener { LayersManager.toggleType(TYPE_OBJ) }
+        toggleMobActionOpt.addActionListener { LayersManager.toggleType(TYPE_MOB) }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
-        openEnvItem,
-        recentEnvironmentsItem,
+        openEnvBtn,
+        recentEnvMenu,
         JSeparator(),
-        openMapItem,
-        availableMapsItem,
-        recentMapsItem,
+        openMapBtn,
+        availableMapsBtn,
+        recentMapsMenu,
         JSeparator(),
-        saveItem,
+        saveItemBtn,
         JSeparator(),
-        exitMenuItem
+        exitMenuBtn
     )
 
     private fun createEditItems() = arrayOf<JComponent>(
-        undoActionItem,
-        redoActionItem,
+        undoActionBtn,
+        redoActionBtn,
         JSeparator(),
-        addSelectModeItem,
-        fillSelectModeItem,
-        pickSelectModeItem
+        addSelectModeOpt,
+        fillSelectModeOpt,
+        pickSelectModeOpt
     )
 
     private fun createOptionsItems() = arrayOf<JComponent>(
-        nextMap,
-        prevMap,
+        nextMapBtn,
+        prevMapBtn,
         JSeparator(),
-        synchronizeMaps,
-        frameAreas
+        syncMapsOpt,
+        frameAreasOpt
     )
 
     private fun createLayersItems() = arrayOf<JComponent>(
-        layersFilterActionItem,
+        layersFilterActionBtn,
         JSeparator(),
-        toggleAreaActionItem,
-        toggleTurfActionItem,
-        toggleObjActionItem,
-        toggleMobActionItem
+        toggleAreaActionOpt,
+        toggleTurfActionOpt,
+        toggleObjActionOpt,
+        toggleMobActionOpt
     )
 
     fun updateUndoable() {
-        undoActionItem.isEnabled = ActionController.hasUndoActions()
-        redoActionItem.isEnabled = ActionController.hasRedoActions()
+        undoActionBtn.isEnabled = ActionController.hasUndoActions()
+        redoActionBtn.isEnabled = ActionController.hasRedoActions()
     }
 
     fun switchUndo(enabled: Boolean) {
-        undoActionItem.isEnabled = enabled
+        undoActionBtn.isEnabled = enabled
     }
 
     fun switchRedo(enabled: Boolean) {
-        redoActionItem.isEnabled = enabled
+        redoActionBtn.isEnabled = enabled
     }
 
     // While map canvas is in focus, Swing won't catch key events, so we fire them programmatically
@@ -153,42 +153,42 @@ object MenuBarView : View {
         SwingUtilities.invokeLater {
             when (shortcut) {
                 // File
-                Shortcut.CTRL_O -> openMapItem
-                Shortcut.CTRL_S -> saveItem
-                Shortcut.CTRL_Q -> exitMenuItem
-                Shortcut.CTRL_Z -> undoActionItem
+                Shortcut.CTRL_O -> openMapBtn
+                Shortcut.CTRL_S -> saveItemBtn
+                Shortcut.CTRL_Q -> exitMenuBtn
+                Shortcut.CTRL_Z -> undoActionBtn
                 // Options
-                Shortcut.CTRL_LEFT_ARROW -> prevMap
-                Shortcut.CTRL_RIGHT_ARROW -> nextMap
+                Shortcut.CTRL_LEFT_ARROW -> prevMapBtn
+                Shortcut.CTRL_RIGHT_ARROW -> nextMapBtn
                 // Edit
-                Shortcut.CTRL_SHIFT_O -> availableMapsItem
-                Shortcut.CTRL_SHIFT_Z -> redoActionItem
-                Shortcut.ALT_1 -> addSelectModeItem
-                Shortcut.ALT_2 -> fillSelectModeItem
-                Shortcut.ALT_3 -> pickSelectModeItem
+                Shortcut.CTRL_SHIFT_O -> availableMapsBtn
+                Shortcut.CTRL_SHIFT_Z -> redoActionBtn
+                Shortcut.ALT_1 -> addSelectModeOpt
+                Shortcut.ALT_2 -> fillSelectModeOpt
+                Shortcut.ALT_3 -> pickSelectModeOpt
                 // Layers
-                Shortcut.CTRL_1 -> toggleAreaActionItem
-                Shortcut.CTRL_2 -> toggleTurfActionItem
-                Shortcut.CTRL_3 -> toggleObjActionItem
-                Shortcut.CTRL_4 -> toggleMobActionItem
+                Shortcut.CTRL_1 -> toggleAreaActionOpt
+                Shortcut.CTRL_2 -> toggleTurfActionOpt
+                Shortcut.CTRL_3 -> toggleObjActionOpt
+                Shortcut.CTRL_4 -> toggleMobActionOpt
             }.doClick()
         }
     }
 
     fun switchSelectType(selectType: SelectType) {
         when (selectType) {
-            SelectType.ADD -> addSelectModeItem
-            SelectType.FILL -> fillSelectModeItem
-            SelectType.PICK -> pickSelectModeItem
+            SelectType.ADD -> addSelectModeOpt
+            SelectType.FILL -> fillSelectModeOpt
+            SelectType.PICK -> pickSelectModeOpt
         }.isSelected = true
     }
 
     fun switchBasicLayers(type: String, isSelected: Boolean) {
         when (type) {
-            TYPE_AREA -> toggleAreaActionItem
-            TYPE_TURF -> toggleTurfActionItem
-            TYPE_OBJ -> toggleObjActionItem
-            TYPE_MOB -> toggleMobActionItem
+            TYPE_AREA -> toggleAreaActionOpt
+            TYPE_TURF -> toggleTurfActionOpt
+            TYPE_OBJ -> toggleObjActionOpt
+            TYPE_MOB -> toggleMobActionOpt
             else -> null
         }?.isSelected = isSelected
     }
@@ -199,29 +199,9 @@ object MenuBarView : View {
         }
     }
 
-    private fun updateRecentEnvironments() {
-        recentEnvironmentsItem.removeAll()
-
-        Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
-            val openButton = createButton(dmeFilePath)
-            openButton.addActionListener { openEnvironment(dmeFilePath) }
-            recentEnvironmentsItem.add(openButton)
-        }
-    }
-
     private fun createOpenMapAction() = ActionListener {
         Dialog.chooseFile("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let {
             openMap(it.path)
-        }
-    }
-
-    private fun updateRecentMaps() {
-        recentMapsItem.removeAll()
-
-        Workspace.getRecentMapsPaths(Environment.dme.path).forEach { dmmFilePath ->
-            val openButton = createButton(dmmFilePath)
-            openButton.addActionListener { Environment.openMap(dmmFilePath) }
-            recentMapsItem.add(openButton)
         }
     }
 
@@ -237,7 +217,7 @@ object MenuBarView : View {
         }
     }
 
-    private fun saveSelectedMapAction() = ActionListener {
+    private fun createSaveSelectedMapAction() = ActionListener {
         MapView.getSelectedDmm()?.let {
             ActionController.resetActionBalance(it)
             saveMap(it)
@@ -248,7 +228,7 @@ object MenuBarView : View {
         Dialog.runWithProgressBar("Parsing environment...") {
             Environment.parseAndPrepareEnv(dmeFilePath)
 
-            arrayOf(saveItem, openMapItem, availableMapsItem, layersFilterActionItem, recentMapsItem).forEach {
+            arrayOf(saveItemBtn, openMapBtn, availableMapsBtn, layersFilterActionBtn, recentMapsMenu).forEach {
                 it.isEnabled = true
             }
 
@@ -258,13 +238,33 @@ object MenuBarView : View {
         }
     }
 
+    private fun updateRecentEnvironments() {
+        recentEnvMenu.removeAll()
+
+        Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
+            val openButton = createButton(dmeFilePath)
+            openButton.addActionListener { openEnvironment(dmeFilePath) }
+            recentEnvMenu.add(openButton)
+        }
+    }
+
     private fun openMap(dmmFilePath: String) {
         Environment.openMap(dmmFilePath)
         Workspace.addRecentMap(Environment.dme.path, dmmFilePath)
         updateRecentMaps()
     }
 
-    ////// Util shit below
+    private fun updateRecentMaps() {
+        recentMapsMenu.removeAll()
+
+        Workspace.getRecentMapsPaths(Environment.dme.path).forEach { dmmFilePath ->
+            val openButton = createButton(dmmFilePath)
+            openButton.addActionListener { Environment.openMap(dmmFilePath) }
+            recentMapsMenu.add(openButton)
+        }
+    }
+
+    // Util shit below
 
     private fun createMenu(name: String, items: Array<JComponent>? = null, isEnabled: Boolean = true) = JMenu(name).apply {
         this.isEnabled = isEnabled
