@@ -14,6 +14,7 @@ import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.Environment
+import io.github.spair.strongdmm.logic.Workspace
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.saveMap
@@ -26,8 +27,10 @@ object MenuBarView : View {
 
     // File items
     private val openEnvItem = createButton("Open Environment...")
-    private val openMapItem = createButton("Open...", false).addCtrlShortcut('O')
-    private val availableMapsItem = createButton("Open from available", false).addCtrlShiftShortcut('O')
+    private val recentEnvironmentsItem = createMenu("Recent Environments")
+    private val openMapItem = createButton("Open map...", false).addCtrlShortcut('O')
+    private val availableMapsItem = createButton("Open map from available", false).addCtrlShiftShortcut('O')
+    private val recentMapsItem = createMenu("Recent maps", isEnabled = false)
     private val saveItem = createButton("Save", false).addCtrlShortcut('S')
     private val exitMenuItem = createButton("Exit").addCtrlShortcut('Q')
 
@@ -57,16 +60,16 @@ object MenuBarView : View {
             add(createMenu("Edit", createEditItems()))
             add(createMenu("Options", createOptionsItems()))
             add(createMenu("Layers", createLayersItems()))
-
+            updateRecentEnvironments()
             initLogic()
         }
     }
 
     private fun initLogic() {
         // File
-        openEnvItem.addActionListener(openEnvironmentAction())
-        openMapItem.addActionListener(openMapAction())
-        availableMapsItem.addActionListener(openMapFromAvailableAction())
+        openEnvItem.addActionListener(createOpenEnvironmentAction())
+        openMapItem.addActionListener(createOpenMapAction())
+        availableMapsItem.addActionListener(createOpenMapFromAvailableAction())
         saveItem.addActionListener(saveSelectedMapAction())
         exitMenuItem.addActionListener { PrimaryFrame.handleWindowClosing() }
 
@@ -95,9 +98,11 @@ object MenuBarView : View {
 
     private fun createFileItems() = arrayOf<JComponent>(
         openEnvItem,
+        recentEnvironmentsItem,
         JSeparator(),
         openMapItem,
         availableMapsItem,
+        recentMapsItem,
         JSeparator(),
         saveItem,
         JSeparator(),
@@ -188,24 +193,39 @@ object MenuBarView : View {
         }?.isSelected = isSelected
     }
 
-    private fun openEnvironmentAction() = ActionListener {
-        Dialog.chooseFile("BYOND Environments (*.dme)", "dme")?.let { dmeFile ->
-            Dialog.runWithProgressBar("Parsing environment...") {
-                Environment.parseAndPrepareEnv(dmeFile)
-                arrayOf(saveItem, openMapItem, availableMapsItem, layersFilterActionItem).forEach {
-                    it.isEnabled = true
-                }
-            }
+    private fun createOpenEnvironmentAction() = ActionListener {
+        Dialog.chooseFile("BYOND Environments (*.dme)", "dme")?.let {
+            openEnvironment(it.path)
         }
     }
 
-    private fun openMapAction() = ActionListener {
-        Dialog.chooseFile("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { dmmFile ->
-            Environment.openMap(dmmFile)
+    private fun updateRecentEnvironments() {
+        recentEnvironmentsItem.removeAll()
+
+        Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
+            val openButton = createButton(dmeFilePath)
+            openButton.addActionListener { openEnvironment(dmeFilePath) }
+            recentEnvironmentsItem.add(openButton)
         }
     }
 
-    private fun openMapFromAvailableAction() = ActionListener {
+    private fun createOpenMapAction() = ActionListener {
+        Dialog.chooseFile("BYOND Maps (*.dmm)", "dmm", Environment.absoluteRootPath)?.let {
+            openMap(it.path)
+        }
+    }
+
+    private fun updateRecentMaps() {
+        recentMapsItem.removeAll()
+
+        Workspace.getRecentMapsPaths(Environment.dme.path).forEach { dmmFilePath ->
+            val openButton = createButton(dmmFilePath)
+            openButton.addActionListener { Environment.openMap(dmmFilePath) }
+            recentMapsItem.add(openButton)
+        }
+    }
+
+    private fun createOpenMapFromAvailableAction() = ActionListener {
         val dmmList = JList(Environment.availableMaps.toTypedArray())
         dmmList.border = BorderUtil.createEmptyBorder(5)
 
@@ -213,7 +233,7 @@ object MenuBarView : View {
         val result = JOptionPane.showConfirmDialog(PrimaryFrame, dialogPane, "Select map to open", JOptionPane.OK_CANCEL_OPTION)
 
         if (result != JOptionPane.CANCEL_OPTION) {
-            Environment.openMap(dmmList.selectedValue)
+            openMap(dmmList.selectedValue)
         }
     }
 
@@ -224,10 +244,32 @@ object MenuBarView : View {
         }
     }
 
-    // /// Util shit below
+    private fun openEnvironment(dmeFilePath: String) {
+        Dialog.runWithProgressBar("Parsing environment...") {
+            Environment.parseAndPrepareEnv(dmeFilePath)
 
-    private fun createMenu(name: String, items: Array<JComponent>) = JMenu(name).apply {
-        items.forEach { add(it) }
+            arrayOf(saveItem, openMapItem, availableMapsItem, layersFilterActionItem, recentMapsItem).forEach {
+                it.isEnabled = true
+            }
+
+            Workspace.addRecentEnvironment(dmeFilePath)
+            updateRecentEnvironments()
+            updateRecentMaps()
+        }
+    }
+
+    private fun openMap(dmmFilePath: String) {
+        Environment.openMap(dmmFilePath)
+        Workspace.addRecentMap(Environment.dme.path, dmmFilePath)
+        updateRecentMaps()
+    }
+
+    ////// Util shit below
+
+    private fun createMenu(name: String, items: Array<JComponent>? = null, isEnabled: Boolean = true) = JMenu(name).apply {
+        this.isEnabled = isEnabled
+        popupMenu.isLightWeightPopupEnabled = false
+        items?.forEach { add(it) }
     }
 
     private fun createButton(text: String, isEnabled: Boolean = true): JMenuItem {

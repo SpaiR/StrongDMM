@@ -25,6 +25,10 @@ object Environment {
 
     private val openedMaps: MutableSet<String> = mutableSetOf()
 
+    fun parseAndPrepareEnv(dmeFilePath: String) {
+        parseAndPrepareEnv(File(dmeFilePath))
+    }
+
     fun parseAndPrepareEnv(dmeFile: File) {
         if (Environment::dme.isInitialized) {
             cleanEnvironmentResources()

@@ -12,7 +12,7 @@ fun parseDme(envPath: String): Dme {
     }
 
     val dmeItems = mutableMapOf<String, DmeItem>()
-    val dme = Dme(dmeItems)
+    val dme = Dme(envPath, dmeItems)
 
     Json.parse(response).asObject().getChildren().forEach { child ->
         traverseTreeRecurs(child.asObject(), dme, dmeItems)
