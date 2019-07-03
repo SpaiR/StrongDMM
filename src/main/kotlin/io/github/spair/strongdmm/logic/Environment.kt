@@ -11,7 +11,7 @@ import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.dme.Dme
-import io.github.spair.strongdmm.logic.dme.parseDme
+import io.github.spair.strongdmm.logic.dme.SdmmParser
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
 import java.io.File
@@ -34,7 +34,7 @@ object Environment {
             cleanEnvironmentResources()
         }
 
-        dme = parseDme(dmeFile.absolutePath)
+        dme = SdmmParser().parseDme(dmeFile.absolutePath)
         absoluteRootPath = dmeFile.parentFile.absolutePath
         findAvailableMaps(dmeFile.parentFile)
         ObjectTreeView.populateTree(dme)
