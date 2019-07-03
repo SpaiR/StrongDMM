@@ -25,9 +25,22 @@ object Workspace {
         }
     }
 
+    fun removeRecentEnvironment(envPath: String) {
+        findEnvironment(envPath)?.let {
+            holder.recentEnvironments.remove(it)
+            save()
+        }
+    }
+
     fun addRecentMap(envPath: String, mapPath: String) {
         val env = findEnvironment(envPath) ?: return
         env.recentMaps.add(mapPath)
+        save()
+    }
+
+    fun removeRecentMap(envPath: String, mapPath: String) {
+        val env = findEnvironment(envPath) ?: return
+        env.recentMaps.remove(mapPath)
         save()
     }
 

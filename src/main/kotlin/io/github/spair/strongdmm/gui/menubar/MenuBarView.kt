@@ -21,6 +21,7 @@ import io.github.spair.strongdmm.logic.map.saveMap
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
+import java.io.File
 import javax.swing.*
 
 object MenuBarView : View {
@@ -278,7 +279,17 @@ object MenuBarView : View {
 
         Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
             val openButton = createButton(dmeFilePath)
-            openButton.addActionListener { openEnvironment(dmeFilePath) }
+
+            openButton.addActionListener {
+                val file = File(dmeFilePath)
+                if (file.exists()) {
+                    openEnvironment(dmeFilePath)
+                } else {
+                    recentEnvMenu.remove(openButton)
+                    Workspace.removeRecentEnvironment(dmeFilePath)
+                }
+            }
+
             recentEnvMenu.add(openButton)
         }
     }
@@ -292,9 +303,21 @@ object MenuBarView : View {
     private fun updateRecentMaps() {
         recentMapsMenu.removeAll()
 
-        Workspace.getRecentMapsPaths(Environment.dme.path).forEach { dmmFilePath ->
+        val envPath = Environment.dme.path
+
+        Workspace.getRecentMapsPaths(envPath).forEach { dmmFilePath ->
             val openButton = createButton(dmmFilePath)
-            openButton.addActionListener { Environment.openMap(dmmFilePath) }
+
+            openButton.addActionListener {
+                val file = File(dmmFilePath)
+                if (file.exists()) {
+                    Environment.openMap(file)
+                } else {
+                    recentMapsMenu.remove(openButton)
+                    Workspace.removeRecentMap(envPath, dmmFilePath)
+                }
+            }
+
             recentMapsMenu.add(openButton)
         }
     }
