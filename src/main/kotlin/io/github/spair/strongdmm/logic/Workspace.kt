@@ -15,6 +15,13 @@ object Workspace {
         load()
     }
 
+    fun isTgmSaveMode(): Boolean = holder.isTgmSaveMode
+
+    fun setTgmSaveMode(value: Boolean) {
+        holder.isTgmSaveMode = value
+        save()
+    }
+
     fun getRecentEnvironmentsPaths(): List<String> = holder.recentEnvironments.map { it.path }.toList()
     fun getRecentMapsPaths(envPath: String): Set<String> = findEnvironment(envPath)?.recentMaps ?: emptySet()
 
@@ -63,6 +70,8 @@ object Workspace {
 
                     holder.recentEnvironments.add(Environment(path, recentMaps))
                 }
+
+                holder.isTgmSaveMode = json.getBoolean(WorkspaceHolder::isTgmSaveMode.name, true)
             }
         }
     }
@@ -85,6 +94,7 @@ object Workspace {
             recentEnvironments.add(envJson)
         }
 
+        json.add(WorkspaceHolder::isTgmSaveMode.name, holder.isTgmSaveMode)
         json.add(WorkspaceHolder::recentEnvironments.name, recentEnvironments)
         workspace.writeText(json.toString())
     }
@@ -92,6 +102,7 @@ object Workspace {
     private fun findEnvironment(envPath: String): Environment? = holder.recentEnvironments.find { it.path == envPath }
 
     private class WorkspaceHolder(
+        var isTgmSaveMode: Boolean = true,
         val recentEnvironments: MutableList<Environment> = mutableListOf()
     )
 

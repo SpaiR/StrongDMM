@@ -26,7 +26,7 @@ import javax.swing.*
 
 object MenuBarView : View {
 
-    // File items
+    // File
     private val openEnvBtn = createButton("Open Environment...")
     private val recentEnvMenu = createMenu("Recent Environments")
     private val openMapBtn = createButton("Open Map...", false).addCtrlShortcut('O')
@@ -38,12 +38,16 @@ object MenuBarView : View {
     private val closeAllBtn = createButton("Close All", false).addCtrlShiftShortcut('W')
     private val exitMenuBtn = createButton("Exit").addCtrlShortcut('Q')
 
-    // Edit items
+    // Edit
     private val undoActionBtn = createButton("Undo", false).addCtrlShortcut('Z')
     private val redoActionBtn = createButton("Redo", false).addCtrlShiftShortcut('Z')
     private val addSelectModeOpt = createRadioButton("Add Select Mode", true).addAltShortcut('1')
     private val fillSelectModeOpt = createRadioButton("Fill Select Mode").addAltShortcut('2')
     private val pickSelectModeOpt = createRadioButton("Pick Select Mode").addAltShortcut('3')
+    // Edit -- Save Mode (sub menu)
+    private val tgmSaveModeOpt = createRadioButton("TGM", Workspace.isTgmSaveMode())
+    private val byondSaveModeOpt = createRadioButton("BYOND", !Workspace.isTgmSaveMode())
+    private val saveMode = createMenu("Save Mode", arrayOf(tgmSaveModeOpt, byondSaveModeOpt))
 
     // Options
     private val nextMapBtn = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
@@ -51,7 +55,7 @@ object MenuBarView : View {
     private val frameAreasOpt = createRadioButton("Frame Areas", true)
     private val syncMapsOpt = createRadioButton("Synchronize Maps")
 
-    // Layers items
+    // Layers
     private val layersFilterActionBtn = createButton("Layers Filter", false)
     private val toggleAreaActionOpt = createRadioButton("Area", true).addCtrlShortcut('1')
     private val toggleTurfActionOpt = createRadioButton("Turf", true).addCtrlShortcut('2')
@@ -100,6 +104,10 @@ object MenuBarView : View {
             add(fillSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
             add(pickSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.PICK) } })
         }
+        ButtonGroup().run {
+            add(tgmSaveModeOpt.apply { addActionListener { Workspace.setTgmSaveMode(true) } })
+            add(byondSaveModeOpt.apply { addActionListener { Workspace.setTgmSaveMode(false) } })
+        }
 
         // Layers
         layersFilterActionBtn.addActionListener { LayersFilter().open() }
@@ -132,7 +140,9 @@ object MenuBarView : View {
         JSeparator(),
         addSelectModeOpt,
         fillSelectModeOpt,
-        pickSelectModeOpt
+        pickSelectModeOpt,
+        JSeparator(),
+        saveMode
     )
 
     private fun createOptionsItems() = arrayOf<JComponent>(

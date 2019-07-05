@@ -2,6 +2,7 @@ package io.github.spair.strongdmm.logic.map
 
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.dmm.io.TileLocation
+import io.github.spair.strongdmm.logic.Workspace
 import java.io.File
 import kotlin.math.floor
 import kotlin.math.min
@@ -96,7 +97,7 @@ fun saveMap(dmm: Dmm) {
         }
     }
 
-    if (outputDmmData.isTgm) {
+    if (Workspace.isTgmSaveMode()) {
         outputDmmData.saveAsTGM(File(dmm.mapPath))
     } else {
         outputDmmData.saveAsByond(File(dmm.mapPath))
