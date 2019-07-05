@@ -90,7 +90,6 @@ object InstanceListView : View, EnvCleanable {
             null
         )
 
-        selectedInstance = initialInstance
         items.add(initialInstance)
 
         val instances = mutableSetOf<ItemInstance>()
@@ -104,13 +103,35 @@ object InstanceListView : View, EnvCleanable {
         }
 
         items.addAll(instances.sortedBy { it.name }.sortedBy { it.customVars?.size }.sortedBy { it.iconState })
-
-        val model = instanceList.model as DefaultListModel
-        model.clear()
-        items.forEach(model::addElement)
-
-        instanceList.selectedIndex = 0
         TabbedObjectPanelView.setInstanceCount(items.size)
+
+        (instanceList.model as DefaultListModel).let { model ->
+            model.clear()
+            items.forEach(model::addElement)
+        }
+
+        // Try to find previously selected item
+        if (selectedInstance != null) {
+            var index = 0
+            var found = false
+
+            for (item in items) {
+                if (selectedInstance == item) {
+                    selectedInstance = item  // Just to swap instance reference
+                    found = true
+                    break
+                }
+                index++
+            }
+
+            if (found) {
+                instanceList.selectedIndex = index
+                return
+            }
+        }
+
+        selectedInstance = initialInstance
+        instanceList.selectedIndex = 0
     }
 
     fun updateSelectedInstanceInfo() {
