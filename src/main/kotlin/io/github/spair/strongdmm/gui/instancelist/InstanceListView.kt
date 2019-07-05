@@ -72,6 +72,7 @@ object InstanceListView : View, EnvCleanable {
         for (i in 0 until model.size()) {
             if (model[i].customVars == customVars) {
                 instanceList.selectedIndex = i
+                instanceList.ensureIndexIsVisible(i)
                 break
             }
         }
