@@ -114,7 +114,7 @@ class FillTileSelect : TileSelect {
                 }
             }
 
-            ActionController.addUndoAction(MultipleAction(reverseActions))
+            ActionController.addUndoAction(MultipleAction(reverseActions), false)
             return true
         }
 

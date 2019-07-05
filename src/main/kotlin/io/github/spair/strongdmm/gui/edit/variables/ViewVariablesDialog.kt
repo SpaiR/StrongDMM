@@ -50,7 +50,7 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
 
         if (saveChanges && model.tmpVars.isNotEmpty()) {
             val newTileItem = tile.addTileItemVars(tileItem, model.tmpVars)
-            ActionController.addUndoAction(SwapTileItemAction(tile, tileItem.id, newTileItem.id))
+            ActionController.addUndoAction(SwapTileItemAction(tile, newTileItem.id, tileItem.id))
         }
 
         return saveChanges

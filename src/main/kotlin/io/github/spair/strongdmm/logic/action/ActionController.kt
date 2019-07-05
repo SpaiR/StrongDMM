@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.logic.action
 
 import io.github.spair.strongdmm.gui.TabbedMapPanelView
+import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
@@ -32,7 +33,12 @@ object ActionController : EnvCleanable {
         return if (actionBalance.containsKey(mapHash)) actionBalance[mapHash] != 0 else false
     }
 
-    fun addUndoAction(undoable: Undoable) {
+    fun addUndoAction(undoable: Undoable, updateSelectedInstanceInfo: Boolean = true) {
+        // Changes already happened
+        if (updateSelectedInstanceInfo) {
+            InstanceListView.updateSelectedInstanceInfo()
+        }
+
         with(getStacks()) {
             redoStack.clear()
             undoStack.push(undoable)
@@ -49,6 +55,7 @@ object ActionController : EnvCleanable {
             if (undoStack.isNotEmpty()) {
                 redoStack.push(undoStack.pop().doAction())
 
+                InstanceListView.updateSelectedInstanceInfo()
                 SelectOperation.depickArea()
                 MenuBarView.switchUndo(undoStack.isNotEmpty())
                 MenuBarView.switchRedo(true)
@@ -63,6 +70,7 @@ object ActionController : EnvCleanable {
             if (redoStack.isNotEmpty()) {
                 undoStack.push(redoStack.pop().doAction())
 
+                InstanceListView.updateSelectedInstanceInfo()
                 SelectOperation.depickArea()
                 MenuBarView.switchRedo(redoStack.isNotEmpty())
                 MenuBarView.switchUndo(true)

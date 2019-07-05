@@ -78,7 +78,7 @@ class AddTileSelect : TileSelect {
 
     override fun onStop() {
         if (reverseActions.isNotEmpty()) {
-            ActionController.addUndoAction(MultipleAction(reverseActions.toList()))
+            ActionController.addUndoAction(MultipleAction(reverseActions.toList()), false)
             reverseActions.clear()
         }
 

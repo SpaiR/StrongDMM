@@ -174,9 +174,8 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
         menu.add(JMenuItem("Reset to Default").apply {
             addActionListener {
                 val newTileItem = currentTile.setTileItemVars(tileItem, null)
-                ActionController.addUndoAction(SwapTileItemAction(currentTile, tileItem.id, newTileItem.id))
+                ActionController.addUndoAction(SwapTileItemAction(currentTile, newTileItem.id, tileItem.id))
                 Frame.update(true)
-                InstanceListView.updateSelectedInstanceInfo()
             }
         })
 
@@ -185,7 +184,6 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
                 currentTile.deleteTileItem(tileItem)
                 ActionController.addUndoAction(PlaceTileItemAction(map, currentTile.x, currentTile.y, tileItem.id))
                 Frame.update(true)
-                InstanceListView.updateSelectedInstanceInfo()
             }
         }
 
@@ -193,7 +191,6 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
             addActionListener {
                 if (ViewVariablesDialog(currentTile, tileItem).open()) {
                     Frame.update(true)
-                    InstanceListView.updateSelectedInstanceInfo()
                 }
             }
         }

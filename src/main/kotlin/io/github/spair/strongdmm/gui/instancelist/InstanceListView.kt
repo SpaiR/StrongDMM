@@ -117,7 +117,7 @@ object InstanceListView : View, EnvCleanable {
 
             for (item in items) {
                 if (selectedInstance == item) {
-                    selectedInstance = item  // Just to swap instance reference
+                    selectedInstance = item // Just to swap instance reference
                     found = true
                     break
                 }
