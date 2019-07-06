@@ -135,12 +135,8 @@ class LayersFilter {
             }
         }
 
-        if (mainType in arrayOf(
-                TYPE_AREA,
-                TYPE_TURF,
-                TYPE_OBJ,
-                TYPE_MOB
-            )) {
+        val basicTypes = arrayOf(TYPE_AREA, TYPE_TURF, TYPE_OBJ, TYPE_MOB)
+        if (mainType in basicTypes) {
             MenuBarView.switchBasicLayers(mainType, isChecked)
         }
 
@@ -254,10 +250,10 @@ class LayersFilter {
             nodes = mutableListOf()
 
             while (e.hasMoreElements()) {
-                val node = e.nextElement()
+                val node = e.nextElement() as DefaultMutableTreeNode
 
-                (node as DefaultMutableTreeNode).takeIf { it.toString().contains(searchPath) }?.let {
-                    nodes.add(it)
+                if (node.toString().contains(searchPath)) {
+                    nodes.add(node)
                 }
             }
 

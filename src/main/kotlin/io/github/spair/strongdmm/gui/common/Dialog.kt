@@ -13,7 +13,7 @@ object Dialog {
     const val MAP_SAVE_NO: Int = 1
     const val MAP_SAVE_CANCEL: Int = 2
 
-    fun chooseFile(desc: String, ext: String, root: String = "."): File? {
+    fun chooseFile(desc: String, ext: String, root: String = System.getProperty("user.home")): File? {
         val fileChooser = JFileChooser(root).apply {
             isAcceptAllFileFilterUsed = false
             addChoosableFileFilter(FileNameExtensionFilter(desc, ext))
@@ -47,6 +47,7 @@ object Dialog {
 
         thread(start = true) {
             action()
+            Thread.yield() // This will make us sure that dialog became visible
             dialog.isVisible = false
             dialog.dispose()
         }

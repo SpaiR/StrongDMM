@@ -8,7 +8,7 @@ import io.github.spair.strongdmm.logic.map.TileItemProvider
 object VisualComposer {
 
     // We will look for things outside of viewport range to handle big objects (bigger then /world/icon_size)
-    private const val ADDITIONAL_VIEW_RANGE = 2
+    private const val ADDITIONAL_VIEW_RANGE: Int = 2
 
     private var xMapOffPrev: Int = 0
     private var yMapOffPrev: Int = 0
@@ -63,13 +63,13 @@ object VisualComposer {
                 val renderX = (tileX - 1) * dmm.iconSize
                 val renderY = (tileY - 1) * dmm.iconSize
 
-                var currentAreaType = TYPE_AREA
+                var currentAreaType: String? = null
 
                 // Collect render instances
                 for (tileItemId in tile.unsafeTileItemsIDs()) {
                     val tileItem = TileItemProvider.getByID(tileItemId)
 
-                    if (drawAreasBorder && tileItem.isType(TYPE_AREA)) {
+                    if (drawAreasBorder && currentAreaType == null && tileItem.isType(TYPE_AREA)) {
                         currentAreaType = tileItem.type
                     }
 
@@ -115,7 +115,7 @@ object VisualComposer {
         return planeLayers
     }
 
-    private fun isFramedBorder(dmm: Dmm, x: Int, y: Int, currentAreaType: String): Boolean {
+    private fun isFramedBorder(dmm: Dmm, x: Int, y: Int, currentAreaType: String?): Boolean {
         dmm.getTile(x, y)?.let { tile ->
             tile.getTileItems().find { it.isType(TYPE_AREA) }?.let { area ->
                 return currentAreaType != area.type

@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.map.select
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.map.CoordArea
+import io.github.spair.strongdmm.logic.map.Tile
 
 object SelectOperation : TileSelect {
 
@@ -54,6 +55,6 @@ object SelectOperation : TileSelect {
         }
     }
 
-    fun isPickType() = tileSelect is PickTileSelect
-    fun getPickedTiles() = (tileSelect as? PickTileSelect)?.getSelectedTiles()
+    fun isPickType(): Boolean = tileSelect is PickTileSelect
+    fun getPickedTiles(): List<Tile>? = (tileSelect as? PickTileSelect)?.getSelectedTiles()
 }

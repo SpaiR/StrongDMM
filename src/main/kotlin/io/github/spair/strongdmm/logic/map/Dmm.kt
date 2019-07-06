@@ -18,11 +18,15 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
     val maxX: Int = initialDmmData.maxX
     val maxY: Int = initialDmmData.maxY
-    val iconSize: Int = dme.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE).let { if (it == NON_EXISTENT_INT) DEFAULT_ICON_SIZE else it }
+    val iconSize: Int
 
     private val tiles: Array<Array<Tile?>>
 
     init {
+        dme.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE).let {
+            iconSize = if (it == NON_EXISTENT_INT) DEFAULT_ICON_SIZE else it
+        }
+
         tiles = Array(maxY) { arrayOfNulls<Tile>(maxX) }
 
         for (x in 1..maxX) {

@@ -25,16 +25,16 @@ object StatusView : View {
             )
         }
 
-        val font = loadingLabel.font.deriveFont(Font.PLAIN, 10f)
+        val plainFont = loadingLabel.font.deriveFont(Font.PLAIN, 10f)
 
         with(loadingLabel) {
-            this.font = font
+            font = plainFont
             icon = ImageIcon(StatusView::class.java.classLoader.getResource("loader.gif"))
             isVisible = false
         }
 
         arrayOf(xCoordLabel, yCoordLabel).forEach {
-            it.font = font
+            it.font = plainFont
         }
     }
 

@@ -16,10 +16,14 @@ import javax.swing.SwingUtilities
 
 object MapView : View, EnvCleanable {
 
-    private val canvas = Canvas().apply { isVisible = true }
+    private val canvas = Canvas()
 
     private var tilePopup: JPopupMenu? = null
     private val pipeline: MapPipeline = MapPipeline(canvas)
+
+    init {
+        canvas.isVisible = true
+    }
 
     override fun clean() {
         tryCloseTilePopup()

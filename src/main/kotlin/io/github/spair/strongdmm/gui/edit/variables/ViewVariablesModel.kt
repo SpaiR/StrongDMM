@@ -87,7 +87,7 @@ class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() {
             collectVars(tileItem.dmeItem)
         }
 
-        displayVars.sortBy { v -> v.name.get() }
+        displayVars.sortBy { it.name.get() }
     }
 
     private fun addVar(key: String, value: String, isInstanceVar: Boolean = false) {
@@ -95,7 +95,7 @@ class ViewVariablesModel(val tileItem: TileItem) : AbstractTableModel() {
             return
         }
 
-        if (displayVars.none { k -> k.name.get() == key }) {
+        if (displayVars.none { it.name.get() == key }) {
             displayVars.add(Var(VarName(key, isInstanceVar), VarValue(value, isInstanceVar)))
         }
     }

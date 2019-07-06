@@ -13,12 +13,15 @@ import javax.swing.*
 
 object TabbedObjectPanelView : View, EnvCleanable {
 
-    private val tabbedPanel = JTabbedPane().apply {
-        isFocusable = false
-    }
-    private val typeField = JTextField("no type selected", 30).apply {
-        isEditable = false
-        border = BorderUtil.createEmptyBorder()
+    private val tabbedPanel: JTabbedPane = JTabbedPane()
+    private val typeField: JTextField = JTextField("no type selected", 30)
+
+    init {
+        tabbedPanel.isFocusable = false
+        with(typeField) {
+            isEditable = false
+            border = BorderUtil.createEmptyBorder()
+        }
     }
 
     override fun clean() {

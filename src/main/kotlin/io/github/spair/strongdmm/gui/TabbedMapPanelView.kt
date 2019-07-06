@@ -21,8 +21,8 @@ object TabbedMapPanelView : View, EnvCleanable {
     private val mapTabs: JTabbedPane = JTabbedPane()
     private val indexHashList: MutableList<Int> = mutableListOf()
 
-    private var isMiscEvent: Boolean = false
-    private var previousIndex: Int = -1
+    private var isMiscEvent: Boolean = false // When false, then we changed the map for sure
+    private var previousIndex: Int = -1 // Previously selected map tab index
 
     init {
         with(mapTabs) {
