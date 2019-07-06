@@ -120,7 +120,7 @@ object MenuBarView : View {
         toggleMobActionOpt.addActionListener { LayersManager.toggleType(TYPE_MOB) }
 
         // Help
-        aboutBtn.addActionListener { Dialog.showHtmlContent("StrongDMM", "about.html", 375, 300) }
+        aboutBtn.addActionListener { Dialog.showHtmlContent("StrongDMM", "about.html", 400, 300) }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
