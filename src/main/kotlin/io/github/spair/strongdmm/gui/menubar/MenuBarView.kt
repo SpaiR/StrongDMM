@@ -47,7 +47,6 @@ object MenuBarView : View {
     // Edit -- Save Mode (sub menu)
     private val tgmSaveModeOpt = createRadioButton("TGM", Workspace.isTgmSaveMode())
     private val byondSaveModeOpt = createRadioButton("BYOND", !Workspace.isTgmSaveMode())
-    private val saveMode = createMenu("Save Mode", arrayOf(tgmSaveModeOpt, byondSaveModeOpt))
 
     // Options
     private val nextMapBtn = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
@@ -62,6 +61,9 @@ object MenuBarView : View {
     private val toggleObjActionOpt = createRadioButton("Obj", true).addCtrlShortcut('3')
     private val toggleMobActionOpt = createRadioButton("Mob", true).addCtrlShortcut('4')
 
+    // Help
+    private val aboutBtn = createButton("About")
+
     // Enabled when environment becomes available
     private val envDependentButtons = arrayOf(
         saveBtn, saveAllBtn, openMapBtn, closeBtn, closeAllBtn,
@@ -74,6 +76,7 @@ object MenuBarView : View {
             add(createMenu("Edit", createEditItems()))
             add(createMenu("Options", createOptionsItems()))
             add(createMenu("Layers", createLayersItems()))
+            add(createMenu("Help", createHelpItems()))
             updateRecentEnvironments()
             initLogic()
         }
@@ -115,6 +118,9 @@ object MenuBarView : View {
         toggleTurfActionOpt.addActionListener { LayersManager.toggleType(TYPE_TURF) }
         toggleObjActionOpt.addActionListener { LayersManager.toggleType(TYPE_OBJ) }
         toggleMobActionOpt.addActionListener { LayersManager.toggleType(TYPE_MOB) }
+
+        // Help
+        aboutBtn.addActionListener { Dialog.showHtmlContent("StrongDMM", "about.html", 375, 300) }
     }
 
     private fun createFileItems() = arrayOf<JComponent>(
@@ -142,7 +148,7 @@ object MenuBarView : View {
         fillSelectModeOpt,
         pickSelectModeOpt,
         JSeparator(),
-        saveMode
+        createMenu("Save Mode", arrayOf(tgmSaveModeOpt, byondSaveModeOpt))
     )
 
     private fun createOptionsItems() = arrayOf<JComponent>(
@@ -160,6 +166,10 @@ object MenuBarView : View {
         toggleTurfActionOpt,
         toggleObjActionOpt,
         toggleMobActionOpt
+    )
+
+    private fun createHelpItems() = arrayOf<JComponent>(
+        aboutBtn
     )
 
     fun updateUndoable() {

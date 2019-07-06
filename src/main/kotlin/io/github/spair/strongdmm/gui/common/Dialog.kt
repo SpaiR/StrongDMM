@@ -2,8 +2,11 @@ package io.github.spair.strongdmm.gui.common
 
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import java.awt.BorderLayout
+import java.awt.Desktop
+import java.awt.Dimension
 import java.io.File
 import javax.swing.*
+import javax.swing.event.HyperlinkEvent
 import javax.swing.filechooser.FileNameExtensionFilter
 import kotlin.concurrent.thread
 
@@ -63,5 +66,28 @@ object Dialog {
             JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE
         )
+    }
+
+    fun showHtmlContent(title: String, resPath: String, width: Int = 500, height: Int = 500) {
+        val textPane = JEditorPane().apply {
+            border = BorderUtil.createEmptyBorder()
+            contentType = "text/html"
+            text = Dialog::class.java.classLoader.getResource(resPath)!!.readText()
+            isEditable = false
+
+            addHyperlinkListener {
+                if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
+                    Desktop.getDesktop().browse(it.url.toURI())
+                }
+            }
+        }
+
+        JDialog(PrimaryFrame, title, true).apply {
+            size = Dimension(width, height)
+            setLocationRelativeTo(PrimaryFrame)
+            add(textPane)
+            isVisible = true
+            dispose()
+        }
     }
 }
