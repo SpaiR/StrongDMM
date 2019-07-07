@@ -15,6 +15,9 @@ object KeyboardProcessor {
         Keyboard.KEY_W to Shortcut.CTRL_W,
         Keyboard.KEY_O to Shortcut.CTRL_O,
         Keyboard.KEY_Z to Shortcut.CTRL_Z,
+        Keyboard.KEY_X to Shortcut.CTRL_X,
+        Keyboard.KEY_C to Shortcut.CTRL_C,
+        Keyboard.KEY_V to Shortcut.CTRL_V,
         Keyboard.KEY_1 to Shortcut.CTRL_1,
         Keyboard.KEY_2 to Shortcut.CTRL_2,
         Keyboard.KEY_3 to Shortcut.CTRL_3,
@@ -36,6 +39,11 @@ object KeyboardProcessor {
         Keyboard.KEY_3 to Shortcut.ALT_3
     )
 
+    private val plainMappings = mapOf(
+        Keyboard.KEY_DELETE to Shortcut.DELETE,
+        Keyboard.KEY_ESCAPE to Shortcut.ESCAPE
+    )
+
     fun fire() {
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) {
@@ -48,6 +56,8 @@ object KeyboardProcessor {
                     }
                 } else if (isAltDown()) {
                     altMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
+                } else {
+                    plainMappings[Keyboard.getEventKey()]?.let(this::fireShortcut)
                 }
             }
         }

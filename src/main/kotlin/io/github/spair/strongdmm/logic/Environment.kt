@@ -14,6 +14,7 @@ import io.github.spair.strongdmm.logic.dme.Dme
 import io.github.spair.strongdmm.logic.dme.SdmmParser
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.TileItemProvider
+import io.github.spair.strongdmm.logic.map.TileOperation
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -100,5 +101,6 @@ object Environment {
         TabbedObjectPanelView.clean()
         TileItemProvider.clean()
         TabbedMapPanelView.clean()
+        TileOperation.clean()
     }
 }

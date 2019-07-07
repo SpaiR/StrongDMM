@@ -11,6 +11,7 @@ import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.edit.LayersFilter
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.map.ModOperation
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.Environment
@@ -41,6 +42,11 @@ object MenuBarView : View {
     // Edit
     private val undoActionBtn = createButton("Undo", false).addCtrlShortcut('Z')
     private val redoActionBtn = createButton("Redo", false).addCtrlShiftShortcut('Z')
+    private val cutBtn = createButton("Cut").addCtrlShortcut('X')
+    private val copyBtn = createButton("Copy").addCtrlShortcut('C')
+    private val pasteBtn = createButton("Paste").addCtrlShortcut('V')
+    private val deleteBtn = createButton("Delete").addPlainShortcut(KeyEvent.VK_DELETE)
+    private val deselectBtn = createButton("Deselect").addPlainShortcut(KeyEvent.VK_ESCAPE)
     private val addSelectModeOpt = createRadioButton("Add Select Mode", true).addAltShortcut('1')
     private val fillSelectModeOpt = createRadioButton("Fill Select Mode").addAltShortcut('2')
     private val pickSelectModeOpt = createRadioButton("Pick Select Mode").addAltShortcut('3')
@@ -102,6 +108,11 @@ object MenuBarView : View {
         // Edit
         undoActionBtn.addActionListener { ActionController.undoAction() }
         redoActionBtn.addActionListener { ActionController.redoAction() }
+        cutBtn.addActionListener { ModOperation.cut(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
+        copyBtn.addActionListener { ModOperation.copy(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
+        pasteBtn.addActionListener { ModOperation.paste(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
+        deleteBtn.addActionListener { ModOperation.delete(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
+        deselectBtn.addActionListener { SelectOperation.depickArea() }
         ButtonGroup().run {
             add(addSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
             add(fillSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.FILL) } })
@@ -143,6 +154,12 @@ object MenuBarView : View {
     private fun createEditItems() = arrayOf<JComponent>(
         undoActionBtn,
         redoActionBtn,
+        JSeparator(),
+        cutBtn,
+        copyBtn,
+        pasteBtn,
+        deleteBtn,
+        deselectBtn,
         JSeparator(),
         addSelectModeOpt,
         fillSelectModeOpt,
@@ -203,6 +220,11 @@ object MenuBarView : View {
                 Shortcut.CTRL_SHIFT_O -> availableMapsBtn
                 Shortcut.CTRL_Z -> undoActionBtn
                 Shortcut.CTRL_SHIFT_Z -> redoActionBtn
+                Shortcut.CTRL_X -> cutBtn
+                Shortcut.CTRL_C -> copyBtn
+                Shortcut.CTRL_V -> pasteBtn
+                Shortcut.DELETE -> deleteBtn
+                Shortcut.ESCAPE -> deselectBtn
                 Shortcut.ALT_1 -> addSelectModeOpt
                 Shortcut.ALT_2 -> fillSelectModeOpt
                 Shortcut.ALT_3 -> pickSelectModeOpt
@@ -360,6 +382,10 @@ object MenuBarView : View {
         return JRadioButtonMenuItem(text).apply {
             this.isSelected = isSelected
         }
+    }
+
+    private fun JMenuItem.addPlainShortcut(char: Int) = apply {
+        accelerator = KeyStroke.getKeyStroke(char, 0)
     }
 
     private fun JMenuItem.addCtrlShortcut(char: Char) = apply {

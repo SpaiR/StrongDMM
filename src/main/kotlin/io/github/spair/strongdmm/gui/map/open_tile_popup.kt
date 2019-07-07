@@ -58,33 +58,33 @@ private fun JPopupMenu.addResetActions() {
 }
 
 private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
-    add(JMenuItem("Cut").apply {
+    add(JMenuItem("Cut (Ctrl+X)").apply {
         addActionListener {
             ModOperation.cut(map, currentTile.x, currentTile.y)
         }
     })
 
-    add(JMenuItem("Copy").apply {
+    add(JMenuItem("Copy (Ctrl+C)").apply {
         addActionListener {
             ModOperation.copy(map, currentTile.x, currentTile.y)
         }
     })
 
-    add(JMenuItem("Paste").apply {
+    add(JMenuItem("Paste (Ctrl+V)").apply {
         isEnabled = TileOperation.hasTileInBuffer()
         addActionListener {
             ModOperation.paste(map, currentTile.x, currentTile.y)
         }
     })
 
-    add(JMenuItem("Delete").apply {
+    add(JMenuItem("Delete (Del)").apply {
         addActionListener {
             ModOperation.delete(map, currentTile.x, currentTile.y)
         }
     })
 
     if (SelectOperation.isPickType()) {
-        add(JMenuItem("Deselect").apply {
+        add(JMenuItem("Deselect (Esc)").apply {
             addActionListener {
                 SelectOperation.depickArea()
             }

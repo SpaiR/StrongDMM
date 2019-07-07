@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.action.MultipleAction
 import io.github.spair.strongdmm.logic.action.TileReplaceAction
@@ -7,9 +8,13 @@ import io.github.spair.strongdmm.logic.action.Undoable
 import kotlin.math.max
 import kotlin.math.min
 
-object TileOperation {
+object TileOperation : EnvCleanable {
 
     private val tilesBuffer: MutableMap<CoordPoint, IntArray> = hashMapOf()
+
+    override fun clean() {
+        tilesBuffer.clear()
+    }
 
     fun hasTileInBuffer(): Boolean = tilesBuffer.isNotEmpty()
 

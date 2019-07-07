@@ -108,4 +108,7 @@ object MapView : View, EnvCleanable {
     }
 
     fun isMapLoadingInProcess(): Boolean = pipeline.mapLoadingInProcess
+
+    fun getMouseTileX(): Int = pipeline.xMouseMap
+    fun getMouseTileY(): Int = pipeline.yMouseMap
 }
