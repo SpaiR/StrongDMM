@@ -41,6 +41,16 @@ wrapper {
     gradleVersion = '5.4.1'
 }
 
+runShadow {
+    def sdmmParser = 'sdmmparser'
+
+    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        sdmmParser += '.exe'
+    }
+
+    jvmArgs(['-Djava.library.path=./libs', "-Dsdmmparser.path=./libs/$sdmmParser"])
+}
+
 processResources {
     filesMatching('*.html') {
         // Replace '${version}' placeholder with actual version
