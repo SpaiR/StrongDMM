@@ -9,7 +9,7 @@ import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.map.saveMap
+import io.github.spair.strongdmm.logic.map.save.SaveMap
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -163,7 +163,7 @@ object TabbedMapPanelView : View, EnvCleanable {
             if (ActionController.hasChanges(dmm)) {
                 val answer = Dialog.askToSaveMap(dmm.mapName)
                 if (answer == Dialog.MAP_SAVE_YES) {
-                    saveMap(dmm)
+                    SaveMap(dmm)
                 } else if (answer == Dialog.MAP_SAVE_CANCEL) {
                     return
                 }

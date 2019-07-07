@@ -11,7 +11,7 @@ import io.github.spair.strongdmm.logic.action.Undoable
 import io.github.spair.strongdmm.logic.dme.Dme
 import java.io.File
 
-class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
+class Dmm(mapFile: File, var initialDmmData: DmmData, dme: Dme) {
 
     val mapName: String = mapFile.nameWithoutExtension
     val mapPath: String = mapFile.path

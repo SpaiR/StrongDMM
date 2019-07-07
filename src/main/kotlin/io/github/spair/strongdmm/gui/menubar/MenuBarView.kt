@@ -18,7 +18,7 @@ import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.Workspace
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.LayersManager
-import io.github.spair.strongdmm.logic.map.saveMap
+import io.github.spair.strongdmm.logic.map.save.SaveMap
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
@@ -282,14 +282,14 @@ object MenuBarView : View {
     private fun createSaveSelectedMapAction() = ActionListener {
         MapView.getSelectedDmm()?.let {
             ActionController.resetActionBalance(it)
-            saveMap(it)
+            SaveMap(it)
         }
     }
 
     private fun createSaveAllMapsAction() = ActionListener {
         MapView.getOpenedMaps().forEach {
             ActionController.resetActionBalance(it)
-            saveMap(it)
+            SaveMap(it)
         }
     }
 

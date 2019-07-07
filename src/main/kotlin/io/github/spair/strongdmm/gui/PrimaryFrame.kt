@@ -4,7 +4,7 @@ import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.action.ActionController
-import io.github.spair.strongdmm.logic.map.saveMap
+import io.github.spair.strongdmm.logic.map.save.SaveMap
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Insets
@@ -34,7 +34,7 @@ object PrimaryFrame : JFrame() {
 
                 if (answer == Dialog.MAP_SAVE_YES) {
                     ActionController.resetActionBalance(map)
-                    saveMap(map)
+                    SaveMap(map)
                 } else if (answer == Dialog.MAP_SAVE_NO) {
                     continue
                 } else if (answer == Dialog.MAP_SAVE_CANCEL) {
