@@ -4,6 +4,7 @@ import com.eclipsesource.json.Json
 import com.eclipsesource.json.JsonArray
 import com.eclipsesource.json.JsonObject
 import com.eclipsesource.json.JsonValue
+import io.github.spair.strongdmm.common.VAR_NAME
 import java.io.BufferedReader
 import java.io.FileReader
 import java.nio.file.Files
@@ -60,8 +61,22 @@ class SdmmParser {
 
         val localVars = with(root.getVars()) {
             val vars = mutableMapOf<String, String>()
-            forEach { def -> vars[def.getName()] = sanitizeVar(def.getValue()) }
+            forEach { def ->
+                var value = sanitizeVar(def.getValue())
+
+                // Exceptional case for name variable
+                if (def.getName() == VAR_NAME && value == "null") {
+                    value = '"' + type.substringAfterLast('/') + '"'
+                }
+
+                vars[def.getName()] = value
+            }
             vars
+        }
+
+        // Exceptional case for name variable
+        if (!localVars.containsKey(VAR_NAME)) {
+            localVars[VAR_NAME] = '"' + type.substringAfterLast('/') + '"'
         }
 
         val childrenList = with(root.getChildren()) {
