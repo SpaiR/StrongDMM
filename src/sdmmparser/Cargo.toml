@@ -1,0 +1,20 @@
+[package]
+name = "sdmmparser"
+version = "0.0.1"
+
+[[bin]]
+name = "sdmmparser"
+path = "main.rs"
+
+[dependencies]
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+[dependencies.dreammaker]
+git = "https://github.com/SpaceManiac/SpacemanDMM"
+rev = "d304549816989dee8891ba2496ae7c8d00d0405b"
+package = "dreammaker"
+
+[profile.release]
+lto = true

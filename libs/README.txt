@@ -6,4 +6,4 @@ Two exceptional files are sdmmparser and sdmmparser.exe.
 Executable itself is used to parse BYOND environment and save JSON representation of it.
 Under the hood it uses SpacemanDMM library, which could be found by next link: https://github.com/SpaceManiac/SpacemanDMM
 
-Source code for 'sdmmparser' executable could be found in 'sdmmparser_source' file.
+Source code for 'sdmmparser' executable could be found in '~/src/sdmmparser' folder.
