@@ -38,6 +38,24 @@ Open [releases](https://github.com/SpaiR/StrongDMM/releases) page and download d
 No dependencies required, all packages are fully self containable.
 
 
+### How to build
+**Pre-requests:** JDK 8 or higher, Rust to compile 'sdmmparser'
+
+#### Editor:
+- **Build:** `gradlew clean build`
+- **Run:** `gradlew runShadow`
+- **Auto-format (for linter)**: `gradlew formatKotlin`
+
+#### sdmmparser (Optional):
+- **Build from root**: `cargo build --manifest-path=./src/sdmmparser/Cargo.toml`
+- **Build from sdmmparser folder**: `cargo build`
+- To build release (optimized) version just add `--release` flag in the end of the command.
+
+To parse BYOND environment StrongDMM uses SpacemanDMM parser. To utilize its functionality 'sdmmparser' is used.
+Most of the time you won't need to build it manually since pre-built exe could be found in `~/libs` folder.
+But if you'll decide to do it, you'll need to move your compiled executable under the `~/libs` folder.
+
+
 ### Credits
 Thanks to original [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
 and later supported by [TG](https://github.com/tgstation/FastDMM). A lot of good ideas were taken from there.<br>
