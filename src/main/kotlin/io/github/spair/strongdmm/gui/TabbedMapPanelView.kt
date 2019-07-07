@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.gui.common.BorderUtil
 import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.map.MapView
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.menubar.MenuBarView
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.Environment
@@ -32,6 +33,7 @@ object TabbedMapPanelView : View, EnvCleanable {
                 if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
                     MapView.openMap(indexHashList[selectedIndex])
                     MenuBarView.updateUndoable()
+                    SelectOperation.depickArea()
                 }
 
                 getTab(previousIndex)?.toggleBoldFont(false)
