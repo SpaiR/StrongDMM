@@ -58,55 +58,28 @@ private fun JPopupMenu.addResetActions() {
 }
 
 private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
-    fun getPickedTiles() = SelectOperation.getPickedTiles()?.takeIf { it.isNotEmpty() }
-
     add(JMenuItem("Cut").apply {
         addActionListener {
-            val pickedTiles = getPickedTiles()
-
-            if (pickedTiles != null) {
-                TileOperation.cut(map, pickedTiles)
-            } else {
-                TileOperation.cut(map, currentTile)
-            }
-
-            SelectOperation.depickArea()
-            Frame.update(true)
+            ModOperation.cut(map, currentTile.x, currentTile.y)
         }
     })
 
     add(JMenuItem("Copy").apply {
         addActionListener {
-            val pickedTiles = getPickedTiles()
-
-            if (pickedTiles != null) {
-                TileOperation.copy(pickedTiles)
-            } else {
-                TileOperation.copy(currentTile)
-            }
+            ModOperation.copy(map, currentTile.x, currentTile.y)
         }
     })
 
     add(JMenuItem("Paste").apply {
         isEnabled = TileOperation.hasTileInBuffer()
         addActionListener {
-            TileOperation.paste(map, currentTile.x, currentTile.y) { SelectOperation.pickArea(it) }
-            Frame.update(true)
+            ModOperation.paste(map, currentTile.x, currentTile.y)
         }
     })
 
     add(JMenuItem("Delete").apply {
         addActionListener {
-            val pickedTiles = getPickedTiles()
-
-            if (pickedTiles != null) {
-                TileOperation.delete(map, pickedTiles)
-            } else {
-                TileOperation.delete(map, currentTile)
-            }
-
-            SelectOperation.depickArea()
-            Frame.update(true)
+            ModOperation.delete(map, currentTile.x, currentTile.y)
         }
     })
 
