@@ -8,7 +8,7 @@ plugins {
 
 application {
     group 'io.github.spair'
-    version '0.0.5'
+    version '0.0.6'
     mainClassName = 'io.github.spair.strongdmm.MainKt'
 }
 
