@@ -8,11 +8,9 @@ import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.action.SwapTileItemAction
+import io.github.spair.strongdmm.logic.action.SwitchTileItemsAction
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
-import io.github.spair.strongdmm.logic.map.Dmm
-import io.github.spair.strongdmm.logic.map.Tile
-import io.github.spair.strongdmm.logic.map.TileItemComparator
-import io.github.spair.strongdmm.logic.map.TileOperation
+import io.github.spair.strongdmm.logic.map.*
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.Display
 import javax.swing.JMenu
@@ -129,13 +127,40 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.getTileItems().sortedWith(TileItemComparator).forEach { tileItem ->
+    currentTile.getTileItems().sortedWith(TileItemComparator).reverseTileMovables().forEach { tileItem ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }
 
         DmiProvider.getSpriteFromDmi(tileItem.icon, tileItem.iconState, tileItem.dir)?.let { spite ->
             menu.icon = spite.scaledIcon
+        }
+
+        // Moving can be done only for objects and mobs.
+        if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
+            menu.add(JMenuItem("Move to Top").apply {
+                addActionListener {
+                    val higherItemId = currentTile.getHigherItemId(tileItem.id)
+                    if (higherItemId != NON_EXISTENT_INT) {
+                        currentTile.switchTileItems(tileItem.id, higherItemId)
+                        ActionController.addUndoAction(SwitchTileItemsAction(currentTile, higherItemId, tileItem.id))
+                        Frame.update(true)
+                    }
+                }
+            })
+
+            menu.add(JMenuItem("Move to Bottom").apply {
+                addActionListener {
+                    val lowerItemId = currentTile.getLowerItemId(tileItem.id)
+                    if (lowerItemId != NON_EXISTENT_INT) {
+                        currentTile.switchTileItems(tileItem.id, lowerItemId)
+                        ActionController.addUndoAction(SwitchTileItemsAction(currentTile, lowerItemId, tileItem.id))
+                        Frame.update(true)
+                    }
+                }
+            })
+
+            menu.addSeparator()
         }
 
         menu.add(JMenuItem("Make Active Object (Ctrl+Shift+Click)").apply {
@@ -160,7 +185,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
             }
         }
 
-        menu.add(JMenuItem("View Variables")).apply {
+        menu.add(JMenuItem("Edit Variables...")).apply {
             addActionListener {
                 if (ViewVariablesDialog(currentTile, tileItem).open()) {
                     Frame.update(true)
@@ -168,4 +193,26 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
             }
         }
     }
+}
+
+// Method to reverse all movables in the tile items list.
+// Used on the sorted list which will have structure like 'area -> movables -> turf' for sure.
+// Method itself is needed to show tile items in popup menu properly.
+// Like area goes first, then all movables sorted from top to bottom and then turf.
+private fun List<TileItem>.reverseTileMovables(): List<TileItem> {
+    // We have only area and turf
+    if (this.size == 2) {
+        return this
+    }
+
+    val area = this.first()
+    val turf = this.last()
+    val movables = this.subList(1, this.size - 1).reversed()
+    val result = mutableListOf<TileItem>()
+
+    result.add(area)
+    result.addAll(movables)
+    result.add(turf)
+
+    return result
 }
