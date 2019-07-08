@@ -9,9 +9,9 @@ class KeyGenerator(private val dmmData: DmmData) {
         private const val BASE: Double = 52.0
 
         // We can have only three tiers of keys, more here: https://secure.byond.com/forum/?post=2340796#comment23770802
-        const val TIR_1_LIMIT: Int = 51 // a-Z
-        const val TIR_2_LIMIT: Int = 2703 // aa-ZZ
-        const val TIR_3_LIMIT: Int = 65535 // aaa-ymp
+        private const val TIER_1_LIMIT: Int = 51 // a-Z
+        private const val TIER_2_LIMIT: Int = 2703 // aa-ZZ
+        private const val TIER_3_LIMIT: Int = 65535 // aaa-ymp
     }
 
     private val base52keys: CharArray = charArrayOf(
@@ -23,9 +23,9 @@ class KeyGenerator(private val dmmData: DmmData) {
 
     fun createKey(): String {
         val freeKeys = when {
-            dmmData.keyLength == 1 -> TIR_1_LIMIT
-            dmmData.keyLength == 2 -> TIR_2_LIMIT
-            else -> TIR_3_LIMIT
+            dmmData.keyLength == 1 -> TIER_1_LIMIT
+            dmmData.keyLength == 2 -> TIER_2_LIMIT
+            else -> TIER_3_LIMIT
         }
 
         var num = 0
@@ -37,11 +37,11 @@ class KeyGenerator(private val dmmData: DmmData) {
             num++
         }
 
-        if (freeKeys == TIR_1_LIMIT && num > TIR_1_LIMIT) {
+        if (freeKeys == TIER_1_LIMIT && num > TIER_1_LIMIT) {
             throw RecreateKeysException(2)
-        } else if (freeKeys == TIR_2_LIMIT && num > TIR_2_LIMIT) {
+        } else if (freeKeys == TIER_2_LIMIT && num > TIER_2_LIMIT) {
             throw RecreateKeysException(3)
-        } else if (num > TIR_3_LIMIT) {
+        } else if (num > TIER_3_LIMIT) {
             throw IllegalStateException("Unable to create new key. Limit of keys is exceeded.")
         }
 

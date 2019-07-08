@@ -26,9 +26,6 @@ class SaveMap(private val dmm: Dmm) {
         unusedKeys = dmm.initialDmmData.keys.toMutableSet()
 
         save()
-
-        // Replace initial data with one which was saved, since it's in the file now.
-        dmm.initialDmmData = outputDmmData
     }
 
     private fun save() {
@@ -141,20 +138,15 @@ class SaveMap(private val dmm: Dmm) {
         unusedKeys.clear()
     }
 
-    // If our keys could be fitted in lesser key length, then we will create all keys with lesser tier from scratch.
+    // Even if we can fit our map keys in a less length the editor won't do that.
+    // It's okay to recreate all keys from scratch when we overflow our limit.
+    // But when our limit was increased we can easily use it to represent the map even if it has two unique keys.
+    // At the same time, key length reduction will result in an abnormal map diff, which may result in a lot of conflicts.
+    // Thus the only case when Editor will reduce key length is when we have only one key on the map. Just because I can.
     private fun trimSizeIfNeeded() {
-        var newSize = -1
-        val keysNumber = outputDmmData.keys.size - 1 // Value for tier limit starts from zero.
-
-        if (keysNumber <= KeyGenerator.TIR_1_LIMIT && outputDmmData.keyLength >= 2) {
-            newSize = 1
-        } else if (keysNumber <= KeyGenerator.TIR_2_LIMIT && outputDmmData.keyLength >= 3) {
-            newSize = 2
-        }
-
-        if (newSize != -1) {
+        if (outputDmmData.keys.size == 1) {
             clearKeyAndTileContent()
-            outputDmmData.keyLength = newSize
+            outputDmmData.keyLength = 1
             fillRemainingTiles()
         }
     }
