@@ -52,7 +52,9 @@ class SdmmParser {
             }
         }
 
+        dme.postInit()
         tmpFile.delete()
+
         return dme
     }
 

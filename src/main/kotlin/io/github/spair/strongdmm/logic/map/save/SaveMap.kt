@@ -38,8 +38,8 @@ class SaveMap(private val dmm: Dmm) {
 
     // Sanitize custom vars from values defined in the code
     private fun sanitizeMap() {
-        for (x in 1..dmm.maxX) {
-            for (y in 1..dmm.maxY) {
+        for (x in 1..dmm.getMaxX()) {
+            for (y in 1..dmm.getMaxY()) {
                 dmm.getTile(x, y)!!.let { tile ->
                     for (tileItem in tile.getTileItems()) {
                         if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {

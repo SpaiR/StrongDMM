@@ -4,6 +4,7 @@ import io.github.spair.strongdmm.gui.PrimaryFrame
 import java.awt.BorderLayout
 import java.awt.Desktop
 import java.awt.Dimension
+import java.awt.FlowLayout
 import java.io.File
 import javax.swing.*
 import javax.swing.event.HyperlinkEvent
@@ -89,5 +90,44 @@ object Dialog {
             isVisible = true
             dispose()
         }
+    }
+
+    fun askMapSize(initX: Int, initY: Int): Pair<Int, Int>? {
+        val xEditField = JTextField("$initX", 5)
+        val yEditField = JTextField("$initY", 5)
+
+        JDialog(PrimaryFrame, "Set Map Size", true).apply {
+            val dialog = this
+
+            size = Dimension(200, 115)
+            setLocationRelativeTo(PrimaryFrame)
+
+            add(JPanel(FlowLayout(FlowLayout.CENTER)).apply {
+                add(JPanel().apply {
+                    add(JLabel("X:"))
+                    add(xEditField)
+                })
+                add(JPanel().apply {
+                    add(JLabel("Y:"))
+                    add(yEditField)
+                })
+            })
+            add(JPanel().apply {
+                add(JButton("OK").apply {
+                    preferredSize = Dimension(80, 20)
+                    addActionListener {
+                        dialog.isVisible = false
+                    }
+                })
+            }, BorderLayout.SOUTH)
+
+            isVisible = true
+            dispose()
+        }
+
+        val x = xEditField.text.toIntOrNull()
+        val y = yEditField.text.toIntOrNull()
+
+        return if ((x != null && x != initX && x > 1) && (y != null && y != initY && y > 1)) Pair(x, y) else null
     }
 }

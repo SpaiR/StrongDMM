@@ -10,6 +10,7 @@ import io.github.spair.strongdmm.gui.common.BorderUtil
 import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.edit.LayersFilter
+import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.gui.map.MapView
 import io.github.spair.strongdmm.gui.map.ModOperation
 import io.github.spair.strongdmm.gui.map.select.SelectOperation
@@ -18,6 +19,7 @@ import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.Workspace
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.map.LayersManager
+import io.github.spair.strongdmm.logic.map.MapManager
 import io.github.spair.strongdmm.logic.map.save.SaveMap
 import java.awt.event.ActionListener
 import java.awt.event.InputEvent
@@ -55,6 +57,7 @@ object MenuBarView : View {
     private val byondSaveModeOpt = createRadioButton("BYOND", !Workspace.isTgmSaveMode())
 
     // Options
+    private val setMapSizeBtn = createButton("Set Map Size...")
     private val nextMapBtn = createButton("Next Map").addCtrlShortcut(KeyEvent.VK_RIGHT)
     private val prevMapBtn = createButton("Prev Map").addCtrlShortcut(KeyEvent.VK_LEFT)
     private val frameAreasOpt = createRadioButton("Frame Areas", true)
@@ -100,6 +103,7 @@ object MenuBarView : View {
         exitMenuBtn.addActionListener { PrimaryFrame.handleWindowClosing() }
 
         // Options
+        setMapSizeBtn.addActionListener(createSetMapSizeAction())
         nextMapBtn.addActionListener { TabbedMapPanelView.selectNextMap() }
         prevMapBtn.addActionListener { TabbedMapPanelView.selectPrevMap() }
         frameAreasOpt.addActionListener { MapView.switchAreasFraming() }
@@ -169,6 +173,8 @@ object MenuBarView : View {
     )
 
     private fun createOptionsItems() = arrayOf<JComponent>(
+        setMapSizeBtn,
+        JSeparator(),
         nextMapBtn,
         prevMapBtn,
         JSeparator(),
@@ -361,6 +367,15 @@ object MenuBarView : View {
             }
 
             recentMapsMenu.add(openButton)
+        }
+    }
+
+    private fun createSetMapSizeAction() = ActionListener {
+        MapView.getSelectedDmm()?.let { dmm ->
+            Dialog.askMapSize(dmm.getMaxX(), dmm.getMaxY())?.let { (x, y) ->
+                MapManager.setMapSize(dmm, x, y)
+                Frame.update(true)
+            }
         }
     }
 

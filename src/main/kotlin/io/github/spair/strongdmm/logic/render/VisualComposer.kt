@@ -54,11 +54,11 @@ object VisualComposer {
                 val tileX = xMapOff + x
                 val tileY = yMapOff + y
 
-                if (tileX < 1 || tileX > dmm.maxX || tileY < 1 || tileY > dmm.maxY) {
+                if (tileX < 1 || tileX > dmm.getMaxX() || tileY < 1 || tileY > dmm.getMaxY()) {
                     continue
                 }
 
-                val tile = dmm.getTile(tileX, tileY)!!
+                val tile = dmm.getTile(tileX, tileY)
 
                 val renderX = (tileX - 1) * dmm.iconSize
                 val renderY = (tileY - 1) * dmm.iconSize
@@ -66,7 +66,7 @@ object VisualComposer {
                 var currentAreaType: String? = null
 
                 // Collect render instances
-                for (tileItemId in tile.unsafeTileItemsIDs()) {
+                for (tileItemId in tile?.unsafeTileItemsIDs() ?: intArrayOf()) {
                     val tileItem = TileItemProvider.getByID(tileItemId)
 
                     if (drawAreasBorder && currentAreaType == null && tileItem.isType(TYPE_AREA)) {

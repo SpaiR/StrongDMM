@@ -1,5 +1,8 @@
 package io.github.spair.strongdmm.logic.map
 
+import io.github.spair.dmm.io.TileContent
+import io.github.spair.dmm.io.TileObject
+import io.github.spair.dmm.io.TileObjectComparator
 import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.logic.Environment
 
@@ -178,5 +181,21 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
         swapTileItem(tileItem.id, newTileItem.id)
         return newTileItem
+    }
+
+    fun getTileContent(): TileContent {
+        val tileContent = TileContent()
+        val tileObjects = mutableListOf<TileObject>()
+
+        getTileItems().forEach { tileItem ->
+            val tileObject = TileObject(tileItem.type)
+            tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
+            tileObjects.add(tileObject)
+        }
+
+        // Consider to look at TileObjectComparator source if this line cause you a question
+        tileObjects.sortedWith(TileObjectComparator()).forEach(tileContent::addTileObject)
+
+        return tileContent
     }
 }
