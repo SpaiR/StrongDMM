@@ -13,7 +13,7 @@ serde_json = "1.0"
 
 [dependencies.dreammaker]
 git = "https://github.com/SpaceManiac/SpacemanDMM"
-rev = "d304549816989dee8891ba2496ae7c8d00d0405b"
+rev = "c0963bb31a6c37f431523e4b6ff8b171d1e3920e"
 package = "dreammaker"
 
 [profile.release]
