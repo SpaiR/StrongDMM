@@ -52,7 +52,7 @@ object Environment {
         val dmm = Dmm(mapFile, dmmData, dme)
 
         StatusView.showLoader("Loading ${dmm.mapName}..")
-        PrimaryFrame.isEnabled = false
+        PrimaryFrame.block()
         MapView.openMap(dmm)
 
         // Let it load map without interruptions from user side
@@ -61,7 +61,7 @@ object Environment {
                 Thread.yield()
             }
 
-            PrimaryFrame.isEnabled = true
+            PrimaryFrame.unblock()
             StatusView.hideLoader()
 
             TabbedMapPanelView.addMapTab(dmm)

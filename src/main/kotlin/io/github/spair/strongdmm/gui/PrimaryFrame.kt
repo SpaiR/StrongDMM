@@ -34,7 +34,9 @@ object PrimaryFrame : JFrame() {
 
                 if (answer == Dialog.MAP_SAVE_YES) {
                     ActionController.resetActionBalance(map)
+                    block()
                     SaveMap(map)
+                    unblock()
                 } else if (answer == Dialog.MAP_SAVE_NO) {
                     continue
                 } else if (answer == Dialog.MAP_SAVE_CANCEL) {
@@ -44,6 +46,14 @@ object PrimaryFrame : JFrame() {
         }
 
         exitProcess(0)
+    }
+
+    fun block() {
+        isEnabled = false
+    }
+
+    fun unblock() {
+        isEnabled = true
     }
 
     private fun initUI() {

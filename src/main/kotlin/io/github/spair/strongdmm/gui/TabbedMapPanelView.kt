@@ -165,7 +165,9 @@ object TabbedMapPanelView : View, EnvCleanable {
             if (ActionController.hasChanges(dmm)) {
                 val answer = Dialog.askToSaveMap(dmm.mapName)
                 if (answer == Dialog.MAP_SAVE_YES) {
+                    PrimaryFrame.block()
                     SaveMap(dmm)
+                    PrimaryFrame.unblock()
                 } else if (answer == Dialog.MAP_SAVE_CANCEL) {
                     return
                 }

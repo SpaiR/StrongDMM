@@ -288,14 +288,18 @@ object MenuBarView : View {
     private fun createSaveSelectedMapAction() = ActionListener {
         MapView.getSelectedDmm()?.let {
             ActionController.resetActionBalance(it)
+            PrimaryFrame.block()
             SaveMap(it)
+            PrimaryFrame.unblock()
         }
     }
 
     private fun createSaveAllMapsAction() = ActionListener {
         MapView.getOpenedMaps().forEach {
             ActionController.resetActionBalance(it)
+            PrimaryFrame.block()
             SaveMap(it)
+            PrimaryFrame.unblock()
         }
     }
 
