@@ -30,10 +30,10 @@ object Dialog {
         }
     }
 
-    fun createFile(desc: String, root: String = System.getProperty("user.home")): File? {
+    fun createFile(desc: String, ext: String, root: String = System.getProperty("user.home")): File? {
         val fileChooser = JFileChooser(root).apply {
             isAcceptAllFileFilterUsed = false
-            addChoosableFileFilter(FileNameExtensionFilter(desc, "dmm"))
+            addChoosableFileFilter(FileNameExtensionFilter(desc, ext))
         }
 
         return if (fileChooser.showSaveDialog(PrimaryFrame) == JFileChooser.APPROVE_OPTION) {
