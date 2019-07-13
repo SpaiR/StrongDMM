@@ -54,6 +54,8 @@ object Environment {
         StatusView.showLoader("Loading ${dmm.mapName}..")
         PrimaryFrame.block()
         MapView.openMap(dmm)
+        Workspace.addRecentMap(Environment.dme.path, mapFile.absolutePath)
+        MenuBarView.updateRecentMaps()
 
         // Let it load map without interruptions from user side
         thread(start = true) {

@@ -26,7 +26,7 @@ object RenderInstanceProvider {
         val mobs = mutableSetOf<Int>()
 
         for (x in 1..dmm.getMaxX()) {
-            for (y in 1..dmm.getMaxX()) {
+            for (y in 1..dmm.getMaxY()) {
                 val tile = dmm.getTile(x, y)!!
                 area.addAll(tile.getAllTileItemsIsType(TYPE_AREA).map { it.id })
                 turf.addAll(tile.getAllTileItemsIsType(TYPE_TURF).map { it.id })

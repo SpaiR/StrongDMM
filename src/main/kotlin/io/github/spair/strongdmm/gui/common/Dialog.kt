@@ -30,6 +30,25 @@ object Dialog {
         }
     }
 
+    fun createFile(desc: String, root: String = System.getProperty("user.home")): File? {
+        val fileChooser = JFileChooser(root).apply {
+            isAcceptAllFileFilterUsed = false
+            addChoosableFileFilter(FileNameExtensionFilter(desc, "dmm"))
+        }
+
+        return if (fileChooser.showSaveDialog(PrimaryFrame) == JFileChooser.APPROVE_OPTION) {
+            val file = fileChooser.selectedFile
+
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+
+            file
+        } else {
+            null
+        }
+    }
+
     // Blocks main frame and does some blocking stuff while showing indeterminate progress bar
     fun runWithProgressBar(progressText: String, action: () -> Unit) {
         val progressLabel = JLabel(progressText).apply {
@@ -128,6 +147,6 @@ object Dialog {
         val x = xEditField.text.toIntOrNull()
         val y = yEditField.text.toIntOrNull()
 
-        return if ((x != null && x != initX && x > 1) && (y != null && y != initY && y > 1)) Pair(x, y) else null
+        return if ((x != null && x > 0) && (y != null && y > 0)) Pair(x, y) else null
     }
 }

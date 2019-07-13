@@ -32,6 +32,7 @@ object MenuBarView : View {
     // File
     private val openEnvBtn = createButton("Open Environment...")
     private val recentEnvMenu = createMenu("Recent Environments")
+    private val newMapBtn = createButton("New Map...", false).addCtrlShortcut('N')
     private val openMapBtn = createButton("Open Map...", false).addCtrlShortcut('O')
     private val availableMapsBtn = createButton("Open Available Map", false).addCtrlShiftShortcut('O')
     private val recentMapsMenu = createMenu("Recent Maps", isEnabled = false)
@@ -75,7 +76,7 @@ object MenuBarView : View {
 
     // Enabled when environment becomes available
     private val envDependentButtons = arrayOf(
-        saveBtn, saveAllBtn, openMapBtn, closeBtn, closeAllBtn,
+        newMapBtn, saveBtn, saveAllBtn, openMapBtn, closeBtn, closeAllBtn,
         availableMapsBtn, layersFilterActionBtn, recentMapsMenu
     )
 
@@ -93,6 +94,7 @@ object MenuBarView : View {
 
     private fun initLogic() {
         // File
+        newMapBtn.addActionListener(createNewMapAction())
         openEnvBtn.addActionListener(createOpenEnvironmentAction())
         openMapBtn.addActionListener(createOpenMapAction())
         availableMapsBtn.addActionListener(createOpenMapFromAvailableAction())
@@ -142,6 +144,7 @@ object MenuBarView : View {
         openEnvBtn,
         recentEnvMenu,
         JSeparator(),
+        newMapBtn,
         openMapBtn,
         availableMapsBtn,
         recentMapsMenu,
@@ -213,6 +216,7 @@ object MenuBarView : View {
         SwingUtilities.invokeLater {
             when (shortcut) {
                 // File
+                Shortcut.CTRL_N -> newMapBtn
                 Shortcut.CTRL_O -> openMapBtn
                 Shortcut.CTRL_S -> saveBtn
                 Shortcut.CTRL_SHIFT_S -> saveAllBtn
@@ -259,6 +263,28 @@ object MenuBarView : View {
             TYPE_MOB -> toggleMobActionOpt
             else -> null
         }?.isSelected = isSelected
+    }
+
+    fun updateRecentMaps() {
+        recentMapsMenu.removeAll()
+
+        val envPath = Environment.dme.path
+
+        Workspace.getRecentMapsPaths(envPath).forEach { dmmFilePath ->
+            val openButton = createButton(dmmFilePath)
+
+            openButton.addActionListener {
+                val file = File(dmmFilePath)
+                if (file.exists()) {
+                    Environment.openMap(file)
+                } else {
+                    recentMapsMenu.remove(openButton)
+                    Workspace.removeRecentMap(envPath, dmmFilePath)
+                }
+            }
+
+            recentMapsMenu.add(openButton)
+        }
     }
 
     private fun createOpenEnvironmentAction() = ActionListener {
@@ -348,37 +374,24 @@ object MenuBarView : View {
 
     private fun openMap(dmmFilePath: String) {
         Environment.openMap(dmmFilePath)
-        Workspace.addRecentMap(Environment.dme.path, dmmFilePath)
-        updateRecentMaps()
-    }
-
-    private fun updateRecentMaps() {
-        recentMapsMenu.removeAll()
-
-        val envPath = Environment.dme.path
-
-        Workspace.getRecentMapsPaths(envPath).forEach { dmmFilePath ->
-            val openButton = createButton(dmmFilePath)
-
-            openButton.addActionListener {
-                val file = File(dmmFilePath)
-                if (file.exists()) {
-                    Environment.openMap(file)
-                } else {
-                    recentMapsMenu.remove(openButton)
-                    Workspace.removeRecentMap(envPath, dmmFilePath)
-                }
-            }
-
-            recentMapsMenu.add(openButton)
-        }
     }
 
     private fun createSetMapSizeAction() = ActionListener {
         MapView.getSelectedDmm()?.let { dmm ->
             Dialog.askMapSize(dmm.getMaxX(), dmm.getMaxY())?.let { (x, y) ->
-                MapManager.setMapSize(dmm, x, y)
-                Frame.update(true)
+                if (x != dmm.getMaxX() || dmm.getMaxY() != y) {
+                    MapManager.setMapSize(dmm, x, y)
+                    Frame.update(true)
+                }
+            }
+        }
+    }
+
+    private fun createNewMapAction() = ActionListener {
+        Dialog.createFile("New BYOND Map (*.dmm)", Environment.absoluteRootPath)?.let { mapFile ->
+            Dialog.askMapSize(1, 1)?.let { (initX, initY) ->
+                MapManager.saveNewMap(mapFile, initX, initY)
+                Environment.openMap(mapFile)
             }
         }
     }

@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard
 object KeyboardProcessor {
 
     private val ctrlMappings = mapOf(
+        Keyboard.KEY_N to Shortcut.CTRL_N,
         Keyboard.KEY_Q to Shortcut.CTRL_Q,
         Keyboard.KEY_S to Shortcut.CTRL_S,
         Keyboard.KEY_W to Shortcut.CTRL_W,
