@@ -99,39 +99,50 @@ class SaveMap(private val dmm: Dmm) {
 
     // Fill remaining tiles (use unused keys or generate a new one)
     private fun fillRemainingTiles() {
-        if (outputDmmData.tileContentsWithKeys.size != outputDmmData.tileContentsWithLocations.size) {
-            for (y in outputDmmData.maxY downTo 1) {
-                for (x in 1..outputDmmData.maxX) {
-                    val location = TileLocation.of(x, y)
-                    val tileContent = dmm.getTileContentByLocation(location)
+        if (outputDmmData.tileContentsWithKeys.size == outputDmmData.tileContentsWithLocations.size) {
+            unusedKeys.clear()
+            return // All locations have its own key
+        }
 
-                    if (!outputDmmData.hasKeyByTileContent(tileContent)) {
-                        var key: String? = null
+        val locsWithoutKey = mutableListOf<TileLocation>()
 
-                        if (unusedKeys.isEmpty()) {
-                            key = keyGenerator.createKey()
-                        } else {
-                            // from all unused keys we will try to find the most appropriate
-                            for (unusedKey in unusedKeys) {
-                                if (dmm.initialDmmData.getKeyByLocation(location) == unusedKey) {
-                                    key = unusedKey
-                                    unusedKeys.remove(key)
-                                    break
-                                }
-                            }
+        // Collect all locs without keys
+        for (y in outputDmmData.maxY downTo 1) {
+            for (x in 1..outputDmmData.maxX) {
+                val location = TileLocation.of(x, y)
+                val tileContent = dmm.getTileContentByLocation(location)
 
-                            // if no appropriate key found use first available
-                            if (key == null) {
-                                val it = unusedKeys.iterator()
-                                key = it.next()
-                                it.remove()
-                            }
-                        }
-
-                        outputDmmData.addKeyAndTileContent(key, tileContent)
-                    }
+                if (!outputDmmData.hasKeyByTileContent(tileContent)) {
+                    locsWithoutKey.add(location)
                 }
             }
+        }
+
+        // Try to find the most appropriate key to the location
+        for (unusedKey in unusedKeys.toSet()) {
+            for (location in locsWithoutKey) {
+                if (dmm.initialDmmData.getKeyByLocation(location) == unusedKey) {
+                    unusedKeys.remove(unusedKey)
+                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(location))
+                    locsWithoutKey.remove(location)
+                    break
+                }
+            }
+        }
+
+        // Handle remaining locations
+        for (location in locsWithoutKey) {
+            var key: String?
+
+            if (unusedKeys.isEmpty()) {
+                key = keyGenerator.createKey()
+            } else {
+                val it = unusedKeys.iterator()
+                key = it.next()
+                it.remove()
+            }
+
+            outputDmmData.addKeyAndTileContent(key, dmm.getTileContentByLocation(location))
         }
 
         // Drop down all unused keys for sure.
