@@ -28,24 +28,26 @@ class KeyGenerator(private val dmmData: DmmData) {
             else -> TIER_3_LIMIT
         }
 
-        var num = 0
+        val keysPool = mutableListOf<String>()
 
-        while (num <= freeKeys) {
-            if (!dmmData.hasTileContentByKey(numToKey(num))) {
-                break
+        // Put all possible keys into the pool ...
+        for (num in 0..freeKeys) {
+            val key = numToKey(num)
+            if (!dmmData.hasTileContentByKey(key)) {
+                keysPool.add(key)
             }
-            num++
         }
 
-        if (freeKeys == TIER_1_LIMIT && num > TIER_1_LIMIT) {
-            throw RecreateKeysException(2)
-        } else if (freeKeys == TIER_2_LIMIT && num > TIER_2_LIMIT) {
-            throw RecreateKeysException(3)
-        } else if (num > TIER_3_LIMIT) {
-            throw IllegalStateException("Unable to create new key. Limit of keys is exceeded.")
+        if (keysPool.isEmpty()) {
+            when (freeKeys) {
+                TIER_1_LIMIT -> throw RecreateKeysException(2)
+                TIER_2_LIMIT -> throw RecreateKeysException(3)
+                else -> throw IllegalStateException("Unable to create a new key. Limit of keys is exceeded.")
+            }
         }
 
-        return numToKey(num)
+        // ... and pick randomly from it
+        return keysPool[(0 until keysPool.size).random()]
     }
 
     private fun numToKey(num: Int): String {
