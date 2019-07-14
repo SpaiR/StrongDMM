@@ -265,6 +265,26 @@ object MenuBarView : View {
         }?.isSelected = isSelected
     }
 
+    fun updateRecentEnvironments() {
+        recentEnvMenu.removeAll()
+
+        Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
+            val openButton = createButton(dmeFilePath)
+
+            openButton.addActionListener {
+                val file = File(dmeFilePath)
+                if (file.exists()) {
+                    openEnvironment(dmeFilePath)
+                } else {
+                    recentEnvMenu.remove(openButton)
+                    Workspace.removeRecentEnvironment(dmeFilePath)
+                }
+            }
+
+            recentEnvMenu.add(openButton)
+        }
+    }
+
     fun updateRecentMaps() {
         recentMapsMenu.removeAll()
 
@@ -343,32 +363,8 @@ object MenuBarView : View {
 
     private fun openEnvironment(dmeFilePath: String) {
         Dialog.runWithProgressBar("Parsing environment...") {
-            Environment.parseAndPrepareEnv(dmeFilePath)
-            Workspace.addRecentEnvironment(dmeFilePath)
-
+            Environment.openEnv(dmeFilePath)
             envDependentButtons.forEach { it.isEnabled = true }
-            updateRecentEnvironments()
-            updateRecentMaps()
-        }
-    }
-
-    private fun updateRecentEnvironments() {
-        recentEnvMenu.removeAll()
-
-        Workspace.getRecentEnvironmentsPaths().forEach { dmeFilePath ->
-            val openButton = createButton(dmeFilePath)
-
-            openButton.addActionListener {
-                val file = File(dmeFilePath)
-                if (file.exists()) {
-                    openEnvironment(dmeFilePath)
-                } else {
-                    recentEnvMenu.remove(openButton)
-                    Workspace.removeRecentEnvironment(dmeFilePath)
-                }
-            }
-
-            recentEnvMenu.add(openButton)
         }
     }
 

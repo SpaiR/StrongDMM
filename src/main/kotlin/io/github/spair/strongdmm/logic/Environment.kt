@@ -26,11 +26,11 @@ object Environment {
 
     private val openedMaps: MutableSet<String> = mutableSetOf()
 
-    fun parseAndPrepareEnv(dmeFilePath: String) {
-        parseAndPrepareEnv(File(dmeFilePath))
+    fun openEnv(dmeFilePath: String) {
+        openEnv(File(dmeFilePath))
     }
 
-    fun parseAndPrepareEnv(dmeFile: File) {
+    fun openEnv(dmeFile: File) {
         if (Environment::dme.isInitialized) {
             cleanEnvironmentResources()
         }
@@ -39,6 +39,10 @@ object Environment {
         absoluteRootPath = dmeFile.parentFile.absolutePath
         findAvailableMaps(dmeFile.parentFile)
         ObjectTreeView.populateTree(dme)
+
+        Workspace.addRecentEnvironment(dmeFile.absolutePath)
+        MenuBarView.updateRecentEnvironments()
+        MenuBarView.updateRecentMaps()
 
         System.gc()
     }
@@ -54,6 +58,7 @@ object Environment {
         StatusView.showLoader("Loading ${dmm.mapName}..")
         PrimaryFrame.block()
         MapView.openMap(dmm)
+
         Workspace.addRecentMap(Environment.dme.path, mapFile.absolutePath)
         MenuBarView.updateRecentMaps()
 
