@@ -176,7 +176,6 @@ object TabbedMapPanelView : View, EnvCleanable {
             isMiscEvent = true
 
             Environment.closeMap(dmm)
-            ActionController.resetActionBalance(dmm)
 
             val mapHash = dmm.hashCode()
             mapTabs.remove(indexHashList.indexOf(mapHash))

@@ -40,23 +40,23 @@ class SaveMap(private val dmm: Dmm) {
     private fun sanitizeMap() {
         for (x in 1..dmm.getMaxX()) {
             for (y in 1..dmm.getMaxY()) {
-                dmm.getTile(x, y)!!.let { tile ->
-                    for (tileItem in tile.getTileItems()) {
-                        if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
-                            continue // We won't find default vars for sure
-                        }
+                val tile = dmm.getTile(x, y)!!
 
-                        val newVars = mutableMapOf<String, String>()
+                for (tileItem in tile.getTileItems()) {
+                    if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
+                        continue // We won't find default vars for sure
+                    }
 
-                        tileItem.customVars.forEach { (name, value) ->
-                            if (value != tileItem.dmeItem.getVar(name)) {
-                                newVars[name] = value
-                            }
-                        }
+                    val newVars = mutableMapOf<String, String>()
 
-                        if (tileItem.customVars != newVars) {
-                            tile.setTileItemVars(tileItem, (if (newVars.isEmpty()) null else newVars))
+                    tileItem.customVars.forEach { (name, value) ->
+                        if (value != tileItem.dmeItem.getVar(name)) {
+                            newVars[name] = value
                         }
+                    }
+
+                    if (tileItem.customVars != newVars) {
+                        tile.setTileItemVars(tileItem, (if (newVars.isEmpty()) null else newVars))
                     }
                 }
             }
@@ -97,7 +97,7 @@ class SaveMap(private val dmm: Dmm) {
         }
     }
 
-    // Fill remaining tiles (use unused keys or generate new one)
+    // Fill remaining tiles (use unused keys or generate a new one)
     private fun fillRemainingTiles() {
         if (outputDmmData.tileContentsWithKeys.size != outputDmmData.tileContentsWithLocations.size) {
             for (y in outputDmmData.maxY downTo 1) {

@@ -50,8 +50,6 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
     }
 
     fun changeMapSize(newMaxX: Int, newMaxY: Int): List<Tile> {
-        val deletedTiles = mutableListOf<Tile>()
-
         val baseTurfId = TileItemProvider.getOrCreate(Environment.dme.getBasicTurfType(), null).id
         val baseAreaId = TileItemProvider.getOrCreate(Environment.dme.getBasicAreaType(), null).id
 
@@ -68,6 +66,8 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
                 }
             }
         }
+
+        val deletedTiles = mutableListOf<Tile>()
 
         // Clean the initial dmm data and collect deleted tiles
         if (maxX > newMaxX || maxY > newMaxY) {

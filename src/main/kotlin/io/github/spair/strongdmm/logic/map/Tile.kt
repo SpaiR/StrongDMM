@@ -10,7 +10,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
 
     fun getTileItems(): List<TileItem> = TileItemProvider.getByIDs(tileItemsIDs)
 
-    // The only place to use this method is a render loop, otherwise `::getTileItemsIDs()` should be used.
+    // Direct access to tile items ID. Unsafe to use since, prefer `::getTileItemsIDs()`
     fun unsafeTileItemsIDs(): IntArray = tileItemsIDs
     fun getTileItemsIDs(): IntArray = tileItemsIDs.copyOf()
 
@@ -49,7 +49,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return removedItem
     }
 
-    fun getHigherItemId(tileItemID: Int): Int {
+    fun getHigherMovableId(tileItemID: Int): Int {
         val index = tileItemsIDs.indexOf(tileItemID)
 
         // We are the one who is on the top
@@ -68,7 +68,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return NON_EXISTENT_INT
     }
 
-    fun getLowerItemId(tileItemID: Int): Int {
+    fun getLowerMovableId(tileItemID: Int): Int {
         val index = tileItemsIDs.indexOf(tileItemID)
 
         // We are the one who is on the bottom
@@ -163,14 +163,14 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return null
     }
 
-    // Will replace tile item with the new on, which will have new vars
+    // Will replace tile item with the new one, which will have new vars
     fun setTileItemVars(tileItem: TileItem, newVars: Map<String, String>?): TileItem {
         val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
         swapTileItem(tileItem.id, newTileItem.id)
         return newTileItem
     }
 
-    // Will replace tile item with the new on, which will have new vars
+    // Will replace tile item with the new one, which will have new vars
     fun addTileItemVars(tileItem: TileItem, vars: Map<String, String>?): TileItem {
         val newVars = if (vars != null) {
             tileItem.customVars?.toMutableMap()?.apply { putAll(vars) } ?: vars

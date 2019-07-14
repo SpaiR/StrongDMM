@@ -140,7 +140,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
         if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
             menu.add(JMenuItem("Move to Top").apply {
                 addActionListener {
-                    val higherItemId = currentTile.getHigherItemId(tileItem.id)
+                    val higherItemId = currentTile.getHigherMovableId(tileItem.id)
                     if (higherItemId != NON_EXISTENT_INT) {
                         currentTile.switchTileItems(tileItem.id, higherItemId)
                         ActionController.addUndoAction(SwitchTileItemsAction(currentTile, higherItemId, tileItem.id))
@@ -151,7 +151,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
             menu.add(JMenuItem("Move to Bottom").apply {
                 addActionListener {
-                    val lowerItemId = currentTile.getLowerItemId(tileItem.id)
+                    val lowerItemId = currentTile.getLowerMovableId(tileItem.id)
                     if (lowerItemId != NON_EXISTENT_INT) {
                         currentTile.switchTileItems(tileItem.id, lowerItemId)
                         ActionController.addUndoAction(SwitchTileItemsAction(currentTile, lowerItemId, tileItem.id))
@@ -198,7 +198,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 // Method to reverse all movables in the tile items list.
 // Used on the sorted list which will have structure like 'area -> movables -> turf' for sure.
 // Method itself is needed to show tile items in popup menu properly.
-// Like area goes first, then all movables sorted from top to bottom and then turf.
+// Like: area goes first, then all movables sorted from top to bottom and then turf.
 private fun List<TileItem>.reverseTileMovables(): List<TileItem> {
     // We have only area and turf
     if (this.size == 2) {

@@ -37,9 +37,13 @@ object Dialog {
         }
 
         return if (fileChooser.showSaveDialog(PrimaryFrame) == JFileChooser.APPROVE_OPTION) {
-            val file = fileChooser.selectedFile
+            var file = fileChooser.selectedFile
 
             if (!file.exists()) {
+                if (file.extension != ext) {
+                    file = File("${file.absolutePath}.$ext")
+                }
+
                 file.createNewFile()
             }
 

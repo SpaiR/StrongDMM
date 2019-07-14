@@ -83,6 +83,7 @@ object Environment {
     fun closeMap(dmm: Dmm) {
         openedMaps.remove(dmm.mapPath)
         MapView.closeMap(dmm.hashCode())
+        ActionController.resetActionBalance(dmm)
         ActionController.clearUnusedActions(MapView.getOpenedMaps())
         MenuBarView.updateUndoable()
     }

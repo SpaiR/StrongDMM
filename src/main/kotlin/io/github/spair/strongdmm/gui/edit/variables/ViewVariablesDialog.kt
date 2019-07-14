@@ -15,10 +15,10 @@ import javax.swing.event.DocumentListener
 class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem) {
 
     private var saveChanges: Boolean = false
-    private val dialog: JDialog = JDialog(PrimaryFrame, "View Variables: ${tileItem.type}", true)
+    private val dialog: JDialog = JDialog(PrimaryFrame, "Edit Variables: ${tileItem.type}", true)
 
-    private val model: ViewVariablesModel = ViewVariablesModel(tileItem)
-    private val varsTable: JTable = JTable(model)
+    private val vvModel: ViewVariablesModel = ViewVariablesModel(tileItem)
+    private val varsTable: JTable = JTable(vvModel)
 
     init {
         with(varsTable) {
@@ -33,9 +33,9 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
             rootPane.border = BorderUtil.createEmptyBorder(5)
 
             with(contentPane) {
-                add(createFilterField(model), BorderLayout.NORTH)
+                add(createFilterField(), BorderLayout.NORTH)
                 add(createScrollPane(), BorderLayout.CENTER)
-                add(createBottomPanel(model), BorderLayout.SOUTH)
+                add(createBottomPanel(), BorderLayout.SOUTH)
             }
 
             setSize(400, 450)
@@ -48,20 +48,20 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
             varsTable.cellEditor.stopCellEditing()
         }
 
-        if (saveChanges && model.tmpVars.isNotEmpty()) {
-            val newTileItem = tile.addTileItemVars(tileItem, model.tmpVars)
+        if (saveChanges && vvModel.tmpVars.isNotEmpty()) {
+            val newTileItem = tile.addTileItemVars(tileItem, vvModel.tmpVars)
             ActionController.addUndoAction(SwapTileItemAction(tile, newTileItem.id, tileItem.id))
         }
 
         return saveChanges
     }
 
-    private fun createFilterField(model: ViewVariablesModel) = JTextField().apply {
+    private fun createFilterField() = JTextField().apply {
         document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent) = changedUpdate(e)
             override fun removeUpdate(e: DocumentEvent) = changedUpdate(e)
             override fun changedUpdate(e: DocumentEvent) {
-                model.filter = text
+                vvModel.filter = text
             }
         })
     }
@@ -72,13 +72,13 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
         }
     }
 
-    private fun createBottomPanel(model: ViewVariablesModel) = JPanel().apply {
+    private fun createBottomPanel() = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
 
         add(JPanel(FlowLayout(FlowLayout.LEFT)).apply {
             add(JCheckBox().apply {
                 addActionListener {
-                    model.showOnlyInstanceVars = isSelected
+                    vvModel.showOnlyInstanceVars = isSelected
                 }
             })
 
