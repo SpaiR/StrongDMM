@@ -5,6 +5,8 @@ import kotlin.math.floor
 
 class KeyGenerator(private val dmmData: DmmData) {
 
+    private val builder = StringBuilder()
+
     companion object {
         private const val BASE: Double = 52.0
 
@@ -21,6 +23,12 @@ class KeyGenerator(private val dmmData: DmmData) {
         'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
     )
 
+    private val calculatedKeys: Array<String> = Array(TIER_3_LIMIT + 1) { "" }
+
+    init {
+        (0..TIER_3_LIMIT).forEach { calculatedKeys[it] = numToKey(it) }
+    }
+
     fun createKey(): String {
         val freeKeys = when {
             dmmData.keyLength == 1 -> TIER_1_LIMIT
@@ -32,7 +40,7 @@ class KeyGenerator(private val dmmData: DmmData) {
 
         // Put all possible keys into the pool ...
         for (num in 0..freeKeys) {
-            val key = numToKey(num)
+            val key = calculatedKeys[num]
             if (!dmmData.hasTileContentByKey(key)) {
                 keysPool.add(key)
             }
@@ -51,22 +59,23 @@ class KeyGenerator(private val dmmData: DmmData) {
     }
 
     private fun numToKey(num: Int): String {
-        val result = StringBuilder()
         var currentNum = num
 
         do {
-            result.insert(0, base52keys[currentNum % BASE.toInt()])
+            builder.insert(0, base52keys[currentNum % BASE.toInt()])
             currentNum = floor(currentNum / BASE).toInt()
         } while (currentNum > 0)
 
-        val lengthDiff = dmmData.keyLength - result.length
+        val lengthDiff = dmmData.keyLength - builder.length
 
         if (lengthDiff != 0) {
             for (i in 0 until lengthDiff) {
-                result.insert(0, base52keys[0])
+                builder.insert(0, base52keys[0])
             }
         }
 
-        return result.toString()
+        val result = builder.toString()
+        builder.clear()
+        return result
     }
 }

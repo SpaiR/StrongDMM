@@ -132,6 +132,12 @@ class SaveMap(private val dmm: Dmm) {
 
         // Handle remaining locations
         for (location in locsWithoutKey) {
+            val tileContent = dmm.getTileContentByLocation(location)
+
+            if (outputDmmData.hasKeyByTileContent(tileContent)) {
+                continue
+            }
+
             var key: String?
 
             if (unusedKeys.isEmpty()) {
@@ -142,7 +148,7 @@ class SaveMap(private val dmm: Dmm) {
                 it.remove()
             }
 
-            outputDmmData.addKeyAndTileContent(key, dmm.getTileContentByLocation(location))
+            outputDmmData.addKeyAndTileContent(key, tileContent)
         }
 
         // Drop down all unused keys for sure.
