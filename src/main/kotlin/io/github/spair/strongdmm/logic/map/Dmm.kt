@@ -2,7 +2,6 @@ package io.github.spair.strongdmm.logic.map
 
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.dmm.io.TileContent
-import io.github.spair.dmm.io.TileLocation
 import io.github.spair.strongdmm.common.DEFAULT_ICON_SIZE
 import io.github.spair.strongdmm.common.NON_EXISTENT_INT
 import io.github.spair.strongdmm.common.TYPE_WORLD
@@ -12,8 +11,6 @@ import io.github.spair.strongdmm.logic.action.DeleteTileItemAction
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.action.Undoable
 import io.github.spair.strongdmm.logic.dme.Dme
-import io.github.spair.strongdmm.logic.map.extension.addTile
-import io.github.spair.strongdmm.logic.map.extension.deleteTile
 import java.io.File
 
 class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
@@ -38,9 +35,11 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
             for (y in 1..maxY) {
                 var tileItemsIDs = IntArray(0)
 
-                for (tileContent in initialDmmData.getTileContentByLocation(TileLocation.of(x, y))) {
-                    if (dme.getItem(tileContent.type) != null) {
-                        tileItemsIDs += TileItemProvider.getOrCreate(tileContent.type, tileContent.vars).id
+                initialDmmData.getTileContentByLocation(x, y)?.let {
+                    for (tileObject in it) {
+                        if (dme.getItem(tileObject.type) != null) {
+                            tileItemsIDs += TileItemProvider.getOrCreate(tileObject.type, tileObject.vars).id
+                        }
                     }
                 }
 
@@ -53,6 +52,8 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
         val baseTurfId = TileItemProvider.getOrCreate(Environment.dme.getBasicTurfType(), null).id
         val baseAreaId = TileItemProvider.getOrCreate(Environment.dme.getBasicAreaType(), null).id
 
+        initialDmmData.setDmmSize(newMaxX, newMaxY, true)
+
         val tiles = Array(newMaxY) { arrayOfNulls<Tile>(newMaxX) }
 
         for (x in 1..newMaxX) {
@@ -60,7 +61,7 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
                 if (x > maxX || y > maxY) {
                     val tile = Tile(x, y, intArrayOf(baseAreaId, baseTurfId))
                     tiles[y - 1][x - 1] = tile
-                    initialDmmData.addTile(x, y, tile.getTileContent())
+                    initialDmmData.addTileContentByLocation(x, y, tile.getTileContent())
                 } else {
                     tiles[y - 1][x - 1] = getTile(x, y)
                 }
@@ -74,17 +75,14 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
             for (x in 1..maxX) {
                 for (y in 1..maxY) {
                     if (x > newMaxX || y > newMaxY) {
-                        initialDmmData.deleteTile(x, y)
                         deletedTiles.add(getTile(x, y)!!)
                     }
                 }
             }
         }
 
-        initialDmmData.maxX = newMaxX
-        initialDmmData.maxY = newMaxY
-        maxX = newMaxX
-        maxY = newMaxY
+        this.maxX = newMaxX
+        this.maxY = newMaxY
         this.tiles = tiles
 
         return deletedTiles
@@ -104,8 +102,8 @@ class Dmm(mapFile: File, val initialDmmData: DmmData, dme: Dme) {
 
     fun getTile(x: Int, y: Int) = if (x in 1..maxX && y in 1..maxY) tiles[y - 1][x - 1] else null
 
-    fun getTileContentByLocation(location: TileLocation): TileContent {
-        return getTile(location.x, location.y)!!.getTileContent()
+    fun getTileContentByLocation(x: Int, y: Int): TileContent {
+        return getTile(x, y)!!.getTileContent()
     }
 
     fun getAllTileItemsByType(type: String): List<TileItem> {

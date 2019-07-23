@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'io.github.spair:dmm-io:1.5'
+    implementation 'io.github.spair:dmm-io:1.6'
     implementation 'ar.com.hjg:pngj:2.1.0'
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
     implementation 'org.scijava:swing-checkbox-tree:1.0.2'

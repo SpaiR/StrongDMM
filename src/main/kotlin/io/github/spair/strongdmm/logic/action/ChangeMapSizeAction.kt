@@ -3,7 +3,6 @@ package io.github.spair.strongdmm.logic.action
 import io.github.spair.strongdmm.gui.map.Frame
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.Tile
-import io.github.spair.strongdmm.logic.map.extension.addTile
 
 class ChangeMapSizeAction(
     private val map: Dmm,
@@ -18,7 +17,7 @@ class ChangeMapSizeAction(
 
         deletedTiles.forEach { tile ->
             map.getTile(tile.x, tile.y)!!.fullReplaceTileItemsByIDs(tile.unsafeTileItemsIDs())
-            map.initialDmmData.addTile(tile.x, tile.y, tile.getTileContent())
+            map.initialDmmData.addTileContentByLocation(tile.x, tile.y, tile.getTileContent())
         }
 
         Frame.update(true)

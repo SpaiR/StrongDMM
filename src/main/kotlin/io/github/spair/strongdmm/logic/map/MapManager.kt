@@ -18,8 +18,7 @@ object MapManager {
     fun saveNewMap(file: File, initX: Int, initY: Int): Dmm {
         val dmmData = DmmData().apply {
             keyLength = 1
-            maxY = initX
-            maxY = initY
+            setDmmSize(0, 0)
             isTgm = Workspace.isTgmSaveMode()
         }
         val dmm = Dmm(file, dmmData, Environment.dme)

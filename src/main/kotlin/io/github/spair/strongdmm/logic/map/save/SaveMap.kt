@@ -1,8 +1,8 @@
 package io.github.spair.strongdmm.logic.map.save
 
 import io.github.spair.dmm.io.DmmData
-import io.github.spair.dmm.io.TileLocation
 import io.github.spair.strongdmm.logic.Workspace
+import io.github.spair.strongdmm.logic.map.CoordPoint
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.io.File
 
@@ -15,8 +15,7 @@ class SaveMap(private val dmm: Dmm) {
     init {
         outputDmmData = DmmData().apply {
             dmm.initialDmmData.let { dmmData ->
-                maxX = dmmData.maxX
-                maxY = dmmData.maxY
+                setDmmSize(dmmData.maxX, dmmData.maxY)
                 keyLength = dmmData.keyLength
                 isTgm = Workspace.isTgmSaveMode()
             }
@@ -66,9 +65,8 @@ class SaveMap(private val dmm: Dmm) {
     private fun fillWithReusedKeys() {
         for (x in 1..outputDmmData.maxX) {
             for (y in 1..outputDmmData.maxY) {
-                val location = TileLocation.of(x, y)
-                val newContent = dmm.getTileContentByLocation(location)
-                val originalKey = dmm.initialDmmData.getKeyByLocation(location)
+                val newContent = dmm.getTileContentByLocation(x, y)
+                val originalKey = dmm.initialDmmData.getKeyByLocation(x, y)
                 val originalContent = dmm.initialDmmData.getTileContentByKey(originalKey)
 
                 if (!outputDmmData.hasKeyByTileContent(newContent) && originalKey != null && originalContent == newContent) {
@@ -76,7 +74,7 @@ class SaveMap(private val dmm: Dmm) {
                     unusedKeys.remove(originalKey)
                 }
 
-                outputDmmData.addTileContentByLocation(location, newContent)
+                outputDmmData.addTileContentByLocation(x, y, newContent)
             }
         }
     }
@@ -99,40 +97,39 @@ class SaveMap(private val dmm: Dmm) {
 
     // Fill remaining tiles (use unused keys or generate a new one)
     private fun fillRemainingTiles() {
-        if (outputDmmData.tileContentsWithKeys.size == outputDmmData.tileContentsWithLocations.size) {
+        if (outputDmmData.hasLocationsWithoutContent()) {
             unusedKeys.clear()
             return // All locations have its own key
         }
 
-        val locsWithoutKey = mutableListOf<TileLocation>()
+        val locsWithoutKey = mutableListOf<CoordPoint>()
 
         // Collect all locs without keys
         for (y in outputDmmData.maxY downTo 1) {
             for (x in 1..outputDmmData.maxX) {
-                val location = TileLocation.of(x, y)
-                val tileContent = dmm.getTileContentByLocation(location)
+                val tileContent = dmm.getTileContentByLocation(x, y)
 
                 if (!outputDmmData.hasKeyByTileContent(tileContent)) {
-                    locsWithoutKey.add(location)
+                    locsWithoutKey.add(CoordPoint(x, y))
                 }
             }
         }
 
         // Try to find the most appropriate key to the location
         for (unusedKey in unusedKeys.toSet()) {
-            for (location in locsWithoutKey) {
-                if (dmm.initialDmmData.getKeyByLocation(location) == unusedKey) {
+            for (loc in locsWithoutKey) {
+                if (dmm.initialDmmData.getKeyByLocation(loc.x, loc.y) == unusedKey) {
                     unusedKeys.remove(unusedKey)
-                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(location))
-                    locsWithoutKey.remove(location)
+                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(loc.x, loc.y))
+                    locsWithoutKey.remove(loc)
                     break
                 }
             }
         }
 
         // Handle remaining locations
-        for (location in locsWithoutKey) {
-            val tileContent = dmm.getTileContentByLocation(location)
+        for (loc in locsWithoutKey) {
+            val tileContent = dmm.getTileContentByLocation(loc.x, loc.y)
 
             if (outputDmmData.hasKeyByTileContent(tileContent)) {
                 continue
