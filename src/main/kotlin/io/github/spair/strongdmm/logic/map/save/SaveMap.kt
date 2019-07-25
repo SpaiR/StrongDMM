@@ -2,7 +2,6 @@ package io.github.spair.strongdmm.logic.map.save
 
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.strongdmm.logic.Workspace
-import io.github.spair.strongdmm.logic.map.CoordPoint
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.io.File
 
@@ -102,7 +101,12 @@ class SaveMap(private val dmm: Dmm) {
             return // All locations have its own key
         }
 
-        val locsWithoutKey = mutableListOf<CoordPoint>()
+        val locsWithoutKey = mutableListOf<Long>()
+
+        // Store two ints in one long. Yes, it matters. Yes, for performance reasons. No, don't repeat that at home.
+        fun setValue(x: Int, y: Int): Long = (x.toLong() shl 32) or (y.toLong() and 0xffffffffL)
+        fun getX(value: Long): Int = (value shr 32).toInt()
+        fun getY(value: Long): Int = value.toInt()
 
         // Collect all locs without keys
         for (y in outputDmmData.maxY downTo 1) {
@@ -110,26 +114,34 @@ class SaveMap(private val dmm: Dmm) {
                 val tileContent = dmm.getTileContentByLocation(x, y)
 
                 if (!outputDmmData.hasKeyByTileContent(tileContent)) {
-                    locsWithoutKey.add(CoordPoint(x, y))
+                    locsWithoutKey.add(setValue(x, y))
                 }
             }
         }
 
-        // Try to find the most appropriate key to the location
+        // Try to find the most appropriate key for location
         for (unusedKey in unusedKeys.toSet()) {
             for (loc in locsWithoutKey) {
-                if (dmm.initialDmmData.getKeyByLocation(loc.x, loc.y) == unusedKey) {
+                val x = getX(loc)
+                val y = getY(loc)
+                if (dmm.initialDmmData.getKeyByLocation(x, y) == unusedKey) {
                     unusedKeys.remove(unusedKey)
-                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(loc.x, loc.y))
+                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(x, y))
                     locsWithoutKey.remove(loc)
                     break
                 }
             }
         }
 
+        if (locsWithoutKey.isNotEmpty()) {
+            keyGenerator.initKeysPool()
+        }
+
         // Handle remaining locations
         for (loc in locsWithoutKey) {
-            val tileContent = dmm.getTileContentByLocation(loc.x, loc.y)
+            val x = getX(loc)
+            val y = getY(loc)
+            val tileContent = dmm.getTileContentByLocation(x, y)
 
             if (outputDmmData.hasKeyByTileContent(tileContent)) {
                 continue
@@ -156,7 +168,7 @@ class SaveMap(private val dmm: Dmm) {
     // It's okay to recreate all keys from scratch when we overflow our limit.
     // But when our limit was increased we can easily use it to represent the map even if it has two unique keys.
     // At the same time, key length reduction will result in an abnormal map diff, which may result in a lot of conflicts.
-    // Thus the only case when Editor will reduce key length is when we have only one key on the map. Just because I can.
+    // Thus the only case when the Editor will reduce key length is when we have only one key on the map. Just because I can.
     private fun trimSizeIfNeeded() {
         if (outputDmmData.keys.size == 1) {
             clearKeyAndTileContent()
