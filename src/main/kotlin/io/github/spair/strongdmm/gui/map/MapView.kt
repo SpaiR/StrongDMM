@@ -88,13 +88,13 @@ object MapView : View, EnvCleanable {
     }
 
     fun getSelectedDmm(): Dmm? = pipeline.selectedMapData?.dmm
-    fun getOpenedMaps(): List<Dmm> = pipeline.openedMaps.values.map { it.dmm }
+    fun getOpenedMaps(): List<Dmm> = pipeline.openedMaps.valueCollection().map { it.dmm }
 
     fun switchMapsSync() {
         with(pipeline) {
             synchronizeMaps = !synchronizeMaps
 
-            if (synchronizeMaps && openedMaps.size > 1) {
+            if (synchronizeMaps && openedMaps.size() > 1) {
                 selectedMapData?.let {
                     syncOpenedMaps(it)
                 }

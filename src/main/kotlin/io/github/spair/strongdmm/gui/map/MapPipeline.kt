@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.gui.map
 
+import gnu.trove.map.hash.TIntObjectHashMap
 import io.github.spair.strongdmm.common.*
 import io.github.spair.strongdmm.gui.StatusView
 import io.github.spair.strongdmm.gui.map.input.KeyboardProcessor
@@ -19,7 +20,7 @@ class MapPipeline(private val canvas: Canvas) {
 
     var selectedMapData: MapRenderData? = null
     var iconSize = DEFAULT_ICON_SIZE
-    val openedMaps: MutableMap<Int, MapRenderData> = mutableMapOf()
+    val openedMaps: TIntObjectHashMap<MapRenderData> = TIntObjectHashMap()
 
     // Marks that our OpenGL context is initialized.
     private var glInitialized: Boolean = false
@@ -58,17 +59,17 @@ class MapPipeline(private val canvas: Canvas) {
     fun switchMap(map: Dmm) {
         val hash = map.hashCode()
 
-        if (openedMaps.containsKey(hash)) {
-            selectedMapData = openedMaps.getValue(hash)
+        selectedMapData = if (openedMaps.containsKey(hash)) {
+            openedMaps[hash]
         } else {
             val newMap = MapRenderData(map)
-            openedMaps[hash] = newMap
+            openedMaps.put(hash, newMap)
 
             if (synchronizeMaps && selectedMapData != null) {
                 syncOpenedMaps(selectedMapData!!)
             }
 
-            selectedMapData = newMap
+            newMap
         }
 
         iconSize = map.iconSize
@@ -85,13 +86,13 @@ class MapPipeline(private val canvas: Canvas) {
             return
         }
 
-        val mapData = openedMaps.getValue(hash)
+        val mapData = openedMaps[hash]
 
         // Do some clean up work if we are closing selected map
         if (selectedMapData === mapData) {
             var selectedMapIndex = 0
 
-            for ((index, mapHash) in openedMaps.keys.withIndex()) {
+            for ((index, mapHash) in openedMaps.keys().withIndex()) {
                 if (mapHash == hash) {
                     selectedMapIndex = index
                     break
@@ -99,18 +100,18 @@ class MapPipeline(private val canvas: Canvas) {
             }
 
             // Switch selected map to the one which is on the left side, or right if no other. Do nothing if no other maps.
-            if (openedMaps.size > 1) {
+            if (openedMaps.size() > 1) {
                 val index = if (selectedMapIndex == 0) {
                     1
                 } else {
-                    if (openedMaps.size >= selectedMapIndex + 2) {
+                    if (openedMaps.size() >= selectedMapIndex + 2) {
                         selectedMapIndex + 1
                     } else {
                         selectedMapIndex - 1
                     }
                 }
 
-                selectedMapData = openedMaps.values.toTypedArray()[index]
+                selectedMapData = openedMaps.valueCollection().toTypedArray()[index]
                 Frame.update(true)
             } else {
                 selectedMapData = null
@@ -121,7 +122,7 @@ class MapPipeline(private val canvas: Canvas) {
     }
 
     fun syncOpenedMaps(selectedMap: MapRenderData) {
-        openedMaps.values.forEach { openedMap ->
+        openedMaps.valueCollection().forEach { openedMap ->
             if (openedMap !== selectedMap) {
                 openedMap.xMapOff = selectedMap.xMapOff
                 openedMap.yMapOff = selectedMap.yMapOff
@@ -218,56 +219,52 @@ class MapPipeline(private val canvas: Canvas) {
 
         glEnable(GL_TEXTURE_2D)
 
-        renderInstances.values.forEach { plane ->
-            plane.values.forEach { layer ->
-                layer.forEach { riAddress ->
-                    val colorRed = RenderInstanceStruct.getColorRed(riAddress)
-                    val colorGreen = RenderInstanceStruct.getColorGreen(riAddress)
-                    val colorBlue = RenderInstanceStruct.getColorBlue(riAddress)
-                    val colorAlpha = RenderInstanceStruct.getColorAlpha(riAddress)
+        renderInstances.forEach { riAddress ->
+            val colorRed = RenderInstanceStruct.getColorRed(riAddress)
+            val colorGreen = RenderInstanceStruct.getColorGreen(riAddress)
+            val colorBlue = RenderInstanceStruct.getColorBlue(riAddress)
+            val colorAlpha = RenderInstanceStruct.getColorAlpha(riAddress)
 
-                    glColor4f(colorRed, colorGreen, colorBlue, colorAlpha)
+            glColor4f(colorRed, colorGreen, colorBlue, colorAlpha)
 
-                    val textureId = RenderInstanceStruct.getTextureId(riAddress)
+            val textureId = RenderInstanceStruct.getTextureId(riAddress)
 
-                    if (textureId != bindedTexture) {
-                        glBindTexture(GL_TEXTURE_2D, textureId)
-                        bindedTexture = textureId
-                    }
-
-                    val locX = RenderInstanceStruct.getLocX(riAddress)
-                    val locY = RenderInstanceStruct.getLocY(riAddress)
-
-                    glPushMatrix()
-                    glTranslatef(locX, locY, 0f)
-
-                    val width = RenderInstanceStruct.getWidth(riAddress)
-                    val height = RenderInstanceStruct.getHeight(riAddress)
-
-                    val u1 = RenderInstanceStruct.getU1(riAddress)
-                    val v1 = RenderInstanceStruct.getV1(riAddress)
-                    val u2 = RenderInstanceStruct.getU2(riAddress)
-                    val v2 = RenderInstanceStruct.getV2(riAddress)
-
-                    glBegin(GL_QUADS)
-                    run {
-                        glTexCoord2f(u2, v1)
-                        glVertex2i(width, height)
-
-                        glTexCoord2f(u1, v1)
-                        glVertex2i(0, height)
-
-                        glTexCoord2f(u1, v2)
-                        glVertex2i(0, 0)
-
-                        glTexCoord2f(u2, v2)
-                        glVertex2i(width, 0)
-                    }
-                    glEnd()
-
-                    glPopMatrix()
-                }
+            if (textureId != bindedTexture) {
+                glBindTexture(GL_TEXTURE_2D, textureId)
+                bindedTexture = textureId
             }
+
+            val locX = RenderInstanceStruct.getLocX(riAddress)
+            val locY = RenderInstanceStruct.getLocY(riAddress)
+
+            glPushMatrix()
+            glTranslatef(locX, locY, 0f)
+
+            val width = RenderInstanceStruct.getWidth(riAddress)
+            val height = RenderInstanceStruct.getHeight(riAddress)
+
+            val u1 = RenderInstanceStruct.getU1(riAddress)
+            val v1 = RenderInstanceStruct.getV1(riAddress)
+            val u2 = RenderInstanceStruct.getU2(riAddress)
+            val v2 = RenderInstanceStruct.getV2(riAddress)
+
+            glBegin(GL_QUADS)
+            run {
+                glTexCoord2f(u2, v1)
+                glVertex2i(width, height)
+
+                glTexCoord2f(u1, v1)
+                glVertex2i(0, height)
+
+                glTexCoord2f(u1, v2)
+                glVertex2i(0, 0)
+
+                glTexCoord2f(u2, v2)
+                glVertex2i(width, 0)
+            }
+            glEnd()
+
+            glPopMatrix()
         }
 
         glDisable(GL_TEXTURE_2D)

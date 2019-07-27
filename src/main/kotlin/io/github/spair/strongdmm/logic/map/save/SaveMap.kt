@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.map.save
 
+import gnu.trove.list.array.TLongArrayList
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.strongdmm.logic.Workspace
 import io.github.spair.strongdmm.logic.map.Dmm
@@ -101,7 +102,7 @@ class SaveMap(private val dmm: Dmm) {
             return // All locations have its own key
         }
 
-        val locsWithoutKey = mutableListOf<Long>()
+        val locsWithoutKey = TLongArrayList()
 
         // Store two ints in one long. Yes, it matters. Yes, for performance reasons. No, don't repeat that at home.
         fun setValue(x: Int, y: Int): Long = (x.toLong() shl 32) or (y.toLong() and 0xffffffffL)
@@ -133,7 +134,7 @@ class SaveMap(private val dmm: Dmm) {
             }
         }
 
-        if (locsWithoutKey.isNotEmpty()) {
+        if (!locsWithoutKey.isEmpty) {
             keyGenerator.initKeysPool()
         }
 

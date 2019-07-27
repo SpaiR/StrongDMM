@@ -24,6 +24,7 @@ dependencies {
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
     implementation 'org.scijava:swing-checkbox-tree:1.0.2'
     implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
+    implementation 'net.sf.trove4j:trove4j:3.0.3'
     shadow 'org.lwjgl.lwjgl:lwjgl:2.9.3'
 }
 

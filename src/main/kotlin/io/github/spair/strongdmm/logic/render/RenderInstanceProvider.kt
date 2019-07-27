@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.render
 
+import gnu.trove.set.hash.TIntHashSet
 import io.github.spair.strongdmm.common.TYPE_AREA
 import io.github.spair.strongdmm.common.TYPE_MOB
 import io.github.spair.strongdmm.common.TYPE_OBJ
@@ -20,24 +21,24 @@ object RenderInstanceProvider {
     }
 
     fun loadMapIcons(dmm: Dmm) {
-        val area = mutableSetOf<Int>()
-        val turf = mutableSetOf<Int>()
-        val objs = mutableSetOf<Int>()
-        val mobs = mutableSetOf<Int>()
+        val area = TIntHashSet()
+        val turf = TIntHashSet()
+        val objs = TIntHashSet()
+        val mobs = TIntHashSet()
 
         for (x in 1..dmm.getMaxX()) {
             for (y in 1..dmm.getMaxY()) {
                 val tile = dmm.getTile(x, y)!!
-                area.addAll(tile.getAllTileItemsIsType(TYPE_AREA).map { it.id })
-                turf.addAll(tile.getAllTileItemsIsType(TYPE_TURF).map { it.id })
-                objs.addAll(tile.getAllTileItemsIsType(TYPE_OBJ).map { it.id })
-                mobs.addAll(tile.getAllTileItemsIsType(TYPE_MOB).map { it.id })
+                tile.getAllTileItemsIsType(TYPE_AREA).forEach { area.add(it.id) }
+                tile.getAllTileItemsIsType(TYPE_TURF).forEach { turf.add(it.id) }
+                tile.getAllTileItemsIsType(TYPE_OBJ).forEach { objs.add(it.id) }
+                tile.getAllTileItemsIsType(TYPE_MOB).forEach { mobs.add(it.id) }
             }
         }
 
         arrayOf(area, turf, objs, mobs).forEach { atoms ->
-            atoms.forEach {
-                cacheRenderData(TileItemProvider.getByID(it))
+            for (id in atoms) {
+                cacheRenderData(TileItemProvider.getByID(id))
             }
         }
 

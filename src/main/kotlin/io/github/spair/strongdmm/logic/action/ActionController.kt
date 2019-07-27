@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.action
 
+import gnu.trove.map.hash.TIntIntHashMap
 import io.github.spair.strongdmm.gui.TabbedMapPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
@@ -12,7 +13,7 @@ import java.util.Stack
 object ActionController : EnvCleanable {
 
     private val mapsStacks: MutableMap<Dmm?, Stacks> = hashMapOf()
-    private val actionBalance: MutableMap<Int, Int> = hashMapOf()
+    private val actionBalance: TIntIntHashMap = TIntIntHashMap()
 
     override fun clean() {
         with(getStacks()) {
@@ -24,7 +25,7 @@ object ActionController : EnvCleanable {
     }
 
     fun resetActionBalance(map: Dmm) {
-        actionBalance[map.hashCode()] = 0
+        actionBalance.put(map.hashCode(), 0)
         TabbedMapPanelView.markMapModified(map, false)
     }
 
@@ -87,19 +88,29 @@ object ActionController : EnvCleanable {
 
     private fun increaseActionBalance() {
         val hash = getSelectedMapHash()
-        val current = actionBalance.getOrDefault(hash, 0)
+
+        if (!actionBalance.containsKey(hash)) {
+            actionBalance.put(hash, 0)
+        }
+
+        val current = actionBalance[hash]
         val newValue = current + 1
 
-        actionBalance[hash] = newValue
+        actionBalance.put(hash, newValue)
         handleBalance(newValue)
     }
 
     private fun decreaseActionBalance() {
         val hash = getSelectedMapHash()
-        val current = actionBalance.getOrDefault(hash, 0)
+
+        if (!actionBalance.containsKey(hash)) {
+            actionBalance.put(hash, 0)
+        }
+
+        val current = actionBalance[hash]
         val newValue = current - 1
 
-        actionBalance[hash] = newValue
+        actionBalance.put(hash, newValue)
         handleBalance(newValue)
     }
 

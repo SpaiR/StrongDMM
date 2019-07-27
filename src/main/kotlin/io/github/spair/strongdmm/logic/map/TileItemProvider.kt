@@ -1,11 +1,12 @@
 package io.github.spair.strongdmm.logic.map
 
+import gnu.trove.map.hash.TIntObjectHashMap
 import io.github.spair.strongdmm.logic.EnvCleanable
 import java.util.Objects
 
 object TileItemProvider : EnvCleanable {
 
-    private val tileItems: MutableMap<Int, TileItem> = hashMapOf()
+    private val tileItems: TIntObjectHashMap<TileItem> = TIntObjectHashMap()
 
     override fun clean() {
         tileItems.clear()
@@ -25,14 +26,19 @@ object TileItemProvider : EnvCleanable {
         }
 
         val hash = Objects.hash(type, varsAggregation)
-        return tileItems.getOrPut(hash) { TileItem(hash, type, vars) }
+
+        if (!tileItems.containsKey(hash)) {
+            tileItems.put(hash, TileItem(hash, type, vars))
+        }
+
+        return tileItems[hash]
     }
 
-    fun getByID(id: Int): TileItem = tileItems.getValue(id)
+    fun getByID(id: Int): TileItem = tileItems[id]
 
     fun getByIDs(ids: IntArray): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
-        ids.forEach { tileItems.add(this.tileItems.getValue(it)) }
+        ids.forEach { tileItems.add(this.tileItems[it]) }
         return tileItems
     }
 }

@@ -33,10 +33,8 @@ object RenderInstanceStruct {
         return UNSAFE.allocateMemory(FULL_STRUCT_CAPACITY)
     }
 
-    fun deallocate(address: List<Long>) {
-        for (riAddress in address) {
-            UNSAFE.freeMemory(riAddress)
-        }
+    fun deallocate(address: Long) {
+        UNSAFE.freeMemory(address)
     }
 
     fun getLocX(address: Long): Float = UNSAFE.getFloat(address + LOC_X_POS)

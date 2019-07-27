@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.logic.map.save
 
+import gnu.trove.list.array.TIntArrayList
 import io.github.spair.dmm.io.DmmData
 import kotlin.math.floor
 
@@ -79,11 +80,11 @@ class KeyGenerator(private val dmmData: DmmData) {
         }
     }
 
-    private lateinit var keysPool: MutableList<Int>
+    private lateinit var keysPool: TIntArrayList
     private var freeKeys: Int = 0
 
     fun initKeysPool() {
-        keysPool = mutableListOf()
+        keysPool = TIntArrayList()
 
         freeKeys = when {
             dmmData.keyLength == 1 -> REAL_TIER_1_LIMIT
@@ -107,7 +108,7 @@ class KeyGenerator(private val dmmData: DmmData) {
     }
 
     fun createKey(): String {
-        if (keysPool.isEmpty()) {
+        if (keysPool.isEmpty) {
             when (freeKeys) {
                 REAL_TIER_1_LIMIT -> throw RecreateKeysException(2)
                 REAL_TIER_2_LIMIT -> throw RecreateKeysException(3)
@@ -116,7 +117,7 @@ class KeyGenerator(private val dmmData: DmmData) {
         }
 
         // ... and pick randomly from it
-        val index = (0 until keysPool.size).random()
+        val index = (0 until keysPool.size()).random()
         val key = keysPool[index]
         keysPool.removeAt(index)
         return KEYS[key]

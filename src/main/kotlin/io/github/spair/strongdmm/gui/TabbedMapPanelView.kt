@@ -1,5 +1,6 @@
 package io.github.spair.strongdmm.gui
 
+import gnu.trove.list.array.TIntArrayList
 import io.github.spair.strongdmm.gui.common.BorderUtil
 import io.github.spair.strongdmm.gui.common.Dialog
 import io.github.spair.strongdmm.gui.common.View
@@ -20,7 +21,7 @@ import javax.swing.*
 object TabbedMapPanelView : View, EnvCleanable {
 
     private val mapTabs: JTabbedPane = JTabbedPane()
-    private val indexHashList: MutableList<Int> = mutableListOf()
+    private val indexHashList: TIntArrayList = TIntArrayList()
 
     private var isMiscEvent: Boolean = false // When false, then we changed the map for sure
     private var previousIndex: Int = -1 // Previously selected map tab index
@@ -30,7 +31,7 @@ object TabbedMapPanelView : View, EnvCleanable {
             isFocusable = false
 
             addChangeListener {
-                if (indexHashList.isNotEmpty() && !isMiscEvent && selectedIndex != -1) {
+                if (!indexHashList.isEmpty && !isMiscEvent && selectedIndex != -1) {
                     MapView.openMap(indexHashList[selectedIndex])
                     MenuBarView.updateUndoable()
                     SelectOperation.depickArea()
@@ -100,7 +101,7 @@ object TabbedMapPanelView : View, EnvCleanable {
     }
 
     private fun switchMap(index: Int) {
-        if (indexHashList.isNotEmpty() && index >= 0 && index <= mapTabs.tabCount - 1) {
+        if (!indexHashList.isEmpty && index >= 0 && index <= mapTabs.tabCount - 1) {
             previousIndex = mapTabs.selectedIndex
             mapTabs.selectedIndex = index
         }
