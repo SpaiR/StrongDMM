@@ -47,9 +47,17 @@ object Environment {
         System.gc()
     }
 
-    fun openMap(mapFile: File) {
-        if (!mapFile.isFile || !openedMaps.add(mapFile.path)) {
+    fun openMap(mapFile: File, forceOpen: Boolean = false) {
+        if (!mapFile.isFile) {
             return
+        }
+
+        if (!openedMaps.add(mapFile.path)) {
+            if (forceOpen) {
+                TabbedMapPanelView.closeMap(MapView.getOpenedMaps().find { it.mapPath == mapFile.path }!!)
+            } else {
+                return
+            }
         }
 
         val dmmData = DmmReader.readMap(mapFile)

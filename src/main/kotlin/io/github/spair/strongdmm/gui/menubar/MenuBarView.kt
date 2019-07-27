@@ -387,7 +387,7 @@ object MenuBarView : View {
         Dialog.createFile("BYOND Map (*.dmm)", "dmm", Environment.absoluteRootPath)?.let { mapFile ->
             Dialog.askMapSize(1, 1)?.let { (initX, initY) ->
                 MapManager.saveNewMap(mapFile, initX, initY)
-                Environment.openMap(mapFile)
+                Environment.openMap(mapFile, true)
             }
         }
     }
