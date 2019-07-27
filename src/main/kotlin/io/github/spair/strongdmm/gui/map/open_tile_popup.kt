@@ -82,7 +82,7 @@ private fun JPopupMenu.addTileActions(map: Dmm, currentTile: Tile) {
     })
 
     if (SelectOperation.isPickType()) {
-        add(JMenuItem("Deselect (Esc)").apply {
+        add(JMenuItem("Deselect All (Esc)").apply {
             addActionListener {
                 SelectOperation.depickArea()
             }

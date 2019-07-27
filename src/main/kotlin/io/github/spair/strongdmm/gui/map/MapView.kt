@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.gui.map
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.common.View
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
+import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.logic.EnvCleanable
 import io.github.spair.strongdmm.logic.map.Dmm
 import java.awt.BorderLayout
@@ -55,15 +56,17 @@ object MapView : View, EnvCleanable {
         pipeline.mapLoadingInProcess = true
         pipeline.switchMap(dmm)
         InstanceListView.updateSelectedInstanceInfo()
+        SelectOperation.depickArea()
+    }
+
+    fun openMap(hash: Int) {
+        pipeline.switchMap(hash)
+        SelectOperation.depickArea()
     }
 
     fun closeMap(hash: Int) {
         pipeline.closeMap(hash)
         InstanceListView.updateSelectedInstanceInfo()
-    }
-
-    fun openMap(hash: Int) {
-        pipeline.switchMap(hash)
     }
 
     fun tryCloseTilePopup(): Boolean {

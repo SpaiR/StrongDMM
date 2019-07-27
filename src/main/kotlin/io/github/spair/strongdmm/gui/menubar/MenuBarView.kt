@@ -18,6 +18,7 @@ import io.github.spair.strongdmm.gui.map.select.SelectType
 import io.github.spair.strongdmm.logic.Environment
 import io.github.spair.strongdmm.logic.Workspace
 import io.github.spair.strongdmm.logic.action.ActionController
+import io.github.spair.strongdmm.logic.map.CoordArea
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.MapManager
 import io.github.spair.strongdmm.logic.map.save.SaveMap
@@ -49,7 +50,8 @@ object MenuBarView : View {
     private val copyBtn = createButton("Copy").addCtrlShortcut('C')
     private val pasteBtn = createButton("Paste").addCtrlShortcut('V')
     private val deleteBtn = createButton("Delete").addPlainShortcut(KeyEvent.VK_DELETE)
-    private val deselectBtn = createButton("Deselect").addPlainShortcut(KeyEvent.VK_ESCAPE)
+    private val selectAllBtn = createButton("Select All")
+    private val deselectBtn = createButton("Deselect All").addPlainShortcut(KeyEvent.VK_ESCAPE)
     private val addSelectModeOpt = createRadioButton("Add Select Mode", true).addAltShortcut('1')
     private val fillSelectModeOpt = createRadioButton("Fill Select Mode").addAltShortcut('2')
     private val pickSelectModeOpt = createRadioButton("Pick Select Mode").addAltShortcut('3')
@@ -118,6 +120,7 @@ object MenuBarView : View {
         copyBtn.addActionListener { ModOperation.copy(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
         pasteBtn.addActionListener { ModOperation.paste(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
         deleteBtn.addActionListener { ModOperation.delete(MapView.getSelectedDmm(), MapView.getMouseTileX(), MapView.getMouseTileY()) }
+        selectAllBtn.addActionListener(createSelectAllAction())
         deselectBtn.addActionListener { SelectOperation.depickArea() }
         ButtonGroup().run {
             add(addSelectModeOpt.apply { addActionListener { SelectOperation.switchSelectType(SelectType.ADD) } })
@@ -166,6 +169,7 @@ object MenuBarView : View {
         copyBtn,
         pasteBtn,
         deleteBtn,
+        selectAllBtn,
         deselectBtn,
         JSeparator(),
         addSelectModeOpt,
@@ -389,6 +393,12 @@ object MenuBarView : View {
                 MapManager.saveNewMap(mapFile, initX, initY)
                 Environment.openMap(mapFile, true)
             }
+        }
+    }
+
+    private fun createSelectAllAction() = ActionListener {
+        MapView.getSelectedDmm()?.let { dmm ->
+            SelectOperation.pickArea(CoordArea(1, 1, dmm.getMaxX(), dmm.getMaxY()))
         }
     }
 
