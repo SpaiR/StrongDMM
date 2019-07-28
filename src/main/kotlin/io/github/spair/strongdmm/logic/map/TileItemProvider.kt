@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.logic.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
+import io.github.spair.strongdmm.common.extension.getOrPut
 import io.github.spair.strongdmm.logic.EnvCleanable
 import java.util.Objects
 
@@ -26,12 +27,7 @@ object TileItemProvider : EnvCleanable {
         }
 
         val hash = Objects.hash(type, varsAggregation)
-
-        if (!tileItems.containsKey(hash)) {
-            tileItems.put(hash, TileItem(hash, type, vars))
-        }
-
-        return tileItems[hash]
+        return tileItems.getOrPut(hash) { TileItem(hash, type, vars) }
     }
 
     fun getByID(id: Int): TileItem = tileItems[id]

@@ -9,7 +9,7 @@ class SwapTileItemAction(
     private val with: Int
 ) : Undoable {
     override fun doAction(): Undoable {
-        tile.swapTileItem(which, with)
+        tile.replaceTileItem(which, with)
         Frame.update(true)
         return SwapTileItemAction(tile, with, which)
     }

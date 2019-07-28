@@ -1,6 +1,7 @@
 package io.github.spair.strongdmm.logic.action
 
 import gnu.trove.map.hash.TIntIntHashMap
+import io.github.spair.strongdmm.common.extension.getOrPut
 import io.github.spair.strongdmm.gui.TabbedMapPanelView
 import io.github.spair.strongdmm.gui.instancelist.InstanceListView
 import io.github.spair.strongdmm.gui.map.MapView
@@ -88,12 +89,7 @@ object ActionController : EnvCleanable {
 
     private fun increaseActionBalance() {
         val hash = getSelectedMapHash()
-
-        if (!actionBalance.containsKey(hash)) {
-            actionBalance.put(hash, 0)
-        }
-
-        val current = actionBalance[hash]
+        val current = actionBalance.getOrPut(hash) { 0 }
         val newValue = current + 1
 
         actionBalance.put(hash, newValue)
@@ -102,12 +98,7 @@ object ActionController : EnvCleanable {
 
     private fun decreaseActionBalance() {
         val hash = getSelectedMapHash()
-
-        if (!actionBalance.containsKey(hash)) {
-            actionBalance.put(hash, 0)
-        }
-
-        val current = actionBalance[hash]
+        val current = actionBalance.getOrPut(hash) { 0 }
         val newValue = current - 1
 
         actionBalance.put(hash, newValue)

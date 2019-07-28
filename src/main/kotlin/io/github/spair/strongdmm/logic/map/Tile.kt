@@ -41,7 +41,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         }
 
         if (removedItem != null) {
-            swapTileItem(removedItem.id, tileItem.id)
+            replaceTileItem(removedItem.id, tileItem.id)
         } else {
             tileItemsIDs += tileItem.id
         }
@@ -87,11 +87,11 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return NON_EXISTENT_INT
     }
 
-    fun swapTileItem(which: Int, with: Int) {
+    fun replaceTileItem(which: Int, with: Int) {
         tileItemsIDs[tileItemsIDs.indexOf(which)] = with
     }
 
-    fun switchTileItems(item1: Int, item2: Int) {
+    fun swapTileItems(item1: Int, item2: Int) {
         val item1Index = tileItemsIDs.indexOf(item1)
         val item2Index = tileItemsIDs.indexOf(item2)
         val tmpArr = getTileItemsIDs()
@@ -128,7 +128,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         }
 
         if (newTileItem != null) {
-            swapTileItem(tileItem.id, newTileItem.id)
+            replaceTileItem(tileItem.id, newTileItem.id)
         } else {
             val tmpArr = IntArray(tileItemsIDs.size - 1)
             var counter = 0
@@ -166,7 +166,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
     // Will replace tile item with the new one, which will have new vars
     fun setTileItemVars(tileItem: TileItem, newVars: Map<String, String>?): TileItem {
         val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
-        swapTileItem(tileItem.id, newTileItem.id)
+        replaceTileItem(tileItem.id, newTileItem.id)
         return newTileItem
     }
 
@@ -179,7 +179,7 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         }
 
         val newTileItem = TileItemProvider.getOrCreate(tileItem.type, newVars)
-        swapTileItem(tileItem.id, newTileItem.id)
+        replaceTileItem(tileItem.id, newTileItem.id)
         return newTileItem
     }
 

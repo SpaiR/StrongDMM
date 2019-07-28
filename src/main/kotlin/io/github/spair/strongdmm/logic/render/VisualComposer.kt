@@ -3,6 +3,7 @@ package io.github.spair.strongdmm.logic.render
 import gnu.trove.list.array.TLongArrayList
 import gnu.trove.map.hash.TFloatObjectHashMap
 import io.github.spair.strongdmm.common.*
+import io.github.spair.strongdmm.common.extension.getOrPut
 import io.github.spair.strongdmm.logic.map.Dmm
 import io.github.spair.strongdmm.logic.map.LayersManager
 import io.github.spair.strongdmm.logic.map.TileItemProvider
@@ -48,7 +49,6 @@ object VisualComposer {
         deallocateCache()
         framedAreas.clear()
 
-        // val planeLayers = RenderInstances()
         val planeLayers = TFloatObjectHashMap<TFloatObjectHashMap<TLongArrayList>>()
         var itemCount = 0
 
@@ -81,18 +81,7 @@ object VisualComposer {
                         continue
                     }
 
-                    if (!planeLayers.containsKey(tileItem.plane)) {
-                        planeLayers.put(tileItem.plane, TFloatObjectHashMap())
-                    }
-
-                    val plane = planeLayers[tileItem.plane]
-
-                    if (!plane.containsKey(tileItem.layer)) {
-                        plane.put(tileItem.layer, TLongArrayList())
-                    }
-
-                    val layer = plane[tileItem.layer]
-
+                    val layer = planeLayers.getOrPut(tileItem.plane) { TFloatObjectHashMap() }.getOrPut(tileItem.layer) { TLongArrayList() }
                     layer.add(RenderInstanceProvider.allocateRenderInstance(renderX.toFloat(), renderY.toFloat(), tileItem))
                     itemCount++
                 }

@@ -8,7 +8,7 @@ import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
 import io.github.spair.strongdmm.logic.action.SwapTileItemAction
-import io.github.spair.strongdmm.logic.action.SwitchTileItemsAction
+import io.github.spair.strongdmm.logic.action.SwapTileItemsAction
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.*
 import org.lwjgl.input.Mouse
@@ -142,8 +142,8 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
                 addActionListener {
                     val higherItemId = currentTile.getHigherMovableId(tileItem.id)
                     if (higherItemId != NON_EXISTENT_INT) {
-                        currentTile.switchTileItems(tileItem.id, higherItemId)
-                        ActionController.addUndoAction(SwitchTileItemsAction(currentTile, higherItemId, tileItem.id))
+                        currentTile.swapTileItems(tileItem.id, higherItemId)
+                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, higherItemId, tileItem.id))
                         Frame.update(true)
                     }
                 }
@@ -153,8 +153,8 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
                 addActionListener {
                     val lowerItemId = currentTile.getLowerMovableId(tileItem.id)
                     if (lowerItemId != NON_EXISTENT_INT) {
-                        currentTile.switchTileItems(tileItem.id, lowerItemId)
-                        ActionController.addUndoAction(SwitchTileItemsAction(currentTile, lowerItemId, tileItem.id))
+                        currentTile.swapTileItems(tileItem.id, lowerItemId)
+                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, lowerItemId, tileItem.id))
                         Frame.update(true)
                     }
                 }
