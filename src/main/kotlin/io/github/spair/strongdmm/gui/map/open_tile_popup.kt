@@ -127,7 +127,9 @@ private fun JPopupMenu.addOptionalSelectedInstanceActions(map: Dmm, currentTile:
 }
 
 private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
-    currentTile.getTileItems().sortedWith(TileItemComparator).reverseTileMovables().forEach { tileItem ->
+    val movables = currentTile.getTileItems().withIndex().sortedWith(TileItemIndexedComparator).reverseTileMovables()
+
+    movables.forEachIndexed { relIdx, (absIdx, tileItem) ->
         val menu = JMenu("${tileItem.getVarText(VAR_NAME)} [${tileItem.type}]").apply {
             this@addTileItemsActions.add(this)
         }
@@ -140,10 +142,10 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
         if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
             menu.add(JMenuItem("Move to Top").apply {
                 addActionListener {
-                    val higherItemId = currentTile.getHigherMovableId(tileItem.id)
-                    if (higherItemId != NON_EXISTENT_INT) {
-                        currentTile.swapTileItems(tileItem.id, higherItemId)
-                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, higherItemId, tileItem.id))
+                    val higherItemIdx = movables.getHigherIndex(relIdx)
+                    if (higherItemIdx != NON_EXISTENT_INT) {
+                        currentTile.swapTileItems(absIdx, higherItemIdx)
+                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, higherItemIdx, absIdx))
                         Frame.update(true)
                     }
                 }
@@ -151,10 +153,10 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
             menu.add(JMenuItem("Move to Bottom").apply {
                 addActionListener {
-                    val lowerItemId = currentTile.getLowerMovableId(tileItem.id)
-                    if (lowerItemId != NON_EXISTENT_INT) {
-                        currentTile.swapTileItems(tileItem.id, lowerItemId)
-                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, lowerItemId, tileItem.id))
+                    val lowerItemIdx = movables.getLowerIndex(relIdx)
+                    if (lowerItemIdx != NON_EXISTENT_INT) {
+                        currentTile.swapTileItems(absIdx, lowerItemIdx)
+                        ActionController.addUndoAction(SwapTileItemsAction(currentTile, lowerItemIdx, absIdx))
                         Frame.update(true)
                     }
                 }
@@ -199,7 +201,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 // Used on the sorted list which will have structure like 'area -> movables -> turf' for sure.
 // Method itself is needed to show tile items in popup menu properly.
 // Like: area goes first, then all movables sorted from top to bottom and then turf.
-private fun List<TileItem>.reverseTileMovables(): List<TileItem> {
+private fun List<IndexedValue<TileItem>>.reverseTileMovables(): List<IndexedValue<TileItem>> {
     // We have only area and turf
     if (this.size == 2) {
         return this
@@ -208,11 +210,21 @@ private fun List<TileItem>.reverseTileMovables(): List<TileItem> {
     val area = this.first()
     val turf = this.last()
     val movables = this.subList(1, this.size - 1).reversed()
-    val result = mutableListOf<TileItem>()
+    val result = mutableListOf<IndexedValue<TileItem>>()
 
     result.add(area)
     result.addAll(movables)
     result.add(turf)
 
     return result
+}
+
+private fun List<IndexedValue<TileItem>>.getHigherIndex(startRelIdx: Int): Int {
+    // The last one will be a turf
+    return if (startRelIdx == 1) NON_EXISTENT_INT else this[startRelIdx - 1].index
+}
+
+private fun List<IndexedValue<TileItem>>.getLowerIndex(startRelIdx: Int): Int {
+    // The first one will be an area
+    return if (startRelIdx == (size - 2)) NON_EXISTENT_INT else this[startRelIdx + 1].index
 }

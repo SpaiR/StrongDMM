@@ -49,55 +49,17 @@ class Tile(val x: Int, val y: Int, private var tileItemsIDs: IntArray) {
         return removedItem
     }
 
-    fun getHigherMovableId(tileItemID: Int): Int {
-        val index = tileItemsIDs.indexOf(tileItemID)
-
-        // We are the one who is on the top
-        if (index == tileItemsIDs.size - 1) {
-            return NON_EXISTENT_INT
-        }
-
-        for (i in (index + 1) until tileItemsIDs.size) {
-            val itemId = tileItemsIDs[i]
-            val tileItem = TileItemProvider.getByID(itemId)
-            if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
-                return itemId
-            }
-        }
-
-        return NON_EXISTENT_INT
-    }
-
-    fun getLowerMovableId(tileItemID: Int): Int {
-        val index = tileItemsIDs.indexOf(tileItemID)
-
-        // We are the one who is on the bottom
-        if (index == 0) {
-            return NON_EXISTENT_INT
-        }
-
-        for (i in (index - 1) downTo 0) {
-            val itemId = tileItemsIDs[i]
-            val tileItem = TileItemProvider.getByID(itemId)
-            if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
-                return itemId
-            }
-        }
-
-        return NON_EXISTENT_INT
-    }
-
     fun replaceTileItem(which: Int, with: Int) {
         tileItemsIDs[tileItemsIDs.indexOf(which)] = with
     }
 
-    fun swapTileItems(item1: Int, item2: Int) {
-        val item1Index = tileItemsIDs.indexOf(item1)
-        val item2Index = tileItemsIDs.indexOf(item2)
+    fun swapTileItems(itemIdx1: Int, itemIdx2: Int) {
+        val item1 = tileItemsIDs[itemIdx1]
+        val item2 = tileItemsIDs[itemIdx2]
         val tmpArr = getTileItemsIDs()
 
-        tmpArr[item1Index] = item2
-        tmpArr[item2Index] = item1
+        tmpArr[itemIdx1] = item2
+        tmpArr[itemIdx2] = item1
 
         tileItemsIDs = tmpArr
     }

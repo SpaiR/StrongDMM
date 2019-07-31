@@ -5,12 +5,12 @@ import io.github.spair.strongdmm.logic.map.Tile
 
 class SwapTileItemsAction(
     private val tile: Tile,
-    private val item1: Int,
-    private val item2: Int
+    private val itemIdx1: Int,
+    private val itemIdx2: Int
 ) : Undoable {
     override fun doAction(): Undoable {
-        tile.swapTileItems(item1, item2)
+        tile.swapTileItems(itemIdx1, itemIdx2)
         Frame.update(true)
-        return SwapTileItemsAction(tile, item2, item1)
+        return SwapTileItemsAction(tile, itemIdx2, itemIdx1)
     }
 }
