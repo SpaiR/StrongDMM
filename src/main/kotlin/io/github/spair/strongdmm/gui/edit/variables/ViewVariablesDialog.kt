@@ -3,7 +3,7 @@ package io.github.spair.strongdmm.gui.edit.variables
 import io.github.spair.strongdmm.gui.PrimaryFrame
 import io.github.spair.strongdmm.gui.common.BorderUtil
 import io.github.spair.strongdmm.logic.action.ActionController
-import io.github.spair.strongdmm.logic.action.SwapTileItemAction
+import io.github.spair.strongdmm.logic.action.ReplaceTileItemAction
 import io.github.spair.strongdmm.logic.map.Tile
 import io.github.spair.strongdmm.logic.map.TileItem
 import java.awt.BorderLayout
@@ -12,7 +12,7 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem) {
+class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem, private val absIdx: Int) {
 
     private var saveChanges: Boolean = false
     private val dialog: JDialog = JDialog(PrimaryFrame, "Edit Variables: ${tileItem.type}", true)
@@ -49,8 +49,8 @@ class ViewVariablesDialog(private val tile: Tile, private val tileItem: TileItem
         }
 
         if (saveChanges && vvModel.tmpVars.isNotEmpty()) {
-            val newTileItem = tile.addTileItemVars(tileItem, vvModel.tmpVars)
-            ActionController.addUndoAction(SwapTileItemAction(tile, newTileItem.id, tileItem.id))
+            tile.addTileItemVars(absIdx, vvModel.tmpVars)
+            ActionController.addUndoAction(ReplaceTileItemAction(tile, absIdx, tileItem.id))
         }
 
         return saveChanges

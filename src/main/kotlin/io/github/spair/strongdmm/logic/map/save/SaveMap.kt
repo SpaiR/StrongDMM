@@ -41,7 +41,7 @@ class SaveMap(private val dmm: Dmm) {
             for (y in 1..dmm.getMaxY()) {
                 val tile = dmm.getTile(x, y)!!
 
-                for (tileItem in tile.getTileItems()) {
+                for ((index, tileItem) in tile.getTileItems().withIndex()) {
                     if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
                         continue // We won't find default vars for sure
                     }
@@ -55,7 +55,7 @@ class SaveMap(private val dmm: Dmm) {
                     }
 
                     if (tileItem.customVars != newVars) {
-                        tile.setTileItemVars(tileItem, (if (newVars.isEmpty()) null else newVars))
+                        tile.setTileItemVars(index, (if (newVars.isEmpty()) null else newVars))
                     }
                 }
             }

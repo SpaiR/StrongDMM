@@ -7,7 +7,7 @@ import io.github.spair.strongdmm.gui.map.select.SelectOperation
 import io.github.spair.strongdmm.gui.objtree.ObjectTreeView
 import io.github.spair.strongdmm.logic.action.ActionController
 import io.github.spair.strongdmm.logic.action.PlaceTileItemAction
-import io.github.spair.strongdmm.logic.action.SwapTileItemAction
+import io.github.spair.strongdmm.logic.action.ReplaceTileItemAction
 import io.github.spair.strongdmm.logic.action.SwapTileItemsAction
 import io.github.spair.strongdmm.logic.dmi.DmiProvider
 import io.github.spair.strongdmm.logic.map.*
@@ -173,8 +173,8 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
         menu.add(JMenuItem("Reset to Default").apply {
             addActionListener {
-                val newTileItem = currentTile.setTileItemVars(tileItem, null)
-                ActionController.addUndoAction(SwapTileItemAction(currentTile, newTileItem.id, tileItem.id))
+                currentTile.setTileItemVars(absIdx, null)
+                ActionController.addUndoAction(ReplaceTileItemAction(currentTile, absIdx, tileItem.id))
                 Frame.update(true)
             }
         })
@@ -189,7 +189,7 @@ private fun JPopupMenu.addTileItemsActions(map: Dmm, currentTile: Tile) {
 
         menu.add(JMenuItem("Edit Variables...")).apply {
             addActionListener {
-                if (ViewVariablesDialog(currentTile, tileItem).open()) {
+                if (ViewVariablesDialog(currentTile, tileItem, absIdx).open()) {
                     Frame.update(true)
                 }
             }
