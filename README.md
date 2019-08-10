@@ -36,8 +36,9 @@ Divide your z-levels in different files and use **Map Synchronization** option.
 
 ### How to install
 Open [releases](https://github.com/SpaiR/StrongDMM/releases) page and download distribution package you want.
-No dependencies required, all packages are fully self containable.
-
+No dependencies required, all packages are fully self containable.<br>
+**Notice!** If you're experiencing a problem when while opening an environment everything is stuck,
+then try to start the editor as an administrator or try to use a zipped version.
 
 ### How to build
 **Pre-requests:** JDK 8 or higher, Rust to compile 'sdmmparser'
