@@ -106,10 +106,9 @@ object InstanceListView : View, EnvCleanable {
         items.addAll(instances.sortedBy { it.name }.sortedBy { it.customVars?.size }.sortedBy { it.iconState })
         TabbedObjectPanelView.setInstanceCount(items.size)
 
-        (instanceList.model as DefaultListModel).let { model ->
-            model.clear()
-            items.forEach(model::addElement)
-        }
+        val model = DefaultListModel<ItemInstance>()
+        items.forEach(model::addElement)
+        instanceList.model = model
 
         // Try to find previously selected item
         if (selectedInstance != null) {
