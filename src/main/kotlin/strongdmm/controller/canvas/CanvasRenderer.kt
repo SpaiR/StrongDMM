@@ -3,6 +3,7 @@ package strongdmm.controller.canvas
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL32
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.util.OUT_OF_BOUNDS
 
 class CanvasRenderer {
     var redraw: Boolean = false
@@ -13,7 +14,15 @@ class CanvasRenderer {
     var windowWidth: Int = -1
     var windowHeight: Int = -1
 
-    fun render(frameMeshes: List<FrameMesh>, windowWidth: Int, windowHeight: Int, renderData: RenderData) {
+    fun render(
+        frameMeshes: List<FrameMesh>,
+        windowWidth: Int,
+        windowHeight: Int,
+        renderData: RenderData,
+        xMapMousePos: Int,
+        yMapMousePos: Int,
+        iconSize: Int
+    ) {
         if (windowWidth == 0 && windowHeight == 0) {
             return
         }
@@ -25,28 +34,66 @@ class CanvasRenderer {
         }
 
         if (canvasTextureIsReady) {
-            glEnable(GL_TEXTURE_2D)
-            glBindTexture(GL_TEXTURE_2D, canvasTexture)
-
-            glBegin(GL_QUADS)
-            glTexCoord2i(0, 0)
-            glVertex2i(0, 0)
-            glTexCoord2i(1, 0)
-            glVertex2i(windowWidth, 0)
-            glTexCoord2i(1, 1)
-            glVertex2i(windowWidth, windowHeight)
-            glTexCoord2i(0, 1)
-            glVertex2i(0, windowHeight)
-            glEnd()
-
-            glBindTexture(GL_TEXTURE_2D, 0)
-            glDisable(GL_TEXTURE_2D)
-
+            renderCanvasTexture()
+            renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
             if (!redraw) {
                 return
             }
         }
 
+        fillCanvasTexture(renderData, frameMeshes)
+
+        canvasTextureIsReady = true
+        redraw = false
+    }
+
+    fun invalidateCanvasTexture() {
+        if (canvasTexture != -1) {
+            glDeleteTextures(canvasTexture)
+            canvasTexture = -1
+            canvasTextureIsReady = false
+        }
+    }
+
+    private fun renderCanvasTexture() {
+        glColor4f(1f, 1f, 1f, 1f)
+
+        glEnable(GL_TEXTURE_2D)
+        glBindTexture(GL_TEXTURE_2D, canvasTexture)
+
+        glBegin(GL_QUADS)
+        glTexCoord2i(0, 0)
+        glVertex2i(0, 0)
+        glTexCoord2i(1, 0)
+        glVertex2i(windowWidth, 0)
+        glTexCoord2i(1, 1)
+        glVertex2i(windowWidth, windowHeight)
+        glTexCoord2i(0, 1)
+        glVertex2i(0, windowHeight)
+        glEnd()
+
+        glBindTexture(GL_TEXTURE_2D, 0)
+        glDisable(GL_TEXTURE_2D)
+    }
+
+    private fun renderMousePosition(renderData: RenderData, xMapMousePos: Int, yMapMousePos: Int, iconSize: Int) {
+        if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
+            val xPos = ((xMapMousePos - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPos = ((yMapMousePos - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+            val realIconSize = iconSize / renderData.viewScale
+
+            glColor4f(1f, 1f, 1f, 0.25f)
+
+            glBegin(GL_QUADS)
+            glVertex2d(xPos, yPos)
+            glVertex2d(xPos + realIconSize, yPos)
+            glVertex2d(xPos + realIconSize, yPos + realIconSize)
+            glVertex2d(xPos, yPos + realIconSize)
+            glEnd()
+        }
+    }
+
+    private fun fillCanvasTexture(renderData: RenderData, frameMeshes: List<FrameMesh>) {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
@@ -110,17 +157,6 @@ class CanvasRenderer {
 
         GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, 0)
         GL32.glDeleteFramebuffers(fb)
-
-        canvasTextureIsReady = true
-        redraw = false
-    }
-
-    fun invalidateCanvasTexture() {
-        if (canvasTexture != -1) {
-            glDeleteTextures(canvasTexture)
-            canvasTexture = -1
-            canvasTextureIsReady = false
-        }
     }
 
     private fun createCanvasTexture(windowWidth: Int, windowHeight: Int) {
