@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
     id 'org.jmailen.kotlinter' version '1.26.0'
     id 'com.gradle.build-scan' version '2.0.2'
 }
@@ -9,27 +9,52 @@ plugins {
 application {
     group 'io.github.spair'
     version '0.0.10'
-    mainClassName = 'io.github.spair.strongdmm.MainKt'
+    mainClassName = 'StrongDmm'
 }
 
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+ext {
+    lwjgl_version = '3.2.2'
+    imgui_version = 'v1.71'
+    uno_version  = '3f32007ffe'
+    gln_version = 'e6fd699b6723c770a4dd891119e33e6dca74961a'
+    glm_version = '6048c31425ae6110258e4b42165f1e636f8b5603'
+    kool_version = 'd052c5e18a06642fcdf9f5942198ee9c4cee1a3f'
+    unsigned_version = 'ba1b5c2ab0231aabbef753df5fa0d0de98142360'
+    gli_version = 'c8cb88947b77232beed84599fb7a01b5ce158f25'
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'io.github.spair:dmm-io:1.6.1'
-    implementation 'ar.com.hjg:pngj:2.1.0'
-    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-    implementation 'org.scijava:swing-checkbox-tree:1.0.2'
-    implementation 'com.github.ben-manes.caffeine:caffeine:2.7.0'
     implementation 'net.sf.trove4j:trove4j:3.0.3'
-    shadow 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
+    implementation 'ar.com.hjg:pngj:2.1.0'
+
+    shadow "com.github.kotlin-graphics.glm:glm:$glm_version"
+    shadow "com.github.kotlin-graphics:gln:$gln_version"
+    shadow "com.github.kotlin-graphics:kool:$kool_version"
+    shadow "com.github.kotlin-graphics:kotlin-unsigned:$unsigned_version"
+    shadow "com.github.kotlin-graphics:gli:$gli_version"
+    shadow "com.github.kotlin-graphics:uno-sdk:$uno_version"
+
+    ['core', 'gl'].each {
+        shadow "com.github.kotlin-graphics.imgui:imgui-$it:$imgui_version"
+    }
+
+    ['', '-opengl', '-glfw', '-stb', '-nfd'].each {
+        def base = "org.lwjgl:lwjgl$it:$lwjgl_version"
+        shadow base
+    }
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_12
 }
 
 buildScan {
@@ -38,18 +63,16 @@ buildScan {
     publishAlwaysIf(System.getenv('CI') != null)
 }
 
-wrapper {
-    gradleVersion = '5.4.1'
-}
-
 runShadow {
-    def sdmmParser = 'sdmmparser'
+    def parserFile = 'sdmmparser'
+    def libsFolder = 'libs'
 
     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-        sdmmParser += '.exe'
+        parserFile += '.exe'
+        libsFolder += '-win'
     }
 
-    jvmArgs(['-Djava.library.path=./libs', "-Dsdmmparser.path=./libs/$sdmmParser"])
+    jvmArgs(["-Djava.library.path=./$libsFolder", "-Dsdmmparser.path=./$libsFolder/$parserFile"])
 }
 
 processResources {
