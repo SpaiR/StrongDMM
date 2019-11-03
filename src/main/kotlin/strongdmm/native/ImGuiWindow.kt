@@ -57,6 +57,7 @@ abstract class ImGuiWindow {
         // Setup Dear ImGui context
         ctx = Context()
         ImGui.io.configFlags = ImGui.io.configFlags or ConfigFlag.NavEnableKeyboard.i // Enable Keyboard Controls
+        ImGui.io.iniFilename = null
 
         // Setup Dear ImGui style
         ImGui.styleColorsDark()
