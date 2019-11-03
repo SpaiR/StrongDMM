@@ -78,8 +78,7 @@ abstract class ImGuiWindow {
         ctx.destroy()
     }
 
-    abstract fun guiLoop(windowWidth: Int, windowHeight: Int) // Used to draw UI elements
-    abstract fun controllerLoop(windowWidth: Int, windowHeight: Int) // For controllers etc.
+    abstract fun appLoop(windowWidth: Int, windowHeight: Int)
 
     @Suppress("UNUSED_PARAMETER")
     private fun mainLoop(s: MemoryStack) {
@@ -102,8 +101,7 @@ abstract class ImGuiWindow {
 
         // Start the Dear ImGui frame
         ImGui.newFrame()
-        guiLoop(width, height)
-        controllerLoop(width, height)
+        appLoop(width, height)
         ImGui.render()
 
         gl.renderDrawData(ImGui.drawData!!)
