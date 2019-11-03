@@ -3,10 +3,12 @@ import strongdmm.controller.MapController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.native.ImGuiWindow
+import strongdmm.ui.CoordsPanelUi
 import strongdmm.ui.MenuBarUi
 
 class StrongDmm : ImGuiWindow() {
     private val menuBarUi = MenuBarUi()
+    private val coordsPanelUi = CoordsPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapController()
@@ -15,6 +17,7 @@ class StrongDmm : ImGuiWindow() {
 
     override fun guiLoop(windowWidth: Int, windowHeight: Int) {
         menuBarUi.process()
+        coordsPanelUi.process(windowWidth, windowHeight)
     }
 
     override fun controllerLoop(windowWidth: Int, windowHeight: Int) {

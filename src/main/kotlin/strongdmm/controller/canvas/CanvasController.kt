@@ -1,5 +1,7 @@
 package strongdmm.controller.canvas
 
+import glm_.vec2.Vec2i
+import imgui.HoveredFlag
 import imgui.ImGui
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
@@ -56,17 +58,22 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun calculateMapMousePos(windowHeight: Int) {
+        if (ImGui.isWindowHovered(HoveredFlag.AnyWindow)) {
+            return
+        }
+
         val (x, y) = ImGui.mousePos
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize
         val yMap = ((windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
 
-        val xMapMousePosNew = if (xMap >= 0 && xMap <= (maxX - 1)) xMap.toInt() + 1 else OUT_OF_BOUNDS
-        val yMapMousePosNew = if (yMap >= 0 && yMap <= (maxY - 1)) yMap.toInt() + 1 else OUT_OF_BOUNDS
+        val xMapMousePosNew = if (xMap > 0 && xMap <= maxX) xMap.toInt() + 1 else OUT_OF_BOUNDS
+        val yMapMousePosNew = if (yMap > 0 && yMap <= maxY) yMap.toInt() + 1 else OUT_OF_BOUNDS
 
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
+            sendEvent(Event.GLOBAL_UPD_MAP_MOUSE_POS, Vec2i(xMapMousePos, yMapMousePos))
         }
     }
 
@@ -89,7 +96,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processViewTranslate() {
-        if (ImGui.isMouseDown(LMB)) {
+        if (!ImGui.isWindowHovered(HoveredFlag.AnyWindow) && ImGui.isMouseDown(LMB)) {
             if (ImGui.io.mouseDelta anyNotEqual 0f) {
                 val (x, y) = ImGui.io.mouseDelta
                 canvasRenderer.run {
