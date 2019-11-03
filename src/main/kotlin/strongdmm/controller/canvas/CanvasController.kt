@@ -1,6 +1,5 @@
 package strongdmm.controller.canvas
 
-import glm_.vec2.Vec2
 import imgui.ImGui
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
@@ -12,6 +11,7 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.Message
 import strongdmm.util.DEFAULT_ICON_SIZE
+import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
 
 class CanvasController : EventSender, EventConsumer {
@@ -26,6 +26,7 @@ class CanvasController : EventSender, EventConsumer {
 
     private var isHasMap: Boolean = false
     private var iconSize: Int = DEFAULT_ICON_SIZE
+
     private var maxX: Int = OUT_OF_BOUNDS
     private var maxY: Int = OUT_OF_BOUNDS
 
@@ -39,13 +40,15 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
         consumeEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, ::handleSwitchEnvironment)
         consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
-        consumeEvent(Event.CANVAS_VIEW_TRANSLATE, ::handleViewTranslate)
-        consumeEvent(Event.CANVAS_VIEW_SCALE, ::handleViewScale)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
         if (isHasMap) {
+            processViewTranslate()
+            processViewScale()
+
             calculateMapMousePos(windowHeight)
+
             sendEvent<List<FrameMesh>>(Event.FRAME_COMPOSE) {
                 canvasRenderer.render(it, windowWidth, windowHeight, renderData, xMapMousePos, yMapMousePos, iconSize)
             }
@@ -85,23 +88,28 @@ class CanvasController : EventSender, EventConsumer {
         isHasMap = false
     }
 
-    private fun handleViewTranslate(msg: Message<Vec2, Unit>) {
-        if (isHasMap) {
-            val (x, y) = msg.body
-            canvasRenderer.run {
-                renderData.viewTranslateX += x * renderData.viewScale
-                renderData.viewTranslateY -= y * renderData.viewScale
-                redraw = true
+    private fun processViewTranslate() {
+        if (ImGui.isMouseDown(LMB)) {
+            if (ImGui.io.mouseDelta anyNotEqual 0f) {
+                val (x, y) = ImGui.io.mouseDelta
+                canvasRenderer.run {
+                    renderData.viewTranslateX += x * renderData.viewScale
+                    renderData.viewTranslateY -= y * renderData.viewScale
+                    redraw = true
+                }
             }
         }
     }
 
-    private fun handleViewScale(msg: Message<Boolean, Unit>) {
-        val isZoomIn = msg.body
+    private fun processViewScale() {
+        if (ImGui.io.mouseWheel == 0f) {
+            return
+        }
+
+        val isZoomIn = ImGui.io.mouseWheel > 0
         val (x, y) = ImGui.mousePos
 
-        // When the editor isn't in the focus
-        if (x < 0 || y < 0) {
+        if (!isHasMap || x < 0 || y < 0) {
             return
         }
 

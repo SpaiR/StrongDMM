@@ -1,5 +1,4 @@
 import strongdmm.controller.EnvironmentController
-import strongdmm.controller.InputMouseController
 import strongdmm.controller.MapController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
@@ -13,18 +12,13 @@ class StrongDmm : ImGuiWindow() {
     private val mapController = MapController()
     private val canvasController = CanvasController()
     private val frameController = FrameController()
-    private val inputMouseController = InputMouseController()
 
-    override fun guiLoop() {
+    override fun guiLoop(windowWidth: Int, windowHeight: Int) {
         menuBarUi.process()
     }
 
-    override fun canvasLoop(windowWidth: Int, windowHeight: Int) {
+    override fun controllerLoop(windowWidth: Int, windowHeight: Int) {
         canvasController.process(windowWidth, windowHeight)
-    }
-
-    override fun inputLoop() {
-        inputMouseController.process()
     }
 
     companion object {

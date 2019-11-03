@@ -77,21 +77,14 @@ abstract class ImGuiWindow {
         ctx.destroy()
     }
 
-    abstract fun guiLoop() // Used to draw UI elements
-    abstract fun canvasLoop(windowWidth: Int, windowHeight: Int) // For raw OpenGL commands to draw a canvas (background)
-    abstract fun inputLoop() // To handle input stuff
+    abstract fun guiLoop(windowWidth: Int, windowHeight: Int) // Used to draw UI elements
+    abstract fun controllerLoop(windowWidth: Int, windowHeight: Int) // For controllers etc.
 
     @Suppress("UNUSED_PARAMETER")
     private fun mainLoop(s: MemoryStack) {
         // Start the Dear ImGui frame
         gl.newFrame()
         glfwWindow.newFrame()
-
-        // Start the Dear ImGui frame
-        ImGui.newFrame()
-        guiLoop()
-        inputLoop()
-        ImGui.render()
 
         val (width, height) = window.framebufferSize
 
@@ -106,8 +99,11 @@ abstract class ImGuiWindow {
         GL11.glMatrixMode(GL11.GL_MODELVIEW)
         GL11.glLoadIdentity()
 
-        // The canvas will be rendered before the Dear ImGui interface so it always be on the background
-        canvasLoop(width, height)
+        // Start the Dear ImGui frame
+        ImGui.newFrame()
+        guiLoop(width, height)
+        controllerLoop(width, height)
+        ImGui.render()
 
         gl.renderDrawData(ImGui.drawData!!)
 
