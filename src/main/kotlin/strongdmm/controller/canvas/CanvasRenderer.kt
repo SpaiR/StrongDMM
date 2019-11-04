@@ -8,6 +8,8 @@ import strongdmm.util.OUT_OF_BOUNDS
 class CanvasRenderer {
     var redraw: Boolean = false
 
+    private val frameBuffer: Int = GL32.glGenFramebuffers()
+
     private var canvasTexture: Int = -1
     private var canvasTextureIsReady: Boolean = false
 
@@ -97,8 +99,7 @@ class CanvasRenderer {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
-        val fb = GL32.glGenFramebuffers()
-        GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, fb)
+        GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, frameBuffer)
         GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, canvasTexture, 0)
 
         glViewport(0, 0, windowWidth, windowHeight)
@@ -156,7 +157,6 @@ class CanvasRenderer {
         glDisable(GL_TEXTURE_2D)
 
         GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, 0)
-        GL32.glDeleteFramebuffers(fb)
     }
 
     private fun createCanvasTexture(windowWidth: Int, windowHeight: Int) {
