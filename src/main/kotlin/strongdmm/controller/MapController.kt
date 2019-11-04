@@ -19,21 +19,27 @@ class MapController : EventSender, EventConsumer {
     }
 
     private fun handleOpen(msg: Message<String, Unit>) {
-        val mapFile = File(msg.body)
-
-        if (!mapFile.isFile || selectedMap?.mapPath == mapFile.absolutePath) {
+        if (selectedMap?.mapPath == msg.body) {
             return
         }
 
-        sendEvent<Dme>(Event.ENVIRONMENT_FETCH) { environment ->
-            val dmm = openedMaps.find { it.mapPath == mapFile.absolutePath }?.let { it } ?: run {
-                val dmmData = DmmReader.readMap(mapFile)
-                Dmm(mapFile, dmmData, environment).apply { openedMaps.add(this) }
+        val dmm = openedMaps.find { it.mapPath == msg.body }
+
+        if (dmm != null) {
+            selectedMap = dmm
+            sendEvent(Event.GLOBAL_SWITCH_MAP, dmm)
+        } else {
+            val mapFile = File(msg.body)
+
+            if (!mapFile.isFile) {
+                return
             }
 
-            selectedMap = dmm
-
-            sendEvent(Event.GLOBAL_SWITCH_MAP, dmm)
+            sendEvent<Dme>(Event.ENVIRONMENT_FETCH) { environment ->
+                val dmmData = DmmReader.readMap(mapFile)
+                selectedMap = Dmm(mapFile, dmmData, environment).apply { openedMaps.add(this) }
+                sendEvent(Event.GLOBAL_SWITCH_MAP, selectedMap)
+            }
         }
     }
 
