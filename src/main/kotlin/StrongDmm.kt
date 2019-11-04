@@ -16,9 +16,11 @@ class StrongDmm : ImGuiWindow() {
     private val frameController = FrameController()
 
     override fun appLoop(windowWidth: Int, windowHeight: Int) {
+        // UIs
         menuBarUi.process()
         coordsPanelUi.process(windowWidth, windowHeight)
 
+        // Controllers (SHOULD go after UI classes)
         canvasController.process(windowWidth, windowHeight)
     }
 

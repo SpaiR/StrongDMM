@@ -57,8 +57,56 @@ class CanvasController : EventSender, EventConsumer {
         }
     }
 
+    private fun processViewTranslate() {
+        if (isImGuiInUse() || !ImGui.isMouseDown(LMB)) {
+            return
+        }
+
+        if (ImGui.io.mouseDelta anyNotEqual 0f) {
+            val (x, y) = ImGui.io.mouseDelta
+            canvasRenderer.run {
+                renderData.viewTranslateX += x * renderData.viewScale
+                renderData.viewTranslateY -= y * renderData.viewScale
+                redraw = true
+            }
+        }
+    }
+
+    private fun processViewScale() {
+        if (isImGuiInUse() || ImGui.io.mouseWheel == 0f) {
+            return
+        }
+
+        val isZoomIn = ImGui.io.mouseWheel > 0
+        val (x, y) = ImGui.mousePos
+
+        if (!isHasMap || x < 0 || y < 0) {
+            return
+        }
+
+        if ((isZoomIn && renderData.scaleCount - 1 < MIN_SCALE) || (!isZoomIn && renderData.scaleCount + 1 > MAX_SCALE)) {
+            return
+        } else {
+            renderData.scaleCount += if (isZoomIn) -1 else 1
+        }
+
+        canvasRenderer.run {
+            if (isZoomIn) {
+                renderData.viewScale /= ZOOM_FACTOR
+                renderData.viewTranslateX -= x * renderData.viewScale / 2
+                renderData.viewTranslateY -= (windowHeight - y) * renderData.viewScale / 2
+            } else {
+                renderData.viewTranslateX += x * renderData.viewScale / 2
+                renderData.viewTranslateY += (windowHeight - y) * renderData.viewScale / 2
+                renderData.viewScale *= ZOOM_FACTOR
+            }
+
+            redraw = true
+        }
+    }
+
     private fun calculateMapMousePos(windowHeight: Int) {
-        if (ImGui.isWindowHovered(HoveredFlag.AnyWindow)) {
+        if (isImGuiInUse()) {
             return
         }
 
@@ -95,49 +143,5 @@ class CanvasController : EventSender, EventConsumer {
         isHasMap = false
     }
 
-    private fun processViewTranslate() {
-        if (!ImGui.isWindowHovered(HoveredFlag.AnyWindow) && ImGui.isMouseDown(LMB)) {
-            if (ImGui.io.mouseDelta anyNotEqual 0f) {
-                val (x, y) = ImGui.io.mouseDelta
-                canvasRenderer.run {
-                    renderData.viewTranslateX += x * renderData.viewScale
-                    renderData.viewTranslateY -= y * renderData.viewScale
-                    redraw = true
-                }
-            }
-        }
-    }
-
-    private fun processViewScale() {
-        if (ImGui.io.mouseWheel == 0f) {
-            return
-        }
-
-        val isZoomIn = ImGui.io.mouseWheel > 0
-        val (x, y) = ImGui.mousePos
-
-        if (!isHasMap || x < 0 || y < 0) {
-            return
-        }
-
-        if ((isZoomIn && renderData.scaleCount - 1 < MIN_SCALE) || (!isZoomIn && renderData.scaleCount + 1 > MAX_SCALE)) {
-            return
-        } else {
-            renderData.scaleCount += if (isZoomIn) -1 else 1
-        }
-
-        canvasRenderer.run {
-            if (isZoomIn) {
-                renderData.viewScale /= ZOOM_FACTOR
-                renderData.viewTranslateX -= x * renderData.viewScale / 2
-                renderData.viewTranslateY -= (windowHeight - y) * renderData.viewScale / 2
-            } else {
-                renderData.viewTranslateX += x * renderData.viewScale / 2
-                renderData.viewTranslateY += (windowHeight - y) * renderData.viewScale / 2
-                renderData.viewScale *= ZOOM_FACTOR
-            }
-
-            redraw = true
-        }
-    }
+    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
 }

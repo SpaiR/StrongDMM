@@ -1,6 +1,8 @@
 package strongdmm.ui
 
 import imgui.ImGui
+import imgui.ImGui.separator
+import imgui.ImGui.text
 import imgui.dsl.mainMenuBar
 import imgui.dsl.menu
 import imgui.dsl.menuBar
@@ -11,7 +13,6 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.Message
 import strongdmm.native.NfdUtil
-import imgui.ImGui.separator as menuSeparator
 
 class MenuBarUi : EventSender, EventConsumer {
     private var progressText: String? = null
@@ -26,14 +27,14 @@ class MenuBarUi : EventSender, EventConsumer {
             menuBar {
                 menu("File") {
                     menuItem("Open Environment..", enabled = progressText == null, block = ::openEnvironment)
-                    menuSeparator()
+                    separator()
                     menuItem("Open Map..", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
                 }
 
                 progressText?.let {
                     val count = (ImGui.time / 0.25).toInt() and 3
                     val bar = charArrayOf('|', '/', '-', '\\')
-                    ImGui.text("%s %s%s", bar[count], it, ".".repeat(count))
+                    text("%s %s%s", bar[count], it, ".".repeat(count))
                 }
             }
         }

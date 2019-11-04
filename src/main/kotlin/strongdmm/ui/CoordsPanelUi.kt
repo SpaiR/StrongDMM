@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import glm_.vec2.Vec2
 import glm_.vec2.Vec2i
-import imgui.Cond
 import imgui.ImGui.setNextWindowPos
 import imgui.ImGui.setNextWindowSize
 import imgui.ImGui.text
@@ -14,11 +13,8 @@ import strongdmm.event.Message
 import strongdmm.util.OUT_OF_BOUNDS
 import imgui.WindowFlag as Wf
 
-class CoordsPanelUi : EventConsumer {
+class CoordsPanelUi : Window(), EventConsumer {
     private var isHasMap: Boolean = false
-
-    private var windowWidth: Int = 0
-    private var windowHeight: Int = 0
 
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
@@ -34,12 +30,7 @@ class CoordsPanelUi : EventConsumer {
             return
         }
 
-        val cond = if (this.windowWidth != windowWidth || this.windowHeight != windowHeight) Cond.Always else Cond.Once
-
-        this.windowWidth = windowWidth
-        this.windowHeight = windowHeight
-
-        setNextWindowPos(Vec2(windowWidth - 110, windowHeight - 40), cond)
+        setNextWindowPos(Vec2(windowWidth - 110, windowHeight - 40), getOptionCondition(windowWidth, windowHeight))
         setNextWindowSize(Vec2(100, 10))
 
         window("coords_panel", flags = Wf.NoResize or Wf.NoTitleBar) {
