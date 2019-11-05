@@ -9,9 +9,10 @@ class CanvasRenderer {
     var redraw: Boolean = false
 
     private val frameBuffer: Int = GL32.glGenFramebuffers()
+    private var isTextureAttached: Boolean = false
 
     private var canvasTexture: Int = -1
-    private var canvasTextureIsReady: Boolean = false
+    private var canvasTextureIsFilled: Boolean = false
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -35,7 +36,7 @@ class CanvasRenderer {
             this.windowHeight = windowHeight
         }
 
-        if (canvasTextureIsReady) {
+        if (canvasTextureIsFilled) {
             renderCanvasTexture()
             renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
             if (!redraw) {
@@ -45,7 +46,7 @@ class CanvasRenderer {
 
         fillCanvasTexture(renderData, frameMeshes)
 
-        canvasTextureIsReady = true
+        canvasTextureIsFilled = true
         redraw = false
     }
 
@@ -53,7 +54,8 @@ class CanvasRenderer {
         if (canvasTexture != -1) {
             glDeleteTextures(canvasTexture)
             canvasTexture = -1
-            canvasTextureIsReady = false
+            canvasTextureIsFilled = false
+            isTextureAttached = false
         }
     }
 
@@ -100,7 +102,11 @@ class CanvasRenderer {
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
         GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, frameBuffer)
-        GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, canvasTexture, 0)
+
+        if (!isTextureAttached) {
+            GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, canvasTexture, 0)
+            isTextureAttached = true
+        }
 
         glViewport(0, 0, windowWidth, windowHeight)
         glClearColor(.25f, .25f, .5f, 1f)
