@@ -4,16 +4,19 @@ import imgui.ConfigFlag
 import imgui.ImGui
 import imgui.imgui.Context
 import imgui.impl.ImplGL3
+import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWImage
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
-import org.lwjgl.stb.STBImage.stbi_load
+import org.lwjgl.stb.STBImage.stbi_load_from_memory
 import org.lwjgl.system.MemoryStack
 import uno.glfw.VSync
 import uno.glfw.glfw
 import java.nio.ByteBuffer
+import javax.imageio.ImageIO
 import uno.glfw.GlfwWindow as UnoGlfwWindow
+import java.io.ByteArrayOutputStream
 
 abstract class ImGuiWindow {
     private val sync = Sync()
@@ -111,25 +114,35 @@ abstract class ImGuiWindow {
     }
 
     private fun loadWindowIcon(window: Long) {
+        val icon = ImageIO.read(ImGuiWindow::class.java.classLoader.getResource("icon.png"))
+
+        val iconBuffer = ByteArrayOutputStream().use {
+            ImageIO.write(icon, "png", it)
+            it.flush()
+
+            val iconInByte = it.toByteArray()
+
+            BufferUtils.createByteBuffer(iconInByte.size).apply {
+                put(iconInByte)
+                flip()
+            }
+        }
+
         var imageBuffer: ByteBuffer? = null
-        var width = 0
-        var heigh = 0
 
         MemoryStack.stackPush().use { stack ->
             val comp = stack.mallocInt(1)
             val w = stack.mallocInt(1)
             val h = stack.mallocInt(1)
 
-            imageBuffer = stbi_load("icon.png", w, h, comp, 4)
-            width = w.get()
-            heigh = h.get()
+            imageBuffer = stbi_load_from_memory(iconBuffer, w, h, comp, 4)
         }
 
         imageBuffer?.let {
             val image = GLFWImage.malloc()
             val imagebf = GLFWImage.malloc(1)
 
-            image.set(width, heigh, it)
+            image.set(icon.width, icon.height, it)
             imagebf.put(0, image)
 
             glfwSetWindowIcon(window, imagebf)
