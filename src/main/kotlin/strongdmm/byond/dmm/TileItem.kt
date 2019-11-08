@@ -12,7 +12,7 @@ class TileItem(
     val customVars: Map<String, String>? = customVars?.takeIf { it.isNotEmpty() }?.let { Collections.unmodifiableMap(it) }
     val type: String get() = dmeItem.type
 
-    // Props extensively used during rendering
+    // Props extensively used during the rendering process
     val icon: String get() = getVarText(VAR_ICON) ?: ""
     val iconState: String get() = getVarText(VAR_ICON_STATE) ?: ""
     val alpha: Int get() = getVarInt(VAR_ALPHA) ?: 0

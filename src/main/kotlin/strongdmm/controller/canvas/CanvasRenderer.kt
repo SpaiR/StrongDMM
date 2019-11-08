@@ -97,6 +97,7 @@ class CanvasRenderer {
         }
     }
 
+    // Method will render the map to the separate texture which will be reused later to avoid CPU usage while idle.
     private fun fillCanvasTexture(renderData: RenderData, frameMeshes: List<FrameMesh>) {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
@@ -134,6 +135,7 @@ class CanvasRenderer {
                 continue
             }
 
+            // More effectively will be to merge all textures into one atlas instead of such batching, but this is fine too.
             if (currentTexture != sprite.textureId) {
                 if (currentTexture != -1) {
                     glEnd()

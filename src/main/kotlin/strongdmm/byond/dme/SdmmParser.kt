@@ -65,7 +65,7 @@ class SdmmParser {
         root.getVars().forEach { def ->
             var value = sanitizeVar(def.getValue())
 
-            // Exceptional case for name variable
+            // Exceptional case for the 'name' variable
             if (def.getName() == VAR_NAME && value == "null") {
                 value = '"' + type.substringAfterLast('/') + '"'
             }
@@ -73,7 +73,7 @@ class SdmmParser {
             localVars[def.getName()] = value
         }
 
-        // Exceptional case for name variable
+        // Exceptional case for the 'name' variable
         if (!localVars.containsKey(VAR_NAME)) {
             localVars[VAR_NAME] = '"' + type.substringAfterLast('/') + '"'
         }
