@@ -3,6 +3,7 @@ package strongdmm.byond.dmm
 import io.github.spair.dmm.io.DmmData
 import strongdmm.byond.dme.Dme
 import java.io.File
+import java.nio.file.Path
 
 class Dmm(
     mapFile: File,
@@ -10,7 +11,8 @@ class Dmm(
     dme: Dme
 ) {
     val mapName: String = mapFile.nameWithoutExtension
-    val mapPath: String = mapFile.path
+    val relativeMapPath: String = Path.of(dme.rootPath).relativize(mapFile.toPath()).toString()
+    val id: Int = mapFile.absolutePath.hashCode()
 
     private var maxX: Int = initialDmmData.maxX
     private var maxY: Int = initialDmmData.maxY
@@ -39,4 +41,19 @@ class Dmm(
 
     fun getMaxX(): Int = maxX
     fun getMaxY(): Int = maxY
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Dmm
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
 }

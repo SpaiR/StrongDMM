@@ -13,12 +13,12 @@ import org.lwjgl.stb.STBImage.stbi_load_from_memory
 import org.lwjgl.system.MemoryStack
 import uno.glfw.VSync
 import uno.glfw.glfw
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 import uno.glfw.GlfwWindow as UnoGlfwWindow
-import java.io.ByteArrayOutputStream
 
-abstract class ImGuiWindow {
+abstract class ImGuiWindow(title: String) {
     private val sync = Sync()
 
     private val window: UnoGlfwWindow
@@ -40,7 +40,7 @@ abstract class ImGuiWindow {
         }
 
         // Create window with graphics context
-        window = UnoGlfwWindow(1280, 768, "StrongDMM")
+        window = UnoGlfwWindow(1280, 768, title)
         window.makeContextCurrent()
         window.maximize()
         window.show(true)

@@ -19,10 +19,13 @@ class CoordsPanelUi : Window(), EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
+    private var selectedMapId: Int = -1
+
     init {
         consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
         consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
         consumeEvent(Event.GLOBAL_UPD_MAP_MOUSE_POS, ::handleUpdMapMousePos)
+        consumeEvent(Event.GLOBAL_CLOSE_MAP, ::handleCloseMap)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -43,6 +46,7 @@ class CoordsPanelUi : Window(), EventConsumer {
     }
 
     private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
+        selectedMapId = msg.body.id
         isHasMap = true
     }
 
@@ -53,5 +57,12 @@ class CoordsPanelUi : Window(), EventConsumer {
     private fun handleUpdMapMousePos(msg: Message<Vec2i, Unit>) {
         xMapMousePos = msg.body.x
         yMapMousePos = msg.body.y
+    }
+
+    private fun handleCloseMap(msg: Message<Dmm, Unit>) {
+        if (selectedMapId == msg.body.id) {
+            selectedMapId = -1
+            isHasMap = false
+        }
     }
 }

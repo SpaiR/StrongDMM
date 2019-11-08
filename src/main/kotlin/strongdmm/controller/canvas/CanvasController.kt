@@ -42,6 +42,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
         consumeEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, ::handleSwitchEnvironment)
         consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
+        consumeEvent(Event.GLOBAL_CLOSE_MAP, ::handleCloseMap)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -125,8 +126,10 @@ class CanvasController : EventSender, EventConsumer {
         }
     }
 
+    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
+
     private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
-        renderData = renderDataStorage.getOrPut(msg.body.mapPath) { RenderData() }
+        renderData = renderDataStorage.getOrPut(msg.body.relativeMapPath) { RenderData() }
         maxX = msg.body.getMaxX()
         maxY = msg.body.getMaxY()
         canvasRenderer.invalidateCanvasTexture()
@@ -143,5 +146,7 @@ class CanvasController : EventSender, EventConsumer {
         isHasMap = false
     }
 
-    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
+    private fun handleCloseMap(msg: Message<Dmm, Unit>) {
+        isHasMap = renderDataStorage.remove(msg.body.relativeMapPath) !== renderData
+    }
 }
