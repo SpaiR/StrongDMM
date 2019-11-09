@@ -13,8 +13,8 @@ class EnvironmentController : EventSender, EventConsumer {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(Event.Environment.Open::class.java, ::handleOpen)
-        consumeEvent(Event.Environment.Fetch::class.java, ::handleFetch)
+        consumeEvent(Event.EnvironmentController.Open::class.java, ::handleOpen)
+        consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
     private fun handleOpen(event: Event<String, Boolean>) {

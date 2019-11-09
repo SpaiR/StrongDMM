@@ -51,7 +51,7 @@ class CanvasController : EventSender, EventConsumer {
                 calculateMapMousePos(windowHeight)
             }
 
-            sendEvent(Event.Frame.Compose {
+            sendEvent(Event.FrameController.Compose {
                 canvasRenderer.render(it, windowWidth, windowHeight, renderData, xMapMousePos, yMapMousePos, iconSize)
             })
         }

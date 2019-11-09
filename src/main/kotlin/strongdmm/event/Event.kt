@@ -12,7 +12,8 @@ import strongdmm.controller.frame.FrameMesh
  * Global events are used to show that something globally happened. Like environment switching or map closing.
  * Unlike the others, global events could be consumed by any number of classes.
  *
- * Events like "Environment" etc are meant to be consumed ONLY by a specific class.
+ * Events like "EnvironmentController" are meant to be consumed ONLY by a specific class.
+ * This restriction is checked on runtime.
  */
 sealed class Event<T, R>(
     val body: T,
@@ -26,12 +27,12 @@ sealed class Event<T, R>(
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
     }
 
-    sealed class Environment { // EnvironmentController
+    sealed class EnvironmentController {
         class Open(body: String, callback: ((Boolean) -> Unit)) : Event<String, Boolean>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
-    sealed class Map { // MapController
+    sealed class MapController {
         class Open(body: String) : Event<String, Unit>(body, null)
         class Close(body: Int) : Event<Int, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
@@ -40,11 +41,11 @@ sealed class Event<T, R>(
         class FetchAvailable(callback: ((Set<Pair<String, String>>) -> Unit)?) : Event<Unit, Set<Pair<String, String>>>(Unit, callback)
     }
 
-    sealed class Frame { // FrameController
+    sealed class FrameController {
         class Compose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
     }
 
-    sealed class AvailableMaps { // AvailableMapsDialogUi
+    sealed class AvailableMapsDialogUi {
         class Open : Event<Unit, Unit>(Unit, null)
     }
 

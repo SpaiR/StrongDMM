@@ -15,12 +15,12 @@ class MapController : EventSender, EventConsumer {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(Event.Map.Open::class.java, ::handleOpen)
-        consumeEvent(Event.Map.Close::class.java, ::handleClose)
-        consumeEvent(Event.Map.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(Event.Map.FetchOpened::class.java, ::handleFetchOpened)
-        consumeEvent(Event.Map.FetchAvailable::class.java, ::handleFetchAvailable)
-        consumeEvent(Event.Map.Switch::class.java, ::handleSwitch)
+        consumeEvent(Event.MapController.Open::class.java, ::handleOpen)
+        consumeEvent(Event.MapController.Close::class.java, ::handleClose)
+        consumeEvent(Event.MapController.FetchSelected::class.java, ::handleFetchSelected)
+        consumeEvent(Event.MapController.FetchOpened::class.java, ::handleFetchOpened)
+        consumeEvent(Event.MapController.FetchAvailable::class.java, ::handleFetchAvailable)
+        consumeEvent(Event.MapController.Switch::class.java, ::handleSwitch)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
     }
@@ -44,7 +44,7 @@ class MapController : EventSender, EventConsumer {
                 return
             }
 
-            sendEvent(Event.Environment.Fetch { environment ->
+            sendEvent(Event.EnvironmentController.Fetch { environment ->
                 val dmmData = DmmReader.readMap(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
                 openedMaps.add(map)

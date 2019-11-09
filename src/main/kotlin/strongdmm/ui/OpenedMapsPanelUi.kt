@@ -20,7 +20,7 @@ import strongdmm.util.RED32
 
 class OpenedMapsPanelUi : Window(), EventSender {
     fun process(windowWidth: Int, windowHeight: Int) {
-        sendEvent(Event.Map.FetchOpened { openedMaps ->
+        sendEvent(Event.MapController.FetchOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
                 return@FetchOpened
             }
@@ -31,19 +31,19 @@ class OpenedMapsPanelUi : Window(), EventSender {
                 setNextWindowCollapsed(true, Cond.Once)
             }
 
-            sendEvent(Event.Map.FetchSelected { selectedMap ->
+            sendEvent(Event.MapController.FetchSelected { selectedMap ->
                 window("${selectedMap?.mapName}###opened_maps") {
                     openedMaps.forEach { map ->
                         withStyleColor(Col.ButtonHovered, RED32) {
                             smallButton("X##close_map_${map.relativeMapPath}") {
-                                sendEvent(Event.Map.Close(map.id))
+                                sendEvent(Event.MapController.Close(map.id))
                             }
                         }
 
                         sameLine()
 
                         if (selectable(map.mapName, selectedMap == map) && selectedMap != map) {
-                            sendEvent(Event.Map.Switch(map.id))
+                            sendEvent(Event.MapController.Switch(map.id))
                         }
 
                         if (isItemHovered()) {

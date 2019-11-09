@@ -42,7 +42,7 @@ class MenuBarUi : EventSender, EventConsumer {
     private fun openEnvironment() {
         NfdUtil.selectFile("dme")?.let { path ->
             progressText = "Loading " + path.substringAfterLast("\\")
-            sendEvent(Event.Environment.Open(path) {
+            sendEvent(Event.EnvironmentController.Open(path) {
                 progressText = null
                 isEnvironmentOpen = it
             })
@@ -50,15 +50,15 @@ class MenuBarUi : EventSender, EventConsumer {
     }
 
     private fun openMap() {
-        sendEvent(Event.Environment.Fetch { environment ->
+        sendEvent(Event.EnvironmentController.Fetch { environment ->
             NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
-                sendEvent(Event.Map.Open(path))
+                sendEvent(Event.MapController.Open(path))
             }
         })
     }
 
     private fun openAvailableMap() {
-        sendEvent(Event.AvailableMaps.Open())
+        sendEvent(Event.AvailableMapsDialogUi.Open())
     }
 
     private fun handleResetEnvironment() {

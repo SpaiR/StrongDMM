@@ -32,7 +32,7 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(Event.Frame.Compose::class.java, ::handleCompose)
+        consumeEvent(Event.FrameController.Compose::class.java, ::handleCompose)
     }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
@@ -62,7 +62,7 @@ class FrameController : EventConsumer, EventSender {
             return
         }
 
-        sendEvent(Event.Map.FetchSelected { map ->
+        sendEvent(Event.MapController.FetchSelected { map ->
             if (map == null) {
                 event.reply(emptyList())
                 return@FetchSelected

@@ -20,7 +20,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var selectionStatus: String = "no map" // to display currently selected map (relative path)
 
     init {
-        consumeEvent(Event.AvailableMaps.Open::class.java, ::handleOpen)
+        consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
     }
 
     fun process() {
@@ -34,7 +34,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             text("Selected: $selectionStatus")
 
             child("available_maps_list", Vec2(580, 200), true, Wf.HorizontalScrollbar.i) {
-                sendEvent(Event.Map.FetchAvailable { availableMaps ->
+                sendEvent(Event.MapController.FetchAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
                         sameLine()
@@ -47,7 +47,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             }
 
             button("OK") {
-                sendEvent(Event.Map.Open(selectedMapPath!!))
+                sendEvent(Event.MapController.Open(selectedMapPath!!))
                 closePopup()
             }
 
