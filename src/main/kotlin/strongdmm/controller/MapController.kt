@@ -11,6 +11,8 @@ import java.io.File
 
 class MapController : EventSender, EventConsumer {
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
+    private val availableMaps: MutableSet<Pair<String, String>> = mutableSetOf()
+
     private var selectedMap: Dmm? = null
 
     init {
@@ -18,16 +20,20 @@ class MapController : EventSender, EventConsumer {
         consumeEvent(Event.MAP_CLOSE, ::handleClose)
         consumeEvent(Event.MAP_FETCH_SELECTED, ::handleFetchSelected)
         consumeEvent(Event.MAP_FETCH_OPENED, ::handleFetchOpened)
+        consumeEvent(Event.MAP_FETCH_AVAILABLE, ::handleFetchAvailable)
         consumeEvent(Event.MAP_SWITCH, ::handleSwitch)
         consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
+        consumeEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, ::handleSwitchEnvironment)
     }
 
     private fun handleOpen(msg: Message<String, Unit>) {
-        if (selectedMap?.relativeMapPath == msg.body) {
+        val id = msg.body.hashCode()
+
+        if (selectedMap?.id == id) {
             return
         }
 
-        val dmm = openedMaps.find { it.relativeMapPath == msg.body }
+        val dmm = openedMaps.find { it.id == id }
 
         if (dmm != null) {
             selectedMap = dmm
@@ -49,8 +55,8 @@ class MapController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleClose(msg: Message<String, Unit>) {
-        openedMaps.find { it.relativeMapPath == msg.body }?.let {
+    private fun handleClose(msg: Message<Int, Unit>) {
+        openedMaps.find { it.id == msg.body }?.let {
             val mapIndex = openedMaps.indexOf(it)
 
             openedMaps.remove(it)
@@ -76,8 +82,12 @@ class MapController : EventSender, EventConsumer {
         msg.reply(openedMaps.toSet())
     }
 
-    private fun handleSwitch(msg: Message<String, Unit>) {
-        openedMaps.find { it.relativeMapPath == msg.body }?.let {
+    private fun handleFetchAvailable(msg: Message<Unit, Set<Pair<String, String>>>) {
+        msg.reply(availableMaps.toSet())
+    }
+
+    private fun handleSwitch(msg: Message<Int, Unit>) {
+        openedMaps.find { it.id == msg.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
                 sendEvent(Event.GLOBAL_SWITCH_MAP, it)
@@ -88,5 +98,14 @@ class MapController : EventSender, EventConsumer {
     private fun handleResetEnvironment(msg: Message<Unit, Unit>) {
         selectedMap = null
         openedMaps.clear()
+        availableMaps.clear()
+    }
+
+    private fun handleSwitchEnvironment(msg: Message<Dme, Unit>) {
+        File(msg.body.rootPath).walkTopDown().forEach {
+            if (it.extension == "dmm") {
+                availableMaps.add(it.absolutePath to File(msg.body.rootPath).toPath().relativize(it.toPath()).toString())
+            }
+        }
     }
 }

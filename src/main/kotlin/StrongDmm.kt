@@ -3,16 +3,14 @@ import strongdmm.controller.MapController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.native.ImGuiWindow
-import strongdmm.ui.CoordsPanelUi
-import strongdmm.ui.MenuBarUi
-import strongdmm.ui.OpenedMapsPanelUi
-import strongdmm.ui.WindowTitleUi
+import strongdmm.ui.*
 
 class StrongDmm(title: String) : ImGuiWindow(title) {
     private val menuBarUi = MenuBarUi()
     private val coordsPanelUi = CoordsPanelUi()
     private val openedMapsPanelUi = OpenedMapsPanelUi()
     private val windowTitleUi = WindowTitleUi()
+    private val availableMapsDialogUi = AvailableMapsDialogUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapController()
@@ -24,6 +22,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
         menuBarUi.process()
         coordsPanelUi.process(windowWidth, windowHeight)
         openedMapsPanelUi.process(windowWidth, windowHeight)
+        availableMapsDialogUi.process()
 
         // Controllers (SHOULD go after UI classes)
         canvasController.process(windowWidth, windowHeight)

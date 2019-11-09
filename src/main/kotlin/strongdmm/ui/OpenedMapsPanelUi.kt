@@ -37,14 +37,14 @@ class OpenedMapsPanelUi : Window(), EventSender {
                     openedMaps.forEach { map ->
                         withStyleColor(Col.ButtonHovered, RED32) {
                             smallButton("X##close_map_${map.relativeMapPath}") {
-                                sendEvent(Event.MAP_CLOSE, map.relativeMapPath)
+                                sendEvent(Event.MAP_CLOSE, map.id)
                             }
                         }
 
                         sameLine()
 
                         if (selectable(map.mapName, selectedMap == map) && selectedMap != map) {
-                            sendEvent(Event.MAP_SWITCH, map.relativeMapPath)
+                            sendEvent(Event.MAP_SWITCH, map.id)
                         }
 
                         if (isItemHovered()) {

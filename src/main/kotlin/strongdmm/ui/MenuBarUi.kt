@@ -26,9 +26,10 @@ class MenuBarUi : EventSender, EventConsumer {
         mainMenuBar {
             menuBar {
                 menu("File") {
-                    menuItem("Open Environment..", enabled = progressText == null, block = ::openEnvironment)
+                    menuItem("Open Environment...", enabled = progressText == null, block = ::openEnvironment)
                     separator()
-                    menuItem("Open Map..", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
+                    menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
+                    menuItem("Open Available Map", enabled = isEnvironmentOpen, block = ::openAvailableMap)
                 }
 
                 progressText?.let {
@@ -56,6 +57,10 @@ class MenuBarUi : EventSender, EventConsumer {
                 sendEvent(Event.MAP_OPEN, path)
             }
         }
+    }
+
+    private fun openAvailableMap() {
+        sendEvent(Event.AVAILABLE_MAPS_OPEN)
     }
 
     private fun handleResetEnvironment(msg: Message<Unit, Unit>) {

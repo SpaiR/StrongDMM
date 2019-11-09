@@ -23,7 +23,7 @@ class CanvasController : EventSender, EventConsumer {
         private const val MAX_SCALE: Int = 12
     }
 
-    private val renderDataStorage: MutableMap<String, RenderData> = mutableMapOf()
+    private val renderDataStorage: MutableMap<Int, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
     private var isHasMap: Boolean = false
@@ -129,7 +129,7 @@ class CanvasController : EventSender, EventConsumer {
     private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
 
     private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
-        renderData = renderDataStorage.getOrPut(msg.body.relativeMapPath) { RenderData() }
+        renderData = renderDataStorage.getOrPut(msg.body.id) { RenderData() }
         maxX = msg.body.getMaxX()
         maxY = msg.body.getMaxY()
         canvasRenderer.invalidateCanvasTexture()
@@ -147,6 +147,6 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun handleCloseMap(msg: Message<Dmm, Unit>) {
-        isHasMap = renderDataStorage.remove(msg.body.relativeMapPath) !== renderData
+        isHasMap = renderDataStorage.remove(msg.body.id) !== renderData
     }
 }
