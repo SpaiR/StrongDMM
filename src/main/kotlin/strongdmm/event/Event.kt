@@ -5,6 +5,15 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.controller.frame.FrameMesh
 
+/**
+ * Events are used to do a communication between application components.
+ * By design only "*Ui" and "*Controller" classes should be able to send and receive them.
+ *
+ * Global events are used to show that something globally happened. Like environment switching or map closing.
+ * Unlike the others, global events could be consumed by any number of classes.
+ *
+ * Events like "Environment" etc are meant to be consumed ONLY by a specific class.
+ */
 sealed class Event<T, R>(
     val body: T,
     private val callback: ((R) -> Unit)?
@@ -17,12 +26,12 @@ sealed class Event<T, R>(
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
     }
 
-    sealed class Environment {
+    sealed class Environment { // EnvironmentController
         class Open(body: String, callback: ((Boolean) -> Unit)) : Event<String, Boolean>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
-    sealed class Map {
+    sealed class Map { // MapController
         class Open(body: String) : Event<String, Unit>(body, null)
         class Close(body: Int) : Event<Int, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
@@ -31,11 +40,11 @@ sealed class Event<T, R>(
         class FetchAvailable(callback: ((Set<Pair<String, String>>) -> Unit)?) : Event<Unit, Set<Pair<String, String>>>(Unit, callback)
     }
 
-    sealed class Frame {
+    sealed class Frame { // FrameController
         class FrameCompose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
     }
 
-    sealed class AvailableMaps {
+    sealed class AvailableMaps { // AvailableMapsDialogUi
         class AvailableMapsOpen : Event<Unit, Unit>(Unit, null)
     }
 
