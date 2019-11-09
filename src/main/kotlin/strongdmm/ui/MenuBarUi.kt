@@ -58,7 +58,7 @@ class MenuBarUi : EventSender, EventConsumer {
     }
 
     private fun openAvailableMap() {
-        sendEvent(Event.AvailableMaps.AvailableMapsOpen())
+        sendEvent(Event.AvailableMaps.Open())
     }
 
     private fun handleResetEnvironment() {

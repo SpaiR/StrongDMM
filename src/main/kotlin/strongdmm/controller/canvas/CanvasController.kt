@@ -45,19 +45,20 @@ class CanvasController : EventSender, EventConsumer {
 
     fun process(windowWidth: Int, windowHeight: Int) {
         if (isHasMap) {
-            processViewTranslate()
-            processViewScale()
+            if (!isImGuiInUse()) {
+                processViewTranslate()
+                processViewScale()
+                calculateMapMousePos(windowHeight)
+            }
 
-            calculateMapMousePos(windowHeight)
-
-            sendEvent(Event.Frame.FrameCompose {
+            sendEvent(Event.Frame.Compose {
                 canvasRenderer.render(it, windowWidth, windowHeight, renderData, xMapMousePos, yMapMousePos, iconSize)
             })
         }
     }
 
     private fun processViewTranslate() {
-        if (isImGuiInUse() || !ImGui.isMouseDown(LMB)) {
+        if (!ImGui.isMouseDown(LMB)) {
             return
         }
 
@@ -72,7 +73,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processViewScale() {
-        if (isImGuiInUse() || ImGui.io.mouseWheel == 0f) {
+        if (ImGui.io.mouseWheel == 0f) {
             return
         }
 
@@ -105,10 +106,6 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun calculateMapMousePos(windowHeight: Int) {
-        if (isImGuiInUse()) {
-            return
-        }
-
         val (x, y) = ImGui.mousePos
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize

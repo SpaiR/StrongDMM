@@ -20,7 +20,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var selectionStatus: String = "no map" // to display currently selected map (relative path)
 
     init {
-        consumeEvent(Event.AvailableMaps.AvailableMapsOpen::class.java, ::handleOpen)
+        consumeEvent(Event.AvailableMaps.Open::class.java, ::handleOpen)
     }
 
     fun process() {

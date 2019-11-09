@@ -41,11 +41,11 @@ sealed class Event<T, R>(
     }
 
     sealed class Frame { // FrameController
-        class FrameCompose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
+        class Compose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
     }
 
     sealed class AvailableMaps { // AvailableMapsDialogUi
-        class AvailableMapsOpen : Event<Unit, Unit>(Unit, null)
+        class Open : Event<Unit, Unit>(Unit, null)
     }
 
     fun reply(response: R) {
