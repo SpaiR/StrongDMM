@@ -1,11 +1,45 @@
 package strongdmm.event
 
-enum class Event {
-    GLOBAL_RESET_ENVIRONMENT, GLOBAL_SWITCH_MAP, GLOBAL_SWITCH_ENVIRONMENT, GLOBAL_UPD_MAP_MOUSE_POS,
-    GLOBAL_CLOSE_MAP,
+import glm_.vec2.Vec2i
+import strongdmm.byond.dme.Dme
+import strongdmm.byond.dmm.Dmm
+import strongdmm.controller.frame.FrameMesh
 
-    ENVIRONMENT_OPEN, ENVIRONMENT_FETCH,
-    MAP_OPEN, MAP_CLOSE, MAP_FETCH_SELECTED, MAP_FETCH_OPENED, MAP_SWITCH, MAP_FETCH_AVAILABLE,
-    FRAME_COMPOSE,
-    AVAILABLE_MAPS_OPEN
+sealed class Event<T, R>(
+    val body: T,
+    private val callback: ((R) -> Unit)?
+) {
+    sealed class Global {
+        class ResetEnvironment : Event<Unit, Unit>(Unit, null)
+        class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
+        class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
+        class UpdMapMousePos(body: Vec2i) : Event<Vec2i, Unit>(body, null)
+        class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
+    }
+
+    sealed class Environment {
+        class Open(body: String, callback: ((Boolean) -> Unit)) : Event<String, Boolean>(body, callback)
+        class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
+    }
+
+    sealed class Map {
+        class Open(body: String) : Event<String, Unit>(body, null)
+        class Close(body: Int) : Event<Int, Unit>(body, null)
+        class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
+        class FetchOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
+        class Switch(body: Int) : Event<Int, Unit>(body, null)
+        class FetchAvailable(callback: ((Set<Pair<String, String>>) -> Unit)?) : Event<Unit, Set<Pair<String, String>>>(Unit, callback)
+    }
+
+    sealed class Frame {
+        class FrameCompose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
+    }
+
+    sealed class AvailableMaps {
+        class AvailableMapsOpen : Event<Unit, Unit>(Unit, null)
+    }
+
+    fun reply(response: R) {
+        callback?.invoke(response)
+    }
 }

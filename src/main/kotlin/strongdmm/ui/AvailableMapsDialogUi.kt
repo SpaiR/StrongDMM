@@ -12,7 +12,6 @@ import imgui.dsl_.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.Message
 import imgui.WindowFlag as Wf
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
@@ -21,7 +20,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var selectionStatus: String = "no map" // to display currently selected map (relative path)
 
     init {
-        consumeEvent(Event.AVAILABLE_MAPS_OPEN, ::handleOpen)
+        consumeEvent(Event.AvailableMaps.AvailableMapsOpen::class.java, ::handleOpen)
     }
 
     fun process() {
@@ -29,13 +28,13 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             openPopup("Available Maps")
         }
 
-        setNextWindowSize(Vec2(600, 280), Cond.Once)
+        setNextWindowSize(Vec2(600, 275), Cond.Once)
 
         popupModal("Available Maps", null, Wf.NoResize.i) {
             text("Selected: $selectionStatus")
 
             child("available_maps_list", Vec2(580, 200), true, Wf.HorizontalScrollbar.i) {
-                sendEvent<Set<Pair<String, String>>>(Event.MAP_FETCH_AVAILABLE) { availableMaps ->
+                sendEvent(Event.Map.FetchAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
                         sameLine()
@@ -44,12 +43,12 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                             selectionStatus = rel
                         }
                     }
-                }
+                })
             }
 
             button("OK") {
+                sendEvent(Event.Map.Open(selectedMapPath!!))
                 closePopup()
-                sendEvent(Event.MAP_OPEN, selectedMapPath)
             }
 
             sameLine()
@@ -65,7 +64,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         selectionStatus = "no map"
     }
 
-    private fun handleOpen(msg: Message<Unit, Unit>) {
+    private fun handleOpen() {
         isOpen = true
     }
 }

@@ -11,7 +11,6 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.Message
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameController : EventConsumer, EventSender {
@@ -29,44 +28,44 @@ class FrameController : EventConsumer, EventSender {
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
-        consumeEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, ::handleSwitchEnvironment)
-        consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
-        consumeEvent(Event.GLOBAL_CLOSE_MAP, ::handleCloseMap)
-        consumeEvent(Event.FRAME_COMPOSE, ::handleCompose)
+        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
+        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(Event.Frame.FrameCompose::class.java, ::handleCompose)
     }
 
-    private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
-        selectedMapId = msg.body.id
+    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         cache.clear()
     }
 
-    private fun handleSwitchEnvironment(msg: Message<Dme, Unit>) {
-        currentIconSize = msg.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+        currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
     }
 
-    private fun handleResetEnvironment(msg: Message<Unit, Unit>) {
+    private fun handleResetEnvironment() {
         selectedMapId = -1
         cache.clear()
     }
 
-    private fun handleCloseMap(msg: Message<Dmm, Unit>) {
-        if (selectedMapId == msg.body.id) {
+    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+        if (selectedMapId == event.body.id) {
             selectedMapId = -1
             cache.clear()
         }
     }
 
-    private fun handleCompose(msg: Message<Unit, List<FrameMesh>>) {
+    private fun handleCompose(event: Event<Unit, List<FrameMesh>>) {
         if (cache.isNotEmpty()) {
-            msg.reply(cache)
+            event.reply(cache)
             return
         }
 
-        sendEvent<Dmm?>(Event.MAP_FETCH_SELECTED) { map ->
+        sendEvent(Event.Map.FetchSelected { map ->
             if (map == null) {
-                msg.reply(emptyList())
-                return@sendEvent
+                event.reply(emptyList())
+                return@FetchSelected
             }
 
             for (x in 1..map.getMaxX()) {
@@ -93,7 +92,7 @@ class FrameController : EventConsumer, EventSender {
             }
 
             cache.sortBy { it.depth }
-            msg.reply(cache)
-        }
+            event.reply(cache)
+        })
     }
 }

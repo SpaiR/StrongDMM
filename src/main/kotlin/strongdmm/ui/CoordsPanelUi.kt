@@ -9,7 +9,6 @@ import imgui.dsl.window
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import strongdmm.event.Message
 import strongdmm.util.OUT_OF_BOUNDS
 import imgui.WindowFlag as Wf
 
@@ -22,10 +21,10 @@ class CoordsPanelUi : Window(), EventConsumer {
     private var selectedMapId: Int = -1
 
     init {
-        consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
-        consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
-        consumeEvent(Event.GLOBAL_UPD_MAP_MOUSE_POS, ::handleUpdMapMousePos)
-        consumeEvent(Event.GLOBAL_CLOSE_MAP, ::handleCloseMap)
+        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.UpdMapMousePos::class.java, ::handleUpdMapMousePos)
+        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -45,22 +44,22 @@ class CoordsPanelUi : Window(), EventConsumer {
         }
     }
 
-    private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
-        selectedMapId = msg.body.id
+    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         isHasMap = true
     }
 
-    private fun handleResetEnvironment(msg: Message<Unit, Unit>) {
+    private fun handleResetEnvironment() {
         isHasMap = false
     }
 
-    private fun handleUpdMapMousePos(msg: Message<Vec2i, Unit>) {
-        xMapMousePos = msg.body.x
-        yMapMousePos = msg.body.y
+    private fun handleUpdMapMousePos(event: Event<Vec2i, Unit>) {
+        xMapMousePos = event.body.x
+        yMapMousePos = event.body.y
     }
 
-    private fun handleCloseMap(msg: Message<Dmm, Unit>) {
-        if (selectedMapId == msg.body.id) {
+    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+        if (selectedMapId == event.body.id) {
             selectedMapId = -1
             isHasMap = false
         }

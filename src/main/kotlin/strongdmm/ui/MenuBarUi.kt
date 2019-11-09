@@ -7,11 +7,9 @@ import imgui.dsl.mainMenuBar
 import imgui.dsl.menu
 import imgui.dsl.menuBar
 import imgui.dsl.menuItem
-import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.Message
 import strongdmm.native.NfdUtil
 
 class MenuBarUi : EventSender, EventConsumer {
@@ -19,7 +17,7 @@ class MenuBarUi : EventSender, EventConsumer {
     private var isEnvironmentOpen: Boolean = false
 
     init {
-        consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
+        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
     }
 
     fun process() {
@@ -44,26 +42,26 @@ class MenuBarUi : EventSender, EventConsumer {
     private fun openEnvironment() {
         NfdUtil.selectFile("dme")?.let { path ->
             progressText = "Loading " + path.substringAfterLast("\\")
-            sendEvent<String, Boolean>(Event.ENVIRONMENT_OPEN, path) {
+            sendEvent(Event.Environment.Open(path) {
                 progressText = null
                 isEnvironmentOpen = it
-            }
+            })
         }
     }
 
     private fun openMap() {
-        sendEvent<Dme>(Event.ENVIRONMENT_FETCH) { environment ->
+        sendEvent(Event.Environment.Fetch { environment ->
             NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
-                sendEvent(Event.MAP_OPEN, path)
+                sendEvent(Event.Map.Open(path))
             }
-        }
+        })
     }
 
     private fun openAvailableMap() {
-        sendEvent(Event.AVAILABLE_MAPS_OPEN)
+        sendEvent(Event.AvailableMaps.AvailableMapsOpen())
     }
 
-    private fun handleResetEnvironment(msg: Message<Unit, Unit>) {
+    private fun handleResetEnvironment() {
         isEnvironmentOpen = false
     }
 }

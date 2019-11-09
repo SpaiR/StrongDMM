@@ -14,16 +14,15 @@ import imgui.dsl.smallButton
 import imgui.dsl.tooltip
 import imgui.dsl.window
 import imgui.dsl.withStyleColor
-import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventSender
 import strongdmm.util.RED32
 
 class OpenedMapsPanelUi : Window(), EventSender {
     fun process(windowWidth: Int, windowHeight: Int) {
-        sendEvent<Set<Dmm>>(Event.MAP_FETCH_OPENED) { openedMaps ->
+        sendEvent(Event.Map.FetchOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
-                return@sendEvent
+                return@FetchOpened
             }
 
             getOptionCondition(windowWidth, windowHeight).let { cond ->
@@ -32,19 +31,19 @@ class OpenedMapsPanelUi : Window(), EventSender {
                 setNextWindowCollapsed(true, Cond.Once)
             }
 
-            sendEvent<Dmm?>(Event.MAP_FETCH_SELECTED) { selectedMap ->
+            sendEvent(Event.Map.FetchSelected { selectedMap ->
                 window("${selectedMap?.mapName}###opened_maps") {
                     openedMaps.forEach { map ->
                         withStyleColor(Col.ButtonHovered, RED32) {
                             smallButton("X##close_map_${map.relativeMapPath}") {
-                                sendEvent(Event.MAP_CLOSE, map.id)
+                                sendEvent(Event.Map.Close(map.id))
                             }
                         }
 
                         sameLine()
 
                         if (selectable(map.mapName, selectedMap == map) && selectedMap != map) {
-                            sendEvent(Event.MAP_SWITCH, map.id)
+                            sendEvent(Event.Map.Switch(map.id))
                         }
 
                         if (isItemHovered()) {
@@ -54,7 +53,7 @@ class OpenedMapsPanelUi : Window(), EventSender {
                         }
                     }
                 }
-            }
-        }
+            })
+        })
     }
 }

@@ -1,20 +1,27 @@
 package strongdmm.event
 
-import gnu.trove.map.hash.TShortObjectHashMap
-import strongdmm.util.extension.getOrPut
-
 object EventBus {
-    private val subscribers: TShortObjectHashMap<MutableList<Any>> = TShortObjectHashMap()
+    private val subscribersWithArg: MutableMap<Any, MutableList<Any>> = mutableMapOf()
+    private val subscribersWithoutArg: MutableMap<Any, MutableList<Any>> = mutableMapOf()
 
-    fun <T, R> register(event: Event, eventAction: (Message<T, R>) -> Unit) {
-        subscribers.getOrPut(event.ordinal.toShort()) { mutableListOf() }.add(eventAction)
+    fun <T, R> register(eventClass: Class<out Event<T, R>>, eventAction: (Event<T, R>) -> Unit) {
+        subscribersWithArg.getOrPut(eventClass) { mutableListOf() }.add(eventAction)
+    }
+
+    fun <T, R> register(eventClass: Class<out Event<T, R>>, eventAction: () -> Unit) {
+        subscribersWithoutArg.getOrPut(eventClass) { mutableListOf() }.add(eventAction)
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T, R> notify(event: Event, msg: Message<T, R>) {
-        subscribers[event.ordinal.toShort()]?.let { subs ->
+    fun <T, R> notify(event: Event<T, R>) {
+        subscribersWithArg[event::class.java]?.let { subs ->
             subs.forEach { handler ->
-                (handler as (Message<T, R>) -> Unit)(msg)
+                (handler as (Event<T, R>) -> Unit)(event)
+            }
+        }
+        subscribersWithoutArg[event::class.java]?.let { subs ->
+            subs.forEach { handler ->
+                (handler as () -> Unit)()
             }
         }
     }

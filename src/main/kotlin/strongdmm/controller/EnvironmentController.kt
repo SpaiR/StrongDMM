@@ -7,37 +7,36 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.Message
 import kotlin.concurrent.thread
 
 class EnvironmentController : EventSender, EventConsumer {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(Event.ENVIRONMENT_OPEN, ::handleOpen)
-        consumeEvent(Event.ENVIRONMENT_FETCH, ::handleFetch)
+        consumeEvent(Event.Environment.Open::class.java, ::handleOpen)
+        consumeEvent(Event.Environment.Fetch::class.java, ::handleFetch)
     }
 
-    private fun handleOpen(msg: Message<String, Boolean>) {
-        sendEvent(Event.GLOBAL_RESET_ENVIRONMENT)
+    private fun handleOpen(event: Event<String, Boolean>) {
+        sendEvent(Event.Global.ResetEnvironment())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            environment = SdmmParser().parseDme(msg.body)
+            environment = SdmmParser().parseDme(event.body)
 
             GlobalDmiHolder.environmentRootPath = environment.rootPath
             GlobalTileItemHolder.environment = environment
 
             System.gc()
 
-            msg.reply(true)
-            sendEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, environment)
+            event.reply(true)
+            sendEvent(Event.Global.SwitchEnvironment(environment))
         }
     }
 
-    private fun handleFetch(msg: Message<Unit, Dme>) {
-        msg.reply(environment)
+    private fun handleFetch(event: Event<Unit, Dme>) {
+        event.reply(environment)
     }
 }

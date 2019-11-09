@@ -7,11 +7,9 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
-import strongdmm.controller.frame.FrameMesh
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.Message
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
@@ -39,10 +37,10 @@ class CanvasController : EventSender, EventConsumer {
     private val canvasRenderer = CanvasRenderer()
 
     init {
-        consumeEvent(Event.GLOBAL_SWITCH_MAP, ::handleSwitchMap)
-        consumeEvent(Event.GLOBAL_SWITCH_ENVIRONMENT, ::handleSwitchEnvironment)
-        consumeEvent(Event.GLOBAL_RESET_ENVIRONMENT, ::handleResetEnvironment)
-        consumeEvent(Event.GLOBAL_CLOSE_MAP, ::handleCloseMap)
+        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
+        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -52,9 +50,9 @@ class CanvasController : EventSender, EventConsumer {
 
             calculateMapMousePos(windowHeight)
 
-            sendEvent<List<FrameMesh>>(Event.FRAME_COMPOSE) {
+            sendEvent(Event.Frame.FrameCompose {
                 canvasRenderer.render(it, windowWidth, windowHeight, renderData, xMapMousePos, yMapMousePos, iconSize)
-            }
+            })
         }
     }
 
@@ -122,31 +120,31 @@ class CanvasController : EventSender, EventConsumer {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            sendEvent(Event.GLOBAL_UPD_MAP_MOUSE_POS, Vec2i(xMapMousePos, yMapMousePos))
+            sendEvent(Event.Global.UpdMapMousePos(Vec2i(xMapMousePos, yMapMousePos)))
         }
     }
 
     private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
 
-    private fun handleSwitchMap(msg: Message<Dmm, Unit>) {
-        renderData = renderDataStorage.getOrPut(msg.body.id) { RenderData() }
-        maxX = msg.body.getMaxX()
-        maxY = msg.body.getMaxY()
+    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+        renderData = renderDataStorage.getOrPut(event.body.id) { RenderData() }
+        maxX = event.body.getMaxX()
+        maxY = event.body.getMaxY()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = true
     }
 
-    private fun handleSwitchEnvironment(msg: Message<Dme, Unit>) {
-        iconSize = msg.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+        iconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
     }
 
-    private fun handleResetEnvironment(msg: Message<Unit, Unit>) {
+    private fun handleResetEnvironment() {
         renderDataStorage.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
     }
 
-    private fun handleCloseMap(msg: Message<Dmm, Unit>) {
-        isHasMap = renderDataStorage.remove(msg.body.id) !== renderData
+    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+        isHasMap = renderDataStorage.remove(event.body.id) !== renderData
     }
 }
