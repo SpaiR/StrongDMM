@@ -32,6 +32,7 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
         consumeEvent(Event.FrameController.Compose::class.java, ::handleCompose)
     }
 
@@ -56,6 +57,10 @@ class FrameController : EventConsumer, EventSender {
         }
     }
 
+    private fun handleRefreshFrame() {
+        cache.clear()
+    }
+
     private fun handleCompose(event: Event<Unit, List<FrameMesh>>) {
         if (cache.isNotEmpty()) {
             event.reply(cache)
@@ -68,9 +73,9 @@ class FrameController : EventConsumer, EventSender {
                 return@FetchSelected
             }
 
-            for (x in 1..map.getMaxX()) {
-                for (y in 1..map.getMaxY()) {
-                    map.getTileItems(x, y).forEach { tileItemId ->
+            for (x in 1..map.maxX) {
+                for (y in 1..map.maxY) {
+                    map.getTileItemsID(x, y).forEach { tileItemId ->
                         val tileItem = GlobalTileItemHolder.getById(tileItemId)
                         val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
                         val x1 = (x - 1) * currentIconSize + tileItem.pixelX

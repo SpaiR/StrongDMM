@@ -14,8 +14,10 @@ class Dmm(
     val relativeMapPath: String = Path.of(dme.rootPath).relativize(mapFile.toPath()).toString()
     val id: Int = mapFile.absolutePath.hashCode()
 
-    private var maxX: Int = initialDmmData.maxX
-    private var maxY: Int = initialDmmData.maxY
+    var maxX: Int = initialDmmData.maxX
+        private set
+    var maxY: Int = initialDmmData.maxY
+        private set
 
     private var tiles: Array<Array<IntArray>> = Array(maxY) { Array(maxX) { IntArray(0) } }
 
@@ -37,10 +39,8 @@ class Dmm(
         }
     }
 
-    fun getTileItems(x: Int, y: Int): IntArray = tiles[y - 1][x - 1]
-
-    fun getMaxX(): Int = maxX
-    fun getMaxY(): Int = maxY
+    fun getTile(x: Int, y: Int): Tile = Tile(this, x, y)
+    fun getTileItemsID(x: Int, y: Int): IntArray = tiles[y - 1][x - 1]
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

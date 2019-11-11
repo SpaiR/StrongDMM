@@ -12,16 +12,16 @@ class TileItem(
     val customVars: Map<String, String>? = customVars?.takeIf { it.isNotEmpty() }?.let { Collections.unmodifiableMap(it) }
     val type: String get() = dmeItem.type
 
-    // Props extensively used during the rendering process
-    val icon: String get() = getVarText(VAR_ICON) ?: ""
-    val iconState: String get() = getVarText(VAR_ICON_STATE) ?: ""
-    val alpha: Int get() = getVarInt(VAR_ALPHA) ?: 0
-    val plane: Float get() = getVarFloat(VAR_PLANE) ?: 0f
-    val layer: Float get() = getVarFloat(VAR_LAYER) ?: 0f
-    val pixelX: Int get() = getVarInt(VAR_PIXEL_X) ?: 0
-    val pixelY: Int get() = getVarInt(VAR_PIXEL_Y) ?: 0
-    val dir: Int get() = getVarInt(VAR_DIR) ?: 0
-    val color: String get() = getVarText(VAR_COLOR) ?: ""
+    // Vars extensively used during the rendering process
+    val icon: String = getVarText(VAR_ICON) ?: ""
+    val iconState: String = getVarText(VAR_ICON_STATE) ?: ""
+    val alpha: Int = getVarInt(VAR_ALPHA) ?: 0
+    val plane: Float = getVarFloat(VAR_PLANE) ?: 0f
+    val layer: Float = getVarFloat(VAR_LAYER) ?: 0f
+    val pixelX: Int = getVarInt(VAR_PIXEL_X) ?: 0
+    val pixelY: Int = getVarInt(VAR_PIXEL_Y) ?: 0
+    val dir: Int = getVarInt(VAR_DIR) ?: 0
+    val color: String = getVarText(VAR_COLOR) ?: ""
 
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {

@@ -3,6 +3,7 @@ package strongdmm.event
 import glm_.vec2.Vec2i
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.Tile
 import strongdmm.controller.frame.FrameMesh
 
 /**
@@ -25,6 +26,7 @@ sealed class Event<T, R>(
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
         class UpdMapMousePos(body: Vec2i) : Event<Vec2i, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
+        class RefreshFrame : Event<Unit, Unit>(Unit, null)
     }
 
     sealed class EnvironmentController {
@@ -47,6 +49,11 @@ sealed class Event<T, R>(
 
     sealed class AvailableMapsDialogUi {
         class Open : Event<Unit, Unit>(Unit, null)
+    }
+
+    sealed class TilePopupUi {
+        class Open(body: Tile) : Event<Tile, Unit>(body, null)
+        class Close : Event<Unit, Unit>(Unit, null)
     }
 
     fun reply(response: R) {

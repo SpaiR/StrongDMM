@@ -13,6 +13,7 @@ import strongdmm.event.EventSender
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
+import strongdmm.util.RMB
 
 class CanvasController : EventSender, EventConsumer {
     companion object {
@@ -41,6 +42,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -48,6 +50,7 @@ class CanvasController : EventSender, EventConsumer {
             if (!isImGuiInUse()) {
                 processViewTranslate()
                 processViewScale()
+                processTilePopupClick()
                 calculateMapMousePos(windowHeight)
             }
 
@@ -103,6 +106,18 @@ class CanvasController : EventSender, EventConsumer {
 
             redraw = true
         }
+
+        sendEvent(Event.TilePopupUi.Close())
+    }
+
+    private fun processTilePopupClick() {
+        if (ImGui.isMouseClicked(RMB)) {
+            sendEvent(Event.MapController.FetchSelected {
+                if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
+                    sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
+                }
+            })
+        }
     }
 
     private fun calculateMapMousePos(windowHeight: Int) {
@@ -125,8 +140,8 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         renderData = renderDataStorage.getOrPut(event.body.id) { RenderData() }
-        maxX = event.body.getMaxX()
-        maxY = event.body.getMaxY()
+        maxX = event.body.maxX
+        maxY = event.body.maxY
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = true
     }
@@ -143,5 +158,9 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         isHasMap = renderDataStorage.remove(event.body.id) !== renderData
+    }
+
+    private fun handleRefreshFrame() {
+        canvasRenderer.redraw = true
     }
 }
