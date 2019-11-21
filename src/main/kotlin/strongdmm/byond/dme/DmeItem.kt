@@ -5,7 +5,7 @@ import strongdmm.byond.*
 class DmeItem(
     private val environment: Dme,
     val type: String,
-    private val vars: Map<String, String?>,
+    val vars: Map<String, String?>,
     private val children: List<String>
 ) {
     private val lookedVars: MutableMap<String, String?> = mutableMapOf()

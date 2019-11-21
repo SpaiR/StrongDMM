@@ -8,8 +8,10 @@ class Dme(
     val rootPath: String,
     private val dmeItems: Map<String, DmeItem>
 ) {
-    private lateinit var basicTurfType: String
-    private lateinit var basicAreaType: String
+    lateinit var basicTurfType: String
+        private set
+    lateinit var basicAreaType: String
+        private set
 
     fun postInit() {
         val world = getItem(TYPE_WORLD)!!
@@ -18,7 +20,4 @@ class Dme(
     }
 
     fun getItem(type: String): DmeItem? = dmeItems[type]
-
-    fun getBasicTurfType(): String = basicTurfType
-    fun getBasicAreaType(): String = basicAreaType
 }

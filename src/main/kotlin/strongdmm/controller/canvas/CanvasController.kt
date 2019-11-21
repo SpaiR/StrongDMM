@@ -25,6 +25,7 @@ class CanvasController : EventSender, EventConsumer {
     private val renderDataStorage: MutableMap<Int, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
+    private var modalBlock: Boolean = false
     private var isHasMap: Boolean = false
     private var iconSize: Int = DEFAULT_ICON_SIZE
 
@@ -43,11 +44,12 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
+        consumeEvent(Event.Global.ModalBlock::class.java, ::handleModalBlock)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
         if (isHasMap) {
-            if (!isImGuiInUse()) {
+            if (!modalBlock && !isImGuiInUse()) {
                 processViewTranslate()
                 processViewScale()
                 processTilePopupClick()
@@ -162,5 +164,9 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleRefreshFrame() {
         canvasRenderer.redraw = true
+    }
+
+    private fun handleModalBlock(event: Event<Boolean, Unit>) {
+        modalBlock = event.body
     }
 }

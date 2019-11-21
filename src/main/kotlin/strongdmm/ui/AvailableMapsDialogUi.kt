@@ -62,9 +62,11 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         isOpen = false
         selectedMapPath = null
         selectionStatus = "no map"
+        sendEvent(Event.Global.ModalBlock(false))
     }
 
     private fun handleOpen() {
         isOpen = true
+        sendEvent(Event.Global.ModalBlock(true))
     }
 }

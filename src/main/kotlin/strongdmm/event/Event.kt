@@ -4,6 +4,7 @@ import glm_.vec2.Vec2i
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.Tile
+import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.frame.FrameMesh
 
 /**
@@ -27,6 +28,7 @@ sealed class Event<T, R>(
         class UpdMapMousePos(body: Vec2i) : Event<Vec2i, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
+        class ModalBlock(body: Boolean) : Event<Boolean, Unit>(body, null)
     }
 
     sealed class EnvironmentController {
@@ -54,6 +56,10 @@ sealed class Event<T, R>(
     sealed class TilePopupUi {
         class Open(body: Tile) : Event<Tile, Unit>(body, null)
         class Close : Event<Unit, Unit>(Unit, null)
+    }
+
+    sealed class EditVarsDialogUi {
+        class Open(body: Pair<Tile, Int>) : Event<Pair<Tile, Int>, Unit>(body, null)
     }
 
     fun reply(response: R) {

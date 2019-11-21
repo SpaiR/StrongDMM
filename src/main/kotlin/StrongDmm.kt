@@ -4,6 +4,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.native.ImGuiWindow
 import strongdmm.ui.*
+import strongdmm.ui.edit.vars.dialog.EditVarsDialogUi
 
 class StrongDmm(title: String) : ImGuiWindow(title) {
     private val menuBarUi = MenuBarUi()
@@ -12,6 +13,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
     private val windowTitleUi = WindowTitleUi()
     private val availableMapsDialogUi = AvailableMapsDialogUi()
     private val tilePopupUi = TilePopupUi()
+    private val editVarsDialogUi = EditVarsDialogUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapController()
@@ -28,6 +30,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
         openedMapsPanelUi.process(windowWidth, windowHeight)
         availableMapsDialogUi.process()
         tilePopupUi.process()
+        editVarsDialogUi.process(windowWidth, windowHeight)
     }
 
     companion object {

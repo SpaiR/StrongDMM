@@ -4,6 +4,7 @@ import glm_.vec2.Vec2
 import imgui.ImGui.image
 import imgui.ImGui.openPopup
 import imgui.ImGui.sameLine
+import imgui.ImGui.separator
 import imgui.ImGui.text
 import imgui.SelectableFlag
 import imgui.WindowFlag
@@ -21,9 +22,6 @@ import strongdmm.event.EventSender
 
 class TilePopupUi : EventConsumer, EventSender {
     companion object {
-        private const val AREA_INDEX: Int = -1
-        private const val TURF_INDEX: Int = -2
-
         private val ICON_SIZE: Vec2 = Vec2(16, 16)
     }
 
@@ -37,21 +35,21 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        if (currentTile != null) {
+        currentTile?.let { tile ->
             popup("tile_popup", WindowFlag.NoMove.i) {
-                showTileItems()
+                showTileItems(tile)
             }
         }
     }
 
-    private fun showTileItems() {
-        currentTile?.area?.let { showTileItemRow(it, AREA_INDEX) }
-        currentTile?.mobs?.forEach { showTileItemRow(it.value, it.index) }
-        currentTile?.objs?.forEach { showTileItemRow(it.value, it.index) }
-        currentTile?.turf?.let { showTileItemRow(it, TURF_INDEX) }
+    private fun showTileItems(tile: Tile) {
+        tile.area?.let { area -> showTileItemRow(tile, area, Tile.AREA_INDEX) }
+        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, mob.index) }
+        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, obj.index) }
+        tile.turf?.let { turf -> showTileItemRow(tile, turf, Tile.TURF_INDEX) }
     }
 
-    private fun showTileItemRow(tileItem: TileItem, index: Int) {
+    private fun showTileItemRow(tile: Tile, tileItem: TileItem, index: Int) {
         val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
@@ -59,23 +57,29 @@ class TilePopupUi : EventConsumer, EventSender {
         sameLine()
 
         menu("$name##$index") {
-            showTileItemOptions(tileItem, index)
+            showTileItemOptions(tile, tileItem, index)
         }
 
         sameLine()
         text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
     }
 
-    private fun showTileItemOptions(tileItem: TileItem, index: Int) {
-        if (index != AREA_INDEX && index != TURF_INDEX) {
+    private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: Int) {
+        if (index != Tile.AREA_INDEX && index != Tile.TURF_INDEX) {
             menuItem("Move To Top##$index") {
-                currentTile?.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
+                tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
                 sendEvent(Event.Global.RefreshFrame())
             }
             menuItem("Move To Bottom##$index") {
-                currentTile?.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
+                tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
                 sendEvent(Event.Global.RefreshFrame())
             }
+
+            separator()
+        }
+
+        menuItem("Edit Variables...##$index") {
+            sendEvent(Event.EditVarsDialogUi.Open(Pair(tile, index)))
         }
     }
 
