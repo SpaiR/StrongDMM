@@ -83,7 +83,7 @@ class TilePopupUi : EventConsumer, EventSender {
         }
     }
 
-    // Default imgui.dsl.menuItem throws the exception after selection.
+    // Default imgui.dsl.menuItem throws an exception after selection occurs
     private inline fun menuItem(label: String, block: () -> Unit) {
         selectable(label, flags = SelectableFlag.DontClosePopups.i) {
             block()

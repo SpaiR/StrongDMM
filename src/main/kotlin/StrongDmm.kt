@@ -4,7 +4,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.native.ImGuiWindow
 import strongdmm.ui.*
-import strongdmm.ui.edit.vars.dialog.EditVarsDialogUi
+import strongdmm.ui.vars.EditVarsDialogUi
 
 class StrongDmm(title: String) : ImGuiWindow(title) {
     private val menuBarUi = MenuBarUi()

@@ -1,4 +1,4 @@
-package strongdmm.ui.edit.vars.dialog
+package strongdmm.ui.vars
 
 import glm_.vec2.Vec2
 import imgui.*
@@ -35,6 +35,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         private const val DIALOG_WIDTH: Int = 400
         private const val DIALOG_HEIGHT: Int = 450
 
+        private const val FILTER_BUFFER: Int = 1024
+
         private var WINDOW_ID: Long = 0 // To ensure every window will be unique.
 
         private val HIDDEN_VARS: Set<String> = setOf(
@@ -45,16 +47,14 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private var currentTile: Tile? = null
-    private var currentTileItemIndex: Int = 0
+    private var currentTileItemIndex: Int = 0 // This index is an item index inside of Tile list of objects
+    private var currentEditVar: Var? = null
 
-    private val varsFilterRaw: CharArray = CharArray(1024)
-    private var varsFilter: String = ""
+    private var varsFilterRaw: CharArray = CharArray(FILTER_BUFFER) // Buffer for variable filter
+    private var varsFilter: String = "" // The actual string representation of the the filter
 
     private val isShowInstanceVars: MutableProperty0<Boolean> = MutableProperty0(false)
-
     private val variables: MutableList<Var> = mutableListOf()
-
-    private var currentEditVar: Var? = null
 
     init {
         consumeEvent(Event.EditVarsDialogUi.Open::class.java, ::handleOpen)
@@ -72,88 +72,91 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             setNextWindowSize(Vec2(DIALOG_WIDTH, DIALOG_HEIGHT), Cond.Once)
 
             window("Edit Variables: ${tileItem.type}##$WINDOW_ID") {
-                checkbox("##isShowInstanceVars", isShowInstanceVars)
-                if (ImGui.isItemHovered()) {
-                    tooltip {
-                        text("Show only instance variables")
-                    }
-                }
-                sameLine()
-                if (inputText("##varsFilter", varsFilterRaw)) {
-                    varsFilter = String(varsFilterRaw, 0, varsFilterRaw.strlen)
-                }
-                sameLine()
-                button("OK") {
-                    applyModifiedVars()
-                    dispose()
-                }
-                sameLine()
-                button("Cancel") {
-                    dispose()
-                }
+                drawControls()
 
                 separator()
 
                 child("vars_table") {
-                    columns(2, border = true)
-
-                    for (variable in variables) {
-                        if (isShowInstanceVars.get() && !variable.isModified) {
-                            continue
-                        }
-
-                        if (varsFilter.isNotEmpty() && !variable.name.contains(varsFilter)) {
-                            continue
-                        }
-
-                        val isModifyingVar = variable === currentEditVar
-
-                        alignTextToFramePadding()
-
-                        if (variable.isModified) {
-                            withStyleColor(Col.Text, GREEN32) {
-                                text(variable.name)
-                            }
-                        } else {
-                            text(variable.name)
-                        }
-
-                        nextColumn()
-                        setNextItemWidth(ImGui.getColumnWidth(-1))
-
-                        if (isModifyingVar) {
-                            if (inputText("##${variable.name}", variable.buffer!!, InputTextFlag.EnterReturnsTrue.i)) {
-                                currentEditVar?.stopEdit()
-                                currentEditVar = null
-                            }
-                        } else {
-                            alignTextToFramePadding()
-                            text(variable.visibleValue)
-
-                            if (ImGui.isItemHovered()) {
-                                ImGui.mouseCursor = MouseCursor.Hand
-                            }
-
-                            if (ImGui.isItemClicked(LMB)) {
-                                currentEditVar?.stopEdit()
-                                currentEditVar = variable
-                                variable.startEdit()
-                            }
-                        }
-
-                        nextColumn()
-                        separator()
-                    }
-
-                    endColumns()
+                    drawVariables()
                 }
             }
         }
     }
 
+    private fun drawControls() {
+        checkbox("##isShowInstanceVars", isShowInstanceVars)
+        if (ImGui.isItemHovered()) {
+            tooltip { text("Show only instance variables") }
+        }
+
+        sameLine()
+        if (inputText("##varsFilter", varsFilterRaw)) {
+            varsFilter = String(varsFilterRaw, 0, varsFilterRaw.strlen)
+        }
+
+        sameLine()
+        button("OK") {
+            applyModifiedVars()
+            dispose()
+        }
+
+        sameLine()
+        button("Cancel", block = ::dispose)
+    }
+
+    private fun drawVariables() {
+        columns(2, border = true)
+
+        for (variable in variables) {
+            if (isShowInstanceVars.get() && !variable.isModified) {
+                continue
+            }
+
+            if (varsFilter.isNotEmpty() && !variable.name.contains(varsFilter)) {
+                continue
+            }
+
+            alignTextToFramePadding()
+            if (variable.isModified) {
+                withStyleColor(Col.Text, GREEN32) {
+                    text(variable.name)
+                }
+            } else {
+                text(variable.name)
+            }
+
+            nextColumn()
+            setNextItemWidth(ImGui.getColumnWidth(-1))
+
+            if (variable === currentEditVar) {
+                if (inputText("##${variable.name}", variable.buffer!!, InputTextFlag.EnterReturnsTrue.i)) {
+                    currentEditVar?.stopEdit()
+                    currentEditVar = null
+                }
+            } else {
+                alignTextToFramePadding()
+                text(variable.displayValue)
+
+                if (ImGui.isItemHovered()) {
+                    ImGui.mouseCursor = MouseCursor.Hand
+                }
+
+                if (ImGui.isItemClicked(LMB)) {
+                    currentEditVar?.stopEdit()
+                    currentEditVar = variable
+                    variable.startEdit()
+                }
+            }
+
+            nextColumn()
+            separator()
+        }
+
+        endColumns()
+    }
+
     private fun collectVarsToDisplay() {
         currentEditVar = null
-
         variables.clear()
 
         fun collectVars(dmeItem: DmeItem) {
@@ -162,6 +165,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                     variables.add(Var(name, value ?: "null", value ?: "null"))
                 }
             }
+
             dmeItem.getParent()?.let { collectVars(it) }
         }
 
@@ -187,21 +191,19 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun applyModifiedVars() {
         currentEditVar?.stopEdit()
 
-        val changedVars = variables.filter { it.isChanged }
-
-        if (changedVars.isEmpty()) {
+        if (variables.none { it.isChanged }) {
             return
         }
 
         val newItemVars = mutableMapOf<String, String>()
 
-        changedVars.forEach {
+        variables.filter { it.isChanged || it.isModified }.forEach {
             newItemVars[it.name] = it.value
         }
 
         if (newItemVars.isEmpty()) {
             if (currentTile!!.tileItems[currentTileItemIndex].customVars != null) {
-                currentTile?.modifyItemVars(currentTileItemIndex, null)
+                currentTile!!.modifyItemVars(currentTileItemIndex, null)
                 sendEvent(Event.Global.RefreshFrame())
             }
         } else {
@@ -213,10 +215,14 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun dispose() {
         currentTile = null
         currentEditVar = null
+        varsFilterRaw = CharArray(FILTER_BUFFER)
+        varsFilter = ""
         variables.clear()
+        sendEvent(Event.Global.ModalBlock(false))
     }
 
     private fun handleOpen(event: Event<Pair<Tile, Int>, Unit>) {
+        sendEvent(Event.Global.ModalBlock(true))
         WINDOW_ID++
         currentTile = event.body.first
         currentTileItemIndex = event.body.second

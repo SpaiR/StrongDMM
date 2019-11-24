@@ -4,7 +4,6 @@ import glm_.vec2.Vec2i
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.Tile
-import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.frame.FrameMesh
 
 /**

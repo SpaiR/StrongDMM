@@ -44,6 +44,7 @@ class Tile(
         val tileItemType = tileItems[itemIdx].type
 
         tileItemsID[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
+        update()
     }
 
     fun moveToTop(isMob: Boolean, index: Int) {
