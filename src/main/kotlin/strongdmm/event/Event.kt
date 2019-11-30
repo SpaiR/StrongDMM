@@ -3,6 +3,7 @@ package strongdmm.event
 import glm_.vec2.Vec2i
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.Tile
 import strongdmm.controller.frame.FrameMesh
 
@@ -37,10 +38,10 @@ sealed class Event<T, R>(
 
     sealed class MapController {
         class Open(body: String) : Event<String, Unit>(body, null)
-        class Close(body: Int) : Event<Int, Unit>(body, null)
+        class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class FetchOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
-        class Switch(body: Int) : Event<Int, Unit>(body, null)
+        class Switch(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchAvailable(callback: ((Set<Pair<String, String>>) -> Unit)?) : Event<Unit, Set<Pair<String, String>>>(Unit, callback)
     }
 

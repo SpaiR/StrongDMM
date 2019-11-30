@@ -55,6 +55,9 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_12
+    kotlinOptions {
+        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+    }
 }
 
 buildScan {
@@ -73,11 +76,4 @@ runShadow {
     }
 
     jvmArgs(["-Djava.library.path=./$libsFolder", "-Dsdmmparser.path=./$libsFolder/$parserFile"])
-}
-
-processResources {
-    filesMatching('*.html') {
-        // Replace '${version}' placeholder with actual version
-        filter { line -> line.replace('${version}', version) }
-    }
 }

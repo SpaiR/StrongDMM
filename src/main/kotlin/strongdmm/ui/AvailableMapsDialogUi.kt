@@ -16,8 +16,8 @@ import imgui.WindowFlag as Wf
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isOpen: Boolean = false
-    private var selectedMapPath: String? = null // to store absolute path for currently selected map
-    private var selectionStatus: String = "no map" // to display currently selected map (relative path)
+    private var selectedMapPath: String? = null // to store an absolute path for currently selected map
+    private var selectionStatus: String = "no map" // to display a currently selected map (relative path)
 
     init {
         consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
@@ -52,7 +52,6 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             }
 
             sameLine()
-
             button("Cancel", ::closePopup)
         }
     }

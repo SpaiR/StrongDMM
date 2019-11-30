@@ -3,12 +3,13 @@ package strongdmm.ui
 import StrongDmm
 import org.lwjgl.glfw.GLFW.glfwSetWindowTitle
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import uno.glfw.glfw
 
 class WindowTitleUi : EventConsumer {
-    private var selectedMapId: Int = -1
+    private var selectedMapId: MapId = MapId.NONE
 
     init {
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
@@ -23,13 +24,13 @@ class WindowTitleUi : EventConsumer {
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         if (selectedMapId == event.body.id) {
-            selectedMapId = -1
+            selectedMapId = MapId.NONE
             glfwSetWindowTitle(glfw.currentContext.L, StrongDmm.TITLE)
         }
     }
 
     private fun handleResetEnvironment() {
-        selectedMapId = -1
+        selectedMapId = MapId.NONE
         glfwSetWindowTitle(glfw.currentContext.L, StrongDmm.TITLE)
     }
 }

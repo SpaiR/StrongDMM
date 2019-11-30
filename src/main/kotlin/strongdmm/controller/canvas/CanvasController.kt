@@ -7,6 +7,7 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -22,7 +23,7 @@ class CanvasController : EventSender, EventConsumer {
         private const val MAX_SCALE: Int = 12
     }
 
-    private val renderDataStorage: MutableMap<Int, RenderData> = mutableMapOf()
+    private val renderDataStorage: MutableMap<MapId, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
     private var modalBlock: Boolean = false

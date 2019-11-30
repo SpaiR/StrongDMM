@@ -12,7 +12,7 @@ class Dmm(
 ) {
     val mapName: String = mapFile.nameWithoutExtension
     val relativeMapPath: String = Path.of(dme.rootPath).relativize(mapFile.toPath()).toString()
-    val id: Int = mapFile.absolutePath.hashCode()
+    val id: MapId = MapId(mapFile.absolutePath.hashCode())
 
     var maxX: Int = initialDmmData.maxX
         private set
@@ -48,12 +48,12 @@ class Dmm(
 
         other as Dmm
 
-        if (id != other.id) return false
+        if (id.value != other.id.value) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return id
+        return id.value
     }
 }

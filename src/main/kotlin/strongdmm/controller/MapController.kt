@@ -3,6 +3,7 @@ package strongdmm.controller
 import io.github.spair.dmm.io.reader.DmmReader
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -26,7 +27,7 @@ class MapController : EventSender, EventConsumer {
     }
 
     private fun handleOpen(event: Event<String, Unit>) {
-        val id = event.body.hashCode()
+        val id = MapId(event.body)
 
         if (selectedMap?.id == id) {
             return
@@ -54,7 +55,7 @@ class MapController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleClose(event: Event<Int, Unit>) {
+    private fun handleClose(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             val mapIndex = openedMaps.indexOf(it)
 
@@ -85,7 +86,7 @@ class MapController : EventSender, EventConsumer {
         event.reply(availableMaps.toSet())
     }
 
-    private fun handleSwitch(event: Event<Int, Unit>) {
+    private fun handleSwitch(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
