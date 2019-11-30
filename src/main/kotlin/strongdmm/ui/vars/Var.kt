@@ -9,12 +9,12 @@ class Var(
 ) {
     companion object {
         private const val BUFFER_SIZE: Int = 10000
-        private val VALUE_TAIL: String = " ".repeat(1000) // Needed for GUI to make ImGui consider that item spreads through the line fully
+        private val TAIL: String = " ".repeat(1000) // Needed for GUI to make ImGui consider that item spreads through the line fully
     }
 
     var value: String = initialValue // The actual value for current variable
         private set
-    var displayValue: String = value + VALUE_TAIL // Used to display in the dialog. Needed since it has a tail which consists of space chars.
+    var displayValue: String = value + TAIL // Used to display in the dialog. Needed since it has a tail which consists of space chars.
         private set
     var buffer: CharArray? = null // Buffer is used by the ImGui to modify value of the variable
         private set
@@ -34,7 +34,7 @@ class Var(
             value = "null"
         }
 
-        displayValue = value + VALUE_TAIL
+        displayValue = value + TAIL
         isModified = value != originalValue
         buffer = null
     }

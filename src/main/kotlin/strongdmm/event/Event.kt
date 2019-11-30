@@ -19,12 +19,16 @@ import strongdmm.util.inline.RelPath
  *
  * Events like "EnvironmentController" are meant to be consumed ONLY by a specific class.
  * This restriction is checked on runtime.
+ *
+ * !!! IMPORTANT !!!
+ * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
+ * Inline classes should be used instead.
  */
-sealed class Event<T, R>(
+abstract class Event<T, R>(
     val body: T,
     private val callback: ((R) -> Unit)?
 ) {
-    sealed class Global {
+    abstract class Global {
         class ResetEnvironment : Event<Unit, Unit>(Unit, null)
         class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
@@ -34,12 +38,12 @@ sealed class Event<T, R>(
         class ModalBlock(body: Boolean) : Event<Boolean, Unit>(body, null)
     }
 
-    sealed class EnvironmentController {
+    abstract class EnvironmentController {
         class Open(body: AbsPath, callback: ((Boolean) -> Unit)) : Event<AbsPath, Boolean>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
-    sealed class MapController {
+    abstract class MapController {
         class Open(body: AbsPath) : Event<AbsPath, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
@@ -48,20 +52,20 @@ sealed class Event<T, R>(
         class FetchAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
     }
 
-    sealed class FrameController {
+    abstract class FrameController {
         class Compose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
     }
 
-    sealed class AvailableMapsDialogUi {
+    abstract class AvailableMapsDialogUi {
         class Open : Event<Unit, Unit>(Unit, null)
     }
 
-    sealed class TilePopupUi {
+    abstract class TilePopupUi {
         class Open(body: Tile) : Event<Tile, Unit>(body, null)
         class Close : Event<Unit, Unit>(Unit, null)
     }
 
-    sealed class EditVarsDialogUi {
+    abstract class EditVarsDialogUi {
         class Open(body: Pair<Tile, TileItemIdx>) : Event<Pair<Tile, TileItemIdx>, Unit>(body, null)
     }
 
