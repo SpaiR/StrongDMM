@@ -28,6 +28,10 @@ class Tile(
         update()
     }
 
+    fun getTileItemsId(): IntArray = dmm.getTileItemsId(x, y)
+
+    fun replaceTileItemsId(tileItemsId: IntArray) = dmm.setTileItemsId(x, y, tileItemsId)
+
     fun modifyItemVars(tileItemIdx: TileItemIdx, vars: Map<String, String>?) {
         val itemIdx = when (tileItemIdx) {
             TileItemIdx.AREA -> areaIndex
@@ -35,10 +39,10 @@ class Tile(
             else -> tileItemIdx
         }
 
-        val tileItemsID = dmm.getTileItemsID(x, y)
+        val tileItemsId = dmm.getTileItemsId(x, y)
         val tileItemType = tileItems[itemIdx.value].type
 
-        tileItemsID[itemIdx.value] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
+        tileItemsId[itemIdx.value] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
         update()
     }
 
@@ -60,9 +64,9 @@ class Tile(
             val swapWithIdx = relativeIdx + shiftValue
             if (swapWithIdx >= 0 && swapWithIdx < list.size) {
                 val swapWithItem = list[swapWithIdx]
-                val tileItemsID = dmm.getTileItemsID(x, y)
-                tileItemsID[swapWithItem.index] = it.value.id
-                tileItemsID[it.index] = swapWithItem.value.id
+                val tileItemsId = dmm.getTileItemsId(x, y)
+                tileItemsId[swapWithItem.index] = it.value.id
+                tileItemsId[it.index] = swapWithItem.value.id
             }
         }
 
@@ -70,7 +74,7 @@ class Tile(
     }
 
     private fun update() {
-        tileItems = dmm.getTileItemsID(x, y).map { GlobalTileItemHolder.getById(it) }.toMutableList()
+        tileItems = dmm.getTileItemsId(x, y).map { GlobalTileItemHolder.getById(it) }.toMutableList()
 
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {
             area = it?.value

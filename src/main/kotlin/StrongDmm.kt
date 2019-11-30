@@ -1,6 +1,7 @@
-import strongdmm.controller.EnvironmentController
 import strongdmm.controller.MapController
+import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
+import strongdmm.controller.environment.EnvironmentController
 import strongdmm.controller.frame.FrameController
 import strongdmm.native.ImGuiWindow
 import strongdmm.ui.*
@@ -19,6 +20,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
     private val mapController = MapController()
     private val canvasController = CanvasController()
     private val frameController = FrameController()
+    private val actionController = ActionController()
 
     override fun appLoop(windowWidth: Int, windowHeight: Int) {
         // Controllers

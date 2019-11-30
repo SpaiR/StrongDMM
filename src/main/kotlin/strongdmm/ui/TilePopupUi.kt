@@ -17,6 +17,7 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
+import strongdmm.controller.action.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -68,11 +69,21 @@ class TilePopupUi : EventConsumer, EventSender {
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
         if (index != TileItemIdx.AREA && index != TileItemIdx.TURF) {
             menuItem("Move To Top##$index") {
-                tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
+                sendEvent(Event.ActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
+                    }
+                ))
+
                 sendEvent(Event.Global.RefreshFrame())
             }
             menuItem("Move To Bottom##$index") {
-                tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
+                sendEvent(Event.ActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
+                    }
+                ))
+
                 sendEvent(Event.Global.RefreshFrame())
             }
 

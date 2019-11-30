@@ -1,4 +1,4 @@
-package strongdmm.controller
+package strongdmm.controller.environment
 
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
@@ -18,7 +18,7 @@ class EnvironmentController : EventSender, EventConsumer {
         consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
-    private fun handleOpen(event: Event<AbsPath, Boolean>) {
+    private fun handleOpen(event: Event<AbsPath, EnvOpenStatus>) {
         sendEvent(Event.Global.ResetEnvironment())
 
         GlobalDmiHolder.resetEnvironment()
@@ -32,7 +32,7 @@ class EnvironmentController : EventSender, EventConsumer {
 
             System.gc()
 
-            event.reply(true)
+            event.reply(EnvOpenStatus(true))
             sendEvent(Event.Global.SwitchEnvironment(environment))
         }
     }

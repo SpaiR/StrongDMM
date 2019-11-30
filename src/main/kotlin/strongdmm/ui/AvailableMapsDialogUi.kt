@@ -9,6 +9,7 @@ import imgui.ImGui.sameLine
 import imgui.ImGui.setNextWindowSize
 import imgui.ImGui.text
 import imgui.dsl_.*
+import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -36,7 +37,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             text("Selected: ${selectionStatus.value}")
 
             child("available_maps_list", Vec2(580, 200), true, Wf.HorizontalScrollbar.i) {
-                sendEvent(Event.MapController.FetchAvailable { availableMaps ->
+                sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
                         sameLine()
@@ -63,11 +64,11 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         isOpen = false
         selectedMapPath = null
         selectionStatus = RelPath.NONE
-        sendEvent(Event.Global.ModalBlock(false))
+        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
     }
 
     private fun handleOpen() {
         isOpen = true
-        sendEvent(Event.Global.ModalBlock(true))
+        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
     }
 }

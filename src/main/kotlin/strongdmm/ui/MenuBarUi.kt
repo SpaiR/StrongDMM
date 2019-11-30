@@ -7,6 +7,7 @@ import imgui.dsl.mainMenuBar
 import imgui.dsl.menu
 import imgui.dsl.menuBar
 import imgui.dsl.menuItem
+import strongdmm.controller.action.ActionStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -16,8 +17,12 @@ class MenuBarUi : EventSender, EventConsumer {
     private var progressText: String? = null
     private var isEnvironmentOpen: Boolean = false
 
+    private var isUndoEnabled: Boolean = false
+    private var isRedoEnabled: Boolean = false
+
     init {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.ActionStatusChanged::class.java, ::handleActionStatusChagnged)
     }
 
     fun process() {
@@ -28,6 +33,11 @@ class MenuBarUi : EventSender, EventConsumer {
                     separator()
                     menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
                     menuItem("Open Available Map", enabled = isEnvironmentOpen, block = ::openAvailableMap)
+                }
+
+                menu("Edit") {
+                    menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::undo)
+                    menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::redo)
                 }
 
                 progressText?.let {
@@ -44,7 +54,7 @@ class MenuBarUi : EventSender, EventConsumer {
             progressText = "Loading " + path.value.substringAfterLast("\\")
             sendEvent(Event.EnvironmentController.Open(path) {
                 progressText = null
-                isEnvironmentOpen = it
+                isEnvironmentOpen = it.isOpen()
             })
         }
     }
@@ -61,7 +71,20 @@ class MenuBarUi : EventSender, EventConsumer {
         sendEvent(Event.AvailableMapsDialogUi.Open())
     }
 
+    private fun undo() {
+        sendEvent(Event.ActionController.UndoAction())
+    }
+
+    private fun redo() {
+        sendEvent(Event.ActionController.RedoAction())
+    }
+
     private fun handleResetEnvironment() {
         isEnvironmentOpen = false
+    }
+
+    private fun handleActionStatusChagnged(event: Event<ActionStatus, Unit>) {
+        isUndoEnabled = event.body.hasUndoAction
+        isRedoEnabled = event.body.hasRedoAction
     }
 }

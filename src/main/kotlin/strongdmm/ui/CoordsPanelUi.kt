@@ -24,7 +24,7 @@ class CoordsPanelUi : Window(), EventConsumer {
     init {
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.UpdMapMousePos::class.java, ::handleUpdMapMousePos)
+        consumeEvent(Event.Global.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
     }
 
@@ -54,7 +54,7 @@ class CoordsPanelUi : Window(), EventConsumer {
         isHasMap = false
     }
 
-    private fun handleUpdMapMousePos(event: Event<Vec2i, Unit>) {
+    private fun handleMapMousePosChanged(event: Event<Vec2i, Unit>) {
         xMapMousePos = event.body.x
         yMapMousePos = event.body.y
     }

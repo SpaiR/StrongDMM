@@ -76,7 +76,7 @@ class FrameController : EventConsumer, EventSender {
 
             for (x in 1..map.maxX) {
                 for (y in 1..map.maxY) {
-                    map.getTileItemsID(x, y).forEach { tileItemId ->
+                    map.getTileItemsId(x, y).forEach { tileItemId ->
                         val tileItem = GlobalTileItemHolder.getById(tileItemId)
                         val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
                         val x1 = (x - 1) * currentIconSize + tileItem.pixelX

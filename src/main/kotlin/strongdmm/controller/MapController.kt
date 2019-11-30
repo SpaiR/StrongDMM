@@ -21,8 +21,8 @@ class MapController : EventSender, EventConsumer {
         consumeEvent(Event.MapController.Open::class.java, ::handleOpen)
         consumeEvent(Event.MapController.Close::class.java, ::handleClose)
         consumeEvent(Event.MapController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(Event.MapController.FetchOpened::class.java, ::handleFetchOpened)
-        consumeEvent(Event.MapController.FetchAvailable::class.java, ::handleFetchAvailable)
+        consumeEvent(Event.MapController.FetchAllOpened::class.java, ::handleFetchAllOpened)
+        consumeEvent(Event.MapController.FetchAllAvailable::class.java, ::handleFetchAllAvailable)
         consumeEvent(Event.MapController.Switch::class.java, ::handleSwitch)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
@@ -80,11 +80,11 @@ class MapController : EventSender, EventConsumer {
         event.reply(selectedMap)
     }
 
-    private fun handleFetchOpened(event: Event<Unit, Set<Dmm>>) {
+    private fun handleFetchAllOpened(event: Event<Unit, Set<Dmm>>) {
         event.reply(openedMaps.toSet())
     }
 
-    private fun handleFetchAvailable(event: Event<Unit, Set<Pair<AbsPath, RelPath>>>) {
+    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsPath, RelPath>>>) {
         event.reply(availableMaps.toSet())
     }
 

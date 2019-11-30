@@ -26,7 +26,7 @@ class CanvasController : EventSender, EventConsumer {
     private val renderDataStorage: MutableMap<MapId, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
-    private var modalBlock: Boolean = false
+    private var isBlocked: Boolean = false
     private var isHasMap: Boolean = false
     private var iconSize: Int = DEFAULT_ICON_SIZE
 
@@ -45,12 +45,12 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
-        consumeEvent(Event.Global.ModalBlock::class.java, ::handleModalBlock)
+        consumeEvent(Event.CanvasController.Block::class.java, ::handleBlock)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
         if (isHasMap) {
-            if (!modalBlock && !isImGuiInUse()) {
+            if (!isBlocked && !isImGuiInUse()) {
                 processViewTranslate()
                 processViewScale()
                 processTilePopupClick()
@@ -135,7 +135,7 @@ class CanvasController : EventSender, EventConsumer {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            sendEvent(Event.Global.UpdMapMousePos(Vec2i(xMapMousePos, yMapMousePos)))
+            sendEvent(Event.Global.MapMousePosChanged(Vec2i(xMapMousePos, yMapMousePos)))
         }
     }
 
@@ -167,7 +167,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true
     }
 
-    private fun handleModalBlock(event: Event<Boolean, Unit>) {
-        modalBlock = event.body
+    private fun handleBlock(event: Event<CanvasBlockStatus, Unit>) {
+        isBlocked = event.body.isBlocked()
     }
 }

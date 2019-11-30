@@ -6,6 +6,10 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItemIdx
+import strongdmm.controller.action.ActionStatus
+import strongdmm.controller.action.Undoable
+import strongdmm.controller.canvas.CanvasBlockStatus
+import strongdmm.controller.environment.EnvOpenStatus
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
@@ -32,14 +36,14 @@ abstract class Event<T, R>(
         class ResetEnvironment : Event<Unit, Unit>(Unit, null)
         class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
-        class UpdMapMousePos(body: Vec2i) : Event<Vec2i, Unit>(body, null)
+        class MapMousePosChanged(body: Vec2i) : Event<Vec2i, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
-        class ModalBlock(body: Boolean) : Event<Boolean, Unit>(body, null)
+        class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
     }
 
     abstract class EnvironmentController {
-        class Open(body: AbsPath, callback: ((Boolean) -> Unit)) : Event<AbsPath, Boolean>(body, callback)
+        class Open(body: AbsPath, callback: ((EnvOpenStatus) -> Unit)) : Event<AbsPath, EnvOpenStatus>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
@@ -47,9 +51,9 @@ abstract class Event<T, R>(
         class Open(body: AbsPath) : Event<AbsPath, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
-        class FetchOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
+        class FetchAllOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
-        class FetchAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
+        class FetchAllAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
     }
 
     abstract class FrameController {
@@ -67,6 +71,16 @@ abstract class Event<T, R>(
 
     abstract class EditVarsDialogUi {
         class Open(body: Pair<Tile, TileItemIdx>) : Event<Pair<Tile, TileItemIdx>, Unit>(body, null)
+    }
+
+    abstract class ActionController {
+        class AddAction(body: Undoable) : Event<Undoable, Unit>(body, null)
+        class UndoAction : Event<Unit, Unit>(Unit, null)
+        class RedoAction : Event<Unit, Unit>(Unit, null)
+    }
+
+    abstract class CanvasController {
+        class Block(body: CanvasBlockStatus) : Event<CanvasBlockStatus, Unit>(body, null)
     }
 
     fun reply(response: R) {

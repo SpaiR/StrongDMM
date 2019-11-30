@@ -40,7 +40,11 @@ class Dmm(
     }
 
     fun getTile(x: Int, y: Int): Tile = Tile(this, x, y)
-    fun getTileItemsID(x: Int, y: Int): IntArray = tiles[y - 1][x - 1]
+    fun getTileItemsId(x: Int, y: Int): IntArray = tiles[y - 1][x - 1]
+
+    fun setTileItemsId(x: Int, y: Int, tileItemsId: IntArray) {
+        tiles[y - 1][x - 1] = tileItemsId
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

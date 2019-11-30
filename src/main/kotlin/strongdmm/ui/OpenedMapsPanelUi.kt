@@ -20,9 +20,9 @@ import strongdmm.util.RED32
 
 class OpenedMapsPanelUi : Window(), EventSender {
     fun process(windowWidth: Int, windowHeight: Int) {
-        sendEvent(Event.MapController.FetchOpened { openedMaps ->
+        sendEvent(Event.MapController.FetchAllOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
-                return@FetchOpened
+                return@FetchAllOpened
             }
 
             getOptionCondition(windowWidth, windowHeight).let { cond ->

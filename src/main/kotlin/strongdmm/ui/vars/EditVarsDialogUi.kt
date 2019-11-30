@@ -25,6 +25,8 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
+import strongdmm.controller.action.ReplaceTileAction
+import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -202,13 +204,13 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             newItemVars[it.name] = it.value
         }
 
-        if (newItemVars.isEmpty()) {
-            if (currentTile!!.tileItems[currentTileItemIndex.value].customVars != null) {
-                currentTile!!.modifyItemVars(currentTileItemIndex, null)
-                sendEvent(Event.Global.RefreshFrame())
-            }
-        } else {
-            currentTile?.modifyItemVars(currentTileItemIndex, newItemVars)
+        currentTile?.let { tile ->
+            sendEvent(Event.ActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                }
+            ))
+
             sendEvent(Event.Global.RefreshFrame())
         }
     }
@@ -219,11 +221,11 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilterRaw = CharArray(FILTER_BUFFER)
         varsFilter = ""
         variables.clear()
-        sendEvent(Event.Global.ModalBlock(false))
+        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
     }
 
     private fun handleOpen(event: Event<Pair<Tile, TileItemIdx>, Unit>) {
-        sendEvent(Event.Global.ModalBlock(true))
+        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
         WINDOW_ID++
         currentTile = event.body.first
         currentTileItemIndex = event.body.second
