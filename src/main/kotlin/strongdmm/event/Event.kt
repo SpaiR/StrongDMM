@@ -6,6 +6,8 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.Tile
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.util.inline.AbsPath
+import strongdmm.util.inline.RelPath
 
 /**
  * Events are used to do a communication between application components.
@@ -32,17 +34,17 @@ sealed class Event<T, R>(
     }
 
     sealed class EnvironmentController {
-        class Open(body: String, callback: ((Boolean) -> Unit)) : Event<String, Boolean>(body, callback)
+        class Open(body: AbsPath, callback: ((Boolean) -> Unit)) : Event<AbsPath, Boolean>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
     sealed class MapController {
-        class Open(body: String) : Event<String, Unit>(body, null)
+        class Open(body: AbsPath) : Event<AbsPath, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class FetchOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
-        class FetchAvailable(callback: ((Set<Pair<String, String>>) -> Unit)?) : Event<Unit, Set<Pair<String, String>>>(Unit, callback)
+        class FetchAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
     }
 
     sealed class FrameController {

@@ -12,12 +12,14 @@ import imgui.dsl_.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.util.inline.AbsPath
+import strongdmm.util.inline.RelPath
 import imgui.WindowFlag as Wf
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isOpen: Boolean = false
-    private var selectedMapPath: String? = null // to store an absolute path for currently selected map
-    private var selectionStatus: String = "no map" // to display a currently selected map (relative path)
+    private var selectedMapPath: AbsPath? = null // to store an absolute path for currently selected map
+    private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
 
     init {
         consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
@@ -31,14 +33,14 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         setNextWindowSize(Vec2(600, 275), Cond.Once)
 
         popupModal("Available Maps", null, Wf.NoResize.i) {
-            text("Selected: $selectionStatus")
+            text("Selected: ${selectionStatus.value}")
 
             child("available_maps_list", Vec2(580, 200), true, Wf.HorizontalScrollbar.i) {
                 sendEvent(Event.MapController.FetchAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
                         sameLine()
-                        selectable(rel, selectedMapPath == abs) {
+                        selectable(rel.value, selectedMapPath == abs) {
                             selectedMapPath = abs
                             selectionStatus = rel
                         }
@@ -60,7 +62,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         isOpen = false
         selectedMapPath = null
-        selectionStatus = "no map"
+        selectionStatus = RelPath.NONE
         sendEvent(Event.Global.ModalBlock(false))
     }
 

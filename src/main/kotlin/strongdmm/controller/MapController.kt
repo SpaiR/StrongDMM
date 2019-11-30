@@ -7,11 +7,13 @@ import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.util.inline.AbsPath
+import strongdmm.util.inline.RelPath
 import java.io.File
 
 class MapController : EventSender, EventConsumer {
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
-    private val availableMaps: MutableSet<Pair<String, String>> = mutableSetOf()
+    private val availableMaps: MutableSet<Pair<AbsPath, RelPath>> = mutableSetOf()
 
     private var selectedMap: Dmm? = null
 
@@ -26,7 +28,7 @@ class MapController : EventSender, EventConsumer {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
     }
 
-    private fun handleOpen(event: Event<String, Unit>) {
+    private fun handleOpen(event: Event<AbsPath, Unit>) {
         val id = MapId(event.body)
 
         if (selectedMap?.id == id) {
@@ -39,7 +41,7 @@ class MapController : EventSender, EventConsumer {
             selectedMap = dmm
             sendEvent(Event.Global.SwitchMap(dmm))
         } else {
-            val mapFile = File(event.body)
+            val mapFile = File(event.body.value)
 
             if (!mapFile.isFile) {
                 return
@@ -82,7 +84,7 @@ class MapController : EventSender, EventConsumer {
         event.reply(openedMaps.toSet())
     }
 
-    private fun handleFetchAvailable(event: Event<Unit, Set<Pair<String, String>>>) {
+    private fun handleFetchAvailable(event: Event<Unit, Set<Pair<AbsPath, RelPath>>>) {
         event.reply(availableMaps.toSet())
     }
 
@@ -104,7 +106,10 @@ class MapController : EventSender, EventConsumer {
     private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
         File(event.body.rootPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
-                availableMaps.add(it.absolutePath to File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
+                val abs = AbsPath(it.absolutePath)
+                val rel =
+                    RelPath(File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
+                availableMaps.add(abs to rel)
             }
         }
     }

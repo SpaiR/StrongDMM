@@ -7,6 +7,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.util.inline.AbsPath
 import kotlin.concurrent.thread
 
 class EnvironmentController : EventSender, EventConsumer {
@@ -17,14 +18,14 @@ class EnvironmentController : EventSender, EventConsumer {
         consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
-    private fun handleOpen(event: Event<String, Boolean>) {
+    private fun handleOpen(event: Event<AbsPath, Boolean>) {
         sendEvent(Event.Global.ResetEnvironment())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            environment = SdmmParser().parseDme(event.body)
+            environment = SdmmParser().parseDme(event.body.value)
 
             GlobalDmiHolder.environmentRootPath = environment.rootPath
             GlobalTileItemHolder.environment = environment
