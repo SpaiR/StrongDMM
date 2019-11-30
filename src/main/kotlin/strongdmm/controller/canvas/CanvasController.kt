@@ -45,7 +45,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
-        consumeEvent(Event.CanvasController.Block::class.java, ::handleBlock)
+        consumeEvent(Event.CanvasController.Block::class.java, ::handleCanvasBlock)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -167,7 +167,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true
     }
 
-    private fun handleBlock(event: Event<CanvasBlockStatus, Unit>) {
+    private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {
         isBlocked = event.body.isBlocked()
     }
 }
