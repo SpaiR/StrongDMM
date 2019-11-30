@@ -1,6 +1,6 @@
 package strongdmm.ui
 
-import StrongDmm
+import strongdmm.StrongDmm
 import org.lwjgl.glfw.GLFW.glfwSetWindowTitle
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId

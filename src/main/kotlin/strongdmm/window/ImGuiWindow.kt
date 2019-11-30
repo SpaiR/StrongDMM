@@ -1,4 +1,4 @@
-package strongdmm.native
+package strongdmm.window
 
 import imgui.ConfigFlag
 import imgui.ImGui

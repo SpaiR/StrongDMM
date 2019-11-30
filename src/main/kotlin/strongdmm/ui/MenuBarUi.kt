@@ -11,7 +11,7 @@ import strongdmm.controller.action.ActionStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.native.NfdUtil
+import strongdmm.util.NfdUtil
 
 class MenuBarUi : EventSender, EventConsumer {
     private var progressText: String? = null

@@ -1,9 +1,11 @@
+package strongdmm
+
 import strongdmm.controller.MapController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.environment.EnvironmentController
 import strongdmm.controller.frame.FrameController
-import strongdmm.native.ImGuiWindow
+import strongdmm.window.ImGuiWindow
 import strongdmm.ui.*
 import strongdmm.ui.vars.EditVarsDialogUi
 

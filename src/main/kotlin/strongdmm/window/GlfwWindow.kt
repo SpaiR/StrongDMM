@@ -1,4 +1,4 @@
-package strongdmm.native
+package strongdmm.window
 
 import glm_.c
 import glm_.f

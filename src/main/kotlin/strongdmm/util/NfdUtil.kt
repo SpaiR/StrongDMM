@@ -1,4 +1,4 @@
-package strongdmm.native
+package strongdmm.util
 
 import kool.use
 import org.lwjgl.system.MemoryUtil
