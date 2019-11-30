@@ -1,5 +1,8 @@
 package strongdmm.byond.dmm
 
+import io.github.spair.dmm.io.TileContent
+import io.github.spair.dmm.io.TileObject
+import io.github.spair.dmm.io.TileObjectComparator
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
@@ -52,6 +55,22 @@ class Tile(
 
     fun moveToBottom(isMob: Boolean, index: TileItemIdx) {
         shiftItem((if (isMob) mobs else objs), index, 1)
+    }
+
+    fun getTileContent(): TileContent {
+        val tileContent = TileContent()
+        val tileObjects = mutableListOf<TileObject>()
+
+        tileItems.forEach { tileItem ->
+            val tileObject = TileObject(tileItem.type)
+            tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
+            tileObjects.add(tileObject)
+        }
+
+        // Consider to look at TileObjectComparator source if this line cause you a question
+        tileObjects.sortedWith(TileObjectComparator()).forEach(tileContent::addTileObject)
+
+        return tileContent
     }
 
     private fun shiftItem(list: List<IndexedValue<TileItem>>, index: TileItemIdx, shiftValue: Int) {

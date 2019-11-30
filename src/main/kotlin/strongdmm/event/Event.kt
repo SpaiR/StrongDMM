@@ -54,6 +54,7 @@ abstract class Event<T, R>(
         class FetchAllOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchAllAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
+        class Save : Event<Unit, Unit>(Unit, null)
     }
 
     abstract class FrameController {

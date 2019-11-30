@@ -33,6 +33,8 @@ class MenuBarUi : EventSender, EventConsumer {
                     separator()
                     menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
                     menuItem("Open Available Map", enabled = isEnvironmentOpen, block = ::openAvailableMap)
+                    separator()
+                    menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpen, block = ::save)
                 }
 
                 menu("Edit") {
@@ -69,6 +71,10 @@ class MenuBarUi : EventSender, EventConsumer {
 
     private fun openAvailableMap() {
         sendEvent(Event.AvailableMapsDialogUi.Open())
+    }
+
+    private fun save() {
+        sendEvent(Event.MapController.Save())
     }
 
     private fun undo() {

@@ -4,14 +4,18 @@ import io.github.spair.dmm.io.reader.DmmReader
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
+import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 import java.io.File
+import java.nio.file.Files
+import kotlin.concurrent.thread
 
 class MapController : EventSender, EventConsumer {
+    private val mapsBackup: MutableMap<MapId, AbsPath> = mutableMapOf()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
     private val availableMaps: MutableSet<Pair<AbsPath, RelPath>> = mutableSetOf()
 
@@ -24,6 +28,7 @@ class MapController : EventSender, EventConsumer {
         consumeEvent(Event.MapController.FetchAllOpened::class.java, ::handleFetchAllOpened)
         consumeEvent(Event.MapController.FetchAllAvailable::class.java, ::handleFetchAllAvailable)
         consumeEvent(Event.MapController.Switch::class.java, ::handleSwitch)
+        consumeEvent(Event.MapController.Save::class.java, ::handleSave)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
     }
@@ -50,8 +55,15 @@ class MapController : EventSender, EventConsumer {
             sendEvent(Event.EnvironmentController.Fetch { environment ->
                 val dmmData = DmmReader.readMap(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
+
+                val tmpDmmDataFile = Files.createTempFile("sdmm-", ".dmm.backup").toFile()
+                tmpDmmDataFile.writeBytes(mapFile.readBytes())
+                mapsBackup[id] = AbsPath(tmpDmmDataFile)
+                tmpDmmDataFile.deleteOnExit()
+
                 openedMaps.add(map)
                 selectedMap = map
+
                 sendEvent(Event.Global.SwitchMap(map))
             })
         }
@@ -61,6 +73,7 @@ class MapController : EventSender, EventConsumer {
         openedMaps.find { it.id == event.body }?.let {
             val mapIndex = openedMaps.indexOf(it)
 
+            mapsBackup.remove(it.id)
             openedMaps.remove(it)
             sendEvent(Event.Global.CloseMap(it))
 
@@ -93,6 +106,15 @@ class MapController : EventSender, EventConsumer {
             if (selectedMap !== it) {
                 selectedMap = it
                 sendEvent(Event.Global.SwitchMap(it))
+            }
+        }
+    }
+
+    private fun handleSave() {
+        selectedMap?.let { map ->
+            thread(start = true) {
+                val initialDmmData = DmmReader.readMap(File(mapsBackup.getValue(map.id).value))
+                SaveMap(map, initialDmmData, true)
             }
         }
     }

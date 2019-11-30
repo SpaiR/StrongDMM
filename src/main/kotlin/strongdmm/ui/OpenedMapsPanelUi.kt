@@ -35,7 +35,7 @@ class OpenedMapsPanelUi : Window(), EventSender {
                 window("${selectedMap?.mapName}###opened_maps") {
                     openedMaps.forEach { map ->
                         withStyleColor(Col.ButtonHovered, RED32) {
-                            smallButton("X##close_map_${map.relativeMapPath}") {
+                            smallButton("X##close_map_${map.relMapPath}") {
                                 sendEvent(Event.MapController.Close(map.id))
                             }
                         }
@@ -48,7 +48,7 @@ class OpenedMapsPanelUi : Window(), EventSender {
 
                         if (isItemHovered()) {
                             tooltip {
-                                text(map.relativeMapPath)
+                                text(map.relMapPath.value)
                             }
                         }
                     }

@@ -20,8 +20,8 @@ class Var(
         private set
     var isModified: Boolean = value != originalValue // Means that the value is not equal to the value of parsed from a codebase
         private set
-    val isChanged: Boolean // Means that the is not equal to the value which it had on a dialog creation
-        get() = value != initialValue
+    var isChanged: Boolean = value != initialValue // Means that it is not equal to the value which it had on a dialog creation
+        private set
 
     fun startEdit() {
         buffer = value.toCharArray().copyOf(BUFFER_SIZE)
@@ -36,6 +36,7 @@ class Var(
 
         displayValue = value + TAIL
         isModified = value != originalValue
+        isChanged = value != initialValue
         buffer = null
     }
 }

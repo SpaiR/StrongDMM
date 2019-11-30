@@ -56,7 +56,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var varsFilterRaw: CharArray = CharArray(FILTER_BUFFER) // Buffer for variable filter
     private var varsFilter: String = "" // The actual string representation of the the filter
 
-    private val isShowInstanceVars: MutableProperty0<Boolean> = MutableProperty0(false)
+    private val isShowModifiedVars: MutableProperty0<Boolean> = MutableProperty0(false)
     private val variables: MutableList<Var> = mutableListOf()
 
     init {
@@ -87,9 +87,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun drawControls() {
-        checkbox("##isShowInstanceVars", isShowInstanceVars)
+        checkbox("##isShowModifiedVars", isShowModifiedVars)
         if (ImGui.isItemHovered()) {
-            tooltip { text("Show only instance variables") }
+            tooltip { text("Show modified variables") }
         }
 
         sameLine()
@@ -111,7 +111,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         columns(2, border = true)
 
         for (variable in variables) {
-            if (isShowInstanceVars.get() && !variable.isModified) {
+            if (isShowModifiedVars.get() && !(variable.isModified || variable.isChanged)) {
                 continue
             }
 
@@ -120,7 +120,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             }
 
             alignTextToFramePadding()
-            if (variable.isModified) {
+            if (variable.isModified || variable.isChanged) {
                 withStyleColor(Col.Text, GREEN32) {
                     text(variable.name)
                 }
@@ -220,6 +220,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         currentEditVar = null
         varsFilterRaw = CharArray(FILTER_BUFFER)
         varsFilter = ""
+        isShowModifiedVars.set(false)
         variables.clear()
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
     }

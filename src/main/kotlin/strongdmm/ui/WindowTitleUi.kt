@@ -1,7 +1,7 @@
 package strongdmm.ui
 
-import strongdmm.StrongDmm
 import org.lwjgl.glfw.GLFW.glfwSetWindowTitle
+import strongdmm.StrongDmm
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
@@ -19,7 +19,7 @@ class WindowTitleUi : EventConsumer {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
-        glfwSetWindowTitle(glfw.currentContext.L, "${event.body.mapName} [${event.body.relativeMapPath}] - ${StrongDmm.TITLE}")
+        glfwSetWindowTitle(glfw.currentContext.L, "${event.body.mapName} [${event.body.relMapPath}] - ${StrongDmm.TITLE}")
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {

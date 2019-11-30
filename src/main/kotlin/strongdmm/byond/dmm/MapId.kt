@@ -8,4 +8,6 @@ inline class MapId(val value: Int) {
     }
 
     constructor(absolutePath: AbsPath) : this(absolutePath.hashCode())
+
+    override fun toString(): String = "$value"
 }
