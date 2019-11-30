@@ -16,6 +16,7 @@ import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.TileItemIdx
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -43,13 +44,13 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItems(tile: Tile) {
-        tile.area?.let { area -> showTileItemRow(tile, area, Tile.AREA_INDEX) }
-        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, mob.index) }
-        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, obj.index) }
-        tile.turf?.let { turf -> showTileItemRow(tile, turf, Tile.TURF_INDEX) }
+        tile.area?.let { area -> showTileItemRow(tile, area, TileItemIdx.AREA) }
+        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, TileItemIdx(mob.index)) }
+        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, TileItemIdx(obj.index)) }
+        tile.turf?.let { turf -> showTileItemRow(tile, turf, TileItemIdx.TURF) }
     }
 
-    private fun showTileItemRow(tile: Tile, tileItem: TileItem, index: Int) {
+    private fun showTileItemRow(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
         val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
@@ -64,8 +65,8 @@ class TilePopupUi : EventConsumer, EventSender {
         text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
     }
 
-    private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: Int) {
-        if (index != Tile.AREA_INDEX && index != Tile.TURF_INDEX) {
+    private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
+        if (index != TileItemIdx.AREA && index != TileItemIdx.TURF) {
             menuItem("Move To Top##$index") {
                 tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
                 sendEvent(Event.Global.RefreshFrame())

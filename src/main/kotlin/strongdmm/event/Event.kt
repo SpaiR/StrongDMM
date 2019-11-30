@@ -5,6 +5,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.Tile
+import strongdmm.byond.dmm.TileItemIdx
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
@@ -61,7 +62,7 @@ sealed class Event<T, R>(
     }
 
     sealed class EditVarsDialogUi {
-        class Open(body: Pair<Tile, Int>) : Event<Pair<Tile, Int>, Unit>(body, null)
+        class Open(body: Pair<Tile, TileItemIdx>) : Event<Pair<Tile, TileItemIdx>, Unit>(body, null)
     }
 
     fun reply(response: R) {

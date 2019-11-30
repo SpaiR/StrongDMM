@@ -24,6 +24,7 @@ import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.TileItemIdx
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -47,7 +48,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private var currentTile: Tile? = null
-    private var currentTileItemIndex: Int = 0 // This index is an item index inside of Tile list of objects
+    private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile list of objects
     private var currentEditVar: Var? = null
 
     private var varsFilterRaw: CharArray = CharArray(FILTER_BUFFER) // Buffer for variable filter
@@ -182,9 +183,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private fun getTileItem(): TileItem? {
         return when (currentTileItemIndex) {
-            Tile.AREA_INDEX -> currentTile?.area
-            Tile.TURF_INDEX -> currentTile?.turf
-            else -> currentTile?.tileItems?.get(currentTileItemIndex)
+            TileItemIdx.AREA -> currentTile?.area
+            TileItemIdx.TURF -> currentTile?.turf
+            else -> currentTile?.tileItems?.get(currentTileItemIndex.value)
         }
     }
 
@@ -202,7 +203,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         }
 
         if (newItemVars.isEmpty()) {
-            if (currentTile!!.tileItems[currentTileItemIndex].customVars != null) {
+            if (currentTile!!.tileItems[currentTileItemIndex.value].customVars != null) {
                 currentTile!!.modifyItemVars(currentTileItemIndex, null)
                 sendEvent(Event.Global.RefreshFrame())
             }
@@ -221,7 +222,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         sendEvent(Event.Global.ModalBlock(false))
     }
 
-    private fun handleOpen(event: Event<Pair<Tile, Int>, Unit>) {
+    private fun handleOpen(event: Event<Pair<Tile, TileItemIdx>, Unit>) {
         sendEvent(Event.Global.ModalBlock(true))
         WINDOW_ID++
         currentTile = event.body.first

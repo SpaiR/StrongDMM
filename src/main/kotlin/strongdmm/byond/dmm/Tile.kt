@@ -10,11 +10,6 @@ class Tile(
     val x: Int,
     val y: Int
 ) {
-    companion object {
-        const val AREA_INDEX: Int = -1
-        const val TURF_INDEX: Int = -2
-    }
-
     lateinit var tileItems: MutableList<TileItem>
         private set
     var area: TileItem? = null
@@ -26,41 +21,41 @@ class Tile(
     lateinit var mobs: List<IndexedValue<TileItem>>
         private set
 
-    private var areaIndex: Int = AREA_INDEX
-    private var turfIndex: Int = TURF_INDEX
+    private var areaIndex: TileItemIdx = TileItemIdx.AREA
+    private var turfIndex: TileItemIdx = TileItemIdx.TURF
 
     init {
         update()
     }
 
-    fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
+    fun modifyItemVars(tileItemIdx: TileItemIdx, vars: Map<String, String>?) {
         val itemIdx = when (tileItemIdx) {
-            AREA_INDEX -> areaIndex
-            TURF_INDEX -> turfIndex
+            TileItemIdx.AREA -> areaIndex
+            TileItemIdx.TURF -> turfIndex
             else -> tileItemIdx
         }
 
         val tileItemsID = dmm.getTileItemsID(x, y)
-        val tileItemType = tileItems[itemIdx].type
+        val tileItemType = tileItems[itemIdx.value].type
 
-        tileItemsID[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
+        tileItemsID[itemIdx.value] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
         update()
     }
 
-    fun moveToTop(isMob: Boolean, index: Int) {
+    fun moveToTop(isMob: Boolean, index: TileItemIdx) {
         shiftItem((if (isMob) mobs else objs), index, -1)
     }
 
-    fun moveToBottom(isMob: Boolean, index: Int) {
+    fun moveToBottom(isMob: Boolean, index: TileItemIdx) {
         shiftItem((if (isMob) mobs else objs), index, 1)
     }
 
-    private fun shiftItem(list: List<IndexedValue<TileItem>>, index: Int, shiftValue: Int) {
+    private fun shiftItem(list: List<IndexedValue<TileItem>>, index: TileItemIdx, shiftValue: Int) {
         if (list.size == 1) {
             return
         }
 
-        list.find { it.index == index }?.let {
+        list.find { it.index == index.value }?.let {
             val relativeIdx = list.indexOf(it)
             val swapWithIdx = relativeIdx + shiftValue
             if (swapWithIdx >= 0 && swapWithIdx < list.size) {
@@ -79,12 +74,12 @@ class Tile(
 
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {
             area = it?.value
-            areaIndex = it?.index ?: AREA_INDEX
+            areaIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.AREA
         }
 
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_TURF) }.let {
             turf = it?.value
-            turfIndex = it?.index ?: TURF_INDEX
+            turfIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.TURF
         }
 
         objs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.type.startsWith(TYPE_OBJ) }
