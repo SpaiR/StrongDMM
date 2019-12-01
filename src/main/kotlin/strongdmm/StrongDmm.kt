@@ -17,6 +17,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
     private val availableMapsDialogUi = AvailableMapsDialogUi()
     private val tilePopupUi = TilePopupUi()
     private val editVarsDialogUi = EditVarsDialogUi()
+    private val environmentTreePanelUi = EnvironmentTreePanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapController()
@@ -35,6 +36,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
         availableMapsDialogUi.process()
         tilePopupUi.process()
         editVarsDialogUi.process(windowWidth, windowHeight)
+        environmentTreePanelUi.process()
     }
 
     companion object {

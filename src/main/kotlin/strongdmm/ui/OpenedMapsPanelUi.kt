@@ -18,18 +18,16 @@ import strongdmm.event.Event
 import strongdmm.event.EventSender
 import strongdmm.util.RED32
 
-class OpenedMapsPanelUi : Window(), EventSender {
+class OpenedMapsPanelUi : EventSender {
     fun process(windowWidth: Int, windowHeight: Int) {
         sendEvent(Event.MapController.FetchAllOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
                 return@FetchAllOpened
             }
 
-            getOptionCondition(windowWidth, windowHeight).let { cond ->
-                setNextWindowPos(Vec2(windowWidth - 160, 30), cond)
-                setNextWindowSize(Vec2(150, 150), cond)
-                setNextWindowCollapsed(true, Cond.Once)
-            }
+            setNextWindowPos(Vec2(windowWidth - 160, 30), Cond.Once)
+            setNextWindowSize(Vec2(150, 150), Cond.Once)
+            setNextWindowCollapsed(true, Cond.Once)
 
             sendEvent(Event.MapController.FetchSelected { selectedMap ->
                 window("${selectedMap?.mapName}###opened_maps") {

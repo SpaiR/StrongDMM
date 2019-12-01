@@ -129,8 +129,7 @@ class MapController : EventSender, EventConsumer {
         File(event.body.rootPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
                 val abs = AbsPath(it.absolutePath)
-                val rel =
-                    RelPath(File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
+                val rel = RelPath(File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
                 availableMaps.add(abs to rel)
             }
         }
