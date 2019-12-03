@@ -39,8 +39,10 @@ class OpenedMapsPanelUi : EventSender {
                             }
                         }
                         sameLine()
-                        (selectable(map.mapName, selectedMap == map) && selectedMap != map).itemAction {
-                            sendEvent(Event.MapController.Switch(map.id))
+                        selectable(map.mapName, selectedMap == map).itemAction {
+                            if (selectedMap != map) {
+                                sendEvent(Event.MapController.Switch(map.id))
+                            }
                         }.itemHovered {
                             tooltip { text(map.relMapPath.value) }
                         }

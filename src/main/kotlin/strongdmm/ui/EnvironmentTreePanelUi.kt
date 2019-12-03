@@ -3,14 +3,17 @@ package strongdmm.ui
 import glm_.vec2.Vec2
 import imgui.Cond
 import imgui.ImGui
+import imgui.ImGui.checkbox
 import imgui.ImGui.sameLine
+import imgui.ImGui.separator
 import imgui.ImGui.setNextWindowPos
 import imgui.ImGui.setNextWindowSize
+import imgui.ImGui.text
 import imgui.ImGui.treeNodeEx
 import imgui.ImGui.treePop
 import imgui.MutableProperty0
 import imgui.TreeNodeFlag
-import imgui.dsl_.window
+import imgui.dsl_.*
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
@@ -19,6 +22,7 @@ import strongdmm.byond.dmi.IconSprite
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.util.imgui.itemClicked
+import strongdmm.util.imgui.itemHovered
 
 class EnvironmentTreePanelUi : EventConsumer {
     private var currentEnv: Dme? = null
@@ -44,10 +48,18 @@ class EnvironmentTreePanelUi : EventConsumer {
                 return@window
             }
 
-            createTreeNodes(currentEnv!!.getItem(TYPE_AREA)!!)
-            createTreeNodes(currentEnv!!.getItem(TYPE_TURF)!!)
-            createTreeNodes(currentEnv!!.getItem(TYPE_OBJ)!!)
-            createTreeNodes(currentEnv!!.getItem(TYPE_MOB)!!)
+            checkbox("##show_icons", isShowIcons).itemHovered {
+                tooltip { text("Show icons") }
+            }
+
+            separator()
+
+            child("tree_nodes") {
+                createTreeNodes(currentEnv!!.getItem(TYPE_AREA)!!)
+                createTreeNodes(currentEnv!!.getItem(TYPE_TURF)!!)
+                createTreeNodes(currentEnv!!.getItem(TYPE_OBJ)!!)
+                createTreeNodes(currentEnv!!.getItem(TYPE_MOB)!!)
+            }
         }
     }
 
