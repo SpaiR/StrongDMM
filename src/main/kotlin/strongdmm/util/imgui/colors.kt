@@ -1,4 +1,4 @@
-package strongdmm.util
+package strongdmm.util.imgui
 
 import imgui.COL32
 

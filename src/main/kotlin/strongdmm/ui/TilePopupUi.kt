@@ -57,11 +57,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
         image(sprite.textureId, ICON_SIZE, Vec2(sprite.u1, sprite.v1), Vec2(sprite.u2, sprite.v2))
         sameLine()
-
-        menu("$name##$index") {
-            showTileItemOptions(tile, tileItem, index)
-        }
-
+        menu("$name##$index") { showTileItemOptions(tile, tileItem, index) }
         sameLine()
         text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
     }

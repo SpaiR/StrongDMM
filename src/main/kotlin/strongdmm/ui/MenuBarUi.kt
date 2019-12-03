@@ -22,7 +22,7 @@ class MenuBarUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.ActionStatusChanged::class.java, ::handleActionStatusChagnged)
+        consumeEvent(Event.Global.ActionStatusChanged::class.java, ::handleActionStatusChanged)
     }
 
     fun process() {
@@ -53,7 +53,7 @@ class MenuBarUi : EventSender, EventConsumer {
 
     private fun openEnvironment() {
         NfdUtil.selectFile("dme")?.let { path ->
-            progressText = "Loading " + path.value.substringAfterLast("\\")
+            progressText = "Loading " + path.value.replace('\\', '/').substringAfterLast("/")
             sendEvent(Event.EnvironmentController.Open(path) {
                 progressText = null
                 isEnvironmentOpen = it.isOpen()
@@ -89,7 +89,7 @@ class MenuBarUi : EventSender, EventConsumer {
         isEnvironmentOpen = false
     }
 
-    private fun handleActionStatusChagnged(event: Event<ActionStatus, Unit>) {
+    private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {
         isUndoEnabled = event.body.hasUndoAction
         isRedoEnabled = event.body.hasRedoAction
     }

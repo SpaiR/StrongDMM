@@ -30,8 +30,7 @@ import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.GREEN32
-import strongdmm.util.LMB
+import strongdmm.util.imgui.*
 
 class EditVarsDialogUi : EventSender, EventConsumer {
     companion object {
@@ -76,9 +75,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
             window("Edit Variables: ${tileItem.type}##$WINDOW_ID") {
                 drawControls()
-
                 separator()
-
                 child("vars_table") {
                     drawVariables()
                 }
@@ -87,22 +84,18 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun drawControls() {
-        checkbox("##isShowModifiedVars", isShowModifiedVars)
-        if (ImGui.isItemHovered()) {
+        checkbox("##isShowModifiedVars", isShowModifiedVars).itemHovered {
             tooltip { text("Show modified variables") }
         }
-
         sameLine()
-        if (inputText("##varsFilter", varsFilterRaw)) {
+        inputText("##varsFilter", varsFilterRaw).itemAction {
             varsFilter = String(varsFilterRaw, 0, varsFilterRaw.strlen)
         }
-
         sameLine()
         button("OK") {
             applyModifiedVars()
             dispose()
         }
-
         sameLine()
         button("Cancel", block = ::dispose)
     }
@@ -132,22 +125,20 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             setNextItemWidth(ImGui.getColumnWidth(-1))
 
             if (variable === currentEditVar) {
-                if (inputText("##${variable.name}", variable.buffer!!, InputTextFlag.EnterReturnsTrue.i)) {
+                inputText("##${variable.name}", variable.buffer!!, InputTextFlag.EnterReturnsTrue.i).itemAction {
                     currentEditVar?.stopEdit()
                     currentEditVar = null
                 }
             } else {
                 alignTextToFramePadding()
-                text(variable.displayValue)
 
-                if (ImGui.isItemHovered()) {
-                    ImGui.mouseCursor = MouseCursor.Hand
-                }
-
-                if (ImGui.isItemClicked(LMB)) {
-                    currentEditVar?.stopEdit()
-                    currentEditVar = variable
-                    variable.startEdit()
+                text(variable.displayValue).with {
+                    itemHovered { ImGui.mouseCursor = MouseCursor.Hand }
+                    itemClicked {
+                        currentEditVar?.stopEdit()
+                        currentEditVar = variable
+                        variable.startEdit()
+                    }
                 }
             }
 

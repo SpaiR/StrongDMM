@@ -8,6 +8,7 @@ import imgui.ImGui.openPopup
 import imgui.ImGui.sameLine
 import imgui.ImGui.setNextWindowSize
 import imgui.ImGui.text
+import imgui.WindowFlag
 import imgui.dsl_.*
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
@@ -15,7 +16,6 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
-import imgui.WindowFlag as Wf
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isOpen: Boolean = false
@@ -33,10 +33,10 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
         setNextWindowSize(Vec2(600, 275), Cond.Once)
 
-        popupModal("Available Maps", null, Wf.NoResize.i) {
+        popupModal("Available Maps", null, WindowFlag.NoResize.i) {
             text("Selected: ${selectionStatus.value}")
 
-            child("available_maps_list", Vec2(580, 200), true, Wf.HorizontalScrollbar.i) {
+            child("available_maps_list", Vec2(580, 200), true, WindowFlag.HorizontalScrollbar.i) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
@@ -53,7 +53,6 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                 sendEvent(Event.MapController.Open(selectedMapPath!!))
                 closePopup()
             }
-
             sameLine()
             button("Cancel", ::closePopup)
         }

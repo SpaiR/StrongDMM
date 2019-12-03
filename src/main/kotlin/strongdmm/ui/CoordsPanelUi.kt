@@ -6,13 +6,13 @@ import imgui.Cond
 import imgui.ImGui.setNextWindowPos
 import imgui.ImGui.setNextWindowSize
 import imgui.ImGui.text
+import imgui.WindowFlag
 import imgui.dsl.window
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.util.OUT_OF_BOUNDS
-import imgui.WindowFlag as Wf
 
 class CoordsPanelUi : EventConsumer {
     private var isHasMap: Boolean = false
@@ -37,7 +37,7 @@ class CoordsPanelUi : EventConsumer {
         setNextWindowPos(Vec2(windowWidth - 110, windowHeight - 40), Cond.Once)
         setNextWindowSize(Vec2(100, 10))
 
-        window("coords_panel", flags = Wf.NoResize or Wf.NoTitleBar) {
+        window("coords_panel", flags = WindowFlag.NoResize or WindowFlag.NoTitleBar) {
             if (xMapMousePos == OUT_OF_BOUNDS || yMapMousePos == OUT_OF_BOUNDS) {
                 text("out of bound")
             } else {

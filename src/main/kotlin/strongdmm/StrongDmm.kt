@@ -32,7 +32,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
         // UIs
         menuBarUi.process()
         coordsPanelUi.process(windowWidth, windowHeight)
-        openedMapsPanelUi.process(windowWidth, windowHeight)
+        openedMapsPanelUi.process(windowWidth)
         availableMapsDialogUi.process()
         tilePopupUi.process()
         editVarsDialogUi.process(windowWidth, windowHeight)

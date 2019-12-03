@@ -6,9 +6,10 @@ import imgui.ImGui
 import imgui.ImGui.sameLine
 import imgui.ImGui.setNextWindowPos
 import imgui.ImGui.setNextWindowSize
+import imgui.ImGui.treeNodeEx
+import imgui.ImGui.treePop
 import imgui.MutableProperty0
 import imgui.TreeNodeFlag
-import imgui.dsl_.menuBar
 import imgui.dsl_.window
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
@@ -17,7 +18,7 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import strongdmm.util.LMB
+import strongdmm.util.imgui.itemClicked
 
 class EnvironmentTreePanelUi : EventConsumer {
     private var currentEnv: Dme? = null
@@ -43,10 +44,6 @@ class EnvironmentTreePanelUi : EventConsumer {
                 return@window
             }
 
-            menuBar {
-                ImGui.checkbox("Show icons", isShowIcons)
-            }
-
             createTreeNodes(currentEnv!!.getItem(TYPE_AREA)!!)
             createTreeNodes(currentEnv!!.getItem(TYPE_TURF)!!)
             createTreeNodes(currentEnv!!.getItem(TYPE_OBJ)!!)
@@ -64,24 +61,25 @@ class EnvironmentTreePanelUi : EventConsumer {
         }
 
         if (dmeItem.children.isEmpty()) {
-            ImGui.treeNodeEx(treeNode.name, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
+            treeNodeEx(treeNode.name, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
         } else {
             if (ImGui.treeNodeEx(treeNode.name, flags = TreeNodeFlag.OpenOnArrow or TreeNodeFlag.OpenOnDoubleClick or selectedFlag)) {
-                if (ImGui.isItemClicked(LMB) && !isSelectedInCycle) {
-                    selectedType = dmeItem.type
-                    isSelectedInCycle = true
-                }
+                itemClicked { selectType(dmeItem.type) }
 
                 dmeItem.children.forEach { child ->
                     createTreeNodes(currentEnv!!.getItem(child)!!)
                 }
 
-                ImGui.treePop()
+                treePop()
             }
         }
 
-        if (ImGui.isItemClicked(LMB) && !isSelectedInCycle) {
-            selectedType = dmeItem.type
+        itemClicked { selectType(dmeItem.type) }
+    }
+
+    private fun selectType(type: String) {
+        if (!isSelectedInCycle) {
+            selectedType = type
             isSelectedInCycle = true
         }
     }
