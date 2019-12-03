@@ -21,10 +21,11 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 import strongdmm.util.imgui.itemClicked
 import strongdmm.util.imgui.itemHovered
 
-class EnvironmentTreePanelUi : EventConsumer {
+class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var currentEnv: Dme? = null
     private val treeNodes: MutableMap<String, TreeNode> = mutableMapOf()
 
@@ -35,6 +36,7 @@ class EnvironmentTreePanelUi : EventConsumer {
 
     init {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
+        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
     }
 
     fun process() {
@@ -45,6 +47,7 @@ class EnvironmentTreePanelUi : EventConsumer {
 
         window("Environment Tree") {
             if (currentEnv == null) {
+                text("No environment opened")
                 return@window
             }
 
@@ -98,6 +101,11 @@ class EnvironmentTreePanelUi : EventConsumer {
 
     private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
         currentEnv = event.body
+    }
+
+    private fun handleResetEnvironment() {
+        currentEnv = null
+        treeNodes.clear()
     }
 
     private class TreeNode(dmeItem: DmeItem) {

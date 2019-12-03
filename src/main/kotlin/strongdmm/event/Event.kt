@@ -43,7 +43,7 @@ abstract class Event<T, R>(
     }
 
     abstract class EnvironmentController {
-        class Open(body: AbsPath, callback: ((EnvOpenStatus) -> Unit)) : Event<AbsPath, EnvOpenStatus>(body, callback)
+        class Open(body: AbsPath, callback: ((EnvOpenStatus) -> Unit)? = null) : Event<AbsPath, EnvOpenStatus>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
