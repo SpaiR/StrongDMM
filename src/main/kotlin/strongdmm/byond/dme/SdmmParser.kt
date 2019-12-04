@@ -85,6 +85,9 @@ class SdmmParser {
             traverseTreeRecurs(child.asObject(), dme, dmeItems)
         }
 
+        // Sort names by natural order
+        childrenList.sortBy { it.substringAfterLast('/') }
+
         dmeItems[type] = DmeItem(dme, type, localVars, childrenList)
     }
 
