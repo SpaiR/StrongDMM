@@ -42,7 +42,6 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var isSelectedInCycle: Boolean = false
 
     private val isShowIcons: MutableProperty0<Boolean> = MutableProperty0(true)
-    private val isShowTypes: MutableProperty0<Boolean> = MutableProperty0(false)
 
     private val typeFilterRaw: CharArray = CharArray(50)
     private var typeFilter: String = ""
@@ -56,7 +55,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     fun process() {
         setNextWindowPos(Vec2(10, 30), Cond.Once)
-        setNextWindowSize(Vec2(300, 500), Cond.Once)
+        setNextWindowSize(Vec2(330, 500), Cond.Once)
 
         window("Environment Tree") {
             if (currentEnv == null) {
@@ -67,13 +66,11 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             isSelectedInCycle = false
             createdTeeNodesInCycle = 0
 
+            checkbox("##show_icons", isShowIcons).itemHovered { tooltip { text("Show icons") } }
+            sameLine()
             inputText("Filter", typeFilterRaw).itemAction { typeFilter = String(typeFilterRaw, 0, typeFilterRaw.strlen) }
             sameLine()
             text("(?)").itemHovered { tooltip { text("Provide at least %d chars to apply", MIN_FILTER_CHARS) } }
-
-            checkbox("Show icons", isShowIcons)
-            sameLine()
-            checkbox("Show types", isShowTypes)
 
             separator()
 
@@ -101,19 +98,13 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 createTreeNodes(currentEnv!!.getItem(child)!!)
             }
         } else {
-            var isTooltipShown = false
             showTreeNodeImage(treeNode)
 
             if (dmeItem.children.isEmpty()) {
                 treeNodeEx(treeNode.name, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
-                showTypeTooltip(dmeItem.type)
-                isTooltipShown = true
             } else {
                 if (treeNodeEx(treeNode.name, flags = TreeNodeFlag.OpenOnArrow or TreeNodeFlag.OpenOnDoubleClick or selectedFlag)) {
                     itemClicked { selectType(dmeItem.type) }
-
-                    showTypeTooltip(dmeItem.type)
-                    isTooltipShown = true
 
                     dmeItem.children.forEach { child ->
                         createTreeNodes(currentEnv!!.getItem(child)!!)
@@ -124,10 +115,6 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             }
 
             itemClicked { selectType(dmeItem.type) }
-
-            if (!isTooltipShown) {
-                showTypeTooltip(dmeItem.type)
-            }
         }
     }
 
@@ -148,12 +135,6 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
         if (isShowIcons.get()) {
             treeNode.sprite.run { image(textureId, ICON_SIZE, Vec2(u1, v1), Vec2(u2, v2)) }
             sameLine()
-        }
-    }
-
-    private fun showTypeTooltip(type: String) {
-        if (isShowTypes.get()) {
-            itemHovered { tooltip { text(type) } }
         }
     }
 
