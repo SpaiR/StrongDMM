@@ -9,7 +9,7 @@ import strongdmm.ui.*
 import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.ImGuiWindow
 
-class StrongDmm(title: String) : ImGuiWindow(title) {
+class StrongDMM(title: String) : ImGuiWindow(title) {
     private val menuBarUi = MenuBarUi()
     private val coordsPanelUi = CoordsPanelUi()
     private val openedMapsPanelUi = OpenedMapsPanelUi()
@@ -44,7 +44,7 @@ class StrongDmm(title: String) : ImGuiWindow(title) {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            StrongDmm(TITLE).start()
+            StrongDMM(TITLE).start()
         }
     }
 }
