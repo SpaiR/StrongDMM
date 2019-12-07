@@ -30,7 +30,7 @@ class DmeItem(
         }
 
         return parentType?.let {
-            environment.getItem(it)!!.getVar(name).apply { lookedVars[name] = this }
+            environment.getItem(it)?.getVar(name).apply { lookedVars[name] = this }
         }
     }
 

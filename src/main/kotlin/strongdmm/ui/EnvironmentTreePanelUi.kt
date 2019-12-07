@@ -31,6 +31,8 @@ import strongdmm.util.imgui.itemHovered
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
     companion object {
         private val ICON_SIZE: Vec2 = Vec2(13, 13)
+        private const val MAX_TREE_NODES_CREATION_PER_CYCLE: Int = 25
+        private const val MIN_FILTER_CHARS: Int = 4
     }
 
     private var currentEnv: Dme? = null
@@ -42,8 +44,10 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private val isShowIcons: MutableProperty0<Boolean> = MutableProperty0(true)
     private val isShowTypes: MutableProperty0<Boolean> = MutableProperty0(false)
 
-    private val typeFilterRaw: CharArray = CharArray(100)
+    private val typeFilterRaw: CharArray = CharArray(50)
     private var typeFilter: String = ""
+
+    private var createdTeeNodesInCycle: Int = 0
 
     init {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
@@ -51,8 +55,6 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        isSelectedInCycle = false
-
         setNextWindowPos(Vec2(10, 30), Cond.Once)
         setNextWindowSize(Vec2(300, 500), Cond.Once)
 
@@ -62,9 +64,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 return@window
             }
 
-            inputText("Filter", typeFilterRaw).itemAction {
-                typeFilter = String(typeFilterRaw, 0, typeFilterRaw.strlen)
-            }
+            isSelectedInCycle = false
+            createdTeeNodesInCycle = 0
+
+            inputText("Filter", typeFilterRaw).itemAction { typeFilter = String(typeFilterRaw, 0, typeFilterRaw.strlen) }
+            sameLine()
+            text("(?)").itemHovered { tooltip { text("Provide at least %d chars to apply", MIN_FILTER_CHARS) } }
 
             checkbox("Show icons", isShowIcons)
             sameLine()
@@ -82,10 +87,10 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun createTreeNodes(dmeItem: DmeItem) {
-        val treeNode = treeNodes.getOrPut(dmeItem.type) { TreeNode(dmeItem) }
+        val treeNode = getOrCreateTreeNode(dmeItem) ?: return
         val selectedFlag = if (dmeItem.type == selectedType) TreeNodeFlag.Selected.i else 0
 
-        if (typeFilter.isNotEmpty()) {
+        if (typeFilter.length >= MIN_FILTER_CHARS) {
             if (dmeItem.type.contains(typeFilter)) {
                 showTreeNodeImage(treeNode)
                 treeNodeEx(dmeItem.type, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
@@ -123,6 +128,19 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             if (!isTooltipShown) {
                 showTypeTooltip(dmeItem.type)
             }
+        }
+    }
+
+    private fun getOrCreateTreeNode(dmeItem: DmeItem): TreeNode? {
+        return when {
+            treeNodes.containsKey(dmeItem.type) -> {
+                treeNodes.getValue(dmeItem.type)
+            }
+            createdTeeNodesInCycle < MAX_TREE_NODES_CREATION_PER_CYCLE -> {
+                createdTeeNodesInCycle++
+                treeNodes.getOrPut(dmeItem.type) { TreeNode(dmeItem) }
+            }
+            else -> null
         }
     }
 
