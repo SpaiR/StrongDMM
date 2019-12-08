@@ -77,8 +77,9 @@ abstract class ImGuiWindow(title: String) {
     fun start() {
         window.loop(::mainLoop)
         gl.shutdown()
-        glfwWindow.shutdown()
         ctx.destroy()
+        window.destroy()
+        glfwWindow.shutdown()
     }
 
     abstract fun appLoop(windowWidth: Int, windowHeight: Int)

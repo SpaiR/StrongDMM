@@ -119,8 +119,8 @@ class GlfwWindow(
     fun shutdown() {
         mouseCursors.forEach(::glfwDestroyCursor)
         mouseCursors.fill(MemoryUtil.NULL)
-        glfwTerminate()
         clientApi = GlfwClientApi.Unknown
+        glfw.terminate()
     }
 
     private fun updateMousePosAndButtons() {
