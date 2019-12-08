@@ -61,6 +61,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     init {
         consumeEvent(Event.EditVarsDialogUi.Open::class.java, ::handleOpen)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
     }
 
@@ -225,6 +226,10 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun handleResetEnvironment() {
+        dispose()
+    }
+
+    private fun handleSwitchMap() {
         dispose()
     }
 
