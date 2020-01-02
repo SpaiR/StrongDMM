@@ -31,12 +31,13 @@ import java.nio.file.Files
  *  Root object contains all #define macros, constants and all other environment objects in children field.
  */
 class SdmmParser {
-    private val parserPath = System.getProperty("sdmmparser.path")
+    private val parserFolder: String = System.getProperty("sdmmparser.path")
+    private val parserFile: String = if (System.getProperty("os.name").contains("win")) "sdmmparser.exe" else "sdmmparser"
 
     fun parseDme(envPath: String): Dme {
         val tmpFile = Files.createTempFile("sdmm.", ".json").toFile()
 
-        val p = ProcessBuilder(parserPath, envPath, tmpFile.absolutePath).start()
+        val p = ProcessBuilder(parserFolder + File.separator + parserFile, envPath, tmpFile.absolutePath).start()
         val status = p.waitFor()
 
         if (status != 0) {

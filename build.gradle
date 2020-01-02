@@ -1,9 +1,10 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
     id 'org.jetbrains.kotlin.jvm' version '1.3.60'
     id 'org.jmailen.kotlinter' version '1.26.0'
-    id 'com.gradle.build-scan' version '2.0.2'
 }
 
 application {
@@ -15,41 +16,41 @@ application {
 repositories {
     jcenter()
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+}
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
 }
 
 ext {
-    lwjglVersion = '3.2.2'
-    imguiVersion = 'v1.71'
-    unoVersion  = '3f32007ffe'
-    glnVersion = 'e6fd699b6723c770a4dd891119e33e6dca74961a'
-    glmVersion = '6048c31425ae6110258e4b42165f1e636f8b5603'
-    gliVersion = 'c8cb88947b77232beed84599fb7a01b5ce158f25'
-    unsignedVersion = 'ba1b5c2ab0231aabbef753df5fa0d0de98142360'
-    koolVersion = 'd052c5e18a06642fcdf9f5942198ee9c4cee1a3f'
+    lwjglVersion = '3.2.3'
+    dmmioVersion = '1.6.1'
+    trove4jVersion = '3.0.3'
+    minimalJsonjVersion = '0.9.5'
+    pngjVersion = '2.1.0'
+    imguiJavaVersion = '1.74-0.3'
 }
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'io.github.spair:dmm-io:1.6.1'
-    implementation 'net.sf.trove4j:trove4j:3.0.3'
-    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-    implementation 'ar.com.hjg:pngj:2.1.0'
+    implementation "io.github.spair:dmm-io:$dmmioVersion"
+    implementation "net.sf.trove4j:trove4j:$trove4jVersion"
+    implementation "com.eclipsesource.minimal-json:minimal-json:$minimalJsonjVersion"
+    implementation "ar.com.hjg:pngj:$pngjVersion"
 
-    shadow "com.github.kotlin-graphics:uno-sdk:$unoVersion"
-    shadow "com.github.kotlin-graphics.glm:glm:$glmVersion"
-    shadow "com.github.kotlin-graphics:gln:$glnVersion"
-    shadow "com.github.kotlin-graphics:gli:$gliVersion"
-    shadow "com.github.kotlin-graphics:kotlin-unsigned:$unsignedVersion"
-    shadow "com.github.kotlin-graphics:kool:$koolVersion"
+    implementation "io.imgui.java:binding:$imguiJavaVersion"
+    implementation "io.imgui.java:lwjgl3:$imguiJavaVersion"
 
-    ['core', 'gl'].each {
-        shadow "com.github.kotlin-graphics.imgui:imgui-$it:$imguiVersion"
-    }
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     ['', '-opengl', '-glfw', '-stb', '-nfd'].each {
-        def base = "org.lwjgl:lwjgl$it:$lwjglVersion"
-        shadow base
+        implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
+        runtimeOnly "org.lwjgl:lwjgl$it::$lwjglNatives"
     }
 }
 
@@ -60,20 +61,6 @@ compileKotlin {
     }
 }
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-    publishAlwaysIf(System.getenv('CI') != null)
-}
-
 runShadow {
-    def parserFile = 'sdmmparser'
-    def libsFolder = 'libs'
-
-    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-        parserFile += '.exe'
-        libsFolder += '-win'
-    }
-
-    jvmArgs(["-Djava.library.path=./$libsFolder", "-Dsdmmparser.path=./$libsFolder/$parserFile"])
+    jvmArgs(["-Djava.library.path=./libs", "-Dsdmmparser.path=./libs"])
 }
