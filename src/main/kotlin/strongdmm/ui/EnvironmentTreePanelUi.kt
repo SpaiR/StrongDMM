@@ -1,21 +1,11 @@
 package strongdmm.ui
 
-import glm_.vec2.Vec2
-import imgui.Cond
-import imgui.ImGui.checkbox
-import imgui.ImGui.image
-import imgui.ImGui.inputText
-import imgui.ImGui.sameLine
-import imgui.ImGui.separator
-import imgui.ImGui.setNextWindowPos
-import imgui.ImGui.setNextWindowSize
-import imgui.ImGui.text
-import imgui.ImGui.treeNodeEx
-import imgui.ImGui.treePop
-import imgui.MutableProperty0
-import imgui.TreeNodeFlag
-import imgui.dsl_.*
-import imgui.internal.strlen
+import gnu.trove.map.hash.TLongObjectHashMap
+import imgui.ImBool
+import imgui.ImGui.*
+import imgui.ImString
+import imgui.enums.ImGuiCond
+import imgui.enums.ImGuiTreeNodeFlags
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
@@ -24,27 +14,27 @@ import strongdmm.byond.dmi.IconSprite
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.imgui.itemAction
+import strongdmm.util.extension.getOrPut
+import strongdmm.util.imgui.child
 import strongdmm.util.imgui.itemClicked
 import strongdmm.util.imgui.itemHovered
+import strongdmm.util.imgui.window
 
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
     companion object {
-        private val ICON_SIZE: Vec2 = Vec2(13, 13)
-        private const val MAX_TREE_NODES_CREATION_PER_CYCLE: Int = 25
+        private const val ICON_SIZE: Float = 13f
+        private const val TREE_NODES_CREATION_LIMIT_PER_CYCLE: Int = 25
         private const val MIN_FILTER_CHARS: Int = 4
     }
 
     private var currentEnv: Dme? = null
-    private val treeNodes: MutableMap<String, TreeNode> = mutableMapOf()
+    private val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
 
     private var selectedType: String = ""
     private var isSelectedInCycle: Boolean = false
 
-    private val isShowIcons: MutableProperty0<Boolean> = MutableProperty0(true)
-
-    private val typeFilterRaw: CharArray = CharArray(50)
-    private var typeFilter: String = ""
+    private val isShowIcons: ImBool = ImBool(true)
+    private val typeFilter: ImString = ImString(50)
 
     private var createdTeeNodesInCycle: Int = 0
 
@@ -54,8 +44,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        setNextWindowPos(Vec2(10, 30), Cond.Once)
-        setNextWindowSize(Vec2(330, 500), Cond.Once)
+        setNextWindowPos(10f, 30f, ImGuiCond.Once)
+        setNextWindowSize(330f, 500f, ImGuiCond.Once)
 
         window("Environment Tree") {
             if (currentEnv == null) {
@@ -66,11 +56,11 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             isSelectedInCycle = false
             createdTeeNodesInCycle = 0
 
-            checkbox("##show_icons", isShowIcons).itemHovered { tooltip { text("Show icons") } }
+            checkbox("##show_icons", isShowIcons).itemHovered { setTooltip("Show icons") }
             sameLine()
-            inputText("Filter", typeFilterRaw).itemAction { typeFilter = String(typeFilterRaw, 0, typeFilterRaw.strlen) }
+            inputText("Filter", typeFilter)
             sameLine()
-            text("(?)").itemHovered { tooltip { text("Provide at least %d chars to apply", MIN_FILTER_CHARS) } }
+            text("(?)").itemHovered { setTooltip("Provide at least $MIN_FILTER_CHARS chars to apply") }
 
             separator()
 
@@ -85,13 +75,14 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun createTreeNodes(dmeItem: DmeItem) {
         val treeNode = getOrCreateTreeNode(dmeItem) ?: return
-        val selectedFlag = if (dmeItem.type == selectedType) TreeNodeFlag.Selected.i else 0
+        val selectedFlag = if (dmeItem.type == selectedType) ImGuiTreeNodeFlags.Selected else 0
 
         if (typeFilter.length >= MIN_FILTER_CHARS) {
-            if (dmeItem.type.contains(typeFilter)) {
+            if (dmeItem.type.contains(typeFilter.get())) {
                 showTreeNodeImage(treeNode)
-                treeNodeEx(dmeItem.type, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
-                itemClicked { selectType(dmeItem.type) }
+                treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag).itemClicked {
+                    selectType(dmeItem.type)
+                }
             }
 
             dmeItem.children.forEach { child ->
@@ -101,9 +92,9 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             showTreeNodeImage(treeNode)
 
             if (dmeItem.children.isEmpty()) {
-                treeNodeEx(treeNode.name, flags = TreeNodeFlag.Leaf or TreeNodeFlag.NoTreePushOnOpen or selectedFlag)
+                treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
             } else {
-                if (treeNodeEx(treeNode.name, flags = TreeNodeFlag.OpenOnArrow or TreeNodeFlag.OpenOnDoubleClick or selectedFlag)) {
+                if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag)) {
                     itemClicked { selectType(dmeItem.type) }
 
                     dmeItem.children.forEach { child ->
@@ -120,12 +111,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun getOrCreateTreeNode(dmeItem: DmeItem): TreeNode? {
         return when {
-            treeNodes.containsKey(dmeItem.type) -> {
-                treeNodes.getValue(dmeItem.type)
+            treeNodes.containsKey(dmeItem.id) -> {
+                treeNodes.get(dmeItem.id)
             }
-            createdTeeNodesInCycle < MAX_TREE_NODES_CREATION_PER_CYCLE -> {
+            createdTeeNodesInCycle < TREE_NODES_CREATION_LIMIT_PER_CYCLE -> {
                 createdTeeNodesInCycle++
-                treeNodes.getOrPut(dmeItem.type) { TreeNode(dmeItem) }
+                treeNodes.getOrPut(dmeItem.id) { TreeNode(dmeItem) }
             }
             else -> null
         }
@@ -133,7 +124,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun showTreeNodeImage(treeNode: TreeNode) {
         if (isShowIcons.get()) {
-            treeNode.sprite.run { image(textureId, ICON_SIZE, Vec2(u1, v1), Vec2(u2, v2)) }
+            treeNode.sprite.run { image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2) }
             sameLine()
         }
     }

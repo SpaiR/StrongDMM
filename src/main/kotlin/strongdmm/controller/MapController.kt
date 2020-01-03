@@ -82,8 +82,9 @@ class MapController : EventSender, EventConsumer {
                     selectedMap = null
                 } else {
                     val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
-                    selectedMap = openedMaps.toList()[index]
-                    sendEvent(Event.Global.SwitchMap(selectedMap!!))
+                    val nextMap = openedMaps.toList()[index]
+                    selectedMap = nextMap
+                    sendEvent(Event.Global.SwitchMap(nextMap))
                 }
             }
         }

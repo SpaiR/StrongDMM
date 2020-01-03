@@ -1,6 +1,6 @@
 package strongdmm.util.imgui
 
-import imgui.COL32
+fun col32(r: Int, g: Int, b: Int, a: Int): Int = (a shl 24) or (b shl 16) or (g shl 8) or (r shl 0)
 
-val RED32: Int = COL32(255, 0, 0, 255)
-val GREEN32: Int = COL32(0, 255, 0, 255)
+val RED32: Long = col32(255, 0, 0, 255).toLong()
+val GREEN32: Long = col32(0, 255, 0, 255).toLong()

@@ -2,11 +2,8 @@ package strongdmm.byond.dmi
 
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
-import gln.texture.glDeleteTexture
 import org.lwjgl.BufferUtils
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL12
-import org.lwjgl.opengl.GL14
+import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.stbi_failure_reason
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.system.MemoryStack
@@ -47,7 +44,7 @@ object GlobalDmiHolder {
         glBindTexture(GL_TEXTURE_2D, 0)
 
         dmiCache.values.filterNotNull().forEach { dmi ->
-            glDeleteTexture(dmi.textureId)
+            glDeleteTextures(dmi.textureId)
         }
 
         dmiCache.clear()
@@ -188,13 +185,13 @@ object GlobalDmiHolder {
         val textureId = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, textureId)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-        glTexParameteri(GL_TEXTURE_2D, GL14.GL_GENERATE_MIPMAP, GL_TRUE)
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE)
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
 

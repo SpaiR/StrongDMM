@@ -6,7 +6,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import uno.glfw.glfw
+import strongdmm.window.AppWindow
 
 class WindowTitleUi : EventConsumer {
     private var selectedMapId: MapId = MapId.NONE
@@ -19,18 +19,18 @@ class WindowTitleUi : EventConsumer {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
-        glfwSetWindowTitle(glfw.currentContext.L, "${event.body.mapName} [${event.body.relMapPath}] - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(AppWindow.window, "${event.body.mapName} [${event.body.relMapPath}] - ${StrongDMM.TITLE}")
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         if (selectedMapId == event.body.id) {
             selectedMapId = MapId.NONE
-            glfwSetWindowTitle(glfw.currentContext.L, StrongDMM.TITLE)
+            glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
         }
     }
 
     private fun handleResetEnvironment() {
         selectedMapId = MapId.NONE
-        glfwSetWindowTitle(glfw.currentContext.L, StrongDMM.TITLE)
+        glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
     }
 }

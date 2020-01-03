@@ -32,7 +32,7 @@ import java.nio.file.Files
  */
 class SdmmParser {
     private val parserFolder: String = System.getProperty("sdmmparser.path")
-    private val parserFile: String = if (System.getProperty("os.name").contains("win")) "sdmmparser.exe" else "sdmmparser"
+    private val parserFile: String = if (System.getProperty("os.name").contains("win", ignoreCase = true)) "sdmmparser.exe" else "sdmmparser"
 
     fun parseDme(envPath: String): Dme {
         val tmpFile = Files.createTempFile("sdmm.", ".json").toFile()

@@ -1,11 +1,7 @@
 package strongdmm.event
 
-import glm_.vec2.Vec2i
 import strongdmm.byond.dme.Dme
-import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapId
-import strongdmm.byond.dmm.Tile
-import strongdmm.byond.dmm.TileItemIdx
+import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.Undoable
 import strongdmm.controller.canvas.CanvasBlockStatus
@@ -36,7 +32,7 @@ abstract class Event<T, R>(
         class ResetEnvironment : Event<Unit, Unit>(Unit, null)
         class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
-        class MapMousePosChanged(body: Vec2i) : Event<Vec2i, Unit>(body, null)
+        class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)

@@ -1,13 +1,14 @@
 package strongdmm.controller.canvas
 
-import glm_.vec2.Vec2i
-import imgui.HoveredFlag
 import imgui.ImGui
+import imgui.ImVec2
+import imgui.enums.ImGuiHoveredFlags
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapId
+import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -37,6 +38,10 @@ class CanvasController : EventSender, EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
+    // To handle user input
+    private val mousePos: ImVec2 = ImVec2()
+    private val mouseDelta: ImVec2 = ImVec2()
+
     private val canvasRenderer = CanvasRenderer()
 
     init {
@@ -51,6 +56,8 @@ class CanvasController : EventSender, EventConsumer {
     fun process(windowWidth: Int, windowHeight: Int) {
         if (isHasMap) {
             if (!isBlocked && !isImGuiInUse()) {
+                ImGui.getMousePos(mousePos)
+
                 processViewTranslate()
                 processViewScale()
                 processTilePopupClick()
@@ -68,23 +75,27 @@ class CanvasController : EventSender, EventConsumer {
             return
         }
 
-        if (ImGui.io.mouseDelta anyNotEqual 0f) {
-            val (x, y) = ImGui.io.mouseDelta
+        ImGui.getIO().getMouseDelta(mouseDelta)
+
+        if (mouseDelta.x != 0f || mouseDelta.y != 0f) {
             canvasRenderer.run {
-                renderData.viewTranslateX += x * renderData.viewScale
-                renderData.viewTranslateY -= y * renderData.viewScale
+                renderData.viewTranslateX += mouseDelta.x * renderData.viewScale
+                renderData.viewTranslateY -= mouseDelta.y * renderData.viewScale
                 redraw = true
             }
         }
     }
 
     private fun processViewScale() {
-        if (ImGui.io.mouseWheel == 0f) {
+        val mouseWheel = ImGui.getIO().mouseWheel
+
+        if (mouseWheel == 0f) {
             return
         }
 
-        val isZoomIn = ImGui.io.mouseWheel > 0
-        val (x, y) = ImGui.mousePos
+        val isZoomIn = mouseWheel > 0
+        val x = mousePos.x
+        val y = mousePos.y
 
         if (!isHasMap || x < 0 || y < 0) {
             return
@@ -124,7 +135,8 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun calculateMapMousePos(windowHeight: Int) {
-        val (x, y) = ImGui.mousePos
+        val x = mousePos.x
+        val y = mousePos.y
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize
         val yMap = ((windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
@@ -135,11 +147,11 @@ class CanvasController : EventSender, EventConsumer {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            sendEvent(Event.Global.MapMousePosChanged(Vec2i(xMapMousePos, yMapMousePos)))
+            sendEvent(Event.Global.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
         }
     }
 
-    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(HoveredFlag.AnyWindow) || ImGui.isAnyItemHovered || ImGui.isAnyItemActive
+    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(ImGuiHoveredFlags.AnyWindow) || ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         renderData = renderDataStorage.getOrPut(event.body.id) { RenderData() }

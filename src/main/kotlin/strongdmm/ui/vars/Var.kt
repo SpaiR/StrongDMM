@@ -1,40 +1,33 @@
 package strongdmm.ui.vars
 
-import imgui.internal.strlen
+import imgui.ImString
 
 class Var(
     val name: String,
     private val initialValue: String, // value currently used by tile item (taken from map)
     private val originalValue: String // value from dme item (taken from code)
 ) {
-    companion object {
-        private const val BUFFER_SIZE: Int = 10000
-        private val TAIL: String = " ".repeat(1000) // Needed for GUI to make ImGui consider that item spreads through the line fully
-    }
 
     var value: String = initialValue // The actual value for current variable
         private set
-    var displayValue: String = value + TAIL // Used to display in the dialog. Needed since it has a tail which consists of space chars.
+    var buffer: ImString? = null // Buffer is used by the ImGui to modify value of the variable
         private set
-    var buffer: CharArray? = null // Buffer is used by the ImGui to modify value of the variable
+    var isModified: Boolean = value != originalValue // Means that the value is not equal to the value parsed from codebase
         private set
-    var isModified: Boolean = value != originalValue // Means that the value is not equal to the value of parsed from a codebase
-        private set
-    var isChanged: Boolean = value != initialValue // Means that it is not equal to the value which it had on a dialog creation
+    var isChanged: Boolean = value != initialValue // Means that it is not equal to the value which it had on dialog creation
         private set
 
     fun startEdit() {
-        buffer = value.toCharArray().copyOf(BUFFER_SIZE)
+        buffer = ImString(value).apply { inputData.isResizable = true }
     }
 
     fun stopEdit() {
-        value = String(buffer!!, 0, buffer!!.strlen)
+        value = buffer!!.get()
 
         if (value.isBlank()) {
             value = "null"
         }
 
-        displayValue = value + TAIL
         isModified = value != originalValue
         isChanged = value != initialValue
         buffer = null

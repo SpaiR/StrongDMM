@@ -8,6 +8,13 @@ class DmeItem(
     val vars: Map<String, String?>,
     val children: List<String>
 ) {
+    companion object {
+        private var TOTAL_ITEMS: Long = 0
+    }
+
+    // Works faster when we need to compare two items on type equality
+    val id: Long = TOTAL_ITEMS++
+
     private val lookedVars: MutableMap<String, String?> = mutableMapOf()
 
     private val parentType by lazy {

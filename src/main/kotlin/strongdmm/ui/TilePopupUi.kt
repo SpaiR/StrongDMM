@@ -1,16 +1,7 @@
 package strongdmm.ui
 
-import glm_.vec2.Vec2
-import imgui.ImGui.image
-import imgui.ImGui.openPopup
-import imgui.ImGui.sameLine
-import imgui.ImGui.separator
-import imgui.ImGui.text
-import imgui.SelectableFlag
-import imgui.WindowFlag
-import imgui.dsl.menu
-import imgui.dsl.popup
-import imgui.dsl.selectable
+import imgui.ImGui.*
+import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
@@ -21,10 +12,13 @@ import strongdmm.controller.action.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.util.imgui.menu
+import strongdmm.util.imgui.menuItem
+import strongdmm.util.imgui.popup
 
 class TilePopupUi : EventConsumer, EventSender {
     companion object {
-        private val ICON_SIZE: Vec2 = Vec2(16, 16)
+        private const val ICON_SIZE: Float = 16f
     }
 
     private var currentTile: Tile? = null
@@ -38,7 +32,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
     fun process() {
         currentTile?.let { tile ->
-            popup("tile_popup", WindowFlag.NoMove.i) {
+            popup("tile_popup", ImGuiWindowFlags.NoMove) {
                 showTileItems(tile)
             }
         }
@@ -55,7 +49,7 @@ class TilePopupUi : EventConsumer, EventSender {
         val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
-        image(sprite.textureId, ICON_SIZE, Vec2(sprite.u1, sprite.v1), Vec2(sprite.u2, sprite.v2))
+        image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2)
         sameLine()
         menu("$name##$index") { showTileItemOptions(tile, tileItem, index) }
         sameLine()
@@ -88,14 +82,6 @@ class TilePopupUi : EventConsumer, EventSender {
 
         menuItem("Edit Variables...##$index") {
             sendEvent(Event.EditVarsDialogUi.Open(Pair(tile, index)))
-        }
-    }
-
-    // Default imgui.dsl.menuItem throws an exception after selection occurs
-    private inline fun menuItem(label: String, block: () -> Unit) {
-        selectable(label, flags = SelectableFlag.DontClosePopups.i) {
-            block()
-            currentTile = null
         }
     }
 

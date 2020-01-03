@@ -1,19 +1,16 @@
 package strongdmm.ui
 
-import glm_.vec2.Vec2
-import imgui.Cond
-import imgui.ImGui.bullet
-import imgui.ImGui.closeCurrentPopup
-import imgui.ImGui.openPopup
-import imgui.ImGui.sameLine
-import imgui.ImGui.setNextWindowSize
-import imgui.ImGui.text
-import imgui.WindowFlag
-import imgui.dsl_.*
+import imgui.ImGui.*
+import imgui.enums.ImGuiCond
+import imgui.enums.ImGuiWindowFlags
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.util.imgui.button
+import strongdmm.util.imgui.child
+import strongdmm.util.imgui.popupModal
+import strongdmm.util.imgui.selectable
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 
@@ -31,12 +28,12 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             openPopup("Available Maps")
         }
 
-        setNextWindowSize(Vec2(600, 275), Cond.Once)
+        setNextWindowSize(600f, 275f, ImGuiCond.Once)
 
-        popupModal("Available Maps", null, WindowFlag.NoResize.i) {
+        popupModal("Available Maps", ImGuiWindowFlags.NoResize) {
             text("Selected: ${selectionStatus.value}")
 
-            child("available_maps_list", Vec2(580, 200), true, WindowFlag.HorizontalScrollbar.i) {
+            child("available_maps_list", 580f, 200f, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
                     availableMaps.forEach { (abs, rel) ->
                         bullet()
@@ -54,7 +51,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                 closePopup()
             }
             sameLine()
-            button("Cancel", ::closePopup)
+            button("Cancel", block = ::closePopup)
         }
     }
 
