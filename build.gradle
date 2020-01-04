@@ -15,6 +15,7 @@ application {
 
 repositories {
     jcenter()
+    mavenLocal()
     mavenCentral()
 }
 
@@ -33,7 +34,7 @@ ext {
     trove4jVersion = '3.0.3'
     minimalJsonjVersion = '0.9.5'
     pngjVersion = '2.1.0'
-    imguiJavaVersion = '1.74-0.3'
+    imguiJavaVersion = '1.74-0.3.2'
 }
 
 dependencies {

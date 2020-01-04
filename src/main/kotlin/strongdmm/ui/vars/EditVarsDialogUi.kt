@@ -3,7 +3,13 @@ package strongdmm.ui.vars
 import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
-import imgui.enums.*
+import imgui.enums.ImGuiCol
+import imgui.enums.ImGuiCond
+import imgui.enums.ImGuiMouseCursor
+import imgui.enums.ImGuiStyleVar
+import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
+import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
+import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
 import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.Tile
@@ -73,7 +79,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             setTooltip("Show modified variables")
         }
         sameLine()
-        inputText("##varsFilter", varsFilter)
+        inputText("##vars_filter", varsFilter)
         sameLine()
         button("OK", block = ::saveVarsAndDispose)
         sameLine()
@@ -107,8 +113,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
             if (variable === currentEditVar) {
                 setNextItemWidth(getColumnWidth(-1))
+                inputText("##${variable.name}", variable.buffer!!)
 
-                inputText("##${variable.name}", variable.buffer!!, ImGuiInputTextFlags.EnterReturnsTrue).itemAction {
+                if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW_KEY_ESCAPE)) {
                     currentEditVar?.stopEdit()
                     currentEditVar = null
                 }
