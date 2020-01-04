@@ -38,6 +38,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private var currentTile: Tile? = null
+    private var initialTileItemsId: IntArray? = null  // Used to restore tile state if we didn't save our modified vars
     private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile objects list
     private var currentEditVar: Var? = null
 
@@ -81,9 +82,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         sameLine()
         inputText("##vars_filter", varsFilter)
         sameLine()
-        button("OK", block = ::saveVarsAndDispose)
+        button("OK", block = ::saveChangesAndDispose)
         sameLine()
-        button("Cancel", block = ::dispose)
+        button("Cancel", block = ::discardChangesAndDispose)
     }
 
     private fun drawVariables() {
@@ -118,6 +119,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                 if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW_KEY_ESCAPE)) {
                     currentEditVar?.stopEdit()
                     currentEditVar = null
+                    applyTmpTileChanges()
                 }
 
                 if (!variableInputFocused) {
@@ -131,7 +133,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
                 button("${variable.value}##${rowCount++}", getColumnWidth(-1)) {
                     variableInputFocused = false
-                    currentEditVar?.stopEdit()
+
+                    if (currentEditVar != null) {
+                        currentEditVar!!.stopEdit()
+                        applyTmpTileChanges()
+                    }
+
                     currentEditVar = variable
                     variable.startEdit()
                 }.itemHovered {
@@ -180,16 +187,39 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         }
     }
 
-    private fun saveVarsAndDispose() {
+    private fun getNewItemVars(): Map<String, String>? {
+        if (variables.none { it.isChanged }) {
+            return null
+        }
+
+        val newItemVars = mutableMapOf<String, String>()
+
+        variables.filter { it.isChanged || it.isModified }.forEach {
+            newItemVars[it.name] = it.value
+        }
+
+        return newItemVars
+    }
+
+    private fun applyTmpTileChanges() {
+        getNewItemVars()?.let { newItemVars ->
+            currentTile?.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+            sendEvent(Event.Global.RefreshFrame())
+        }
+    }
+
+    private fun discardTmpTileChanges() {
+        if (currentTile != null && initialTileItemsId != null) {
+            currentTile!!.replaceTileItemsId(initialTileItemsId!!)
+            sendEvent(Event.Global.RefreshFrame())
+        }
+    }
+
+    private fun saveChangesAndDispose() {
         currentEditVar?.stopEdit()
+        discardTmpTileChanges()
 
-        if (variables.any { it.isChanged }) {
-            val newItemVars = mutableMapOf<String, String>()
-
-            variables.filter { it.isChanged || it.isModified }.forEach {
-                newItemVars[it.name] = it.value
-            }
-
+        getNewItemVars()?.let { newItemVars ->
             currentTile?.let { tile ->
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
@@ -204,8 +234,14 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         dispose()
     }
 
+    private fun discardChangesAndDispose() {
+        discardTmpTileChanges()
+        dispose()
+    }
+
     private fun dispose() {
         currentTile = null
+        initialTileItemsId = null
         currentEditVar = null
         varsFilter.set("")
         isShowModifiedVars.set(false)
@@ -217,6 +253,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
         WINDOW_ID++
         currentTile = event.body.first
+        initialTileItemsId = event.body.first.getTileItemsId().clone()
         currentTileItemIndex = event.body.second
         collectVarsToDisplay()
     }
@@ -226,7 +263,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun handleSwitchMap() {
-        dispose()
+        discardChangesAndDispose()
     }
 
     private fun handleCloseMap() {
