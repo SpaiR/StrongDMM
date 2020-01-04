@@ -25,7 +25,7 @@ class TileItem(
 
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {
-            if (length >= 1) {
+            if (length > 1) {
                 substring(1, length - 1)
             } else {
                 this
