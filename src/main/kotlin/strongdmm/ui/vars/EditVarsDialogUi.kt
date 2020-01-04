@@ -38,7 +38,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private var currentTile: Tile? = null
-    private var initialTileItemsId: IntArray? = null  // Used to restore tile state if we didn't save our modified vars
+    private var initialTileItemsId: IntArray? = null // Used to restore tile state if we didn't save our modified vars
     private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile objects list
     private var currentEditVar: Var? = null
 
