@@ -3,6 +3,8 @@ package strongdmm.ui
 import imgui.ImGui.*
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
+import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
+import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -46,17 +48,28 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                 })
             }
 
-            button("OK") {
-                sendEvent(Event.MapController.Open(selectedMapPath!!))
-                closePopup()
-            }
+            button("OK", block = ::openSelectedMapAndClosePopup)
             sameLine()
             button("Cancel", block = ::closePopup)
+
+            if (!isOpen) {
+                closeCurrentPopup()
+            }
+        }
+
+        if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER)) {
+            openSelectedMapAndClosePopup()
+        }
+    }
+
+    private fun openSelectedMapAndClosePopup() {
+        selectedMapPath?.let {
+            sendEvent(Event.MapController.Open(it))
+            closePopup()
         }
     }
 
     private fun closePopup() {
-        closeCurrentPopup()
         isOpen = false
         selectedMapPath = null
         selectionStatus = RelPath.NONE
