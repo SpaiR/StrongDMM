@@ -3,12 +3,6 @@ package strongdmm.util.imgui
 import imgui.ImBool
 import imgui.ImGui
 
-fun setItemHoveredTooltip(text: String) {
-    if (ImGui.isItemHovered()) {
-        ImGui.setTooltip(text)
-    }
-}
-
 inline fun popupModal(name: String, imGuiWindowFlags: Int = 0, block: () -> Unit) {
     if (ImGui.beginPopupModal(name, imGuiWindowFlags)) {
         block()
