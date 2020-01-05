@@ -6,6 +6,7 @@ import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiTreeNodeFlags
+import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
@@ -16,6 +17,7 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.child
+import strongdmm.util.imgui.inputText
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
 
@@ -60,14 +62,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             checkbox("##show_icons", isShowIcons)
             setItemHoveredTooltip("Show icons")
             sameLine()
-            inputText("Filter", typeFilter)
-            sameLine()
-            text("(?)")
-            setItemHoveredTooltip("Provide at least $MIN_FILTER_CHARS chars to apply")
+            setNextItemWidth(-1f)
+            inputText("##filter", typeFilter, "Type Filter", "Provide at least $MIN_FILTER_CHARS chars to apply")
 
             separator()
 
-            child("tree_nodes") {
+            child("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
                 createTreeNodes(currentEnv!!.getItem(TYPE_AREA)!!)
                 createTreeNodes(currentEnv!!.getItem(TYPE_TURF)!!)
                 createTreeNodes(currentEnv!!.getItem(TYPE_OBJ)!!)
