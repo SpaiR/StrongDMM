@@ -6,7 +6,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.Paths
 
 class Dmm(
     mapFile: File,
@@ -15,7 +15,7 @@ class Dmm(
 ) {
     val mapName: String = mapFile.nameWithoutExtension
     val absMapPath: AbsPath = AbsPath(mapFile)
-    val relMapPath: RelPath = RelPath(Path.of(dme.rootPath).relativize(mapFile.toPath()).toString())
+    val relMapPath: RelPath = RelPath(Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString())
     val id: MapId = MapId(mapFile.absolutePath.hashCode())
 
     var maxX: Int = initialDmmData.maxX

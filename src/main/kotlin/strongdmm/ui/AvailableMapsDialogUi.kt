@@ -1,6 +1,7 @@
 package strongdmm.ui
 
 import imgui.ImGui.*
+import imgui.ImString
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
@@ -20,6 +21,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isOpen: Boolean = false
     private var selectedMapPath: AbsPath? = null // to store an absolute path for currently selected map
     private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
+    private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
 
     init {
         consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
@@ -30,14 +32,20 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             openPopup("Available Maps")
         }
 
-        setNextWindowSize(600f, 275f, ImGuiCond.Once)
+        setNextWindowSize(600f, 285f, ImGuiCond.Once)
 
-        popupModal("Available Maps", ImGuiWindowFlags.NoResize) {
+        popupModal("Available Maps") {
             text("Selected: ${selectionStatus.value}")
+            setNextItemWidth(getWindowWidth() - 20)
+            inputText("##map_filter", mapFilter)
 
-            child("available_maps_list", 580f, 200f, true, ImGuiWindowFlags.HorizontalScrollbar) {
+            child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
-                    availableMaps.forEach { (abs, rel) ->
+                    for ((abs, rel) in availableMaps) {
+                        if (mapFilter.length > 0 && !rel.value.contains(mapFilter.get())) {
+                            continue
+                        }
+
                         bullet()
                         sameLine()
                         selectable(rel.value, selectedMapPath == abs) {
@@ -48,7 +56,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                 })
             }
 
-            button("OK", block = ::openSelectedMapAndClosePopup)
+            button("Open", block = ::openSelectedMapAndClosePopup)
             sameLine()
             button("Cancel", block = ::closePopup)
 
