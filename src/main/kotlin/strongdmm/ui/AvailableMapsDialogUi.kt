@@ -10,10 +10,7 @@ import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.child
-import strongdmm.util.imgui.popupModal
-import strongdmm.util.imgui.selectable
+import strongdmm.util.imgui.*
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 
@@ -37,7 +34,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         popupModal("Available Maps") {
             text("Selected: ${selectionStatus.value}")
             setNextItemWidth(getWindowWidth() - 20)
-            inputText("##map_filter", mapFilter)
+            inputText("##map_filter", mapFilter, "Path Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
