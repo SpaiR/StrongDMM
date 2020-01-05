@@ -77,7 +77,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         checkbox("##is_show_modified_vars", isShowModifiedVars)
         setItemHoveredTooltip("Show modified variables")
         sameLine()
-        inputText("##vars_filter", varsFilter)
+        inputText("##vars_filter", varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = ::saveChangesAndDispose)
         sameLine()
