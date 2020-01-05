@@ -286,14 +286,15 @@ abstract class AppWindow(title: String) {
         val h = stack.mallocInt(1)
         val imageBuffer = STBImage.stbi_load_from_memory(iconBuffer, w, h, comp, 4)
 
-        imageBuffer?.let {
+        if (imageBuffer != null) {
             val image = GLFWImage.malloc()
-            val imagebf = GLFWImage.malloc(1)
+            val imagePtr = GLFWImage.malloc(1)
 
-            image.set(icon.width, icon.height, it)
-            imagebf.put(0, image)
+            image.set(icon.width, icon.height, imageBuffer)
+            imagePtr.put(0, image)
 
-            glfwSetWindowIcon(window, imagebf)
+            glfwSetWindowIcon(window, imagePtr)
+            STBImage.stbi_image_free(imageBuffer)
         }
     }
 

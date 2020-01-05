@@ -4,8 +4,7 @@ import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL30.*
-import org.lwjgl.stb.STBImage.stbi_failure_reason
-import org.lwjgl.stb.STBImage.stbi_load
+import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
 import strongdmm.byond.DEFAULT_DIR
 import strongdmm.util.DEFAULT_ICON_SIZE
@@ -80,9 +79,9 @@ object GlobalDmiHolder {
             }
         }
 
-        var image: ByteBuffer? = null
         var width = 0
         var height = 0
+        var texture = -1
 
         // Read an image itself
         MemoryStack.stackPush().use { stack ->
@@ -90,21 +89,27 @@ object GlobalDmiHolder {
             val h = stack.mallocInt(1)
             val comp = stack.mallocInt(1)
 
-            image = stbi_load(dmiFile.absolutePath, w, h, comp, 4)
+            val imageBuffer = STBImage.stbi_load(dmiFile.absolutePath, w, h, comp, 4)
 
-            if (image == null) {
-                throw RuntimeException("Failed to load a atlas file!" + System.lineSeparator() + stbi_failure_reason())
+            if (imageBuffer != null) {
+                width = w.get()
+                height = h.get()
+                texture = createTexture(width, height, imageBuffer)
+                STBImage.stbi_image_free(imageBuffer)
             }
+        }
 
-            width = w.get()
-            height = h.get()
+        // Unable to load provided icon
+        if (texture == -1) {
+            dmiCache[icon] = null
+            return placeholderSprite
         }
 
         val dmiCols = width / imageMeta.spriteWidth
         val dmiRows = height / imageMeta.spriteHeight
 
         val iconStates = mutableMapOf<String, IconState>()
-        val dmi = Dmi(imageMeta.spriteWidth, imageMeta.spriteHeight, dmiRows, dmiCols, createTexture(width, height, image!!), iconStates)
+        val dmi = Dmi(imageMeta.spriteWidth, imageMeta.spriteHeight, dmiRows, dmiCols, texture, iconStates)
 
         var spriteIndex = 0
 
