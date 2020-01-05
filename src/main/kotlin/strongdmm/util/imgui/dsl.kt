@@ -2,28 +2,11 @@ package strongdmm.util.imgui
 
 import imgui.ImBool
 import imgui.ImGui
-import strongdmm.util.LMB
 
-inline fun Any.itemHovered(block: () -> Unit) {
+fun setItemHoveredTooltip(text: String) {
     if (ImGui.isItemHovered()) {
-        block()
+        ImGui.setTooltip(text)
     }
-}
-
-inline fun Boolean.itemAction(block: () -> Unit) {
-    if (this) {
-        block()
-    }
-}
-
-inline fun Any.itemClicked(mouse: Int = LMB, block: () -> Unit) {
-    if (ImGui.isItemClicked(mouse)) {
-        block()
-    }
-}
-
-inline fun Any.with(block: () -> Unit) {
-    block()
 }
 
 inline fun popupModal(name: String, imGuiWindowFlags: Int = 0, block: () -> Unit) {

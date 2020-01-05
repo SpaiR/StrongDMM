@@ -16,8 +16,7 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.child
-import strongdmm.util.imgui.itemClicked
-import strongdmm.util.imgui.itemHovered
+import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
 
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
@@ -56,11 +55,15 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             isSelectedInCycle = false
             createdTeeNodesInCycle = 0
 
-            checkbox("##show_icons", isShowIcons).itemHovered { setTooltip("Show icons") }
+            pushID(currentEnv!!.rootPath)
+
+            checkbox("##show_icons", isShowIcons)
+            setItemHoveredTooltip("Show icons")
             sameLine()
             inputText("Filter", typeFilter)
             sameLine()
-            text("(?)").itemHovered { setTooltip("Provide at least $MIN_FILTER_CHARS chars to apply") }
+            text("(?)")
+            setItemHoveredTooltip("Provide at least $MIN_FILTER_CHARS chars to apply")
 
             separator()
 
@@ -70,17 +73,20 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 createTreeNodes(currentEnv!!.getItem(TYPE_OBJ)!!)
                 createTreeNodes(currentEnv!!.getItem(TYPE_MOB)!!)
             }
+
+            popID()
         }
     }
 
     private fun createTreeNodes(dmeItem: DmeItem) {
-        val treeNode = getOrCreateTreeNode(dmeItem) ?: return
         val selectedFlag = if (dmeItem.type == selectedType) ImGuiTreeNodeFlags.Selected else 0
 
         if (typeFilter.length >= MIN_FILTER_CHARS) {
             if (dmeItem.type.contains(typeFilter.get())) {
+                val treeNode = getOrCreateTreeNode(dmeItem) ?: return
                 showTreeNodeImage(treeNode)
-                treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag).itemClicked {
+                treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
+                if (isItemClicked()) {
                     selectType(dmeItem.type)
                 }
             }
@@ -89,13 +95,16 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 createTreeNodes(currentEnv!!.getItem(child)!!)
             }
         } else {
+            val treeNode = getOrCreateTreeNode(dmeItem) ?: return
             showTreeNodeImage(treeNode)
 
             if (dmeItem.children.isEmpty()) {
                 treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
             } else {
                 if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag)) {
-                    itemClicked { selectType(dmeItem.type) }
+                    if (isItemClicked()) {
+                        selectType(dmeItem.type)
+                    }
 
                     dmeItem.children.forEach { child ->
                         createTreeNodes(currentEnv!!.getItem(child)!!)
@@ -105,7 +114,9 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 }
             }
 
-            itemClicked { selectType(dmeItem.type) }
+            if (isItemClicked()) {
+                selectType(dmeItem.type)
+            }
         }
     }
 
@@ -141,6 +152,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun handleResetEnvironment() {
+        selectedType = ""
+        typeFilter.set("")
         currentEnv = null
         treeNodes.clear()
     }

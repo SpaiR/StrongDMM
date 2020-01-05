@@ -5,7 +5,10 @@ import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
 import strongdmm.event.Event
 import strongdmm.event.EventSender
-import strongdmm.util.imgui.*
+import strongdmm.util.imgui.RED32
+import strongdmm.util.imgui.setItemHoveredTooltip
+import strongdmm.util.imgui.smallButton
+import strongdmm.util.imgui.window
 
 class OpenedMapsPanelUi : EventSender {
     fun process(windowWidth: Int) {
@@ -29,13 +32,12 @@ class OpenedMapsPanelUi : EventSender {
 
                         sameLine()
 
-                        selectable(map.mapName, selectedMap == map).itemAction {
+                        if (selectable(map.mapName, selectedMap == map)) {
                             if (selectedMap != map) {
                                 sendEvent(Event.MapController.Switch(map.id))
                             }
-                        }.itemHovered {
-                            setTooltip(map.relMapPath.value)
                         }
+                        setItemHoveredTooltip(map.relMapPath.value)
                     }
                 }
             })

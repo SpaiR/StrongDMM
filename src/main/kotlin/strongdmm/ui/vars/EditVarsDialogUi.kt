@@ -7,9 +7,7 @@ import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiStyleVar
-import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
-import org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE
-import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
+import org.lwjgl.glfw.GLFW.*
 import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.Tile
@@ -76,9 +74,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun drawControls() {
-        checkbox("##is_show_modified_vars", isShowModifiedVars).itemHovered {
-            setTooltip("Show modified variables")
-        }
+        checkbox("##is_show_modified_vars", isShowModifiedVars)
+        setItemHoveredTooltip("Show modified variables")
         sameLine()
         inputText("##vars_filter", varsFilter)
         sameLine()
@@ -141,7 +138,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
                     currentEditVar = variable
                     variable.startEdit()
-                }.itemHovered {
+                }
+                if (isItemHovered()) {
                     setMouseCursor(ImGuiMouseCursor.Hand)
                 }
 

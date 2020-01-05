@@ -80,7 +80,7 @@ class TilePopupUi : EventConsumer, EventSender {
             separator()
         }
 
-        menuItem("Edit Variables...##$index") {
+        menuItem("Edit...##$index") {
             sendEvent(Event.EditVarsDialogUi.Open(Pair(tile, index)))
         }
     }
