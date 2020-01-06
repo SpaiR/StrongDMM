@@ -23,12 +23,12 @@ class Dmm(
     var maxY: Int = initialDmmData.maxY
         private set
 
-    private var tiles: Array<Array<IntArray>> = Array(maxY) { Array(maxX) { IntArray(0) } }
+    private var tiles: Array<Array<LongArray>> = Array(maxY) { Array(maxX) { LongArray(0) } }
 
     init {
         for (x in 1..maxX) {
             for (y in 1..maxY) {
-                var tileItems = IntArray(0)
+                var tileItems = LongArray(0)
 
                 initialDmmData.getTileContentByLocation(x, y)?.let {
                     for (tileObject in it) {
@@ -48,9 +48,9 @@ class Dmm(
     }
 
     fun getTile(x: Int, y: Int): Tile = Tile(this, x, y)
-    fun getTileItemsId(x: Int, y: Int): IntArray = tiles[y - 1][x - 1]
+    fun getTileItemsId(x: Int, y: Int): LongArray = tiles[y - 1][x - 1]
 
-    fun setTileItemsId(x: Int, y: Int, tileItemsId: IntArray) {
+    fun setTileItemsId(x: Int, y: Int, tileItemsId: LongArray) {
         tiles[y - 1][x - 1] = tileItemsId
     }
 

@@ -6,8 +6,8 @@ class ReplaceTileAction(
     private val tile: Tile,
     tileChangeAction: () -> Unit
 ) : Undoable {
-    private val tileItemsIdBefore: IntArray = tile.getTileItemsId().copyOf()
-    private val tileItemsIdAfter: IntArray
+    private val tileItemsIdBefore: LongArray = tile.getTileItemsId().copyOf()
+    private val tileItemsIdAfter: LongArray
 
     init {
         tileChangeAction()

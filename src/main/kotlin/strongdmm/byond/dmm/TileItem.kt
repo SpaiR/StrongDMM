@@ -5,7 +5,7 @@ import strongdmm.byond.dme.DmeItem
 import java.util.Collections
 
 class TileItem(
-    val id: Int,
+    val id: Long,
     val dmeItem: DmeItem,
     customVars: Map<String, String>?
 ) {

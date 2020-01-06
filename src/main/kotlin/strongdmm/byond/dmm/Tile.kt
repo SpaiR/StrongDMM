@@ -31,9 +31,9 @@ class Tile(
         update()
     }
 
-    fun getTileItemsId(): IntArray = dmm.getTileItemsId(x, y)
+    fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
 
-    fun replaceTileItemsId(tileItemsId: IntArray) = dmm.setTileItemsId(x, y, tileItemsId)
+    fun replaceTileItemsId(tileItemsId: LongArray) = dmm.setTileItemsId(x, y, tileItemsId)
 
     fun modifyItemVars(tileItemIdx: TileItemIdx, vars: Map<String, String>?) {
         val itemIdx = when (tileItemIdx) {
