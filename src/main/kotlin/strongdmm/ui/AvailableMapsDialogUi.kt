@@ -34,7 +34,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         popupModal("Available Maps") {
             text("Selected: ${selectionStatus.value}")
             setNextItemWidth(getWindowWidth() - 20)
-            inputText("##map_filter", mapFilter, "Path Filter")
+            inputText("##map_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->

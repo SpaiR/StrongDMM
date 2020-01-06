@@ -77,6 +77,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         checkbox("##is_show_modified_vars", isShowModifiedVars)
         setItemHoveredTooltip("Show modified variables")
         sameLine()
+        setNextItemWidth(getWindowWidth() - 130f)
         inputText("##vars_filter", varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = ::saveChangesAndDispose)
@@ -100,9 +101,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
             alignTextToFramePadding()
             if (variable.isModified || variable.isChanged) {
-                pushStyleColor(ImGuiCol.Text, GREEN32)
-                text(variable.name)
-                popStyleColor()
+                textColored(0f, 1f, 0f, 1f, variable.name)
             } else {
                 text(variable.name)
             }

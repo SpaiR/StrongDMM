@@ -18,7 +18,7 @@ import strongdmm.util.inline.RelPath
  * Unlike the others, global events could be consumed by any number of classes.
  *
  * Events like "EnvironmentController" are meant to be consumed ONLY by a specific class.
- * This restriction is checked on runtime.
+ * This restriction is checked in runtime.
  *
  * !!! IMPORTANT !!!
  * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
