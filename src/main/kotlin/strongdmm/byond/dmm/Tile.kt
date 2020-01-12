@@ -9,7 +9,7 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 
 class Tile(
-    private val dmm: Dmm,
+    val dmm: Dmm,
     val x: Int,
     val y: Int
 ) {
