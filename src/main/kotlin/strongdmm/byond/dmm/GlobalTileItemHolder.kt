@@ -13,6 +13,7 @@ object GlobalTileItemHolder {
 
     fun resetEnvironment() {
         tileItems.clear()
+        tileItemsIdByType.clear()
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>?): TileItem {
@@ -44,4 +45,11 @@ object GlobalTileItemHolder {
     }
 
     fun getById(id: Long): TileItem = tileItems[id]
+
+    fun getTileItemsByType(type: String): List<TileItem> {
+        val tileItems = mutableListOf<TileItem>()
+        getOrCreate(type, null) // Ensure that default tile item exists
+        tileItemsIdByType[type]?.forEach { tileItems.add(getById(it)) }
+        return tileItems
+    }
 }

@@ -36,6 +36,7 @@ abstract class Event<T, R>(
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
+        class SwitchSelectedTileItem(body: Pair<TileItemType, Map<String, String>?>) : Event<Pair<TileItemType, Map<String, String>?>, Unit>(body, null)
     }
 
     abstract class EnvironmentController {
@@ -78,6 +79,10 @@ abstract class Event<T, R>(
 
     abstract class CanvasController {
         class Block(body: CanvasBlockStatus) : Event<CanvasBlockStatus, Unit>(body, null)
+    }
+
+    abstract class ObjectPanelUi {
+        class Update : Event<Unit, Unit>(Unit, null)
     }
 
     fun reply(response: R) {

@@ -41,7 +41,13 @@ class DmeItem(
         }
     }
 
-    fun getVarText(name: String): String? = getVar(name)?.takeIf { it.isNotEmpty() }?.run { substring(1, length - 1) }
+    fun getVarText(name: String): String? = getVar(name)?.takeIf { it.isNotEmpty() }?.run {
+        if (length > 1) {
+            substring(1, length - 1)
+        } else {
+            this
+        }
+    }
 
     fun getVarFloat(name: String): Float? = getVar(name)?.toFloatOrNull()
 

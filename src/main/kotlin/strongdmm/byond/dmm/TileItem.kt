@@ -22,6 +22,7 @@ class TileItem(
     val pixelY: Int = getVarInt(VAR_PIXEL_Y) ?: 0
     val dir: Int = getVarInt(VAR_DIR) ?: 0
     val color: String = getVarText(VAR_COLOR) ?: ""
+    val name: String = getVarText(VAR_NAME) ?: ""
 
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {

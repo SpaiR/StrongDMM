@@ -8,6 +8,7 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
+import strongdmm.byond.dmm.TileItemType
 import strongdmm.controller.action.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -58,7 +59,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
         if (index != TileItemIdx.AREA && index != TileItemIdx.TURF) {
-            menuItem("Move To Top##$index") {
+            menuItem("Move To Top##move_to_top_$index") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
                         tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
@@ -67,7 +68,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
                 sendEvent(Event.Global.RefreshFrame())
             }
-            menuItem("Move To Bottom##$index") {
+            menuItem("Move To Bottom##move_to_bottom_$index") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
                         tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
@@ -80,7 +81,11 @@ class TilePopupUi : EventConsumer, EventSender {
             separator()
         }
 
-        menuItem("Edit...##$index") {
+        menuItem("Make Active Object##make_active_objec_$index") {
+            sendEvent(Event.Global.SwitchSelectedTileItem(Pair(TileItemType(tileItem), tileItem.customVars)))
+        }
+
+        menuItem("Edit...##edit_variables_$index") {
             sendEvent(Event.EditVarsDialogUi.Open(Pair(tile, index)))
         }
     }

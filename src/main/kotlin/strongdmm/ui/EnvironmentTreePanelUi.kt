@@ -12,6 +12,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
+import strongdmm.byond.dmm.TileItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -31,7 +32,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var currentEnv: Dme? = null
     private val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
 
-    private var selectedType: String = ""
+    private var selectedType: TileItemType = TileItemType("")
     private var isSelectedInCycle: Boolean = false
 
     private val isShowIcons: ImBool = ImBool(true)
@@ -42,6 +43,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     init {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
     }
 
     fun process() {
@@ -79,7 +81,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun createTreeNodes(dmeItem: DmeItem) {
-        val selectedFlag = if (dmeItem.type == selectedType) ImGuiTreeNodeFlags.Selected else 0
+        val selectedFlag = if (dmeItem.type == selectedType.value) ImGuiTreeNodeFlags.Selected else 0
 
         if (typeFilter.length >= MIN_FILTER_CHARS) {
             if (dmeItem.type.contains(typeFilter.get())) {
@@ -142,7 +144,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun selectType(type: String) {
         if (!isSelectedInCycle) {
-            selectedType = type
+            sendEvent(Event.Global.SwitchSelectedTileItem(Pair(TileItemType(type), null)))
             isSelectedInCycle = true
         }
     }
@@ -152,10 +154,14 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun handleResetEnvironment() {
-        selectedType = ""
+        selectedType = TileItemType("")
         typeFilter.set("")
         currentEnv = null
         treeNodes.clear()
+    }
+
+    private fun handleSwitchSelectedTileItem(event: Event<Pair<TileItemType, Map<String, String>?>, Unit>) {
+        selectedType = event.body.first
     }
 
     private class TreeNode(dmeItem: DmeItem) {

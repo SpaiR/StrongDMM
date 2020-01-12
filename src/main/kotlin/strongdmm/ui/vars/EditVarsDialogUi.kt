@@ -226,6 +226,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
                 sendEvent(Event.Global.RefreshFrame())
             }
+
+            sendEvent(Event.ObjectPanelUi.Update())
         }
 
         dispose()
