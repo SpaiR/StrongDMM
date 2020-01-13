@@ -36,7 +36,7 @@ abstract class Event<T, R>(
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
-        class SwitchSelectedTileItem(body: Pair<TileItemType, Map<String, String>?>) : Event<Pair<TileItemType, Map<String, String>?>, Unit>(body, null)
+        class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
     }
 
     abstract class EnvironmentController {

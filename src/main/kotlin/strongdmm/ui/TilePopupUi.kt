@@ -8,7 +8,6 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
-import strongdmm.byond.dmm.TileItemType
 import strongdmm.controller.action.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -82,7 +81,7 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         menuItem("Make Active Object##make_active_objec_$index") {
-            sendEvent(Event.Global.SwitchSelectedTileItem(Pair(TileItemType(tileItem), tileItem.customVars)))
+            sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
         }
 
         menuItem("Edit...##edit_variables_$index") {

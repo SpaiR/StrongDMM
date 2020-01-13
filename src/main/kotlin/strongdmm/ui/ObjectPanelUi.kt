@@ -7,7 +7,6 @@ import imgui.enums.ImGuiCond
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
-import strongdmm.byond.dmm.TileItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.util.RMB
@@ -116,11 +115,11 @@ class ObjectPanelUi : EventConsumer {
         tileItems = null
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<Pair<TileItemType, Map<String, String>?>, Unit>) {
+    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
         scrolledToItem = false
-        tileItemType = event.body.first.value
-        tileItems = getTileItemsByTypeSorted(event.body.first.value)
-        selectedObjIdx = tileItems!!.withIndex().find { it.value.customVars == event.body.second }?.index ?: 0
+        tileItemType = event.body.type
+        tileItems = getTileItemsByTypeSorted(event.body.type)
+        selectedObjIdx = tileItems!!.withIndex().find { it.value.customVars == event.body.customVars }?.index ?: 0
     }
 
     private fun handleSwitchMap() {
