@@ -16,6 +16,7 @@ import strongdmm.util.inline.RelPath
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isOpen: Boolean = false
+    private var isFirstOpen: Boolean = true
     private var selectedMapPath: AbsPath? = null // to store an absolute path for currently selected map
     private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
@@ -34,6 +35,12 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         popupModal("Available Maps") {
             text("Selected: ${selectionStatus.value}")
             setNextItemWidth(getWindowWidth() - 20)
+
+            if (isFirstOpen) {
+                setKeyboardFocusHere()
+                isFirstOpen = false
+            }
+
             inputText("##map_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
@@ -82,6 +89,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     }
 
     private fun handleOpen() {
+        isFirstOpen = true
         isOpen = true
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
     }

@@ -35,6 +35,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         )
     }
 
+    private var isFistOpen: Boolean = true
+
     private var currentTile: Tile? = null
     private var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
     private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile objects list
@@ -78,6 +80,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         setItemHoveredTooltip("Show modified variables")
         sameLine()
         setNextItemWidth(getWindowWidth() - 130f)
+
+        if (isFistOpen) {
+            setKeyboardFocusHere()
+            isFistOpen = false
+        }
+
         inputText("##vars_filter", varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = ::saveChangesAndDispose)
@@ -110,17 +118,18 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
             if (variable === currentEditVar) {
                 setNextItemWidth(getColumnWidth(-1))
+
+                if (!variableInputFocused) {
+                    setKeyboardFocusHere()
+                    variableInputFocused = true
+                }
+
                 inputText("##${variable.name}", variable.buffer!!)
 
                 if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW_KEY_ESCAPE)) {
                     currentEditVar?.stopEdit()
                     currentEditVar = null
                     applyTmpTileChanges()
-                }
-
-                if (!variableInputFocused) {
-                    setKeyboardFocusHere(-1)
-                    variableInputFocused = true
                 }
             } else {
                 pushStyleColor(ImGuiCol.Button, 0)
@@ -249,6 +258,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun handleOpen(event: Event<Pair<Tile, TileItemIdx>, Unit>) {
+        isFistOpen = true
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
         WINDOW_ID++
         currentTile = event.body.first
