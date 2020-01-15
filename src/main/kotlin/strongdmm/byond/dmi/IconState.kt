@@ -3,9 +3,9 @@ package strongdmm.byond.dmi
 import strongdmm.byond.*
 
 class IconState(
-    private val dirs: Int,
-    private val frames: Int,
-    private val sprites: List<IconSprite>
+    val dirs: Int,
+    val frames: Int,
+    val sprites: List<IconSprite>
 ) {
     fun getIconSprite(): IconSprite = getIconSprite(DEFAULT_DIR)
     fun getIconSprite(dir: Int): IconSprite = getIconSprite(dir, 0)

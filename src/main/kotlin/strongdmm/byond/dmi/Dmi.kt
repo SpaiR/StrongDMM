@@ -6,7 +6,7 @@ class Dmi(
     val rows: Int,
     val cols: Int,
     val textureId: Int,
-    private val iconStates: Map<String, IconState>
+    val iconStates: Map<String, IconState>
 ) {
     fun getIconState(iconState: String): IconState? = iconStates[iconState] ?: iconStates[""]
 }

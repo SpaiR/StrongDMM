@@ -86,6 +86,11 @@ abstract class Event<T, R>(
         class Update : Event<Unit, Unit>(Unit, null)
     }
 
+    abstract class InstanceController {
+        class GenerateFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
+        class GenerateFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
+    }
+
     fun reply(response: R) {
         callback?.invoke(response)
     }

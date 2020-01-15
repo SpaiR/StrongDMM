@@ -65,6 +65,16 @@ class ObjectPanelUi : EventConsumer, EventSender {
                     menuItem("New Instance...") {
                         sendEvent(Event.EditVarsDialogUi.OpenWithTileItem(tileItem))
                     }
+                    menuItem("Generate Instances from Icon-states") {
+                        sendEvent(Event.InstanceController.GenerateFromIconStates(tileItem) {
+                            handleUpdate()
+                        })
+                    }
+                    menuItem("Generate Instances from Directions") {
+                        sendEvent(Event.InstanceController.GenerateFromDirections(tileItem) {
+                            handleUpdate()
+                        })
+                    }
                 }
 
                 sameLine()
