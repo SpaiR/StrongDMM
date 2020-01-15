@@ -151,7 +151,10 @@ class CanvasController : EventSender, EventConsumer {
         }
     }
 
-    private fun isImGuiInUse(): Boolean = ImGui.isWindowHovered(ImGuiHoveredFlags.AnyWindow) || ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
+    private fun isImGuiInUse(): Boolean {
+        return ImGui.isWindowHovered(ImGuiHoveredFlags.AnyWindow or ImGuiHoveredFlags.AllowWhenBlockedByPopup or ImGuiHoveredFlags.AllowWhenBlockedByActiveItem) ||
+            ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
+    }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         renderData = renderDataStorage.getOrPut(event.body.id) { RenderData() }
