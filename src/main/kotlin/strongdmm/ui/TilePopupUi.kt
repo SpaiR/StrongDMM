@@ -19,8 +19,10 @@ import strongdmm.util.imgui.popup
 class TilePopupUi : EventConsumer, EventSender {
     companion object {
         private const val ICON_SIZE: Float = 16f
+        private const val POPUP_ID: String = "tile_popup"
     }
 
+    private var isOpened: Boolean = false
     private var currentTile: Tile? = null
 
     init {
@@ -32,7 +34,14 @@ class TilePopupUi : EventConsumer, EventSender {
 
     fun process() {
         currentTile?.let { tile ->
-            popup("tile_popup", ImGuiWindowFlags.NoMove) {
+            if (!isOpened) {
+                openPopup(POPUP_ID)
+                isOpened = true
+            } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
+                currentTile = null
+            }
+
+            popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
                 showTileItems(tile)
             }
         }
@@ -51,7 +60,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
         image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2)
         sameLine()
-        menu("$name##$index") { showTileItemOptions(tile, tileItem, index) }
+        menu("$name##tile_item_row_$index") { showTileItemOptions(tile, tileItem, index) }
         sameLine()
         text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
     }
@@ -80,18 +89,18 @@ class TilePopupUi : EventConsumer, EventSender {
             separator()
         }
 
-        menuItem("Make Active Object##make_active_objec_$index") {
+        menuItem("Make Active Object##make_active_object_$index") {
             sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
         }
 
         menuItem("Edit...##edit_variables_$index") {
-            sendEvent(Event.EditVarsDialogUi.Open(Pair(tile, index)))
+            sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, index)))
         }
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {
         currentTile = event.body
-        openPopup("tile_popup")
+        isOpened = false
     }
 
     private fun handleClose() {

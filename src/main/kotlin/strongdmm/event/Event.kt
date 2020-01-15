@@ -68,7 +68,8 @@ abstract class Event<T, R>(
     }
 
     abstract class EditVarsDialogUi {
-        class Open(body: Pair<Tile, TileItemIdx>) : Event<Pair<Tile, TileItemIdx>, Unit>(body, null)
+        class OpenWithTile(body: Pair<Tile, TileItemIdx>) : Event<Pair<Tile, TileItemIdx>, Unit>(body, null)
+        class OpenWithTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
     }
 
     abstract class ActionController {

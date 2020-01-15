@@ -8,6 +8,10 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 
+/**
+ * Helper class to do a very specific tile things like objects replacing and or vars modifying.
+ * No meant to be used in maps themselves.
+ */
 class Tile(
     val dmm: Dmm,
     val x: Int,
@@ -28,7 +32,7 @@ class Tile(
     private var turfIndex: TileItemIdx = TileItemIdx.TURF
 
     init {
-        update()
+        readObjectsFromMap()
     }
 
     fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
@@ -46,7 +50,7 @@ class Tile(
         val tileItemType = tileItems[itemIdx.value].type
 
         tileItemsId[itemIdx.value] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
-        update()
+        readObjectsFromMap()
     }
 
     fun moveToTop(isMob: Boolean, index: TileItemIdx) {
@@ -67,7 +71,7 @@ class Tile(
             tileObjects.add(tileObject)
         }
 
-        // Consider to look at TileObjectComparator source if this line cause you a question
+        // Consider to look into the TileObjectComparator source if this line cause you a question
         tileObjects.sortedWith(TileObjectComparator()).forEach(tileContent::addTileObject)
 
         return tileContent
@@ -89,10 +93,10 @@ class Tile(
             }
         }
 
-        update()
+        readObjectsFromMap()
     }
 
-    private fun update() {
+    private fun readObjectsFromMap() {
         tileItems = dmm.getTileItemsId(x, y).map { GlobalTileItemHolder.getById(it) }.toMutableList()
 
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {

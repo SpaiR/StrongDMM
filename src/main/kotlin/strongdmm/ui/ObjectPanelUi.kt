@@ -9,13 +9,15 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 import strongdmm.util.RMB
 import strongdmm.util.imgui.popupContextItem
 import strongdmm.util.imgui.selectable
 import strongdmm.util.imgui.window
 import strongdmm.util.imgui.withIndent
+import strongdmm.util.imgui.menuItem
 
-class ObjectPanelUi : EventConsumer {
+class ObjectPanelUi : EventConsumer, EventSender {
     companion object {
         private const val ICON_SIZE: Float = 32f
     }
@@ -40,7 +42,7 @@ class ObjectPanelUi : EventConsumer {
         setNextWindowSize(330f, 390f, ImGuiCond.Once)
 
         window("Object##object_panel") {
-            popupContextItem("object_panel", RMB) {
+            popupContextItem("object_panel_config", RMB) {
                 checkbox("Show vars preview", showVarsPreview)
                 setNextItemWidth(75f)
                 if (inputInt("Columns count", columnsCount)) {
@@ -56,12 +58,17 @@ class ObjectPanelUi : EventConsumer {
 
             tileItems?.forEachIndexed { index, tileItem ->
                 val isSelected = index == selectedObjIdx
-                selectable("##tile_item$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
+                selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
                     selectedObjIdx = index
                 }
                 if (isSelected && !scrolledToItem) {
                     setScrollHereY()
                     scrolledToItem = true
+                }
+                popupContextItem("object_options_$index", RMB) {
+                    menuItem("New Instance...") {
+                        sendEvent(Event.EditVarsDialogUi.OpenWithTileItem(tileItem))
+                    }
                 }
 
                 sameLine()
@@ -111,8 +118,9 @@ class ObjectPanelUi : EventConsumer {
     }
 
     private fun handleResetEnvironment() {
-        selectedObjIdx = 0
+        tileItemType = ""
         tileItems = null
+        selectedObjIdx = 0
     }
 
     private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {

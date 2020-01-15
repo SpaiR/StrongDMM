@@ -27,9 +27,6 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val actionController = ActionController()
 
     override fun appLoop(windowWidth: Int, windowHeight: Int) {
-        // Controllers
-        canvasController.process(windowWidth, windowHeight)
-
         // UIs
         menuBarUi.process()
         coordsPanelUi.process(windowWidth, windowHeight)
@@ -39,6 +36,9 @@ class StrongDMM(title: String) : AppWindow(title) {
         editVarsDialogUi.process(windowWidth, windowHeight)
         environmentTreePanelUi.process()
         objectPanelUi.process()
+
+        // Controllers
+        canvasController.process(windowWidth, windowHeight)
     }
 
     companion object {

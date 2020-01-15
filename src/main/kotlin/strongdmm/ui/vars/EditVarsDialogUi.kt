@@ -10,6 +10,7 @@ import imgui.enums.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW.*
 import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
+import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
@@ -37,6 +38,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private var isFistOpen: Boolean = true
 
+    private var currentTileItem: TileItem? = null
     private var currentTile: Tile? = null
     private var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
     private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile objects list
@@ -50,22 +52,19 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var variableInputFocused: Boolean = false // On first var select we will focus its input. Var is to check if we've already did it
 
     init {
-        consumeEvent(Event.EditVarsDialogUi.Open::class.java, ::handleOpen)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(Event.EditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
+        consumeEvent(Event.EditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
-        if (currentTile == null) {
-            return
-        }
-
         getTileItem()?.let { tileItem ->
             setNextWindowPos((windowWidth - DIALOG_WIDTH) / 2f, (windowHeight - DIALOG_HEIGHT) / 2f, ImGuiCond.Once)
             setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, ImGuiCond.Once)
 
-            window("Edit Variables: ${tileItem.type}##$WINDOW_ID") {
+            window("Edit Variables: ${tileItem.type}##edit_variables_$WINDOW_ID") {
                 drawControls()
                 separator()
                 child("vars_table") {
@@ -136,7 +135,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                 pushStyleColor(ImGuiCol.ButtonHovered, .25f, .58f, .98f, .5f)
                 pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
 
-                button("${variable.value}##${rowCount++}", getColumnWidth(-1)) {
+                button("${variable.value}##variable_btn_${rowCount++}", getColumnWidth(-1)) {
                     variableInputFocused = false
 
                     if (currentEditVar != null) {
@@ -186,7 +185,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun getTileItem(): TileItem? {
-        return when (currentTileItemIndex) {
+        return currentTileItem ?: when (currentTileItemIndex) {
             TileItemIdx.AREA -> currentTile?.area
             TileItemIdx.TURF -> currentTile?.turf
             else -> currentTile?.tileItems?.get(currentTileItemIndex.value)
@@ -209,8 +208,10 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private fun applyTmpTileChanges() {
         getNewItemVars()?.let { newItemVars ->
-            currentTile?.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
-            sendEvent(Event.Global.RefreshFrame())
+            currentTile?.let {
+                it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                sendEvent(Event.Global.RefreshFrame())
+            }
         }
     }
 
@@ -226,14 +227,16 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         discardTmpTileChanges()
 
         getNewItemVars()?.let { newItemVars ->
-            currentTile?.let { tile ->
+            if (currentTile != null) {
                 sendEvent(Event.ActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                    ReplaceTileAction(currentTile!!) {
+                        currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                     }
                 ))
 
                 sendEvent(Event.Global.RefreshFrame())
+            } else if (currentTileItem != null) {
+                GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 
             sendEvent(Event.ObjectPanelUi.Update())
@@ -248,6 +251,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun dispose() {
+        currentTileItem = null
         currentTile = null
         initialTileItemsId = null
         currentEditVar = null
@@ -257,14 +261,10 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
     }
 
-    private fun handleOpen(event: Event<Pair<Tile, TileItemIdx>, Unit>) {
+    private fun open() {
         isFistOpen = true
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
         WINDOW_ID++
-        currentTile = event.body.first
-        initialTileItemsId = event.body.first.getTileItemsId().clone()
-        currentTileItemIndex = event.body.second
-        collectVarsToDisplay()
     }
 
     private fun handleResetEnvironment() {
@@ -277,5 +277,19 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private fun handleCloseMap() {
         dispose()
+    }
+
+    private fun handleOpenWithTile(event: Event<Pair<Tile, TileItemIdx>, Unit>) {
+        open()
+        currentTile = event.body.first
+        initialTileItemsId = event.body.first.getTileItemsId().clone()
+        currentTileItemIndex = event.body.second
+        collectVarsToDisplay()
+    }
+
+    private fun handleOpenWithTileItem(event: Event<TileItem, Unit>) {
+        open()
+        currentTileItem = event.body
+        collectVarsToDisplay()
     }
 }
