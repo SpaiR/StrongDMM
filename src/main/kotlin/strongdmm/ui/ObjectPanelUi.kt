@@ -11,11 +11,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.RMB
-import strongdmm.util.imgui.popupContextItem
-import strongdmm.util.imgui.selectable
-import strongdmm.util.imgui.window
-import strongdmm.util.imgui.withIndent
-import strongdmm.util.imgui.menuItem
+import strongdmm.util.imgui.*
 
 class ObjectPanelUi : EventConsumer, EventSender {
     companion object {
@@ -78,7 +74,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
 
                 sameLine()
                 withIndent(1f) {
-                    GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir).run {
+                    GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir).run {
                         image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2)
                     }
                 }

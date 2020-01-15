@@ -172,7 +172,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
         init {
             val icon = dmeItem.getVarText(VAR_ICON) ?: ""
             val iconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
-            sprite = GlobalDmiHolder.getSprite(icon, iconState)
+            sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(icon, iconState)
         }
     }
 }

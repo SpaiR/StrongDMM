@@ -25,8 +25,7 @@ object GlobalDmiHolder {
     private val STATE_PATTERN: Regex = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
     private val PARAM_PATTERN: Regex = "(\\w+)\\s=\\s(.+)".toRegex()
 
-    // Initialize placeholder texture
-    init {
+    init { // Initialize placeholder texture
         val placeholderImage = ImageIO.read(javaClass.classLoader.getResource("placeholder.png"))
         val placeholderTextureId = loadTexture(placeholderImage)
         val placeholderIconStates = mutableMapOf<String, IconState>()
@@ -49,20 +48,20 @@ object GlobalDmiHolder {
         dmiCache.clear()
     }
 
-    fun getSprite(icon: String, iconState: String, dir: Int = DEFAULT_DIR): IconSprite {
+    fun getDmi(icon: String): Dmi? {
         if (icon.isEmpty()) {
-            return placeholderSprite
+            return null
         }
 
         if (dmiCache.containsKey(icon)) {
-            return dmiCache.getValue(icon)?.getIconState(iconState)?.getIconSprite(dir) ?: placeholderSprite
+            return dmiCache.getValue(icon)
         }
 
         val dmiFile = File(environmentRootPath + File.separator + icon)
 
         if (!dmiFile.exists() || !dmiFile.isFile) {
             dmiCache[icon] = null
-            return placeholderSprite
+            return null
         }
 
         val imageMeta: Metadata
@@ -73,7 +72,7 @@ object GlobalDmiHolder {
                 imageMeta = metadata.extractMetadata()
             } catch (e: Exception) {
                 dmiCache[icon] = null
-                return placeholderSprite
+                return null
             } finally {
                 close()
             }
@@ -102,7 +101,7 @@ object GlobalDmiHolder {
         // Unable to load provided icon
         if (texture == -1) {
             dmiCache[icon] = null
-            return placeholderSprite
+            return null
         }
 
         val dmiCols = width / imageMeta.spriteWidth
@@ -128,7 +127,15 @@ object GlobalDmiHolder {
 
         dmiCache[icon] = dmi
 
-        return dmi.getIconState(iconState)?.getIconSprite(dir) ?: placeholderSprite
+        return dmi
+    }
+
+    fun getIconState(icon: String, iconState: String): IconState? {
+        return getDmi(icon)?.getIconState(iconState)
+    }
+
+    fun getIconSpriteOrPlaceholder(icon: String, iconState: String, dir: Int = DEFAULT_DIR): IconSprite {
+        return getIconState(icon, iconState)?.getIconSprite(dir) ?: placeholderSprite
     }
 
     private fun PngMetadata.extractMetadata(): Metadata {

@@ -55,7 +55,7 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemRow(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
-        val sprite = GlobalDmiHolder.getSprite(tileItem.icon, tileItem.iconState, tileItem.dir)
+        val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
         image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2)
