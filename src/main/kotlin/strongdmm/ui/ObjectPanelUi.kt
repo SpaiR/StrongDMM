@@ -37,7 +37,9 @@ class ObjectPanelUi : EventConsumer, EventSender {
         setNextWindowPos(10f, 535f, ImGuiCond.Once)
         setNextWindowSize(330f, 390f, ImGuiCond.Once)
 
-        window("Object##object_panel") {
+        val title = if (tileItems?.size ?: 0 > 0) "Object (${tileItems!!.size})##object_panel" else "Object##object_panel"
+
+        window(title) {
             popupContextItem("object_panel_config", RMB) {
                 checkbox("Show vars preview", showVarsPreview)
                 setNextItemWidth(75f)
