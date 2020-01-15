@@ -1,14 +1,13 @@
 package strongdmm.controller.canvas
 
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL32
+import org.lwjgl.opengl.GL30.*
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.OUT_OF_BOUNDS
 
 class CanvasRenderer {
     var redraw: Boolean = false
 
-    private val frameBuffer: Int = GL32.glGenFramebuffers()
+    private val frameBuffer: Int = glGenFramebuffers()
     private var isTextureAttached: Boolean = false
 
     private var canvasTexture: Int = -1
@@ -31,9 +30,9 @@ class CanvasRenderer {
         }
 
         if (this.windowWidth != windowWidth || this.windowHeight != windowHeight || canvasTexture == -1) {
-            createCanvasTexture(windowWidth, windowHeight)
             this.windowWidth = windowWidth
             this.windowHeight = windowHeight
+            createCanvasTexture()
         }
 
         if (canvasTextureIsFilled) {
@@ -102,10 +101,10 @@ class CanvasRenderer {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
-        GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, frameBuffer)
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
 
         if (!isTextureAttached) {
-            GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, canvasTexture, 0)
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, canvasTexture, 0)
             isTextureAttached = true
         }
 
@@ -164,10 +163,10 @@ class CanvasRenderer {
 
         glDisable(GL_TEXTURE_2D)
 
-        GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, 0)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 
-    private fun createCanvasTexture(windowWidth: Int, windowHeight: Int) {
+    private fun createCanvasTexture() {
         invalidateCanvasTexture()
         canvasTexture = glGenTextures()
         glBindTexture(GL_TEXTURE_2D, canvasTexture)
