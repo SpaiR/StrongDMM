@@ -19,7 +19,7 @@ class InstanceController : EventConsumer, EventSender {
             sendEvent(Event.EnvironmentController.Fetch { dme ->
                 val itemType = event.body.type
                 val dmeItem = dme.getItem(itemType)!!
-                val initialIconState = dmeItem.getVarText(VAR_ICON_STATE)
+                val initialIconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
 
                 dmi.iconStates.keys.filter { it != initialIconState }.let { iconStates ->
                     if (iconStates.isNotEmpty()) {
@@ -38,7 +38,7 @@ class InstanceController : EventConsumer, EventSender {
         GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
             sendEvent(Event.EnvironmentController.Fetch { dme ->
                 val dmeItem = dme.getItem(tileItem.type)!!
-                val initialDir = dmeItem.getVarInt(VAR_DIR)
+                val initialDir = dmeItem.getVarInt(VAR_DIR) ?: DEFAULT_DIR
 
                 when (iconState.dirs) {
                     4 -> {

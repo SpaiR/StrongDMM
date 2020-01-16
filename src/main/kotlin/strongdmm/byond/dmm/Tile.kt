@@ -9,7 +9,7 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 
 /**
- * Helper class to do a very specific tile things like objects replacing and or vars modifying.
+ * Helper class to do a very specific tile things like objects replacing or vars modifying.
  * No meant to be used in maps themselves.
  */
 class Tile(
