@@ -15,36 +15,46 @@ class InstanceController : EventConsumer, EventSender {
     }
 
     private fun handleGenerateFromIconStates(event: Event<TileItem, Unit>) {
-        val tileItem = event.body
-        GlobalDmiHolder.getDmi(tileItem.icon)?.let { dmi ->
-            dmi.iconStates.keys.filter { it != tileItem.iconState }.let { iconStates ->
-                if (iconStates.isNotEmpty()) {
-                    iconStates.forEach { iconStateName ->
-                        GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_ICON_STATE to "\"$iconStateName\""))
+        GlobalDmiHolder.getDmi(event.body.icon)?.let { dmi ->
+            sendEvent(Event.EnvironmentController.Fetch { dme ->
+                val itemType = event.body.type
+                val dmeItem = dme.getItem(itemType)!!
+                val initialIconState = dmeItem.getVarText(VAR_ICON_STATE)
+
+                dmi.iconStates.keys.filter { it != initialIconState }.let { iconStates ->
+                    if (iconStates.isNotEmpty()) {
+                        iconStates.forEach { iconStateName ->
+                            GlobalTileItemHolder.getOrCreate(itemType, mutableMapOf(VAR_ICON_STATE to "\"$iconStateName\""))
+                        }
+                        event.reply(Unit)
                     }
-                    event.reply(Unit)
                 }
-            }
+            })
         }
     }
 
     private fun handleGenerateFromDirections(event: Event<TileItem, Unit>) {
         val tileItem = event.body
         GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
-            when (iconState.dirs) {
-                4 -> {
-                    arrayOf(NORTH, SOUTH, EAST, WEST).filter { it != tileItem.dir }.forEach { dir ->
-                        GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
+            sendEvent(Event.EnvironmentController.Fetch { dme ->
+                val dmeItem = dme.getItem(tileItem.type)!!
+                val initialDir = dmeItem.getVarInt(VAR_DIR)
+
+                when (iconState.dirs) {
+                    4 -> {
+                        arrayOf(NORTH, SOUTH, EAST, WEST).filter { it != initialDir }.forEach { dir ->
+                            GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
+                        }
+                        event.reply(Unit)
                     }
-                    event.reply(Unit)
-                }
-                8 -> {
-                    arrayOf(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST).filter { it != tileItem.dir }.forEach { dir ->
-                        GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
+                    8 -> {
+                        arrayOf(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST).filter { it != initialDir }.forEach { dir ->
+                            GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
+                        }
+                        event.reply(Unit)
                     }
-                    event.reply(Unit)
                 }
-            }
+            })
         }
     }
 }
