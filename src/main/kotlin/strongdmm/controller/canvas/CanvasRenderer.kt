@@ -36,8 +36,16 @@ class CanvasRenderer {
         }
 
         if (canvasTextureIsFilled) {
+            glViewport(0, 0, windowWidth, windowHeight)
+            glMatrixMode(GL_PROJECTION)
+            glLoadIdentity()
+            glOrtho(0.0, windowWidth.toDouble(), 0.0, windowHeight.toDouble(), -1.0, 1.0)
+            glMatrixMode(GL_MODELVIEW)
+            glLoadIdentity()
+
             renderCanvasTexture()
             renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
+
             if (!redraw) {
                 return
             }
@@ -109,14 +117,14 @@ class CanvasRenderer {
         }
 
         glViewport(0, 0, windowWidth, windowHeight)
-        glClearColor(.25f, .25f, .5f, 1f)
-        glClear(GL_COLOR_BUFFER_BIT)
-
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0.0, viewWidthWithScale, 0.0, viewHeightWithScale, -1.0, 1.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+        glClearColor(.25f, .25f, .5f, 1f)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         glEnable(GL_TEXTURE_2D)
 

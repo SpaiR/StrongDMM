@@ -95,7 +95,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun drawVariables() {
         var rowCount = 0
 
-        columns(2, "var_columns", true)
+        columns(2, "edit_vars_columns", true)
 
         for (variable in variables) {
             if (isShowModifiedVars.get() && !(variable.isModified || variable.isChanged)) {

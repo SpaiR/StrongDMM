@@ -15,10 +15,12 @@ import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
-    private var isOpen: Boolean = false
+    private var isDoOpen: Boolean = false
     private var isFirstOpen: Boolean = true
+
     private var selectedMapPath: AbsPath? = null // to store an absolute path for currently selected map
     private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
+
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
 
     init {
@@ -26,8 +28,9 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     }
 
     fun process() {
-        if (isOpen) {
+        if (isDoOpen) {
             openPopup("Available Maps")
+            isDoOpen = false
         }
 
         setNextWindowSize(600f, 285f, ImGuiCond.Once)
@@ -41,7 +44,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
                 isFirstOpen = false
             }
 
-            inputText("##map_filter", mapFilter, "Paths Filter")
+            inputText("##maps_path_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
@@ -63,10 +66,6 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             button("Open", block = ::openSelectedMapAndClosePopup)
             sameLine()
             button("Cancel", block = ::closePopup)
-
-            if (!isOpen) {
-                closeCurrentPopup()
-            }
         }
 
         if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER)) {
@@ -82,15 +81,15 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     }
 
     private fun closePopup() {
-        isOpen = false
+        closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = RelPath.NONE
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
     }
 
     private fun handleOpen() {
+        isDoOpen = true
         isFirstOpen = true
-        isOpen = true
         sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
     }
 }

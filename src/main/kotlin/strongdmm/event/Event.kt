@@ -30,10 +30,10 @@ abstract class Event<T, R>(
 ) {
     abstract class Global {
         class ResetEnvironment : Event<Unit, Unit>(Unit, null)
-        class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
-        class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
+        class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
+        class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)

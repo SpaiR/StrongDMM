@@ -22,7 +22,7 @@ class TilePopupUi : EventConsumer, EventSender {
         private const val POPUP_ID: String = "tile_popup"
     }
 
-    private var isOpened: Boolean = false
+    private var isDoOpen: Boolean = false
     private var currentTile: Tile? = null
 
     init {
@@ -34,9 +34,9 @@ class TilePopupUi : EventConsumer, EventSender {
 
     fun process() {
         currentTile?.let { tile ->
-            if (!isOpened) {
+            if (isDoOpen) {
                 openPopup(POPUP_ID)
-                isOpened = true
+                isDoOpen = false
             } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
                 currentTile = null
             }
@@ -100,7 +100,7 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun handleOpen(event: Event<Tile, Unit>) {
         currentTile = event.body
-        isOpened = false
+        isDoOpen = true
     }
 
     private fun handleClose() {

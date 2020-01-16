@@ -237,14 +237,6 @@ abstract class AppWindow(title: String) {
             glfwSetCursor(window, mouseCursors[imguiCursor])
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
 
-            // Initialize OpenGL context to render a canvas
-            glViewport(0, 0, fbWidth[0], fbHeight[0])
-            glMatrixMode(GL_PROJECTION)
-            glLoadIdentity()
-            glOrtho(0.0, fbWidth[0].toDouble(), 0.0, fbHeight[0].toDouble(), -1.0, 1.0)
-            glMatrixMode(GL_MODELVIEW)
-            glLoadIdentity()
-
             // Clear the framebuffer
             glClear(GL_COLOR_BUFFER_BIT)
 
