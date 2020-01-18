@@ -162,7 +162,7 @@ abstract class AppWindow(title: String) {
             io.keySuper = io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER)
         }
 
-        glfwSetCharCallback(window) { w: Long, c: Int ->
+        glfwSetCharCallback(window) { _, c: Int ->
             if (c != GLFW_KEY_DELETE) {
                 io.addInputCharacter(c)
             }

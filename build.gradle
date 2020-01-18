@@ -56,7 +56,7 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_12
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
     kotlinOptions {
         freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
     }
