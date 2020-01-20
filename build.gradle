@@ -15,16 +15,15 @@ application {
 
 repositories {
     jcenter()
-    mavenLocal()
     mavenCentral()
 }
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
+        project.ext.nativesType = "natives-linux"
         break
     case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
+        project.ext.nativesType = "natives-windows"
         break
 }
 
@@ -34,7 +33,7 @@ ext {
     trove4jVersion = '3.0.3'
     minimalJsonjVersion = '0.9.5'
     pngjVersion = '2.1.0'
-    imguiJavaVersion = '1.74-0.3.2'
+    imguiVersion = '1.74-0.4'
 }
 
 dependencies {
@@ -44,24 +43,25 @@ dependencies {
     implementation "com.eclipsesource.minimal-json:minimal-json:$minimalJsonjVersion"
     implementation "ar.com.hjg:pngj:$pngjVersion"
 
-    implementation "io.imgui.java:binding:$imguiJavaVersion"
-    implementation "io.imgui.java:lwjgl3:$imguiJavaVersion"
+    implementation "io.imgui.java:binding:$imguiVersion"
+    implementation "io.imgui.java:lwjgl3:$imguiVersion"
+    implementation "io.imgui.java:$nativesType:$imguiVersion"
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     ['', '-opengl', '-glfw', '-stb', '-nfd'].each {
         implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
-        runtimeOnly "org.lwjgl:lwjgl$it::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl$it::$nativesType"
     }
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
     kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11
         freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
     }
 }
 
 runShadow {
-    jvmArgs(["-Djava.library.path=./libs", "-Dsdmmparser.path=./libs"])
+    jvmArgs(['-Dsdmmparser.path=./libs'])
 }

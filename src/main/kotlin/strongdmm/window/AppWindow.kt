@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream
 import java.util.Objects
 import javax.imageio.ImageIO
 
-// Modified https://github.com/SpaiR/imgui-java/blob/v1.74-0.3/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
+// Modified https://github.com/SpaiR/imgui-java/blob/v1.74-0.4/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
 abstract class AppWindow(title: String) {
     companion object {
         var window: Long = 0

@@ -110,7 +110,7 @@ inline fun popupContextItem(strId: String, mouse: Int = LMB, block: () -> Unit) 
     }
 }
 
-inline fun withStyleColor(imGuiCol: Int, col: Long, block: () -> Unit) {
+inline fun withStyleColor(imGuiCol: Int, col: Int, block: () -> Unit) {
     ImGui.pushStyleColor(imGuiCol, col)
     block()
     ImGui.popStyleColor()
