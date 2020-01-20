@@ -101,6 +101,7 @@ class CanvasController : EventSender, EventConsumer {
             return
         }
 
+        // I guess it could be simplified, but it works as a scale limiter
         if ((isZoomIn && renderData.scaleCount - 1 < MIN_SCALE) || (!isZoomIn && renderData.scaleCount + 1 > MAX_SCALE)) {
             return
         } else {

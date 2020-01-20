@@ -38,6 +38,7 @@ ext {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
     implementation "io.github.spair:dmm-io:$dmmioVersion"
     implementation "net.sf.trove4j:trove4j:$trove4jVersion"
     implementation "com.eclipsesource.minimal-json:minimal-json:$minimalJsonjVersion"

@@ -38,10 +38,10 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private var isFistOpen: Boolean = true
 
-    private var currentTileItem: TileItem? = null
-    private var currentTile: Tile? = null
+    private var currentTileItem: TileItem? = null // We can open edit menu with a tile item...
+    private var currentTile: Tile? = null // ...or with a tile. If opened with the tile, then changes will be applied to a map.
     private var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
-    private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of Tile objects list
+    private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of a Tile objects list
     private var currentEditVar: Var? = null
 
     // Variables filter buffer, resizable string
@@ -98,10 +98,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         columns(2, "edit_vars_columns", true)
 
         for (variable in variables) {
+            // Filtering when we need to show only modified vars
             if (isShowModifiedVars.get() && !(variable.isModified || variable.isChanged)) {
                 continue
             }
 
+            // Filtering when 'filter input' is not empty
             if (varsFilter.get().isNotEmpty() && !variable.name.contains(varsFilter.get())) {
                 continue
             }
@@ -163,6 +165,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         currentEditVar = null
         variables.clear()
 
+        // To collect vars from the dme hierarchy
         fun collectVars(dmeItem: DmeItem) {
             dmeItem.vars.filterKeys { variableName -> variableName !in HIDDEN_VARS }.forEach { (name, value) ->
                 if (variables.none { variable -> variable.name == name }) {
@@ -173,11 +176,13 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             dmeItem.getParent()?.let { collectVars(it) }
         }
 
+        // To collect vars from the current tile item
         getTileItem()?.let { tileItem ->
             tileItem.customVars?.filterKeys { variableName -> variableName !in HIDDEN_VARS }?.forEach { name, value ->
                 variables.add(Var(name, value, tileItem.dmeItem.getVar(name) ?: "null"))
             }
 
+            // After we got vars from the tile item we need to go though its dme representation and all children
             collectVars(tileItem.dmeItem)
         }
 
@@ -227,7 +232,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         discardTmpTileChanges()
 
         getNewItemVars()?.let { newItemVars ->
-            if (currentTile != null) {
+            if (currentTile != null) { // in case if we have a tile to apply changes
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(currentTile!!) {
                         currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
@@ -235,7 +240,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                 ))
 
                 sendEvent(Event.Global.RefreshFrame())
-            } else if (currentTileItem != null) {
+            } else if (currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 

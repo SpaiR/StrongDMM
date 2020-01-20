@@ -104,11 +104,12 @@ class CanvasRenderer {
         }
     }
 
-    // Method will render the map to the separate texture which will be reused later to avoid CPU usage while idle.
+    // Method will render map to the separate texture which will be reused later to avoid CPU usage while idle.
     private fun fillCanvasTexture(renderData: RenderData, frameMeshes: List<FrameMesh>) {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
+        // Magic is happens in a separate framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer)
 
         if (!isTextureAttached) {
