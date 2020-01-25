@@ -20,6 +20,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.imgui.*
+import strongdmm.window.AppWindow
 
 class EditVarsDialogUi : EventSender, EventConsumer {
     companion object {
@@ -59,9 +60,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         consumeEvent(Event.EditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }
 
-    fun process(windowWidth: Int, windowHeight: Int) {
+    fun process() {
         getTileItem()?.let { tileItem ->
-            setNextWindowPos((windowWidth - DIALOG_WIDTH) / 2f, (windowHeight - DIALOG_HEIGHT) / 2f, ImGuiCond.Once)
+            setNextWindowPos((AppWindow.windowWidth - DIALOG_WIDTH) / 2f, (AppWindow.windowHeight - DIALOG_HEIGHT) / 2f, ImGuiCond.Once)
             setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, ImGuiCond.Once)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_$WINDOW_ID") {

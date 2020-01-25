@@ -9,7 +9,9 @@ import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItemId
 import strongdmm.byond.dmm.TileItemType
-import strongdmm.event.*
+import strongdmm.event.Event
+import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 import strongdmm.ui.search.SearchResult
 import strongdmm.util.imgui.inputText
 import strongdmm.util.imgui.window

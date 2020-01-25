@@ -57,7 +57,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.CanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
     }
 
-    fun process(windowWidth: Int, windowHeight: Int) {
+    fun process() {
         if (isHasMap) {
             if (!isBlocked && !isImGuiInUse()) {
                 ImGui.getMousePos(mousePos)
@@ -65,11 +65,11 @@ class CanvasController : EventSender, EventConsumer {
                 processViewTranslate()
                 processViewScale()
                 processTilePopupClick()
-                calculateMapMousePos(windowHeight)
+                calculateMapMousePos()
             }
 
             sendEvent(Event.FrameController.Compose {
-                canvasRenderer.render(it, windowWidth, windowHeight, renderData, xMapMousePos, yMapMousePos, iconSize)
+                canvasRenderer.render(it, renderData, xMapMousePos, yMapMousePos, iconSize)
             })
         }
     }
@@ -139,12 +139,12 @@ class CanvasController : EventSender, EventConsumer {
         }
     }
 
-    private fun calculateMapMousePos(windowHeight: Int) {
+    private fun calculateMapMousePos() {
         val x = mousePos.x
         val y = mousePos.y
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize
-        val yMap = ((windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
+        val yMap = ((AppWindow.windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
 
         val xMapMousePosNew = if (xMap > 0 && xMap <= maxX) xMap.toInt() + 1 else OUT_OF_BOUNDS
         val yMapMousePosNew = if (yMap > 0 && yMap <= maxY) yMap.toInt() + 1 else OUT_OF_BOUNDS

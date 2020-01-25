@@ -2,7 +2,7 @@ package strongdmm.byond.dmm
 
 import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
-import java.util.Collections
+import java.util.*
 
 class TileItem(
     val id: Long,

@@ -8,9 +8,9 @@ import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.imgui.window
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.setItemHoveredTooltip
+import strongdmm.util.imgui.window
 
 class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableSet<SearchResult> = mutableSetOf()
@@ -41,7 +41,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
             if (openState.get()) {
                 window("Search Result: ${searchResult.type} (${searchResult.positions.size})", openState) {
-                    columns((getWindowWidth() / 100f).toInt(), "search_result_columns", false)
+                    columns(getWindowWidth().toInt() / 100, "search_result_columns", false)
                     searchResult.positions.forEachIndexed { idx, searchPos ->
                         button("x:%03d y:%03d##jump_btn_$idx".format(searchPos.pos.x, searchPos.pos.y)) {
                             sendEvent(Event.CanvasController.CenterPosition(searchPos.pos))

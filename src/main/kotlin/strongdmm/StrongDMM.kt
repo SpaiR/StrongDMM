@@ -35,21 +35,21 @@ class StrongDMM(title: String) : AppWindow(title) {
         instanceLocatorPanelUi.postInit()
     }
 
-    override fun appLoop(windowWidth: Int, windowHeight: Int) {
+    override fun appLoop() {
         // UIs
         menuBarUi.process()
-        coordsPanelUi.process(windowWidth, windowHeight)
-        openedMapsPanelUi.process(windowWidth)
+        coordsPanelUi.process()
+        openedMapsPanelUi.process()
         availableMapsDialogUi.process()
         tilePopupUi.process()
-        editVarsDialogUi.process(windowWidth, windowHeight)
+        editVarsDialogUi.process()
         environmentTreePanelUi.process()
         objectPanelUi.process()
         instanceLocatorPanelUi.process()
         searchResultPanelUi.process()
 
         // Controllers
-        canvasController.process(windowWidth, windowHeight)
+        canvasController.process()
     }
 
     companion object {

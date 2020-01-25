@@ -10,6 +10,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
+import strongdmm.window.AppWindow
 
 class CoordsPanelUi : EventConsumer {
     private var isHasMap: Boolean = false
@@ -26,12 +27,12 @@ class CoordsPanelUi : EventConsumer {
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
     }
 
-    fun process(windowWidth: Int, windowHeight: Int) {
+    fun process() {
         if (!isHasMap) {
             return
         }
 
-        setNextWindowPos(windowWidth - 110f, windowHeight - 40f, ImGuiCond.Once)
+        setNextWindowPos(AppWindow.windowWidth - 110f, AppWindow.windowHeight - 40f, ImGuiCond.Once)
         setNextWindowSize(100f, 10f)
 
         window("coords_panel", ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {

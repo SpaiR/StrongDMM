@@ -9,15 +9,16 @@ import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.smallButton
 import strongdmm.util.imgui.window
+import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventSender {
-    fun process(windowWidth: Int) {
+    fun process() {
         sendEvent(Event.MapController.FetchAllOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
                 return@FetchAllOpened
             }
 
-            setNextWindowPos(windowWidth - 160f, 30f, ImGuiCond.Once)
+            setNextWindowPos(AppWindow.windowWidth - 160f, 30f, ImGuiCond.Once)
             setNextWindowSize(150f, 150f, ImGuiCond.Once)
             setNextWindowCollapsed(true, ImGuiCond.Once)
 

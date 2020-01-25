@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL30.*
 import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.OUT_OF_BOUNDS
+import strongdmm.window.AppWindow
 
 class CanvasRenderer {
     var redraw: Boolean = false
@@ -22,13 +23,14 @@ class CanvasRenderer {
 
     fun render(
         frameMeshes: List<FrameMesh>,
-        windowWidth: Int,
-        windowHeight: Int,
         renderData: RenderData,
         xMapMousePos: Int,
         yMapMousePos: Int,
         iconSize: Int
     ) {
+        val windowWidth = AppWindow.windowWidth
+        val windowHeight = AppWindow.windowHeight
+
         if (windowWidth == 0 && windowHeight == 0) {
             return
         }

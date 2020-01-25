@@ -3,7 +3,9 @@ package strongdmm.controller
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.*
-import strongdmm.event.*
+import strongdmm.event.Event
+import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 
 class InstanceController : EventConsumer, EventSender {
     init {

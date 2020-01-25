@@ -20,7 +20,7 @@ import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 import java.io.ByteArrayOutputStream
-import java.util.Objects
+import java.util.*
 import javax.imageio.ImageIO
 
 // Modified https://github.com/SpaiR/imgui-java/blob/v1.74-0.4/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
@@ -247,7 +247,7 @@ abstract class AppWindow(title: String) {
             glClear(GL_COLOR_BUFFER_BIT)
 
             ImGui.newFrame()
-            appLoop(fbWidth[0], fbHeight[0])
+            appLoop()
             ImGui.render()
 
             imGuiGl3.render(ImGui.getDrawData())
@@ -262,7 +262,7 @@ abstract class AppWindow(title: String) {
         }
     }
 
-    abstract fun appLoop(windowWidth: Int, windowHeight: Int)
+    abstract fun appLoop()
 
     private fun loadWindowIcon(stack: MemoryStack) {
         val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("icon.png"))
