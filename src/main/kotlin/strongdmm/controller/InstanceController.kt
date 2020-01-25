@@ -3,15 +3,16 @@ package strongdmm.controller
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.*
 
 class InstanceController : EventConsumer, EventSender {
     init {
         consumeEvent(Event.InstanceController.GenerateFromIconStates::class.java, ::handleGenerateFromIconStates)
         consumeEvent(Event.InstanceController.GenerateFromDirections::class.java, ::handleGenerateFromDirections)
+        consumeEvent(Event.InstanceController.FindPositionsByType::class.java, ::handleFindPositionsByType)
+        consumeEvent(Event.InstanceController.FindPositionsById::class.java, ::handleFindPositionsById)
     }
 
     private fun handleGenerateFromIconStates(event: Event<TileItem, Unit>) {
@@ -56,5 +57,47 @@ class InstanceController : EventConsumer, EventSender {
                 }
             })
         }
+    }
+
+    private fun handleFindPositionsByType(event: Event<TileItemType, List<Pair<TileItemType, MapPos>>>) {
+        val positions = mutableListOf<Pair<TileItemType, MapPos>>()
+
+        sendEvent(Event.MapController.FetchSelected { map ->
+            if (map != null && event.body.isNotEmpty()) {
+                for (x in (1..map.maxX)) {
+                    for (y in (1..map.maxY)) {
+                        map.getTileItemsId(x, y).forEach { tileItemId ->
+                            val tileItem = GlobalTileItemHolder.getById(tileItemId)
+                            if (tileItem.type.contains(event.body)) {
+                                positions.add(Pair(tileItem.type, MapPos(x, y)))
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        event.reply(positions)
+    }
+
+    private fun handleFindPositionsById(event: Event<TileItemId, List<Pair<TileItemType, MapPos>>>) {
+        val positions = mutableListOf<Pair<TileItemType, MapPos>>()
+
+        sendEvent(Event.MapController.FetchSelected { map ->
+            if (map != null) {
+                for (x in (1..map.maxX)) {
+                    for (y in (1..map.maxY)) {
+                        map.getTileItemsId(x, y).forEach { tileItemId ->
+                            val tileItem = GlobalTileItemHolder.getById(tileItemId)
+                            if (tileItem.id == event.body) {
+                                positions.add(Pair(tileItem.type, MapPos(x, y)))
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        event.reply(positions)
     }
 }

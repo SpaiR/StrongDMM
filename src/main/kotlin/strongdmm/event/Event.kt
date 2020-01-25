@@ -1,5 +1,6 @@
 package strongdmm.event
 
+import imgui.ImBool
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
@@ -7,6 +8,7 @@ import strongdmm.controller.action.Undoable
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.controller.environment.EnvOpenStatus
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.ui.search.SearchResult
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 
@@ -19,6 +21,11 @@ import strongdmm.util.inline.RelPath
  *
  * Events like "EnvironmentController" are meant to be consumed ONLY by a specific class.
  * This restriction is checked in runtime.
+ *
+ * Sometimes it's needed to provide state with ImGui pointer-like variables from one UI to another.
+ * To do that use 'Event.Global.Provider' subclasses.
+ * The only types could be send through those events are:
+ *  - ImBool
  *
  * !!! IMPORTANT !!!
  * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
@@ -37,6 +44,10 @@ abstract class Event<T, R>(
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
+
+        abstract class Provider {
+            class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
+        }
     }
 
     abstract class EnvironmentController {
@@ -80,6 +91,9 @@ abstract class Event<T, R>(
 
     abstract class CanvasController {
         class Block(body: CanvasBlockStatus) : Event<CanvasBlockStatus, Unit>(body, null)
+        class CenterPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
+        class MarkPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
+        class ResetMarkedPosition : Event<Unit, Unit>(Unit, null)
     }
 
     abstract class ObjectPanelUi {
@@ -89,6 +103,17 @@ abstract class Event<T, R>(
     abstract class InstanceController {
         class GenerateFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
         class GenerateFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
+        class FindPositionsByType(body: TileItemType, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<TileItemType, List<Pair<TileItemType, MapPos>>>(body, callback)
+        class FindPositionsById(body: TileItemId, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<TileItemId, List<Pair<TileItemType, MapPos>>>(body, callback)
+    }
+
+    abstract class SearchResultPanelUi {
+        class Open(body: SearchResult) : Event<SearchResult, Unit>(body, null)
+    }
+
+    abstract class InstanceLocatorPanelUi {
+        class SearchByType(body: TileItemType) : Event<TileItemType, Unit>(body, null)
+        class SearchById(body: TileItemId) : Event<TileItemId, Unit>(body, null)
     }
 
     fun reply(response: R) {

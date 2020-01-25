@@ -19,6 +19,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
     }
 
     private val showVarsPreview: ImBool = ImBool(false)
+    private lateinit var showInstanceLocator: ImBool
     private val columnsCount: ImInt = ImInt(1)
 
     private var scrolledToItem: Boolean = false
@@ -30,6 +31,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.Global.Provider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
         consumeEvent(Event.ObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
@@ -37,11 +39,12 @@ class ObjectPanelUi : EventConsumer, EventSender {
         setNextWindowPos(10f, 535f, ImGuiCond.Once)
         setNextWindowSize(330f, 390f, ImGuiCond.Once)
 
-        val title = if (tileItems?.size ?: 0 > 0) "Object (${tileItems!!.size})##object_panel" else "Object##object_panel"
+        val title = if (tileItems?.size ?: 0 > 0) "Object (${tileItems!!.size})###object_panel" else "Object###object_panel"
 
         window(title) {
             popupContextItem("object_panel_config", RMB) {
-                checkbox("Show vars preview", showVarsPreview)
+                checkbox("Show Variables Preview", showVarsPreview)
+                checkbox("Show Instance Locator", showInstanceLocator)
                 setNextItemWidth(75f)
                 if (inputInt("Columns count", columnsCount)) {
                     if (columnsCount.get() <= 0) {
@@ -64,6 +67,13 @@ class ObjectPanelUi : EventConsumer, EventSender {
                     scrolledToItem = true
                 }
                 popupContextItem("object_options_$index", RMB) {
+                    menuItem("Find Instance on Map") {
+                        sendEvent(Event.InstanceLocatorPanelUi.SearchById(tileItem.id))
+                    }
+                    menuItem("Fine All Objects on Map") {
+                        sendEvent(Event.InstanceLocatorPanelUi.SearchByType(tileItem.type))
+                    }
+                    separator()
                     menuItem("New Instance...") {
                         sendEvent(Event.EditVarsDialogUi.OpenWithTileItem(tileItem))
                     }
@@ -99,7 +109,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
             setNextWindowPos(345f, 730f, ImGuiCond.Once)
             setNextWindowSize(300f, 195f, ImGuiCond.Once)
 
-            window("Variables preview", showVarsPreview) {
+            window("Variables Preview", showVarsPreview) {
                 tileItems?.let { objs ->
                     if (selectedObjIdx != -1) {
                         val tileItem = objs[selectedObjIdx]
@@ -142,6 +152,10 @@ class ObjectPanelUi : EventConsumer, EventSender {
         if (tileItemType.isNotEmpty()) {
             tileItems = getTileItemsByTypeSorted(tileItemType)
         }
+    }
+
+    private fun handleProviderInstanceLocatorOpen(event: Event<ImBool, Unit>) {
+        showInstanceLocator = event.body
     }
 
     private fun handleUpdate() {

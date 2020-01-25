@@ -1,6 +1,7 @@
 package strongdmm.controller.canvas
 
 import org.lwjgl.opengl.GL30.*
+import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.OUT_OF_BOUNDS
 
@@ -12,6 +13,9 @@ class CanvasRenderer {
 
     private var canvasTexture: Int = -1
     private var canvasTextureIsFilled: Boolean = false
+
+    // Used to visually emphasize attention on something on the map
+    var markedPosition: MapPos? = null
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -45,6 +49,7 @@ class CanvasRenderer {
 
             renderCanvasTexture()
             renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
+            renderMarkedPosition(renderData, iconSize)
 
             if (!redraw) {
                 return
@@ -101,6 +106,34 @@ class CanvasRenderer {
             glVertex2d(xPos + realIconSize, yPos + realIconSize)
             glVertex2d(xPos, yPos + realIconSize)
             glEnd()
+        }
+    }
+
+    private fun renderMarkedPosition(renderData: RenderData, iconSize: Int) {
+        markedPosition?.let { pos ->
+            val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+            val realIconSize = iconSize / renderData.viewScale
+
+            glColor4f(1f, 0f, 0f, 1f)
+
+            glLineWidth(4f)
+            glBegin(GL_LINES)
+
+            glVertex2d(xPos, yPos)
+            glVertex2d(xPos, yPos + realIconSize)
+
+            glVertex2d(xPos + realIconSize, yPos)
+            glVertex2d(xPos + realIconSize, yPos + realIconSize)
+
+            glVertex2d(xPos, yPos)
+            glVertex2d(xPos + realIconSize, yPos)
+
+            glVertex2d(xPos, yPos + realIconSize)
+            glVertex2d(xPos + realIconSize, yPos + realIconSize)
+
+            glEnd()
+            glLineWidth(1f)
         }
     }
 

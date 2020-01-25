@@ -7,6 +7,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.environment.EnvironmentController
 import strongdmm.controller.frame.FrameController
 import strongdmm.ui.*
+import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.AppWindow
 
@@ -20,6 +21,8 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val editVarsDialogUi = EditVarsDialogUi()
     private val environmentTreePanelUi = EnvironmentTreePanelUi()
     private val objectPanelUi = ObjectPanelUi()
+    private val instanceLocatorPanelUi = InstanceLocatorPanelUi()
+    private val searchResultPanelUi = SearchResultPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapController()
@@ -27,6 +30,10 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val frameController = FrameController()
     private val actionController = ActionController()
     private val instanceController = InstanceController()
+
+    init {
+        instanceLocatorPanelUi.postInit()
+    }
 
     override fun appLoop(windowWidth: Int, windowHeight: Int) {
         // UIs
@@ -38,6 +45,8 @@ class StrongDMM(title: String) : AppWindow(title) {
         editVarsDialogUi.process(windowWidth, windowHeight)
         environmentTreePanelUi.process()
         objectPanelUi.process()
+        instanceLocatorPanelUi.process()
+        searchResultPanelUi.process()
 
         // Controllers
         canvasController.process(windowWidth, windowHeight)

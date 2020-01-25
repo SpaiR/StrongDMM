@@ -1,6 +1,6 @@
 package strongdmm.byond.dmm
 
-class MapPos(
+data class MapPos(
     val x: Int,
     val y: Int
 )

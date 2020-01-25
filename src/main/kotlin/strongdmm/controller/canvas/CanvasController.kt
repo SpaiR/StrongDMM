@@ -16,6 +16,7 @@ import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.RMB
+import strongdmm.window.AppWindow
 
 class CanvasController : EventSender, EventConsumer {
     companion object {
@@ -51,6 +52,9 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
         consumeEvent(Event.CanvasController.Block::class.java, ::handleCanvasBlock)
+        consumeEvent(Event.CanvasController.CenterPosition::class.java, ::handleCenterPosition)
+        consumeEvent(Event.CanvasController.MarkPosition::class.java, ::handleMarkPosition)
+        consumeEvent(Event.CanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
     }
 
     fun process(windowWidth: Int, windowHeight: Int) {
@@ -158,7 +162,8 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        renderData = renderDataStorage.getOrPut(event.body.id) { RenderData() }
+        canvasRenderer.markedPosition = null
+        renderData = renderDataStorage.getOrPut(event.body.id) { RenderData(event.body.id) }
         maxX = event.body.maxX
         maxY = event.body.maxY
         canvasRenderer.invalidateCanvasTexture()
@@ -170,12 +175,17 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun handleResetEnvironment() {
+        canvasRenderer.markedPosition = null
         renderDataStorage.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
+        if (renderData.mapId == event.body.id) {
+            canvasRenderer.markedPosition = null
+        }
+
         isHasMap = renderDataStorage.remove(event.body.id) !== renderData
     }
 
@@ -185,5 +195,22 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {
         isBlocked = event.body.isBlocked()
+    }
+
+    private fun handleCenterPosition(event: Event<MapPos, Unit>) {
+        renderData.viewTranslateX = AppWindow.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
+        renderData.viewTranslateY = AppWindow.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
+        canvasRenderer.redraw = true
+    }
+
+    private fun handleMarkPosition(event: Event<MapPos, Unit>) {
+        canvasRenderer.run {
+            markedPosition = event.body
+            redraw = true
+        }
+    }
+
+    private fun handleResetMarkedPosition() {
+        canvasRenderer.markedPosition = null
     }
 }
