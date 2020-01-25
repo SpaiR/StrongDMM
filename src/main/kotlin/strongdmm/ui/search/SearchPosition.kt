@@ -4,6 +4,6 @@ import strongdmm.byond.dmm.MapPos
 
 data class SearchPosition(
     val idx: Int,
-    val type: String,
+    val tileItemType: String,
     val pos: MapPos
 )

@@ -6,6 +6,7 @@ import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.ui.search.SearchRect
 
 class InstanceController : EventConsumer, EventSender {
     init {
@@ -59,16 +60,17 @@ class InstanceController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleFindPositionsByType(event: Event<TileItemType, List<Pair<TileItemType, MapPos>>>) {
+    private fun handleFindPositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItemType, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItemType, MapPos>>()
 
         sendEvent(Event.MapController.FetchSelected { map ->
-            if (map != null && event.body.isNotEmpty()) {
-                for (x in (1..map.maxX)) {
-                    for (y in (1..map.maxY)) {
+            if (map != null && event.body.second.isNotEmpty()) {
+                val (x1, y1, x2, y2) = event.body.first
+                for (x in (x1..x2)) {
+                    for (y in (y1..y2)) {
                         map.getTileItemsId(x, y).forEach { tileItemId ->
                             val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                            if (tileItem.type.contains(event.body)) {
+                            if (tileItem.type.contains(event.body.second)) {
                                 positions.add(Pair(tileItem.type, MapPos(x, y)))
                             }
                         }
@@ -80,16 +82,17 @@ class InstanceController : EventConsumer, EventSender {
         event.reply(positions)
     }
 
-    private fun handleFindPositionsById(event: Event<TileItemId, List<Pair<TileItemType, MapPos>>>) {
+    private fun handleFindPositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItemType, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItemType, MapPos>>()
 
         sendEvent(Event.MapController.FetchSelected { map ->
             if (map != null) {
-                for (x in (1..map.maxX)) {
-                    for (y in (1..map.maxY)) {
+                val (x1, y1, x2, y2) = event.body.first
+                for (x in (x1..x2)) {
+                    for (y in (y1..y2)) {
                         map.getTileItemsId(x, y).forEach { tileItemId ->
                             val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                            if (tileItem.id == event.body) {
+                            if (tileItem.id == event.body.second) {
                                 positions.add(Pair(tileItem.type, MapPos(x, y)))
                             }
                         }

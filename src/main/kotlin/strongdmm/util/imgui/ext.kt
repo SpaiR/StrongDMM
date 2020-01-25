@@ -1,6 +1,7 @@
 package strongdmm.util.imgui
 
 import imgui.ImGui
+import imgui.ImInt
 import imgui.ImString
 
 fun setItemHoveredTooltip(text: String) {
@@ -45,4 +46,14 @@ fun inputText(label: String, text: ImString, placeholder: String, helpText: Stri
 
     ImGui.endGroup()
     return valueChanged
+}
+
+fun inputInt(label: String, v: ImInt, min: Int, max: Int) {
+    if (ImGui.inputInt(label, v)) {
+        if (v.get() > max) {
+            v.set(max)
+        } else if (v.get() < min) {
+            v.set(min)
+        }
+    }
 }

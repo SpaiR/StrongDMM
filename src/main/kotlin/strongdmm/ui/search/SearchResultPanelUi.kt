@@ -47,7 +47,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                             sendEvent(Event.CanvasController.CenterPosition(searchPos.pos))
                             sendEvent(Event.CanvasController.MarkPosition(searchPos.pos))
                         }
-                        setItemHoveredTooltip("[%d] %s".format(searchPos.idx, searchPos.type))
+                        setItemHoveredTooltip("[%d] %s".format(searchPos.idx, searchPos.tileItemType))
                         nextColumn()
                     }
                 }
@@ -83,6 +83,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleOpen(event: Event<SearchResult, Unit>) {
+        searchResults.remove(event.body)
         searchResults.add(event.body)
     }
 }

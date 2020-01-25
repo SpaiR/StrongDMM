@@ -8,6 +8,7 @@ import strongdmm.controller.action.Undoable
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.controller.environment.EnvOpenStatus
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
 import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
@@ -104,8 +105,8 @@ abstract class Event<T, R>(
     abstract class InstanceController {
         class GenerateFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
         class GenerateFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
-        class FindPositionsByType(body: TileItemType, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<TileItemType, List<Pair<TileItemType, MapPos>>>(body, callback)
-        class FindPositionsById(body: TileItemId, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<TileItemId, List<Pair<TileItemType, MapPos>>>(body, callback)
+        class FindPositionsByType(body: Pair<SearchRect, TileItemType>, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemType>, List<Pair<TileItemType, MapPos>>>(body, callback)
+        class FindPositionsById(body: Pair<SearchRect, TileItemId>, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemId>, List<Pair<TileItemType, MapPos>>>(body, callback)
     }
 
     abstract class SearchResultPanelUi {
