@@ -190,7 +190,7 @@ class CanvasRenderer {
                 glBegin(GL_QUADS)
             }
 
-            glColor4f(color.red, color.green, color.blue, color.alpha)
+            glColor4f(color.r, color.g, color.b, color.a)
 
             glTexCoord2f(sprite.u2, sprite.v1)
             glVertex2d(rx2, ry2)

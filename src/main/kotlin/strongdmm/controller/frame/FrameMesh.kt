@@ -1,6 +1,7 @@
 package strongdmm.controller.frame
 
 import strongdmm.byond.dmi.IconSprite
+import strongdmm.byond.dmm.Color
 
 data class FrameMesh(
     val sprite: IconSprite,

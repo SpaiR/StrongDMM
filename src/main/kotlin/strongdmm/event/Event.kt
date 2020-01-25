@@ -35,7 +35,7 @@ abstract class Event<T, R>(
     val body: T,
     private val callback: ((R) -> Unit)?
 ) {
-    //@formatter:off
+    // @formatter:off
     abstract class Global {
         class ResetEnvironment : Event<Unit, Unit>(Unit, null)
         class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
@@ -120,5 +120,5 @@ abstract class Event<T, R>(
     fun reply(response: R) {
         callback?.invoke(response)
     }
-    //@formatter:on
+    // @formatter:on
 }

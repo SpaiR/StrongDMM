@@ -6,6 +6,7 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmi.GlobalDmiHolder
+import strongdmm.byond.dmm.ColorExtractor
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapId
@@ -83,7 +84,7 @@ class FrameController : EventConsumer, EventSender {
                         val y1 = (y - 1) * currentIconSize + tileItem.pixelY
                         val x2 = x1 + sprite.iconWidth
                         val y2 = y1 + sprite.iconHeight
-                        val color = colorExtractor.extract(tileItem)
+                        val color = tileItem.color
                         val depth = tileItem.plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
 
                         val specificDepth = when {

@@ -15,13 +15,12 @@ class TileItem(
     // Vars extensively used during the rendering process
     val icon: String = getVarText(VAR_ICON) ?: ""
     val iconState: String = getVarText(VAR_ICON_STATE) ?: ""
-    val alpha: Int = getVarInt(VAR_ALPHA) ?: 0
     val plane: Float = getVarFloat(VAR_PLANE) ?: 0f
     val layer: Float = getVarFloat(VAR_LAYER) ?: 0f
     val pixelX: Int = getVarInt(VAR_PIXEL_X) ?: 0
     val pixelY: Int = getVarInt(VAR_PIXEL_Y) ?: 0
     val dir: Int = getVarInt(VAR_DIR) ?: 0
-    val color: String = getVarText(VAR_COLOR) ?: ""
+    val color: Color = ColorExtractor.extract(getVarText(VAR_COLOR), getVarInt(VAR_ALPHA) ?: 1)
     val name: String = getVarText(VAR_NAME) ?: ""
 
     fun getVarText(name: String): String? {
