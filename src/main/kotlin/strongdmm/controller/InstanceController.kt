@@ -2,9 +2,7 @@ package strongdmm.controller
 
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
-import strongdmm.byond.dmm.GlobalTileItemHolder
-import strongdmm.byond.dmm.MapPos
-import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.*
 import strongdmm.event.*
 
 class InstanceController : EventConsumer, EventSender {

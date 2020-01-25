@@ -29,7 +29,7 @@ import strongdmm.util.inline.RelPath
  *
  * !!! IMPORTANT !!!
  * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
- * Inline classes should be used instead.
+ * Inline classes or typealias should be used instead.
  */
 abstract class Event<T, R>(
     val body: T,
