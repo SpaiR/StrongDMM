@@ -1,10 +1,12 @@
 package strongdmm.ui.search
 
 import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.TileItem
 
 class SearchResult(
-    val type: String,
-    positions: List<Pair<String, MapPos>>
+    val searchValue: String, // This could be an object type or an instance ID
+    val isSearchById: Boolean, // Do we used tile item ID or tile item type
+    positions: List<Pair<TileItem, MapPos>>
 ) {
     val positions: MutableList<SearchPosition> = ArrayList(positions.size)
 
@@ -28,11 +30,11 @@ class SearchResult(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         other as SearchResult
-        if (type != other.type) return false
+        if (searchValue != other.searchValue) return false
         return true
     }
 
     override fun hashCode(): Int {
-        return type.hashCode()
+        return searchValue.hashCode()
     }
 }

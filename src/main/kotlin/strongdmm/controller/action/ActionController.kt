@@ -2,6 +2,7 @@ package strongdmm.controller.action
 
 import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.byond.dmm.Dmm
+import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender

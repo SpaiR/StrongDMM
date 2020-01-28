@@ -4,7 +4,7 @@ import imgui.ImBool
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
-import strongdmm.controller.action.Undoable
+import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.controller.environment.EnvOpenStatus
 import strongdmm.controller.frame.FrameMesh
@@ -105,8 +105,8 @@ abstract class Event<T, R>(
     abstract class InstanceController {
         class GenerateFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
         class GenerateFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
-        class FindPositionsByType(body: Pair<SearchRect, TileItemType>, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemType>, List<Pair<TileItemType, MapPos>>>(body, callback)
-        class FindPositionsById(body: Pair<SearchRect, TileItemId>, callback: (List<Pair<TileItemType, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemId>, List<Pair<TileItemType, MapPos>>>(body, callback)
+        class FindPositionsByType(body: Pair<SearchRect, TileItemType>, callback: (List<Pair<TileItem, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>(body, callback)
+        class FindPositionsById(body: Pair<SearchRect, TileItemId>, callback: (List<Pair<TileItem, MapPos>>) -> Unit) : Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>(body, callback)
     }
 
     abstract class SearchResultPanelUi {
@@ -116,6 +116,13 @@ abstract class Event<T, R>(
     abstract class InstanceLocatorPanelUi {
         class SearchByType(body: TileItemType) : Event<TileItemType, Unit>(body, null)
         class SearchById(body: TileItemId) : Event<TileItemId, Unit>(body, null)
+    }
+
+    abstract class MapModifierController {
+        class ReplaceTypeInPositions(body: Pair<TileItemType, List<Pair<TileItem, MapPos>>>) : Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>(body, null)
+        class ReplaceIdInPositions(body: Pair<TileItemType, List<Pair<TileItem, MapPos>>>) : Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>(body, null)
+        class DeleteTypeInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
+        class DeleteIdInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
     }
 
     fun reply(response: R) {

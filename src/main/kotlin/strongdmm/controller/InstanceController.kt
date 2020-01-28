@@ -60,8 +60,8 @@ class InstanceController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleFindPositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItemType, MapPos>>>) {
-        val positions = mutableListOf<Pair<TileItemType, MapPos>>()
+    private fun handleFindPositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>) {
+        val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(Event.MapController.FetchSelected { map ->
             if (map != null && event.body.second.isNotEmpty()) {
@@ -70,8 +70,8 @@ class InstanceController : EventConsumer, EventSender {
                     for (y in (y1..y2)) {
                         map.getTileItemsId(x, y).forEach { tileItemId ->
                             val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                            if (tileItem.type.contains(event.body.second)) {
-                                positions.add(Pair(tileItem.type, MapPos(x, y)))
+                            if (tileItem.type == event.body.second) {
+                                positions.add(Pair(tileItem, MapPos(x, y)))
                             }
                         }
                     }
@@ -82,8 +82,8 @@ class InstanceController : EventConsumer, EventSender {
         event.reply(positions)
     }
 
-    private fun handleFindPositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItemType, MapPos>>>) {
-        val positions = mutableListOf<Pair<TileItemType, MapPos>>()
+    private fun handleFindPositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>) {
+        val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(Event.MapController.FetchSelected { map ->
             if (map != null) {
@@ -93,7 +93,7 @@ class InstanceController : EventConsumer, EventSender {
                         map.getTileItemsId(x, y).forEach { tileItemId ->
                             val tileItem = GlobalTileItemHolder.getById(tileItemId)
                             if (tileItem.id == event.body.second) {
-                                positions.add(Pair(tileItem.type, MapPos(x, y)))
+                                positions.add(Pair(tileItem, MapPos(x, y)))
                             }
                         }
                     }

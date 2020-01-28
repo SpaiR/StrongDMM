@@ -37,6 +37,32 @@ class Tile(
 
     fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
 
+    fun replaceTileItem(tileItemType: String, replaceWith: TileItem) {
+        tileItems.find { it.type == tileItemType }?.let { tileItem ->
+            dmm.getTileItemsId(x, y)[tileItems.indexOf(tileItem)] = replaceWith.id
+        }
+    }
+
+    fun replaceTileItem(tileItemId: Long, replaceWith: TileItem) {
+        tileItems.find { it.id == tileItemId }?.let { tileItem ->
+            dmm.getTileItemsId(x, y)[tileItems.indexOf(tileItem)] = replaceWith.id
+        }
+    }
+
+    fun deleteTileItem(tileItemType: String) {
+        tileItems.find { it.type == tileItemType }?.let { tileItem ->
+            tileItems.remove(tileItem)
+            dmm.setTileItemsId(x, y, tileItems.asSequence().map { it.id }.toList().toLongArray())
+        }
+    }
+
+    fun deleteTileItem(tileItemId: Long) {
+        tileItems.find { it.id == tileItemId }?.let { tileItem ->
+            tileItems.remove(tileItem)
+            dmm.setTileItemsId(x, y, tileItems.asSequence().map { it.id }.toList().toLongArray())
+        }
+    }
+
     fun replaceTileItemsId(tileItemsId: LongArray) = dmm.setTileItemsId(x, y, tileItemsId)
 
     fun modifyItemVars(tileItemIdx: TileItemIdx, vars: Map<String, String>?) {
@@ -97,18 +123,22 @@ class Tile(
     }
 
     private fun readObjectsFromMap() {
+        // List with all tile items
         tileItems = dmm.getTileItemsId(x, y).map { GlobalTileItemHolder.getById(it) }.toMutableList()
 
+        // Find area and its index in tile items list
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {
             area = it?.value
             areaIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.AREA
         }
 
+        // Find turf and its index in tile items list
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_TURF) }.let {
             turf = it?.value
             turfIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.TURF
         }
 
+        // Collect indexed objects and mobs
         objs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.type.startsWith(TYPE_OBJ) }
         mobs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.type.startsWith(TYPE_MOB) }
     }

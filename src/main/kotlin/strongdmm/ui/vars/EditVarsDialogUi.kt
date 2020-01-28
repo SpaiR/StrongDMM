@@ -14,7 +14,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.dmm.TileItemIdx
-import strongdmm.controller.action.ReplaceTileAction
+import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer

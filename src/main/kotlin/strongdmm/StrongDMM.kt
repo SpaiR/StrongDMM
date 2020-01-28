@@ -2,6 +2,7 @@ package strongdmm
 
 import strongdmm.controller.InstanceController
 import strongdmm.controller.MapController
+import strongdmm.controller.MapModifierController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.environment.EnvironmentController
@@ -30,6 +31,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val frameController = FrameController()
     private val actionController = ActionController()
     private val instanceController = InstanceController()
+    private val mapModifierController = MapModifierController()
 
     init {
         instanceLocatorPanelUi.postInit()

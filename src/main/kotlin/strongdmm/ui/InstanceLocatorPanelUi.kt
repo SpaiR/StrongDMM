@@ -7,17 +7,15 @@ import imgui.ImString
 import imgui.enums.ImGuiCond
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
 import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
-import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapPos
-import strongdmm.byond.dmm.TileItemId
-import strongdmm.byond.dmm.TileItemType
+import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
-import strongdmm.util.imgui.inputText
+import strongdmm.util.imgui.button
 import strongdmm.util.imgui.inputInt
+import strongdmm.util.imgui.inputText
 import strongdmm.util.imgui.window
 
 class InstanceLocatorPanelUi : EventSender, EventConsumer {
@@ -25,7 +23,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
         private const val SEARCH_INPUT_WIDTH: Float = 100f
     }
 
-    private val showInstanceLocator: ImBool = ImBool(true)
+    private val showInstanceLocator: ImBool = ImBool(false)
     private var isFirstOpen: Boolean = true
 
     private val searchType: ImString = ImString(50).apply { inputData.isResizable = true }
@@ -84,13 +82,15 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
             setNextItemWidth(SEARCH_INPUT_WIDTH)
             inputInt("y2", searchY2, 1, mapMaxY)
 
-            if (button("Reset")) {
-                searchX1.set(1)
-                searchY1.set(1)
-                searchX2.set(mapMaxX)
-                searchY2.set(mapMaxY)
-            }
+            button("Reset", block = ::resetSearchRect)
         }
+    }
+
+    private fun resetSearchRect() {
+        searchX1.set(1)
+        searchY1.set(1)
+        searchX2.set(mapMaxX)
+        searchY2.set(mapMaxY)
     }
 
     private fun search() {
@@ -103,9 +103,9 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
         val tileItemId = type.toLongOrNull()
         val searchRect = SearchRect(searchX1.get(), searchY1.get(), searchX2.get(), searchY2.get())
 
-        val openSearchResult = { it: List<Pair<TileItemType, MapPos>> ->
+        val openSearchResult = { it: List<Pair<TileItem, MapPos>> ->
             if (it.isNotEmpty()) {
-                sendEvent(Event.SearchResultPanelUi.Open(SearchResult(type, it)))
+                sendEvent(Event.SearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
             }
         }
 

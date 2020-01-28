@@ -1,4 +1,4 @@
-package strongdmm.controller.action
+package strongdmm.controller.action.undoable
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.Tile
@@ -19,7 +19,9 @@ class ReplaceTileAction(
         tileItemsIdAfter = dmm.getTileItemsId(x, y).copyOf()
     }
 
-    override fun doAction(): Undoable = ReplaceTileAction(dmm, x, y) {
-        dmm.setTileItemsId(x, y, tileItemsIdBefore)
+    override fun doAction(): Undoable {
+        return ReplaceTileAction(dmm, x, y) {
+            dmm.setTileItemsId(x, y, tileItemsIdBefore)
+        }
     }
 }
