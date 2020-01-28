@@ -49,9 +49,9 @@ class MenuBarUi : EventSender, EventConsumer {
     }
 
     private fun openEnvironment() {
-        NfdUtil.selectFile("dme")?.let { path ->
-            progressText = "Loading " + path.value.replace('\\', '/').substringAfterLast("/")
-            sendEvent(Event.EnvironmentController.Open(path) {
+        NfdUtil.selectFile("dme")?.let { file ->
+            progressText = "Loading " + file.absolutePath.replace('\\', '/').substringAfterLast("/")
+            sendEvent(Event.EnvironmentController.Open(file) {
                 progressText = null
                 isEnvironmentOpen = it
             })

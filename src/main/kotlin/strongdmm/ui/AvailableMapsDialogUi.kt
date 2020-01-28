@@ -10,14 +10,14 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.imgui.*
-import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
+import java.io.File
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isDoOpen: Boolean = false
     private var isFirstOpen: Boolean = true
 
-    private var selectedMapPath: AbsPath? = null // to store an absolute path for currently selected map
+    private var selectedMapPath: String? = null // to store an absolute path for currently selected map
     private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
 
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
@@ -74,7 +74,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     private fun openSelectedMapAndClosePopup() {
         selectedMapPath?.let {
-            sendEvent(Event.MapController.Open(it))
+            sendEvent(Event.MapController.Open(File(it)))
             closePopup()
         }
     }

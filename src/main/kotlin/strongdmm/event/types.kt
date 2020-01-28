@@ -9,3 +9,6 @@ typealias TileItemIdx = Int
 typealias CanvasBlockStatus = Boolean
 
 typealias EnvironmentBlockStatus = Boolean
+
+typealias AbsoluteFilePath = String
+typealias RelativeFilePath = String

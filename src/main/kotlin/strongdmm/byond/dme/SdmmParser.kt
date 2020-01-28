@@ -34,18 +34,18 @@ class SdmmParser {
     private val parserFolder: String = System.getProperty("sdmmparser.path")
     private val parserFile: String = if (System.getProperty("os.name").contains("win", ignoreCase = true)) "sdmmparser.exe" else "sdmmparser"
 
-    fun parseDme(envPath: String): Dme {
+    fun parseDme(dmeFile: File): Dme {
         val tmpFile = Files.createTempFile("sdmm.", ".json").toFile()
 
-        val p = ProcessBuilder(parserFolder + File.separator + parserFile, envPath, tmpFile.absolutePath).start()
+        val p = ProcessBuilder(parserFolder + File.separator + parserFile, dmeFile.absolutePath, tmpFile.absolutePath).start()
         val status = p.waitFor()
 
         if (status != 0) {
-            throw RuntimeException("Unable to parse environment with path: $envPath")
+            throw RuntimeException("Unable to parse environment with path: $dmeFile")
         }
 
         val dmeItems = mutableMapOf<String, DmeItem>()
-        val dme = Dme(File(envPath).parent, dmeItems)
+        val dme = Dme(dmeFile.parent, dmeItems)
 
         BufferedReader(FileReader(tmpFile)).use {
             Json.parse(it).asObject().getChildren().forEach { child ->

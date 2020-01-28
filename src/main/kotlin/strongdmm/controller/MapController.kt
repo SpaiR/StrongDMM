@@ -5,20 +5,16 @@ import io.github.spair.dmm.io.reader.DmmReader
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.save.SaveMap
-import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
-import strongdmm.event.MapId
-import strongdmm.util.inline.AbsPath
+import strongdmm.event.*
 import strongdmm.util.inline.RelPath
 import java.io.File
 import java.nio.file.Files
 import kotlin.concurrent.thread
 
 class MapController : EventSender, EventConsumer {
-    private val mapsBackupById: TIntObjectHashMap<AbsPath> = TIntObjectHashMap()
+    private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
-    private val availableMaps: MutableSet<Pair<AbsPath, RelPath>> = mutableSetOf()
+    private val availableMapsPathsWithRelName: MutableSet<Pair<String, RelPath>> = mutableSetOf()
 
     private var selectedMap: Dmm? = null
 
@@ -34,8 +30,8 @@ class MapController : EventSender, EventConsumer {
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
     }
 
-    private fun handleOpen(event: Event<AbsPath, Unit>) {
-        val id = event.body.hashCode()
+    private fun handleOpen(event: Event<File, Unit>) {
+        val id = event.body.absolutePath.hashCode()
 
         if (selectedMap?.id == id) {
             return
@@ -47,7 +43,7 @@ class MapController : EventSender, EventConsumer {
             selectedMap = dmm
             sendEvent(Event.Global.SwitchMap(dmm))
         } else {
-            val mapFile = File(event.body.value)
+            val mapFile = event.body
 
             if (!mapFile.isFile) {
                 return
@@ -59,7 +55,7 @@ class MapController : EventSender, EventConsumer {
 
                 val tmpDmmDataFile = Files.createTempFile("sdmm-", ".dmm.backup").toFile()
                 tmpDmmDataFile.writeBytes(mapFile.readBytes())
-                mapsBackupById.put(id, AbsPath(tmpDmmDataFile))
+                mapsBackupPathsById.put(id, tmpDmmDataFile.absolutePath)
                 tmpDmmDataFile.deleteOnExit()
 
                 openedMaps.add(map)
@@ -74,7 +70,7 @@ class MapController : EventSender, EventConsumer {
         openedMaps.find { it.id == event.body }?.let {
             val mapIndex = openedMaps.indexOf(it)
 
-            mapsBackupById.remove(it.id)
+            mapsBackupPathsById.remove(it.id)
             openedMaps.remove(it)
             sendEvent(Event.Global.CloseMap(it))
 
@@ -99,8 +95,8 @@ class MapController : EventSender, EventConsumer {
         event.reply(openedMaps.toSet())
     }
 
-    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsPath, RelPath>>>) {
-        event.reply(availableMaps.toSet())
+    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsoluteFilePath, RelPath>>>) {
+        event.reply(availableMapsPathsWithRelName.toSet())
     }
 
     private fun handleSwitch(event: Event<MapId, Unit>) {
@@ -115,7 +111,7 @@ class MapController : EventSender, EventConsumer {
     private fun handleSave() {
         selectedMap?.let { map ->
             thread(start = true) {
-                val initialDmmData = DmmReader.readMap(File(mapsBackupById.get(map.id).value))
+                val initialDmmData = DmmReader.readMap(File(mapsBackupPathsById.get(map.id)))
                 SaveMap(map, initialDmmData, true)
             }
         }
@@ -124,15 +120,15 @@ class MapController : EventSender, EventConsumer {
     private fun handleResetEnvironment() {
         selectedMap = null
         openedMaps.clear()
-        availableMaps.clear()
+        availableMapsPathsWithRelName.clear()
     }
 
     private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
         File(event.body.rootPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
-                val abs = AbsPath(it.absolutePath)
+                val abs = it.absolutePath
                 val rel = RelPath(File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
-                availableMaps.add(abs to rel)
+                availableMapsPathsWithRelName.add(abs to rel)
             }
         }
     }

@@ -3,7 +3,6 @@ package strongdmm.byond.dmm
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.dmm.io.TileContent
 import strongdmm.byond.dme.Dme
-import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
 import java.io.File
 import java.nio.file.Paths
@@ -18,7 +17,7 @@ class Dmm(
     }
 
     val mapName: String = mapFile.nameWithoutExtension
-    val absMapPath: AbsPath = AbsPath(mapFile)
+    val absMapPath: String = mapFile.absolutePath
     val relMapPath: RelPath = RelPath(Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString())
     val id: Int = absMapPath.hashCode()
 

@@ -8,7 +8,7 @@ import strongdmm.event.EnvironmentBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.inline.AbsPath
+import java.io.File
 import kotlin.concurrent.thread
 
 class EnvironmentController : EventSender, EventConsumer {
@@ -19,14 +19,14 @@ class EnvironmentController : EventSender, EventConsumer {
         consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
-    private fun handleOpen(event: Event<AbsPath, EnvironmentBlockStatus>) {
+    private fun handleOpen(event: Event<File, EnvironmentBlockStatus>) {
         sendEvent(Event.Global.ResetEnvironment())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            environment = SdmmParser().parseDme(event.body.value)
+            environment = SdmmParser().parseDme(event.body)
 
             GlobalDmiHolder.environmentRootPath = environment.rootPath
             GlobalTileItemHolder.environment = environment

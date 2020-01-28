@@ -8,8 +8,8 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
-import strongdmm.util.inline.AbsPath
 import strongdmm.util.inline.RelPath
+import java.io.File
 
 /**
  * Events are used to do a communication between application components.
@@ -51,17 +51,17 @@ abstract class Event<T, R>(
     }
 
     abstract class EnvironmentController {
-        class Open(body: AbsPath, callback: ((EnvironmentBlockStatus) -> Unit)? = null) : Event<AbsPath, EnvironmentBlockStatus>(body, callback)
+        class Open(body: File, callback: ((EnvironmentBlockStatus) -> Unit)? = null) : Event<File, EnvironmentBlockStatus>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
     abstract class MapController {
-        class Open(body: AbsPath) : Event<AbsPath, Unit>(body, null)
+        class Open(body: File) : Event<File, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class FetchAllOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
-        class FetchAllAvailable(callback: ((Set<Pair<AbsPath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsPath, RelPath>>>(Unit, callback)
+        class FetchAllAvailable(callback: ((Set<Pair<AbsoluteFilePath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsoluteFilePath, RelPath>>>(Unit, callback)
         class Save : Event<Unit, Unit>(Unit, null)
     }
 
