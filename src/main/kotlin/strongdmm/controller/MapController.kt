@@ -6,7 +6,6 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.*
-import strongdmm.util.inline.RelPath
 import java.io.File
 import java.nio.file.Files
 import kotlin.concurrent.thread
@@ -14,7 +13,7 @@ import kotlin.concurrent.thread
 class MapController : EventSender, EventConsumer {
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
-    private val availableMapsPathsWithRelName: MutableSet<Pair<String, RelPath>> = mutableSetOf()
+    private val availableMapsPathsWithVisibleMapsPaths: MutableSet<Pair<String, String>> = mutableSetOf()
 
     private var selectedMap: Dmm? = null
 
@@ -95,8 +94,8 @@ class MapController : EventSender, EventConsumer {
         event.reply(openedMaps.toSet())
     }
 
-    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsoluteFilePath, RelPath>>>) {
-        event.reply(availableMapsPathsWithRelName.toSet())
+    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsoluteFilePath, VisibleFilePath>>>) {
+        event.reply(availableMapsPathsWithVisibleMapsPaths.toSet())
     }
 
     private fun handleSwitch(event: Event<MapId, Unit>) {
@@ -120,15 +119,15 @@ class MapController : EventSender, EventConsumer {
     private fun handleResetEnvironment() {
         selectedMap = null
         openedMaps.clear()
-        availableMapsPathsWithRelName.clear()
+        availableMapsPathsWithVisibleMapsPaths.clear()
     }
 
     private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
         File(event.body.rootPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
-                val abs = it.absolutePath
-                val rel = RelPath(File(event.body.rootPath).toPath().relativize(it.toPath()).toString())
-                availableMapsPathsWithRelName.add(abs to rel)
+                val absoluteFilePath = it.absolutePath
+                val visibleName = File(event.body.rootPath).toPath().relativize(it.toPath()).toString()
+                availableMapsPathsWithVisibleMapsPaths.add(absoluteFilePath to visibleName)
             }
         }
     }

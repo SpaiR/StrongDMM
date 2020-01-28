@@ -3,7 +3,6 @@ package strongdmm.byond.dmm
 import io.github.spair.dmm.io.DmmData
 import io.github.spair.dmm.io.TileContent
 import strongdmm.byond.dme.Dme
-import strongdmm.util.inline.RelPath
 import java.io.File
 import java.nio.file.Paths
 
@@ -16,10 +15,11 @@ class Dmm(
         const val MAP_ID_NONE: Int = -1
     }
 
+    val id: Int = mapFile.absolutePath.hashCode()
     val mapName: String = mapFile.nameWithoutExtension
+
     val absMapPath: String = mapFile.absolutePath
-    val relMapPath: RelPath = RelPath(Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString())
-    val id: Int = absMapPath.hashCode()
+    val visibleMapPath: String = Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString() // Visible to user
 
     var maxX: Int = initialDmmData.maxX
         private set

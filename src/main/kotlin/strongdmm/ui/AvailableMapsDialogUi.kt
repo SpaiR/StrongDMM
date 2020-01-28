@@ -10,7 +10,6 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.imgui.*
-import strongdmm.util.inline.RelPath
 import java.io.File
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
@@ -18,7 +17,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isFirstOpen: Boolean = true
 
     private var selectedMapPath: String? = null // to store an absolute path for currently selected map
-    private var selectionStatus: RelPath = RelPath.NONE // to display a currently selected map (relative path)
+    private var selectionStatus: String = "" // to display a currently selected map (visible path)
 
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
 
@@ -35,7 +34,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         setNextWindowSize(600f, 285f, ImGuiCond.Once)
 
         popupModal("Available Maps") {
-            text("Selected: ${selectionStatus.value}")
+            text("Selected: $selectionStatus")
             setNextItemWidth(getWindowWidth() - 20)
 
             if (isFirstOpen) {
@@ -47,16 +46,16 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
-                    for ((abs, rel) in availableMaps) {
-                        if (mapFilter.length > 0 && !rel.value.contains(mapFilter.get())) {
+                    for ((absoluteFilePath, visibleFilePath) in availableMaps) {
+                        if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get())) {
                             continue
                         }
 
                         bullet()
                         sameLine()
-                        selectable(rel.value, selectedMapPath == abs) {
-                            selectedMapPath = abs
-                            selectionStatus = rel
+                        selectable(visibleFilePath, selectedMapPath == absoluteFilePath) {
+                            selectedMapPath = absoluteFilePath
+                            selectionStatus = visibleFilePath
                         }
                     }
                 })
@@ -82,7 +81,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private fun closePopup() {
         closeCurrentPopup()
         selectedMapPath = null
-        selectionStatus = RelPath.NONE
+        selectionStatus = ""
         sendEvent(Event.CanvasController.Block(false))
     }
 

@@ -11,4 +11,4 @@ typealias CanvasBlockStatus = Boolean
 typealias EnvironmentBlockStatus = Boolean
 
 typealias AbsoluteFilePath = String
-typealias RelativeFilePath = String
+typealias VisibleFilePath = String

@@ -8,7 +8,6 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
-import strongdmm.util.inline.RelPath
 import java.io.File
 
 /**
@@ -28,7 +27,7 @@ import java.io.File
  *
  * !!! IMPORTANT !!!
  * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
- * Inline classes or typealias should be used instead.
+ * Use typealiase instead.
  */
 abstract class Event<T, R>(
     val body: T,
@@ -61,7 +60,7 @@ abstract class Event<T, R>(
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class FetchAllOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
-        class FetchAllAvailable(callback: ((Set<Pair<AbsoluteFilePath, RelPath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsoluteFilePath, RelPath>>>(Unit, callback)
+        class FetchAllAvailable(callback: ((Set<Pair<AbsoluteFilePath, VisibleFilePath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsoluteFilePath, VisibleFilePath>>>(Unit, callback)
         class Save : Event<Unit, Unit>(Unit, null)
     }
 

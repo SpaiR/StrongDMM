@@ -10,7 +10,7 @@ import strongdmm.byond.TYPE_TURF
 
 /**
  * Helper class to do a very specific tile things like objects replacing or vars modifying.
- * No meant to be used in maps themselves.
+ * Not meant to be used in maps themselves.
  */
 class Tile(
     val dmm: Dmm,
