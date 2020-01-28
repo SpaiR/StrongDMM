@@ -16,7 +16,6 @@ import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_AREA
 import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_TURF
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.ReplaceTileAction
-import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -266,12 +265,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilter.set("")
         isShowModifiedVars.set(false)
         variables.clear()
-        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
+        sendEvent(Event.CanvasController.Block(false))
     }
 
     private fun open() {
         isFistOpen = true
-        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
+        sendEvent(Event.CanvasController.Block(true))
         WINDOW_ID++
     }
 

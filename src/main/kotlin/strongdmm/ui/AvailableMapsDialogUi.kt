@@ -6,7 +6,6 @@ import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
 import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
-import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -84,12 +83,12 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = RelPath.NONE
-        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(false)))
+        sendEvent(Event.CanvasController.Block(false))
     }
 
     private fun handleOpen() {
         isDoOpen = true
         isFirstOpen = true
-        sendEvent(Event.CanvasController.Block(CanvasBlockStatus(true)))
+        sendEvent(Event.CanvasController.Block(true))
     }
 }

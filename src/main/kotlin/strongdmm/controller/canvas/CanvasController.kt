@@ -9,6 +9,7 @@ import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
+import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -195,7 +196,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {
-        isBlocked = event.body.isBlocked()
+        isBlocked = event.body
     }
 
     private fun handleCenterPosition(event: Event<MapPos, Unit>) {

@@ -5,7 +5,6 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
-import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.controller.environment.EnvOpenStatus
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.ui.search.SearchRect
