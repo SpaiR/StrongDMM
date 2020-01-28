@@ -3,7 +3,6 @@ package strongdmm.byond.dmm.save
 import gnu.trove.list.array.TLongArrayList
 import io.github.spair.dmm.io.DmmData
 import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.TileItemIdx
 import java.io.File
 
 class SaveMap(
@@ -51,7 +50,7 @@ class SaveMap(
                     }
 
                     if (tileItem.customVars != newVars) {
-                        tile.modifyItemVars(TileItemIdx(index), if (newVars.isEmpty()) null else newVars)
+                        tile.modifyItemVars(index, if (newVars.isEmpty()) null else newVars)
                     }
                 }
             }

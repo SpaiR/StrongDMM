@@ -12,13 +12,15 @@ import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
+import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_AREA
+import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_TURF
 import strongdmm.byond.dmm.TileItem
-import strongdmm.byond.dmm.TileItemIdx
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.canvas.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.TileItemIdx
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -42,7 +44,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var currentTileItem: TileItem? = null // We can open edit menu with a tile item...
     private var currentTile: Tile? = null // ...or with a tile. If opened with the tile, then changes will be applied to a map.
     private var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
-    private var currentTileItemIndex: TileItemIdx = TileItemIdx(0) // This index is an item index inside of a Tile objects list
+    private var currentTileItemIndex: Int = 0 // This index is an item index inside of a Tile objects list
     private var currentEditVar: Var? = null
 
     // Variables filter buffer, resizable string
@@ -192,9 +194,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     private fun getTileItem(): TileItem? {
         return currentTileItem ?: when (currentTileItemIndex) {
-            TileItemIdx.AREA -> currentTile?.area
-            TileItemIdx.TURF -> currentTile?.turf
-            else -> currentTile?.tileItems?.get(currentTileItemIndex.value)
+            TILE_ITEM_IDX_AREA -> currentTile?.area
+            TILE_ITEM_IDX_TURF -> currentTile?.turf
+            else -> currentTile?.tileItems?.get(currentTileItemIndex)
         }
     }
 

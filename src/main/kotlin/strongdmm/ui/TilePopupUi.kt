@@ -6,8 +6,9 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
+import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_AREA
+import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_TURF
 import strongdmm.byond.dmm.TileItem
-import strongdmm.byond.dmm.TileItemIdx
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -48,38 +49,38 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItems(tile: Tile) {
-        tile.area?.let { area -> showTileItemRow(tile, area, TileItemIdx.AREA) }
-        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, TileItemIdx(mob.index)) }
-        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, TileItemIdx(obj.index)) }
-        tile.turf?.let { turf -> showTileItemRow(tile, turf, TileItemIdx.TURF) }
+        tile.area?.let { area -> showTileItemRow(tile, area, TILE_ITEM_IDX_AREA) }
+        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, mob.index) }
+        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, obj.index) }
+        tile.turf?.let { turf -> showTileItemRow(tile, turf, TILE_ITEM_IDX_TURF) }
     }
 
-    private fun showTileItemRow(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
+    private fun showTileItemRow(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
         image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.color.r, tileItem.color.g, tileItem.color.b, 1f)
         sameLine()
-        menu("$name##tile_item_row_$index") { showTileItemOptions(tile, tileItem, index) }
+        menu("$name##tile_item_row_$tileItemIdx") { showTileItemOptions(tile, tileItem, tileItemIdx) }
         sameLine()
         text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
     }
 
-    private fun showTileItemOptions(tile: Tile, tileItem: TileItem, index: TileItemIdx) {
-        if (index != TileItemIdx.AREA && index != TileItemIdx.TURF) {
-            menuItem("Move To Top##move_to_top_$index") {
+    private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
+        if (tileItemIdx != TILE_ITEM_IDX_AREA && tileItemIdx != TILE_ITEM_IDX_TURF) {
+            menuItem("Move To Top##move_to_top_$tileItemIdx") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
-                        tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), index)
+                        tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), tileItemIdx)
                     }
                 ))
 
                 sendEvent(Event.Global.RefreshFrame())
             }
-            menuItem("Move To Bottom##move_to_bottom_$index") {
+            menuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
-                        tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), index)
+                        tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), tileItemIdx)
                     }
                 ))
 
@@ -89,12 +90,12 @@ class TilePopupUi : EventConsumer, EventSender {
             separator()
         }
 
-        menuItem("Make Active Object##make_active_object_$index") {
+        menuItem("Make Active Object##make_active_object_$tileItemIdx") {
             sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
         }
 
-        menuItem("Edit...##edit_variables_$index") {
-            sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, index)))
+        menuItem("Edit...##edit_variables_$tileItemIdx") {
+            sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
     }
 

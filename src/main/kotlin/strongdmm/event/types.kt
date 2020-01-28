@@ -4,3 +4,4 @@ typealias MapId = Int
 
 typealias TileItemType = String
 typealias TileItemId = Long
+typealias TileItemIdx = Int

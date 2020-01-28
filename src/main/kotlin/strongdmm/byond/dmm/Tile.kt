@@ -17,6 +17,11 @@ class Tile(
     val x: Int,
     val y: Int
 ) {
+    companion object {
+        const val TILE_ITEM_IDX_AREA: Int = -1
+        const val TILE_ITEM_IDX_TURF: Int = -2
+    }
+
     lateinit var tileItems: MutableList<TileItem>
         private set
     var area: TileItem? = null
@@ -28,8 +33,8 @@ class Tile(
     lateinit var mobs: List<IndexedValue<TileItem>>
         private set
 
-    private var areaIndex: TileItemIdx = TileItemIdx.AREA
-    private var turfIndex: TileItemIdx = TileItemIdx.TURF
+    private var areaIndex: Int = TILE_ITEM_IDX_AREA
+    private var turfIndex: Int = TILE_ITEM_IDX_TURF
 
     init {
         readObjectsFromMap()
@@ -65,26 +70,26 @@ class Tile(
 
     fun replaceTileItemsId(tileItemsId: LongArray) = dmm.setTileItemsId(x, y, tileItemsId)
 
-    fun modifyItemVars(tileItemIdx: TileItemIdx, vars: Map<String, String>?) {
+    fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
         val itemIdx = when (tileItemIdx) {
-            TileItemIdx.AREA -> areaIndex
-            TileItemIdx.TURF -> turfIndex
+            TILE_ITEM_IDX_AREA -> areaIndex
+            TILE_ITEM_IDX_TURF -> turfIndex
             else -> tileItemIdx
         }
 
         val tileItemsId = dmm.getTileItemsId(x, y)
-        val tileItemType = tileItems[itemIdx.value].type
+        val tileItemType = tileItems[itemIdx].type
 
-        tileItemsId[itemIdx.value] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
+        tileItemsId[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
         readObjectsFromMap()
     }
 
-    fun moveToTop(isMob: Boolean, index: TileItemIdx) {
-        shiftItem((if (isMob) mobs else objs), index, -1)
+    fun moveToTop(isMob: Boolean, tileItemIdx: Int) {
+        shiftItem((if (isMob) mobs else objs), tileItemIdx, -1)
     }
 
-    fun moveToBottom(isMob: Boolean, index: TileItemIdx) {
-        shiftItem((if (isMob) mobs else objs), index, 1)
+    fun moveToBottom(isMob: Boolean, tileItemIdx: Int) {
+        shiftItem((if (isMob) mobs else objs), tileItemIdx, 1)
     }
 
     fun getTileContent(): TileContent {
@@ -103,12 +108,12 @@ class Tile(
         return tileContent
     }
 
-    private fun shiftItem(list: List<IndexedValue<TileItem>>, index: TileItemIdx, shiftValue: Int) {
+    private fun shiftItem(list: List<IndexedValue<TileItem>>, tileItemIdx: Int, shiftValue: Int) {
         if (list.size == 1) {
             return
         }
 
-        list.find { it.index == index.value }?.let {
+        list.find { it.index == tileItemIdx }?.let {
             val relativeIdx = list.indexOf(it)
             val swapWithIdx = relativeIdx + shiftValue
             if (swapWithIdx >= 0 && swapWithIdx < list.size) {
@@ -129,13 +134,13 @@ class Tile(
         // Find area and its index in tile items list
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {
             area = it?.value
-            areaIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.AREA
+            areaIndex = it?.index ?: TILE_ITEM_IDX_AREA
         }
 
         // Find turf and its index in tile items list
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_TURF) }.let {
             turf = it?.value
-            turfIndex = it?.index?.let { idx -> TileItemIdx(idx) } ?: TileItemIdx.TURF
+            turfIndex = it?.index ?: TILE_ITEM_IDX_TURF
         }
 
         // Collect indexed objects and mobs
