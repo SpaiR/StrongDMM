@@ -1,9 +1,10 @@
-package strongdmm.controller.environment
+package strongdmm.controller
 
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.event.EnvironmentBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -18,7 +19,7 @@ class EnvironmentController : EventSender, EventConsumer {
         consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
-    private fun handleOpen(event: Event<AbsPath, EnvOpenStatus>) {
+    private fun handleOpen(event: Event<AbsPath, EnvironmentBlockStatus>) {
         sendEvent(Event.Global.ResetEnvironment())
 
         GlobalDmiHolder.resetEnvironment()
@@ -32,7 +33,7 @@ class EnvironmentController : EventSender, EventConsumer {
 
             System.gc()
 
-            event.reply(EnvOpenStatus(true))
+            event.reply(true)
             sendEvent(Event.Global.SwitchEnvironment(environment))
         }
     }

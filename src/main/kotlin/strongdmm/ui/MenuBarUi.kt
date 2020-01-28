@@ -53,7 +53,7 @@ class MenuBarUi : EventSender, EventConsumer {
             progressText = "Loading " + path.value.replace('\\', '/').substringAfterLast("/")
             sendEvent(Event.EnvironmentController.Open(path) {
                 progressText = null
-                isEnvironmentOpen = it.isOpen()
+                isEnvironmentOpen = it
             })
         }
     }
