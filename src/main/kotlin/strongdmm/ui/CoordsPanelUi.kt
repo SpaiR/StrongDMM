@@ -4,7 +4,6 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -18,7 +17,7 @@ class CoordsPanelUi : EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
-    private var selectedMapId: MapId = MapId.NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
@@ -60,7 +59,7 @@ class CoordsPanelUi : EventConsumer {
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         if (selectedMapId == event.body.id) {
-            selectedMapId = MapId.NONE
+            selectedMapId = Dmm.MAP_ID_NONE
             isHasMap = false
         }
     }

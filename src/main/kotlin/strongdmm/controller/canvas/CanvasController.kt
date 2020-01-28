@@ -1,5 +1,6 @@
 package strongdmm.controller.canvas
 
+import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.ImGui
 import imgui.ImVec2
 import imgui.enums.ImGuiHoveredFlags
@@ -7,7 +8,6 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -16,6 +16,7 @@ import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.RMB
+import strongdmm.util.extension.getOrPut
 import strongdmm.window.AppWindow
 
 class CanvasController : EventSender, EventConsumer {
@@ -25,7 +26,7 @@ class CanvasController : EventSender, EventConsumer {
         private const val MAX_SCALE: Int = 12
     }
 
-    private val renderDataStorage: MutableMap<MapId, RenderData> = mutableMapOf()
+    private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
     private lateinit var renderData: RenderData
 
     private var isBlocked: Boolean = false
@@ -163,7 +164,7 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         canvasRenderer.markedPosition = null
-        renderData = renderDataStorage.getOrPut(event.body.id) { RenderData(event.body.id) }
+        renderData = renderDataStorageByMapId.getOrPut(event.body.id) { RenderData(event.body.id) }
         maxX = event.body.maxX
         maxY = event.body.maxY
         canvasRenderer.invalidateCanvasTexture()
@@ -176,7 +177,7 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleResetEnvironment() {
         canvasRenderer.markedPosition = null
-        renderDataStorage.clear()
+        renderDataStorageByMapId.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
     }
@@ -186,7 +187,7 @@ class CanvasController : EventSender, EventConsumer {
             canvasRenderer.markedPosition = null
         }
 
-        isHasMap = renderDataStorage.remove(event.body.id) !== renderData
+        isHasMap = renderDataStorageByMapId.remove(event.body.id) !== renderData
     }
 
     private fun handleRefreshFrame() {

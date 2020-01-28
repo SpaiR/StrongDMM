@@ -3,13 +3,13 @@ package strongdmm.controller
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.byond.dmm.TileItemType
 import strongdmm.controller.action.undoable.MultiAction
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.TileItemType
 
 class MapModifierController : EventConsumer, EventSender {
     init {

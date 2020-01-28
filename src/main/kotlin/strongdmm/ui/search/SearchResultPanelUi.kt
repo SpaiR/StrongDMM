@@ -5,7 +5,6 @@ import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCond
 import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapId
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
@@ -18,7 +17,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableSet<SearchResult> = mutableSetOf()
     private val panelsOpenState: MutableMap<String, ImBool> = mutableMapOf()
 
-    private var currentMapId: MapId = MapId.NONE
+    private var currentMapId: Int = Dmm.MAP_ID_NONE
 
     private val replaceType: ImString = ImString(50).apply { inputData.isResizable = true }
     private var isReplaceEnabled: Boolean = false
@@ -176,7 +175,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         if (event.body.id == currentMapId) {
-            currentMapId = MapId.NONE
+            currentMapId = Dmm.MAP_ID_NONE
             clearAll()
         }
     }

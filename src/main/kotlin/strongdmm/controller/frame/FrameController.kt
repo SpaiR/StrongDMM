@@ -9,7 +9,6 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.ColorExtractor
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
-import strongdmm.byond.dmm.MapId
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -25,7 +24,7 @@ class FrameController : EventConsumer, EventSender {
 
     private val colorExtractor = ColorExtractor()
     private val cache: MutableList<FrameMesh> = mutableListOf()
-    private var selectedMapId: MapId = MapId.NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
@@ -48,13 +47,13 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private fun handleResetEnvironment() {
-        selectedMapId = MapId.NONE
+        selectedMapId = Dmm.MAP_ID_NONE
         cache.clear()
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         if (selectedMapId == event.body.id) {
-            selectedMapId = MapId.NONE
+            selectedMapId = Dmm.MAP_ID_NONE
             cache.clear()
         }
     }

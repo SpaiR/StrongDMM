@@ -13,10 +13,14 @@ class Dmm(
     initialDmmData: DmmData,
     dme: Dme
 ) {
+    companion object {
+        const val MAP_ID_NONE: Int = -1
+    }
+
     val mapName: String = mapFile.nameWithoutExtension
     val absMapPath: AbsPath = AbsPath(mapFile)
     val relMapPath: RelPath = RelPath(Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString())
-    val id: MapId = MapId(absMapPath)
+    val id: Int = absMapPath.hashCode()
 
     var maxX: Int = initialDmmData.maxX
         private set
@@ -57,15 +61,12 @@ class Dmm(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as Dmm
-
-        if (id.value != other.id.value) return false
-
+        if (id != other.id) return false
         return true
     }
 
     override fun hashCode(): Int {
-        return id.value
+        return id
     }
 }

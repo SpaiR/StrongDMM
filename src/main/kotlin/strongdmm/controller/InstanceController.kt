@@ -3,9 +3,7 @@ package strongdmm.controller
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.*
-import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.*
 import strongdmm.ui.search.SearchRect
 
 class InstanceController : EventConsumer, EventSender {
