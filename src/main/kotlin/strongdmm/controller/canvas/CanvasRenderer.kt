@@ -167,7 +167,7 @@ class CanvasRenderer {
         var currentTexture = -1
 
         for (frameMesh in frameMeshes) {
-            val (sprite, x1, y1, x2, y2, color) = frameMesh
+            val (sprite, x1, y1, x2, y2, colorR, colorG, colorB, colorA) = frameMesh
 
             val rx1 = x1 + renderData.viewTranslateX
             val ry1 = y1 + renderData.viewTranslateY
@@ -190,7 +190,7 @@ class CanvasRenderer {
                 glBegin(GL_QUADS)
             }
 
-            glColor4f(color.r, color.g, color.b, color.a)
+            glColor4f(colorR, colorG, colorB, colorA)
 
             glTexCoord2f(sprite.u2, sprite.v1)
             glVertex2d(rx2, ry2)

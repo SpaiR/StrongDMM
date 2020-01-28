@@ -2,7 +2,10 @@ package strongdmm.event
 
 import imgui.ImBool
 import strongdmm.byond.dme.Dme
-import strongdmm.byond.dmm.*
+import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.Tile
+import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh

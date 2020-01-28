@@ -97,7 +97,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
                 sameLine()
                 withIndent(1f) {
                     GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir).run {
-                        image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2, tileItem.color.r, tileItem.color.g, tileItem.color.b, 1f)
+                        image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
                     }
                 }
 

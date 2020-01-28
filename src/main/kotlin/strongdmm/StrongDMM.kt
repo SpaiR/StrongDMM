@@ -1,11 +1,11 @@
 package strongdmm
 
+import strongdmm.controller.EnvironmentController
 import strongdmm.controller.InstanceController
 import strongdmm.controller.MapController
 import strongdmm.controller.MapModifierController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
-import strongdmm.controller.EnvironmentController
 import strongdmm.controller.frame.FrameController
 import strongdmm.ui.*
 import strongdmm.ui.search.SearchResultPanelUi

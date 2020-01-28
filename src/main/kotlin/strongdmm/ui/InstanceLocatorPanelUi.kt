@@ -7,7 +7,9 @@ import imgui.ImString
 import imgui.enums.ImGuiCond
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
 import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
-import strongdmm.byond.dmm.*
+import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult

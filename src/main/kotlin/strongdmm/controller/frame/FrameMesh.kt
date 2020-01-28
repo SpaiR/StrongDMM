@@ -1,7 +1,6 @@
 package strongdmm.controller.frame
 
 import strongdmm.byond.dmi.IconSprite
-import strongdmm.byond.dmm.Color
 
 data class FrameMesh(
     val sprite: IconSprite,
@@ -9,6 +8,9 @@ data class FrameMesh(
     val y1: Int,
     val x2: Int,
     val y2: Int,
-    val color: Color,
+    val colorR: Float,
+    val colorG: Float,
+    val colorB: Float,
+    val colorA: Float,
     val depth: Float
 )

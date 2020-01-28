@@ -2,7 +2,9 @@ package strongdmm.controller
 
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
-import strongdmm.byond.dmm.*
+import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
 import strongdmm.ui.search.SearchRect
 

@@ -83,7 +83,10 @@ class FrameController : EventConsumer, EventSender {
                         val y1 = (y - 1) * currentIconSize + tileItem.pixelY
                         val x2 = x1 + sprite.iconWidth
                         val y2 = y1 + sprite.iconHeight
-                        val color = tileItem.color
+                        val colorR = tileItem.colorR
+                        val colorG = tileItem.colorG
+                        val colorB = tileItem.colorB
+                        val colorA = tileItem.colorA
                         val depth = tileItem.plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
 
                         val specificDepth = when {
@@ -92,7 +95,7 @@ class FrameController : EventConsumer, EventSender {
                             else -> 0
                         }
 
-                        cache.add(FrameMesh(sprite, x1, y1, x2, y2, color, depth + specificDepth))
+                        cache.add(FrameMesh(sprite, x1, y1, x2, y2, colorR, colorG, colorB, colorA, depth + specificDepth))
                     }
                 }
             }

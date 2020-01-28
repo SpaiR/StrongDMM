@@ -20,8 +20,20 @@ class TileItem(
     val pixelX: Int = getVarInt(VAR_PIXEL_X) ?: 0
     val pixelY: Int = getVarInt(VAR_PIXEL_Y) ?: 0
     val dir: Int = getVarInt(VAR_DIR) ?: 0
-    val color: Color = ColorExtractor.extract(getVarText(VAR_COLOR), getVarInt(VAR_ALPHA) ?: 1)
     val name: String = getVarText(VAR_NAME) ?: ""
+    val colorR: Float
+    val colorG: Float
+    val colorB: Float
+    val colorA: Float
+
+    init {
+        ColorExtractor.extract(getVarText(VAR_COLOR), getVarInt(VAR_ALPHA) ?: 1).run {
+            colorR = r
+            colorG = g
+            colorB = b
+            colorA = a
+        }
+    }
 
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {

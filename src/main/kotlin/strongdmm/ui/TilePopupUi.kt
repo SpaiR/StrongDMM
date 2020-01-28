@@ -59,7 +59,7 @@ class TilePopupUi : EventConsumer, EventSender {
         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
-        image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.color.r, tileItem.color.g, tileItem.color.b, 1f)
+        image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
         sameLine()
         menu("$name##tile_item_row_$tileItemIdx") { showTileItemOptions(tile, tileItem, tileItemIdx) }
         sameLine()
