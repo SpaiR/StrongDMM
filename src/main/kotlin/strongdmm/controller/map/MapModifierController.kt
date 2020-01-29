@@ -1,4 +1,4 @@
-package strongdmm.controller
+package strongdmm.controller.map
 
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPos

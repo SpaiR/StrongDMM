@@ -1,4 +1,4 @@
-package strongdmm.controller
+package strongdmm.controller.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
 import io.github.spair.dmm.io.reader.DmmReader

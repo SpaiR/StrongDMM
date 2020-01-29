@@ -2,8 +2,8 @@ package strongdmm
 
 import strongdmm.controller.EnvironmentController
 import strongdmm.controller.InstanceController
-import strongdmm.controller.MapHolderController
-import strongdmm.controller.MapModifierController
+import strongdmm.controller.map.MapHolderController
+import strongdmm.controller.map.MapModifierController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
