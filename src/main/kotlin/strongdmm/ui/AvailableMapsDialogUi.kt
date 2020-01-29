@@ -45,7 +45,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             inputText("##maps_path_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
-                sendEvent(Event.MapController.FetchAllAvailable { availableMaps ->
+                sendEvent(Event.MapHolderController.FetchAllAvailable { availableMaps ->
                     for ((absoluteFilePath, visibleFilePath) in availableMaps) {
                         if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get())) {
                             continue
@@ -73,7 +73,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     private fun openSelectedMapAndClosePopup() {
         selectedMapPath?.let {
-            sendEvent(Event.MapController.Open(File(it)))
+            sendEvent(Event.MapHolderController.Open(File(it)))
             closePopup()
         }
     }

@@ -10,7 +10,7 @@ import java.io.File
 import java.nio.file.Files
 import kotlin.concurrent.thread
 
-class MapController : EventSender, EventConsumer {
+class MapHolderController : EventSender, EventConsumer {
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
     private val availableMapsPathsWithVisibleMapsPaths: MutableSet<Pair<String, String>> = mutableSetOf()
@@ -18,13 +18,13 @@ class MapController : EventSender, EventConsumer {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(Event.MapController.Open::class.java, ::handleOpen)
-        consumeEvent(Event.MapController.Close::class.java, ::handleClose)
-        consumeEvent(Event.MapController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(Event.MapController.FetchAllOpened::class.java, ::handleFetchAllOpened)
-        consumeEvent(Event.MapController.FetchAllAvailable::class.java, ::handleFetchAllAvailable)
-        consumeEvent(Event.MapController.Switch::class.java, ::handleSwitch)
-        consumeEvent(Event.MapController.Save::class.java, ::handleSave)
+        consumeEvent(Event.MapHolderController.Open::class.java, ::handleOpen)
+        consumeEvent(Event.MapHolderController.Close::class.java, ::handleClose)
+        consumeEvent(Event.MapHolderController.FetchSelected::class.java, ::handleFetchSelected)
+        consumeEvent(Event.MapHolderController.FetchAllOpened::class.java, ::handleFetchAllOpened)
+        consumeEvent(Event.MapHolderController.FetchAllAvailable::class.java, ::handleFetchAllAvailable)
+        consumeEvent(Event.MapHolderController.Switch::class.java, ::handleSwitch)
+        consumeEvent(Event.MapHolderController.Save::class.java, ::handleSave)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
     }

@@ -13,7 +13,7 @@ import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventSender {
     fun process() {
-        sendEvent(Event.MapController.FetchAllOpened { openedMaps ->
+        sendEvent(Event.MapHolderController.FetchAllOpened { openedMaps ->
             if (openedMaps.isEmpty()) {
                 return@FetchAllOpened
             }
@@ -22,12 +22,12 @@ class OpenedMapsPanelUi : EventSender {
             setNextWindowSize(150f, 150f, ImGuiCond.Once)
             setNextWindowCollapsed(true, ImGuiCond.Once)
 
-            sendEvent(Event.MapController.FetchSelected { selectedMap ->
+            sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
                 window("${selectedMap?.mapName}###opened_maps") {
                     openedMaps.forEach { map ->
                         pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                         smallButton("X##close_map_${map.visibleMapPath}") {
-                            sendEvent(Event.MapController.Close(map.id))
+                            sendEvent(Event.MapHolderController.Close(map.id))
                         }
                         popStyleColor()
 
@@ -35,7 +35,7 @@ class OpenedMapsPanelUi : EventSender {
 
                         if (selectable(map.mapName, selectedMap == map)) {
                             if (selectedMap != map) {
-                                sendEvent(Event.MapController.Switch(map.id))
+                                sendEvent(Event.MapHolderController.Switch(map.id))
                             }
                         }
                         setItemHoveredTooltip(map.visibleMapPath)

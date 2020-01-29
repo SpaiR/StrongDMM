@@ -57,7 +57,7 @@ abstract class Event<T, R>(
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
-    abstract class MapController {
+    abstract class MapHolderController {
         class Open(body: File) : Event<File, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)

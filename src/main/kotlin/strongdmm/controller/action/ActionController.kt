@@ -25,7 +25,7 @@ class ActionController : EventConsumer, EventSender {
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
 
     private fun updateActionBalance(isPositive: Boolean) {
-        sendEvent(Event.MapController.FetchSelected { currentMap ->
+        sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
             if (currentMap != null) {
                 val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
                 val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
@@ -42,7 +42,7 @@ class ActionController : EventConsumer, EventSender {
     }
 
     private fun handleAddAction(event: Event<Undoable, Unit>) {
-        sendEvent(Event.MapController.FetchSelected { currentMap ->
+        sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
             if (currentMap != null) {
                 getMapActionStack(currentMap).let { (undo, redo) ->
                     redo.clear()
@@ -54,7 +54,7 @@ class ActionController : EventConsumer, EventSender {
     }
 
     private fun handleUndoAction() {
-        sendEvent(Event.MapController.FetchSelected { currentMap ->
+        sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
             if (currentMap != null) {
                 getMapActionStack(currentMap).let { (undo, redo) ->
                     redo.push(undo.pop().doAction())
@@ -66,7 +66,7 @@ class ActionController : EventConsumer, EventSender {
     }
 
     private fun handleRedoAction() {
-        sendEvent(Event.MapController.FetchSelected { currentMap ->
+        sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
             if (currentMap != null) {
                 getMapActionStack(currentMap).let { (undo, redo) ->
                     undo.push(redo.pop().doAction())

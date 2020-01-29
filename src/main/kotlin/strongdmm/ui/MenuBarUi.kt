@@ -61,7 +61,7 @@ class MenuBarUi : EventSender, EventConsumer {
     private fun openMap() {
         sendEvent(Event.EnvironmentController.Fetch { environment ->
             NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
-                sendEvent(Event.MapController.Open(path))
+                sendEvent(Event.MapHolderController.Open(path))
             }
         })
     }
@@ -71,7 +71,7 @@ class MenuBarUi : EventSender, EventConsumer {
     }
 
     private fun save() {
-        sendEvent(Event.MapController.Save())
+        sendEvent(Event.MapHolderController.Save())
     }
 
     private fun undo() {

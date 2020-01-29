@@ -133,7 +133,7 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun processTilePopupClick() {
         if (ImGui.isMouseClicked(RMB)) {
-            sendEvent(Event.MapController.FetchSelected {
+            sendEvent(Event.MapHolderController.FetchSelected {
                 if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
                     sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
                 }

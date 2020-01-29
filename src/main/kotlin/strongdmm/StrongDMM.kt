@@ -2,7 +2,7 @@ package strongdmm
 
 import strongdmm.controller.EnvironmentController
 import strongdmm.controller.InstanceController
-import strongdmm.controller.MapController
+import strongdmm.controller.MapHolderController
 import strongdmm.controller.MapModifierController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
@@ -26,7 +26,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val searchResultPanelUi = SearchResultPanelUi()
 
     private val environmentController = EnvironmentController()
-    private val mapController = MapController()
+    private val mapController = MapHolderController()
     private val canvasController = CanvasController()
     private val frameController = FrameController()
     private val actionController = ActionController()

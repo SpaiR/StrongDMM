@@ -20,7 +20,7 @@ class MapModifierController : EventConsumer, EventSender {
     }
 
     private fun handleReplaceTypeInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(Event.MapController.FetchSelected { dmm ->
+        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
                 val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first, null)
                 val replaceActions = mutableListOf<Undoable>()
@@ -39,7 +39,7 @@ class MapModifierController : EventConsumer, EventSender {
     }
 
     private fun handleReplaceIdInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(Event.MapController.FetchSelected { dmm ->
+        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
                 val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first, null)
                 val replaceActions = mutableListOf<Undoable>()
@@ -58,7 +58,7 @@ class MapModifierController : EventConsumer, EventSender {
     }
 
     private fun handleDeleteTypeInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(Event.MapController.FetchSelected { dmm ->
+        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
                 val deleteActions = mutableListOf<Undoable>()
 
@@ -76,7 +76,7 @@ class MapModifierController : EventConsumer, EventSender {
     }
 
     private fun handleDeleteIdInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(Event.MapController.FetchSelected { dmm ->
+        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
                 val deleteActions = mutableListOf<Undoable>()
 

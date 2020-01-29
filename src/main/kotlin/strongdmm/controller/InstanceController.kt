@@ -63,7 +63,7 @@ class InstanceController : EventConsumer, EventSender {
     private fun handleFindPositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(Event.MapController.FetchSelected { map ->
+        sendEvent(Event.MapHolderController.FetchSelected { map ->
             if (map != null && event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {
@@ -85,7 +85,7 @@ class InstanceController : EventConsumer, EventSender {
     private fun handleFindPositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(Event.MapController.FetchSelected { map ->
+        sendEvent(Event.MapHolderController.FetchSelected { map ->
             if (map != null) {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {

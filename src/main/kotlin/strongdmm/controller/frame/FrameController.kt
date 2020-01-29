@@ -68,7 +68,7 @@ class FrameController : EventConsumer, EventSender {
             return
         }
 
-        sendEvent(Event.MapController.FetchSelected { map ->
+        sendEvent(Event.MapHolderController.FetchSelected { map ->
             if (map == null) {
                 event.reply(emptyList())
                 return@FetchSelected
