@@ -14,7 +14,7 @@ import strongdmm.util.RMB
 import strongdmm.util.imgui.*
 
 class SearchResultPanelUi : EventConsumer, EventSender {
-    private val searchResults: MutableSet<SearchResult> = mutableSetOf()
+    private val searchResults: MutableMap<String, SearchResult> = mutableMapOf()
     private val panelsOpenState: MutableMap<String, ImBool> = mutableMapOf()
 
     private var currentMapId: Int = Dmm.MAP_ID_NONE
@@ -36,7 +36,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
         val searchResIterator = searchResults.iterator()
         while (searchResIterator.hasNext()) {
-            val searchResult = searchResIterator.next()
+            val (_, searchResult) = searchResIterator.next()
 
             if (searchResult.positions.isEmpty()) {
                 searchResIterator.remove()
@@ -181,7 +181,6 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleOpen(event: Event<SearchResult, Unit>) {
-        searchResults.remove(event.body)
-        searchResults.add(event.body)
+        searchResults[event.body.searchValue] = event.body
     }
 }
