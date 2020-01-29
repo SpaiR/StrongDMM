@@ -4,8 +4,7 @@ import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
-import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
-import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
+import org.lwjgl.glfw.GLFW.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -64,10 +63,12 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             button("Open", block = ::openSelectedMapAndClosePopup)
             sameLine()
             button("Cancel", block = ::closePopup)
-        }
 
-        if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER)) {
-            openSelectedMapAndClosePopup()
+            if (isKeyPressed(GLFW_KEY_ENTER) || isKeyPressed(GLFW_KEY_KP_ENTER)) {
+                openSelectedMapAndClosePopup()
+            } else if (isKeyPressed(GLFW_KEY_ESCAPE)) {
+                closePopup()
+            }
         }
     }
 
