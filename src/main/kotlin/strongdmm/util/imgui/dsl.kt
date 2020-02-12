@@ -2,7 +2,7 @@ package strongdmm.util.imgui
 
 import imgui.ImBool
 import imgui.ImGui
-import strongdmm.util.LMB
+import imgui.enums.ImGuiMouseButton
 
 inline fun popupModal(name: String, imGuiWindowFlags: Int = 0, block: () -> Unit) {
     if (ImGui.beginPopupModal(name, imGuiWindowFlags)) {
@@ -103,7 +103,7 @@ inline fun menuItem(label: String, shortcut: String = "", selected: ImBool, enab
     }
 }
 
-inline fun popupContextItem(strId: String, mouse: Int = LMB, block: () -> Unit) {
+inline fun popupContextItem(strId: String, mouse: Int = ImGuiMouseButton.Left, block: () -> Unit) {
     if (ImGui.beginPopupContextItem(strId, mouse)) {
         block()
         ImGui.endPopup()

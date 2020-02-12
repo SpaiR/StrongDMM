@@ -4,13 +4,13 @@ import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCond
+import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.RMB
 import strongdmm.util.imgui.*
 
 class SearchResultPanelUi : EventConsumer, EventSender {
@@ -96,7 +96,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                         }
                         setItemHoveredTooltip("[${searchPos.idx}]")
 
-                        if (isItemClicked(RMB)) {
+                        if (isItemClicked(ImGuiMouseButton.Right)) {
                             if (replaceType.length == 0) {
                                 delete(searchPos, searchResult.isSearchById)
                                 posIterator.remove()

@@ -4,13 +4,13 @@ import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImInt
 import imgui.enums.ImGuiCond
+import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.util.RMB
 import strongdmm.util.imgui.*
 
 class ObjectPanelUi : EventConsumer, EventSender {
@@ -42,7 +42,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         val title = if (tileItems?.size ?: 0 > 0) "Object (${tileItems!!.size})###object_panel" else "Object###object_panel"
 
         window(title) {
-            popupContextItem("object_panel_config", RMB) {
+            popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
                 checkbox("Show Variables Preview", showVarsPreview)
                 checkbox("Show Instance Locator", showInstanceLocator)
                 setNextItemWidth(75f)
@@ -66,7 +66,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
                     setScrollHereY()
                     scrolledToItem = true
                 }
-                popupContextItem("object_options_$index", RMB) {
+                popupContextItem("object_options_$index", ImGuiMouseButton.Right) {
                     menuItem("Find Instance on Map") {
                         sendEvent(Event.InstanceLocatorPanelUi.SearchById(tileItem.id))
                     }

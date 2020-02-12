@@ -4,6 +4,7 @@ import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.ImGui
 import imgui.ImVec2
 import imgui.enums.ImGuiHoveredFlags
+import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
@@ -14,9 +15,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.util.DEFAULT_ICON_SIZE
-import strongdmm.util.LMB
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.RMB
 import strongdmm.util.extension.getOrPut
 import strongdmm.window.AppWindow
 
@@ -77,7 +76,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processViewTranslate() {
-        if (!ImGui.isMouseDown(LMB)) {
+        if (!ImGui.isMouseDown(ImGuiMouseButton.Left)) {
             return
         }
 
@@ -132,7 +131,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processTilePopupClick() {
-        if (ImGui.isMouseClicked(RMB)) {
+        if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
             sendEvent(Event.MapHolderController.FetchSelected {
                 if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
                     sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))

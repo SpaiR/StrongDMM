@@ -1,5 +1,6 @@
 package strongdmm.window
 
+import imgui.ImFontConfig
 import imgui.ImGui
 import imgui.callbacks.ImStrConsumer
 import imgui.callbacks.ImStrSupplier
@@ -23,7 +24,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
 
-// Modified https://github.com/SpaiR/imgui-java/blob/v1.74-0.4/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
+// Modified https://github.com/SpaiR/imgui-java/blob/v1.75-0.6/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
 abstract class AppWindow(title: String) {
     companion object {
         private const val DEFAULT_WIDTH = 1280
@@ -153,6 +154,7 @@ abstract class AppWindow(title: String) {
         mouseCursors[ImGuiMouseCursor.ResizeNESW] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
         mouseCursors[ImGuiMouseCursor.ResizeNWSE] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
         mouseCursors[ImGuiMouseCursor.Hand] = glfwCreateStandardCursor(GLFW_HAND_CURSOR)
+        mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
 
         // Here goes GLFW callbacks to update user input stuff in ImGui
         glfwSetKeyCallback(window) { _, key: Int, _, action: Int, _ ->
@@ -206,6 +208,21 @@ abstract class AppWindow(title: String) {
                 return glfwGetClipboardString(window)
             }
         })
+
+        // Fonts configuration
+        val fontAtlas = io.fonts
+        fontAtlas.addFontDefault() // ProggyClean.ttf, 13px
+
+        val fontConfig = ImFontConfig()
+
+        fontConfig.mergeMode = true
+        fontConfig.pixelSnapH = true
+
+        javaClass.classLoader.getResourceAsStream("basis33.ttf")!!.use {
+            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 16f, fontConfig, fontAtlas.glyphRangesCyrillic)
+        }
+
+        fontConfig.destroy()
 
         // Initialize renderer itself
         imGuiGl3.init()
