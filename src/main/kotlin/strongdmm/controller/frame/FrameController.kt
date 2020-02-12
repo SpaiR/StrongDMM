@@ -6,7 +6,6 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmi.GlobalDmiHolder
-import strongdmm.byond.dmm.ColorExtractor
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
@@ -22,7 +21,6 @@ class FrameController : EventConsumer, EventSender {
         private const val MOB_DEPTH: Short = 10
     }
 
-    private val colorExtractor = ColorExtractor()
     private val cache: MutableList<FrameMesh> = mutableListOf()
     private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
@@ -74,10 +72,21 @@ class FrameController : EventConsumer, EventSender {
                 return@FetchSelected
             }
 
+            var filteredTypes: Set<String>? = null
+
+            sendEvent(Event.LayersFilterController.Fetch {
+                filteredTypes = it
+            })
+
             for (x in 1..map.maxX) {
                 for (y in 1..map.maxY) {
-                    map.getTileItemsId(x, y).forEach { tileItemId ->
+                    for (tileItemId in map.getTileItemsId(x, y)) {
                         val tileItem = GlobalTileItemHolder.getById(tileItemId)
+
+                        if (filteredTypes != null && filteredTypes!!.contains(tileItem.type)) {
+                            continue
+                        }
+
                         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
                         val x1 = (x - 1) * currentIconSize + tileItem.pixelX
                         val y1 = (y - 1) * currentIconSize + tileItem.pixelY

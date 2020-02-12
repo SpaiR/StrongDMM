@@ -46,6 +46,7 @@ abstract class Event<T, R>(
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
+        class RefreshLayersFilter(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
 
         abstract class Provider {
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
@@ -123,6 +124,17 @@ abstract class Event<T, R>(
         class ReplaceIdInPositions(body: Pair<TileItemType, List<Pair<TileItem, MapPos>>>) : Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>(body, null)
         class DeleteTypeInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
         class DeleteIdInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
+    }
+
+    abstract class LayersFilterPanelUi {
+        class Open : Event<Unit, Unit>(Unit, null)
+    }
+
+    abstract class LayersFilterController {
+        class FilterById(body: DmeItemIdArray) : Event<DmeItemIdArray, Unit>(body, null)
+        class ShowByType(body: DmeItemType) : Event<DmeItemType, Unit>(body, null)
+        class HideByType(body: DmeItemType) : Event<DmeItemType, Unit>(body, null)
+        class Fetch(callback: ((Set<DmeItemType>) -> Unit)) : Event<Unit, Set<DmeItemType>>(Unit, callback)
     }
 
     fun reply(response: R) {

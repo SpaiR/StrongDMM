@@ -66,7 +66,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             setItemHoveredTooltip("Show icons")
             sameLine()
             setNextItemWidth(-1f)
-            inputText("##filter", typeFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS chars to apply")
+            inputText("##types_filter", typeFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS chars to apply")
 
             separator()
 

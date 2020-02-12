@@ -6,7 +6,7 @@ import strongdmm.byond.VAR_TURF
 
 class Dme(
     val rootPath: String,
-    private val dmeItems: Map<String, DmeItem>
+    val items: Map<String, DmeItem>
 ) {
     lateinit var basicTurfType: String
         private set
@@ -19,5 +19,5 @@ class Dme(
         basicAreaType = world.getVar(VAR_AREA)!!
     }
 
-    fun getItem(type: String): DmeItem? = dmeItems[type]
+    fun getItem(type: String): DmeItem? = items[type]
 }

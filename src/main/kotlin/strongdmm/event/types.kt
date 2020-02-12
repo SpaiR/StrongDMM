@@ -2,6 +2,9 @@ package strongdmm.event
 
 typealias MapId = Int
 
+typealias DmeItemIdArray = LongArray
+typealias DmeItemType = String
+
 typealias TileItemType = String
 typealias TileItemId = Long
 typealias TileItemIdx = Int

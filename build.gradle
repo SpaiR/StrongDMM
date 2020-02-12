@@ -46,7 +46,7 @@ dependencies {
 
     implementation "io.imgui.java:binding:$imguiVersion"
     implementation "io.imgui.java:lwjgl3:$imguiVersion"
-    implementation "io.imgui.java:$nativesType:$imguiVersion"
+    runtimeOnly "io.imgui.java:$nativesType:$imguiVersion"
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 

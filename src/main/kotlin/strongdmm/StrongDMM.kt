@@ -2,11 +2,12 @@ package strongdmm
 
 import strongdmm.controller.EnvironmentController
 import strongdmm.controller.InstanceController
-import strongdmm.controller.map.MapHolderController
-import strongdmm.controller.map.MapModifierController
+import strongdmm.controller.LayersFilterController
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
+import strongdmm.controller.map.MapHolderController
+import strongdmm.controller.map.MapModifierController
 import strongdmm.ui.*
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
@@ -24,6 +25,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val objectPanelUi = ObjectPanelUi()
     private val instanceLocatorPanelUi = InstanceLocatorPanelUi()
     private val searchResultPanelUi = SearchResultPanelUi()
+    private val layersFilterPanelUi = LayersFilterPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapController = MapHolderController()
@@ -32,6 +34,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val actionController = ActionController()
     private val instanceController = InstanceController()
     private val mapModifierController = MapModifierController()
+    private val layersFilterController = LayersFilterController()
 
     init {
         instanceLocatorPanelUi.postInit()
@@ -49,6 +52,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         objectPanelUi.process()
         instanceLocatorPanelUi.process()
         searchResultPanelUi.process()
+        layersFilterPanelUi.process()
 
         // Controllers
         canvasController.process()

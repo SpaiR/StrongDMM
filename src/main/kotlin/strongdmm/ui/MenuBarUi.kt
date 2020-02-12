@@ -1,8 +1,13 @@
 package strongdmm.ui
 
+import imgui.ImBool
 import imgui.ImGui
 import imgui.ImGui.separator
 import imgui.ImGui.text
+import strongdmm.byond.TYPE_AREA
+import strongdmm.byond.TYPE_MOB
+import strongdmm.byond.TYPE_OBJ
+import strongdmm.byond.TYPE_TURF
 import strongdmm.controller.action.ActionStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -14,10 +19,15 @@ import strongdmm.util.imgui.menuItem
 
 class MenuBarUi : EventSender, EventConsumer {
     private var progressText: String? = null
-    private var isEnvironmentOpen: Boolean = false
+    private var isEnvironmentOpened: Boolean = false
 
     private var isUndoEnabled: Boolean = false
     private var isRedoEnabled: Boolean = false
+
+    private val isAreaLayerActive: ImBool = ImBool(true)
+    private val isTurfLayerActive: ImBool = ImBool(true)
+    private val isObjLayerActive: ImBool = ImBool(true)
+    private val isMobLayerActive: ImBool = ImBool(true)
 
     init {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
@@ -29,15 +39,23 @@ class MenuBarUi : EventSender, EventConsumer {
             menu("File") {
                 menuItem("Open Environment...", enabled = progressText == null, block = ::openEnvironment)
                 separator()
-                menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpen, block = ::openMap)
-                menuItem("Open Available Map", enabled = isEnvironmentOpen, block = ::openAvailableMap)
+                menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpened, block = ::openMap)
+                menuItem("Open Available Map", enabled = isEnvironmentOpened, block = ::openAvailableMap)
                 separator()
-                menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpen, block = ::save)
+                menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::save)
             }
 
             menu("Edit") {
-                menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::undo)
-                menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::redo)
+                menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
+                menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
+            }
+
+            menu("Layers") {
+                menuItem("Layers Filter", enabled = isEnvironmentOpened, block = ::openLayersFilter)
+                menuItem("Area", shortcut = "Ctrl+1", enabled = isEnvironmentOpened, selected = isAreaLayerActive, block = ::toggleAreaLayer)
+                menuItem("Turf", shortcut = "Ctrl+2", enabled = isEnvironmentOpened, selected = isTurfLayerActive, block = ::toggleTurfLayer)
+                menuItem("Object", shortcut = "Ctrl+3", enabled = isEnvironmentOpened, selected = isObjLayerActive, block = ::toggleObjLayer)
+                menuItem("Mob", shortcut = "Ctrl+4", enabled = isEnvironmentOpened, selected = isMobLayerActive, block = ::toggleMobLayer)
             }
 
             progressText?.let {
@@ -53,7 +71,7 @@ class MenuBarUi : EventSender, EventConsumer {
             progressText = "Loading " + file.absolutePath.replace('\\', '/').substringAfterLast("/")
             sendEvent(Event.EnvironmentController.Open(file) {
                 progressText = null
-                isEnvironmentOpen = it
+                isEnvironmentOpened = it
             })
         }
     }
@@ -74,16 +92,44 @@ class MenuBarUi : EventSender, EventConsumer {
         sendEvent(Event.MapHolderController.Save())
     }
 
-    private fun undo() {
+    private fun doUndo() {
         sendEvent(Event.ActionController.UndoAction())
     }
 
-    private fun redo() {
+    private fun doRedo() {
         sendEvent(Event.ActionController.RedoAction())
     }
 
+    private fun openLayersFilter() {
+        sendEvent(Event.LayersFilterPanelUi.Open())
+    }
+
+    private fun toggleAreaLayer() {
+        toggleLayer(isAreaLayerActive, TYPE_AREA)
+    }
+
+    private fun toggleTurfLayer() {
+        toggleLayer(isTurfLayerActive, TYPE_TURF)
+    }
+
+    private fun toggleObjLayer() {
+        toggleLayer(isObjLayerActive, TYPE_OBJ)
+    }
+
+    private fun toggleMobLayer() {
+        toggleLayer(isMobLayerActive, TYPE_MOB)
+    }
+
+    private fun toggleLayer(layerStatus: ImBool, layerType: String) {
+        if (layerStatus.get()) {
+            sendEvent(Event.LayersFilterController.ShowByType(layerType))
+        } else {
+            sendEvent(Event.LayersFilterController.HideByType(layerType))
+        }
+    }
+
     private fun handleResetEnvironment() {
-        isEnvironmentOpen = false
+        isEnvironmentOpened = false
     }
 
     private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {
