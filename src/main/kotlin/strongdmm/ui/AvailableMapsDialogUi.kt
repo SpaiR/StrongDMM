@@ -46,7 +46,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 sendEvent(Event.MapHolderController.FetchAllAvailable { availableMaps ->
                     for ((absoluteFilePath, visibleFilePath) in availableMaps) {
-                        if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get())) {
+                        if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get(), ignoreCase = true)) {
                             continue
                         }
 
