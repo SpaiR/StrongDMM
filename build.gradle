@@ -33,7 +33,7 @@ ext {
     trove4jVersion = '3.0.3'
     minimalJsonjVersion = '0.9.5'
     pngjVersion = '2.1.0'
-    imguiVersion = '1.75-0.6'
+    imguiVersion = '1.75-0.7'
 }
 
 dependencies {
