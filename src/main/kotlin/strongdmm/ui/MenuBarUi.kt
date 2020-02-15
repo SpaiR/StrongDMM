@@ -9,6 +9,7 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.controller.action.ActionStatus
+import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -32,6 +33,7 @@ class MenuBarUi : EventSender, EventConsumer {
     init {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        consumeEvent(Event.Global.RefreshLayersFilter::class.java, ::handleRefreshLayersFilter)
     }
 
     fun process() {
@@ -135,5 +137,12 @@ class MenuBarUi : EventSender, EventConsumer {
     private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {
         isUndoEnabled = event.body.hasUndoAction
         isRedoEnabled = event.body.hasRedoAction
+    }
+
+    private fun handleRefreshLayersFilter(event: Event<Set<DmeItemType>, Unit>) {
+        isAreaLayerActive.set(!event.body.contains(TYPE_AREA))
+        isTurfLayerActive.set(!event.body.contains(TYPE_TURF))
+        isObjLayerActive.set(!event.body.contains(TYPE_OBJ))
+        isMobLayerActive.set(!event.body.contains(TYPE_MOB))
     }
 }
