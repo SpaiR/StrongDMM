@@ -76,7 +76,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processViewTranslate() {
-        if (!ImGui.isMouseDown(ImGuiMouseButton.Left)) {
+        if (!(ImGui.isMouseDown(ImGuiMouseButton.Middle) || (ImGui.getIO().keyAlt && ImGui.isMouseDown(ImGuiMouseButton.Left)))) {
             return
         }
 
