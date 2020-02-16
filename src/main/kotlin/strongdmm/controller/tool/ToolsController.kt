@@ -8,8 +8,7 @@ import strongdmm.event.EventConsumer
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ToolsController : EventConsumer {
-    private var tool: Tool = AddTool()
-
+    private var currentTool: Tool = AddDeleteTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
@@ -22,26 +21,26 @@ class ToolsController : EventConsumer {
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
         currentMapPos = event.body
-        if (tool.isActive && currentMapPos.x != OUT_OF_BOUNDS &&  currentMapPos.y != OUT_OF_BOUNDS) {
-            tool.onMapPosChanged(currentMapPos)
+        if (currentTool.isActive && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
+            currentTool.onMapPosChanged(currentMapPos)
         }
     }
 
     private fun handleMapMouseDragStart() {
         if (currentMapPos.x != OUT_OF_BOUNDS &&  currentMapPos.y != OUT_OF_BOUNDS) {
-            tool.onStart(currentMapPos)
+            currentTool.onStart(currentMapPos)
         }
     }
 
     private fun handleMapMouseDragStop() {
-        tool.onStop()
+        currentTool.onStop()
     }
 
     private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
-        tool.onTileItemSwitch(event.body)
+        currentTool.onTileItemSwitch(event.body)
     }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        tool.onMapSwitch(event.body)
+        currentTool.onMapSwitch(event.body)
     }
 }

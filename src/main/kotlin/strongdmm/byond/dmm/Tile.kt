@@ -43,6 +43,8 @@ class Tile(
 
     fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
 
+    fun getFilteredTileItems(filteredTypes: Collection<String>): List<TileItem> = tileItems.filter { !filteredTypes.contains(it.type) }
+
     fun addTileItem(tileItem: TileItem) {
         when {
             tileItem.isType(TYPE_AREA) -> {

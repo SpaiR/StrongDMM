@@ -5,7 +5,7 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 
 abstract class Tool {
-    var isActive: Boolean = false
+    open var isActive: Boolean = false
 
     abstract fun onStart(mapPos: MapPos)
     abstract fun onStop()
