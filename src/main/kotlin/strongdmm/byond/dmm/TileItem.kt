@@ -35,6 +35,8 @@ class TileItem(
         }
     }
 
+    fun isType(type: String): Boolean = this.type.startsWith(type)
+
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {
             if (length > 1) {

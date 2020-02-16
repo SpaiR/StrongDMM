@@ -45,12 +45,12 @@ class Tile(
 
     fun addTileItem(tileItem: TileItem) {
         when {
-            tileItem.type.startsWith(TYPE_AREA) -> {
+            tileItem.isType(TYPE_AREA) -> {
                 area?.let {
                     replaceTileItem(it.id, tileItem)
                 }
             }
-            tileItem.type.startsWith(TYPE_TURF) -> {
+            tileItem.isType(TYPE_TURF) -> {
                 turf?.let {
                     replaceTileItem(it.id, tileItem)
                 }
@@ -92,10 +92,10 @@ class Tile(
 
     fun deleteTileItem(tileItem: TileItem) {
         when {
-            tileItem.type.startsWith(TYPE_AREA) -> {
+            tileItem.isType(TYPE_AREA) -> {
                 replaceTileItem(tileItem, GlobalTileItemHolder.getOrCreate(dmm.basicAreaType))
             }
-            tileItem.type.startsWith(TYPE_TURF) -> {
+            tileItem.isType(TYPE_TURF) -> {
                 replaceTileItem(tileItem, GlobalTileItemHolder.getOrCreate(dmm.basicTurfType))
             }
             else -> {
@@ -176,19 +176,19 @@ class Tile(
         tileItems = getTileItemsId().map { GlobalTileItemHolder.getById(it) }.toMutableList()
 
         // Find area and its index in tile items list
-        tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {
+        tileItems.withIndex().find { it.value.isType(TYPE_AREA) }.let {
             area = it?.value
             areaIndex = it?.index ?: TILE_ITEM_IDX_AREA
         }
 
         // Find turf and its index in tile items list
-        tileItems.withIndex().find { it.value.type.startsWith(TYPE_TURF) }.let {
+        tileItems.withIndex().find { it.value.isType(TYPE_TURF) }.let {
             turf = it?.value
             turfIndex = it?.index ?: TILE_ITEM_IDX_TURF
         }
 
         // Collect indexed objects and mobs
-        objs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.type.startsWith(TYPE_OBJ) }
-        mobs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.type.startsWith(TYPE_MOB) }
+        objs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.isType(TYPE_OBJ) }
+        mobs = tileItems.withIndex().reversed().filter { (_, tileItem) -> tileItem.isType(TYPE_MOB) }
     }
 }

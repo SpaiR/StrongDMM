@@ -99,8 +99,8 @@ class FrameController : EventConsumer, EventSender {
                         val depth = tileItem.plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
 
                         val specificDepth = when {
-                            tileItem.type.startsWith(TYPE_OBJ) -> OBJ_DEPTH
-                            tileItem.type.startsWith(TYPE_MOB) -> MOB_DEPTH
+                            tileItem.isType(TYPE_OBJ) -> OBJ_DEPTH
+                            tileItem.isType(TYPE_MOB) -> MOB_DEPTH
                             else -> 0
                         }
 

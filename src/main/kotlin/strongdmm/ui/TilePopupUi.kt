@@ -71,7 +71,7 @@ class TilePopupUi : EventConsumer, EventSender {
             menuItem("Move To Top##move_to_top_$tileItemIdx") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
-                        tile.moveToTop(tileItem.type.startsWith(TYPE_MOB), tileItemIdx)
+                        tile.moveToTop(tileItem.isType(TYPE_MOB), tileItemIdx)
                     }
                 ))
 
@@ -80,7 +80,7 @@ class TilePopupUi : EventConsumer, EventSender {
             menuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
-                        tile.moveToBottom(tileItem.type.startsWith(TYPE_MOB), tileItemIdx)
+                        tile.moveToBottom(tileItem.isType(TYPE_MOB), tileItemIdx)
                     }
                 ))
 
