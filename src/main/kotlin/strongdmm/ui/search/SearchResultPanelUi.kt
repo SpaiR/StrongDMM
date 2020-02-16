@@ -111,6 +111,10 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                 }
             }
         }
+
+        if (panelsOpenState.isEmpty()) {
+            sendEvent(Event.CanvasController.ResetMarkedPosition())
+        }
     }
 
     private fun checkReplaceEnabled() {

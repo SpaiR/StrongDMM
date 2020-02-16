@@ -15,6 +15,9 @@ class Dmm(
         const val MAP_ID_NONE: Int = -1
     }
 
+    val basicAreaType: String = dme.basicAreaType
+    val basicTurfType: String = dme.basicTurfType
+
     val id: Int = mapFile.absolutePath.hashCode()
     val mapName: String = mapFile.nameWithoutExtension
 

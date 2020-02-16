@@ -16,7 +16,7 @@ object GlobalTileItemHolder {
         tileItemsIdByType.clear()
     }
 
-    fun getOrCreate(type: String, vars: Map<String, String>?): TileItem {
+    fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
         var typeVarsConcat = type
 
         // Concatenate type with available variables to get unique representation of the tile item
@@ -48,7 +48,7 @@ object GlobalTileItemHolder {
 
     fun getTileItemsByType(type: String): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
-        getOrCreate(type, null) // Ensure that default tile item exists
+        getOrCreate(type) // Ensure that default tile item exists
         tileItemsIdByType[type]?.forEach { tileItems.add(getById(it)) }
         return tileItems
     }

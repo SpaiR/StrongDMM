@@ -22,7 +22,7 @@ class MapModifierController : EventConsumer, EventSender {
     private fun handleReplaceTypeInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
         sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
-                val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first, null)
+                val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
                 val replaceActions = mutableListOf<Undoable>()
 
                 event.body.second.forEach { (tileItem, pos) ->
@@ -41,7 +41,7 @@ class MapModifierController : EventConsumer, EventSender {
     private fun handleReplaceIdInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
         sendEvent(Event.MapHolderController.FetchSelected { dmm ->
             if (dmm != null) {
-                val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first, null)
+                val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
                 val replaceActions = mutableListOf<Undoable>()
 
                 event.body.second.forEach { (tileItem, pos) ->

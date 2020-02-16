@@ -60,7 +60,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
             tileItems?.forEachIndexed { index, tileItem ->
                 val isSelected = index == selectedObjIdx
                 selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
-                    selectedObjIdx = index
+                    sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
                 }
                 if (isSelected && !scrolledToItem) {
                     setScrollHereY()

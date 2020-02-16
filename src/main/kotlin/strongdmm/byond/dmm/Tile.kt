@@ -24,6 +24,7 @@ class Tile(
 
     lateinit var tileItems: MutableList<TileItem>
         private set
+
     var area: TileItem? = null
         private set
     var turf: TileItem? = null
@@ -42,29 +43,75 @@ class Tile(
 
     fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
 
+    fun addTileItem(tileItem: TileItem) {
+        when {
+            tileItem.type.startsWith(TYPE_AREA) -> {
+                area?.let {
+                    replaceTileItem(it.id, tileItem)
+                }
+            }
+            tileItem.type.startsWith(TYPE_TURF) -> {
+                turf?.let {
+                    replaceTileItem(it.id, tileItem)
+                }
+            }
+            else -> {
+                dmm.setTileItemsId(x, y, getTileItemsId() + tileItem.id)
+            }
+        }
+        readObjectsFromMap()
+    }
+
     fun replaceTileItem(tileItemType: String, replaceWith: TileItem) {
-        tileItems.find { it.type == tileItemType }?.let { tileItem ->
-            dmm.getTileItemsId(x, y)[tileItems.indexOf(tileItem)] = replaceWith.id
+        tileItems.findLast { it.type == tileItemType }?.let { tileItem ->
+            replaceTileItem(tileItem, replaceWith)
         }
     }
 
     fun replaceTileItem(tileItemId: Long, replaceWith: TileItem) {
-        tileItems.find { it.id == tileItemId }?.let { tileItem ->
-            dmm.getTileItemsId(x, y)[tileItems.indexOf(tileItem)] = replaceWith.id
+        tileItems.findLast { it.id == tileItemId }?.let { tileItem ->
+            replaceTileItem(tileItem, replaceWith)
         }
     }
 
+    fun replaceTileItem(tileItem: TileItem, replaceWith: TileItem) {
+        getTileItemsId()[tileItems.indexOf(tileItem)] = replaceWith.id
+    }
+
     fun deleteTileItem(tileItemType: String) {
-        tileItems.find { it.type == tileItemType }?.let { tileItem ->
-            tileItems.remove(tileItem)
-            dmm.setTileItemsId(x, y, tileItems.asSequence().map { it.id }.toList().toLongArray())
+        tileItems.findLast { it.type == tileItemType }?.let { tileItem ->
+            deleteTileItem(tileItem)
         }
     }
 
     fun deleteTileItem(tileItemId: Long) {
-        tileItems.find { it.id == tileItemId }?.let { tileItem ->
-            tileItems.remove(tileItem)
-            dmm.setTileItemsId(x, y, tileItems.asSequence().map { it.id }.toList().toLongArray())
+        tileItems.findLast { it.id == tileItemId }?.let { tileItem ->
+            deleteTileItem(tileItem)
+        }
+    }
+
+    fun deleteTileItem(tileItem: TileItem) {
+        when {
+            tileItem.type.startsWith(TYPE_AREA) -> {
+                replaceTileItem(tileItem, GlobalTileItemHolder.getOrCreate(dmm.basicAreaType))
+            }
+            tileItem.type.startsWith(TYPE_TURF) -> {
+                replaceTileItem(tileItem, GlobalTileItemHolder.getOrCreate(dmm.basicTurfType))
+            }
+            else -> {
+                val initialIds = getTileItemsId()
+                val tileItemIdx = initialIds.lastIndexOf(tileItem.id)
+                val newIds = LongArray(initialIds.size - 1)
+
+                var idx = 0
+                initialIds.forEachIndexed { index, id ->
+                    if (index != tileItemIdx) {
+                        newIds[idx++] = id
+                    }
+                }
+
+                dmm.setTileItemsId(x, y, newIds)
+            }
         }
     }
 
@@ -77,10 +124,7 @@ class Tile(
             else -> tileItemIdx
         }
 
-        val tileItemsId = dmm.getTileItemsId(x, y)
-        val tileItemType = tileItems[itemIdx].type
-
-        tileItemsId[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItemType, vars).id
+        getTileItemsId()[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItems[itemIdx].type, vars).id
         readObjectsFromMap()
     }
 
@@ -118,7 +162,7 @@ class Tile(
             val swapWithIdx = relativeIdx + shiftValue
             if (swapWithIdx >= 0 && swapWithIdx < list.size) {
                 val swapWithItem = list[swapWithIdx]
-                val tileItemsId = dmm.getTileItemsId(x, y)
+                val tileItemsId = getTileItemsId()
                 tileItemsId[swapWithItem.index] = it.value.id
                 tileItemsId[it.index] = swapWithItem.value.id
             }
@@ -129,7 +173,7 @@ class Tile(
 
     private fun readObjectsFromMap() {
         // List with all tile items
-        tileItems = dmm.getTileItemsId(x, y).map { GlobalTileItemHolder.getById(it) }.toMutableList()
+        tileItems = getTileItemsId().map { GlobalTileItemHolder.getById(it) }.toMutableList()
 
         // Find area and its index in tile items list
         tileItems.withIndex().find { it.value.type.startsWith(TYPE_AREA) }.let {

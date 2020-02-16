@@ -17,6 +17,7 @@ class CanvasRenderer {
 
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
+    var selectedTiles: Collection<MapPos>? = null
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -52,6 +53,7 @@ class CanvasRenderer {
             renderCanvasTexture()
             renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
             renderMarkedPosition(renderData, iconSize)
+            renderSelectedTiles(renderData, iconSize)
 
             if (!redraw) {
                 return
@@ -118,24 +120,33 @@ class CanvasRenderer {
             val realIconSize = iconSize / renderData.viewScale
 
             glColor4f(1f, 0f, 0f, 1f)
-
             glLineWidth(4f)
-            glBegin(GL_LINES)
 
-            glVertex2d(xPos, yPos)
-            glVertex2d(xPos, yPos + realIconSize)
-
-            glVertex2d(xPos + realIconSize, yPos)
-            glVertex2d(xPos + realIconSize, yPos + realIconSize)
-
+            glBegin(GL_LINE_LOOP)
             glVertex2d(xPos, yPos)
             glVertex2d(xPos + realIconSize, yPos)
-
-            glVertex2d(xPos, yPos + realIconSize)
             glVertex2d(xPos + realIconSize, yPos + realIconSize)
-
+            glVertex2d(xPos, yPos + realIconSize)
             glEnd()
+
             glLineWidth(1f)
+        }
+    }
+
+    private fun renderSelectedTiles(renderData: RenderData, iconSize: Int) {
+        selectedTiles?.forEach { pos ->
+            val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+            val realIconSize = iconSize / renderData.viewScale
+
+            glColor4f(1f, 1f, 1f, 1f)
+
+            glBegin(GL_LINE_LOOP)
+            glVertex2d(xPos, yPos)
+            glVertex2d(xPos + realIconSize, yPos)
+            glVertex2d(xPos + realIconSize, yPos + realIconSize)
+            glVertex2d(xPos, yPos + realIconSize)
+            glEnd()
         }
     }
 

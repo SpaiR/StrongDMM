@@ -8,6 +8,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.controller.map.MapHolderController
 import strongdmm.controller.map.MapModifierController
+import strongdmm.controller.tool.ToolsController
 import strongdmm.ui.*
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
@@ -35,6 +36,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val instanceController = InstanceController()
     private val mapModifierController = MapModifierController()
     private val layersFilterController = LayersFilterController()
+    private val toolsController = ToolsController()
 
     init {
         instanceLocatorPanelUi.postInit()

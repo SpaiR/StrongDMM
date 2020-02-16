@@ -43,6 +43,8 @@ abstract class Event<T, R>(
         class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
         class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
+        class MapMouseDragStart : Event<Unit, Unit>(Unit, null)
+        class MapMouseDragStop : Event<Unit, Unit>(Unit, null)
         class RefreshFrame : Event<Unit, Unit>(Unit, null)
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
@@ -97,6 +99,8 @@ abstract class Event<T, R>(
         class CenterPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
         class MarkPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
         class ResetMarkedPosition : Event<Unit, Unit>(Unit, null)
+        class SelectTiles(body: Collection<MapPos>) : Event<Collection<MapPos>, Unit>(body, null)
+        class ResetSelectedTiles : Event<Unit, Unit>(Unit, null)
     }
 
     abstract class ObjectPanelUi {

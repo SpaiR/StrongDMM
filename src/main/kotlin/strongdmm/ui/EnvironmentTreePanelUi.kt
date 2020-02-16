@@ -145,7 +145,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun selectType(type: String) {
         if (!isSelectedInCycle) {
-            sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getOrCreate(type, null)))
+            sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
             isSelectedInCycle = true
         }
     }

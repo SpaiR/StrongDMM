@@ -40,6 +40,8 @@ class CanvasController : EventSender, EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
+    private var isMapMouseDragged: Boolean = false
+
     // To handle user input
     private val mousePos: ImVec2 = ImVec2()
     private val mouseDelta: ImVec2 = ImVec2()
@@ -56,6 +58,8 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.CanvasController.CenterPosition::class.java, ::handleCenterPosition)
         consumeEvent(Event.CanvasController.MarkPosition::class.java, ::handleMarkPosition)
         consumeEvent(Event.CanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
+        consumeEvent(Event.CanvasController.SelectTiles::class.java, ::handleSelectTiles)
+        consumeEvent(Event.CanvasController.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
     }
 
     fun process() {
@@ -66,7 +70,8 @@ class CanvasController : EventSender, EventConsumer {
                 processViewTranslate()
                 processViewScale()
                 processTilePopupClick()
-                calculateMapMousePos()
+                processMapMouseDrag()
+                processMapMousePosition()
             }
 
             sendEvent(Event.FrameController.Compose {
@@ -88,6 +93,8 @@ class CanvasController : EventSender, EventConsumer {
                 renderData.viewTranslateY -= mouseDelta.y * renderData.viewScale
                 redraw = true
             }
+
+            sendEvent(Event.TilePopupUi.Close())
         }
     }
 
@@ -140,7 +147,17 @@ class CanvasController : EventSender, EventConsumer {
         }
     }
 
-    private fun calculateMapMousePos() {
+    private fun processMapMouseDrag() {
+        if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
+            isMapMouseDragged = true
+            sendEvent(Event.Global.MapMouseDragStart())
+        } else if (!ImGui.isMouseDown(ImGuiMouseButton.Left) && isMapMouseDragged) {
+            isMapMouseDragged = false
+            sendEvent(Event.Global.MapMouseDragStop())
+        }
+    }
+
+    private fun processMapMousePosition() {
         val x = mousePos.x
         val y = mousePos.y
 
@@ -213,5 +230,13 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleResetMarkedPosition() {
         canvasRenderer.markedPosition = null
+    }
+
+    private fun handleSelectTiles(event: Event<Collection<MapPos>, Unit>) {
+        canvasRenderer.selectedTiles = event.body
+    }
+
+    private fun handleResetSelectedTiles() {
+        canvasRenderer.selectedTiles = null
     }
 }
