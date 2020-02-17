@@ -27,7 +27,7 @@ class ToolsController : EventConsumer {
     }
 
     private fun handleMapMouseDragStart() {
-        if (currentMapPos.x != OUT_OF_BOUNDS &&  currentMapPos.y != OUT_OF_BOUNDS) {
+        if (currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
             currentTool.onStart(currentMapPos)
         }
     }

@@ -22,7 +22,7 @@ class Tile(
         const val TILE_ITEM_IDX_TURF: Int = -2
     }
 
-    lateinit var tileItems: MutableList<TileItem>
+    lateinit var tileItems: List<TileItem>
         private set
 
     var area: TileItem? = null
@@ -78,6 +78,7 @@ class Tile(
 
     fun replaceTileItem(tileItem: TileItem, replaceWith: TileItem) {
         getTileItemsId()[tileItems.indexOf(tileItem)] = replaceWith.id
+        readObjectsFromMap()
     }
 
     fun deleteTileItem(tileItemType: String) {
@@ -115,9 +116,13 @@ class Tile(
                 dmm.setTileItemsId(x, y, newIds)
             }
         }
+        readObjectsFromMap()
     }
 
-    fun replaceTileItemsId(tileItemsId: LongArray) = dmm.setTileItemsId(x, y, tileItemsId)
+    fun replaceTileItemsId(tileItemsId: LongArray) {
+        dmm.setTileItemsId(x, y, tileItemsId)
+        readObjectsFromMap()
+    }
 
     fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
         val itemIdx = when (tileItemIdx) {
@@ -175,7 +180,7 @@ class Tile(
 
     private fun readObjectsFromMap() {
         // List with all tile items
-        tileItems = getTileItemsId().map { GlobalTileItemHolder.getById(it) }.toMutableList()
+        tileItems = getTileItemsId().map { GlobalTileItemHolder.getById(it) }
 
         // Find area and its index in tile items list
         tileItems.withIndex().find { it.value.isType(TYPE_AREA) }.let {
