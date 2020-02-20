@@ -18,7 +18,7 @@ class AddDeleteTool : Tool() {
     private var currentTool: Tool = add
 
     override fun onStart(mapPos: MapPos) {
-        currentTool = if (ImGui.getIO().keyShift) delete else add
+        currentTool = if (ImGui.getIO().keyCtrl) delete else add
         currentTool.onStart(mapPos)
     }
 

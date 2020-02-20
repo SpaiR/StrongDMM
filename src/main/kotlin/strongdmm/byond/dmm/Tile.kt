@@ -86,6 +86,12 @@ class Tile(
     }
 
     fun deleteTileItem(tileItem: TileItem) {
+        deleteTileItem(tileItems.lastIndexOf(tileItem))
+    }
+
+    fun deleteTileItem(tileItemIdx: Int) {
+        val tileItem = tileItems[tileItemIdx]
+
         when {
             tileItem.isType(TYPE_AREA) -> {
                 replaceTileItem(tileItem, GlobalTileItemHolder.getOrCreate(dmm.basicAreaType))
@@ -95,7 +101,6 @@ class Tile(
             }
             else -> {
                 val initialIds = getTileItemsId()
-                val tileItemIdx = initialIds.lastIndexOf(tileItem.id)
                 val newIds = LongArray(initialIds.size - 1)
 
                 var idx = 0
@@ -108,6 +113,7 @@ class Tile(
                 dmm.setTileItemsId(x, y, newIds)
             }
         }
+
         readObjectsFromMap()
     }
 

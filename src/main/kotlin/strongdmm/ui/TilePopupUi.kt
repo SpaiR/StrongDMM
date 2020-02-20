@@ -97,6 +97,16 @@ class TilePopupUi : EventConsumer, EventSender {
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
             sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
+
+        menuItem("Delete##delete_object_$tileItemIdx") {
+            sendEvent(Event.ActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.deleteTileItem(tileItemIdx)
+                }
+            ))
+
+            sendEvent(Event.Global.RefreshFrame())
+        }
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {

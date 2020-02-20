@@ -190,7 +190,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun getTileItem(): TileItem? {
-        return currentTile?.tileItems?.get(currentTileItemIndex)
+        return currentTileItem ?: currentTile?.tileItems?.get(currentTileItemIndex)
     }
 
     private fun getNewItemVars(): Map<String, String>? {
