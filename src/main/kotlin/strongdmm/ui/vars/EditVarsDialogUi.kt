@@ -12,8 +12,6 @@ import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
-import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_AREA
-import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_TURF
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
@@ -192,11 +190,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     }
 
     private fun getTileItem(): TileItem? {
-        return currentTileItem ?: when (currentTileItemIndex) {
-            TILE_ITEM_IDX_AREA -> currentTile?.area
-            TILE_ITEM_IDX_TURF -> currentTile?.turf
-            else -> currentTile?.tileItems?.get(currentTileItemIndex)
-        }
+        return currentTile?.tileItems?.get(currentTileItemIndex)
     }
 
     private fun getNewItemVars(): Map<String, String>? {

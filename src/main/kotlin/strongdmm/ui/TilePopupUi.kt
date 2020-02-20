@@ -2,12 +2,12 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
+import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
+import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
-import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_AREA
-import strongdmm.byond.dmm.Tile.Companion.TILE_ITEM_IDX_TURF
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
@@ -49,10 +49,10 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItems(tile: Tile) {
-        tile.area?.let { area -> showTileItemRow(tile, area, TILE_ITEM_IDX_AREA) }
+        tile.area?.let { area -> showTileItemRow(tile, area.value, area.index) }
         tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, mob.index) }
         tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, obj.index) }
-        tile.turf?.let { turf -> showTileItemRow(tile, turf, TILE_ITEM_IDX_TURF) }
+        tile.turf?.let { turf -> showTileItemRow(tile, turf.value, turf.index) }
     }
 
     private fun showTileItemRow(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
@@ -67,7 +67,7 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        if (tileItemIdx != TILE_ITEM_IDX_AREA && tileItemIdx != TILE_ITEM_IDX_TURF) {
+        if (!tileItem.isType(TYPE_AREA) && !tileItem.isType(TYPE_TURF)) {
             menuItem("Move To Top##move_to_top_$tileItemIdx") {
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {

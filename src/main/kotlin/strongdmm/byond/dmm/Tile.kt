@@ -17,25 +17,17 @@ class Tile(
     val x: Int,
     val y: Int
 ) {
-    companion object {
-        const val TILE_ITEM_IDX_AREA: Int = -1
-        const val TILE_ITEM_IDX_TURF: Int = -2
-    }
-
     lateinit var tileItems: List<TileItem>
         private set
 
-    var area: TileItem? = null
+    var area: IndexedValue<TileItem>? = null
         private set
-    var turf: TileItem? = null
+    var turf: IndexedValue<TileItem>? = null
         private set
     lateinit var objs: List<IndexedValue<TileItem>>
         private set
     lateinit var mobs: List<IndexedValue<TileItem>>
         private set
-
-    private var areaIndex: Int = TILE_ITEM_IDX_AREA
-    private var turfIndex: Int = TILE_ITEM_IDX_TURF
 
     init {
         readObjectsFromMap()
@@ -49,12 +41,12 @@ class Tile(
         when {
             tileItem.isType(TYPE_AREA) -> {
                 area?.let {
-                    replaceTileItem(it.id, tileItem)
+                    replaceTileItem(it.value.id, tileItem)
                 }
             }
             tileItem.isType(TYPE_TURF) -> {
                 turf?.let {
-                    replaceTileItem(it.id, tileItem)
+                    replaceTileItem(it.value.id, tileItem)
                 }
             }
             else -> {
@@ -125,13 +117,7 @@ class Tile(
     }
 
     fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
-        val itemIdx = when (tileItemIdx) {
-            TILE_ITEM_IDX_AREA -> areaIndex
-            TILE_ITEM_IDX_TURF -> turfIndex
-            else -> tileItemIdx
-        }
-
-        getTileItemsId()[itemIdx] = GlobalTileItemHolder.getOrCreate(tileItems[itemIdx].type, vars).id
+        getTileItemsId()[tileItemIdx] = GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, vars).id
         readObjectsFromMap()
     }
 
@@ -188,14 +174,12 @@ class Tile(
 
         // Find area and its index in tile items list
         tileItems.withIndex().find { it.value.isType(TYPE_AREA) }.let {
-            area = it?.value
-            areaIndex = it?.index ?: TILE_ITEM_IDX_AREA
+            area = it
         }
 
         // Find turf and its index in tile items list
         tileItems.withIndex().find { it.value.isType(TYPE_TURF) }.let {
-            turf = it?.value
-            turfIndex = it?.index ?: TILE_ITEM_IDX_TURF
+            turf = it
         }
 
         // Collect indexed objects and mobs
