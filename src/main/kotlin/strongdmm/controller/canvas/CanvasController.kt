@@ -79,12 +79,8 @@ class CanvasController : EventSender, EventConsumer {
             processTileItemSelectMode()
         }
 
-        canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
-        canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
-
-        sendEvent(Event.FrameController.Compose {
-            canvasRenderer.render(it, renderData, xMapMousePos, yMapMousePos, iconSize)
-        })
+        prepareCanvasRenderer()
+        canvasRenderer.render()
 
         postProcessTileItemSelectMode()
     }
@@ -193,6 +189,19 @@ class CanvasController : EventSender, EventConsumer {
         if (ImGui.getIO().keyShift) {
             canvasRenderer.isTileItemSelectMode = true
         }
+    }
+
+    private fun prepareCanvasRenderer() {
+        sendEvent(Event.FrameController.Compose {
+            canvasRenderer.frameMeshes = it
+        })
+
+        canvasRenderer.renderData = renderData
+        canvasRenderer.xMapMousePos = xMapMousePos
+        canvasRenderer.yMapMousePos = yMapMousePos
+        canvasRenderer.iconSize = iconSize
+        canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
+        canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
     }
 
     private fun postProcessTileItemSelectMode() {

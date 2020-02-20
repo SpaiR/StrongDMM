@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL30.*
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.window.AppWindow
 import java.nio.ByteBuffer
@@ -18,6 +19,15 @@ class CanvasRenderer {
     private var canvasTexture: Int = -1
     private var canvasTextureIsFilled: Boolean = false
 
+    // Variables provided by CanvasController every cycle
+    lateinit var frameMeshes: List<FrameMesh>
+    lateinit var renderData: RenderData
+    var xMapMousePos: Int = OUT_OF_BOUNDS
+    var yMapMousePos: Int = OUT_OF_BOUNDS
+    var iconSize: Int = DEFAULT_ICON_SIZE
+    var mousePosX: Float = 0f
+    var mousePosY: Float = 0f
+
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
     var selectedTiles: Collection<MapPos>? = null
@@ -25,22 +35,13 @@ class CanvasRenderer {
     var windowWidth: Int = -1
     var windowHeight: Int = -1
 
-    var mousePosX: Float = 0f
-    var mousePosY: Float = 0f
-
     // Used to handle tile item selection mode
     var isTileItemSelectMode: Boolean = false
     var tileItemIdMouseOver: Long = 0
     private var pixelsBuffer: ByteBuffer = BufferUtils.createByteBuffer(512 * 512 * 4) // used to read item texture, could be resized to store more data
     private var markedTileItemLvl: Int = -1 // level of the marker item; marked means that the pixel under the mouse for this item is opaque
 
-    fun render(
-        frameMeshes: List<FrameMesh>,
-        renderData: RenderData,
-        xMapMousePos: Int,
-        yMapMousePos: Int,
-        iconSize: Int
-    ) {
+    fun render() {
         val windowWidth = AppWindow.windowWidth
         val windowHeight = AppWindow.windowHeight
 
@@ -63,16 +64,16 @@ class CanvasRenderer {
             glLoadIdentity()
 
             renderCanvasTexture()
-            renderMousePosition(renderData, xMapMousePos, yMapMousePos, iconSize)
-            renderMarkedPosition(renderData, iconSize)
-            renderSelectedTiles(renderData, iconSize)
+            renderMousePosition()
+            renderMarkedPosition()
+            renderSelectedTiles()
 
             if (!redraw && !isTileItemSelectMode) {
                 return
             }
         }
 
-        fillCanvasTexture(renderData, frameMeshes)
+        fillCanvasTexture()
 
         canvasTextureIsFilled = true
         redraw = false
@@ -108,7 +109,7 @@ class CanvasRenderer {
         glDisable(GL_TEXTURE_2D)
     }
 
-    private fun renderMousePosition(renderData: RenderData, xMapMousePos: Int, yMapMousePos: Int, iconSize: Int) {
+    private fun renderMousePosition() {
         if (xMapMousePos == OUT_OF_BOUNDS || yMapMousePos == OUT_OF_BOUNDS || isTileItemSelectMode) {
             return
         }
@@ -127,7 +128,7 @@ class CanvasRenderer {
         glEnd()
     }
 
-    private fun renderMarkedPosition(renderData: RenderData, iconSize: Int) {
+    private fun renderMarkedPosition() {
         markedPosition?.let { pos ->
             val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
@@ -147,7 +148,7 @@ class CanvasRenderer {
         }
     }
 
-    private fun renderSelectedTiles(renderData: RenderData, iconSize: Int) {
+    private fun renderSelectedTiles() {
         selectedTiles?.forEach { pos ->
             val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
@@ -165,7 +166,7 @@ class CanvasRenderer {
     }
 
     // Method will render map to the separate texture which will be reused later to avoid CPU usage while idle.
-    private fun fillCanvasTexture(renderData: RenderData, frameMeshes: List<FrameMesh>) {
+    private fun fillCanvasTexture() {
         val viewWidthWithScale = windowWidth * renderData.viewScale
         val viewHeightWithScale = windowHeight * renderData.viewScale
 
