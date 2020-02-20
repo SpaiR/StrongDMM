@@ -37,6 +37,13 @@ class TileItem(
 
     fun isType(type: String): Boolean = this.type.startsWith(type)
 
+    fun isSameType(tileItem: TileItem): Boolean {
+        return isType(TYPE_AREA) && tileItem.isType(TYPE_AREA) ||
+            isType(TYPE_TURF) && tileItem.isType(TYPE_TURF) ||
+            isType(TYPE_OBJ) && tileItem.isType(TYPE_OBJ) ||
+            isType(TYPE_MOB) && tileItem.isType(TYPE_MOB)
+    }
+
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {
             if (length > 1) {

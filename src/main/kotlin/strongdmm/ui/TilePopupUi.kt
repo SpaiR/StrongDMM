@@ -2,10 +2,7 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.byond.TYPE_AREA
-import strongdmm.byond.TYPE_MOB
-import strongdmm.byond.TYPE_TURF
-import strongdmm.byond.VAR_NAME
+import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
@@ -25,12 +22,14 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private var isDoOpen: Boolean = false
     private var currentTile: Tile? = null
+    private var selectedTileItem: TileItem? = null
 
     init {
         consumeEvent(Event.TilePopupUi.Open::class.java, ::handleOpen)
         consumeEvent(Event.TilePopupUi.Close::class.java, ::handleClose)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
     }
 
     fun process() {
@@ -67,28 +66,27 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        if (!tileItem.isType(TYPE_AREA) && !tileItem.isType(TYPE_TURF)) {
-            menuItem("Move To Top##move_to_top_$tileItemIdx") {
-                sendEvent(Event.ActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.moveToTop(tileItem.isType(TYPE_MOB), tileItemIdx)
-                    }
-                ))
+        menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
+            sendEvent(Event.ActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.moveToTop(tileItem, tileItemIdx)
+                }
+            ))
 
-                sendEvent(Event.Global.RefreshFrame())
-            }
-            menuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
-                sendEvent(Event.ActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.moveToBottom(tileItem.isType(TYPE_MOB), tileItemIdx)
-                    }
-                ))
-
-                sendEvent(Event.Global.RefreshFrame())
-            }
-
-            separator()
+            sendEvent(Event.Global.RefreshFrame())
         }
+
+        menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
+            sendEvent(Event.ActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.moveToBottom(tileItem, tileItemIdx)
+                }
+            ))
+
+            sendEvent(Event.Global.RefreshFrame())
+        }
+
+        separator()
 
         menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
             sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
@@ -96,6 +94,18 @@ class TilePopupUi : EventConsumer, EventSender {
 
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
             sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+        }
+
+        menuItem("Replace With Active Object##replace_with_active_object_$tileItemIdx", enabled = (selectedTileItem?.isSameType(tileItem) ?: false)) {
+            selectedTileItem?.let { activeTileItem ->
+                sendEvent(Event.ActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.replaceTileItem(tileItemIdx, activeTileItem)
+                    }
+                ))
+
+                sendEvent(Event.Global.RefreshFrame())
+            }
         }
 
         menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+RMB") {
@@ -120,9 +130,14 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun handleResetEnvironment() {
         currentTile = null
+        selectedTileItem = null
     }
 
     private fun handleCloseMap() {
         currentTile = null
+    }
+
+    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
+        selectedTileItem = event.body
     }
 }

@@ -69,8 +69,14 @@ class Tile(
     }
 
     fun replaceTileItem(tileItem: TileItem, replaceWith: TileItem) {
-        getTileItemsId()[tileItems.indexOf(tileItem)] = replaceWith.id
-        readObjectsFromMap()
+        replaceTileItem(tileItems.indexOf(tileItem), replaceWith)
+    }
+
+    fun replaceTileItem(tileItemIdx: Int, replaceWith: TileItem) {
+        if (tileItems[tileItemIdx].isSameType(replaceWith)) {
+            getTileItemsId()[tileItemIdx] = replaceWith.id
+            readObjectsFromMap()
+        }
     }
 
     fun deleteTileItem(tileItemType: String) {
@@ -127,12 +133,12 @@ class Tile(
         readObjectsFromMap()
     }
 
-    fun moveToTop(isMob: Boolean, tileItemIdx: Int) {
-        shiftItem((if (isMob) mobs else objs), tileItemIdx, -1)
+    fun moveToTop(tileItem: TileItem, tileItemIdx: Int) {
+        shiftItem((if (tileItem.isType(TYPE_MOB)) mobs else objs), tileItemIdx, -1)
     }
 
-    fun moveToBottom(isMob: Boolean, tileItemIdx: Int) {
-        shiftItem((if (isMob) mobs else objs), tileItemIdx, 1)
+    fun moveToBottom(tileItem: TileItem, tileItemIdx: Int) {
+        shiftItem((if (tileItem.isType(TYPE_MOB)) mobs else objs), tileItemIdx, 1)
     }
 
     fun getTileContent(): TileContent {
