@@ -1,5 +1,6 @@
 package strongdmm.controller.canvas
 
+import imgui.ImVec4
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL30.*
 import strongdmm.byond.dmi.IconSprite
@@ -7,6 +8,7 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
+import strongdmm.util.imgui.GREEN_RGBA
 import strongdmm.window.AppWindow
 import java.nio.ByteBuffer
 
@@ -37,6 +39,7 @@ class CanvasRenderer {
 
     // Used to handle tile item selection mode
     var isTileItemSelectMode: Boolean = false
+    var tileItemSelectColor: ImVec4 = GREEN_RGBA
     var tileItemIdMouseOver: Long = 0
     private var pixelsBuffer: ByteBuffer = BufferUtils.createByteBuffer(512 * 512 * 4) // used to read item texture, could be resized to store more data
     private var markedTileItemLvl: Int = -1 // level of the marker item; marked means that the pixel under the mouse for this item is opaque
@@ -201,7 +204,7 @@ class CanvasRenderer {
             var colorR = frameMesh.colorR
             var colorG = frameMesh.colorG
             var colorB = frameMesh.colorB
-            val colorA = frameMesh.colorA
+            var colorA = frameMesh.colorA
 
             val rx1 = x1 + renderData.viewTranslateX
             val ry1 = y1 + renderData.viewTranslateY
@@ -230,9 +233,10 @@ class CanvasRenderer {
 
                 if (isMouseOverTileItem(rx1, ry1, sprite)) {
                     if (currentMarkedTileItemLvl == ++markedTileItemLvl) {
-                        colorR = 0f
-                        colorG = 1f
-                        colorB = 0f
+                        colorR = tileItemSelectColor.x
+                        colorG = tileItemSelectColor.y
+                        colorB = tileItemSelectColor.z
+                        colorA = tileItemSelectColor.w
                         tileItemIdMouseOver = tileItemId
                     }
                 }

@@ -11,6 +11,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPos
+import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -18,6 +19,8 @@ import strongdmm.event.EventSender
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
+import strongdmm.util.imgui.GREEN_RGBA
+import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.AppWindow
 
 class CanvasController : EventSender, EventConsumer {
@@ -188,6 +191,7 @@ class CanvasController : EventSender, EventConsumer {
     private fun processTileItemSelectMode() {
         if (ImGui.getIO().keyShift) {
             canvasRenderer.isTileItemSelectMode = true
+            canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) RED_RGBA else GREEN_RGBA
         }
     }
 
@@ -213,11 +217,19 @@ class CanvasController : EventSender, EventConsumer {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) { // Select tile item
                 sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) { // Open for edit
-                sendEvent(Event.MapHolderController.FetchSelected {
-                    if (it != null) {
-                        openTileItemUnderMouseForEdit(it)
-                    }
-                })
+                if (ImGui.getIO().keyCtrl) {
+                    sendEvent(Event.MapHolderController.FetchSelected {
+                        if (it != null) {
+                            deleteTileItemUnderMouse(it)
+                        }
+                    })
+                } else {
+                    sendEvent(Event.MapHolderController.FetchSelected {
+                        if (it != null) {
+                            openTileItemUnderMouseForEdit(it)
+                        }
+                    })
+                }
             }
         }
 
@@ -226,7 +238,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true // Do one more redraw, so our canvas texture will render proper data (no highlighting etc)
     }
 
-    private fun openTileItemUnderMouseForEdit(map: Dmm) {
+    private fun getTileItemCoordUnderMouse(): MapPos {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
 
         var x = xMapMousePos
@@ -239,7 +251,28 @@ class CanvasController : EventSender, EventConsumer {
             y += (-1 * tileItem.pixelY / iconSize.toFloat() + if (tileItem.pixelY > 0) -.5 else .5).toInt()
         }
 
-        val tile = map.getTile(x, y)
+        return MapPos(x, y)
+    }
+
+    private fun deleteTileItemUnderMouse(map: Dmm) {
+        val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
+        val pos = getTileItemCoordUnderMouse()
+        val tile = map.getTile(pos.x, pos.y)
+        val tileItemIdx = tile.getTileItemIdx(tileItem)
+
+        sendEvent(Event.ActionController.AddAction(
+            ReplaceTileAction(tile) {
+                tile.deleteTileItem(tileItemIdx)
+            }
+        ))
+
+        sendEvent(Event.Global.RefreshFrame())
+    }
+
+    private fun openTileItemUnderMouseForEdit(map: Dmm) {
+        val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
+        val pos = getTileItemCoordUnderMouse()
+        val tile = map.getTile(pos.x, pos.y)
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
