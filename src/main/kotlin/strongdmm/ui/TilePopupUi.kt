@@ -90,11 +90,11 @@ class TilePopupUi : EventConsumer, EventSender {
             separator()
         }
 
-        menuItem("Make Active Object##make_active_object_$tileItemIdx") {
+        menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
             sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
         }
 
-        menuItem("Edit...##edit_variables_$tileItemIdx") {
+        menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
             sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
     }

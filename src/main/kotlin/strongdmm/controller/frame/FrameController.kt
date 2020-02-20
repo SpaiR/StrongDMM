@@ -104,7 +104,7 @@ class FrameController : EventConsumer, EventSender {
                             else -> 0
                         }
 
-                        cache.add(FrameMesh(sprite, x1, y1, x2, y2, colorR, colorG, colorB, colorA, depth + specificDepth))
+                        cache.add(FrameMesh(tileItemId, sprite, x1, y1, x2, y2, colorR, colorG, colorB, colorA, depth + specificDepth))
                     }
                 }
             }

@@ -1,10 +1,13 @@
 package strongdmm.controller.canvas
 
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL30.*
+import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.window.AppWindow
+import java.nio.ByteBuffer
 
 class CanvasRenderer {
     var redraw: Boolean = false
@@ -21,6 +24,15 @@ class CanvasRenderer {
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
+
+    var mousePosX: Float = 0f
+    var mousePosY: Float = 0f
+
+    // Used to handle tile item selection mode
+    var isTileItemSelectMode: Boolean = false
+    var tileItemIdMouseOver: Long = 0
+    private var pixelsBuffer: ByteBuffer = BufferUtils.createByteBuffer(512 * 512 * 4) // used to read item texture, could be resized to store more data
+    private var markedTileItemLvl: Int = -1 // level of the marker item; marked means that the pixel under the mouse for this item is opaque
 
     fun render(
         frameMeshes: List<FrameMesh>,
@@ -55,7 +67,7 @@ class CanvasRenderer {
             renderMarkedPosition(renderData, iconSize)
             renderSelectedTiles(renderData, iconSize)
 
-            if (!redraw) {
+            if (!redraw && !isTileItemSelectMode) {
                 return
             }
         }
@@ -97,20 +109,22 @@ class CanvasRenderer {
     }
 
     private fun renderMousePosition(renderData: RenderData, xMapMousePos: Int, yMapMousePos: Int, iconSize: Int) {
-        if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
-            val xPos = ((xMapMousePos - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
-            val yPos = ((yMapMousePos - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
-            val realIconSize = iconSize / renderData.viewScale
-
-            glColor4f(1f, 1f, 1f, 0.25f)
-
-            glBegin(GL_QUADS)
-            glVertex2d(xPos, yPos)
-            glVertex2d(xPos + realIconSize, yPos)
-            glVertex2d(xPos + realIconSize, yPos + realIconSize)
-            glVertex2d(xPos, yPos + realIconSize)
-            glEnd()
+        if (xMapMousePos == OUT_OF_BOUNDS || yMapMousePos == OUT_OF_BOUNDS || isTileItemSelectMode) {
+            return
         }
+
+        val xPos = ((xMapMousePos - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+        val yPos = ((yMapMousePos - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+        val realIconSize = iconSize / renderData.viewScale
+
+        glColor4f(1f, 1f, 1f, 0.25f)
+
+        glBegin(GL_QUADS)
+        glVertex2d(xPos, yPos)
+        glVertex2d(xPos + realIconSize, yPos)
+        glVertex2d(xPos + realIconSize, yPos + realIconSize)
+        glVertex2d(xPos, yPos + realIconSize)
+        glEnd()
     }
 
     private fun renderMarkedPosition(renderData: RenderData, iconSize: Int) {
@@ -177,8 +191,16 @@ class CanvasRenderer {
 
         var currentTexture = -1
 
+        val currentMarkedTileItemLvl = markedTileItemLvl
+        markedTileItemLvl = -1
+
         for (frameMesh in frameMeshes) {
-            val (sprite, x1, y1, x2, y2, colorR, colorG, colorB, colorA) = frameMesh
+            val (tileItemId, sprite, x1, y1, x2, y2) = frameMesh
+
+            var colorR = frameMesh.colorR
+            var colorG = frameMesh.colorG
+            var colorB = frameMesh.colorB
+            val colorA = frameMesh.colorA
 
             val rx1 = x1 + renderData.viewTranslateX
             val ry1 = y1 + renderData.viewTranslateY
@@ -189,7 +211,7 @@ class CanvasRenderer {
                 continue
             }
 
-            // More effectively will be to merge all textures into one atlas instead of such batching, but this is fine too.
+            // More effectively would be to merge all textures into one atlas instead of such batching, but this is fine too.
             if (currentTexture != sprite.textureId) {
                 if (currentTexture != -1) {
                     glEnd()
@@ -198,6 +220,22 @@ class CanvasRenderer {
                 glBindTexture(GL_TEXTURE_2D, sprite.textureId)
 
                 currentTexture = sprite.textureId
+                glBegin(GL_QUADS)
+            }
+
+            // Detect tile item under the mouse and make it highlighted with the green color
+            if (isTileItemSelectMode && mousePosX in rx1..rx2 && mousePosY in ry1..ry2) {
+                glEnd() // We should stop render routine to read texture from the GPU properly
+
+                if (isMouseOverTileItem(rx1, ry1, sprite)) {
+                    if (currentMarkedTileItemLvl == ++markedTileItemLvl) {
+                        colorR = 0f
+                        colorG = 1f
+                        colorB = 0f
+                        tileItemIdMouseOver = tileItemId
+                    }
+                }
+
                 glBegin(GL_QUADS)
             }
 
@@ -219,6 +257,26 @@ class CanvasRenderer {
         glDisable(GL_TEXTURE_2D)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
+    }
+
+    private fun isMouseOverTileItem(rx1: Double, ry1: Double, sprite: IconSprite): Boolean {
+        val xOffset = (mousePosX - rx1).toInt()
+        val yOffset = sprite.iconHeight - (mousePosY - ry1 + .5).toInt()
+        val neededPixelsBufferSize = sprite.textureHeight * sprite.textureWidth * 4
+
+        if (neededPixelsBufferSize > pixelsBuffer.limit()) {
+            pixelsBuffer = BufferUtils.createByteBuffer(neededPixelsBufferSize)
+            System.gc()
+        }
+
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelsBuffer)
+
+        val positionOfAlpha = 4 * ((sprite.y1 + yOffset) * sprite.textureWidth + (sprite.x1 + xOffset)) + 3
+        if (positionOfAlpha < pixelsBuffer.limit()) {
+            return pixelsBuffer.get(positionOfAlpha) != 0.toByte()
+        }
+
+        return false
     }
 
     private fun createCanvasTexture() {

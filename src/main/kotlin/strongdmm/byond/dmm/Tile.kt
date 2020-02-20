@@ -159,6 +159,10 @@ class Tile(
         return tileContent
     }
 
+    fun getTileItemIdx(tileItem: TileItem): Int {
+        return tileItems.lastIndexOf(tileItem)
+    }
+
     private fun shiftItem(list: List<IndexedValue<TileItem>>, tileItemIdx: Int, shiftValue: Int) {
         if (list.size == 1) {
             return

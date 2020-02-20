@@ -49,7 +49,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
                 if (inputInt("Columns count", columnsCount)) {
                     if (columnsCount.get() <= 0) {
                         columnsCount.set(1)
-                    } else if (columnsCount.get() > 64) {
+                    } else if (columnsCount.get() > 64) { // 64 - maximum number of columns in ImGui
                         columnsCount.set(64)
                     }
                 }
@@ -61,6 +61,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
                 val isSelected = index == selectedObjIdx
                 selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
                     sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
+                    scrolledToItem = true // do not scroll panel in the next cycle
                 }
                 if (isSelected && !scrolledToItem) {
                     setScrollHereY()

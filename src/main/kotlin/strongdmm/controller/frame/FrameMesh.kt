@@ -3,6 +3,7 @@ package strongdmm.controller.frame
 import strongdmm.byond.dmi.IconSprite
 
 data class FrameMesh(
+    val itemId: Long,
     val sprite: IconSprite,
     val x1: Int,
     val y1: Int,

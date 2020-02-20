@@ -9,6 +9,7 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
@@ -63,21 +64,29 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     fun process() {
-        if (isHasMap) {
-            if (!isBlocked && !isImGuiInUse()) {
-                ImGui.getMousePos(mousePos)
-
-                processViewTranslate()
-                processViewScale()
-                processTilePopupClick()
-                processMapMouseDrag()
-                processMapMousePosition()
-            }
-
-            sendEvent(Event.FrameController.Compose {
-                canvasRenderer.render(it, renderData, xMapMousePos, yMapMousePos, iconSize)
-            })
+        if (!isHasMap) {
+            return
         }
+
+        ImGui.getMousePos(mousePos)
+
+        if (!isBlocked && !isImGuiInUse()) {
+            processViewTranslate()
+            processViewScale()
+            processTilePopupClick()
+            processMapMouseDrag()
+            processMapMousePosition()
+            processTileItemSelectMode()
+        }
+
+        canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
+        canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
+
+        sendEvent(Event.FrameController.Compose {
+            canvasRenderer.render(it, renderData, xMapMousePos, yMapMousePos, iconSize)
+        })
+
+        postProcessTileItemSelectMode()
     }
 
     private fun processViewTranslate() {
@@ -138,16 +147,22 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processTilePopupClick() {
-        if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
-            sendEvent(Event.MapHolderController.FetchSelected {
-                if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
-                    sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
-                }
-            })
+        if (!ImGui.isMouseClicked(ImGuiMouseButton.Right) || ImGui.getIO().keyShift) {
+            return
         }
+
+        sendEvent(Event.MapHolderController.FetchSelected {
+            if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
+                sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
+            }
+        })
     }
 
     private fun processMapMouseDrag() {
+        if (ImGui.getIO().keyShift) {
+            return // do not do anything while this modifier is in play, since it's used by SHIFT+Click actions
+        }
+
         if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
             isMapMouseDragged = true
             sendEvent(Event.Global.MapMouseDragStart())
@@ -172,6 +187,53 @@ class CanvasController : EventSender, EventConsumer {
             yMapMousePos = yMapMousePosNew
             sendEvent(Event.Global.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
         }
+    }
+
+    private fun processTileItemSelectMode() {
+        if (ImGui.getIO().keyShift) {
+            canvasRenderer.isTileItemSelectMode = true
+        }
+    }
+
+    private fun postProcessTileItemSelectMode() {
+        if (!canvasRenderer.isTileItemSelectMode) {
+            return
+        }
+
+        if (canvasRenderer.tileItemIdMouseOver != 0L) {
+            if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) { // Select tile item
+                sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+            } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) { // Open for edit
+                sendEvent(Event.MapHolderController.FetchSelected {
+                    if (it != null) {
+                        openTileItemUnderMouseForEdit(it)
+                    }
+                })
+            }
+        }
+
+        canvasRenderer.isTileItemSelectMode = false
+        canvasRenderer.tileItemIdMouseOver = 0
+        canvasRenderer.redraw = true // Do one more redraw, so our canvas texture will render proper data (no highlighting etc)
+    }
+
+    private fun openTileItemUnderMouseForEdit(map: Dmm) {
+        val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
+
+        var x = xMapMousePos
+        var y = yMapMousePos
+
+        if (tileItem.pixelX != 0) {
+            x += (-1 * tileItem.pixelX / iconSize.toFloat() + if (tileItem.pixelX > 0) -.5 else .5).toInt()
+        }
+        if (tileItem.pixelY != 0) {
+            y += (-1 * tileItem.pixelY / iconSize.toFloat() + if (tileItem.pixelY > 0) -.5 else .5).toInt()
+        }
+
+        val tile = map.getTile(x, y)
+        val tileItemIdx = tile.getTileItemIdx(tileItem)
+
+        sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
     }
 
     private fun isImGuiInUse(): Boolean {
