@@ -69,7 +69,7 @@ class Tile(
     }
 
     fun replaceTileItem(tileItem: TileItem, replaceWith: TileItem) {
-        replaceTileItem(tileItems.indexOf(tileItem), replaceWith)
+        replaceTileItem(tileItems.lastIndexOf(tileItem), replaceWith)
     }
 
     fun replaceTileItem(tileItemIdx: Int, replaceWith: TileItem) {

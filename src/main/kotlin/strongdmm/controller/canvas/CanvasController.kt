@@ -11,6 +11,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
@@ -32,6 +33,8 @@ class CanvasController : EventSender, EventConsumer {
 
     private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
     private lateinit var renderData: RenderData
+
+    private var selectedTileItem: TileItem? = null
 
     private var isBlocked: Boolean = false
     private var isHasMap: Boolean = false
@@ -58,6 +61,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
+        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
         consumeEvent(Event.CanvasController.Block::class.java, ::handleCanvasBlock)
         consumeEvent(Event.CanvasController.CenterPosition::class.java, ::handleCenterPosition)
         consumeEvent(Event.CanvasController.MarkPosition::class.java, ::handleMarkPosition)
@@ -214,22 +218,26 @@ class CanvasController : EventSender, EventConsumer {
         }
 
         if (canvasRenderer.tileItemIdMouseOver != 0L) {
-            if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) { // Select tile item
-                sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
-            } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) { // Open for edit
-                if (ImGui.getIO().keyCtrl) {
-                    sendEvent(Event.MapHolderController.FetchSelected {
-                        if (it != null) {
-                            deleteTileItemUnderMouse(it)
+            if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
+                if (ImGui.getIO().keyCtrl) { // Replace tile item
+                    sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
+                        if (currentMap != null) {
+                            replaceTileItemUnderMouseWithSelected(currentMap)
                         }
                     })
-                } else {
-                    sendEvent(Event.MapHolderController.FetchSelected {
-                        if (it != null) {
-                            openTileItemUnderMouseForEdit(it)
-                        }
-                    })
+                } else { // Select tile item
+                    sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
+            } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
+                sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
+                    if (currentMap != null) {
+                        if (ImGui.getIO().keyCtrl) { // Delete tile item
+                            deleteTileItemUnderMouse(currentMap)
+                        } else { // Open for edit
+                            openTileItemUnderMouseForEdit(currentMap)
+                        }
+                    }
+                })
             }
         }
 
@@ -254,15 +262,32 @@ class CanvasController : EventSender, EventConsumer {
         return MapPos(x, y)
     }
 
+    private fun replaceTileItemUnderMouseWithSelected(map: Dmm) {
+        if (selectedTileItem == null) {
+            return
+        }
+
+        val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
+        val pos = getTileItemCoordUnderMouse()
+        val tile = map.getTile(pos.x, pos.y)
+
+        sendEvent(Event.ActionController.AddAction(
+            ReplaceTileAction(tile) {
+                tile.replaceTileItem(tileItem, selectedTileItem!!)
+            }
+        ))
+
+        sendEvent(Event.Global.RefreshFrame())
+    }
+
     private fun deleteTileItemUnderMouse(map: Dmm) {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
         val pos = getTileItemCoordUnderMouse()
         val tile = map.getTile(pos.x, pos.y)
-        val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(Event.ActionController.AddAction(
             ReplaceTileAction(tile) {
-                tile.deleteTileItem(tileItemIdx)
+                tile.deleteTileItem(tileItem)
             }
         ))
 
@@ -301,6 +326,7 @@ class CanvasController : EventSender, EventConsumer {
         renderDataStorageByMapId.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
+        selectedTileItem = null
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
@@ -313,6 +339,10 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleRefreshFrame() {
         canvasRenderer.redraw = true
+    }
+
+    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
+        selectedTileItem = event.body
     }
 
     private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {

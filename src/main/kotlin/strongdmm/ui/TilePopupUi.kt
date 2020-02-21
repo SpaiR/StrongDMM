@@ -96,7 +96,7 @@ class TilePopupUi : EventConsumer, EventSender {
             sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
 
-        menuItem("Replace With Active Object##replace_with_active_object_$tileItemIdx", enabled = (selectedTileItem?.isSameType(tileItem) ?: false)) {
+        menuItem("Replace With Active Object##replace_with_active_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB", enabled = (selectedTileItem?.isSameType(tileItem) ?: false)) {
             selectedTileItem?.let { activeTileItem ->
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
