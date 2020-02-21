@@ -94,7 +94,6 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                             sendEvent(Event.CanvasController.CenterPosition(searchPos.pos))
                             sendEvent(Event.CanvasController.MarkPosition(searchPos.pos))
                         }
-                        setItemHoveredTooltip("[${searchPos.idx}]")
 
                         if (isItemClicked(ImGuiMouseButton.Right)) {
                             if (replaceType.length == 0) {
