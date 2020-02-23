@@ -68,6 +68,8 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.CanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
         consumeEvent(Event.CanvasController.SelectTiles::class.java, ::handleSelectTiles)
         consumeEvent(Event.CanvasController.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
+        consumeEvent(Event.CanvasController.SelectArea::class.java, ::handleSelectArea)
+        consumeEvent(Event.CanvasController.ResetSelectedArea::class.java, ::handleResetSelectedArea)
     }
 
     fun process() {
@@ -372,5 +374,13 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleResetSelectedTiles() {
         canvasRenderer.selectedTiles = null
+    }
+
+    private fun handleSelectArea(event: Event<Pair<MapPos, MapPos>, Unit>) {
+        canvasRenderer.selectedArea = event.body
+    }
+
+    private fun handleResetSelectedArea() {
+        canvasRenderer.selectedArea = null
     }
 }

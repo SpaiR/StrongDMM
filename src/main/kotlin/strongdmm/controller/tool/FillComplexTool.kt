@@ -5,15 +5,15 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 
-class AddDeleteTool : Tool() {
+class FillComplexTool : Tool() {
     override var isActive: Boolean
         get() = currentTool.isActive
         set(value) {
             currentTool.isActive = value
         }
 
-    private val add: Tool = AddTool()
-    private val delete: Tool = DeleteTool()
+    private val add: Tool = FillAddTool()
+    private val delete: Tool = FillDeleteTool()
 
     private var currentTool: Tool = add
 
@@ -30,12 +30,12 @@ class AddDeleteTool : Tool() {
         currentTool.onMapPosChanged(mapPos)
     }
 
-    override fun onTileItemSwitch(tileItem: TileItem) {
+    override fun onTileItemSwitch(tileItem: TileItem?) {
         add.onTileItemSwitch(tileItem)
         delete.onTileItemSwitch(tileItem)
     }
 
-    override fun onMapSwitch(map: Dmm) {
+    override fun onMapSwitch(map: Dmm?) {
         add.onMapSwitch(map)
         delete.onMapSwitch(map)
     }

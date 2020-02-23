@@ -3,7 +3,6 @@ package strongdmm.ui
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
-import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.controller.tool.ToolType
 import strongdmm.event.Event
@@ -13,7 +12,7 @@ import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
 class ToolSelectPanelUi : EventConsumer, EventSender {
-    private var currentTool: ToolType = ToolType.ADD
+    private var currentTool: ToolType = ToolType.TILE
 
     init {
         consumeEvent(Event.Global.SwitchUsedTool::class.java, ::handleSwitchUsedTool)
@@ -38,7 +37,6 @@ class ToolSelectPanelUi : EventConsumer, EventSender {
                 }
 
                 if (isItemHovered()) {
-                    setMouseCursor(ImGuiMouseCursor.Hand)
                     setTooltip(tool.toolHelper)
                 }
 

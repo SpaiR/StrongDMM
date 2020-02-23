@@ -33,6 +33,7 @@ class CanvasRenderer {
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
     var selectedTiles: Collection<MapPos>? = null
+    var selectedArea: Pair<MapPos, MapPos>? = null
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -70,6 +71,7 @@ class CanvasRenderer {
             renderMousePosition()
             renderMarkedPosition()
             renderSelectedTiles()
+            renderSelectedArea()
 
             if (!redraw && !isTileItemSelectMode) {
                 return
@@ -164,6 +166,27 @@ class CanvasRenderer {
             glVertex2d(xPos + realIconSize, yPos)
             glVertex2d(xPos + realIconSize, yPos + realIconSize)
             glVertex2d(xPos, yPos + realIconSize)
+            glEnd()
+        }
+    }
+
+    private fun renderSelectedArea() {
+        selectedArea?.let { (posStart, posEnd) ->
+            val xPosStart = ((posStart.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPosStart = ((posStart.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+
+            val xPosEnd = ((posEnd.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPosEnd = ((posEnd.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+
+            val realIconSize = iconSize / renderData.viewScale
+
+            glColor4f(1f, 1f, 1f, .25f)
+
+            glBegin(GL_QUADS)
+            glVertex2d(xPosStart, yPosStart)
+            glVertex2d(xPosEnd + realIconSize, yPosStart)
+            glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
+            glVertex2d(xPosStart, yPosEnd + realIconSize)
             glEnd()
         }
     }

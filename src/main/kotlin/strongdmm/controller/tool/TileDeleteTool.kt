@@ -13,7 +13,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventSender
 
-class DeleteTool : Tool(), EventSender {
+class TileDeleteTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
@@ -41,8 +41,9 @@ class DeleteTool : Tool(), EventSender {
         }
     }
 
-    override fun onTileItemSwitch(tileItem: TileItem) {
+    override fun onTileItemSwitch(tileItem: TileItem?) {
         tileItemTypeToDelete = when {
+            tileItem == null -> ""
             tileItem.isType(TYPE_AREA) -> TYPE_AREA
             tileItem.isType(TYPE_TURF) -> TYPE_TURF
             tileItem.isType(TYPE_OBJ) -> TYPE_OBJ
@@ -51,7 +52,7 @@ class DeleteTool : Tool(), EventSender {
         }
     }
 
-    override fun onMapSwitch(map: Dmm) {
+    override fun onMapSwitch(map: Dmm?) {
         currentMap = map
     }
 

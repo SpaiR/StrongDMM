@@ -9,7 +9,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventSender
 
-class AddTool : Tool(), EventSender {
+class TileAddTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
@@ -37,11 +37,11 @@ class AddTool : Tool(), EventSender {
         }
     }
 
-    override fun onTileItemSwitch(tileItem: TileItem) {
+    override fun onTileItemSwitch(tileItem: TileItem?) {
         usedTileItem = tileItem
     }
 
-    override fun onMapSwitch(map: Dmm) {
+    override fun onMapSwitch(map: Dmm?) {
         currentMap = map
     }
 

@@ -103,6 +103,8 @@ abstract class Event<T, R>(
         class ResetMarkedPosition : Event<Unit, Unit>(Unit, null)
         class SelectTiles(body: Collection<MapPos>) : Event<Collection<MapPos>, Unit>(body, null)
         class ResetSelectedTiles : Event<Unit, Unit>(Unit, null)
+        class SelectArea(body: Pair<MapPos, MapPos>) : Event<Pair<MapPos, MapPos>, Unit>(body, null)
+        class ResetSelectedArea : Event<Unit, Unit>(Unit, null)
     }
 
     abstract class ObjectPanelUi {
