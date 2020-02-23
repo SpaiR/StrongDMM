@@ -43,9 +43,6 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                 continue
             }
 
-            setNextWindowPos(655f, 535f, ImGuiCond.Once)
-            setNextWindowSize(375f, 390f, ImGuiCond.Once)
-
             val openState = panelsOpenState.getOrPut(searchResult.searchValue) { ImBool(true) }
 
             if (!openState.get()) {
@@ -53,6 +50,9 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                 searchResIterator.remove()
                 continue
             }
+
+            setNextWindowPos(655f, 535f, ImGuiCond.Once)
+            setNextWindowSize(375f, 390f, ImGuiCond.Once)
 
             window("Search Result: ${searchResult.searchValue} (${searchResult.positions.size})###${searchResult.searchValue}", openState) {
                 if (inputText("##replace_type", replaceType, "Replace Type")) {
