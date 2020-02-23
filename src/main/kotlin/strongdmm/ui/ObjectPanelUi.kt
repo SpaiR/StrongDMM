@@ -39,7 +39,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         setNextWindowPos(10f, 535f, ImGuiCond.Once)
         setNextWindowSize(330f, 390f, ImGuiCond.Once)
 
-        val title = if (tileItems?.size ?: 0 > 0) "Object (${tileItems!!.size})###object_panel" else "Object###object_panel"
+        val title = if (tileItems?.size ?: 0 > 0) "(${tileItems!!.size}) $tileItemType###object_panel" else "Object Panel###object_panel"
 
         window(title) {
             popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
