@@ -1,5 +1,8 @@
 package strongdmm.controller.tool
 
+import strongdmm.controller.tool.fill.FillComplexTool
+import strongdmm.controller.tool.tile.TileComplexTool
+
 enum class ToolType(
     val toolName: String,
     val toolHelper: String,

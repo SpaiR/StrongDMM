@@ -1,4 +1,4 @@
-package strongdmm.controller.tool
+package strongdmm.controller.tool.fill
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
@@ -6,6 +6,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.MultiAction
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
+import strongdmm.controller.tool.Tool
 import strongdmm.event.Event
 import strongdmm.event.EventSender
 import kotlin.math.max

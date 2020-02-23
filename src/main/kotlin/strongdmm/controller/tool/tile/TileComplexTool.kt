@@ -1,9 +1,10 @@
-package strongdmm.controller.tool
+package strongdmm.controller.tool.tile
 
 import imgui.ImGui
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.controller.tool.Tool
 
 class TileComplexTool : Tool() {
     override var isActive: Boolean
