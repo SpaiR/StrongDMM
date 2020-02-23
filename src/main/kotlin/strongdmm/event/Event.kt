@@ -9,6 +9,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.controller.tool.ToolType
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
 import java.io.File
@@ -49,6 +50,7 @@ abstract class Event<T, R>(
         class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
         class RefreshLayersFilter(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
+        class SwitchUsedTool(body: ToolType) : Event<ToolType, Unit>(body, null)
 
         abstract class Provider {
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
@@ -139,6 +141,10 @@ abstract class Event<T, R>(
         class ShowByType(body: DmeItemType) : Event<DmeItemType, Unit>(body, null)
         class HideByType(body: DmeItemType) : Event<DmeItemType, Unit>(body, null)
         class Fetch(callback: ((Set<DmeItemType>) -> Unit)) : Event<Unit, Set<DmeItemType>>(Unit, callback)
+    }
+
+    abstract class ToolsController {
+        class Switch(body: ToolType) : Event<ToolType, Unit>(body, null)
     }
 
     fun reply(response: R) {

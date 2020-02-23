@@ -5,9 +5,10 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 import strongdmm.util.OUT_OF_BOUNDS
 
-class ToolsController : EventConsumer {
+class ToolsController : EventConsumer, EventSender {
     private var currentTool: Tool = AddDeleteTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
@@ -17,6 +18,7 @@ class ToolsController : EventConsumer {
         consumeEvent(Event.Global.MapMouseDragStop::class.java, ::handleMapMouseDragStop)
         consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -42,5 +44,10 @@ class ToolsController : EventConsumer {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         currentTool.onMapSwitch(event.body)
+    }
+
+    private fun handleSwitch(event: Event<ToolType, Unit>) {
+        currentTool = event.body.createTool()
+        sendEvent(Event.Global.SwitchUsedTool(event.body))
     }
 }
