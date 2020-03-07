@@ -5,7 +5,7 @@ open class ShortcutHandler {
         val globalShortcuts: MutableSet<Shortcut> = mutableSetOf() // used to iterate through all registered shortcuts
     }
 
-    val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()
+    private val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()
 
     fun addShortcut(first: Int, second: Int = -1, third: Int = -1, action: (() -> Unit)? = null) {
         val shortcut = Shortcut(first, second, third)

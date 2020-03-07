@@ -47,6 +47,7 @@ class SelectComplexTool : ComplexTool() {
     override fun reset() {
         add.reset()
         move.reset()
+        currentTool = add
     }
 
     override fun destroy() {
