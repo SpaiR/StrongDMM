@@ -58,7 +58,7 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (currentMap == event.body) {
+        if (currentMap === event.body) {
             currentTool.reset()
             currentMap = null
             currentTool.onMapSwitch(null)
