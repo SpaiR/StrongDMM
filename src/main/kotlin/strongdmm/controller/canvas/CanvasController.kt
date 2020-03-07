@@ -10,6 +10,7 @@ import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.ReplaceTileAction
+import strongdmm.controller.frame.FrameMesh
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -59,6 +60,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
         consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
+        consumeEvent(Event.Global.Provider.ComposedFrame::class.java, ::handleProviderComposedFrame)
         consumeEvent(Event.CanvasController.Block::class.java, ::handleCanvasBlock)
         consumeEvent(Event.CanvasController.CenterPosition::class.java, ::handleCenterPosition)
         consumeEvent(Event.CanvasController.MarkPosition::class.java, ::handleMarkPosition)
@@ -200,10 +202,6 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun prepareCanvasRenderer() {
-        sendEvent(Event.FrameController.Compose {
-            canvasRenderer.frameMeshes = it
-        })
-
         canvasRenderer.renderData = renderData
         canvasRenderer.xMapMousePos = xMapMousePos
         canvasRenderer.yMapMousePos = yMapMousePos
@@ -343,6 +341,10 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
         selectedTileItem = event.body
+    }
+
+    private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+        canvasRenderer.frameMeshes = event.body
     }
 
     private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {

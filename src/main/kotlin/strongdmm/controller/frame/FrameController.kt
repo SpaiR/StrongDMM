@@ -32,16 +32,21 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
-        consumeEvent(Event.FrameController.Compose::class.java, ::handleCompose)
+    }
+
+    fun postInit() {
+        sendEvent(Event.Global.Provider.ComposedFrame(cache))
     }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
         cache.clear()
+        updateFrameCache()
     }
 
     private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
         currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+        updateFrameCache()
     }
 
     private fun handleResetEnvironment() {
@@ -58,17 +63,12 @@ class FrameController : EventConsumer, EventSender {
 
     private fun handleRefreshFrame() {
         cache.clear()
+        updateFrameCache()
     }
 
-    private fun handleCompose(event: Event<Unit, List<FrameMesh>>) {
-        if (cache.isNotEmpty()) {
-            event.reply(cache)
-            return
-        }
-
+    private fun updateFrameCache() {
         sendEvent(Event.MapHolderController.FetchSelected { map ->
             if (map == null) {
-                event.reply(emptyList())
                 return@FetchSelected
             }
 
@@ -110,7 +110,6 @@ class FrameController : EventConsumer, EventSender {
             }
 
             cache.sortBy { it.depth }
-            event.reply(cache)
         })
     }
 }

@@ -15,6 +15,7 @@ import java.nio.ByteBuffer
 
 class CanvasRenderer {
     var redraw: Boolean = false
+    var frameMeshes: List<FrameMesh> = emptyList()
 
     private val frameBuffer: Int = glGenFramebuffers()
     private var isTextureAttached: Boolean = false
@@ -23,7 +24,6 @@ class CanvasRenderer {
     private var canvasTextureIsFilled: Boolean = false
 
     // Variables provided by CanvasController every cycle
-    lateinit var frameMeshes: List<FrameMesh>
     lateinit var renderData: RenderData
     var xMapMousePos: Int = OUT_OF_BOUNDS
     var yMapMousePos: Int = OUT_OF_BOUNDS

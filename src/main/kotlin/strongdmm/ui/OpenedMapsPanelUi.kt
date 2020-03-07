@@ -33,7 +33,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         setNextWindowCollapsed(true, ImGuiCond.Once)
 
         window("${selectedMap?.mapName}###opened_maps") {
-            openedMaps.forEach { map ->
+            openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
                     sendEvent(Event.MapHolderController.Close(map.id))

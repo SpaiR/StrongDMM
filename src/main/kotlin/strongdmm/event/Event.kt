@@ -52,6 +52,7 @@ abstract class Event<T, R>(
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
             class OpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
             class AvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) : Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
+            class ComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
         }
     }
 
@@ -66,10 +67,6 @@ abstract class Event<T, R>(
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
         class Save : Event<Unit, Unit>(Unit, null)
-    }
-
-    abstract class FrameController {
-        class Compose(callback: ((List<FrameMesh>) -> Unit)) : Event<Unit, List<FrameMesh>>(Unit, callback)
     }
 
     abstract class AvailableMapsDialogUi {
