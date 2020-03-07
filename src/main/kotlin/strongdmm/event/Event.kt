@@ -6,6 +6,7 @@ import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.tool.ToolType
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
@@ -47,6 +48,7 @@ abstract class Event<T, R>(
         class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
         class RefreshLayersFilter(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
         class SwitchUsedTool(body: ToolType) : Event<ToolType, Unit>(body, null)
+        class TriggerShortcut(body: Shortcut) : Event<Shortcut, Unit>(body, null)
 
         abstract class Provider {
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)

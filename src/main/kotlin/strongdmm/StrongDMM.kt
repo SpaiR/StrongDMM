@@ -8,6 +8,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.controller.map.MapHolderController
 import strongdmm.controller.map.MapModifierController
+import strongdmm.controller.shortcut.ShortcutController
 import strongdmm.controller.tool.ToolsController
 import strongdmm.ui.*
 import strongdmm.ui.search.SearchResultPanelUi
@@ -38,6 +39,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val instanceController = InstanceController()
     private val layersFilterController = LayersFilterController()
     private val toolsController = ToolsController()
+    private val shortcutController = ShortcutController()
 
     init {
         instanceLocatorPanelUi.postInit()
@@ -62,6 +64,7 @@ class StrongDMM(title: String) : AppWindow(title) {
 
         // Controllers
         canvasController.process()
+        shortcutController.process()
     }
 
     companion object {
