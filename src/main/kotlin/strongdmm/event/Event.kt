@@ -13,20 +13,19 @@ import java.io.File
 
 /**
  * Events are used to do a communication between application components.
- * By design only "*Ui" and "*Controller" classes should be able to send and receive them.
+ * By design only "*Ui" and "*Controller" classes could receive them.
+ * It's allowed to send events from classes different then ui or controllers, but mechanism should be used with wisdom.
  *
- * Global events are used to show that something globally happened. Like environment switching or map closing.
- * Unlike the others, global events could be consumed by any number of classes.
+ * Global events are used to show that something globally happened. Like environment was switched or map was closed.
+ * Unlike the others, global events could be consumed by any classes.
  *
  * Events like "EnvironmentController" are meant to be consumed ONLY by a specific class.
  * This restriction is checked in runtime.
  *
- * Sometimes it's needed to provide state with ImGui pointer-like variables from one UI to another.
- * To do that use 'Event.Global.Provider' subclasses.
- * The only types could be send through those events are:
- *  - ImBool
+ * Sometimes it's needed to provide state from one class to another to avoid unneeded events creation.
+ * "Event.Provider.*" events should be used for that.
+ * Provided variables should be finalized in places they are declared.
  *
- * !!! IMPORTANT !!!
  * To make sure that events by themselves are fully self-explanatory, primitive types as well as raw strings should not be used as arguments.
  * Use typealiase instead.
  */
@@ -51,6 +50,7 @@ abstract class Event<T, R>(
 
         abstract class Provider {
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
+            class OpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
         }
     }
 
@@ -63,7 +63,6 @@ abstract class Event<T, R>(
         class Open(body: File) : Event<File, Unit>(body, null)
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
-        class FetchAllOpened(callback: ((Set<Dmm>) -> Unit)?) : Event<Unit, Set<Dmm>>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchAllAvailable(callback: ((Set<Pair<AbsoluteFilePath, VisibleFilePath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsoluteFilePath, VisibleFilePath>>>(Unit, callback)
         class Save : Event<Unit, Unit>(Unit, null)

@@ -30,17 +30,18 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val toolSelectPanelUi = ToolSelectPanelUi()
 
     private val environmentController = EnvironmentController()
-    private val mapController = MapHolderController()
+    private val mapHolderController = MapHolderController()
+    private val mapModifierController = MapModifierController()
     private val canvasController = CanvasController()
     private val frameController = FrameController()
     private val actionController = ActionController()
     private val instanceController = InstanceController()
-    private val mapModifierController = MapModifierController()
     private val layersFilterController = LayersFilterController()
     private val toolsController = ToolsController()
 
     init {
         instanceLocatorPanelUi.postInit()
+        mapHolderController.postInit()
     }
 
     override fun appLoop() {

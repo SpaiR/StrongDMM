@@ -39,6 +39,8 @@ class EnvironmentController : EventSender, EventConsumer {
     }
 
     private fun handleFetch(event: Event<Unit, Dme>) {
-        event.reply(environment)
+        if (this::environment.isInitialized) {
+            event.reply(environment)
+        }
     }
 }
