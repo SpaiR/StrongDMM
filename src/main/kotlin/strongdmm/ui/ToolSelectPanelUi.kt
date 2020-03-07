@@ -12,6 +12,7 @@ import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
 class ToolSelectPanelUi : EventConsumer, EventSender {
+    private val tools: Array<ToolType> = ToolType.values()
     private var currentTool: ToolType = ToolType.TILE
 
     init {
@@ -23,7 +24,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender {
         setNextWindowSize(80f, 35f, ImGuiCond.Once)
 
         window("Tool", ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize) {
-            ToolType.values().forEach { tool ->
+            tools.forEach { tool ->
                 val isToolSelected = tool == currentTool
 
                 if (isToolSelected) {
