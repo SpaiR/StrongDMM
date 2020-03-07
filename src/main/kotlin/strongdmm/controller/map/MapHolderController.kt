@@ -21,7 +21,6 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(Event.MapHolderController.Open::class.java, ::handleOpen)
         consumeEvent(Event.MapHolderController.Close::class.java, ::handleClose)
         consumeEvent(Event.MapHolderController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(Event.MapHolderController.FetchAllAvailable::class.java, ::handleFetchAllAvailable)
         consumeEvent(Event.MapHolderController.Switch::class.java, ::handleSwitch)
         consumeEvent(Event.MapHolderController.Save::class.java, ::handleSave)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
@@ -30,6 +29,7 @@ class MapHolderController : EventSender, EventConsumer {
 
     fun postInit() {
         sendEvent(Event.Global.Provider.OpenedMaps(openedMaps))
+        sendEvent(Event.Global.Provider.AvailableMaps(availableMapsPathsWithVisibleMapsPaths))
     }
 
     private fun handleOpen(event: Event<File, Unit>) {
@@ -91,10 +91,6 @@ class MapHolderController : EventSender, EventConsumer {
 
     private fun handleFetchSelected(event: Event<Unit, Dmm?>) {
         event.reply(selectedMap)
-    }
-
-    private fun handleFetchAllAvailable(event: Event<Unit, Set<Pair<AbsoluteFilePath, VisibleFilePath>>>) {
-        event.reply(availableMapsPathsWithVisibleMapsPaths.toSet())
     }
 
     private fun handleSwitch(event: Event<MapId, Unit>) {

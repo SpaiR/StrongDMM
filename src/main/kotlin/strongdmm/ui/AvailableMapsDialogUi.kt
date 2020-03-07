@@ -15,6 +15,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isDoOpen: Boolean = false
     private var isFirstOpen: Boolean = true
 
+    private var availableMaps: Set<Pair<String, String>> = emptySet()
     private var selectedMapPath: String? = null // to store an absolute path for currently selected map
     private var selectionStatus: String = "" // to display a currently selected map (visible path)
 
@@ -22,6 +23,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
+        consumeEvent(Event.Global.Provider.AvailableMaps::class.java, ::handleProviderAvailableMaps)
     }
 
     fun process() {
@@ -44,20 +46,18 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             inputText("##maps_path_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
-                sendEvent(Event.MapHolderController.FetchAllAvailable { availableMaps ->
-                    for ((absoluteFilePath, visibleFilePath) in availableMaps) {
-                        if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get(), ignoreCase = true)) {
-                            continue
-                        }
-
-                        bullet()
-                        sameLine()
-                        selectable(visibleFilePath, selectedMapPath == absoluteFilePath) {
-                            selectedMapPath = absoluteFilePath
-                            selectionStatus = visibleFilePath
-                        }
+                for ((absoluteFilePath, visibleFilePath) in availableMaps) {
+                    if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get(), ignoreCase = true)) {
+                        continue
                     }
-                })
+
+                    bullet()
+                    sameLine()
+                    selectable(visibleFilePath, selectedMapPath == absoluteFilePath) {
+                        selectedMapPath = absoluteFilePath
+                        selectionStatus = visibleFilePath
+                    }
+                }
             }
 
             button("Open", block = ::openSelectedMapAndClosePopup)
@@ -90,5 +90,9 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         isDoOpen = true
         isFirstOpen = true
         sendEvent(Event.CanvasController.Block(true))
+    }
+
+    private fun handleProviderAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {
+        availableMaps = event.body
     }
 }

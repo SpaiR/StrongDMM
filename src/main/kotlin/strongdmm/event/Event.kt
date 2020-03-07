@@ -51,6 +51,7 @@ abstract class Event<T, R>(
         abstract class Provider {
             class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
             class OpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
+            class AvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) : Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
         }
     }
 
@@ -64,7 +65,6 @@ abstract class Event<T, R>(
         class Close(body: MapId) : Event<MapId, Unit>(body, null)
         class FetchSelected(callback: ((Dmm?) -> Unit)) : Event<Unit, Dmm?>(Unit, callback)
         class Switch(body: MapId) : Event<MapId, Unit>(body, null)
-        class FetchAllAvailable(callback: ((Set<Pair<AbsoluteFilePath, VisibleFilePath>>) -> Unit)?) : Event<Unit, Set<Pair<AbsoluteFilePath, VisibleFilePath>>>(Unit, callback)
         class Save : Event<Unit, Unit>(Unit, null)
     }
 
