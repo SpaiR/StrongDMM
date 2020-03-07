@@ -41,5 +41,6 @@ class LayersFilterController : EventConsumer, EventSender {
 
     private fun handleResetEnvironment() {
         filteredTypes.clear()
+        sendEvent(Event.Global.RefreshLayersFilter(filteredTypes))
     }
 }
