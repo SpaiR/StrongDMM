@@ -2,7 +2,9 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.byond.*
+import strongdmm.byond.TYPE_MOB
+import strongdmm.byond.TYPE_OBJ
+import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
@@ -96,7 +98,11 @@ class TilePopupUi : EventConsumer, EventSender {
             sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
 
-        menuItem("Replace With Active Object##replace_with_active_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB", enabled = (selectedTileItem?.isSameType(tileItem) ?: false)) {
+        menuItem(
+            "Replace With Active Object##replace_with_active_object_$tileItemIdx",
+            shortcut = "Ctrl+Shift+LMB",
+            enabled = (selectedTileItem?.isSameType(tileItem) ?: false)
+        ) {
             selectedTileItem?.let { activeTileItem ->
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {

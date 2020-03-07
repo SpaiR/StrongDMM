@@ -5,7 +5,10 @@ import io.github.spair.dmm.io.reader.DmmReader
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.save.SaveMap
-import strongdmm.event.*
+import strongdmm.event.Event
+import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
+import strongdmm.event.MapId
 import java.io.File
 import java.nio.file.Files
 import kotlin.concurrent.thread
