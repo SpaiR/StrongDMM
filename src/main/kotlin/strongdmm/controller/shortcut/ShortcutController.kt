@@ -11,7 +11,6 @@ class ShortcutController : EventSender, ShortcutHandler() {
         addShortcut(Shortcut.ALT_PAIR, GLFW_KEY_1)
         addShortcut(Shortcut.ALT_PAIR, GLFW_KEY_2)
         addShortcut(Shortcut.ALT_PAIR, GLFW_KEY_3)
-        addShortcut(Shortcut.ALT_PAIR, GLFW_KEY_4)
 
         // Ctrl+*
         addShortcut(Shortcut.CONTROL_PAIR, GLFW_KEY_Z)

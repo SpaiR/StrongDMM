@@ -4,6 +4,9 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
+import org.lwjgl.glfw.GLFW
+import strongdmm.controller.shortcut.Shortcut
+import strongdmm.controller.shortcut.ShortcutHandler
 import strongdmm.controller.tool.ToolType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -11,12 +14,17 @@ import strongdmm.event.EventSender
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
-class ToolSelectPanelUi : EventConsumer, EventSender {
+class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     private val tools: Array<ToolType> = ToolType.values()
     private var currentTool: ToolType = ToolType.TILE
 
     init {
         consumeEvent(Event.Global.SwitchUsedTool::class.java, ::handleSwitchUsedTool)
+        consumeEvent(Event.Global.TriggerShortcut::class.java, ::handleTriggerShortcut)
+
+        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_1) { selectTool(tools[0]) }
+        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_2) { selectTool(tools[1]) }
+        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_3) { selectTool(tools[2]) }
     }
 
     fun process() {
@@ -50,7 +58,15 @@ class ToolSelectPanelUi : EventConsumer, EventSender {
         }
     }
 
+    private fun selectTool(tool: ToolType) {
+        sendEvent(Event.ToolsController.Switch(tool))
+    }
+
     private fun handleSwitchUsedTool(event: Event<ToolType, Unit>) {
         currentTool = event.body
+    }
+
+    private fun handleTriggerShortcut(event: Event<Shortcut, Unit>) {
+        handleShortcut(event.body)
     }
 }
