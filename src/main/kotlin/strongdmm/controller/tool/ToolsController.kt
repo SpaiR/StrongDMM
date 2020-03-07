@@ -25,6 +25,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
+        consumeEvent(Event.ToolsController.Reset::class.java, ::handleReset)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -79,5 +80,9 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.onMapSwitch(currentMap)
         currentTool.onTileItemSwitch(selectedTileItem)
         sendEvent(Event.Global.SwitchUsedTool(event.body))
+    }
+
+    private fun handleReset() {
+        currentTool.reset()
     }
 }

@@ -45,6 +45,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = ::doRedo)
+        addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
 
         // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_1, action = ::toggleAreaLayerManual)
@@ -67,6 +68,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             menu("Edit") {
                 menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
                 menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
+                separator()
+                menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
             }
 
             menu("Layers") {
@@ -129,6 +132,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         if (isRedoEnabled) {
             sendEvent(Event.ActionController.RedoAction())
         }
+    }
+
+    private fun doDeselectAll() {
+        sendEvent(Event.ToolsController.Reset())
     }
 
     private fun doOpenLayersFilter() {

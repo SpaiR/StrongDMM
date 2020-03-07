@@ -44,6 +44,8 @@ class TilePopupUi : EventConsumer, EventSender {
             }
 
             popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
+                menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
+                separator()
                 showTileItems(tile)
             }
         }
@@ -123,6 +125,10 @@ class TilePopupUi : EventConsumer, EventSender {
 
             sendEvent(Event.Global.RefreshFrame())
         }
+    }
+
+    private fun doDeselectAll() {
+        sendEvent(Event.ToolsController.Reset())
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {

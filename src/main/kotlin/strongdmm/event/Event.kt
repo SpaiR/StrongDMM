@@ -143,6 +143,7 @@ abstract class Event<T, R>(
 
     abstract class ToolsController {
         class Switch(body: ToolType) : Event<ToolType, Unit>(body, null)
+        class Reset : Event<Unit, Unit>(Unit, null)
     }
 
     fun reply(response: R) {
