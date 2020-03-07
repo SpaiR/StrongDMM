@@ -40,4 +40,14 @@ class FillComplexTool : Tool() {
         add.onMapSwitch(map)
         delete.onMapSwitch(map)
     }
+
+    override fun reset() {
+        add.reset()
+        delete.reset()
+    }
+
+    override fun destroy() {
+        add.destroy()
+        delete.destroy()
+    }
 }

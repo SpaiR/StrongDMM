@@ -30,10 +30,8 @@ class TileDeleteTool : Tool(), EventSender {
     }
 
     override fun onStop() {
-        isActive = false
-        dirtyTiles.clear()
         flushReverseActions()
-        sendEvent(Event.CanvasController.ResetSelectedTiles())
+        reset()
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -57,6 +55,19 @@ class TileDeleteTool : Tool(), EventSender {
         currentMap = map
     }
 
+    override fun reset() {
+        isActive = false
+        dirtyTiles.clear()
+        reverseActions.clear()
+        sendEvent(Event.CanvasController.ResetSelectedTiles())
+    }
+
+    override fun destroy() {
+        reset()
+        tileItemTypeToDelete = null
+        currentMap = null
+    }
+
     private fun deleteTopmostTileItem(pos: MapPos) {
         currentMap?.getTile(pos.x, pos.y)?.let { tile ->
             sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
@@ -78,6 +89,5 @@ class TileDeleteTool : Tool(), EventSender {
         }
 
         sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions.toList())))
-        reverseActions.clear()
     }
 }

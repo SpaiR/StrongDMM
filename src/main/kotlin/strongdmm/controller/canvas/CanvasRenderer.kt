@@ -4,6 +4,7 @@ import imgui.ImVec4
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL30.*
 import strongdmm.byond.dmi.IconSprite
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.util.DEFAULT_ICON_SIZE
@@ -33,7 +34,8 @@ class CanvasRenderer {
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
     var selectedTiles: Collection<MapPos>? = null
-    var selectedArea: Pair<MapPos, MapPos>? = null
+    var selectedArea: MapArea? = null
+    var highlightSelectedArea: Boolean = false
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -171,12 +173,12 @@ class CanvasRenderer {
     }
 
     private fun renderSelectedArea() {
-        selectedArea?.let { (posStart, posEnd) ->
-            val xPosStart = ((posStart.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
-            val yPosStart = ((posStart.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+        selectedArea?.let { mapArea ->
+            val xPosStart = ((mapArea.x1 - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPosStart = ((mapArea.y1 - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
 
-            val xPosEnd = ((posEnd.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
-            val yPosEnd = ((posEnd.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+            val xPosEnd = ((mapArea.x2 - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPosEnd = ((mapArea.y2 - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
 
             val realIconSize = iconSize / renderData.viewScale
 
@@ -188,6 +190,18 @@ class CanvasRenderer {
             glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
             glVertex2d(xPosStart, yPosEnd + realIconSize)
             glEnd()
+
+            if (highlightSelectedArea) {
+                glColor4f(0f, 1f, 0f, .75f)
+                glLineWidth(2f)
+                glBegin(GL_LINE_LOOP)
+                glVertex2d(xPosStart, yPosStart)
+                glVertex2d(xPosEnd + realIconSize, yPosStart)
+                glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
+                glVertex2d(xPosStart, yPosEnd + realIconSize)
+                glEnd()
+                glLineWidth(1f)
+            }
         }
     }
 

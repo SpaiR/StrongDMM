@@ -89,6 +89,7 @@ class ActionController : EventConsumer, EventSender {
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
         actionStacks.remove(event.body)
         actionBalanceStorage.remove(event.body)
+        sendEvent(Event.Global.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
     }
 
     private data class ActionStack(

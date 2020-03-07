@@ -22,6 +22,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(Event.Global.MapMouseDragStop::class.java, ::handleMapMouseDragStop)
         consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
         consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
     }
@@ -40,7 +41,9 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleMapMouseDragStop() {
-        currentTool.onStop()
+        if (currentTool.isActive) {
+            currentTool.onStop()
+        }
     }
 
     private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
@@ -49,18 +52,29 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+        currentTool.reset()
         currentMap = event.body
         currentTool.onMapSwitch(event.body)
+    }
+
+    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+        if (currentMap == event.body) {
+            currentTool.reset()
+            currentMap = null
+            currentTool.onMapSwitch(null)
+        }
     }
 
     private fun handleResetEnvironment() {
         currentMap = null
         selectedTileItem = null
+        currentTool.destroy()
         currentTool.onTileItemSwitch(null)
         currentTool.onMapSwitch(null)
     }
 
     private fun handleSwitch(event: Event<ToolType, Unit>) {
+        currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onMapSwitch(currentMap)
         currentTool.onTileItemSwitch(selectedTileItem)

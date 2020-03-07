@@ -2,10 +2,7 @@ package strongdmm.event
 
 import imgui.ImBool
 import strongdmm.byond.dme.Dme
-import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.MapPos
-import strongdmm.byond.dmm.Tile
-import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.*
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.frame.FrameMesh
@@ -103,8 +100,9 @@ abstract class Event<T, R>(
         class ResetMarkedPosition : Event<Unit, Unit>(Unit, null)
         class SelectTiles(body: Collection<MapPos>) : Event<Collection<MapPos>, Unit>(body, null)
         class ResetSelectedTiles : Event<Unit, Unit>(Unit, null)
-        class SelectArea(body: Pair<MapPos, MapPos>) : Event<Pair<MapPos, MapPos>, Unit>(body, null)
+        class SelectArea(body: MapArea) : Event<MapArea, Unit>(body, null)
         class ResetSelectedArea : Event<Unit, Unit>(Unit, null)
+        class HighlightSelectedArea : Event<Unit, Unit>(Unit, null)
     }
 
     abstract class ObjectPanelUi {

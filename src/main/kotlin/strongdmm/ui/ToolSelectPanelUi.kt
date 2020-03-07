@@ -20,7 +20,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender {
 
     fun process() {
         setNextWindowPos(350f, 30f, ImGuiCond.Once)
-        setNextWindowSize(120f, 35f, ImGuiCond.Once)
+        setNextWindowSize(80f, 35f, ImGuiCond.Once)
 
         window("Tool", ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize) {
             ToolType.values().forEach { tool ->
@@ -37,7 +37,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender {
                 }
 
                 if (isItemHovered()) {
-                    setTooltip(tool.toolHelper)
+                    setTooltip(tool.toolDesc)
                 }
 
                 if (isToolSelected) {

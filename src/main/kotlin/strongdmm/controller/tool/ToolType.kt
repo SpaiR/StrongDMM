@@ -1,13 +1,31 @@
 package strongdmm.controller.tool
 
 import strongdmm.controller.tool.fill.FillComplexTool
+import strongdmm.controller.tool.select.SelectComplexTool
 import strongdmm.controller.tool.tile.TileComplexTool
 
 enum class ToolType(
     val toolName: String,
-    val toolHelper: String,
+    val toolDesc: String,
     val createTool: () -> Tool
 ) {
-    TILE("T", "Tile (Alt+1)\nClick - Place selected object\nCtrl+Click - Delete topmost object", { TileComplexTool() }),
-    FILL("F", "Fill (Alt+2)\nDrag - Fill the area with selected object\nCtrl+Drag - Delete all topmost objects in the area", { FillComplexTool() })
+    TILE("T", """
+    Tile (Alt+1)
+    ------------
+    Click - Place selected object
+    Ctrl+Click - Delete topmost object
+    """.trimIndent(), { TileComplexTool() }),
+
+    FILL("F", """
+    Fill (Alt+2)
+    ------------
+    Click & Drag - Fill the area with selected object
+    Ctrl+[Click & Drag] - Delete all topmost objects in the area
+    """.trimIndent(), { FillComplexTool() }),
+
+    SELECT("S", """
+    Select (Alt+3)
+    --------------
+    Click & Drag - Select the area / Move selection with visible objects inside
+    """.trimIndent(), { SelectComplexTool() })
 }

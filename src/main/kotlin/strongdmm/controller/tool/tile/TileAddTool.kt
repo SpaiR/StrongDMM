@@ -26,10 +26,8 @@ class TileAddTool : Tool(), EventSender {
     }
 
     override fun onStop() {
-        isActive = false
-        dirtyTiles.clear()
         flushReverseActions()
-        sendEvent(Event.CanvasController.ResetSelectedTiles())
+        reset()
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -44,6 +42,19 @@ class TileAddTool : Tool(), EventSender {
 
     override fun onMapSwitch(map: Dmm?) {
         currentMap = map
+    }
+
+    override fun reset() {
+        isActive = false
+        dirtyTiles.clear()
+        reverseActions.clear()
+        sendEvent(Event.CanvasController.ResetSelectedTiles())
+    }
+
+    override fun destroy() {
+        reset()
+        usedTileItem = null
+        currentMap = null
     }
 
     private fun addTileItem(pos: MapPos) {
@@ -63,6 +74,5 @@ class TileAddTool : Tool(), EventSender {
         }
 
         sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions.toList())))
-        reverseActions.clear()
     }
 }

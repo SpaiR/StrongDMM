@@ -8,10 +8,7 @@ import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
-import strongdmm.byond.dmm.Dmm
-import strongdmm.byond.dmm.GlobalTileItemHolder
-import strongdmm.byond.dmm.MapPos
-import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
@@ -70,6 +67,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Event.CanvasController.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
         consumeEvent(Event.CanvasController.SelectArea::class.java, ::handleSelectArea)
         consumeEvent(Event.CanvasController.ResetSelectedArea::class.java, ::handleResetSelectedArea)
+        consumeEvent(Event.CanvasController.HighlightSelectedArea::class.java, ::handleHighlightSelectedArea)
     }
 
     fun process() {
@@ -376,11 +374,16 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.selectedTiles = null
     }
 
-    private fun handleSelectArea(event: Event<Pair<MapPos, MapPos>, Unit>) {
+    private fun handleSelectArea(event: Event<MapArea, Unit>) {
         canvasRenderer.selectedArea = event.body
     }
 
     private fun handleResetSelectedArea() {
         canvasRenderer.selectedArea = null
+        canvasRenderer.highlightSelectedArea = false
+    }
+
+    private fun handleHighlightSelectedArea() {
+        canvasRenderer.highlightSelectedArea = true
     }
 }

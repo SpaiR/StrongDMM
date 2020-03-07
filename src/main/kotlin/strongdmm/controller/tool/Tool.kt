@@ -12,4 +12,6 @@ abstract class Tool {
     abstract fun onMapPosChanged(mapPos: MapPos)
     abstract fun onTileItemSwitch(tileItem: TileItem?)
     abstract fun onMapSwitch(map: Dmm?)
+    abstract fun reset()
+    abstract fun destroy()
 }

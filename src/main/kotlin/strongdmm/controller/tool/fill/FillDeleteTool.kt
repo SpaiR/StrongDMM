@@ -5,6 +5,7 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.MultiAction
@@ -84,11 +85,22 @@ class FillDeleteTool : Tool(), EventSender {
         currentMap = map
     }
 
+    override fun reset() {
+        isActive = false
+        sendEvent(Event.CanvasController.ResetSelectedArea())
+    }
+
+    override fun destroy() {
+        reset()
+        currentMap = null
+        tileItemTypeToDelete = null
+    }
+
     private fun fillAreaRect(x: Int, y: Int) {
         x1 = min(xStart, x)
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-        sendEvent(Event.CanvasController.SelectArea(Pair(MapPos(x1, y1), MapPos(x2, y2))))
+        sendEvent(Event.CanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
     }
 }
