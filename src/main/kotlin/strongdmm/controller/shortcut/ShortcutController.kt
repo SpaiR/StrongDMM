@@ -19,10 +19,14 @@ class ShortcutController : EventSender, ShortcutHandler() {
                     }
                 } else if (secondKey != -1) {
                     if (ImGui.isKeyPressed(secondKey)) {
-                        shortcutToTrigger = shortcut
+                        if (shortcutToTrigger == null || shortcutToTrigger.weight < shortcut.weight) {
+                            shortcutToTrigger = shortcut
+                        }
                     }
                 } else {
-                    shortcutToTrigger = shortcut
+                    if (shortcutToTrigger == null || shortcutToTrigger.weight < shortcut.weight) {
+                        shortcutToTrigger = shortcut
+                    }
                 }
             }
         }
