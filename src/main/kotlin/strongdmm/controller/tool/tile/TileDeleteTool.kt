@@ -4,7 +4,6 @@ import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.MultiAction
@@ -19,10 +18,9 @@ class TileDeleteTool : Tool(), EventSender {
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
     private var tileItemTypeToDelete: String? = null
-    private var currentMap: Dmm? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = currentMap != null && tileItemTypeToDelete != null
+        isActive = tileItemTypeToDelete != null
 
         if (isActive && dirtyTiles.add(mapPos)) {
             deleteTopmostTileItem(mapPos)
@@ -51,10 +49,6 @@ class TileDeleteTool : Tool(), EventSender {
         }
     }
 
-    override fun onMapSwitch(map: Dmm?) {
-        currentMap = map
-    }
-
     override fun reset() {
         isActive = false
         dirtyTiles.clear()
@@ -65,11 +59,12 @@ class TileDeleteTool : Tool(), EventSender {
     override fun destroy() {
         reset()
         tileItemTypeToDelete = null
-        currentMap = null
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        currentMap?.getTile(pos.x, pos.y)?.let { tile ->
+        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+            val tile = selectedMap.getTile(pos.x, pos.y)
+
             sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
@@ -80,7 +75,7 @@ class TileDeleteTool : Tool(), EventSender {
                     sendEvent(Event.Global.RefreshFrame())
                 }
             })
-        }
+        })
     }
 
     private fun flushReverseActions() {

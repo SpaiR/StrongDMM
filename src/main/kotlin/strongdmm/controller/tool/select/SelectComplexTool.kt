@@ -1,6 +1,5 @@
 package strongdmm.controller.tool.select
 
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
@@ -38,11 +37,6 @@ class SelectComplexTool : ComplexTool() {
 
     override fun onTileItemSwitch(tileItem: TileItem?) {
         // unused
-    }
-
-    override fun onMapSwitch(map: Dmm?) {
-        add.onMapSwitch(map)
-        move.onMapSwitch(map)
     }
 
     override fun getActiveArea(): MapArea = currentTool.getActiveArea()

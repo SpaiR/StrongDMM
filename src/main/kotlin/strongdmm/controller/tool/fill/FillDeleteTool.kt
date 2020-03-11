@@ -4,7 +4,6 @@ import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
@@ -27,10 +26,9 @@ class FillDeleteTool : Tool(), EventSender {
     private var y2: Int = 0
 
     private var tileItemTypeToDelete: String? = null
-    private var currentMap: Dmm? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = currentMap != null && tileItemTypeToDelete != null
+        isActive = tileItemTypeToDelete != null
 
         if (isActive) {
             xStart = mapPos.x
@@ -44,10 +42,12 @@ class FillDeleteTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
-            for (x in x1..x2) {
-                for (y in y1..y2) {
-                    currentMap?.getTile(x, y)?.let { tile ->
+        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+            sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
+                for (x in x1..x2) {
+                    for (y in y1..y2) {
+                        val tile = selectedMap.getTile(x, y)
+
                         tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                             reverseActions.add(ReplaceTileAction(tile) {
                                 tile.deleteTileItem(tileItem)
@@ -55,7 +55,7 @@ class FillDeleteTool : Tool(), EventSender {
                         }
                     }
                 }
-            }
+            })
         })
 
         if (reverseActions.isNotEmpty()) {
@@ -81,10 +81,6 @@ class FillDeleteTool : Tool(), EventSender {
         }
     }
 
-    override fun onMapSwitch(map: Dmm?) {
-        currentMap = map
-    }
-
     override fun reset() {
         isActive = false
         sendEvent(Event.CanvasController.ResetSelectedArea())
@@ -92,7 +88,6 @@ class FillDeleteTool : Tool(), EventSender {
 
     override fun destroy() {
         reset()
-        currentMap = null
         tileItemTypeToDelete = null
     }
 

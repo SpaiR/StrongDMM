@@ -1,6 +1,5 @@
 package strongdmm.controller.tool.tile
 
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.MultiAction
@@ -15,10 +14,9 @@ class TileAddTool : Tool(), EventSender {
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
     private var usedTileItem: TileItem? = null
-    private var currentMap: Dmm? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = currentMap != null && usedTileItem != null
+        isActive = usedTileItem != null
 
         if (isActive && dirtyTiles.add(mapPos)) {
             addTileItem(mapPos)
@@ -40,10 +38,6 @@ class TileAddTool : Tool(), EventSender {
         usedTileItem = tileItem
     }
 
-    override fun onMapSwitch(map: Dmm?) {
-        currentMap = map
-    }
-
     override fun reset() {
         isActive = false
         dirtyTiles.clear()
@@ -54,18 +48,19 @@ class TileAddTool : Tool(), EventSender {
     override fun destroy() {
         reset()
         usedTileItem = null
-        currentMap = null
     }
 
     private fun addTileItem(pos: MapPos) {
-        currentMap?.getTile(pos.x, pos.y)?.let { tile ->
+        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+            val tile = selectedMap.getTile(pos.x, pos.y)
+
             reverseActions.add(ReplaceTileAction(tile) {
                 tile.addTileItem(usedTileItem!!)
             })
 
             sendEvent(Event.CanvasController.SelectTiles(dirtyTiles))
             sendEvent(Event.Global.RefreshFrame())
-        }
+        })
     }
 
     private fun flushReverseActions() {

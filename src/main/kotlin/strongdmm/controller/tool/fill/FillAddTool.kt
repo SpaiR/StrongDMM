@@ -1,6 +1,5 @@
 package strongdmm.controller.tool.fill
 
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
@@ -23,10 +22,9 @@ class FillAddTool : Tool(), EventSender {
     private var y2: Int = 0
 
     private var usedTileItem: TileItem? = null
-    private var currentMap: Dmm? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = currentMap != null && usedTileItem != null
+        isActive = usedTileItem != null
 
         if (isActive) {
             xStart = mapPos.x
@@ -40,15 +38,17 @@ class FillAddTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        for (x in x1..x2) {
-            for (y in y1..y2) {
-                currentMap?.getTile(x, y)?.let { tile ->
+        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+            for (x in x1..x2) {
+                for (y in y1..y2) {
+                    val tile = selectedMap.getTile(x, y)
+
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.addTileItem(usedTileItem!!)
                     })
                 }
             }
-        }
+        })
 
         if (reverseActions.isNotEmpty()) {
             sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
@@ -66,10 +66,6 @@ class FillAddTool : Tool(), EventSender {
         usedTileItem = tileItem
     }
 
-    override fun onMapSwitch(map: Dmm?) {
-        currentMap = map
-    }
-
     override fun reset() {
         isActive = false
         sendEvent(Event.CanvasController.ResetSelectedArea())
@@ -78,7 +74,6 @@ class FillAddTool : Tool(), EventSender {
     override fun destroy() {
         reset()
         usedTileItem = null
-        currentMap = null
     }
 
     private fun fillAreaRect(x: Int, y: Int) {

@@ -15,7 +15,7 @@ class ToolsController : EventConsumer, EventSender {
     private var currentTool: Tool = TileComplexTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
-    private var currentMap: Dmm? = null
+    private var currentMapId: Int = Dmm.MAP_ID_NONE
     private var selectedTileItem: TileItem? = null
 
     init {
@@ -39,7 +39,7 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleMapMouseDragStart() {
-        if (currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
+        if (currentMapId != Dmm.MAP_ID_NONE && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
             currentTool.onStart(currentMapPos)
         }
     }
@@ -57,30 +57,26 @@ class ToolsController : EventConsumer, EventSender {
 
     private fun handleSwitchMap(event: Event<Dmm, Unit>) {
         currentTool.reset()
-        currentMap = event.body
-        currentTool.onMapSwitch(event.body)
+        currentMapId = event.body.id
     }
 
     private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (currentMap === event.body) {
+        if (currentMapId == event.body.id) {
             currentTool.reset()
-            currentMap = null
-            currentTool.onMapSwitch(null)
+            currentMapId = Dmm.MAP_ID_NONE
         }
     }
 
     private fun handleResetEnvironment() {
-        currentMap = null
+        currentMapId = Dmm.MAP_ID_NONE
         selectedTileItem = null
         currentTool.destroy()
         currentTool.onTileItemSwitch(null)
-        currentTool.onMapSwitch(null)
     }
 
     private fun handleSwitch(event: Event<ToolType, Unit>) {
         currentTool.destroy()
         currentTool = event.body.createTool()
-        currentTool.onMapSwitch(currentMap)
         currentTool.onTileItemSwitch(selectedTileItem)
         sendEvent(Event.Global.SwitchUsedTool(event.body))
     }

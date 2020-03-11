@@ -1,6 +1,5 @@
 package strongdmm.controller.tool.select
 
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
@@ -17,10 +16,8 @@ class SelectAddAreaTool : Tool(), EventSender {
 
     var selectedArea: MapArea = MapArea(OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
-    private var currentMap: Dmm? = null
-
     override fun onStart(mapPos: MapPos) {
-        isActive = currentMap != null
+        isActive = true
 
         if (isActive) {
             xStart = mapPos.x
@@ -42,10 +39,6 @@ class SelectAddAreaTool : Tool(), EventSender {
         // unused
     }
 
-    override fun onMapSwitch(map: Dmm?) {
-        currentMap = map
-    }
-
     override fun getActiveArea(): MapArea = selectedArea
 
     override fun reset() {
@@ -55,7 +48,6 @@ class SelectAddAreaTool : Tool(), EventSender {
 
     override fun destroy() {
         reset()
-        currentMap = null
     }
 
     private fun fillAreaRect(x: Int, y: Int) {
