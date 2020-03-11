@@ -92,8 +92,8 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleFetchSelected(event: Event<Unit, Dmm?>) {
-        event.reply(selectedMap)
+    private fun handleFetchSelected(event: Event<Unit, Dmm>) {
+        selectedMap?.let { event.reply(it) }
     }
 
     private fun handleSwitch(event: Event<MapId, Unit>) {

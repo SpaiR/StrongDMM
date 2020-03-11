@@ -64,7 +64,7 @@ class InstanceController : EventConsumer, EventSender {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(Event.MapHolderController.FetchSelected { map ->
-            if (map != null && event.body.second.isNotEmpty()) {
+            if (event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {
                     for (y in (y1..y2)) {
@@ -86,15 +86,14 @@ class InstanceController : EventConsumer, EventSender {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(Event.MapHolderController.FetchSelected { map ->
-            if (map != null) {
-                val (x1, y1, x2, y2) = event.body.first
-                for (x in (x1..x2)) {
-                    for (y in (y1..y2)) {
-                        map.getTileItemsId(x, y).forEach { tileItemId ->
-                            val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                            if (tileItem.id == event.body.second) {
-                                positions.add(Pair(tileItem, MapPos(x, y)))
-                            }
+            val (x1, y1, x2, y2) = event.body.first
+
+            for (x in (x1..x2)) {
+                for (y in (y1..y2)) {
+                    map.getTileItemsId(x, y).forEach { tileItemId ->
+                        val tileItem = GlobalTileItemHolder.getById(tileItemId)
+                        if (tileItem.id == event.body.second) {
+                            positions.add(Pair(tileItem, MapPos(x, y)))
                         }
                     }
                 }

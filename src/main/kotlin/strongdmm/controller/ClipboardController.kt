@@ -31,24 +31,22 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handleCopy() {
         sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
-            if (selectedMap != null) {
-                sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
-                    sendEvent(Event.ToolsController.FetchActiveArea { activeArea ->
-                        val width = activeArea.x2 - activeArea.x1 + 1
-                        val height = activeArea.y2 - activeArea.y1 + 1
-                        val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
+            sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
+                sendEvent(Event.ToolsController.FetchActiveArea { activeArea ->
+                    val width = activeArea.x2 - activeArea.x1 + 1
+                    val height = activeArea.y2 - activeArea.y1 + 1
+                    val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
 
-                        for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
-                            for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
-                                val tile = selectedMap.getTile(x, y)
-                                tileItems[xLocal][yLocal] = tile.getFilteredTileItems(filteredLayers)
-                            }
+                    for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
+                        for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
+                            val tile = selectedMap.getTile(x, y)
+                            tileItems[xLocal][yLocal] = tile.getFilteredTileItems(filteredLayers)
                         }
+                    }
 
-                        this.tileItems = tileItems
-                    })
+                    this.tileItems = tileItems
                 })
-            }
+            })
         })
     }
 
@@ -58,39 +56,37 @@ class ClipboardController : EventConsumer, EventSender {
         }
 
         sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
-            if (selectedMap != null) {
-                sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
-                    val reverseActions = mutableListOf<Undoable>()
+            sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
+                val reverseActions = mutableListOf<Undoable>()
 
-                    for ((x, col) in tileItems!!.withIndex()) {
-                        for ((y, tileItems) in col.withIndex()) {
-                            val xPos = currentMapPos.x + x
-                            val yPos = currentMapPos.y + y
+                for ((x, col) in tileItems!!.withIndex()) {
+                    for ((y, tileItems) in col.withIndex()) {
+                        val xPos = currentMapPos.x + x
+                        val yPos = currentMapPos.y + y
 
-                            if (xPos !in 1..selectedMap.maxX || yPos !in 1..selectedMap.maxY) {
-                                continue
+                        if (xPos !in 1..selectedMap.maxX || yPos !in 1..selectedMap.maxY) {
+                            continue
+                        }
+
+                        val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
+
+                        reverseActions.add(ReplaceTileAction(tile) {
+                            tile.getFilteredTileItems(filteredLayers).forEach { tileItem ->
+                                tile.deleteTileItem(tileItem)
                             }
 
-                            val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
-
-                            reverseActions.add(ReplaceTileAction(tile) {
-                                tile.getFilteredTileItems(filteredLayers).forEach { tileItem ->
-                                    tile.deleteTileItem(tileItem)
-                                }
-
-                                tileItems.forEach {
-                                    tile.addTileItem(it)
-                                }
-                            })
-                        }
+                            tileItems.forEach {
+                                tile.addTileItem(it)
+                            }
+                        })
                     }
+                }
 
-                    if (reverseActions.isNotEmpty()) {
-                        sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
-                        sendEvent(Event.Global.RefreshFrame())
-                    }
-                })
-            }
+                if (reverseActions.isNotEmpty()) {
+                    sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
+                    sendEvent(Event.Global.RefreshFrame())
+                }
+            })
         })
     }
 }

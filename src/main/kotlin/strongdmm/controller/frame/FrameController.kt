@@ -68,10 +68,6 @@ class FrameController : EventConsumer, EventSender {
 
     private fun updateFrameCache() {
         sendEvent(Event.MapHolderController.FetchSelected { map ->
-            if (map == null) {
-                return@FetchSelected
-            }
-
             var filteredTypes: Set<String>? = null
 
             sendEvent(Event.LayersFilterController.Fetch {

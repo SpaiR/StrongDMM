@@ -157,7 +157,7 @@ class CanvasController : EventSender, EventConsumer {
         }
 
         sendEvent(Event.MapHolderController.FetchSelected {
-            if (it != null && xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
+            if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
                 sendEvent(Event.TilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
             }
         })
@@ -219,21 +219,17 @@ class CanvasController : EventSender, EventConsumer {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                 if (ImGui.getIO().keyCtrl) { // Replace tile item
                     sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-                        if (currentMap != null) {
-                            replaceTileItemUnderMouseWithSelected(currentMap)
-                        }
+                        replaceTileItemUnderMouseWithSelected(currentMap)
                     })
                 } else { // Select tile item
                     sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
                 sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-                    if (currentMap != null) {
-                        if (ImGui.getIO().keyCtrl) { // Delete tile item
-                            deleteTileItemUnderMouse(currentMap)
-                        } else { // Open for edit
-                            openTileItemUnderMouseForEdit(currentMap)
-                        }
+                    if (ImGui.getIO().keyCtrl) { // Delete tile item
+                        deleteTileItemUnderMouse(currentMap)
+                    } else { // Open for edit
+                        openTileItemUnderMouseForEdit(currentMap)
                     }
                 })
             }

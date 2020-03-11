@@ -26,12 +26,10 @@ class ActionController : EventConsumer, EventSender {
 
     private fun updateActionBalance(isPositive: Boolean) {
         sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-            if (currentMap != null) {
-                val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
-                val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
-                actionBalanceStorage.put(currentMap, newBalance)
-                notifyActionBalanceChanged(currentMap)
-            }
+            val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
+            val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
+            actionBalanceStorage.put(currentMap, newBalance)
+            notifyActionBalanceChanged(currentMap)
         })
     }
 
@@ -43,36 +41,30 @@ class ActionController : EventConsumer, EventSender {
 
     private fun handleAddAction(event: Event<Undoable, Unit>) {
         sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-            if (currentMap != null) {
-                getMapActionStack(currentMap).let { (undo, redo) ->
-                    redo.clear()
-                    undo.push(event.body)
-                    updateActionBalance(true)
-                }
+            getMapActionStack(currentMap).let { (undo, redo) ->
+                redo.clear()
+                undo.push(event.body)
+                updateActionBalance(true)
             }
         })
     }
 
     private fun handleUndoAction() {
         sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-            if (currentMap != null) {
-                getMapActionStack(currentMap).let { (undo, redo) ->
-                    redo.push(undo.pop().doAction())
-                    updateActionBalance(false)
-                    sendEvent(Event.Global.RefreshFrame())
-                }
+            getMapActionStack(currentMap).let { (undo, redo) ->
+                redo.push(undo.pop().doAction())
+                updateActionBalance(false)
+                sendEvent(Event.Global.RefreshFrame())
             }
         })
     }
 
     private fun handleRedoAction() {
         sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-            if (currentMap != null) {
-                getMapActionStack(currentMap).let { (undo, redo) ->
-                    undo.push(redo.pop().doAction())
-                    updateActionBalance(true)
-                    sendEvent(Event.Global.RefreshFrame())
-                }
+            getMapActionStack(currentMap).let { (undo, redo) ->
+                undo.push(redo.pop().doAction())
+                updateActionBalance(true)
+                sendEvent(Event.Global.RefreshFrame())
             }
         })
     }
