@@ -1,8 +1,8 @@
 package strongdmm.controller.shortcut
 
 import imgui.ImGui
-import strongdmm.event.Event
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 
 class ShortcutController : EventSender, ShortcutHandler() {
     fun process() {
@@ -32,7 +32,7 @@ class ShortcutController : EventSender, ShortcutHandler() {
         }
 
         shortcutToTrigger?.let {
-            sendEvent(Event.Global.TriggerShortcut(it))
+            sendEvent(EventGlobal.ShortcutTriggered(it))
         }
     }
 }

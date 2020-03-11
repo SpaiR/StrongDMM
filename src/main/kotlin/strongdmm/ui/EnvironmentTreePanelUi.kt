@@ -17,6 +17,8 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventTileItemController
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.child
 import strongdmm.util.imgui.inputText
@@ -42,9 +44,9 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var createdTeeNodesInCycle: Int = 0
 
     init {
-        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
+        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
     }
 
     fun process() {
@@ -145,23 +147,23 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun selectType(type: String) {
         if (!isSelectedInCycle) {
-            sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
+            sendEvent(EventTileItemController.ChangeActive(GlobalTileItemHolder.getOrCreate(type)))
             isSelectedInCycle = true
         }
     }
 
-    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         currentEnv = event.body
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         selectedType = ""
         typeFilter.set("")
         currentEnv = null
         treeNodes.clear()
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
+    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
         selectedType = event.body.type
     }
 

@@ -13,6 +13,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.Event
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
 import kotlin.math.max
 import kotlin.math.min
 
@@ -60,7 +61,7 @@ class FillDeleteTool : Tool(), EventSender {
 
         if (reverseActions.isNotEmpty()) {
             sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
 
         sendEvent(Event.CanvasController.ResetSelectedArea())

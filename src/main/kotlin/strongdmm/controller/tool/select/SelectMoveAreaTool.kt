@@ -10,6 +10,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.Event
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
 
@@ -96,7 +97,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
         if (reverseActions.isNotEmpty()) {
             sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
 
         tilesItemsToMove.clear()

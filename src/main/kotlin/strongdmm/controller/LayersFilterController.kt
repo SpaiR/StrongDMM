@@ -1,6 +1,8 @@
 package strongdmm.controller
 
 import strongdmm.event.*
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
 
 class LayersFilterController : EventConsumer, EventSender {
     private var filteredTypes: MutableSet<String> = HashSet()
@@ -10,28 +12,28 @@ class LayersFilterController : EventConsumer, EventSender {
         consumeEvent(Event.LayersFilterController.ShowByType::class.java, ::handleShowByType)
         consumeEvent(Event.LayersFilterController.HideByType::class.java, ::handleHideByType)
         consumeEvent(Event.LayersFilterController.Fetch::class.java, ::handleFetch)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleFilterById(event: Event<DmeItemIdArray, Unit>) {
         sendEvent(Event.EnvironmentController.Fetch { dme ->
             filteredTypes = dme.items.values.filter { event.body.contains(it.id) }.map { it.type }.toMutableSet()
-            sendEvent(Event.Global.RefreshFrame())
-            sendEvent(Event.Global.RefreshLayersFilter(filteredTypes))
+            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }
 
     private fun handleShowByType(event: Event<DmeItemType, Unit>) {
         filteredTypes.removeIf { it.contains(event.body) }
-        sendEvent(Event.Global.RefreshFrame())
-        sendEvent(Event.Global.RefreshLayersFilter(filteredTypes))
+        sendEvent(EventFrameController.Refresh())
+        sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
     }
 
     private fun handleHideByType(event: Event<DmeItemType, Unit>) {
         sendEvent(Event.EnvironmentController.Fetch { dme ->
             filteredTypes.addAll(dme.items.values.filter { it.type.contains(event.body) }.map { it.type })
-            sendEvent(Event.Global.RefreshFrame())
-            sendEvent(Event.Global.RefreshLayersFilter(filteredTypes))
+            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }
 
@@ -39,8 +41,8 @@ class LayersFilterController : EventConsumer, EventSender {
         event.reply(filteredTypes)
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         filteredTypes.clear()
-        sendEvent(Event.Global.RefreshLayersFilter(filteredTypes))
+        sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
     }
 }

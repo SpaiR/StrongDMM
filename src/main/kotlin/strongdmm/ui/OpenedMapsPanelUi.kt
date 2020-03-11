@@ -7,6 +7,8 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.smallButton
@@ -15,12 +17,12 @@ import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventConsumer, EventSender {
     private var openedMaps: Set<Dmm> = emptySet()
-    private var selectedMap: Dmm? = null
+    private var openedMap: Dmm? = null
 
     init {
-        consumeEvent(Event.Global.Provider.OpenedMaps::class.java, ::handleProviderOpenedMaps)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventGlobalProvider.OpenedMaps::class.java, ::handleProviderOpenedMaps)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {
@@ -32,7 +34,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         setNextWindowSize(150f, 150f, ImGuiCond.Once)
         setNextWindowCollapsed(true, ImGuiCond.Once)
 
-        window("${selectedMap?.mapName}###opened_maps") {
+        window("${openedMap?.mapName}###opened_maps") {
             openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
@@ -42,8 +44,8 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 sameLine()
 
-                if (selectable(map.mapName, selectedMap === map)) {
-                    if (selectedMap !== map) {
+                if (selectable(map.mapName, openedMap === map)) {
+                    if (openedMap !== map) {
                         sendEvent(Event.MapHolderController.Switch(map.id))
                     }
                 }
@@ -56,13 +58,13 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         openedMaps = event.body
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        selectedMap = event.body
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+        openedMap = event.body
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (event.body === selectedMap) {
-            selectedMap = null
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (event.body === openedMap) {
+            openedMap = null
         }
     }
 }

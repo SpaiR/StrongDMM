@@ -9,23 +9,24 @@ import strongdmm.controller.tool.tile.TileComplexTool
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ToolsController : EventConsumer, EventSender {
     private var currentTool: Tool = TileComplexTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
-    private var currentMapId: Int = Dmm.MAP_ID_NONE
-    private var selectedTileItem: TileItem? = null
+    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var activeTileItem: TileItem? = null
 
     init {
-        consumeEvent(Event.Global.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(Event.Global.MapMouseDragStart::class.java, ::handleMapMouseDragStart)
-        consumeEvent(Event.Global.MapMouseDragStop::class.java, ::handleMapMouseDragStop)
-        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
+        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(EventGlobal.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
+        consumeEvent(EventGlobal.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
+        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
         consumeEvent(Event.ToolsController.Reset::class.java, ::handleReset)
         consumeEvent(Event.ToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
@@ -38,38 +39,38 @@ class ToolsController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleMapMouseDragStart() {
-        if (currentMapId != Dmm.MAP_ID_NONE && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
+    private fun handleMapMouseDragStarted() {
+        if (openedMapId != Dmm.MAP_ID_NONE && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
             currentTool.onStart(currentMapPos)
         }
     }
 
-    private fun handleMapMouseDragStop() {
+    private fun handleMapMouseDragStopped() {
         if (currentTool.isActive) {
             currentTool.onStop()
         }
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
-        selectedTileItem = event.body
+    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+        activeTileItem = event.body
         currentTool.onTileItemSwitch(event.body)
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
         currentTool.reset()
-        currentMapId = event.body.id
+        openedMapId = event.body.id
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (currentMapId == event.body.id) {
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (openedMapId == event.body.id) {
             currentTool.reset()
-            currentMapId = Dmm.MAP_ID_NONE
+            openedMapId = Dmm.MAP_ID_NONE
         }
     }
 
-    private fun handleResetEnvironment() {
-        currentMapId = Dmm.MAP_ID_NONE
-        selectedTileItem = null
+    private fun handleEnvironmentReset() {
+        openedMapId = Dmm.MAP_ID_NONE
+        activeTileItem = null
         currentTool.destroy()
         currentTool.onTileItemSwitch(null)
     }
@@ -77,8 +78,8 @@ class ToolsController : EventConsumer, EventSender {
     private fun handleSwitch(event: Event<ToolType, Unit>) {
         currentTool.destroy()
         currentTool = event.body.createTool()
-        currentTool.onTileItemSwitch(selectedTileItem)
-        sendEvent(Event.Global.SwitchUsedTool(event.body))
+        currentTool.onTileItemSwitch(activeTileItem)
+        sendEvent(EventGlobal.ActiveToolChanged(event.body))
     }
 
     private fun handleReset() {

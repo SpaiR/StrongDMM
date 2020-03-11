@@ -1,12 +1,8 @@
 package strongdmm.event
 
-import imgui.ImBool
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
-import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.Undoable
-import strongdmm.controller.frame.FrameMesh
-import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.tool.ToolType
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
@@ -35,29 +31,6 @@ abstract class Event<T, R>(
     private val callback: ((R) -> Unit)?
 ) {
     // @formatter:off
-    abstract class Global {
-        class ResetEnvironment : Event<Unit, Unit>(Unit, null)
-        class SwitchEnvironment(body: Dme) : Event<Dme, Unit>(body, null)
-        class SwitchMap(body: Dmm) : Event<Dmm, Unit>(body, null)
-        class CloseMap(body: Dmm) : Event<Dmm, Unit>(body, null)
-        class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
-        class MapMouseDragStart : Event<Unit, Unit>(Unit, null)
-        class MapMouseDragStop : Event<Unit, Unit>(Unit, null)
-        class RefreshFrame : Event<Unit, Unit>(Unit, null)
-        class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
-        class SwitchSelectedTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
-        class RefreshLayersFilter(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
-        class SwitchUsedTool(body: ToolType) : Event<ToolType, Unit>(body, null)
-        class TriggerShortcut(body: Shortcut) : Event<Shortcut, Unit>(body, null)
-
-        abstract class Provider {
-            class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
-            class OpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
-            class AvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) : Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
-            class ComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
-        }
-    }
-
     abstract class EnvironmentController {
         class Open(body: File, callback: (EnvironmentBlockStatus) -> Unit) : Event<File, EnvironmentBlockStatus>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)

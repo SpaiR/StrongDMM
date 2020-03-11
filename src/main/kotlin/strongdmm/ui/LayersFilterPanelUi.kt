@@ -15,6 +15,7 @@ import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.imgui.GREEN32
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.child
@@ -35,9 +36,9 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
 
     init {
         consumeEvent(Event.LayersFilterPanelUi.Open::class.java, ::handleOpen)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
-        consumeEvent(Event.Global.RefreshLayersFilter::class.java, ::handleRefreshLayersFilter)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
     }
 
     fun process() {
@@ -137,16 +138,16 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
         isOpened.set(true)
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         currentEnv = null
         filteredTypesId.clear()
     }
 
-    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         currentEnv = event.body
     }
 
-    private fun handleRefreshLayersFilter(event: Event<Set<DmeItemType>, Unit>) {
+    private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
         sendEvent(Event.EnvironmentController.Fetch {
             filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->

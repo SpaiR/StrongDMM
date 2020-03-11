@@ -11,6 +11,8 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
 import strongdmm.util.imgui.button
@@ -37,14 +39,14 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
     private val searchY2: ImInt = ImInt(255)
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(Event.InstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
         consumeEvent(Event.InstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
     }
 
     fun postInit() {
-        sendEvent(Event.Global.Provider.InstanceLocatorOpen(showInstanceLocator))
+        sendEvent(EventGlobalProvider.InstanceLocatorOpen(showInstanceLocator))
     }
 
     fun process() {
@@ -116,11 +118,11 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
         }
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         searchType.set("")
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
         mapMaxX = event.body.maxX
         mapMaxY = event.body.maxY
 

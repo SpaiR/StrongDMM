@@ -16,6 +16,7 @@ import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -34,10 +35,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private val isMobLayerActive: ImBool = ImBool(true)
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        consumeEvent(Event.Global.RefreshLayersFilter::class.java, ::handleRefreshLayersFilter)
-        consumeEvent(Event.Global.TriggerShortcut::class.java, ::handleTriggerShortcut)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -208,7 +209,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         }
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         isEnvironmentOpened = false
     }
 
@@ -217,14 +218,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         isRedoEnabled = event.body.hasRedoAction
     }
 
-    private fun handleRefreshLayersFilter(event: Event<Set<DmeItemType>, Unit>) {
+    private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
         isAreaLayerActive.set(!event.body.contains(TYPE_AREA))
         isTurfLayerActive.set(!event.body.contains(TYPE_TURF))
         isObjLayerActive.set(!event.body.contains(TYPE_OBJ))
         isMobLayerActive.set(!event.body.contains(TYPE_MOB))
     }
 
-    private fun handleTriggerShortcut(event: Event<Shortcut, Unit>) {
+    private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
         handleShortcut(event.body)
     }
 }

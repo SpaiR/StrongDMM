@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFW.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.util.imgui.*
 import java.io.File
 
@@ -23,7 +24,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
-        consumeEvent(Event.Global.Provider.AvailableMaps::class.java, ::handleProviderAvailableMaps)
+        consumeEvent(EventGlobalProvider.AvailableMaps::class.java, ::handleProviderAvailableMaps)
     }
 
     fun process() {

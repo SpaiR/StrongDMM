@@ -9,6 +9,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.Event
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
 import kotlin.math.max
 import kotlin.math.min
 
@@ -21,10 +22,10 @@ class FillAddTool : Tool(), EventSender {
     private var x2: Int = 0
     private var y2: Int = 0
 
-    private var usedTileItem: TileItem? = null
+    private var activeTileItem: TileItem? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = usedTileItem != null
+        isActive = activeTileItem != null
 
         if (isActive) {
             xStart = mapPos.x
@@ -44,7 +45,7 @@ class FillAddTool : Tool(), EventSender {
                     val tile = selectedMap.getTile(x, y)
 
                     reverseActions.add(ReplaceTileAction(tile) {
-                        tile.addTileItem(usedTileItem!!)
+                        tile.addTileItem(activeTileItem!!)
                     })
                 }
             }
@@ -52,7 +53,7 @@ class FillAddTool : Tool(), EventSender {
 
         if (reverseActions.isNotEmpty()) {
             sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
 
         sendEvent(Event.CanvasController.ResetSelectedArea())
@@ -63,7 +64,7 @@ class FillAddTool : Tool(), EventSender {
     }
 
     override fun onTileItemSwitch(tileItem: TileItem?) {
-        usedTileItem = tileItem
+        activeTileItem = tileItem
     }
 
     override fun reset() {
@@ -73,7 +74,7 @@ class FillAddTool : Tool(), EventSender {
 
     override fun destroy() {
         reset()
-        usedTileItem = null
+        activeTileItem = null
     }
 
     private fun fillAreaRect(x: Int, y: Int) {

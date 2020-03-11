@@ -8,6 +8,7 @@ import strongdmm.event.EnvironmentBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -20,7 +21,7 @@ class EnvironmentController : EventSender, EventConsumer {
     }
 
     private fun handleOpen(event: Event<File, EnvironmentBlockStatus>) {
-        sendEvent(Event.Global.ResetEnvironment())
+        sendEvent(EventGlobal.EnvironmentReset())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
@@ -34,7 +35,7 @@ class EnvironmentController : EventSender, EventConsumer {
             System.gc()
 
             event.reply(true)
-            sendEvent(Event.Global.SwitchEnvironment(environment))
+            sendEvent(EventGlobal.EnvironmentChanged(environment))
         }
     }
 

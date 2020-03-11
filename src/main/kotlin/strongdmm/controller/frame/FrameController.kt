@@ -11,6 +11,9 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameController : EventConsumer, EventSender {
@@ -22,48 +25,49 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private val cache: MutableList<FrameMesh> = mutableListOf()
-    private var selectedMapId: Int = Dmm.MAP_ID_NONE
+    private var openedMapId: Int = Dmm.MAP_ID_NONE
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(EventFrameController.Refresh::class.java, ::handleRefresh)
     }
 
     fun postInit() {
-        sendEvent(Event.Global.Provider.ComposedFrame(cache))
+        sendEvent(EventGlobalProvider.ComposedFrame(cache))
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+        openedMapId = event.body.id
         cache.clear()
         updateFrameCache()
     }
 
-    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
         updateFrameCache()
     }
 
-    private fun handleResetEnvironment() {
-        selectedMapId = Dmm.MAP_ID_NONE
+    private fun handleEnvironmentReset() {
+        openedMapId = Dmm.MAP_ID_NONE
         cache.clear()
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (selectedMapId == event.body.id) {
-            selectedMapId = Dmm.MAP_ID_NONE
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (openedMapId == event.body.id) {
+            openedMapId = Dmm.MAP_ID_NONE
             cache.clear()
         }
     }
 
-    private fun handleRefreshFrame() {
+    private fun handleRefresh() {
         cache.clear()
         updateFrameCache()
+        sendEvent(EventGlobal.FrameRefreshed())
     }
 
     private fun updateFrameCache() {

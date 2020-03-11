@@ -11,16 +11,17 @@ import strongdmm.controller.tool.ToolType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
 class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     private val tools: Array<ToolType> = ToolType.values()
-    private var currentTool: ToolType = ToolType.TILE
+    private var activeTool: ToolType = ToolType.TILE
 
     init {
-        consumeEvent(Event.Global.SwitchUsedTool::class.java, ::handleSwitchUsedTool)
-        consumeEvent(Event.Global.TriggerShortcut::class.java, ::handleTriggerShortcut)
+        consumeEvent(EventGlobal.ActiveToolChanged::class.java, ::handleActiveToolChanged)
+        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
 
         addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_1) { selectTool(tools[0]) }
         addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_2) { selectTool(tools[1]) }
@@ -33,9 +34,9 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
 
         window("Tool", ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize) {
             tools.forEach { tool ->
-                val isToolSelected = tool == currentTool
+                val isToolActive = tool == activeTool
 
-                if (isToolSelected) {
+                if (isToolActive) {
                     pushStyleColor(ImGuiCol.Button, 0f, .5f, 0f, 1f)
                     pushStyleColor(ImGuiCol.ButtonHovered, 0f, .8f, 0f, 1f)
                     pushStyleColor(ImGuiCol.ButtonActive, 0f, .5f, 0f, 1f)
@@ -49,7 +50,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
                     setTooltip(tool.toolDesc)
                 }
 
-                if (isToolSelected) {
+                if (isToolActive) {
                     popStyleColor(3)
                 }
 
@@ -62,11 +63,11 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
         sendEvent(Event.ToolsController.Switch(tool))
     }
 
-    private fun handleSwitchUsedTool(event: Event<ToolType, Unit>) {
-        currentTool = event.body
+    private fun handleActiveToolChanged(event: Event<ToolType, Unit>) {
+        activeTool = event.body
     }
 
-    private fun handleTriggerShortcut(event: Event<Shortcut, Unit>) {
+    private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
         handleShortcut(event.body)
     }
 }

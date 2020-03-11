@@ -11,21 +11,22 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.imgui.*
 
 class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableMap<String, SearchResult> = mutableMapOf()
     private val panelsOpenState: MutableMap<String, ImBool> = mutableMapOf()
 
-    private var currentMapId: Int = Dmm.MAP_ID_NONE
+    private var openedMapId: Int = Dmm.MAP_ID_NONE
 
     private val replaceType: ImString = ImString(50).apply { inputData.isResizable = true }
     private var isReplaceEnabled: Boolean = false
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Event.SearchResultPanelUi.Open::class.java, ::handleOpen)
     }
 
@@ -167,18 +168,18 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         panelsOpenState.clear()
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         clearAll()
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        currentMapId = event.body.id
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+        openedMapId = event.body.id
         clearAll()
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (event.body.id == currentMapId) {
-            currentMapId = Dmm.MAP_ID_NONE
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (event.body.id == openedMapId) {
+            openedMapId = Dmm.MAP_ID_NONE
             clearAll()
         }
     }

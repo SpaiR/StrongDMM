@@ -12,6 +12,9 @@ import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventTileItemController
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
@@ -24,14 +27,14 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private var isDoOpen: Boolean = false
     private var currentTile: Tile? = null
-    private var selectedTileItem: TileItem? = null
+    private var activeTileItem: TileItem? = null
 
     init {
         consumeEvent(Event.TilePopupUi.Open::class.java, ::handleOpen)
         consumeEvent(Event.TilePopupUi.Close::class.java, ::handleClose)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
     }
 
     fun process() {
@@ -77,7 +80,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 }
             ))
 
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
 
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
@@ -87,13 +90,13 @@ class TilePopupUi : EventConsumer, EventSender {
                 }
             ))
 
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
 
         separator()
 
         menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
-            sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
+            sendEvent(EventTileItemController.ChangeActive(tileItem))
         }
 
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
@@ -103,16 +106,16 @@ class TilePopupUi : EventConsumer, EventSender {
         menuItem(
             "Replace With Active Object##replace_with_active_object_$tileItemIdx",
             shortcut = "Ctrl+Shift+LMB",
-            enabled = (selectedTileItem?.isSameType(tileItem) ?: false)
+            enabled = (activeTileItem?.isSameType(tileItem) ?: false)
         ) {
-            selectedTileItem?.let { activeTileItem ->
+            activeTileItem?.let { activeTileItem ->
                 sendEvent(Event.ActionController.AddAction(
                     ReplaceTileAction(tile) {
                         tile.replaceTileItem(tileItemIdx, activeTileItem)
                     }
                 ))
 
-                sendEvent(Event.Global.RefreshFrame())
+                sendEvent(EventFrameController.Refresh())
             }
         }
 
@@ -123,7 +126,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 }
             ))
 
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
     }
 
@@ -140,16 +143,16 @@ class TilePopupUi : EventConsumer, EventSender {
         currentTile = null
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         currentTile = null
-        selectedTileItem = null
+        activeTileItem = null
     }
 
-    private fun handleCloseMap() {
+    private fun handleOpenedMapClosed() {
         currentTile = null
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
-        selectedTileItem = event.body
+    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+        activeTileItem = event.body
     }
 }

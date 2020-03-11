@@ -11,6 +11,9 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.EventTileItemController
 import strongdmm.util.imgui.*
 
 class ObjectPanelUi : EventConsumer, EventSender {
@@ -28,10 +31,10 @@ class ObjectPanelUi : EventConsumer, EventSender {
     private var selectedObjIdx: Int = 0
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.Provider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
         consumeEvent(Event.ObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
@@ -60,7 +63,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
             tileItems?.forEachIndexed { index, tileItem ->
                 val isSelected = index == selectedObjIdx
                 selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
-                    sendEvent(Event.Global.SwitchSelectedTileItem(tileItem))
+                    sendEvent(EventTileItemController.ChangeActive(tileItem))
                     scrolledToItem = true // do not scroll panel in the next cycle
                 }
                 if (isSelected && !scrolledToItem) {
@@ -136,20 +139,20 @@ class ObjectPanelUi : EventConsumer, EventSender {
         return GlobalTileItemHolder.getTileItemsByType(type).sortedBy { it.iconState }.sortedBy { it.dir }.sortedBy { it.customVars?.size }
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         tileItemType = ""
         tileItems = null
         selectedObjIdx = 0
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
+    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
         scrolledToItem = false
         tileItemType = event.body.type
         tileItems = getTileItemsByTypeSorted(event.body.type)
         selectedObjIdx = tileItems!!.withIndex().find { it.value.customVars == event.body.customVars }?.index ?: 0
     }
 
-    private fun handleSwitchMap() {
+    private fun handleOpenedMapChanged() {
         if (tileItemType.isNotEmpty()) {
             tileItems = getTileItemsByTypeSorted(tileItemType)
         }

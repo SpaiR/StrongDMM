@@ -12,6 +12,7 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.Event
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
 
 class TileDeleteTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
@@ -72,7 +73,7 @@ class TileDeleteTool : Tool(), EventSender {
                     })
 
                     sendEvent(Event.CanvasController.SelectTiles(dirtyTiles))
-                    sendEvent(Event.Global.RefreshFrame())
+                    sendEvent(EventFrameController.Refresh())
                 }
             })
         })

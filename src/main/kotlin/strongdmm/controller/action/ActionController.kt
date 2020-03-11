@@ -6,6 +6,8 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
@@ -17,9 +19,9 @@ class ActionController : EventConsumer, EventSender {
         consumeEvent(Event.ActionController.AddAction::class.java, ::handleAddAction)
         consumeEvent(Event.ActionController.UndoAction::class.java, ::handleUndoAction)
         consumeEvent(Event.ActionController.RedoAction::class.java, ::handleRedoAction)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
@@ -35,7 +37,7 @@ class ActionController : EventConsumer, EventSender {
 
     private fun notifyActionBalanceChanged(map: Dmm) {
         getMapActionStack(map).let { (undo, redo) ->
-            sendEvent(Event.Global.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
+            sendEvent(EventGlobal.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
         }
     }
 
@@ -54,7 +56,7 @@ class ActionController : EventConsumer, EventSender {
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.push(undo.pop().doAction())
                 updateActionBalance(false)
-                sendEvent(Event.Global.RefreshFrame())
+                sendEvent(EventFrameController.Refresh())
             }
         })
     }
@@ -64,24 +66,24 @@ class ActionController : EventConsumer, EventSender {
             getMapActionStack(currentMap).let { (undo, redo) ->
                 undo.push(redo.pop().doAction())
                 updateActionBalance(true)
-                sendEvent(Event.Global.RefreshFrame())
+                sendEvent(EventFrameController.Refresh())
             }
         })
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         actionStacks.clear()
         actionBalanceStorage.clear()
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
         notifyActionBalanceChanged(event.body)
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
         actionStacks.remove(event.body)
         actionBalanceStorage.remove(event.body)
-        sendEvent(Event.Global.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
+        sendEvent(EventGlobal.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
     }
 
     private data class ActionStack(

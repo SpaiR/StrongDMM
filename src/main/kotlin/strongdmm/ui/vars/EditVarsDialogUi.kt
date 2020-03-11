@@ -18,6 +18,8 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemIdx
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -52,9 +54,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var variableInputFocused: Boolean = false // On first var select we will focus its input. Var is to check if we've already did it
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Event.EditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
         consumeEvent(Event.EditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }
@@ -211,7 +213,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         getNewItemVars()?.let { newItemVars ->
             currentTile?.let {
                 it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
-                sendEvent(Event.Global.RefreshFrame())
+                sendEvent(EventFrameController.Refresh())
             }
         }
     }
@@ -219,7 +221,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun discardTmpTileChanges() {
         if (currentTile != null && initialTileItemsId != null) {
             currentTile!!.replaceTileItemsId(initialTileItemsId!!)
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         }
     }
 
@@ -235,7 +237,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                     }
                 ))
 
-                sendEvent(Event.Global.RefreshFrame())
+                sendEvent(EventFrameController.Refresh())
             } else if (currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
@@ -268,15 +270,15 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         WINDOW_ID++
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         dispose()
     }
 
-    private fun handleSwitchMap() {
+    private fun handleOpenedMapChanged() {
         discardChangesAndDispose()
     }
 
-    private fun handleCloseMap() {
+    private fun handleOpenedMapClosed() {
         dispose()
     }
 

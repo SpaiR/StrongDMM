@@ -7,6 +7,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
@@ -17,13 +18,13 @@ class CoordsPanelUi : EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
-    private var selectedMapId: Int = Dmm.MAP_ID_NONE
+    private var openedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {
@@ -43,12 +44,12 @@ class CoordsPanelUi : EventConsumer {
         }
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+        openedMapId = event.body.id
         isHasMap = true
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         isHasMap = false
     }
 
@@ -57,9 +58,9 @@ class CoordsPanelUi : EventConsumer {
         yMapMousePos = event.body.y
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
-        if (selectedMapId == event.body.id) {
-            selectedMapId = Dmm.MAP_ID_NONE
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (openedMapId == event.body.id) {
+            openedMapId = Dmm.MAP_ID_NONE
             isHasMap = false
         }
     }

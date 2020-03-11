@@ -8,6 +8,8 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ClipboardController : EventConsumer, EventSender {
@@ -15,13 +17,13 @@ class ClipboardController : EventConsumer, EventSender {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(Event.ClipboardController.Copy::class.java, ::handleCopy)
         consumeEvent(Event.ClipboardController.Paste::class.java, ::handlePaste)
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         tileItems = null
     }
 
@@ -84,7 +86,7 @@ class ClipboardController : EventConsumer, EventSender {
 
                 if (reverseActions.isNotEmpty()) {
                     sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
-                    sendEvent(Event.Global.RefreshFrame())
+                    sendEvent(EventFrameController.Refresh())
                 }
             })
         })

@@ -1,9 +1,6 @@
 package strongdmm
 
-import strongdmm.controller.ClipboardController
-import strongdmm.controller.EnvironmentController
-import strongdmm.controller.InstanceController
-import strongdmm.controller.LayersFilterController
+import strongdmm.controller.*
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
@@ -42,6 +39,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val toolsController = ToolsController()
     private val shortcutController = ShortcutController()
     private val clipboardController = ClipboardController()
+    private val tileItemController = TileItemController()
 
     init {
         instanceLocatorPanelUi.postInit()

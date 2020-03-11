@@ -10,6 +10,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemType
+import strongdmm.event.type.EventFrameController
 
 class MapModifierController : EventConsumer, EventSender {
     init {
@@ -32,7 +33,7 @@ class MapModifierController : EventConsumer, EventSender {
             }
 
             sendEvent(Event.ActionController.AddAction(MultiAction(replaceActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         })
     }
 
@@ -49,7 +50,7 @@ class MapModifierController : EventConsumer, EventSender {
             }
 
             sendEvent(Event.ActionController.AddAction(MultiAction(replaceActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         })
     }
 
@@ -65,7 +66,7 @@ class MapModifierController : EventConsumer, EventSender {
             }
 
             sendEvent(Event.ActionController.AddAction(MultiAction(deleteActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         })
     }
 
@@ -81,7 +82,7 @@ class MapModifierController : EventConsumer, EventSender {
             }
 
             sendEvent(Event.ActionController.AddAction(MultiAction(deleteActions)))
-            sendEvent(Event.Global.RefreshFrame())
+            sendEvent(EventFrameController.Refresh())
         })
     }
 }

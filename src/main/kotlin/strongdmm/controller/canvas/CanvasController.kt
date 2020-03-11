@@ -15,6 +15,10 @@ import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.EventTileItemController
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
@@ -32,7 +36,7 @@ class CanvasController : EventSender, EventConsumer {
     private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
     private lateinit var renderData: RenderData
 
-    private var selectedTileItem: TileItem? = null
+    private var activeTileItem: TileItem? = null
 
     private var isBlocked: Boolean = false
     private var isHasMap: Boolean = false
@@ -54,13 +58,13 @@ class CanvasController : EventSender, EventConsumer {
     private val canvasRenderer = CanvasRenderer()
 
     init {
-        consumeEvent(Event.Global.SwitchMap::class.java, ::handleSwitchMap)
-        consumeEvent(Event.Global.SwitchEnvironment::class.java, ::handleSwitchEnvironment)
-        consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
-        consumeEvent(Event.Global.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(Event.Global.RefreshFrame::class.java, ::handleRefreshFrame)
-        consumeEvent(Event.Global.SwitchSelectedTileItem::class.java, ::handleSwitchSelectedTileItem)
-        consumeEvent(Event.Global.Provider.ComposedFrame::class.java, ::handleProviderComposedFrame)
+        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(EventGlobal.FrameRefreshed::class.java, ::handleFrameRefreshed)
+        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(EventGlobalProvider.ComposedFrame::class.java, ::handleProviderComposedFrame)
         consumeEvent(Event.CanvasController.Block::class.java, ::handleCanvasBlock)
         consumeEvent(Event.CanvasController.CenterPosition::class.java, ::handleCenterPosition)
         consumeEvent(Event.CanvasController.MarkPosition::class.java, ::handleMarkPosition)
@@ -170,10 +174,10 @@ class CanvasController : EventSender, EventConsumer {
 
         if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
             isMapMouseDragged = true
-            sendEvent(Event.Global.MapMouseDragStart())
+            sendEvent(EventGlobal.MapMouseDragStarted())
         } else if (!ImGui.isMouseDown(ImGuiMouseButton.Left) && isMapMouseDragged) {
             isMapMouseDragged = false
-            sendEvent(Event.Global.MapMouseDragStop())
+            sendEvent(EventGlobal.MapMouseDragStopped())
         }
     }
 
@@ -190,7 +194,7 @@ class CanvasController : EventSender, EventConsumer {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            sendEvent(Event.Global.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
+            sendEvent(EventGlobal.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
         }
     }
 
@@ -222,7 +226,7 @@ class CanvasController : EventSender, EventConsumer {
                         replaceTileItemUnderMouseWithSelected(currentMap)
                     })
                 } else { // Select tile item
-                    sendEvent(Event.Global.SwitchSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+                    sendEvent(EventTileItemController.ChangeActive(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
                 sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
@@ -257,7 +261,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun replaceTileItemUnderMouseWithSelected(map: Dmm) {
-        if (selectedTileItem == null) {
+        if (activeTileItem == null) {
             return
         }
 
@@ -267,11 +271,11 @@ class CanvasController : EventSender, EventConsumer {
 
         sendEvent(Event.ActionController.AddAction(
             ReplaceTileAction(tile) {
-                tile.replaceTileItem(tileItem, selectedTileItem!!)
+                tile.replaceTileItem(tileItem, activeTileItem!!)
             }
         ))
 
-        sendEvent(Event.Global.RefreshFrame())
+        sendEvent(EventFrameController.Refresh())
     }
 
     private fun deleteTileItemUnderMouse(map: Dmm) {
@@ -285,7 +289,7 @@ class CanvasController : EventSender, EventConsumer {
             }
         ))
 
-        sendEvent(Event.Global.RefreshFrame())
+        sendEvent(EventFrameController.Refresh())
     }
 
     private fun openTileItemUnderMouseForEdit(map: Dmm) {
@@ -302,7 +306,7 @@ class CanvasController : EventSender, EventConsumer {
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
     }
 
-    private fun handleSwitchMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
         canvasRenderer.markedPosition = null
         renderData = renderDataStorageByMapId.getOrPut(event.body.id) { RenderData(event.body.id) }
         maxX = event.body.maxX
@@ -311,19 +315,19 @@ class CanvasController : EventSender, EventConsumer {
         isHasMap = true
     }
 
-    private fun handleSwitchEnvironment(event: Event<Dme, Unit>) {
+    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         iconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
     }
 
-    private fun handleResetEnvironment() {
+    private fun handleEnvironmentReset() {
         canvasRenderer.markedPosition = null
         renderDataStorageByMapId.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
-        selectedTileItem = null
+        activeTileItem = null
     }
 
-    private fun handleCloseMap(event: Event<Dmm, Unit>) {
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
         if (renderData.mapId == event.body.id) {
             canvasRenderer.markedPosition = null
         }
@@ -331,12 +335,12 @@ class CanvasController : EventSender, EventConsumer {
         isHasMap = renderDataStorageByMapId.remove(event.body.id) !== renderData
     }
 
-    private fun handleRefreshFrame() {
+    private fun handleFrameRefreshed() {
         canvasRenderer.redraw = true
     }
 
-    private fun handleSwitchSelectedTileItem(event: Event<TileItem, Unit>) {
-        selectedTileItem = event.body
+    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+        activeTileItem = event.body
     }
 
     private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
