@@ -59,7 +59,7 @@ abstract class Event<T, R>(
     }
 
     abstract class EnvironmentController {
-        class Open(body: File, callback: ((EnvironmentBlockStatus) -> Unit)? = null) : Event<File, EnvironmentBlockStatus>(body, callback)
+        class Open(body: File, callback: (EnvironmentBlockStatus) -> Unit) : Event<File, EnvironmentBlockStatus>(body, callback)
         class Fetch(callback: ((Dme) -> Unit)) : Event<Unit, Dme>(Unit, callback)
     }
 
