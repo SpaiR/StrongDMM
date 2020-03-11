@@ -144,6 +144,12 @@ abstract class Event<T, R>(
     abstract class ToolsController {
         class Switch(body: ToolType) : Event<ToolType, Unit>(body, null)
         class Reset : Event<Unit, Unit>(Unit, null)
+        class FetchActiveArea(callback: ((MapArea) -> Unit)) : Event<Unit, MapArea>(Unit, callback)
+    }
+
+    abstract class ClipboardController {
+        class Copy : Event<Unit, Unit>(Unit, null)
+        class Paste : Event<Unit, Unit>(Unit, null)
     }
 
     fun reply(response: R) {

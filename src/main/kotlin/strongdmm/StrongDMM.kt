@@ -1,5 +1,6 @@
 package strongdmm
 
+import strongdmm.controller.ClipboardController
 import strongdmm.controller.EnvironmentController
 import strongdmm.controller.InstanceController
 import strongdmm.controller.LayersFilterController
@@ -40,6 +41,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val layersFilterController = LayersFilterController()
     private val toolsController = ToolsController()
     private val shortcutController = ShortcutController()
+    private val clipboardController = ClipboardController()
 
     init {
         instanceLocatorPanelUi.postInit()

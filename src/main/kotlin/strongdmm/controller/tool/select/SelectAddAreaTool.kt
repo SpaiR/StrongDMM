@@ -46,6 +46,8 @@ class SelectAddAreaTool : Tool(), EventSender {
         currentMap = map
     }
 
+    override fun getActiveArea(): MapArea = selectedArea
+
     override fun reset() {
         isActive = false
         sendEvent(Event.CanvasController.ResetSelectedArea())

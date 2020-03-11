@@ -45,6 +45,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = ::doRedo)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = ::doCopy)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = ::doPaste)
         addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
 
         // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
@@ -69,6 +71,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
                 menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
                 separator()
+                menuItem("Copy", shortcut = "Ctrl+C", enabled = isEnvironmentOpened, block = ::doCopy)
+                menuItem("Paste", shortcut = "Ctrl+V", enabled = isEnvironmentOpened, block = ::doPaste)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
             }
 
@@ -132,6 +136,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         if (isRedoEnabled) {
             sendEvent(Event.ActionController.RedoAction())
         }
+    }
+
+    private fun doCopy() {
+        sendEvent(Event.ClipboardController.Copy())
+    }
+
+    private fun doPaste() {
+        sendEvent(Event.ClipboardController.Paste())
     }
 
     private fun doDeselectAll() {

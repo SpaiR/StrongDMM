@@ -1,8 +1,10 @@
 package strongdmm.controller.tool
 
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.controller.tool.select.SelectComplexTool
 import strongdmm.controller.tool.tile.TileComplexTool
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -26,6 +28,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(Event.Global.ResetEnvironment::class.java, ::handleResetEnvironment)
         consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
         consumeEvent(Event.ToolsController.Reset::class.java, ::handleReset)
+        consumeEvent(Event.ToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -84,5 +87,17 @@ class ToolsController : EventConsumer, EventSender {
 
     private fun handleReset() {
         currentTool.reset()
+    }
+
+    private fun handleFetchActiveArea(event: Event<Unit, MapArea>) {
+        val activeArea = if (currentTool is SelectComplexTool) {
+            currentTool.getActiveArea()
+        } else {
+            MapArea(currentMapPos.x, currentMapPos.y, currentMapPos.x, currentMapPos.y)
+        }
+
+        if (activeArea.isNotOutOfBounds()) {
+            event.reply(activeArea)
+        }
     }
 }

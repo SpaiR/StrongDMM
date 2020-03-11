@@ -133,6 +133,8 @@ class SelectMoveAreaTool : Tool(), EventSender {
         currentMap = map
     }
 
+    override fun getActiveArea(): MapArea = selectedArea
+
     override fun reset() {
         isActive = false
         tilesItemsToMove.clear()
