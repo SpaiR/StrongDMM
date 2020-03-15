@@ -12,10 +12,16 @@ class TileItemController : EventSender, EventConsumer {
 
     init {
         consumeEvent(EventTileItemController.ChangeActive::class.java, ::handleChangeActive)
+        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleChangeActive(event: Event<TileItem, Unit>) {
         activeTileItem = event.body
         sendEvent(EventGlobal.ActiveTileItemChanged(event.body))
+    }
+
+    private fun handleEnvironmentReset() {
+        activeTileItem = null
+        sendEvent(EventGlobal.ActiveTileItemChanged(null))
     }
 }

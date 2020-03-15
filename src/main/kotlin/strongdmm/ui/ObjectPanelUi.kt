@@ -145,11 +145,13 @@ class ObjectPanelUi : EventConsumer, EventSender {
         selectedObjIdx = 0
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
-        scrolledToItem = false
-        tileItemType = event.body.type
-        tileItems = getTileItemsByTypeSorted(event.body.type)
-        selectedObjIdx = tileItems!!.withIndex().find { it.value.customVars == event.body.customVars }?.index ?: 0
+    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
+        if (event.body != null) {
+            scrolledToItem = false
+            tileItemType = event.body.type
+            tileItems = getTileItemsByTypeSorted(event.body.type)
+            selectedObjIdx = tileItems!!.withIndex().find { it.value.customVars == event.body.customVars }?.index ?: 0
+        }
     }
 
     private fun handleOpenedMapChanged() {

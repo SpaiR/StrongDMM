@@ -35,7 +35,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var currentEnv: Dme? = null
     private val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
 
-    private var selectedType: String = ""
+    private var activeTileItemType: String = ""
     private var isSelectedInCycle: Boolean = false
 
     private val isShowIcons: ImBool = ImBool(true)
@@ -84,7 +84,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun createTreeNodes(dmeItem: DmeItem) {
-        val selectedFlag = if (dmeItem.type == selectedType) ImGuiTreeNodeFlags.Selected else 0
+        val selectedFlag = if (dmeItem.type == activeTileItemType) ImGuiTreeNodeFlags.Selected else 0
 
         if (typeFilter.length >= MIN_FILTER_CHARS) {
             if (dmeItem.type.contains(typeFilter.get())) {
@@ -157,14 +157,13 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun handleEnvironmentReset() {
-        selectedType = ""
         typeFilter.set("")
         currentEnv = null
         treeNodes.clear()
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
-        selectedType = event.body.type
+    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
+        activeTileItemType = event.body?.type ?: ""
     }
 
     private class TreeNode(dmeItem: DmeItem) {

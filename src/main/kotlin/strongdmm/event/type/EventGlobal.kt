@@ -25,7 +25,7 @@ abstract class EventGlobal {
 
     class ActionStatusChanged(body: ActionStatus) : Event<ActionStatus, Unit>(body, null)
 
-    class ActiveTileItemChanged(body: TileItem) : Event<TileItem, Unit>(body, null)
+    class ActiveTileItemChanged(body: TileItem?) : Event<TileItem?, Unit>(body, null)
 
     class LayersFilterRefreshed(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
 

@@ -324,7 +324,6 @@ class CanvasController : EventSender, EventConsumer {
         renderDataStorageByMapId.clear()
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = false
-        activeTileItem = null
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
@@ -339,7 +338,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItem = event.body
     }
 

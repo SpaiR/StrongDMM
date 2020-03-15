@@ -145,14 +145,13 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun handleEnvironmentReset() {
         currentTile = null
-        activeTileItem = null
     }
 
     private fun handleOpenedMapClosed() {
         currentTile = null
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItem = event.body
     }
 }

@@ -51,7 +51,7 @@ class ToolsController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem, Unit>) {
+    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItem = event.body
         currentTool.onTileItemSwitch(event.body)
     }
@@ -70,7 +70,6 @@ class ToolsController : EventConsumer, EventSender {
 
     private fun handleEnvironmentReset() {
         openedMapId = Dmm.MAP_ID_NONE
-        activeTileItem = null
         currentTool.destroy()
         currentTool.onTileItemSwitch(null)
     }
