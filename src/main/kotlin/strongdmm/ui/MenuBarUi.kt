@@ -49,6 +49,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = ::doRedo)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_X, action = ::doCut)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = ::doCopy)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = ::doPaste)
         addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
@@ -75,6 +76,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
                 menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
                 separator()
+                menuItem("Cut", shortcut = "Ctrl+X", enabled = isEnvironmentOpened, block = ::doCut)
                 menuItem("Copy", shortcut = "Ctrl+C", enabled = isEnvironmentOpened, block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", enabled = isEnvironmentOpened, block = ::doPaste)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
@@ -140,6 +142,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         if (isRedoEnabled) {
             sendEvent(EventActionController.RedoAction())
         }
+    }
+
+    private fun doCut() {
+        sendEvent(EventClipboardController.Cut())
     }
 
     private fun doCopy() {

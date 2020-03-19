@@ -19,6 +19,7 @@ class ClipboardController : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(EventClipboardController.Cut::class.java, ::handleCut)
         consumeEvent(EventClipboardController.Copy::class.java, ::handleCopy)
         consumeEvent(EventClipboardController.Paste::class.java, ::handlePaste)
     }
@@ -29,6 +30,42 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
         currentMapPos = event.body
+    }
+
+    private fun handleCut() {
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
+                sendEvent(EventToolsController.FetchActiveArea { activeArea ->
+                    val width = activeArea.x2 - activeArea.x1 + 1
+                    val height = activeArea.y2 - activeArea.y1 + 1
+                    val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
+                    val reverseActions = mutableListOf<Undoable>()
+
+                    for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
+                        for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
+                            val tile = selectedMap.getTile(x, y)
+
+                            tile.getFilteredTileItems(filteredLayers).let { filteredTileItems ->
+                                tileItems[xLocal][yLocal] = filteredTileItems
+
+                                reverseActions.add(ReplaceTileAction(tile) {
+                                    filteredTileItems.forEach { tileItem ->
+                                        tile.deleteTileItem(tileItem)
+                                    }
+                                })
+                            }
+                        }
+                    }
+
+                    this.tileItems = tileItems
+
+                    if (reverseActions.isNotEmpty()) {
+                        sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
+                        sendEvent(EventFrameController.Refresh())
+                    }
+                })
+            })
+        })
     }
 
     private fun handleCopy() {

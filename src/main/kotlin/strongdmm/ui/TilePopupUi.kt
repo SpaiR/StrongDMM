@@ -48,6 +48,7 @@ class TilePopupUi : EventConsumer, EventSender {
             }
 
             popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
+                menuItem("Cut", shortcut = "Ctrl+X", block = ::doCut)
                 menuItem("Copy", shortcut = "Ctrl+C", block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", block = ::doPaste)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
@@ -136,6 +137,11 @@ class TilePopupUi : EventConsumer, EventSender {
             sendEvent(EventFrameController.Refresh())
         }
     }
+
+    private fun doCut() {
+        sendEvent(EventClipboardController.Cut())
+    }
+
 
     private fun doCopy() {
         sendEvent(EventClipboardController.Copy())
