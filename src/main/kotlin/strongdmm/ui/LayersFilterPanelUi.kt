@@ -16,6 +16,9 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventEnvironmentController
+import strongdmm.event.type.controller.EventLayersFilterController
+import strongdmm.event.type.ui.EventLayersFilterPanelUi
 import strongdmm.util.imgui.GREEN32
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.child
@@ -35,7 +38,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
     private val typesFilter: ImString = ImString(50)
 
     init {
-        consumeEvent(Event.LayersFilterPanelUi.Open::class.java, ::handleOpen)
+        consumeEvent(EventLayersFilterPanelUi.Open::class.java, ::handleOpen)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
@@ -106,7 +109,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
 
         if (smallButton(" ##layer_filter_${dmeItem.id}")) {
             toggleItemFilter(dmeItem, isFilteredType)
-            sendEvent(Event.LayersFilterController.FilterById(filteredTypesId.toArray()))
+            sendEvent(EventLayersFilterController.FilterById(filteredTypesId.toArray()))
         }
 
         if (isItemHovered()) {
@@ -148,7 +151,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
-        sendEvent(Event.EnvironmentController.Fetch {
+        sendEvent(EventEnvironmentController.Fetch {
             filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->
                 if (event.body.contains(dmeItem.type)) {

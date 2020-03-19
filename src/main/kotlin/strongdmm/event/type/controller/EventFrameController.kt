@@ -1,4 +1,4 @@
-package strongdmm.event.type
+package strongdmm.event.type.controller
 
 import strongdmm.event.Event
 

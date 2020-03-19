@@ -8,9 +8,8 @@ import strongdmm.controller.action.undoable.MultiAction
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
-import strongdmm.event.Event
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.controller.*
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
 
@@ -35,10 +34,10 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
             initialArea = selectedArea
 
-            sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
+            sendEvent(EventLayersFilterController.Fetch { filteredTypes ->
                 this.filteredTypes = filteredTypes
 
-                sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+                sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
                     for (x in selectedArea.x1..selectedArea.x2) {
                         for (y in selectedArea.y1..selectedArea.y2) {
                             val filteredTileItems = selectedMap.getTile(x, y).getFilteredTileItems(filteredTypes)
@@ -55,7 +54,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
             // Delete moved tile items from the initial location (if it's not the part of the selected area)
             for (x in initialArea.x1..initialArea.x2) {
                 for (y in initialArea.y1..initialArea.y2) {
@@ -96,7 +95,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
             sendEvent(EventFrameController.Refresh())
         }
 
@@ -114,7 +113,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
         val x2 = selectedArea.x2 + xAxisShift
         val y2 = selectedArea.y2 + yAxisShift
 
-        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
             if ((x1 !in 0..selectedMap.maxX) || (y1 !in 0..selectedMap.maxY) || (x2 !in 0..selectedMap.maxX) || (y2 !in 0..selectedMap.maxY)) {
                 return@FetchSelected
             }
@@ -126,7 +125,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
             currentY = mapPos.y
             selectedArea = MapArea(x1, y1, x2, y2)
 
-            sendEvent(Event.CanvasController.SelectArea(selectedArea))
+            sendEvent(EventCanvasController.SelectArea(selectedArea))
         })
     }
 
@@ -141,7 +140,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
         tilesItemsToMove.clear()
         totalXShift = 0
         totalYShift = 0
-        sendEvent(Event.CanvasController.ResetSelectedArea())
+        sendEvent(EventCanvasController.ResetSelectedArea())
     }
 
     override fun destroy() {

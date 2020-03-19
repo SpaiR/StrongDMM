@@ -8,8 +8,8 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventFrameController
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.*
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ClipboardController : EventConsumer, EventSender {
@@ -19,8 +19,8 @@ class ClipboardController : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(Event.ClipboardController.Copy::class.java, ::handleCopy)
-        consumeEvent(Event.ClipboardController.Paste::class.java, ::handlePaste)
+        consumeEvent(EventClipboardController.Copy::class.java, ::handleCopy)
+        consumeEvent(EventClipboardController.Paste::class.java, ::handlePaste)
     }
 
     private fun handleEnvironmentReset() {
@@ -32,9 +32,9 @@ class ClipboardController : EventConsumer, EventSender {
     }
 
     private fun handleCopy() {
-        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
-            sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
-                sendEvent(Event.ToolsController.FetchActiveArea { activeArea ->
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
+                sendEvent(EventToolsController.FetchActiveArea { activeArea ->
                     val width = activeArea.x2 - activeArea.x1 + 1
                     val height = activeArea.y2 - activeArea.y1 + 1
                     val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
@@ -57,8 +57,8 @@ class ClipboardController : EventConsumer, EventSender {
             return
         }
 
-        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
-            sendEvent(Event.LayersFilterController.Fetch { filteredLayers ->
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
                 val reverseActions = mutableListOf<Undoable>()
 
                 for ((x, col) in tileItems!!.withIndex()) {
@@ -85,7 +85,7 @@ class ClipboardController : EventConsumer, EventSender {
                 }
 
                 if (reverseActions.isNotEmpty()) {
-                    sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions)))
+                    sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
                     sendEvent(EventFrameController.Refresh())
                 }
             })

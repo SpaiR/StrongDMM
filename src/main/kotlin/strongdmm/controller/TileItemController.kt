@@ -5,7 +5,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventTileItemController
+import strongdmm.event.type.controller.EventTileItemController
 
 class TileItemController : EventSender, EventConsumer {
     private var activeTileItem: TileItem? = null

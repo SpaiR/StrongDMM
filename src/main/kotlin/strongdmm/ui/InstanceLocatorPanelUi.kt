@@ -13,6 +13,9 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventInstanceController
+import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
+import strongdmm.event.type.ui.EventSearchResultPanelUi
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
 import strongdmm.util.imgui.button
@@ -41,8 +44,8 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
-        consumeEvent(Event.InstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
-        consumeEvent(Event.InstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
+        consumeEvent(EventInstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
+        consumeEvent(EventInstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
     }
 
     fun postInit() {
@@ -107,14 +110,14 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
 
         val openSearchResult = { it: List<Pair<TileItem, MapPos>> ->
             if (it.isNotEmpty()) {
-                sendEvent(Event.SearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
+                sendEvent(EventSearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
             }
         }
 
         if (tileItemId != null) {
-            sendEvent(Event.InstanceController.FindPositionsById(Pair(searchRect, tileItemId), openSearchResult))
+            sendEvent(EventInstanceController.FindPositionsById(Pair(searchRect, tileItemId), openSearchResult))
         } else {
-            sendEvent(Event.InstanceController.FindPositionsByType(Pair(searchRect, type), openSearchResult))
+            sendEvent(EventInstanceController.FindPositionsByType(Pair(searchRect, type), openSearchResult))
         }
     }
 

@@ -12,9 +12,13 @@ import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventFrameController
 import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventTileItemController
+import strongdmm.event.type.controller.EventActionController
+import strongdmm.event.type.controller.EventFrameController
+import strongdmm.event.type.controller.EventTileItemController
+import strongdmm.event.type.controller.EventToolsController
+import strongdmm.event.type.ui.EventEditVarsDialogUi
+import strongdmm.event.type.ui.EventTilePopupUi
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
@@ -30,8 +34,8 @@ class TilePopupUi : EventConsumer, EventSender {
     private var activeTileItem: TileItem? = null
 
     init {
-        consumeEvent(Event.TilePopupUi.Open::class.java, ::handleOpen)
-        consumeEvent(Event.TilePopupUi.Close::class.java, ::handleClose)
+        consumeEvent(EventTilePopupUi.Open::class.java, ::handleOpen)
+        consumeEvent(EventTilePopupUi.Close::class.java, ::handleClose)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
@@ -74,7 +78,8 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(Event.ActionController.AddAction(
+            sendEvent(
+                EventActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.moveToTop(tileItem, tileItemIdx)
                 }
@@ -84,7 +89,8 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(Event.ActionController.AddAction(
+            sendEvent(
+                EventActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.moveToBottom(tileItem, tileItemIdx)
                 }
@@ -100,7 +106,7 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
-            sendEvent(Event.EditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+            sendEvent(EventEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
 
         menuItem(
@@ -109,7 +115,8 @@ class TilePopupUi : EventConsumer, EventSender {
             enabled = (activeTileItem?.isSameType(tileItem) ?: false)
         ) {
             activeTileItem?.let { activeTileItem ->
-                sendEvent(Event.ActionController.AddAction(
+                sendEvent(
+                    EventActionController.AddAction(
                     ReplaceTileAction(tile) {
                         tile.replaceTileItem(tileItemIdx, activeTileItem)
                     }
@@ -120,7 +127,8 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+RMB") {
-            sendEvent(Event.ActionController.AddAction(
+            sendEvent(
+                EventActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItemIdx)
                 }
@@ -131,7 +139,7 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun doDeselectAll() {
-        sendEvent(Event.ToolsController.Reset())
+        sendEvent(EventToolsController.Reset())
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {

@@ -18,7 +18,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventTileItemController
+import strongdmm.event.type.controller.EventTileItemController
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.child
 import strongdmm.util.imgui.inputText

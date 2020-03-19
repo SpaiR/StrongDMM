@@ -12,6 +12,10 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventCanvasController
+import strongdmm.event.type.controller.EventEnvironmentController
+import strongdmm.event.type.controller.EventMapModifierController
+import strongdmm.event.type.ui.EventSearchResultPanelUi
 import strongdmm.util.imgui.*
 
 class SearchResultPanelUi : EventConsumer, EventSender {
@@ -27,7 +31,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(Event.SearchResultPanelUi.Open::class.java, ::handleOpen)
+        consumeEvent(EventSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
 
     fun process() {
@@ -92,8 +96,8 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                         val searchPos = posIterator.next()
 
                         button("x:%03d y:%03d##jump_btn_${idx++}".format(searchPos.pos.x, searchPos.pos.y)) {
-                            sendEvent(Event.CanvasController.CenterPosition(searchPos.pos))
-                            sendEvent(Event.CanvasController.MarkPosition(searchPos.pos))
+                            sendEvent(EventCanvasController.CenterPosition(searchPos.pos))
+                            sendEvent(EventCanvasController.MarkPosition(searchPos.pos))
                         }
 
                         if (isItemClicked(ImGuiMouseButton.Right)) {
@@ -113,12 +117,12 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         }
 
         if (panelsOpenState.isEmpty()) {
-            sendEvent(Event.CanvasController.ResetMarkedPosition())
+            sendEvent(EventCanvasController.ResetMarkedPosition())
         }
     }
 
     private fun checkReplaceEnabled() {
-        sendEvent(Event.EnvironmentController.Fetch {
+        sendEvent(EventEnvironmentController.Fetch {
             isReplaceEnabled = it.getItem(replaceType.get()) != null
         })
     }
@@ -133,12 +137,12 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
     private fun delete(deletionList: List<Pair<TileItem, MapPos>>, isSearchById: Boolean) {
         if (isSearchById) {
-            sendEvent(Event.MapModifierController.DeleteIdInPositions(deletionList))
+            sendEvent(EventMapModifierController.DeleteIdInPositions(deletionList))
         } else {
-            sendEvent(Event.MapModifierController.DeleteTypeInPositions(deletionList))
+            sendEvent(EventMapModifierController.DeleteTypeInPositions(deletionList))
         }
 
-        sendEvent(Event.CanvasController.ResetMarkedPosition())
+        sendEvent(EventCanvasController.ResetMarkedPosition())
     }
 
     private fun replace(searchPosition: SearchPosition, isSearchById: Boolean) {
@@ -155,12 +159,12 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         }
 
         if (isSearchById) {
-            sendEvent(Event.MapModifierController.ReplaceIdInPositions(Pair(replaceType.get(), replaceList)))
+            sendEvent(EventMapModifierController.ReplaceIdInPositions(Pair(replaceType.get(), replaceList)))
         } else {
-            sendEvent(Event.MapModifierController.ReplaceTypeInPositions(Pair(replaceType.get(), replaceList)))
+            sendEvent(EventMapModifierController.ReplaceTypeInPositions(Pair(replaceType.get(), replaceList)))
         }
 
-        sendEvent(Event.CanvasController.ResetMarkedPosition())
+        sendEvent(EventCanvasController.ResetMarkedPosition())
     }
 
     private fun clearAll() {

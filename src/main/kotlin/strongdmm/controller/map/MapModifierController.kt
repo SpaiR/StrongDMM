@@ -10,18 +10,21 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemType
-import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.controller.EventActionController
+import strongdmm.event.type.controller.EventFrameController
+import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.controller.EventMapModifierController
 
 class MapModifierController : EventConsumer, EventSender {
     init {
-        consumeEvent(Event.MapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
-        consumeEvent(Event.MapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
-        consumeEvent(Event.MapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
-        consumeEvent(Event.MapModifierController.DeleteIdInPositions::class.java, ::handleDeleteIdInPositions)
+        consumeEvent(EventMapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
+        consumeEvent(EventMapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
+        consumeEvent(EventMapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
+        consumeEvent(EventMapModifierController.DeleteIdInPositions::class.java, ::handleDeleteIdInPositions)
     }
 
     private fun handleReplaceTypeInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
+        sendEvent(EventMapHolderController.FetchSelected { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
 
@@ -32,13 +35,13 @@ class MapModifierController : EventConsumer, EventSender {
                 })
             }
 
-            sendEvent(Event.ActionController.AddAction(MultiAction(replaceActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(replaceActions)))
             sendEvent(EventFrameController.Refresh())
         })
     }
 
     private fun handleReplaceIdInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
+        sendEvent(EventMapHolderController.FetchSelected { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
 
@@ -49,13 +52,13 @@ class MapModifierController : EventConsumer, EventSender {
                 })
             }
 
-            sendEvent(Event.ActionController.AddAction(MultiAction(replaceActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(replaceActions)))
             sendEvent(EventFrameController.Refresh())
         })
     }
 
     private fun handleDeleteTypeInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
+        sendEvent(EventMapHolderController.FetchSelected { dmm ->
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
@@ -65,13 +68,13 @@ class MapModifierController : EventConsumer, EventSender {
                 })
             }
 
-            sendEvent(Event.ActionController.AddAction(MultiAction(deleteActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(deleteActions)))
             sendEvent(EventFrameController.Refresh())
         })
     }
 
     private fun handleDeleteIdInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(Event.MapHolderController.FetchSelected { dmm ->
+        sendEvent(EventMapHolderController.FetchSelected { dmm ->
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
@@ -81,7 +84,7 @@ class MapModifierController : EventConsumer, EventSender {
                 })
             }
 
-            sendEvent(Event.ActionController.AddAction(MultiAction(deleteActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(deleteActions)))
             sendEvent(EventFrameController.Refresh())
         })
     }

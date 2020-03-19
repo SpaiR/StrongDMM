@@ -10,6 +10,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventToolsController
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ToolsController : EventConsumer, EventSender {
@@ -27,9 +28,9 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Event.ToolsController.Switch::class.java, ::handleSwitch)
-        consumeEvent(Event.ToolsController.Reset::class.java, ::handleReset)
-        consumeEvent(Event.ToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
+        consumeEvent(EventToolsController.Switch::class.java, ::handleSwitch)
+        consumeEvent(EventToolsController.Reset::class.java, ::handleReset)
+        consumeEvent(EventToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {

@@ -10,9 +10,8 @@ import strongdmm.controller.action.undoable.MultiAction
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
-import strongdmm.event.Event
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventFrameController
+import strongdmm.event.type.controller.*
 
 class TileDeleteTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
@@ -54,7 +53,7 @@ class TileDeleteTool : Tool(), EventSender {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(Event.CanvasController.ResetSelectedTiles())
+        sendEvent(EventCanvasController.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -63,16 +62,16 @@ class TileDeleteTool : Tool(), EventSender {
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        sendEvent(Event.MapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y)
 
-            sendEvent(Event.LayersFilterController.Fetch { filteredTypes ->
+            sendEvent(EventLayersFilterController.Fetch { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.deleteTileItem(tileItem)
                     })
 
-                    sendEvent(Event.CanvasController.SelectTiles(dirtyTiles))
+                    sendEvent(EventCanvasController.SelectTiles(dirtyTiles))
                     sendEvent(EventFrameController.Refresh())
                 }
             })
@@ -84,6 +83,6 @@ class TileDeleteTool : Tool(), EventSender {
             return
         }
 
-        sendEvent(Event.ActionController.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(EventActionController.AddAction(MultiAction(reverseActions.toList())))
     }
 }

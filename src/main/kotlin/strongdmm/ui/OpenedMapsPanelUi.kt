@@ -9,6 +9,7 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventMapHolderController
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.smallButton
@@ -38,7 +39,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
             openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
-                    sendEvent(Event.MapHolderController.Close(map.id))
+                    sendEvent(EventMapHolderController.Close(map.id))
                 }
                 popStyleColor()
 
@@ -46,7 +47,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 if (selectable(map.mapName, openedMap === map)) {
                     if (openedMap !== map) {
-                        sendEvent(Event.MapHolderController.Switch(map.id))
+                        sendEvent(EventMapHolderController.Switch(map.id))
                     }
                 }
                 setItemHoveredTooltip(map.visibleMapPath)

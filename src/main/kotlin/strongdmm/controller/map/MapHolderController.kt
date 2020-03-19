@@ -11,6 +11,8 @@ import strongdmm.event.EventSender
 import strongdmm.event.MapId
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventEnvironmentController
+import strongdmm.event.type.controller.EventMapHolderController
 import java.io.File
 import java.nio.file.Files
 import kotlin.concurrent.thread
@@ -23,11 +25,11 @@ class MapHolderController : EventSender, EventConsumer {
     private var openedMap: Dmm? = null
 
     init {
-        consumeEvent(Event.MapHolderController.Open::class.java, ::handleOpen)
-        consumeEvent(Event.MapHolderController.Close::class.java, ::handleClose)
-        consumeEvent(Event.MapHolderController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(Event.MapHolderController.Switch::class.java, ::handleSwitch)
-        consumeEvent(Event.MapHolderController.Save::class.java, ::handleSave)
+        consumeEvent(EventMapHolderController.Open::class.java, ::handleOpen)
+        consumeEvent(EventMapHolderController.Close::class.java, ::handleClose)
+        consumeEvent(EventMapHolderController.FetchSelected::class.java, ::handleFetchSelected)
+        consumeEvent(EventMapHolderController.Switch::class.java, ::handleSwitch)
+        consumeEvent(EventMapHolderController.Save::class.java, ::handleSave)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
     }
@@ -56,7 +58,7 @@ class MapHolderController : EventSender, EventConsumer {
                 return
             }
 
-            sendEvent(Event.EnvironmentController.Fetch { environment ->
+            sendEvent(EventEnvironmentController.Fetch { environment ->
                 val dmmData = DmmReader.readMap(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 

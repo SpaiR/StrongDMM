@@ -12,6 +12,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventToolsController
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
@@ -43,7 +44,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
                 }
 
                 button(tool.toolName) {
-                    sendEvent(Event.ToolsController.Switch(tool))
+                    sendEvent(EventToolsController.Switch(tool))
                 }
 
                 if (isItemHovered()) {
@@ -60,7 +61,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     }
 
     private fun selectTool(tool: ToolType) {
-        sendEvent(Event.ToolsController.Switch(tool))
+        sendEvent(EventToolsController.Switch(tool))
     }
 
     private fun handleActiveToolChanged(event: Event<ToolType, Unit>) {

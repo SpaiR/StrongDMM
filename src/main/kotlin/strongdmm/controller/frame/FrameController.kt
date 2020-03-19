@@ -11,9 +11,11 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventFrameController
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventFrameController
+import strongdmm.event.type.controller.EventLayersFilterController
+import strongdmm.event.type.controller.EventMapHolderController
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameController : EventConsumer, EventSender {
@@ -71,10 +73,10 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private fun updateFrameCache() {
-        sendEvent(Event.MapHolderController.FetchSelected { map ->
+        sendEvent(EventMapHolderController.FetchSelected { map ->
             var filteredTypes: Set<String>? = null
 
-            sendEvent(Event.LayersFilterController.Fetch {
+            sendEvent(EventLayersFilterController.Fetch {
                 filteredTypes = it
             })
 

@@ -13,7 +13,11 @@ import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.EventTileItemController
+import strongdmm.event.type.controller.EventInstanceController
+import strongdmm.event.type.controller.EventTileItemController
+import strongdmm.event.type.ui.EventEditVarsDialogUi
+import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
+import strongdmm.event.type.ui.EventObjectPanelUi
 import strongdmm.util.imgui.*
 
 class ObjectPanelUi : EventConsumer, EventSender {
@@ -35,7 +39,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
-        consumeEvent(Event.ObjectPanelUi.Update::class.java, ::handleUpdate)
+        consumeEvent(EventObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
     fun process() {
@@ -72,22 +76,22 @@ class ObjectPanelUi : EventConsumer, EventSender {
                 }
                 popupContextItem("object_options_$index", ImGuiMouseButton.Right) {
                     menuItem("Find Instance on Map") {
-                        sendEvent(Event.InstanceLocatorPanelUi.SearchById(tileItem.id))
+                        sendEvent(EventInstanceLocatorPanelUi.SearchById(tileItem.id))
                     }
                     menuItem("Fine All Objects on Map") {
-                        sendEvent(Event.InstanceLocatorPanelUi.SearchByType(tileItem.type))
+                        sendEvent(EventInstanceLocatorPanelUi.SearchByType(tileItem.type))
                     }
                     separator()
                     menuItem("New Instance...") {
-                        sendEvent(Event.EditVarsDialogUi.OpenWithTileItem(tileItem))
+                        sendEvent(EventEditVarsDialogUi.OpenWithTileItem(tileItem))
                     }
                     menuItem("Generate Instances from Icon-states") {
-                        sendEvent(Event.InstanceController.GenerateFromIconStates(tileItem) {
+                        sendEvent(EventInstanceController.GenerateFromIconStates(tileItem) {
                             handleUpdate()
                         })
                     }
                     menuItem("Generate Instances from Directions") {
-                        sendEvent(Event.InstanceController.GenerateFromDirections(tileItem) {
+                        sendEvent(EventInstanceController.GenerateFromDirections(tileItem) {
                             handleUpdate()
                         })
                     }

@@ -18,8 +18,12 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemIdx
-import strongdmm.event.type.EventFrameController
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventActionController
+import strongdmm.event.type.controller.EventCanvasController
+import strongdmm.event.type.controller.EventFrameController
+import strongdmm.event.type.ui.EventEditVarsDialogUi
+import strongdmm.event.type.ui.EventObjectPanelUi
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -57,8 +61,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(Event.EditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
-        consumeEvent(Event.EditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
+        consumeEvent(EventEditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
+        consumeEvent(EventEditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }
 
     fun process() {
@@ -231,7 +235,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
         getNewItemVars()?.let { newItemVars ->
             if (currentTile != null) { // in case if we have a tile to apply changes
-                sendEvent(Event.ActionController.AddAction(
+                sendEvent(
+                    EventActionController.AddAction(
                     ReplaceTileAction(currentTile!!) {
                         currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                     }
@@ -242,7 +247,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                 GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 
-            sendEvent(Event.ObjectPanelUi.Update())
+            sendEvent(EventObjectPanelUi.Update())
         }
 
         dispose()
@@ -261,12 +266,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilter.set("")
         isShowModifiedVars.set(false)
         variables.clear()
-        sendEvent(Event.CanvasController.Block(false))
+        sendEvent(EventCanvasController.Block(false))
     }
 
     private fun open() {
         isFistOpen = true
-        sendEvent(Event.CanvasController.Block(true))
+        sendEvent(EventCanvasController.Block(true))
         WINDOW_ID++
     }
 

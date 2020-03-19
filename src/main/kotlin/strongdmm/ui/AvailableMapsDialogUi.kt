@@ -9,6 +9,9 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventCanvasController
+import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.util.imgui.*
 import java.io.File
 
@@ -23,7 +26,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
 
     init {
-        consumeEvent(Event.AvailableMapsDialogUi.Open::class.java, ::handleOpen)
+        consumeEvent(EventAvailableMapsDialogUi.Open::class.java, ::handleOpen)
         consumeEvent(EventGlobalProvider.AvailableMaps::class.java, ::handleProviderAvailableMaps)
     }
 
@@ -75,7 +78,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     private fun openSelectedMapAndClosePopup() {
         selectedMapPath?.let {
-            sendEvent(Event.MapHolderController.Open(File(it)))
+            sendEvent(EventMapHolderController.Open(File(it)))
             closePopup()
         }
     }
@@ -84,13 +87,13 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = ""
-        sendEvent(Event.CanvasController.Block(false))
+        sendEvent(EventCanvasController.Block(false))
     }
 
     private fun handleOpen() {
         isDoOpen = true
         isFirstOpen = true
-        sendEvent(Event.CanvasController.Block(true))
+        sendEvent(EventCanvasController.Block(true))
     }
 
     private fun handleProviderAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {

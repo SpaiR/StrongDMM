@@ -9,6 +9,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventEnvironmentController
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -16,8 +17,8 @@ class EnvironmentController : EventSender, EventConsumer {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(Event.EnvironmentController.Open::class.java, ::handleOpen)
-        consumeEvent(Event.EnvironmentController.Fetch::class.java, ::handleFetch)
+        consumeEvent(EventEnvironmentController.Open::class.java, ::handleOpen)
+        consumeEvent(EventEnvironmentController.Fetch::class.java, ::handleFetch)
     }
 
     private fun handleOpen(event: Event<File, EnvironmentBlockStatus>) {

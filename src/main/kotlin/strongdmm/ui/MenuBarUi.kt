@@ -17,6 +17,9 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.*
+import strongdmm.event.type.ui.EventAvailableMapsDialogUi
+import strongdmm.event.type.ui.EventLayersFilterPanelUi
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -96,7 +99,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
             progressText = "Loading " + file.absolutePath.replace('\\', '/').substringAfterLast("/")
-            sendEvent(Event.EnvironmentController.Open(file) {
+            sendEvent(EventEnvironmentController.Open(file) {
                 progressText = null
                 isEnvironmentOpened = it
             })
@@ -108,52 +111,52 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             return
         }
 
-        sendEvent(Event.EnvironmentController.Fetch { environment ->
+        sendEvent(EventEnvironmentController.Fetch { environment ->
             NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
-                sendEvent(Event.MapHolderController.Open(path))
+                sendEvent(EventMapHolderController.Open(path))
             }
         })
     }
 
     private fun doOpenAvailableMap() {
         if (isEnvironmentOpened) {
-            sendEvent(Event.AvailableMapsDialogUi.Open())
+            sendEvent(EventAvailableMapsDialogUi.Open())
         }
     }
 
     private fun doSave() {
         if (isEnvironmentOpened) {
-            sendEvent(Event.MapHolderController.Save())
+            sendEvent(EventMapHolderController.Save())
         }
     }
 
     private fun doUndo() {
         if (isUndoEnabled) {
-            sendEvent(Event.ActionController.UndoAction())
+            sendEvent(EventActionController.UndoAction())
         }
     }
 
     private fun doRedo() {
         if (isRedoEnabled) {
-            sendEvent(Event.ActionController.RedoAction())
+            sendEvent(EventActionController.RedoAction())
         }
     }
 
     private fun doCopy() {
-        sendEvent(Event.ClipboardController.Copy())
+        sendEvent(EventClipboardController.Copy())
     }
 
     private fun doPaste() {
-        sendEvent(Event.ClipboardController.Paste())
+        sendEvent(EventClipboardController.Paste())
     }
 
     private fun doDeselectAll() {
-        sendEvent(Event.ToolsController.Reset())
+        sendEvent(EventToolsController.Reset())
     }
 
     private fun doOpenLayersFilter() {
         if (isEnvironmentOpened) {
-            sendEvent(Event.LayersFilterPanelUi.Open())
+            sendEvent(EventLayersFilterPanelUi.Open())
         }
     }
 
@@ -203,9 +206,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun toggleLayer(layerStatus: ImBool, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(Event.LayersFilterController.ShowByType(layerType))
+            sendEvent(EventLayersFilterController.ShowByType(layerType))
         } else {
-            sendEvent(Event.LayersFilterController.HideByType(layerType))
+            sendEvent(EventLayersFilterController.HideByType(layerType))
         }
     }
 
