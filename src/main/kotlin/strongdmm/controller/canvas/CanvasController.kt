@@ -223,7 +223,7 @@ class CanvasController : EventSender, EventConsumer {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                 if (ImGui.getIO().keyCtrl) { // Replace tile item
                     sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
-                        replaceTileItemUnderMouseWithSelected(currentMap)
+                        deleteTileItemUnderMouse(currentMap)
                     })
                 } else { // Select tile item
                     sendEvent(EventTileItemController.ChangeActive(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
@@ -231,7 +231,7 @@ class CanvasController : EventSender, EventConsumer {
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
                 sendEvent(Event.MapHolderController.FetchSelected { currentMap ->
                     if (ImGui.getIO().keyCtrl) { // Delete tile item
-                        deleteTileItemUnderMouse(currentMap)
+                        replaceTileItemUnderMouseWithSelected(currentMap)
                     } else { // Open for edit
                         openTileItemUnderMouseForEdit(currentMap)
                     }
