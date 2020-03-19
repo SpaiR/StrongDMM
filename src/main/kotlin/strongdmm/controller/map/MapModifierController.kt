@@ -10,17 +10,53 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemType
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.controller.EventMapHolderController
-import strongdmm.event.type.controller.EventMapModifierController
+import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.*
+import strongdmm.util.OUT_OF_BOUNDS
 
 class MapModifierController : EventConsumer, EventSender {
+    private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
+
     init {
+        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(EventMapModifierController.DeleteActiveAreaTileItems::class.java, ::handleDeleteActiveAreaTileItems)
         consumeEvent(EventMapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
         consumeEvent(EventMapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
         consumeEvent(EventMapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
         consumeEvent(EventMapModifierController.DeleteIdInPositions::class.java, ::handleDeleteIdInPositions)
+    }
+
+    private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
+        currentMapPos = event.body
+    }
+
+    private fun handleDeleteActiveAreaTileItems() {
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
+                sendEvent(EventToolsController.FetchActiveArea { activeArea ->
+                    val reverseActions = mutableListOf<Undoable>()
+
+                    for (x in (activeArea.x1..activeArea.x2)) {
+                        for (y in (activeArea.y1..activeArea.y2)) {
+                            val tile = selectedMap.getTile(x, y)
+
+                            tile.getFilteredTileItems(filteredLayers).let { filteredTileItems ->
+                                reverseActions.add(ReplaceTileAction(tile) {
+                                    filteredTileItems.forEach { tileItem ->
+                                        tile.deleteTileItem(tileItem)
+                                    }
+                                })
+                            }
+                        }
+                    }
+
+                    if (reverseActions.isNotEmpty()) {
+                        sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
+                        sendEvent(EventFrameController.Refresh())
+                    }
+                })
+            })
+        })
     }
 
     private fun handleReplaceTypeInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {

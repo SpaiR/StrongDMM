@@ -51,6 +51,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 menuItem("Cut", shortcut = "Ctrl+X", block = ::doCut)
                 menuItem("Copy", shortcut = "Ctrl+C", block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", block = ::doPaste)
+                menuItem("Delete", shortcut = "Delete", block = ::doDelete)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
                 separator()
                 showTileItems(tile)
@@ -149,6 +150,10 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun doPaste() {
         sendEvent(EventClipboardController.Paste())
+    }
+
+    private fun doDelete() {
+        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
     }
 
     private fun doDeselectAll() {

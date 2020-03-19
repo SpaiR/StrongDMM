@@ -52,6 +52,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_X, action = ::doCut)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = ::doCopy)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = ::doPaste)
+        addShortcut(GLFW.GLFW_KEY_DELETE, action = ::doDelete)
         addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
 
         // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
@@ -79,6 +80,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Cut", shortcut = "Ctrl+X", enabled = isEnvironmentOpened, block = ::doCut)
                 menuItem("Copy", shortcut = "Ctrl+C", enabled = isEnvironmentOpened, block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", enabled = isEnvironmentOpened, block = ::doPaste)
+                menuItem("Delete", shortcut = "Delete", enabled = isEnvironmentOpened, block = ::doDelete)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
             }
 
@@ -154,6 +156,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doPaste() {
         sendEvent(EventClipboardController.Paste())
+    }
+
+    private fun doDelete() {
+        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
     }
 
     private fun doDeselectAll() {
