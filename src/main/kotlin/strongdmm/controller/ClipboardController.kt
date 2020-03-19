@@ -30,7 +30,7 @@ class ClipboardController : EventConsumer, EventSender {
     }
 
     private fun handleCut() {
-        handleCopy()
+        sendEvent(EventClipboardController.Copy())
         sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
     }
 
