@@ -272,10 +272,11 @@ class CanvasController : EventSender, EventConsumer {
 
         sendEvent(
             EventActionController.AddAction(
-            ReplaceTileAction(tile) {
-                tile.replaceTileItem(tileItem, activeTileItem!!)
-            }
-        ))
+                ReplaceTileAction(tile) {
+                    tile.replaceTileItem(tileItem, activeTileItem!!)
+                }
+            )
+        )
 
         sendEvent(EventFrameController.Refresh())
     }
@@ -287,10 +288,11 @@ class CanvasController : EventSender, EventConsumer {
 
         sendEvent(
             EventActionController.AddAction(
-            ReplaceTileAction(tile) {
-                tile.deleteTileItem(tileItem)
-            }
-        ))
+                ReplaceTileAction(tile) {
+                    tile.deleteTileItem(tileItem)
+                }
+            )
+        )
 
         sendEvent(EventFrameController.Refresh())
     }

@@ -237,10 +237,11 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             if (currentTile != null) { // in case if we have a tile to apply changes
                 sendEvent(
                     EventActionController.AddAction(
-                    ReplaceTileAction(currentTile!!) {
-                        currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
-                    }
-                ))
+                        ReplaceTileAction(currentTile!!) {
+                            currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                        }
+                    )
+                )
 
                 sendEvent(EventFrameController.Refresh())
             } else if (currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created

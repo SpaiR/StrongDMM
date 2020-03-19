@@ -81,10 +81,11 @@ class TilePopupUi : EventConsumer, EventSender {
         menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
             sendEvent(
                 EventActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.moveToTop(tileItem, tileItemIdx)
-                }
-            ))
+                    ReplaceTileAction(tile) {
+                        tile.moveToTop(tileItem, tileItemIdx)
+                    }
+                )
+            )
 
             sendEvent(EventFrameController.Refresh())
         }
@@ -92,10 +93,11 @@ class TilePopupUi : EventConsumer, EventSender {
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
             sendEvent(
                 EventActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.moveToBottom(tileItem, tileItemIdx)
-                }
-            ))
+                    ReplaceTileAction(tile) {
+                        tile.moveToBottom(tileItem, tileItemIdx)
+                    }
+                )
+            )
 
             sendEvent(EventFrameController.Refresh())
         }
@@ -118,10 +120,11 @@ class TilePopupUi : EventConsumer, EventSender {
             activeTileItem?.let { activeTileItem ->
                 sendEvent(
                     EventActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.replaceTileItem(tileItemIdx, activeTileItem)
-                    }
-                ))
+                        ReplaceTileAction(tile) {
+                            tile.replaceTileItem(tileItemIdx, activeTileItem)
+                        }
+                    )
+                )
 
                 sendEvent(EventFrameController.Refresh())
             }
@@ -130,10 +133,11 @@ class TilePopupUi : EventConsumer, EventSender {
         menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+RMB") {
             sendEvent(
                 EventActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.deleteTileItem(tileItemIdx)
-                }
-            ))
+                    ReplaceTileAction(tile) {
+                        tile.deleteTileItem(tileItemIdx)
+                    }
+                )
+            )
 
             sendEvent(EventFrameController.Refresh())
         }
@@ -142,7 +146,6 @@ class TilePopupUi : EventConsumer, EventSender {
     private fun doCut() {
         sendEvent(EventClipboardController.Cut())
     }
-
 
     private fun doCopy() {
         sendEvent(EventClipboardController.Copy())
