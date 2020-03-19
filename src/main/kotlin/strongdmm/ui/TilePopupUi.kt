@@ -13,10 +13,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.controller.EventTileItemController
-import strongdmm.event.type.controller.EventToolsController
+import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.EventEditVarsDialogUi
 import strongdmm.event.type.ui.EventTilePopupUi
 import strongdmm.util.imgui.menu
@@ -51,6 +48,8 @@ class TilePopupUi : EventConsumer, EventSender {
             }
 
             popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
+                menuItem("Copy", shortcut = "Ctrl+C", block = ::doCopy)
+                menuItem("Paste", shortcut = "Ctrl+V", block = ::doPaste)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
                 separator()
                 showTileItems(tile)
@@ -136,6 +135,14 @@ class TilePopupUi : EventConsumer, EventSender {
 
             sendEvent(EventFrameController.Refresh())
         }
+    }
+
+    private fun doCopy() {
+        sendEvent(EventClipboardController.Copy())
+    }
+
+    private fun doPaste() {
+        sendEvent(EventClipboardController.Paste())
     }
 
     private fun doDeselectAll() {
