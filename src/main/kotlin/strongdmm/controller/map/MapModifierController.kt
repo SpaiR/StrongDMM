@@ -20,6 +20,7 @@ class MapModifierController : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(EventMapModifierController.DeleteActiveAreaTileItems::class.java, ::handleDeleteActiveAreaTileItems)
+        consumeEvent(EventMapModifierController.ReplaceActiveAreaTileItems::class.java, ::handleReplaceActiveAreaTileItems)
         consumeEvent(EventMapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
         consumeEvent(EventMapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
         consumeEvent(EventMapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
@@ -55,6 +56,42 @@ class MapModifierController : EventConsumer, EventSender {
                         sendEvent(EventFrameController.Refresh())
                     }
                 })
+            })
+        })
+    }
+
+    private fun handleReplaceActiveAreaTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
+        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
+                val reverseActions = mutableListOf<Undoable>()
+
+                for ((x, col) in event.body.withIndex()) {
+                    for ((y, tileItems) in col.withIndex()) {
+                        val xPos = currentMapPos.x + x
+                        val yPos = currentMapPos.y + y
+
+                        if (xPos !in 1..selectedMap.maxX || yPos !in 1..selectedMap.maxY) {
+                            continue
+                        }
+
+                        val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
+
+                        reverseActions.add(ReplaceTileAction(tile) {
+                            tile.getFilteredTileItems(filteredLayers).forEach { tileItem ->
+                                tile.deleteTileItem(tileItem)
+                            }
+
+                            tileItems.forEach {
+                                tile.addTileItem(it)
+                            }
+                        })
+                    }
+                }
+
+                if (reverseActions.isNotEmpty()) {
+                    sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
+                    sendEvent(EventFrameController.Refresh())
+                }
             })
         })
     }

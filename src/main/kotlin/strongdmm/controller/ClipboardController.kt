@@ -33,39 +33,8 @@ class ClipboardController : EventConsumer, EventSender {
     }
 
     private fun handleCut() {
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
-            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
-                sendEvent(EventToolsController.FetchActiveArea { activeArea ->
-                    val width = activeArea.x2 - activeArea.x1 + 1
-                    val height = activeArea.y2 - activeArea.y1 + 1
-                    val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
-                    val reverseActions = mutableListOf<Undoable>()
-
-                    for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
-                        for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
-                            val tile = selectedMap.getTile(x, y)
-
-                            tile.getFilteredTileItems(filteredLayers).let { filteredTileItems ->
-                                tileItems[xLocal][yLocal] = filteredTileItems
-
-                                reverseActions.add(ReplaceTileAction(tile) {
-                                    filteredTileItems.forEach { tileItem ->
-                                        tile.deleteTileItem(tileItem)
-                                    }
-                                })
-                            }
-                        }
-                    }
-
-                    this.tileItems = tileItems
-
-                    if (reverseActions.isNotEmpty()) {
-                        sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
-                        sendEvent(EventFrameController.Refresh())
-                    }
-                })
-            })
-        })
+        handleCopy()
+        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
     }
 
     private fun handleCopy() {
@@ -90,42 +59,8 @@ class ClipboardController : EventConsumer, EventSender {
     }
 
     private fun handlePaste() {
-        if (currentMapPos.isOutOfBounds() || tileItems == null) {
-            return
+        if (!currentMapPos.isOutOfBounds() && tileItems != null) {
+            sendEvent(EventMapModifierController.ReplaceActiveAreaTileItems(tileItems!!))
         }
-
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
-            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
-                val reverseActions = mutableListOf<Undoable>()
-
-                for ((x, col) in tileItems!!.withIndex()) {
-                    for ((y, tileItems) in col.withIndex()) {
-                        val xPos = currentMapPos.x + x
-                        val yPos = currentMapPos.y + y
-
-                        if (xPos !in 1..selectedMap.maxX || yPos !in 1..selectedMap.maxY) {
-                            continue
-                        }
-
-                        val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
-
-                        reverseActions.add(ReplaceTileAction(tile) {
-                            tile.getFilteredTileItems(filteredLayers).forEach { tileItem ->
-                                tile.deleteTileItem(tileItem)
-                            }
-
-                            tileItems.forEach {
-                                tile.addTileItem(it)
-                            }
-                        })
-                    }
-                }
-
-                if (reverseActions.isNotEmpty()) {
-                    sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
-                    sendEvent(EventFrameController.Refresh())
-                }
-            })
-        })
     }
 }
