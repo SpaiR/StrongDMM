@@ -20,7 +20,7 @@ class MapModifierController : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(EventMapModifierController.DeleteActiveAreaTileItems::class.java, ::handleDeleteActiveAreaTileItems)
-        consumeEvent(EventMapModifierController.ReplaceActiveAreaTileItems::class.java, ::handleReplaceActiveAreaTileItems)
+        consumeEvent(EventMapModifierController.FillCurrentMapPosWithTileItems::class.java, ::handleFillCurrentMapPosWithTileItems)
         consumeEvent(EventMapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
         consumeEvent(EventMapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
         consumeEvent(EventMapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
@@ -60,7 +60,7 @@ class MapModifierController : EventConsumer, EventSender {
         })
     }
 
-    private fun handleReplaceActiveAreaTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
+    private fun handleFillCurrentMapPosWithTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
         sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
             sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
                 val reverseActions = mutableListOf<Undoable>()

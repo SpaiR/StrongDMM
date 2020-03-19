@@ -57,7 +57,7 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handlePaste() {
         if (!currentMapPos.isOutOfBounds() && tileItems != null) {
-            sendEvent(EventMapModifierController.ReplaceActiveAreaTileItems(tileItems!!))
+            sendEvent(EventMapModifierController.FillCurrentMapPosWithTileItems(tileItems!!))
         }
     }
 }
