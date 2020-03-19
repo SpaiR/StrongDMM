@@ -28,7 +28,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(EventMapHolderController.Open::class.java, ::handleOpen)
         consumeEvent(EventMapHolderController.Close::class.java, ::handleClose)
         consumeEvent(EventMapHolderController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(EventMapHolderController.Switch::class.java, ::handleSwitch)
+        consumeEvent(EventMapHolderController.Change::class.java, ::handleChange)
         consumeEvent(EventMapHolderController.Save::class.java, ::handleSave)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
@@ -100,7 +100,7 @@ class MapHolderController : EventSender, EventConsumer {
         openedMap?.let { event.reply(it) }
     }
 
-    private fun handleSwitch(event: Event<MapId, Unit>) {
+    private fun handleChange(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             if (openedMap !== it) {
                 openedMap = it

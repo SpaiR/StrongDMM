@@ -28,7 +28,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventToolsController.Switch::class.java, ::handleSwitch)
+        consumeEvent(EventToolsController.Change::class.java, ::handleChange)
         consumeEvent(EventToolsController.Reset::class.java, ::handleReset)
         consumeEvent(EventToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
     }
@@ -75,7 +75,7 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.onTileItemSwitch(null)
     }
 
-    private fun handleSwitch(event: Event<ToolType, Unit>) {
+    private fun handleChange(event: Event<ToolType, Unit>) {
         currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onTileItemSwitch(activeTileItem)

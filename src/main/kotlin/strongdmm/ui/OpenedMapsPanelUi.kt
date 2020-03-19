@@ -47,7 +47,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 if (selectable(map.mapName, openedMap === map)) {
                     if (openedMap !== map) {
-                        sendEvent(EventMapHolderController.Switch(map.id))
+                        sendEvent(EventMapHolderController.Change(map.id))
                     }
                 }
                 setItemHoveredTooltip(map.visibleMapPath)

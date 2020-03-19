@@ -44,7 +44,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
                 }
 
                 button(tool.toolName) {
-                    sendEvent(EventToolsController.Switch(tool))
+                    sendEvent(EventToolsController.Change(tool))
                 }
 
                 if (isItemHovered()) {
@@ -61,7 +61,7 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     }
 
     private fun selectTool(tool: ToolType) {
-        sendEvent(EventToolsController.Switch(tool))
+        sendEvent(EventToolsController.Change(tool))
     }
 
     private fun handleActiveToolChanged(event: Event<ToolType, Unit>) {
