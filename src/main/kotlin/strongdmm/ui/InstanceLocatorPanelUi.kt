@@ -14,6 +14,7 @@ import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventInstanceController
+import strongdmm.event.type.controller.EventToolsController
 import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
 import strongdmm.event.type.ui.EventSearchResultPanelUi
 import strongdmm.ui.search.SearchRect
@@ -87,8 +88,19 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
             setNextItemWidth(SEARCH_INPUT_WIDTH)
             inputInt("y2", searchY2, 1, mapMaxY)
 
+            button("Selection", block = ::setSearchRectToActiveArea)
+            sameLine()
             button("Reset", block = ::resetSearchRect)
         }
+    }
+
+    private fun setSearchRectToActiveArea() {
+        sendEvent(EventToolsController.FetchActiveArea { activeArea ->
+            searchX1.set(activeArea.x1)
+            searchY1.set(activeArea.y1)
+            searchX2.set(activeArea.x2)
+            searchY2.set(activeArea.y2)
+        })
     }
 
     private fun resetSearchRect() {
