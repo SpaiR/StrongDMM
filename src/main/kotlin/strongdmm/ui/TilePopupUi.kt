@@ -8,6 +8,7 @@ import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -30,12 +31,16 @@ class TilePopupUi : EventConsumer, EventSender {
     private var currentTile: Tile? = null
     private var activeTileItem: TileItem? = null
 
+    private var isUndoEnabled: Boolean = false
+    private var isRedoEnabled: Boolean = false
+
     init {
         consumeEvent(EventTilePopupUi.Open::class.java, ::handleOpen)
         consumeEvent(EventTilePopupUi.Close::class.java, ::handleClose)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
     }
 
     fun process() {
@@ -48,6 +53,9 @@ class TilePopupUi : EventConsumer, EventSender {
             }
 
             popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
+                menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
+                menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
+                separator()
                 menuItem("Cut", shortcut = "Ctrl+X", block = ::doCut)
                 menuItem("Copy", shortcut = "Ctrl+C", block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", block = ::doPaste)
@@ -143,6 +151,14 @@ class TilePopupUi : EventConsumer, EventSender {
         }
     }
 
+    private fun doUndo() {
+        sendEvent(EventActionController.UndoAction())
+    }
+
+    private fun doRedo() {
+        sendEvent(EventActionController.RedoAction())
+    }
+
     private fun doCut() {
         sendEvent(EventClipboardController.Cut())
     }
@@ -182,5 +198,10 @@ class TilePopupUi : EventConsumer, EventSender {
 
     private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItem = event.body
+    }
+
+    private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {
+        isUndoEnabled = event.body.hasUndoAction
+        isRedoEnabled = event.body.hasRedoAction
     }
 }

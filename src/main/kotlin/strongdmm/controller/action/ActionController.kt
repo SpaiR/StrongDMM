@@ -56,6 +56,10 @@ class ActionController : EventConsumer, EventSender {
     private fun handleUndoAction() {
         sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
+                if (undo.isEmpty()) {
+                    return@FetchSelectedMap
+                }
+
                 redo.push(undo.pop().doAction())
                 updateActionBalance(false)
                 sendEvent(EventFrameController.RefreshFrame())
@@ -66,6 +70,10 @@ class ActionController : EventConsumer, EventSender {
     private fun handleRedoAction() {
         sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
+                if (redo.isEmpty()) {
+                    return@FetchSelectedMap
+                }
+
                 undo.push(redo.pop().doAction())
                 updateActionBalance(true)
                 sendEvent(EventFrameController.RefreshFrame())

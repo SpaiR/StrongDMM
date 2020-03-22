@@ -135,15 +135,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doUndo() {
-        if (isUndoEnabled) {
-            sendEvent(EventActionController.UndoAction())
-        }
+        sendEvent(EventActionController.UndoAction())
     }
 
     private fun doRedo() {
-        if (isRedoEnabled) {
-            sendEvent(EventActionController.RedoAction())
-        }
+        sendEvent(EventActionController.RedoAction())
     }
 
     private fun doCut() {
@@ -167,9 +163,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doOpenLayersFilter() {
-        if (isEnvironmentOpened) {
-            sendEvent(EventLayersFilterPanelUi.Open())
-        }
+        sendEvent(EventLayersFilterPanelUi.Open())
     }
 
     private fun toggleAreaLayer() {
