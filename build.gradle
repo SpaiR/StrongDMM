@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.60'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
     id 'org.jmailen.kotlinter' version '1.26.0'
 }
 
@@ -33,7 +33,7 @@ ext {
     trove4jVersion = '3.0.3'
     minimalJsonjVersion = '0.9.5'
     pngjVersion = '2.1.0'
-    imguiVersion = '1.75-0.7'
+    imguiVersion = '1.75-0.7.1'
 }
 
 dependencies {
