@@ -5,8 +5,10 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.tool.ComplexTool
 import strongdmm.controller.tool.Tool
+import strongdmm.event.EventSender
+import strongdmm.event.type.controller.EventCanvasController
 
-class SelectComplexTool : ComplexTool() {
+class SelectComplexTool : ComplexTool(), EventSender {
     private val add = SelectAddAreaTool()
     private val move = SelectMoveAreaTool()
 
@@ -50,5 +52,13 @@ class SelectComplexTool : ComplexTool() {
     override fun destroy() {
         add.destroy()
         move.destroy()
+    }
+
+    fun selectArea(area: MapArea) {
+        reset()
+        add.selectedArea = area
+        onStop()
+        sendEvent(EventCanvasController.HighlightSelectedArea())
+        sendEvent(EventCanvasController.SelectArea(area))
     }
 }

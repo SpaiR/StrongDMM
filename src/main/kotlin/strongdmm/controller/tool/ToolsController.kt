@@ -31,6 +31,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventToolsController.Change::class.java, ::handleChange)
         consumeEvent(EventToolsController.Reset::class.java, ::handleReset)
         consumeEvent(EventToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
+        consumeEvent(EventToolsController.SelectActiveArea::class.java, ::handleSelectActiveArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -96,5 +97,10 @@ class ToolsController : EventConsumer, EventSender {
         if (activeArea.isNotOutOfBounds()) {
             event.reply(activeArea)
         }
+    }
+
+    private fun handleSelectActiveArea(event: Event<MapArea, Unit>) {
+        sendEvent(EventToolsController.Change(ToolType.SELECT))
+        (currentTool as SelectComplexTool).selectArea(event.body)
     }
 }

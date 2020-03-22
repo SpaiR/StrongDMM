@@ -7,7 +7,7 @@ import strongdmm.event.TileItemType
 
 abstract class EventMapModifierController {
     class DeleteActiveAreaTileItems : Event<Unit, Unit>(Unit, null)
-    class FillCurrentMapPosWithTileItems(body: Array<Array<List<TileItem>>>) : Event<Array<Array<List<TileItem>>>, Unit>(body, null)
+    class FillSelectedMapPosWithTileItems(body: Array<Array<List<TileItem>>>) : Event<Array<Array<List<TileItem>>>, Unit>(body, null)
 
     class ReplaceTypeInPositions(body: Pair<TileItemType, List<Pair<TileItem, MapPos>>>) :
         Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>(body, null)

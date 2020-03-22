@@ -1,6 +1,7 @@
 package strongdmm.controller.map
 
 import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.undoable.MultiAction
@@ -20,7 +21,7 @@ class MapModifierController : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(EventMapModifierController.DeleteActiveAreaTileItems::class.java, ::handleDeleteActiveAreaTileItems)
-        consumeEvent(EventMapModifierController.FillCurrentMapPosWithTileItems::class.java, ::handleFillCurrentMapPosWithTileItems)
+        consumeEvent(EventMapModifierController.FillSelectedMapPosWithTileItems::class.java, ::handleFillSelectedMapPosWithTileItems)
         consumeEvent(EventMapModifierController.ReplaceTypeInPositions::class.java, ::handleReplaceTypeInPositions)
         consumeEvent(EventMapModifierController.ReplaceIdInPositions::class.java, ::handleReplaceIdInPositions)
         consumeEvent(EventMapModifierController.DeleteTypeInPositions::class.java, ::handleDeleteTypeInPositions)
@@ -60,10 +61,13 @@ class MapModifierController : EventConsumer, EventSender {
         })
     }
 
-    private fun handleFillCurrentMapPosWithTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
+    private fun handleFillSelectedMapPosWithTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
         sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
             sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
                 val reverseActions = mutableListOf<Undoable>()
+
+                var x2 = currentMapPos.x
+                var y2 = currentMapPos.y
 
                 for ((x, col) in event.body.withIndex()) {
                     for ((y, tileItems) in col.withIndex()) {
@@ -73,6 +77,9 @@ class MapModifierController : EventConsumer, EventSender {
                         if (xPos !in 1..selectedMap.maxX || yPos !in 1..selectedMap.maxY) {
                             continue
                         }
+
+                        x2 = xPos
+                        y2 = yPos
 
                         val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
 
@@ -90,6 +97,7 @@ class MapModifierController : EventConsumer, EventSender {
 
                 if (reverseActions.isNotEmpty()) {
                     sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
+                    sendEvent(EventToolsController.SelectActiveArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
                     sendEvent(EventFrameController.Refresh())
                 }
             })
