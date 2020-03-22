@@ -67,7 +67,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
             tileItems?.forEachIndexed { index, tileItem ->
                 val isSelected = index == selectedObjIdx
                 selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
-                    sendEvent(EventTileItemController.ChangeActive(tileItem))
+                    sendEvent(EventTileItemController.ChangeActiveTileItem(tileItem))
                     scrolledToItem = true // do not scroll panel in the next cycle
                 }
                 if (isSelected && !scrolledToItem) {
@@ -86,12 +86,12 @@ class ObjectPanelUi : EventConsumer, EventSender {
                         sendEvent(EventEditVarsDialogUi.OpenWithTileItem(tileItem))
                     }
                     menuItem("Generate Instances from Icon-states") {
-                        sendEvent(EventInstanceController.GenerateFromIconStates(tileItem) {
+                        sendEvent(EventInstanceController.GenerateInstancesFromIconStates(tileItem) {
                             handleUpdate()
                         })
                     }
                     menuItem("Generate Instances from Directions") {
-                        sendEvent(EventInstanceController.GenerateFromDirections(tileItem) {
+                        sendEvent(EventInstanceController.GenerateInstancesFromDirections(tileItem) {
                             handleUpdate()
                         })
                     }

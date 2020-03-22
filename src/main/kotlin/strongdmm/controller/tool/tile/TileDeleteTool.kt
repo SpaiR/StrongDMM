@@ -62,17 +62,17 @@ class TileDeleteTool : Tool(), EventSender {
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y)
 
-            sendEvent(EventLayersFilterController.Fetch { filteredTypes ->
+            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.deleteTileItem(tileItem)
                     })
 
                     sendEvent(EventCanvasController.SelectTiles(dirtyTiles))
-                    sendEvent(EventFrameController.Refresh())
+                    sendEvent(EventFrameController.RefreshFrame())
                 }
             })
         })

@@ -6,9 +6,9 @@ import strongdmm.event.MapId
 import java.io.File
 
 abstract class EventMapHolderController {
-    class Open(body: File) : Event<File, Unit>(body, null)
-    class Close(body: MapId) : Event<MapId, Unit>(body, null)
-    class FetchSelected(callback: ((Dmm) -> Unit)) : Event<Unit, Dmm>(Unit, callback)
-    class Change(body: MapId) : Event<MapId, Unit>(body, null)
-    class Save : Event<Unit, Unit>(Unit, null)
+    class OpenMap(body: File) : Event<File, Unit>(body, null)
+    class CloseMap(body: MapId) : Event<MapId, Unit>(body, null)
+    class FetchSelectedMap(callback: ((Dmm) -> Unit)) : Event<Unit, Dmm>(Unit, callback)
+    class ChangeSelectedMap(body: MapId) : Event<MapId, Unit>(body, null)
+    class SaveSelectedMap : Event<Unit, Unit>(Unit, null)
 }

@@ -39,7 +39,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
             openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
-                    sendEvent(EventMapHolderController.Close(map.id))
+                    sendEvent(EventMapHolderController.CloseMap(map.id))
                 }
                 popStyleColor()
 
@@ -47,7 +47,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 if (selectable(map.mapName, selectedMap === map)) {
                     if (selectedMap !== map) {
-                        sendEvent(EventMapHolderController.Change(map.id))
+                        sendEvent(EventMapHolderController.ChangeSelectedMap(map.id))
                     }
                 }
                 setItemHoveredTooltip(map.visibleMapPath)

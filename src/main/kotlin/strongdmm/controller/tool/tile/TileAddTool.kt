@@ -54,7 +54,7 @@ class TileAddTool : Tool(), EventSender {
     }
 
     private fun addTileItem(pos: MapPos) {
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y)
 
             reverseActions.add(ReplaceTileAction(tile) {
@@ -62,7 +62,7 @@ class TileAddTool : Tool(), EventSender {
             })
 
             sendEvent(EventCanvasController.SelectTiles(dirtyTiles))
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         })
     }
 

@@ -10,36 +10,36 @@ class LayersFilterController : EventConsumer, EventSender {
     private var filteredTypes: MutableSet<String> = HashSet()
 
     init {
-        consumeEvent(EventLayersFilterController.FilterById::class.java, ::handleFilterById)
-        consumeEvent(EventLayersFilterController.ShowByType::class.java, ::handleShowByType)
-        consumeEvent(EventLayersFilterController.HideByType::class.java, ::handleHideByType)
-        consumeEvent(EventLayersFilterController.Fetch::class.java, ::handleFetch)
+        consumeEvent(EventLayersFilterController.FilterLayersById::class.java, ::handleFilterLayersById)
+        consumeEvent(EventLayersFilterController.ShowLayersByType::class.java, ::handleShowLayersByType)
+        consumeEvent(EventLayersFilterController.HideLayersByType::class.java, ::handleHideLayersByType)
+        consumeEvent(EventLayersFilterController.FetchFilteredLayers::class.java, ::handleFetchFilteredLayers)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
-    private fun handleFilterById(event: Event<DmeItemIdArray, Unit>) {
-        sendEvent(EventEnvironmentController.Fetch { dme ->
+    private fun handleFilterLayersById(event: Event<DmeItemIdArray, Unit>) {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
             filteredTypes = dme.items.values.filter { event.body.contains(it.id) }.map { it.type }.toMutableSet()
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
             sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }
 
-    private fun handleShowByType(event: Event<DmeItemType, Unit>) {
+    private fun handleShowLayersByType(event: Event<DmeItemType, Unit>) {
         filteredTypes.removeIf { it.contains(event.body) }
-        sendEvent(EventFrameController.Refresh())
+        sendEvent(EventFrameController.RefreshFrame())
         sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
     }
 
-    private fun handleHideByType(event: Event<DmeItemType, Unit>) {
-        sendEvent(EventEnvironmentController.Fetch { dme ->
+    private fun handleHideLayersByType(event: Event<DmeItemType, Unit>) {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
             filteredTypes.addAll(dme.items.values.filter { it.type.contains(event.body) }.map { it.type })
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
             sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }
 
-    private fun handleFetch(event: Event<Unit, Set<DmeItemType>>) {
+    private fun handleFetchFilteredLayers(event: Event<Unit, Set<DmeItemType>>) {
         event.reply(filteredTypes)
     }
 

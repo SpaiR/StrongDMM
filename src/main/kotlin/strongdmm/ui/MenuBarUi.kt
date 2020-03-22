@@ -103,7 +103,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
             progressText = "Loading " + file.absolutePath.replace('\\', '/').substringAfterLast("/")
-            sendEvent(EventEnvironmentController.Open(file) {
+            sendEvent(EventEnvironmentController.OpenEnvironment(file) {
                 progressText = null
                 isEnvironmentOpened = it
             })
@@ -115,9 +115,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             return
         }
 
-        sendEvent(EventEnvironmentController.Fetch { environment ->
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
             NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
-                sendEvent(EventMapHolderController.Open(path))
+                sendEvent(EventMapHolderController.OpenMap(path))
             }
         })
     }
@@ -130,7 +130,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doSave() {
         if (isEnvironmentOpened) {
-            sendEvent(EventMapHolderController.Save())
+            sendEvent(EventMapHolderController.SaveSelectedMap())
         }
     }
 
@@ -159,11 +159,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doDelete() {
-        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
+        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun doDeselectAll() {
-        sendEvent(EventToolsController.Reset())
+        sendEvent(EventToolsController.ResetTool())
     }
 
     private fun doOpenLayersFilter() {
@@ -218,9 +218,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun toggleLayer(layerStatus: ImBool, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(EventLayersFilterController.ShowByType(layerType))
+            sendEvent(EventLayersFilterController.ShowLayersByType(layerType))
         } else {
-            sendEvent(EventLayersFilterController.HideByType(layerType))
+            sendEvent(EventLayersFilterController.HideLayersByType(layerType))
         }
     }
 

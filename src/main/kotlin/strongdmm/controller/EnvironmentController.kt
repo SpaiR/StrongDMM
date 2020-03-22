@@ -17,11 +17,11 @@ class EnvironmentController : EventSender, EventConsumer {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(EventEnvironmentController.Open::class.java, ::handleOpen)
-        consumeEvent(EventEnvironmentController.Fetch::class.java, ::handleFetch)
+        consumeEvent(EventEnvironmentController.OpenEnvironment::class.java, ::handleOpenEnvironment)
+        consumeEvent(EventEnvironmentController.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
     }
 
-    private fun handleOpen(event: Event<File, EnvironmentBlockStatus>) {
+    private fun handleOpenEnvironment(event: Event<File, EnvironmentBlockStatus>) {
         sendEvent(EventGlobal.EnvironmentReset())
 
         GlobalDmiHolder.resetEnvironment()
@@ -40,7 +40,7 @@ class EnvironmentController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleFetch(event: Event<Unit, Dme>) {
+    private fun handleFetchOpenedEnvironment(event: Event<Unit, Dme>) {
         if (this::environment.isInitialized) {
             event.reply(environment)
         }

@@ -217,7 +217,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         getNewItemVars()?.let { newItemVars ->
             currentTile?.let {
                 it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
-                sendEvent(EventFrameController.Refresh())
+                sendEvent(EventFrameController.RefreshFrame())
             }
         }
     }
@@ -225,7 +225,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun discardTmpTileChanges() {
         if (currentTile != null && initialTileItemsId != null) {
             currentTile!!.replaceTileItemsId(initialTileItemsId!!)
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         }
     }
 
@@ -243,7 +243,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                     )
                 )
 
-                sendEvent(EventFrameController.Refresh())
+                sendEvent(EventFrameController.RefreshFrame())
             } else if (currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
@@ -267,12 +267,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilter.set("")
         isShowModifiedVars.set(false)
         variables.clear()
-        sendEvent(EventCanvasController.Block(false))
+        sendEvent(EventCanvasController.BlockCanvas(false))
     }
 
     private fun open() {
         isFistOpen = true
-        sendEvent(EventCanvasController.Block(true))
+        sendEvent(EventCanvasController.BlockCanvas(true))
         WINDOW_ID++
     }
 

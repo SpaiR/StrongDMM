@@ -36,7 +36,7 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventFrameController.Refresh::class.java, ::handleRefresh)
+        consumeEvent(EventFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
     fun postInit() {
@@ -66,17 +66,17 @@ class FrameController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleRefresh() {
+    private fun handleRefreshFrame() {
         cache.clear()
         updateFrameCache()
         sendEvent(EventGlobal.FrameRefreshed())
     }
 
     private fun updateFrameCache() {
-        sendEvent(EventMapHolderController.FetchSelected { map ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { map ->
             var filteredTypes: Set<String>? = null
 
-            sendEvent(EventLayersFilterController.Fetch {
+            sendEvent(EventLayersFilterController.FetchFilteredLayers {
                 filteredTypes = it
             })
 

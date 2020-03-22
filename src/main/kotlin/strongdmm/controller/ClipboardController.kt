@@ -31,12 +31,12 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handleCut() {
         sendEvent(EventClipboardController.Copy())
-        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
+        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun handleCopy() {
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
-            sendEvent(EventLayersFilterController.Fetch { filteredLayers ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredLayers ->
                 sendEvent(EventToolsController.FetchActiveArea { activeArea ->
                     val width = activeArea.x2 - activeArea.x1 + 1
                     val height = activeArea.y2 - activeArea.y1 + 1
@@ -57,7 +57,7 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handlePaste() {
         if (!currentMapPos.isOutOfBounds() && tileItems != null) {
-            sendEvent(EventMapModifierController.FillSelectedMapPosWithTileItems(tileItems!!))
+            sendEvent(EventMapModifierController.FillSelectedMapPositionWithTileItems(tileItems!!))
         }
     }
 }

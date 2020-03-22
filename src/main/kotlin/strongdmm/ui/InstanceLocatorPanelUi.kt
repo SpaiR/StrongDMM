@@ -115,9 +115,9 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
         }
 
         if (tileItemId != null) {
-            sendEvent(EventInstanceController.FindPositionsById(Pair(searchRect, tileItemId), openSearchResult))
+            sendEvent(EventInstanceController.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
         } else {
-            sendEvent(EventInstanceController.FindPositionsByType(Pair(searchRect, type), openSearchResult))
+            sendEvent(EventInstanceController.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
         }
     }
 

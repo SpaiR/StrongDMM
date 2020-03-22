@@ -109,7 +109,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
 
         if (smallButton(" ##layer_filter_${dmeItem.id}")) {
             toggleItemFilter(dmeItem, isFilteredType)
-            sendEvent(EventLayersFilterController.FilterById(filteredTypesId.toArray()))
+            sendEvent(EventLayersFilterController.FilterLayersById(filteredTypesId.toArray()))
         }
 
         if (isItemHovered()) {
@@ -151,7 +151,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
-        sendEvent(EventEnvironmentController.Fetch {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment {
             filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->
                 if (event.body.contains(dmeItem.type)) {

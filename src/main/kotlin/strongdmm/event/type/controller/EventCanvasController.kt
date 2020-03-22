@@ -6,8 +6,8 @@ import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 
 abstract class EventCanvasController {
-    class Block(body: CanvasBlockStatus) : Event<CanvasBlockStatus, Unit>(body, null)
-    class CenterPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
+    class BlockCanvas(body: CanvasBlockStatus) : Event<CanvasBlockStatus, Unit>(body, null)
+    class CenterCanvasByPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
     class MarkPosition(body: MapPos) : Event<MapPos, Unit>(body, null)
     class ResetMarkedPosition : Event<Unit, Unit>(Unit, null)
     class SelectTiles(body: Collection<MapPos>) : Event<Collection<MapPos>, Unit>(body, null)

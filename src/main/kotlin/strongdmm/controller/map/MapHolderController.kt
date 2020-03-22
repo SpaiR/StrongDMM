@@ -25,11 +25,11 @@ class MapHolderController : EventSender, EventConsumer {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(EventMapHolderController.Open::class.java, ::handleOpen)
-        consumeEvent(EventMapHolderController.Close::class.java, ::handleClose)
-        consumeEvent(EventMapHolderController.FetchSelected::class.java, ::handleFetchSelected)
-        consumeEvent(EventMapHolderController.Change::class.java, ::handleChange)
-        consumeEvent(EventMapHolderController.Save::class.java, ::handleSave)
+        consumeEvent(EventMapHolderController.OpenMap::class.java, ::handleOpenMap)
+        consumeEvent(EventMapHolderController.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
+        consumeEvent(EventMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
+        consumeEvent(EventMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
     }
@@ -39,7 +39,7 @@ class MapHolderController : EventSender, EventConsumer {
         sendEvent(EventGlobalProvider.AvailableMaps(availableMapsPathsWithVisibleMapsPaths))
     }
 
-    private fun handleOpen(event: Event<File, Unit>) {
+    private fun handleOpenMap(event: Event<File, Unit>) {
         val id = event.body.absolutePath.hashCode()
 
         if (selectedMap?.id == id) {
@@ -58,7 +58,7 @@ class MapHolderController : EventSender, EventConsumer {
                 return
             }
 
-            sendEvent(EventEnvironmentController.Fetch { environment ->
+            sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
                 val dmmData = DmmReader.readMap(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 
@@ -75,7 +75,7 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleClose(event: Event<MapId, Unit>) {
+    private fun handleCloseMap(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             val mapIndex = openedMaps.indexOf(it)
 
@@ -96,11 +96,11 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleFetchSelected(event: Event<Unit, Dmm>) {
+    private fun handleFetchSelectedMap(event: Event<Unit, Dmm>) {
         selectedMap?.let { event.reply(it) }
     }
 
-    private fun handleChange(event: Event<MapId, Unit>) {
+    private fun handleChangeSelectedMap(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
@@ -109,7 +109,7 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleSave() {
+    private fun handleSaveSelectedMap() {
         selectedMap?.let { map ->
             thread(start = true) {
                 val initialDmmData = DmmReader.readMap(File(mapsBackupPathsById.get(map.id)))

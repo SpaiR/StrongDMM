@@ -66,8 +66,8 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventGlobal.FrameRefreshed::class.java, ::handleFrameRefreshed)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobalProvider.ComposedFrame::class.java, ::handleProviderComposedFrame)
-        consumeEvent(EventCanvasController.Block::class.java, ::handleCanvasBlock)
-        consumeEvent(EventCanvasController.CenterPosition::class.java, ::handleCenterPosition)
+        consumeEvent(EventCanvasController.BlockCanvas::class.java, ::handleBlockCanvas)
+        consumeEvent(EventCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(EventCanvasController.MarkPosition::class.java, ::handleMarkPosition)
         consumeEvent(EventCanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
         consumeEvent(EventCanvasController.SelectTiles::class.java, ::handleSelectTiles)
@@ -161,7 +161,7 @@ class CanvasController : EventSender, EventConsumer {
             return
         }
 
-        sendEvent(EventMapHolderController.FetchSelected {
+        sendEvent(EventMapHolderController.FetchSelectedMap {
             if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
                 sendEvent(EventTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos)))
             }
@@ -223,14 +223,14 @@ class CanvasController : EventSender, EventConsumer {
         if (canvasRenderer.tileItemIdMouseOver != 0L) {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                 if (ImGui.getIO().keyCtrl) { // Replace tile item
-                    sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+                    sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
                         deleteTileItemUnderMouse(currentMap)
                     })
                 } else { // Select tile item
-                    sendEvent(EventTileItemController.ChangeActive(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+                    sendEvent(EventTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
-                sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+                sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
                     if (ImGui.getIO().keyCtrl) { // Delete tile item
                         replaceTileItemUnderMouseWithSelected(currentMap)
                     } else { // Open for edit
@@ -278,7 +278,7 @@ class CanvasController : EventSender, EventConsumer {
             )
         )
 
-        sendEvent(EventFrameController.Refresh())
+        sendEvent(EventFrameController.RefreshFrame())
     }
 
     private fun deleteTileItemUnderMouse(map: Dmm) {
@@ -294,7 +294,7 @@ class CanvasController : EventSender, EventConsumer {
             )
         )
 
-        sendEvent(EventFrameController.Refresh())
+        sendEvent(EventFrameController.RefreshFrame())
     }
 
     private fun openTileItemUnderMouseForEdit(map: Dmm) {
@@ -351,11 +351,11 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.frameMeshes = event.body
     }
 
-    private fun handleCanvasBlock(event: Event<CanvasBlockStatus, Unit>) {
+    private fun handleBlockCanvas(event: Event<CanvasBlockStatus, Unit>) {
         isBlocked = event.body
     }
 
-    private fun handleCenterPosition(event: Event<MapPos, Unit>) {
+    private fun handleCenterCanvasByPosition(event: Event<MapPos, Unit>) {
         renderData.viewTranslateX = AppWindow.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
         renderData.viewTranslateY = AppWindow.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
         canvasRenderer.redraw = true

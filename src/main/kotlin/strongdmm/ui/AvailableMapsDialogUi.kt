@@ -78,7 +78,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     private fun openSelectedMapAndClosePopup() {
         selectedMapPath?.let {
-            sendEvent(EventMapHolderController.Open(File(it)))
+            sendEvent(EventMapHolderController.OpenMap(File(it)))
             closePopup()
         }
     }
@@ -87,13 +87,13 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = ""
-        sendEvent(EventCanvasController.Block(false))
+        sendEvent(EventCanvasController.BlockCanvas(false))
     }
 
     private fun handleOpen() {
         isDoOpen = true
         isFirstOpen = true
-        sendEvent(EventCanvasController.Block(true))
+        sendEvent(EventCanvasController.BlockCanvas(true))
     }
 
     private fun handleProviderAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {

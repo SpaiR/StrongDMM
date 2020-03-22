@@ -13,15 +13,15 @@ import strongdmm.ui.search.SearchRect
 
 class InstanceController : EventConsumer, EventSender {
     init {
-        consumeEvent(EventInstanceController.GenerateFromIconStates::class.java, ::handleGenerateFromIconStates)
-        consumeEvent(EventInstanceController.GenerateFromDirections::class.java, ::handleGenerateFromDirections)
-        consumeEvent(EventInstanceController.FindPositionsByType::class.java, ::handleFindPositionsByType)
-        consumeEvent(EventInstanceController.FindPositionsById::class.java, ::handleFindPositionsById)
+        consumeEvent(EventInstanceController.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
+        consumeEvent(EventInstanceController.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
+        consumeEvent(EventInstanceController.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
+        consumeEvent(EventInstanceController.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
     }
 
-    private fun handleGenerateFromIconStates(event: Event<TileItem, Unit>) {
+    private fun handleGenerateInstancesFromIconStates(event: Event<TileItem, Unit>) {
         GlobalDmiHolder.getDmi(event.body.icon)?.let { dmi ->
-            sendEvent(EventEnvironmentController.Fetch { dme ->
+            sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
                 val itemType = event.body.type
                 val dmeItem = dme.getItem(itemType)!!
                 val initialIconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
@@ -38,10 +38,10 @@ class InstanceController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleGenerateFromDirections(event: Event<TileItem, Unit>) {
+    private fun handleGenerateInstancesFromDirections(event: Event<TileItem, Unit>) {
         val tileItem = event.body
         GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
-            sendEvent(EventEnvironmentController.Fetch { dme ->
+            sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
                 val dmeItem = dme.getItem(tileItem.type)!!
                 val initialDir = dmeItem.getVarInt(VAR_DIR) ?: DEFAULT_DIR
 
@@ -63,10 +63,10 @@ class InstanceController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleFindPositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>) {
+    private fun handleFindInstancePositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(EventMapHolderController.FetchSelected { map ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { map ->
             if (event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {
@@ -85,10 +85,10 @@ class InstanceController : EventConsumer, EventSender {
         event.reply(positions)
     }
 
-    private fun handleFindPositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>) {
+    private fun handleFindInstancePositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(EventMapHolderController.FetchSelected { map ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { map ->
             val (x1, y1, x2, y2) = event.body.first
 
             for (x in (x1..x2)) {

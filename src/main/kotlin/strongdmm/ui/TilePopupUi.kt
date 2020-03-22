@@ -87,7 +87,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 )
             )
 
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         }
 
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
@@ -99,13 +99,13 @@ class TilePopupUi : EventConsumer, EventSender {
                 )
             )
 
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         }
 
         separator()
 
         menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
-            sendEvent(EventTileItemController.ChangeActive(tileItem))
+            sendEvent(EventTileItemController.ChangeActiveTileItem(tileItem))
         }
 
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
@@ -126,7 +126,7 @@ class TilePopupUi : EventConsumer, EventSender {
                     )
                 )
 
-                sendEvent(EventFrameController.Refresh())
+                sendEvent(EventFrameController.RefreshFrame())
             }
         }
 
@@ -139,7 +139,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 )
             )
 
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         }
     }
 
@@ -156,11 +156,11 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun doDelete() {
-        sendEvent(EventMapModifierController.DeleteActiveAreaTileItems())
+        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun doDeselectAll() {
-        sendEvent(EventToolsController.Reset())
+        sendEvent(EventToolsController.ResetTool())
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {

@@ -96,7 +96,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                         val searchPos = posIterator.next()
 
                         button("x:%03d y:%03d##jump_btn_${idx++}".format(searchPos.pos.x, searchPos.pos.y)) {
-                            sendEvent(EventCanvasController.CenterPosition(searchPos.pos))
+                            sendEvent(EventCanvasController.CenterCanvasByPosition(searchPos.pos))
                             sendEvent(EventCanvasController.MarkPosition(searchPos.pos))
                         }
 
@@ -122,7 +122,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     }
 
     private fun checkReplaceEnabled() {
-        sendEvent(EventEnvironmentController.Fetch {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment {
             isReplaceEnabled = it.getItem(replaceType.get()) != null
         })
     }
@@ -137,9 +137,9 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
     private fun delete(deletionList: List<Pair<TileItem, MapPos>>, isSearchById: Boolean) {
         if (isSearchById) {
-            sendEvent(EventMapModifierController.DeleteIdInPositions(deletionList))
+            sendEvent(EventMapModifierController.DeleteTileItemsWithIdInPositions(deletionList))
         } else {
-            sendEvent(EventMapModifierController.DeleteTypeInPositions(deletionList))
+            sendEvent(EventMapModifierController.DeleteTileItemsWithTypeInPositions(deletionList))
         }
 
         sendEvent(EventCanvasController.ResetMarkedPosition())
@@ -159,9 +159,9 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         }
 
         if (isSearchById) {
-            sendEvent(EventMapModifierController.ReplaceIdInPositions(Pair(replaceType.get(), replaceList)))
+            sendEvent(EventMapModifierController.ReplaceTileItemsWithIdInPositions(Pair(replaceType.get(), replaceList)))
         } else {
-            sendEvent(EventMapModifierController.ReplaceTypeInPositions(Pair(replaceType.get(), replaceList)))
+            sendEvent(EventMapModifierController.ReplaceTileItemsWithTypeInPositions(Pair(replaceType.get(), replaceList)))
         }
 
         sendEvent(EventCanvasController.ResetMarkedPosition())

@@ -28,8 +28,8 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventToolsController.Change::class.java, ::handleChange)
-        consumeEvent(EventToolsController.Reset::class.java, ::handleReset)
+        consumeEvent(EventToolsController.ChangeTool::class.java, ::handleChangeTool)
+        consumeEvent(EventToolsController.ResetTool::class.java, ::handleResetTool)
         consumeEvent(EventToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
         consumeEvent(EventToolsController.SelectActiveArea::class.java, ::handleSelectActiveArea)
     }
@@ -76,14 +76,14 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.onTileItemSwitch(null)
     }
 
-    private fun handleChange(event: Event<ToolType, Unit>) {
+    private fun handleChangeTool(event: Event<ToolType, Unit>) {
         currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onTileItemSwitch(activeTileItem)
         sendEvent(EventGlobal.ActiveToolChanged(event.body))
     }
 
-    private fun handleReset() {
+    private fun handleResetTool() {
         currentTool.reset()
     }
 
@@ -100,7 +100,7 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleSelectActiveArea(event: Event<MapArea, Unit>) {
-        sendEvent(EventToolsController.Change(ToolType.SELECT))
+        sendEvent(EventToolsController.ChangeTool(ToolType.SELECT))
         (currentTool as SelectComplexTool).selectArea(event.body)
     }
 }

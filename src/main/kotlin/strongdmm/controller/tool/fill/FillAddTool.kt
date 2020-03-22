@@ -41,7 +41,7 @@ class FillAddTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
             for (x in x1..x2) {
                 for (y in y1..y2) {
                     val tile = selectedMap.getTile(x, y)
@@ -55,7 +55,7 @@ class FillAddTool : Tool(), EventSender {
 
         if (reverseActions.isNotEmpty()) {
             sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(EventFrameController.Refresh())
+            sendEvent(EventFrameController.RefreshFrame())
         }
 
         sendEvent(EventCanvasController.ResetSelectedArea())

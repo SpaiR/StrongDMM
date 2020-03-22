@@ -29,7 +29,7 @@ class ActionController : EventConsumer, EventSender {
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
 
     private fun updateActionBalance(isPositive: Boolean) {
-        sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
             val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
             actionBalanceStorage.put(currentMap, newBalance)
@@ -44,7 +44,7 @@ class ActionController : EventConsumer, EventSender {
     }
 
     private fun handleAddAction(event: Event<Undoable, Unit>) {
-        sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.clear()
                 undo.push(event.body)
@@ -54,21 +54,21 @@ class ActionController : EventConsumer, EventSender {
     }
 
     private fun handleUndoAction() {
-        sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.push(undo.pop().doAction())
                 updateActionBalance(false)
-                sendEvent(EventFrameController.Refresh())
+                sendEvent(EventFrameController.RefreshFrame())
             }
         })
     }
 
     private fun handleRedoAction() {
-        sendEvent(EventMapHolderController.FetchSelected { currentMap ->
+        sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 undo.push(redo.pop().doAction())
                 updateActionBalance(true)
-                sendEvent(EventFrameController.Refresh())
+                sendEvent(EventFrameController.RefreshFrame())
             }
         })
     }
