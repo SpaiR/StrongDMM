@@ -9,28 +9,28 @@ import strongdmm.event.type.EventGlobal
 import strongdmm.window.AppWindow
 
 class WindowTitleUi : EventConsumer {
-    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
-        openedMapId = event.body.id
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         glfwSetWindowTitle(AppWindow.window, "${event.body.mapName} [${event.body.visibleMapPath}] - ${StrongDMM.TITLE}")
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (openedMapId == event.body.id) {
-            openedMapId = Dmm.MAP_ID_NONE
+        if (selectedMapId == event.body.id) {
+            selectedMapId = Dmm.MAP_ID_NONE
             glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
         }
     }
 
     private fun handleEnvironmentReset() {
-        openedMapId = Dmm.MAP_ID_NONE
+        selectedMapId = Dmm.MAP_ID_NONE
         glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
     }
 }

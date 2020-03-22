@@ -14,7 +14,7 @@ abstract class EventGlobal {
     class EnvironmentReset : Event<Unit, Unit>(Unit, null)
     class EnvironmentChanged(body: Dme) : Event<Dme, Unit>(body, null)
 
-    class OpenedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
+    class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
     class OpenedMapClosed(body: Dmm) : Event<Dmm, Unit>(body, null)
 
     class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)

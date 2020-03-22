@@ -18,10 +18,10 @@ class CoordsPanelUi : EventConsumer {
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
-    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -44,8 +44,8 @@ class CoordsPanelUi : EventConsumer {
         }
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
-        openedMapId = event.body.id
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         isHasMap = true
     }
 
@@ -59,8 +59,8 @@ class CoordsPanelUi : EventConsumer {
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (openedMapId == event.body.id) {
-            openedMapId = Dmm.MAP_ID_NONE
+        if (selectedMapId == event.body.id) {
+            selectedMapId = Dmm.MAP_ID_NONE
             isHasMap = false
         }
     }

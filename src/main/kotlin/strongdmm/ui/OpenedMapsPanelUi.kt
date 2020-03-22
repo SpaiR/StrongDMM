@@ -18,11 +18,11 @@ import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventConsumer, EventSender {
     private var openedMaps: Set<Dmm> = emptySet()
-    private var openedMap: Dmm? = null
+    private var selectedMap: Dmm? = null
 
     init {
         consumeEvent(EventGlobalProvider.OpenedMaps::class.java, ::handleProviderOpenedMaps)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
@@ -35,7 +35,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         setNextWindowSize(150f, 150f, ImGuiCond.Once)
         setNextWindowCollapsed(true, ImGuiCond.Once)
 
-        window("${openedMap?.mapName}###opened_maps") {
+        window("${selectedMap?.mapName}###opened_maps") {
             openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
@@ -45,8 +45,8 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 sameLine()
 
-                if (selectable(map.mapName, openedMap === map)) {
-                    if (openedMap !== map) {
+                if (selectable(map.mapName, selectedMap === map)) {
+                    if (selectedMap !== map) {
                         sendEvent(EventMapHolderController.Change(map.id))
                     }
                 }
@@ -59,13 +59,13 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         openedMaps = event.body
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
-        openedMap = event.body
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMap = event.body
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (event.body === openedMap) {
-            openedMap = null
+        if (event.body === selectedMap) {
+            selectedMap = null
         }
     }
 }

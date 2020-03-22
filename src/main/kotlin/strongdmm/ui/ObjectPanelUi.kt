@@ -37,7 +37,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
         consumeEvent(EventObjectPanelUi.Update::class.java, ::handleUpdate)
     }
@@ -158,7 +158,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         }
     }
 
-    private fun handleOpenedMapChanged() {
+    private fun handleSelectedMapChanged() {
         if (tileItemType.isNotEmpty()) {
             tileItems = getTileItemsByTypeSorted(tileItemType)
         }

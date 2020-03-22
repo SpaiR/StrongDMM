@@ -59,7 +59,7 @@ class CanvasController : EventSender, EventConsumer {
     private val canvasRenderer = CanvasRenderer()
 
     init {
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -311,7 +311,7 @@ class CanvasController : EventSender, EventConsumer {
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         canvasRenderer.markedPosition = null
         renderData = renderDataStorageByMapId.getOrPut(event.body.id) { RenderData(event.body.id) }
         maxX = event.body.maxX

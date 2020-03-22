@@ -22,7 +22,7 @@ class MapHolderController : EventSender, EventConsumer {
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
     private val availableMapsPathsWithVisibleMapsPaths: MutableSet<Pair<String, String>> = mutableSetOf()
 
-    private var openedMap: Dmm? = null
+    private var selectedMap: Dmm? = null
 
     init {
         consumeEvent(EventMapHolderController.Open::class.java, ::handleOpen)
@@ -42,15 +42,15 @@ class MapHolderController : EventSender, EventConsumer {
     private fun handleOpen(event: Event<File, Unit>) {
         val id = event.body.absolutePath.hashCode()
 
-        if (openedMap?.id == id) {
+        if (selectedMap?.id == id) {
             return
         }
 
         val dmm = openedMaps.find { it.id == id }
 
         if (dmm != null) {
-            openedMap = dmm
-            sendEvent(EventGlobal.OpenedMapChanged(dmm))
+            selectedMap = dmm
+            sendEvent(EventGlobal.SelectedMapChanged(dmm))
         } else {
             val mapFile = event.body
 
@@ -68,9 +68,9 @@ class MapHolderController : EventSender, EventConsumer {
                 tmpDmmDataFile.deleteOnExit()
 
                 openedMaps.add(map)
-                openedMap = map
+                selectedMap = map
 
-                sendEvent(EventGlobal.OpenedMapChanged(map))
+                sendEvent(EventGlobal.SelectedMapChanged(map))
             })
         }
     }
@@ -83,34 +83,34 @@ class MapHolderController : EventSender, EventConsumer {
             openedMaps.remove(it)
             sendEvent(EventGlobal.OpenedMapClosed(it))
 
-            if (openedMap === it) {
+            if (selectedMap === it) {
                 if (openedMaps.isEmpty()) {
-                    openedMap = null
+                    selectedMap = null
                 } else {
                     val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
                     val nextMap = openedMaps.toList()[index]
-                    openedMap = nextMap
-                    sendEvent(EventGlobal.OpenedMapChanged(nextMap))
+                    selectedMap = nextMap
+                    sendEvent(EventGlobal.SelectedMapChanged(nextMap))
                 }
             }
         }
     }
 
     private fun handleFetchSelected(event: Event<Unit, Dmm>) {
-        openedMap?.let { event.reply(it) }
+        selectedMap?.let { event.reply(it) }
     }
 
     private fun handleChange(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
-            if (openedMap !== it) {
-                openedMap = it
-                sendEvent(EventGlobal.OpenedMapChanged(it))
+            if (selectedMap !== it) {
+                selectedMap = it
+                sendEvent(EventGlobal.SelectedMapChanged(it))
             }
         }
     }
 
     private fun handleSave() {
-        openedMap?.let { map ->
+        selectedMap?.let { map ->
             thread(start = true) {
                 val initialDmmData = DmmReader.readMap(File(mapsBackupPathsById.get(map.id)))
                 SaveMap(map, initialDmmData, true)
@@ -119,7 +119,7 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleEnvironmentReset() {
-        openedMap = null
+        selectedMap = null
         openedMaps.clear()
         availableMapsPathsWithVisibleMapsPaths.clear()
     }

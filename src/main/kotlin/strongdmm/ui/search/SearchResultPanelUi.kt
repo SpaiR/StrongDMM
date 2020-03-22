@@ -22,14 +22,14 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableMap<String, SearchResult> = mutableMapOf()
     private val panelsOpenState: MutableMap<String, ImBool> = mutableMapOf()
 
-    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     private val replaceType: ImString = ImString(50).apply { inputData.isResizable = true }
     private var isReplaceEnabled: Boolean = false
 
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
@@ -176,14 +176,14 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         clearAll()
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
-        openedMapId = event.body.id
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         clearAll()
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (event.body.id == openedMapId) {
-            openedMapId = Dmm.MAP_ID_NONE
+        if (event.body.id == selectedMapId) {
+            selectedMapId = Dmm.MAP_ID_NONE
             clearAll()
         }
     }

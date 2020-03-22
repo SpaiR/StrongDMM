@@ -27,12 +27,12 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private val cache: MutableList<FrameMesh> = mutableListOf()
-    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -43,8 +43,8 @@ class FrameController : EventConsumer, EventSender {
         sendEvent(EventGlobalProvider.ComposedFrame(cache))
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
-        openedMapId = event.body.id
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
         cache.clear()
         updateFrameCache()
     }
@@ -55,13 +55,13 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private fun handleEnvironmentReset() {
-        openedMapId = Dmm.MAP_ID_NONE
+        selectedMapId = Dmm.MAP_ID_NONE
         cache.clear()
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (openedMapId == event.body.id) {
-            openedMapId = Dmm.MAP_ID_NONE
+        if (selectedMapId == event.body.id) {
+            selectedMapId = Dmm.MAP_ID_NONE
             cache.clear()
         }
     }

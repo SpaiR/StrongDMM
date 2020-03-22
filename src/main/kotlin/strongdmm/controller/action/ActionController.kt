@@ -22,7 +22,7 @@ class ActionController : EventConsumer, EventSender {
         consumeEvent(EventActionController.UndoAction::class.java, ::handleUndoAction)
         consumeEvent(EventActionController.RedoAction::class.java, ::handleRedoAction)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
@@ -78,7 +78,7 @@ class ActionController : EventConsumer, EventSender {
         actionBalanceStorage.clear()
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         notifyActionBalanceChanged(event.body)
     }
 

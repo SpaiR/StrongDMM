@@ -17,7 +17,7 @@ class ToolsController : EventConsumer, EventSender {
     private var currentTool: Tool = TileComplexTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
-    private var openedMapId: Int = Dmm.MAP_ID_NONE
+    private var selectedMapId: Int = Dmm.MAP_ID_NONE
     private var activeTileItem: TileItem? = null
 
     init {
@@ -25,7 +25,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
         consumeEvent(EventGlobal.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventToolsController.Change::class.java, ::handleChange)
@@ -41,7 +41,7 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleMapMouseDragStarted() {
-        if (openedMapId != Dmm.MAP_ID_NONE && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
+        if (selectedMapId != Dmm.MAP_ID_NONE && currentMapPos.x != OUT_OF_BOUNDS && currentMapPos.y != OUT_OF_BOUNDS) {
             currentTool.onStart(currentMapPos)
         }
     }
@@ -57,20 +57,20 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.onTileItemSwitch(event.body)
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         currentTool.reset()
-        openedMapId = event.body.id
+        selectedMapId = event.body.id
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (openedMapId == event.body.id) {
+        if (selectedMapId == event.body.id) {
             currentTool.reset()
-            openedMapId = Dmm.MAP_ID_NONE
+            selectedMapId = Dmm.MAP_ID_NONE
         }
     }
 
     private fun handleEnvironmentReset() {
-        openedMapId = Dmm.MAP_ID_NONE
+        selectedMapId = Dmm.MAP_ID_NONE
         currentTool.destroy()
         currentTool.onTileItemSwitch(null)
     }

@@ -59,7 +59,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventEditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
         consumeEvent(EventEditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
@@ -280,7 +280,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         dispose()
     }
 
-    private fun handleOpenedMapChanged() {
+    private fun handleSelectedMapChanged() {
         discardChangesAndDispose()
     }
 

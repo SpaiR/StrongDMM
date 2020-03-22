@@ -43,7 +43,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapChanged::class.java, ::handleOpenedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventInstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
         consumeEvent(EventInstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
     }
@@ -125,7 +125,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
         searchType.set("")
     }
 
-    private fun handleOpenedMapChanged(event: Event<Dmm, Unit>) {
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         mapMaxX = event.body.maxX
         mapMaxY = event.body.maxY
 
