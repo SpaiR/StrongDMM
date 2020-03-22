@@ -17,6 +17,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.event.type.ui.EventLayersFilterPanelUi
@@ -37,11 +38,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private val isObjLayerActive: ImBool = ImBool(true)
     private val isMobLayerActive: ImBool = ImBool(true)
 
+    private lateinit var showInstanceLocator: ImBool
+
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+        consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -54,6 +58,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = ::doPaste)
         addShortcut(GLFW.GLFW_KEY_DELETE, action = ::doDelete)
         addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_F, action = ::doFindInstance)
 
         // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_1, action = ::toggleAreaLayerManual)
@@ -82,6 +87,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Paste", shortcut = "Ctrl+V", enabled = isEnvironmentOpened, block = ::doPaste)
                 menuItem("Delete", shortcut = "Delete", enabled = isEnvironmentOpened, block = ::doDelete)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
+                separator()
+                menuItem("Find Instance...", shortcut = "Ctrl+F", block = ::doFindInstance)
             }
 
             menu("Layers") {
@@ -162,6 +169,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         sendEvent(EventToolsController.ResetTool())
     }
 
+    private fun doFindInstance() {
+        showInstanceLocator.set(!showInstanceLocator.get())
+    }
+
     private fun doOpenLayersFilter() {
         sendEvent(EventLayersFilterPanelUi.Open())
     }
@@ -236,5 +247,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
         handleShortcut(event.body)
+    }
+
+    private fun handleProviderInstanceLocatorOpen(event: Event<ImBool, Unit>) {
+        showInstanceLocator = event.body
     }
 }
