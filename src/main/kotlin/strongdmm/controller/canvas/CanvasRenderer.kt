@@ -182,7 +182,7 @@ class CanvasRenderer {
 
             val realIconSize = iconSize / renderData.viewScale
 
-            glColor4f(1f, 1f, 1f, .25f)
+            glColor4f(1f, 1f, 1f, .15f)
 
             glBegin(GL_QUADS)
             glVertex2d(xPosStart, yPosStart)
@@ -192,7 +192,7 @@ class CanvasRenderer {
             glEnd()
 
             if (highlightSelectedArea) {
-                glColor4f(0f, 1f, 0f, .75f)
+                glColor4f(0f, 1f, 0f, .65f)
                 glLineWidth(2f)
                 glBegin(GL_LINE_LOOP)
                 glVertex2d(xPosStart, yPosStart)
@@ -264,7 +264,7 @@ class CanvasRenderer {
                 glBegin(GL_QUADS)
             }
 
-            // Detect tile item under the mouse and make it highlighted with the green color
+            // Detect tile item under the mouse and make it highlighted with color
             if (isTileItemSelectMode && mousePosX in rx1..rx2 && mousePosY in ry1..ry2) {
                 glEnd() // We should stop render routine to read texture from the GPU properly
 

@@ -14,12 +14,17 @@ import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
 
 class SelectMoveAreaTool : Tool(), EventSender {
-    private var currentX: Int = 0
-    private var currentY: Int = 0
+    private var prevMapPosX: Int = 0
+    private var prevMapPosY: Int = 0
 
     private var totalXShift: Int = 0
     private var totalYShift: Int = 0
+
     private var tilesItemsToMove: TIntObjectHashMap<TIntObjectHashMap<List<TileItem>>> = TIntObjectHashMap()
+    private var tilesItemsStored: TIntObjectHashMap<TIntObjectHashMap<List<TileItem>>> = TIntObjectHashMap()
+
+    private val reverseActions: MutableList<Undoable> = mutableListOf()
+
     private var filteredTypes: Set<String> = emptySet()
 
     var selectedArea: MapArea = MapArea(OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS)
@@ -29,19 +34,21 @@ class SelectMoveAreaTool : Tool(), EventSender {
         isActive = true
 
         if (isActive) {
-            currentX = mapPos.x
-            currentY = mapPos.y
+            prevMapPosX = mapPos.x
+            prevMapPosY = mapPos.y
 
             initialArea = selectedArea
 
             sendEvent(EventLayersFilterController.Fetch { filteredTypes ->
-                this.filteredTypes = filteredTypes
+                this.filteredTypes = filteredTypes // We need to know, which layers were filtered at the beginning
 
+                // Save initial tile items
                 sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
                     for (x in selectedArea.x1..selectedArea.x2) {
                         for (y in selectedArea.y1..selectedArea.y2) {
                             val filteredTileItems = selectedMap.getTile(x, y).getFilteredTileItems(filteredTypes)
-                            tilesItemsToMove.getOrPut(x) { TIntObjectHashMap() }.getOrPut(y) { filteredTileItems }
+                            tilesItemsToMove.put(x, y, filteredTileItems)
+                            tilesItemsStored.put(x, y, filteredTileItems)
                         }
                     }
                 })
@@ -52,79 +59,127 @@ class SelectMoveAreaTool : Tool(), EventSender {
     override fun onStop() {
         isActive = false
 
-        val reverseActions = mutableListOf<Undoable>()
+        if (!tilesItemsToMove.isEmpty) {
+            sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
+                // Restore initial tiles state and create a reverse action
+                for (x in initialArea.x1..initialArea.x2) {
+                    for (y in initialArea.y1..initialArea.y2) {
+                        val tile = selectedMap.getTile(x, y)
+                        var movedTileItems: List<TileItem>? = null
 
-        sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
-            // Delete moved tile items from the initial location (if it's not the part of the selected area)
-            for (x in initialArea.x1..initialArea.x2) {
-                for (y in initialArea.y1..initialArea.y2) {
-                    val tileItems = tilesItemsToMove[x][y]
-                    val tileToMove = selectedMap.getTile(x, y)
+                        // If it's a part of the selected area, then it filled with moved items
+                        if (selectedArea.isInBounds(x, y)) {
+                            movedTileItems = tile.getFilteredTileItems(filteredTypes)
+                            movedTileItems.forEach { tileIem ->
+                                tile.deleteTileItem(tileIem) // So we delete them..
+                            }
+                        }
 
-                    if (!selectedArea.isInBounds(x, y)) {
-                        reverseActions.add(ReplaceTileAction(tileToMove) {
-                            tileItems.forEach { tileItem ->
-                                tileToMove.deleteTileItem(tileItem)
+                        val initialTileItems = tilesItemsToMove[x][y]
+
+                        // ..and restore initial items to create a proper reverse action for them
+                        initialTileItems.forEach { tileItem ->
+                            tile.addTileItem(tileItem)
+                        }
+
+                        reverseActions.add(ReplaceTileAction(tile) {
+                            initialTileItems.forEach { tileItem ->
+                                tile.deleteTileItem(tileItem)
                             }
                         })
+
+                        // Once reverse action was created, if there were any moved items - we restore them
+                        movedTileItems?.forEach {
+                            tile.addTileItem(it)
+                        }
                     }
                 }
-            }
-
-            // Replace tile items in the selected location with tile items from the original one
-            for (x in selectedArea.x1..selectedArea.x2) {
-                for (y in selectedArea.y1..selectedArea.y2) {
-                    val xInit = x - totalXShift
-                    val yInit = y - totalYShift
-                    val tileItems = tilesItemsToMove[xInit][yInit]
-                    val tileToReplace = selectedMap.getTile(x, y)
-
-                    reverseActions.add(ReplaceTileAction(tileToReplace) {
-                        tileToReplace.tileItems.toList().forEach {
-                            if (it.type !in filteredTypes) {
-                                tileToReplace.deleteTileItem(it)
-                            }
-                        }
-
-                        tileItems.forEach { tileItem ->
-                            tileToReplace.addTileItem(tileItem)
-                        }
-                    })
-                }
-            }
-        })
+            })
+        }
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
+            sendEvent(EventActionController.AddAction(MultiAction(reverseActions.toList())))
             sendEvent(EventFrameController.Refresh())
         }
 
         tilesItemsToMove.clear()
+        tilesItemsStored.clear()
+        reverseActions.clear()
         totalXShift = 0
         totalYShift = 0
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
-        val xAxisShift = mapPos.x - currentX
-        val yAxisShift = mapPos.y - currentY
+        val xAxisShift = mapPos.x - prevMapPosX
+        val yAxisShift = mapPos.y - prevMapPosY
 
         val x1 = selectedArea.x1 + xAxisShift
         val y1 = selectedArea.y1 + yAxisShift
         val x2 = selectedArea.x2 + xAxisShift
         val y2 = selectedArea.y2 + yAxisShift
 
+        prevMapPosX = mapPos.x
+        prevMapPosY = mapPos.y
+
         sendEvent(EventMapHolderController.FetchSelected { selectedMap ->
-            if ((x1 !in 0..selectedMap.maxX) || (y1 !in 0..selectedMap.maxY) || (x2 !in 0..selectedMap.maxX) || (y2 !in 0..selectedMap.maxY)) {
+            if (x1 !in 1..selectedMap.maxX || y1 !in 1..selectedMap.maxY || x2 !in 1..selectedMap.maxX || y2 !in 1..selectedMap.maxY) {
                 return@FetchSelected
             }
+
+            // Restore tile items for tiles we left out of the selection
+            for (x in selectedArea.x1..selectedArea.x2) {
+                for (y in selectedArea.y1..selectedArea.y2) {
+                    val tile = selectedMap.getTile(x, y)
+
+                    tile.getFilteredTileItems(filteredTypes).forEach { tileIem ->
+                        tile.deleteTileItem(tileIem)
+                    }
+
+                    if (!initialArea.isInBounds(x, y)) {
+                        tilesItemsStored[x][y].forEach { tileItem ->
+                            tile.addTileItem(tileItem)
+                        }
+                    }
+                }
+            }
+
+            tilesItemsStored.clear()
+            reverseActions.clear()
 
             totalXShift += xAxisShift
             totalYShift += yAxisShift
 
-            currentX = mapPos.x
-            currentY = mapPos.y
             selectedArea = MapArea(x1, y1, x2, y2)
 
+            for (x in selectedArea.x1..selectedArea.x2) {
+                for (y in selectedArea.y1..selectedArea.y2) {
+                    val tile = selectedMap.getTile(x, y)
+                    val filteredTileItems = tile.getFilteredTileItems(filteredTypes)
+
+                    tilesItemsStored.put(x, y, filteredTileItems)
+
+                    val replaceTileAction = ReplaceTileAction(tile) {
+                        filteredTileItems.forEach { tileItem ->
+                            tile.deleteTileItem(tileItem)
+                        }
+
+                        val xInit = x - totalXShift
+                        val yInit = y - totalYShift
+                        val tileItems = tilesItemsToMove[xInit][yInit]
+
+                        tileItems.forEach { tileItem ->
+                            tile.addTileItem(tileItem)
+                        }
+                    }
+
+                    // For initial area we create a separate reverse actions
+                    if (!initialArea.isInBounds(x, y)) {
+                        reverseActions.add(replaceTileAction)
+                    }
+                }
+            }
+
+            sendEvent(EventFrameController.Refresh())
             sendEvent(EventCanvasController.SelectArea(selectedArea))
         })
     }
@@ -136,14 +191,15 @@ class SelectMoveAreaTool : Tool(), EventSender {
     override fun getActiveArea(): MapArea = selectedArea
 
     override fun reset() {
-        isActive = false
-        tilesItemsToMove.clear()
-        totalXShift = 0
-        totalYShift = 0
+        onStop()
         sendEvent(EventCanvasController.ResetSelectedArea())
     }
 
     override fun destroy() {
         reset()
+    }
+
+    private fun TIntObjectHashMap<TIntObjectHashMap<List<TileItem>>>.put(x: Int, y: Int, tileItems: List<TileItem>) {
+        this.getOrPut(x) { TIntObjectHashMap() }.put(y, tileItems)
     }
 }
