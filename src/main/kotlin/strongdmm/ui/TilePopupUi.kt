@@ -1,11 +1,13 @@
 package strongdmm.ui
 
+import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.VAR_NAME
 import strongdmm.byond.dmi.GlobalDmiHolder
+import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
@@ -16,7 +18,9 @@ import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.EventEditVarsDialogUi
+import strongdmm.event.type.ui.EventObjectPanelUi
 import strongdmm.event.type.ui.EventTilePopupUi
+import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
@@ -34,6 +38,9 @@ class TilePopupUi : EventConsumer, EventSender {
     private var isUndoEnabled: Boolean = false
     private var isRedoEnabled: Boolean = false
 
+    private val pixelXNudgeArrays: TIntObjectHashMap<IntArray> = TIntObjectHashMap()
+    private val pixelYNudgeArrays: TIntObjectHashMap<IntArray> = TIntObjectHashMap()
+
     init {
         consumeEvent(EventTilePopupUi.Open::class.java, ::handleOpen)
         consumeEvent(EventTilePopupUi.Close::class.java, ::handleClose)
@@ -49,7 +56,8 @@ class TilePopupUi : EventConsumer, EventSender {
                 openPopup(POPUP_ID)
                 isDoOpen = false
             } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
-                currentTile = null
+                dispose()
+                return
             }
 
             popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
@@ -68,13 +76,13 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItems(tile: Tile) {
-        tile.area?.let { area -> showTileItemRow(tile, area.value, area.index) }
-        tile.mobs.forEach { mob -> showTileItemRow(tile, mob.value, mob.index) }
-        tile.objs.forEach { obj -> showTileItemRow(tile, obj.value, obj.index) }
-        tile.turf?.let { turf -> showTileItemRow(tile, turf.value, turf.index) }
+        tile.area?.let { area -> showTileItem(tile, area.value, area.index) }
+        tile.mobs.forEach { mob -> showTileItem(tile, mob.value, mob.index) }
+        tile.objs.forEach { obj -> showTileItem(tile, obj.value, obj.index) }
+        tile.turf?.let { turf -> showTileItem(tile, turf.value, turf.index) }
     }
 
-    private fun showTileItemRow(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
+    private fun showTileItem(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
         val name = tileItem.getVarText(VAR_NAME)!!
 
@@ -86,26 +94,27 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
+        showNudgeOption(true, tile, tileItem, tileItemIdx, tileItem.pixelX, pixelXNudgeArrays.getOrPut(tileItemIdx) { intArrayOf(tileItem.pixelX) })
+        showNudgeOption(false, tile, tileItem, tileItemIdx, tileItem.pixelY, pixelYNudgeArrays.getOrPut(tileItemIdx) { intArrayOf(tileItem.pixelY) })
+
+        separator()
+
         menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(
-                EventActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.moveToTop(tileItem, tileItemIdx)
-                    }
-                )
-            )
+            sendEvent(EventActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.moveToTop(tileItem, tileItemIdx)
+                }
+            ))
 
             sendEvent(EventFrameController.RefreshFrame())
         }
 
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(
-                EventActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.moveToBottom(tileItem, tileItemIdx)
-                    }
-                )
-            )
+            sendEvent(EventActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.moveToBottom(tileItem, tileItemIdx)
+                }
+            ))
 
             sendEvent(EventFrameController.RefreshFrame())
         }
@@ -126,28 +135,51 @@ class TilePopupUi : EventConsumer, EventSender {
             enabled = (activeTileItem?.isSameType(tileItem) ?: false)
         ) {
             activeTileItem?.let { activeTileItem ->
-                sendEvent(
-                    EventActionController.AddAction(
-                        ReplaceTileAction(tile) {
-                            tile.replaceTileItem(tileItemIdx, activeTileItem)
-                        }
-                    )
-                )
+                sendEvent(EventActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.replaceTileItem(tileItemIdx, activeTileItem)
+                    }
+                ))
 
                 sendEvent(EventFrameController.RefreshFrame())
             }
         }
 
         menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+RMB") {
-            sendEvent(
-                EventActionController.AddAction(
-                    ReplaceTileAction(tile) {
-                        tile.deleteTileItem(tileItemIdx)
-                    }
-                )
-            )
+            sendEvent(EventActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.deleteTileItem(tileItemIdx)
+                }
+            ))
 
             sendEvent(EventFrameController.RefreshFrame())
+        }
+    }
+
+    private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, initialValue: Int, pixelNudge: IntArray) {
+        setNextItemWidth(50f)
+
+        if (dragInt("Nudge %s-axis".format(if (isXAxis) "X" else "Y"), pixelNudge, .25f)) {
+            GlobalTileItemHolder.invisibleOperation {
+                tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
+            }
+
+            sendEvent(EventFrameController.RefreshFrame())
+        }
+
+        if (isItemDeactivatedAfterEdit()) {
+            GlobalTileItemHolder.invisibleOperation {
+                tile.nudge(isXAxis, tileItem, tileItemIdx, initialValue)
+            }
+
+            sendEvent(EventActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
+                }
+            ))
+
+            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(EventObjectPanelUi.Update())
         }
     }
 
@@ -179,17 +211,24 @@ class TilePopupUi : EventConsumer, EventSender {
         sendEvent(EventToolsController.ResetTool())
     }
 
+    private fun dispose() {
+        currentTile = null
+        pixelXNudgeArrays.clear()
+        pixelYNudgeArrays.clear()
+    }
+
     private fun handleOpen(event: Event<Tile, Unit>) {
         currentTile = event.body
         isDoOpen = true
     }
 
     private fun handleClose() {
-        currentTile = null
+        dispose()
     }
 
     private fun handleEnvironmentReset() {
-        currentTile = null
+        dispose()
+        activeTileItem = null
     }
 
     private fun handleOpenedMapClosed() {

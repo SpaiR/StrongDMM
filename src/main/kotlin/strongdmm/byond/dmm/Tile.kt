@@ -3,10 +3,7 @@ package strongdmm.byond.dmm
 import io.github.spair.dmm.io.TileContent
 import io.github.spair.dmm.io.TileObject
 import io.github.spair.dmm.io.TileObjectComparator
-import strongdmm.byond.TYPE_AREA
-import strongdmm.byond.TYPE_MOB
-import strongdmm.byond.TYPE_OBJ
-import strongdmm.byond.TYPE_TURF
+import strongdmm.byond.*
 
 /**
  * Helper class to do a very specific tile things like objects replacing or vars modifying.
@@ -131,6 +128,17 @@ class Tile(
     fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
         getTileItemsId()[tileItemIdx] = GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, vars).id
         readObjectsFromMap()
+    }
+
+    fun nudge(isXAxis: Boolean, tileItem: TileItem, tileItemIdx: Int, value: Int) {
+        val atoms = if (tileItem.isType(TYPE_MOB)) mobs else objs
+        val item = atoms.find { it.index == tileItemIdx }
+        if (item != null) {
+            val vars = if (item.value.customVars != null) HashMap(item.value.customVars) else mutableMapOf<String, String>()
+            val axis = if (isXAxis) VAR_PIXEL_X else VAR_PIXEL_Y
+            vars[axis] = value.toString()
+            modifyItemVars(tileItemIdx, vars)
+        }
     }
 
     fun moveToTop(tileItem: TileItem, tileItemIdx: Int) {

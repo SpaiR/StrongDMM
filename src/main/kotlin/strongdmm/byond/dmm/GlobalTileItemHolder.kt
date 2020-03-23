@@ -8,12 +8,22 @@ import strongdmm.byond.dme.Dme
 object GlobalTileItemHolder {
     lateinit var environment: Dme
 
+    var isInvisibleMode: Boolean = false
+
     private val tileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
+    private val invisibleTileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
     private val tileItemsIdByType: MutableMap<String, TLongList> = mutableMapOf()
 
     fun resetEnvironment() {
         tileItems.clear()
         tileItemsIdByType.clear()
+        invisibleTileItems.clear()
+    }
+
+    inline fun invisibleOperation(action: () -> Unit) {
+        isInvisibleMode = true
+        action()
+        isInvisibleMode = false
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
@@ -34,17 +44,27 @@ object GlobalTileItemHolder {
             hash = ((hash shl 5) + hash) + c.toInt()
         }
 
-        if (tileItems.contains(hash)) {
+        if (isInvisibleMode) {
+            if (invisibleTileItems.contains(hash)) {
+                return invisibleTileItems.get(hash)
+            }
+        } else if (tileItems.contains(hash)) {
             return tileItems.get(hash)
         }
 
         val tileItem = TileItem(hash, environment.getItem(type)!!, vars)
-        tileItems.put(hash, tileItem)
-        tileItemsIdByType.getOrPut(type) { TLongArrayList() }.add(hash)
+
+        if (!isInvisibleMode) {
+            tileItems.put(hash, tileItem)
+            tileItemsIdByType.getOrPut(type) { TLongArrayList() }.add(hash)
+        } else {
+            invisibleTileItems.put(hash, tileItem)
+        }
+
         return tileItem
     }
 
-    fun getById(id: Long): TileItem = tileItems[id]
+    fun getById(id: Long): TileItem = tileItems[id] ?: invisibleTileItems[id]
 
     fun getTileItemsByType(type: String): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
