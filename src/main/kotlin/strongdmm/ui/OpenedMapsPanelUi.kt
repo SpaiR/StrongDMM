@@ -1,5 +1,6 @@
 package strongdmm.ui
 
+import gnu.trove.map.hash.TObjectIntHashMap
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
@@ -18,16 +19,18 @@ import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventConsumer, EventSender {
     private var openedMaps: Set<Dmm> = emptySet()
+    private var actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
     private var selectedMap: Dmm? = null
 
     init {
         consumeEvent(EventGlobalProvider.OpenedMaps::class.java, ::handleProviderOpenedMaps)
+        consumeEvent(EventGlobalProvider.ActionBalanceStorage::class.java, ::handleProviderActionBalanceStorage)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {
-        if (openedMaps.isEmpty()) {
+        if (openedMaps.isEmpty() || selectedMap == null) {
             return
         }
 
@@ -35,7 +38,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         setNextWindowSize(150f, 150f, ImGuiCond.Once)
         setNextWindowCollapsed(true, ImGuiCond.Once)
 
-        window("${selectedMap?.mapName}###opened_maps") {
+        window("${getMapName(selectedMap!!)}###opened_maps") {
             openedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.visibleMapPath}") {
@@ -45,7 +48,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 sameLine()
 
-                if (selectable(map.mapName, selectedMap === map)) {
+                if (selectable(getMapName(map), selectedMap === map)) {
                     if (selectedMap !== map) {
                         sendEvent(EventMapHolderController.ChangeSelectedMap(map.id))
                     }
@@ -55,8 +58,16 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         }
     }
 
+    private fun getMapName(map: Dmm): String {
+        return map.mapName + if (actionBalanceStorage[map] != 0) " *" else ""
+    }
+
     private fun handleProviderOpenedMaps(event: Event<Set<Dmm>, Unit>) {
         openedMaps = event.body
+    }
+
+    private fun handleProviderActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+        actionBalanceStorage = event.body
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

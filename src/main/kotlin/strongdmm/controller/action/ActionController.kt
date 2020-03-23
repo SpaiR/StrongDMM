@@ -7,6 +7,7 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventActionController
 import strongdmm.event.type.controller.EventFrameController
 import strongdmm.event.type.controller.EventMapHolderController
@@ -24,6 +25,10 @@ class ActionController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+    }
+
+    fun postInit() {
+        sendEvent(EventGlobalProvider.ActionBalanceStorage(actionBalanceStorage))
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
