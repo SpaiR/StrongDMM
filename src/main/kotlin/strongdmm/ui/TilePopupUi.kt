@@ -160,7 +160,7 @@ class TilePopupUi : EventConsumer, EventSender {
         setNextItemWidth(50f)
 
         if (dragInt("Nudge %s-axis".format(if (isXAxis) "X" else "Y"), pixelNudge, .25f)) {
-            GlobalTileItemHolder.invisibleOperation {
+            GlobalTileItemHolder.tmpOperation {
                 tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
             }
 
@@ -168,7 +168,7 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         if (isItemDeactivatedAfterEdit()) {
-            GlobalTileItemHolder.invisibleOperation {
+            GlobalTileItemHolder.tmpOperation {
                 tile.nudge(isXAxis, tileItem, tileItemIdx, initialValue)
             }
 

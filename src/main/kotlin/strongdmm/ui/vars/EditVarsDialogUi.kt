@@ -216,7 +216,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun applyTmpTileChanges() {
         getNewItemVars()?.let { newItemVars ->
             currentTile?.let {
-                it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                GlobalTileItemHolder.tmpOperation {
+                    it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
+                }
                 sendEvent(EventFrameController.RefreshFrame())
             }
         }

@@ -8,22 +8,22 @@ import strongdmm.byond.dme.Dme
 object GlobalTileItemHolder {
     lateinit var environment: Dme
 
-    var isInvisibleMode: Boolean = false
+    var isTmpMode: Boolean = false
 
     private val tileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
-    private val invisibleTileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
+    private val tmpTileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
     private val tileItemsIdByType: MutableMap<String, TLongList> = mutableMapOf()
 
     fun resetEnvironment() {
         tileItems.clear()
         tileItemsIdByType.clear()
-        invisibleTileItems.clear()
+        tmpTileItems.clear()
     }
 
-    inline fun invisibleOperation(action: () -> Unit) {
-        isInvisibleMode = true
+    inline fun tmpOperation(action: () -> Unit) {
+        isTmpMode = true
         action()
-        isInvisibleMode = false
+        isTmpMode = false
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
@@ -44,9 +44,9 @@ object GlobalTileItemHolder {
             hash = ((hash shl 5) + hash) + c.toInt()
         }
 
-        if (isInvisibleMode) {
-            if (invisibleTileItems.contains(hash)) {
-                return invisibleTileItems.get(hash)
+        if (isTmpMode) {
+            if (tmpTileItems.contains(hash)) {
+                return tmpTileItems.get(hash)
             }
         } else if (tileItems.contains(hash)) {
             return tileItems.get(hash)
@@ -54,17 +54,17 @@ object GlobalTileItemHolder {
 
         val tileItem = TileItem(hash, environment.getItem(type)!!, vars)
 
-        if (!isInvisibleMode) {
+        if (!isTmpMode) {
             tileItems.put(hash, tileItem)
             tileItemsIdByType.getOrPut(type) { TLongArrayList() }.add(hash)
         } else {
-            invisibleTileItems.put(hash, tileItem)
+            tmpTileItems.put(hash, tileItem)
         }
 
         return tileItem
     }
 
-    fun getById(id: Long): TileItem = tileItems[id] ?: invisibleTileItems[id]
+    fun getById(id: Long): TileItem = tileItems[id] ?: tmpTileItems[id]
 
     fun getTileItemsByType(type: String): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
