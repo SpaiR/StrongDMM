@@ -3,10 +3,15 @@ package strongdmm.controller.canvas
 import imgui.ImVec4
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL30.*
+import strongdmm.byond.EAST
+import strongdmm.byond.NORTH
+import strongdmm.byond.SOUTH
+import strongdmm.byond.WEST
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.controller.frame.FramedTile
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.GREEN_RGBA
@@ -28,8 +33,12 @@ class CanvasRenderer {
     var xMapMousePos: Int = OUT_OF_BOUNDS
     var yMapMousePos: Int = OUT_OF_BOUNDS
     var iconSize: Int = DEFAULT_ICON_SIZE
+    var realIconSize: Int = iconSize
     var mousePosX: Float = 0f
     var mousePosY: Float = 0f
+
+    // To visualize "Area Frames" option
+    var framedTiles: List<FramedTile> = listOf()
 
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
@@ -70,6 +79,7 @@ class CanvasRenderer {
             glLoadIdentity()
 
             renderCanvasTexture()
+            renderFramedTiles()
             renderMousePosition()
             renderMarkedPosition()
             renderSelectedTiles()
@@ -116,6 +126,42 @@ class CanvasRenderer {
         glDisable(GL_TEXTURE_2D)
     }
 
+    private fun renderFramedTiles() {
+        if (framedTiles.isEmpty()) {
+            return
+        }
+
+        glColor4f(0.65f, 0.65f, 0.65f, 1f)
+
+        glLineWidth(1.5f)
+        glBegin(GL_LINES)
+
+        framedTiles.forEach { (x, y, dir) ->
+            val xPos = ((x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
+            val yPos = ((y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
+
+            if ((dir and WEST) != 0) {
+                glVertex2d(xPos, yPos)
+                glVertex2d(xPos, yPos + realIconSize)
+            }
+            if ((dir and EAST) != 0) {
+                glVertex2d(xPos + realIconSize, yPos)
+                glVertex2d(xPos + realIconSize, yPos + realIconSize)
+            }
+            if ((dir and SOUTH) != 0) {
+                glVertex2d(xPos, yPos)
+                glVertex2d(xPos + realIconSize, yPos)
+            }
+            if ((dir and NORTH) != 0) {
+                glVertex2d(xPos, yPos + realIconSize)
+                glVertex2d(xPos + realIconSize, yPos + realIconSize)
+            }
+        }
+
+        glEnd()
+        glLineWidth(1f)
+    }
+
     private fun renderMousePosition() {
         if (xMapMousePos == OUT_OF_BOUNDS || yMapMousePos == OUT_OF_BOUNDS || isTileItemSelectMode) {
             return
@@ -123,7 +169,6 @@ class CanvasRenderer {
 
         val xPos = ((xMapMousePos - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
         val yPos = ((yMapMousePos - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
-        val realIconSize = iconSize / renderData.viewScale
 
         glColor4f(1f, 1f, 1f, 0.25f)
 
@@ -139,7 +184,6 @@ class CanvasRenderer {
         markedPosition?.let { pos ->
             val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
-            val realIconSize = iconSize / renderData.viewScale
 
             glColor4f(1f, 0f, 0f, 1f)
             glLineWidth(4f)
@@ -156,20 +200,32 @@ class CanvasRenderer {
     }
 
     private fun renderSelectedTiles() {
+        if (selectedTiles.isNullOrEmpty()) {
+            return
+        }
+
+        glColor4f(1f, 1f, 1f, 1f)
+
+        glBegin(GL_LINES)
+
         selectedTiles?.forEach { pos ->
             val xPos = ((pos.x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPos = ((pos.y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
-            val realIconSize = iconSize / renderData.viewScale
 
-            glColor4f(1f, 1f, 1f, 1f)
-
-            glBegin(GL_LINE_LOOP)
             glVertex2d(xPos, yPos)
             glVertex2d(xPos + realIconSize, yPos)
+
+            glVertex2d(xPos + realIconSize, yPos)
+            glVertex2d(xPos + realIconSize, yPos + realIconSize)
+
             glVertex2d(xPos + realIconSize, yPos + realIconSize)
             glVertex2d(xPos, yPos + realIconSize)
-            glEnd()
+
+            glVertex2d(xPos, yPos + realIconSize)
+            glVertex2d(xPos, yPos)
         }
+
+        glEnd()
     }
 
     private fun renderSelectedArea() {
@@ -179,8 +235,6 @@ class CanvasRenderer {
 
             val xPosEnd = ((mapArea.x2 - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPosEnd = ((mapArea.y2 - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
-
-            val realIconSize = iconSize / renderData.viewScale
 
             glColor4f(1f, 1f, 1f, .15f)
 

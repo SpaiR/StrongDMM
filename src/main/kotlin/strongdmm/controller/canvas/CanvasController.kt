@@ -11,6 +11,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.frame.FrameMesh
+import strongdmm.controller.frame.FramedTile
 import strongdmm.event.CanvasBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -66,6 +67,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventGlobal.FrameRefreshed::class.java, ::handleFrameRefreshed)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobalProvider.ComposedFrame::class.java, ::handleProviderComposedFrame)
+        consumeEvent(EventGlobalProvider.FramedTiles::class.java, ::handleProviderFramedTiles)
         consumeEvent(EventCanvasController.BlockCanvas::class.java, ::handleBlockCanvas)
         consumeEvent(EventCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(EventCanvasController.MarkPosition::class.java, ::handleMarkPosition)
@@ -211,6 +213,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.xMapMousePos = xMapMousePos
         canvasRenderer.yMapMousePos = yMapMousePos
         canvasRenderer.iconSize = iconSize
+        canvasRenderer.realIconSize = (iconSize / renderData.viewScale).toInt()
         canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
         canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
     }
@@ -349,6 +352,10 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
         canvasRenderer.frameMeshes = event.body
+    }
+
+    private fun handleProviderFramedTiles(event: Event<List<FramedTile>, Unit>) {
+        canvasRenderer.framedTiles = event.body
     }
 
     private fun handleBlockCanvas(event: Event<CanvasBlockStatus, Unit>) {
