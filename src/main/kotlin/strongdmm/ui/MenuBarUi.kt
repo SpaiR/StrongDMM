@@ -39,6 +39,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private val isMobLayerActive: ImBool = ImBool(true)
 
     private lateinit var showInstanceLocator: ImBool
+    private lateinit var frameAreas: ImBool
 
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
@@ -46,6 +47,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
         consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
+        consumeEvent(EventGlobalProvider.FrameAreas::class.java, ::handleProviderFrameAreas)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -89,6 +91,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
                 separator()
                 menuItem("Find Instance...", shortcut = "Ctrl+F", block = ::doFindInstance)
+            }
+
+            menu("Options") {
+                menuItem("Frame Areas", selected = frameAreas, block = {})
             }
 
             menu("Layers") {
@@ -251,5 +257,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun handleProviderInstanceLocatorOpen(event: Event<ImBool, Unit>) {
         showInstanceLocator = event.body
+    }
+
+    private fun handleProviderFrameAreas(event: Event<ImBool, Unit>) {
+        frameAreas = event.body
     }
 }

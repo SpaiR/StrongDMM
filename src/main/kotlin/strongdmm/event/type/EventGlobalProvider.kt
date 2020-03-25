@@ -16,4 +16,5 @@ abstract class EventGlobalProvider {
     class ComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
     class FramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
     class ActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
+    class FrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
 }

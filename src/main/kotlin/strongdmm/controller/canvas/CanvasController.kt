@@ -1,6 +1,7 @@
 package strongdmm.controller.canvas
 
 import gnu.trove.map.hash.TIntObjectHashMap
+import imgui.ImBool
 import imgui.ImGui
 import imgui.ImVec2
 import imgui.enums.ImGuiHoveredFlags
@@ -47,6 +48,8 @@ class CanvasController : EventSender, EventConsumer {
     private var maxX: Int = OUT_OF_BOUNDS
     private var maxY: Int = OUT_OF_BOUNDS
 
+    private val frameAreas: ImBool = ImBool(true)
+
     // Tile of the map covered with mouse
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
@@ -77,6 +80,10 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventCanvasController.SelectArea::class.java, ::handleSelectArea)
         consumeEvent(EventCanvasController.ResetSelectedArea::class.java, ::handleResetSelectedArea)
         consumeEvent(EventCanvasController.HighlightSelectedArea::class.java, ::handleHighlightSelectedArea)
+    }
+
+    fun postInit() {
+        sendEvent(EventGlobalProvider.FrameAreas(frameAreas))
     }
 
     fun process() {
@@ -216,6 +223,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.realIconSize = (iconSize / renderData.viewScale).toInt()
         canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
         canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
+        canvasRenderer.frameAreas = frameAreas.get()
     }
 
     private fun postProcessTileItemSelectMode() {

@@ -46,6 +46,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         mapHolderController.postInit()
         frameController.postInit()
         actionController.postInit()
+        canvasController.postInit()
     }
 
     override fun appLoop() {

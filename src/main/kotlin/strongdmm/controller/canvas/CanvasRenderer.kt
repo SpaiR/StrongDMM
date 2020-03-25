@@ -36,6 +36,7 @@ class CanvasRenderer {
     var realIconSize: Int = iconSize
     var mousePosX: Float = 0f
     var mousePosY: Float = 0f
+    var frameAreas: Boolean = true
 
     // To visualize "Area Frames" option
     var framedTiles: List<FramedTile> = listOf()
@@ -127,7 +128,7 @@ class CanvasRenderer {
     }
 
     private fun renderFramedTiles() {
-        if (framedTiles.isEmpty()) {
+        if (!frameAreas || framedTiles.isEmpty()) {
             return
         }
 
