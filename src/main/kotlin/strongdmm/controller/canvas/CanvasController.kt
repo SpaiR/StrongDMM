@@ -69,8 +69,8 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.FrameRefreshed::class.java, ::handleFrameRefreshed)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobalProvider.ComposedFrame::class.java, ::handleProviderComposedFrame)
-        consumeEvent(EventGlobalProvider.FramedTiles::class.java, ::handleProviderFramedTiles)
+        consumeEvent(EventGlobalProvider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
+        consumeEvent(EventGlobalProvider.FrameControllerFramedTiles::class.java, ::handleProviderFrameControllerFramedTiles)
         consumeEvent(EventCanvasController.BlockCanvas::class.java, ::handleBlockCanvas)
         consumeEvent(EventCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(EventCanvasController.MarkPosition::class.java, ::handleMarkPosition)
@@ -83,7 +83,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.FrameAreas(frameAreas))
+        sendEvent(EventGlobalProvider.CanvasControllerFrameAreas(frameAreas))
     }
 
     fun process() {
@@ -233,7 +233,7 @@ class CanvasController : EventSender, EventConsumer {
 
         if (canvasRenderer.tileItemIdMouseOver != 0L) {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
-                if (ImGui.getIO().keyCtrl) { // Replace tile item
+                if (ImGui.getIO().keyCtrl) { // Delete tile item
                     sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
                         deleteTileItemUnderMouse(currentMap)
                     })
@@ -242,7 +242,7 @@ class CanvasController : EventSender, EventConsumer {
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
                 sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
-                    if (ImGui.getIO().keyCtrl) { // Delete tile item
+                    if (ImGui.getIO().keyCtrl) { // Replace tile item
                         replaceTileItemUnderMouseWithSelected(currentMap)
                     } else { // Open for edit
                         openTileItemUnderMouseForEdit(currentMap)
@@ -358,11 +358,11 @@ class CanvasController : EventSender, EventConsumer {
         activeTileItem = event.body
     }
 
-    private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+    private fun handleProviderFrameControllerComposedFrame(event: Event<List<FrameMesh>, Unit>) {
         canvasRenderer.frameMeshes = event.body
     }
 
-    private fun handleProviderFramedTiles(event: Event<List<FramedTile>, Unit>) {
+    private fun handleProviderFrameControllerFramedTiles(event: Event<List<FramedTile>, Unit>) {
         canvasRenderer.framedTiles = event.body
     }
 

@@ -23,8 +23,8 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(EventGlobalProvider.OpenedMaps::class.java, ::handleProviderOpenedMaps)
-        consumeEvent(EventGlobalProvider.ActionBalanceStorage::class.java, ::handleProviderActionBalanceStorage)
+        consumeEvent(EventGlobalProvider.MapHolderControllerOpenedMaps::class.java, ::handleProviderMapHolderControllerOpenedMaps)
+        consumeEvent(EventGlobalProvider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
@@ -62,11 +62,11 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         return map.mapName + if (actionBalanceStorage[map] != 0) " *" else ""
     }
 
-    private fun handleProviderOpenedMaps(event: Event<Set<Dmm>, Unit>) {
+    private fun handleProviderMapHolderControllerOpenedMaps(event: Event<Set<Dmm>, Unit>) {
         openedMaps = event.body
     }
 
-    private fun handleProviderActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+    private fun handleProviderActionControllerActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
         actionBalanceStorage = event.body
     }
 

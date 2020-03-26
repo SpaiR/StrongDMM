@@ -39,7 +39,7 @@ class CanvasRenderer {
     var frameAreas: Boolean = true
 
     // To visualize "Area Frames" option
-    var framedTiles: List<FramedTile> = listOf()
+    lateinit var framedTiles: List<FramedTile>
 
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
@@ -108,7 +108,6 @@ class CanvasRenderer {
 
     private fun renderCanvasTexture() {
         glColor4f(1f, 1f, 1f, 1f)
-
         glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, canvasTexture)
 
@@ -133,7 +132,6 @@ class CanvasRenderer {
         }
 
         glColor4f(0.65f, 0.65f, 0.65f, 1f)
-
         glLineWidth(1.5f)
         glBegin(GL_LINES)
 
@@ -249,12 +247,14 @@ class CanvasRenderer {
             if (highlightSelectedArea) {
                 glColor4f(0f, 1f, 0f, .65f)
                 glLineWidth(2f)
+
                 glBegin(GL_LINE_LOOP)
                 glVertex2d(xPosStart, yPosStart)
                 glVertex2d(xPosEnd + realIconSize, yPosStart)
                 glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
                 glVertex2d(xPosStart, yPosEnd + realIconSize)
                 glEnd()
+
                 glLineWidth(1f)
             }
         }
@@ -282,7 +282,6 @@ class CanvasRenderer {
 
         glClearColor(.25f, .25f, .5f, 1f)
         glClear(GL_COLOR_BUFFER_BIT)
-
         glEnable(GL_TEXTURE_2D)
 
         var currentTexture = -1
@@ -303,7 +302,7 @@ class CanvasRenderer {
             val rx2 = x2 + renderData.viewTranslateX
             val ry2 = y2 + renderData.viewTranslateY
 
-            if (viewWidthWithScale < rx1 || viewHeightWithScale < ry1 || rx2 < 0 || ry2 < 0) {
+            if (rx1 > viewWidthWithScale || ry1 > viewHeightWithScale || rx2 < 0 || ry2 < 0) {
                 continue
             }
 
@@ -349,10 +348,9 @@ class CanvasRenderer {
         }
 
         glEnd()
+
         glBindTexture(GL_TEXTURE_2D, 0)
-
         glDisable(GL_TEXTURE_2D)
-
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
     }
 

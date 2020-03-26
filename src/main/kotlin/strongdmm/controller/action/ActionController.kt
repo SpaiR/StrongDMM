@@ -28,7 +28,7 @@ class ActionController : EventConsumer, EventSender {
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.ActionBalanceStorage(actionBalanceStorage))
+        sendEvent(EventGlobalProvider.ActionControllerActionBalanceStorage(actionBalanceStorage))
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }

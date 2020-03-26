@@ -35,8 +35,8 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.OpenedMaps(openedMaps))
-        sendEvent(EventGlobalProvider.AvailableMaps(availableMapsPathsWithVisibleMapsPaths))
+        sendEvent(EventGlobalProvider.MapHolderControllerOpenedMaps(openedMaps))
+        sendEvent(EventGlobalProvider.MapHolderControllerAvailableMaps(availableMapsPathsWithVisibleMapsPaths))
     }
 
     private fun handleOpenMap(event: Event<File, Unit>) {

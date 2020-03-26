@@ -38,7 +38,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
+        consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(EventObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
@@ -164,7 +164,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         }
     }
 
-    private fun handleProviderInstanceLocatorOpen(event: Event<ImBool, Unit>) {
+    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
         showInstanceLocator = event.body
     }
 

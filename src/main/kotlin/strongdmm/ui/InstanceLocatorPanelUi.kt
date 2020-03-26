@@ -50,7 +50,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.InstanceLocatorOpen(showInstanceLocator))
+        sendEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen(showInstanceLocator))
     }
 
     fun process() {

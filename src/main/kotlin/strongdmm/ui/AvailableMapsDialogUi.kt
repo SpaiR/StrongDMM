@@ -27,7 +27,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     init {
         consumeEvent(EventAvailableMapsDialogUi.Open::class.java, ::handleOpen)
-        consumeEvent(EventGlobalProvider.AvailableMaps::class.java, ::handleProviderAvailableMaps)
+        consumeEvent(EventGlobalProvider.MapHolderControllerAvailableMaps::class.java, ::handleProviderMapHolderControllerAvailableMaps)
     }
 
     fun process() {
@@ -96,7 +96,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         sendEvent(EventCanvasController.BlockCanvas(true))
     }
 
-    private fun handleProviderAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {
+    private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {
         availableMaps = event.body
     }
 }

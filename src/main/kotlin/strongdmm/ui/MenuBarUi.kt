@@ -46,8 +46,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
-        consumeEvent(EventGlobalProvider.InstanceLocatorOpen::class.java, ::handleProviderInstanceLocatorOpen)
-        consumeEvent(EventGlobalProvider.FrameAreas::class.java, ::handleProviderFrameAreas)
+        consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
+        consumeEvent(EventGlobalProvider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -255,11 +255,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         handleShortcut(event.body)
     }
 
-    private fun handleProviderInstanceLocatorOpen(event: Event<ImBool, Unit>) {
+    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
         showInstanceLocator = event.body
     }
 
-    private fun handleProviderFrameAreas(event: Event<ImBool, Unit>) {
+    private fun handleProviderCanvasControllerFrameAreas(event: Event<ImBool, Unit>) {
         frameAreas = event.body
     }
 }

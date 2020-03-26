@@ -10,11 +10,12 @@ import strongdmm.event.Event
 import strongdmm.event.VisibleFilePath
 
 abstract class EventGlobalProvider {
-    class InstanceLocatorOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
-    class OpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
-    class AvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) : Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
-    class ComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
-    class FramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
-    class ActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
-    class FrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
+    class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
+    class MapHolderControllerOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
+    class MapHolderControllerAvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) :
+        Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
+    class FrameControllerComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
+    class FrameControllerFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
+    class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
+    class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
 }

@@ -39,8 +39,8 @@ class FrameController : EventConsumer, EventSender {
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.ComposedFrame(cache))
-        sendEvent(EventGlobalProvider.FramedTiles(framedTiles))
+        sendEvent(EventGlobalProvider.FrameControllerComposedFrame(cache))
+        sendEvent(EventGlobalProvider.FrameControllerFramedTiles(framedTiles))
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
