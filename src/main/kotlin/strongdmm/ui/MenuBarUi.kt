@@ -25,6 +25,7 @@ import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
+import java.io.File
 
 class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private var progressText: String? = null
@@ -42,6 +43,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private lateinit var frameAreas: ImBool
 
     init {
+        consumeEvent(EventGlobal.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
+        consumeEvent(EventGlobal.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
+        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
@@ -115,11 +119,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            progressText = "Loading " + file.absolutePath.replace('\\', '/').substringAfterLast("/")
-            sendEvent(EventEnvironmentController.OpenEnvironment(file) {
-                progressText = null
-                isEnvironmentOpened = it
-            })
+            sendEvent(EventEnvironmentController.OpenEnvironment(file))
         }
     }
 
@@ -233,6 +233,18 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         } else {
             sendEvent(EventLayersFilterController.HideLayersByType(layerType))
         }
+    }
+
+    private fun handleEnvironmentLoading(event: Event<File, Unit>) {
+        progressText = "Loading " + event.body.absolutePath.replace('\\', '/').substringAfterLast("/")
+    }
+
+    private fun handleEnvironmentLoaded() {
+        progressText = null
+    }
+
+    private fun handleEnvironmentChanged() {
+        isEnvironmentOpened = true
     }
 
     private fun handleEnvironmentReset() {

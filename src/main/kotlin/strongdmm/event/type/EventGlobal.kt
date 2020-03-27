@@ -8,10 +8,14 @@ import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.tool.ToolType
 import strongdmm.event.DmeItemType
+import strongdmm.event.EnvironmentLoadedStatus
 import strongdmm.event.Event
+import java.io.File
 
 abstract class EventGlobal {
     class EnvironmentReset : Event<Unit, Unit>(Unit, null)
+    class EnvironmentLoading(body: File) : Event<File, Unit>(body, null)
+    class EnvironmentLoaded(body: EnvironmentLoadedStatus) : Event<EnvironmentLoadedStatus, Unit>(body, null)
     class EnvironmentChanged(body: Dme) : Event<Dme, Unit>(body, null)
 
     class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)

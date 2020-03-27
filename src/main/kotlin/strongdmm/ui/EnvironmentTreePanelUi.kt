@@ -18,12 +18,11 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventTileItemController
+import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut
-import strongdmm.util.imgui.child
-import strongdmm.util.imgui.inputText
-import strongdmm.util.imgui.setItemHoveredTooltip
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.*
 
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
     companion object {
@@ -31,6 +30,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
         private const val TREE_NODES_CREATION_LIMIT_PER_CYCLE: Int = 25
         private const val MIN_FILTER_CHARS: Int = 4
     }
+
+    private var isEnvironmentLoading: Boolean = false
 
     private var currentEnv: Dme? = null
     private val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
@@ -44,6 +45,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var createdTeeNodesInCycle: Int = 0
 
     init {
+        consumeEvent(EventGlobal.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
+        consumeEvent(EventGlobal.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
@@ -55,7 +58,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
         window("Environment Tree") {
             if (currentEnv == null) {
-                text("No environment opened")
+                if (isEnvironmentLoading) {
+                    textDisabled("Loading Environment...")
+                } else {
+                    button("Open Environment...", block = ::doOpenEnvironment)
+                }
+                separator()
                 return@window
             }
 
@@ -80,6 +88,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             }
 
             popID()
+        }
+    }
+
+    private fun doOpenEnvironment() {
+        NfdUtil.selectFile("dme")?.let { file ->
+            sendEvent(EventEnvironmentController.OpenEnvironment(file))
         }
     }
 
@@ -150,6 +164,14 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             sendEvent(EventTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getOrCreate(type)))
             isSelectedInCycle = true
         }
+    }
+
+    private fun handleEnvironmentLoading() {
+        isEnvironmentLoading = true
+    }
+
+    private fun handleEnvironmentLoaded() {
+        isEnvironmentLoading = false
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {

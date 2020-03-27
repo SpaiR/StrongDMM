@@ -4,7 +4,6 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
-import strongdmm.event.EnvironmentBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -21,13 +20,15 @@ class EnvironmentController : EventSender, EventConsumer {
         consumeEvent(EventEnvironmentController.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
     }
 
-    private fun handleOpenEnvironment(event: Event<File, EnvironmentBlockStatus>) {
+    private fun handleOpenEnvironment(event: Event<File, Unit>) {
         sendEvent(EventGlobal.EnvironmentReset())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
+            sendEvent(EventGlobal.EnvironmentLoading(event.body))
+
             environment = SdmmParser().parseDme(event.body)
 
             GlobalDmiHolder.environmentRootPath = environment.rootPath
@@ -35,8 +36,8 @@ class EnvironmentController : EventSender, EventConsumer {
 
             System.gc()
 
-            event.reply(true)
             sendEvent(EventGlobal.EnvironmentChanged(environment))
+            sendEvent(EventGlobal.EnvironmentLoaded(true))
         }
     }
 
