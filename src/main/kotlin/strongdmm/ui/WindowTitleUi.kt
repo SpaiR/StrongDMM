@@ -19,7 +19,7 @@ class WindowTitleUi : EventConsumer {
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
-        glfwSetWindowTitle(AppWindow.window, "${event.body.mapName} [${event.body.visibleMapPath}] - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(AppWindow.window, "${event.body.mapName} [${event.body.mapPath.readable}] - ${StrongDMM.TITLE}")
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {

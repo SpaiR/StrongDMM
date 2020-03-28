@@ -2,6 +2,7 @@ package strongdmm.controller.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
 import io.github.spair.dmm.io.reader.DmmReader
+import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.save.SaveMap
@@ -14,10 +15,14 @@ import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapHolderController
 import java.io.File
-import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.concurrent.thread
 
 class MapHolderController : EventSender, EventConsumer {
+    companion object {
+        private val backupsDir: Path = StrongDMM.homeDir.resolve("backups")
+    }
+
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
     private val availableMapsPathsWithVisibleMapsPaths: MutableSet<Pair<String, String>> = mutableSetOf()
@@ -35,8 +40,25 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     fun postInit() {
+        ensureBackupsDirExists()
+
         sendEvent(EventGlobalProvider.MapHolderControllerOpenedMaps(openedMaps))
         sendEvent(EventGlobalProvider.MapHolderControllerAvailableMaps(availableMapsPathsWithVisibleMapsPaths))
+    }
+
+    private fun ensureBackupsDirExists() {
+        backupsDir.toFile().mkdirs()
+    }
+
+    private fun createBackupFile(environment: Dme, mapFile: File, id: Int) {
+        val tmpFileName = "${environment.name}-${mapFile.nameWithoutExtension}-${System.currentTimeMillis()}.backup"
+        val tmpDmmDataFile = File(backupsDir.toFile(), tmpFileName)
+
+        tmpDmmDataFile.createNewFile()
+        tmpDmmDataFile.writeBytes(mapFile.readBytes())
+        tmpDmmDataFile.deleteOnExit()
+
+        mapsBackupPathsById.put(id, tmpDmmDataFile.absolutePath)
     }
 
     private fun handleOpenMap(event: Event<File, Unit>) {
@@ -62,10 +84,7 @@ class MapHolderController : EventSender, EventConsumer {
                 val dmmData = DmmReader.readMap(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 
-                val tmpDmmDataFile = Files.createTempFile("sdmm-", ".dmm.backup").toFile()
-                tmpDmmDataFile.writeBytes(mapFile.readBytes())
-                mapsBackupPathsById.put(id, tmpDmmDataFile.absolutePath)
-                tmpDmmDataFile.deleteOnExit()
+                createBackupFile(environment, mapFile, id)
 
                 openedMaps.add(map)
                 selectedMap = map
@@ -125,10 +144,10 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
-        File(event.body.rootPath).walkTopDown().forEach {
+        File(event.body.absRootDirPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
                 val absoluteFilePath = it.absolutePath
-                val visibleName = File(event.body.rootPath).toPath().relativize(it.toPath()).toString()
+                val visibleName = File(event.body.absRootDirPath).toPath().relativize(it.toPath()).toString()
                 availableMapsPathsWithVisibleMapsPaths.add(absoluteFilePath to visibleName)
             }
         }

@@ -21,8 +21,7 @@ class Dmm(
     val id: Int = mapFile.absolutePath.hashCode()
     val mapName: String = mapFile.nameWithoutExtension
 
-    val absMapPath: String = mapFile.absolutePath
-    val visibleMapPath: String = Paths.get(dme.rootPath).relativize(mapFile.toPath()).toString() // Visible to user
+    val mapPath: MapPath = MapPath(Paths.get(dme.absRootDirPath).relativize(mapFile.toPath()).toString(), mapFile.absolutePath)
 
     var maxX: Int = initialDmmData.maxX
         private set

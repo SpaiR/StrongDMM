@@ -12,6 +12,8 @@ import strongdmm.ui.*
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.AppWindow
+import java.nio.file.Path
+import java.nio.file.Paths
 
 class StrongDMM(title: String) : AppWindow(title) {
     private val menuBarUi = MenuBarUi()
@@ -40,13 +42,17 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val shortcutController = ShortcutController()
     private val clipboardController = ClipboardController()
     private val tileItemController = TileItemController()
+    private val recentFilesController = RecentFilesController()
 
     init {
+        ensureHomeDirExists()
+
         instanceLocatorPanelUi.postInit()
         mapHolderController.postInit()
         frameController.postInit()
         actionController.postInit()
         canvasController.postInit()
+        recentFilesController.postInit()
     }
 
     override fun appLoop() {
@@ -69,8 +75,14 @@ class StrongDMM(title: String) : AppWindow(title) {
         shortcutController.process()
     }
 
+    private fun ensureHomeDirExists() {
+        homeDir.toFile().mkdirs()
+    }
+
     companion object {
         const val TITLE: String = "StrongDMM"
+
+        val homeDir: Path = Paths.get(System.getProperty("user.home")).resolve(".strongdmm")
 
         @JvmStatic
         fun main(args: Array<String>) {

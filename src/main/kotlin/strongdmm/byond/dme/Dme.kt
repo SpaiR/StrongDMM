@@ -5,7 +5,9 @@ import strongdmm.byond.VAR_AREA
 import strongdmm.byond.VAR_TURF
 
 class Dme(
-    val rootPath: String,
+    val name: String,
+    val absRootDirPath: String,
+    val absEnvPath: String,
     val items: Map<String, DmeItem>
 ) {
     lateinit var basicTurfType: String

@@ -167,9 +167,9 @@ class SaveMap(
 
     private fun saveToFile() {
         if (outputDmmData.isTgm) {
-            outputDmmData.saveAsTGM(File(dmm.absMapPath))
+            outputDmmData.saveAsTGM(File(dmm.mapPath.absolute))
         } else {
-            outputDmmData.saveAsByond(File(dmm.absMapPath))
+            outputDmmData.saveAsByond(File(dmm.mapPath.absolute))
         }
     }
 }

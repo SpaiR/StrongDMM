@@ -70,7 +70,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             isSelectedInCycle = false
             createdTeeNodesInCycle = 0
 
-            pushID(currentEnv!!.rootPath)
+            pushID(currentEnv!!.absRootDirPath)
 
             checkbox("##show_icons", isShowIcons)
             setItemHoveredTooltip("Show icons")

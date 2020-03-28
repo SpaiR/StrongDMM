@@ -31,7 +31,7 @@ class EnvironmentController : EventSender, EventConsumer {
 
             environment = SdmmParser().parseDme(event.body)
 
-            GlobalDmiHolder.environmentRootPath = environment.rootPath
+            GlobalDmiHolder.environmentRootPath = environment.absRootDirPath
             GlobalTileItemHolder.environment = environment
 
             System.gc()

@@ -9,6 +9,7 @@ import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
+import strongdmm.byond.dmm.MapPath
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.shortcut.ShortcutHandler
@@ -41,6 +42,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private lateinit var showInstanceLocator: ImBool
     private lateinit var frameAreas: ImBool
+    private lateinit var providedRecentEnvironments: List<String>
+    private lateinit var providedRecentMaps: List<MapPath>
 
     init {
         consumeEvent(EventGlobal.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
@@ -50,8 +53,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+
         consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(EventGlobalProvider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
+        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments::class.java, ::handleProviderRecentFilesControllerRecentEnvironments)
+        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -77,9 +83,15 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         mainMenuBar {
             menu("File") {
                 menuItem("Open Environment...", enabled = progressText == null, block = ::doOpenEnvironment)
+                menu("Recent Environments") {
+                    showRecentEnvironments()
+                }
                 separator()
                 menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpened, block = ::doOpenMap)
                 menuItem("Open Available Map", shortcut = "Ctrl+Shift+O", enabled = isEnvironmentOpened, block = ::doOpenAvailableMap)
+                menu("Recent Maps", enabled = isEnvironmentOpened) {
+                    showRecentMaps()
+                }
                 separator()
                 menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::doSave)
             }
@@ -117,6 +129,22 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         }
     }
 
+    private fun showRecentEnvironments() {
+        providedRecentEnvironments.toTypedArray().forEach { recentEnvironmentPath ->
+            menuItem(recentEnvironmentPath) {
+                sendEvent(EventEnvironmentController.OpenEnvironment(File(recentEnvironmentPath)))
+            }
+        }
+    }
+
+    private fun showRecentMaps() {
+        providedRecentMaps.toTypedArray().forEach { (readable, absolute) ->
+            menuItem(readable) {
+                sendEvent(EventMapHolderController.OpenMap(File(absolute)))
+            }
+        }
+    }
+
     private fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
             sendEvent(EventEnvironmentController.OpenEnvironment(file))
@@ -129,7 +157,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         }
 
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
-            NfdUtil.selectFile("dmm", environment.rootPath)?.let { path ->
+            NfdUtil.selectFile("dmm", environment.absRootDirPath)?.let { path ->
                 sendEvent(EventMapHolderController.OpenMap(path))
             }
         })
@@ -273,5 +301,13 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun handleProviderCanvasControllerFrameAreas(event: Event<ImBool, Unit>) {
         frameAreas = event.body
+    }
+
+    private fun handleProviderRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {
+        providedRecentEnvironments = event.body
+    }
+
+    private fun handleProviderRecentFilesControllerRecentMaps(event: Event<List<MapPath>, Unit>) {
+        providedRecentMaps = event.body
     }
 }

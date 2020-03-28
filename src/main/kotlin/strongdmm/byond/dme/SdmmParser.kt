@@ -5,9 +5,7 @@ import com.eclipsesource.json.JsonArray
 import com.eclipsesource.json.JsonObject
 import com.eclipsesource.json.JsonValue
 import strongdmm.byond.VAR_NAME
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 import java.nio.file.Files
 
 /**
@@ -45,9 +43,9 @@ class SdmmParser {
         }
 
         val dmeItems = mutableMapOf<String, DmeItem>()
-        val dme = Dme(dmeFile.parent, dmeItems)
+        val dme = Dme(dmeFile.nameWithoutExtension, dmeFile.parent, dmeFile.absolutePath, dmeItems)
 
-        BufferedReader(FileReader(tmpFile)).use {
+        tmpFile.reader().use {
             Json.parse(it).asObject().getChildren().forEach { child ->
                 traverseTreeRecurs(child.asObject(), dme, dmeItems)
             }
@@ -67,7 +65,7 @@ class SdmmParser {
             var value = sanitizeVar(def.getValue())
 
             // Exceptional case for the 'name' variable
-            if (def.getName() == VAR_NAME && value == "null") {
+            if (def.getName() == VAR_NAME && value == null) {
                 value = '"' + type.substringAfterLast('/') + '"'
             }
 

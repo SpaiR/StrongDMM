@@ -3,6 +3,7 @@ package strongdmm.event.type
 import gnu.trove.map.hash.TObjectIntHashMap
 import imgui.ImBool
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapPath
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.controller.frame.FramedTile
 import strongdmm.event.AbsoluteFilePath
@@ -18,4 +19,7 @@ abstract class EventGlobalProvider {
     class FrameControllerFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
     class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
     class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
+
+    class RecentFilesControllerRecentEnvironments(body: List<String>) : Event<List<String>, Unit>(body, null)
+    class RecentFilesControllerRecentMaps(body: List<MapPath>) : Event<List<MapPath>, Unit>(body, null)
 }
