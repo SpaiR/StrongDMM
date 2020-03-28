@@ -38,8 +38,8 @@ class TilePopupUi : EventConsumer, EventSender {
     private var isUndoEnabled: Boolean = false
     private var isRedoEnabled: Boolean = false
 
-    private val pixelXNudgeArrays: TIntObjectHashMap<IntArray> = TIntObjectHashMap()
-    private val pixelYNudgeArrays: TIntObjectHashMap<IntArray> = TIntObjectHashMap()
+    private val pixelXNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap()
+    private val pixelYNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap()
 
     init {
         consumeEvent(EventTilePopupUi.Open::class.java, ::handleOpen)
@@ -94,8 +94,8 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        showNudgeOption(true, tile, tileItem, tileItemIdx, tileItem.pixelX, pixelXNudgeArrays.getOrPut(tileItemIdx) { intArrayOf(tileItem.pixelX) })
-        showNudgeOption(false, tile, tileItem, tileItemIdx, tileItem.pixelY, pixelYNudgeArrays.getOrPut(tileItemIdx) { intArrayOf(tileItem.pixelY) })
+        showNudgeOption(true, tile, tileItem, tileItemIdx, pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelX to intArrayOf(tileItem.pixelX) })
+        showNudgeOption(false, tile, tileItem, tileItemIdx, pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelY to intArrayOf(tileItem.pixelY) })
 
         separator()
 
@@ -129,9 +129,19 @@ class TilePopupUi : EventConsumer, EventSender {
             sendEvent(EventEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
 
+        menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB") {
+            sendEvent(EventActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.deleteTileItem(tileItemIdx)
+                }
+            ))
+
+            sendEvent(EventFrameController.RefreshFrame())
+        }
+
         menuItem(
             "Replace With Active Object##replace_with_active_object_$tileItemIdx",
-            shortcut = "Ctrl+Shift+LMB",
+            shortcut = "Ctrl+Shift+RMB",
             enabled = (activeTileItem?.isSameType(tileItem) ?: false)
         ) {
             activeTileItem?.let { activeTileItem ->
@@ -144,19 +154,11 @@ class TilePopupUi : EventConsumer, EventSender {
                 sendEvent(EventFrameController.RefreshFrame())
             }
         }
-
-        menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+RMB") {
-            sendEvent(EventActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.deleteTileItem(tileItemIdx)
-                }
-            ))
-
-            sendEvent(EventFrameController.RefreshFrame())
-        }
     }
 
-    private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, initialValue: Int, pixelNudge: IntArray) {
+    private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, nudgeValue: Pair<Int, IntArray>) {
+        val (initialValue, pixelNudge) = nudgeValue
+
         setNextItemWidth(50f)
 
         if (dragInt("Nudge %s-axis".format(if (isXAxis) "X" else "Y"), pixelNudge, .25f)) {
@@ -180,6 +182,12 @@ class TilePopupUi : EventConsumer, EventSender {
 
             sendEvent(EventFrameController.RefreshFrame())
             sendEvent(EventObjectPanelUi.Update())
+
+            if (isXAxis) {
+                pixelXNudgeArrays.clear()
+            } else {
+                pixelYNudgeArrays.clear()
+            }
         }
     }
 
