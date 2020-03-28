@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
     id 'org.jmailen.kotlinter' version '1.26.0'
 }
 
