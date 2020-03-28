@@ -41,13 +41,18 @@ class MapModifierController : EventConsumer, EventSender {
                     for (x in (activeArea.x1..activeArea.x2)) {
                         for (y in (activeArea.y1..activeArea.y2)) {
                             val tile = selectedMap.getTile(x, y)
+                            val initialTileItems = tile.getTileItemsId()
 
                             tile.getFilteredTileItems(filteredLayers).let { filteredTileItems ->
-                                reverseActions.add(ReplaceTileAction(tile) {
+                                val replaceTileAction = ReplaceTileAction(tile) {
                                     filteredTileItems.forEach { tileItem ->
                                         tile.deleteTileItem(tileItem)
                                     }
-                                })
+                                }
+
+                                if (!tile.getTileItemsId().contentEquals(initialTileItems)) {
+                                    reverseActions.add(replaceTileAction)
+                                }
                             }
                         }
                     }
