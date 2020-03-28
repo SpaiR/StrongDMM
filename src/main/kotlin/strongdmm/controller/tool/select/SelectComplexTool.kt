@@ -58,7 +58,6 @@ class SelectComplexTool : ComplexTool(), EventSender {
         reset()
         add.selectedArea = area
         onStop()
-        sendEvent(EventCanvasController.HighlightSelectedArea())
         sendEvent(EventCanvasController.SelectArea(area))
     }
 }

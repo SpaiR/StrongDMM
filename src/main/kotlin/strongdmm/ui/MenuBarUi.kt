@@ -130,18 +130,34 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun showRecentEnvironments() {
+        if (providedRecentEnvironments.isEmpty()) {
+            return
+        }
+
         providedRecentEnvironments.toTypedArray().forEach { recentEnvironmentPath ->
             menuItem(recentEnvironmentPath) {
                 sendEvent(EventEnvironmentController.OpenEnvironment(File(recentEnvironmentPath)))
             }
         }
+        separator()
+        menuItem("Clear Recent Environments") {
+            sendEvent(EventRecentFilesController.ClearRecentEnvironments())
+        }
     }
 
     private fun showRecentMaps() {
+        if (providedRecentMaps.isEmpty()) {
+            return
+        }
+
         providedRecentMaps.toTypedArray().forEach { (readable, absolute) ->
             menuItem(readable) {
                 sendEvent(EventMapHolderController.OpenMap(File(absolute)))
             }
+        }
+        separator()
+        menuItem("Clear Recent Maps") {
+            sendEvent(EventRecentFilesController.ClearRecentMaps())
         }
     }
 

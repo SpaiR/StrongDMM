@@ -22,7 +22,6 @@ class SelectAddAreaTool : Tool(), EventSender {
             xStart = mapPos.x
             yStart = mapPos.y
             fillAreaRect(mapPos.x, mapPos.y)
-            sendEvent(EventCanvasController.HighlightSelectedArea())
         }
     }
 

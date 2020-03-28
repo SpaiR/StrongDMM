@@ -79,7 +79,6 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventCanvasController.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
         consumeEvent(EventCanvasController.SelectArea::class.java, ::handleSelectArea)
         consumeEvent(EventCanvasController.ResetSelectedArea::class.java, ::handleResetSelectedArea)
-        consumeEvent(EventCanvasController.HighlightSelectedArea::class.java, ::handleHighlightSelectedArea)
     }
 
     fun postInit() {
@@ -401,10 +400,5 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleResetSelectedArea() {
         canvasRenderer.selectedArea = null
-        canvasRenderer.highlightSelectedArea = false
-    }
-
-    private fun handleHighlightSelectedArea() {
-        canvasRenderer.highlightSelectedArea = true
     }
 }

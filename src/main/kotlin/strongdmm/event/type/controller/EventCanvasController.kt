@@ -14,5 +14,4 @@ abstract class EventCanvasController {
     class ResetSelectedTiles : Event<Unit, Unit>(Unit, null)
     class SelectArea(body: MapArea) : Event<MapArea, Unit>(body, null)
     class ResetSelectedArea : Event<Unit, Unit>(Unit, null)
-    class HighlightSelectedArea : Event<Unit, Unit>(Unit, null)
 }

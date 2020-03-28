@@ -13,6 +13,7 @@ import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventEnvironmentController
+import strongdmm.event.type.controller.EventRecentFilesController
 import java.io.File
 
 class RecentFilesController : EventConsumer, EventSender {
@@ -33,6 +34,8 @@ class RecentFilesController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(EventRecentFilesController.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
+        consumeEvent(EventRecentFilesController.ClearRecentMaps::class.java, ::handleClearRecentMaps)
     }
 
     fun postInit() {
@@ -114,6 +117,22 @@ class RecentFilesController : EventConsumer, EventSender {
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
             addMap(environment.absEnvPath, event.body.mapPath)
+            updateRecentMapsList(environment.absEnvPath)
+        })
+    }
+
+    private fun handleClearRecentEnvironments() {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+            recentEnvironments.clear()
+            writeRecentJsonFile()
+            updateRecentMapsList(environment.absEnvPath)
+        })
+    }
+
+    private fun handleClearRecentMaps() {
+        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+            allRecentMaps[environment.absEnvPath]?.clear()
+            writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)
         })
     }

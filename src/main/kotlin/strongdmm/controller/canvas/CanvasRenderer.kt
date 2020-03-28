@@ -45,7 +45,6 @@ class CanvasRenderer {
     var markedPosition: MapPos? = null
     var selectedTiles: Collection<MapPos>? = null
     var selectedArea: MapArea? = null
-    var highlightSelectedArea: Boolean = false
 
     var windowWidth: Int = -1
     var windowHeight: Int = -1
@@ -244,19 +243,17 @@ class CanvasRenderer {
             glVertex2d(xPosStart, yPosEnd + realIconSize)
             glEnd()
 
-            if (highlightSelectedArea) {
-                glColor4f(0f, 1f, 0f, .65f)
-                glLineWidth(2f)
+            glColor4f(0f, 1f, 0f, .65f)
+            glLineWidth(2f)
 
-                glBegin(GL_LINE_LOOP)
-                glVertex2d(xPosStart, yPosStart)
-                glVertex2d(xPosEnd + realIconSize, yPosStart)
-                glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
-                glVertex2d(xPosStart, yPosEnd + realIconSize)
-                glEnd()
+            glBegin(GL_LINE_LOOP)
+            glVertex2d(xPosStart, yPosStart)
+            glVertex2d(xPosEnd + realIconSize, yPosStart)
+            glVertex2d(xPosEnd + realIconSize, yPosEnd + realIconSize)
+            glVertex2d(xPosStart, yPosEnd + realIconSize)
+            glEnd()
 
-                glLineWidth(1f)
-            }
+            glLineWidth(1f)
         }
     }
 
