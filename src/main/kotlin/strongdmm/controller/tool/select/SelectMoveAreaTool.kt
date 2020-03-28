@@ -10,7 +10,6 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.EventSender
 import strongdmm.event.type.controller.*
-import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
 
 class SelectMoveAreaTool : Tool(), EventSender {
@@ -27,7 +26,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
     private var filteredTypes: Set<String> = emptySet()
 
-    var selectedArea: MapArea = MapArea(OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS)
+    var selectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
     private var initialArea: MapArea = selectedArea
 
     override fun onStart(mapPos: MapPos) {
@@ -192,6 +191,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
     override fun reset() {
         onStop()
+        selectedArea = MapArea.OUT_OF_BOUNDS_AREA
         sendEvent(EventCanvasController.ResetSelectedArea())
     }
 

@@ -6,7 +6,6 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.tool.Tool
 import strongdmm.event.EventSender
 import strongdmm.event.type.controller.EventCanvasController
-import strongdmm.util.OUT_OF_BOUNDS
 import kotlin.math.max
 import kotlin.math.min
 
@@ -14,7 +13,7 @@ class SelectAddAreaTool : Tool(), EventSender {
     private var xStart: Int = 0
     private var yStart: Int = 0
 
-    var selectedArea: MapArea = MapArea(OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS, OUT_OF_BOUNDS)
+    var selectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
 
     override fun onStart(mapPos: MapPos) {
         isActive = true
@@ -43,6 +42,7 @@ class SelectAddAreaTool : Tool(), EventSender {
 
     override fun reset() {
         isActive = false
+        selectedArea = MapArea.OUT_OF_BOUNDS_AREA
         sendEvent(EventCanvasController.ResetSelectedArea())
     }
 

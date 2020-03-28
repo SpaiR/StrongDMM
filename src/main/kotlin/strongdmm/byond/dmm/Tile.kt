@@ -71,7 +71,7 @@ class Tile(
 
     fun replaceTileItem(tileItemIdx: Int, replaceWith: TileItem) {
         if (tileItems[tileItemIdx].isSameType(replaceWith)) {
-            getTileItemsId()[tileItemIdx] = replaceWith.id
+            setTileItemsIdWithReplace(tileItemIdx, replaceWith.id)
             readObjectsFromMap()
         }
     }
@@ -126,7 +126,7 @@ class Tile(
     }
 
     fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
-        getTileItemsId()[tileItemIdx] = GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, vars).id
+        setTileItemsIdWithReplace(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, vars).id)
         readObjectsFromMap()
     }
 
@@ -169,6 +169,12 @@ class Tile(
         return tileItems.lastIndexOf(tileItem)
     }
 
+    private fun setTileItemsIdWithReplace(tileItemIdx: Int, replaceWithId: Long) {
+        val tileItemsId = getTileItemsId().copyOf()
+        tileItemsId[tileItemIdx] = replaceWithId
+        dmm.setTileItemsId(x, y, tileItemsId)
+    }
+
     private fun shiftItem(list: List<IndexedValue<TileItem>>, tileItemIdx: Int, shiftValue: Int) {
         if (list.size == 1) {
             return
@@ -179,9 +185,10 @@ class Tile(
             val swapWithIdx = relativeIdx + shiftValue
             if (swapWithIdx >= 0 && swapWithIdx < list.size) {
                 val swapWithItem = list[swapWithIdx]
-                val tileItemsId = getTileItemsId()
+                val tileItemsId = getTileItemsId().copyOf()
                 tileItemsId[swapWithItem.index] = it.value.id
                 tileItemsId[it.index] = swapWithItem.value.id
+                dmm.setTileItemsId(x, y, tileItemsId)
             }
         }
 
