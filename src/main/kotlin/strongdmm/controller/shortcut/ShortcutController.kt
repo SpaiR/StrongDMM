@@ -11,7 +11,9 @@ class ShortcutController : EventSender, ShortcutHandler() {
         for (shortcut in globalShortcuts) {
             val (firstKey, secondKey, thirdKey) = shortcut
 
-            if (ImGui.isKeyDown(firstKey)) {
+            if (secondKey == -1 && thirdKey == -1 && ImGui.isKeyPressed(firstKey)) {
+                shortcutToTrigger = shortcut
+            } else if (ImGui.isKeyDown(firstKey)) {
                 if (thirdKey != -1) {
                     if (ImGui.isKeyDown(secondKey) && ImGui.isKeyPressed(thirdKey)) {
                         shortcutToTrigger = shortcut
@@ -22,10 +24,6 @@ class ShortcutController : EventSender, ShortcutHandler() {
                         if (shortcutToTrigger == null || shortcutToTrigger.weight < shortcut.weight) {
                             shortcutToTrigger = shortcut
                         }
-                    }
-                } else {
-                    if (shortcutToTrigger == null || shortcutToTrigger.weight < shortcut.weight) {
-                        shortcutToTrigger = shortcut
                     }
                 }
             }

@@ -132,7 +132,7 @@ class CanvasRenderer {
         }
 
         glColor4f(0.65f, 0.65f, 0.65f, 1f)
-        glLineWidth(1.5f)
+        glLineWidth(1.4f)
         glBegin(GL_LINES)
 
         framedTiles.forEach { (x, y, dir) ->
