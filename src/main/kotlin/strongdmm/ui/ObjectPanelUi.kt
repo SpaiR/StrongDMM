@@ -26,7 +26,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
     }
 
     private val showVarsPreview: ImBool = ImBool(false)
-    private lateinit var showInstanceLocator: ImBool
+    private lateinit var providedShowInstanceLocator: ImBool
     private val columnsCount: ImInt = ImInt(1)
 
     private var scrolledToItem: Boolean = false
@@ -51,7 +51,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         window(title) {
             popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
                 checkbox("Show Variables Preview", showVarsPreview)
-                checkbox("Show Instance Locator", showInstanceLocator)
+                checkbox("Show Instance Locator", providedShowInstanceLocator)
                 setNextItemWidth(75f)
                 if (inputInt("Columns count", columnsCount)) {
                     if (columnsCount.get() <= 0) {
@@ -165,7 +165,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
-        showInstanceLocator = event.body
+        providedShowInstanceLocator = event.body
     }
 
     private fun handleUpdate() {

@@ -19,7 +19,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private var isDoOpen: Boolean = false
     private var isFirstOpen: Boolean = true
 
-    private var availableMaps: Set<Pair<String, String>> = emptySet()
+    private var providedAvailableMaps: Set<Pair<String, String>> = emptySet()
     private var selectedMapPath: String? = null // to store an absolute path for currently selected map
     private var selectionStatus: String = "" // to display a currently selected map (visible path)
 
@@ -50,7 +50,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             inputText("##maps_path_filter", mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
-                for ((absoluteFilePath, visibleFilePath) in availableMaps) {
+                for ((absoluteFilePath, visibleFilePath) in providedAvailableMaps) {
                     if (mapFilter.length > 0 && !visibleFilePath.contains(mapFilter.get(), ignoreCase = true)) {
                         continue
                     }
@@ -97,6 +97,6 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     }
 
     private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {
-        availableMaps = event.body
+        providedAvailableMaps = event.body
     }
 }

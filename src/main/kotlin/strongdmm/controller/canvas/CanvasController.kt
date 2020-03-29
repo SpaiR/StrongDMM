@@ -358,11 +358,11 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun handleProviderFrameControllerComposedFrame(event: Event<List<FrameMesh>, Unit>) {
-        canvasRenderer.frameMeshes = event.body
+        canvasRenderer.providedFrameMeshes = event.body
     }
 
     private fun handleProviderFrameControllerFramedTiles(event: Event<List<FramedTile>, Unit>) {
-        canvasRenderer.framedTiles = event.body
+        canvasRenderer.providedFramedTiles = event.body
     }
 
     private fun handleBlockCanvas(event: Event<CanvasBlockStatus, Unit>) {

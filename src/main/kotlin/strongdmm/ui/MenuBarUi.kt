@@ -40,8 +40,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private val isObjLayerActive: ImBool = ImBool(true)
     private val isMobLayerActive: ImBool = ImBool(true)
 
-    private lateinit var showInstanceLocator: ImBool
-    private lateinit var frameAreas: ImBool
+    private lateinit var providedShowInstanceLocator: ImBool
+    private lateinit var providedFrameAreas: ImBool
     private lateinit var providedRecentEnvironments: List<String>
     private lateinit var providedRecentMaps: List<MapPath>
 
@@ -110,7 +110,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             }
 
             menu("Options") {
-                menuItem("Frame Areas", selected = frameAreas, block = {})
+                menuItem("Frame Areas", selected = providedFrameAreas, block = {})
             }
 
             menu("Layers") {
@@ -220,7 +220,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doFindInstance() {
-        showInstanceLocator.set(!showInstanceLocator.get())
+        providedShowInstanceLocator.set(!providedShowInstanceLocator.get())
     }
 
     private fun doOpenLayersFilter() {
@@ -312,11 +312,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
-        showInstanceLocator = event.body
+        providedShowInstanceLocator = event.body
     }
 
     private fun handleProviderCanvasControllerFrameAreas(event: Event<ImBool, Unit>) {
-        frameAreas = event.body
+        providedFrameAreas = event.body
     }
 
     private fun handleProviderRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {

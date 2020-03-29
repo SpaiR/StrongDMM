@@ -18,8 +18,8 @@ import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventConsumer, EventSender {
-    private var openedMaps: Set<Dmm> = emptySet()
-    private var actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
+    private var providedOpenedMaps: Set<Dmm> = emptySet()
+    private var providedActionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
     private var selectedMap: Dmm? = null
 
     init {
@@ -30,7 +30,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        if (openedMaps.isEmpty() || selectedMap == null) {
+        if (providedOpenedMaps.isEmpty() || selectedMap == null) {
             return
         }
 
@@ -39,7 +39,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         setNextWindowCollapsed(true, ImGuiCond.Once)
 
         window("${getMapName(selectedMap!!)}###opened_maps") {
-            openedMaps.toTypedArray().forEach { map ->
+            providedOpenedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.mapPath.readable}") {
                     sendEvent(EventMapHolderController.CloseMap(map.id))
@@ -59,15 +59,15 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
     }
 
     private fun getMapName(map: Dmm): String {
-        return map.mapName + if (actionBalanceStorage[map] != 0) " *" else ""
+        return map.mapName + if (providedActionBalanceStorage[map] != 0) " *" else ""
     }
 
     private fun handleProviderMapHolderControllerOpenedMaps(event: Event<Set<Dmm>, Unit>) {
-        openedMaps = event.body
+        providedOpenedMaps = event.body
     }
 
     private fun handleProviderActionControllerActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
-        actionBalanceStorage = event.body
+        providedActionBalanceStorage = event.body
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

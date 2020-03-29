@@ -20,7 +20,9 @@ import java.nio.ByteBuffer
 
 class CanvasRenderer {
     var redraw: Boolean = false
-    var frameMeshes: List<FrameMesh> = emptyList()
+
+    lateinit var providedFrameMeshes: List<FrameMesh>
+    lateinit var providedFramedTiles: List<FramedTile>
 
     private val frameBuffer: Int = glGenFramebuffers()
     private var isTextureAttached: Boolean = false
@@ -37,9 +39,6 @@ class CanvasRenderer {
     var mousePosX: Float = 0f
     var mousePosY: Float = 0f
     var frameAreas: Boolean = true
-
-    // To visualize "Area Frames" option
-    lateinit var framedTiles: List<FramedTile>
 
     // Used to visually emphasize attention on something on the map
     var markedPosition: MapPos? = null
@@ -126,7 +125,7 @@ class CanvasRenderer {
     }
 
     private fun renderFramedTiles() {
-        if (!frameAreas || framedTiles.isEmpty()) {
+        if (!frameAreas || providedFramedTiles.isEmpty()) {
             return
         }
 
@@ -134,7 +133,7 @@ class CanvasRenderer {
         glLineWidth(1.4f)
         glBegin(GL_LINES)
 
-        framedTiles.forEach { (x, y, dir) ->
+        providedFramedTiles.forEach { (x, y, dir) ->
             val xPos = ((x - 1) * iconSize + renderData.viewTranslateX) / renderData.viewScale
             val yPos = ((y - 1) * iconSize + renderData.viewTranslateY) / renderData.viewScale
 
@@ -286,7 +285,7 @@ class CanvasRenderer {
         val currentMarkedTileItemLvl = markedTileItemLvl
         markedTileItemLvl = -1
 
-        for (frameMesh in frameMeshes) {
+        for (frameMesh in providedFrameMeshes) {
             val (tileItemId, sprite, x1, y1, x2, y2) = frameMesh
 
             var colorR = frameMesh.colorR
