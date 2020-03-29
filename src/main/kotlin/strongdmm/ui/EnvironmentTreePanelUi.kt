@@ -18,11 +18,13 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventTileItemController
 import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.*
+import java.io.File
 
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
     companion object {
@@ -32,6 +34,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private var isEnvironmentLoading: Boolean = false
+
+    private lateinit var providedRecentEnvironments: List<String>
 
     private var currentEnv: Dme? = null
     private val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
@@ -50,6 +54,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments::class.java, ::handleRecentFilesControllerRecentEnvironments)
     }
 
     fun process() {
@@ -61,9 +66,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 if (isEnvironmentLoading) {
                     textDisabled("Loading Environment...")
                 } else {
-                    button("Open Environment...", block = ::doOpenEnvironment)
+                    showEnvironmentOpenControls()
                 }
-                separator()
                 return@window
             }
 
@@ -91,9 +95,26 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
         }
     }
 
-    private fun doOpenEnvironment() {
-        NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(EventEnvironmentController.OpenEnvironment(file))
+    private fun showEnvironmentOpenControls() {
+        button("Open Environment...") {
+            NfdUtil.selectFile("dme")?.let { file ->
+                sendEvent(EventEnvironmentController.OpenEnvironment(file))
+            }
+        }
+
+        separator()
+
+        if (providedRecentEnvironments.isNotEmpty()) {
+            text("Recent Environments:")
+            providedRecentEnvironments.toTypedArray().forEach { envPath ->
+                alignTextToFramePadding()
+                bullet()
+                sameLine()
+                button(envPath.replace('\\', '/').substringAfterLast('/')) {
+                    sendEvent(EventEnvironmentController.OpenEnvironment(File(envPath)))
+                }
+                setItemHoveredTooltip(envPath)
+            }
         }
     }
 
@@ -186,6 +207,10 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItemType = event.body?.type ?: ""
+    }
+
+    private fun handleRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {
+        providedRecentEnvironments = event.body
     }
 
     private class TreeNode(dmeItem: DmeItem) {
