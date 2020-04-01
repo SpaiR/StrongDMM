@@ -310,6 +310,9 @@ abstract class AppWindow(title: String) {
 
             glfwSetWindowIcon(window, imagePtr)
             STBImage.stbi_image_free(imageBuffer)
+
+            imagePtr.free()
+            image.free()
         }
     }
 
