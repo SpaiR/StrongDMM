@@ -22,6 +22,7 @@ import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.event.type.ui.EventLayersFilterPanelUi
+import strongdmm.event.type.ui.EventPreferencesPanelUi
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -110,6 +111,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
             menu("Options") {
                 menuItem("Frame Areas", selected = providedFrameAreas, block = {})
+                menuItem("Preferences...", block = ::doOpenPreferences)
             }
 
             menu("Layers") {
@@ -220,6 +222,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doFindInstance() {
         providedShowInstanceLocator.set(!providedShowInstanceLocator.get())
+    }
+
+    private fun doOpenPreferences() {
+        sendEvent(EventPreferencesPanelUi.Open())
     }
 
     private fun doOpenLayersFilter() {

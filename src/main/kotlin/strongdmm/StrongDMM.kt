@@ -6,6 +6,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.controller.map.MapHolderController
 import strongdmm.controller.map.MapModifierController
+import strongdmm.controller.preferences.PreferencesController
 import strongdmm.controller.recent.RecentFilesController
 import strongdmm.controller.shortcut.ShortcutController
 import strongdmm.controller.tool.ToolsController
@@ -31,6 +32,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val layersFilterPanelUi = LayersFilterPanelUi()
     private val toolSelectPanelUi = ToolSelectPanelUi()
     private val levelSwitchPanelUi = LevelSwitchPanelUi()
+    private val preferencesPanelUi = PreferencesPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapHolderController = MapHolderController()
@@ -45,6 +47,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val clipboardController = ClipboardController()
     private val tileItemController = TileItemController()
     private val recentFilesController = RecentFilesController()
+    private val preferencesController = PreferencesController()
 
     init {
         ensureHomeDirExists()
@@ -55,6 +58,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         actionController.postInit()
         canvasController.postInit()
         recentFilesController.postInit()
+        preferencesController.postInit()
     }
 
     override fun appLoop() {
@@ -72,6 +76,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         layersFilterPanelUi.process()
         toolSelectPanelUi.process()
         levelSwitchPanelUi.process()
+        preferencesPanelUi.process()
 
         // Controllers
         canvasController.process()

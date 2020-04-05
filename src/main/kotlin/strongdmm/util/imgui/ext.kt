@@ -59,6 +59,6 @@ fun inputInt(label: String, v: ImInt, min: Int, max: Int) {
 }
 
 fun helpMark(helpText: String) {
-    ImGui.text("(?)")
+    ImGui.textDisabled("(?)")
     setItemHoveredTooltip(helpText)
 }

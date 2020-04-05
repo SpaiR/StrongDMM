@@ -16,7 +16,7 @@ import java.io.File
 
 class RecentFilesController : EventConsumer, EventSender {
     companion object {
-        private val recentJsonFile: File = File(StrongDMM.homeDir.toFile(), "recent.json")
+        private val recentFilesConfig: File = File(StrongDMM.homeDir.toFile(), "recent.json")
     }
 
     private lateinit var recentFiles: RecentFiles
@@ -33,21 +33,21 @@ class RecentFilesController : EventConsumer, EventSender {
     }
 
     fun postInit() {
-        ensureRecentJsonFileExists()
-        readRecentJsonFile()
+        ensureRecentFilesConfigExists()
+        readRecentFilesConfig()
 
         sendEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments(recentEnvironments))
         sendEvent(EventGlobalProvider.RecentFilesControllerRecentMaps(recentMaps))
     }
 
-    private fun ensureRecentJsonFileExists() {
-        if (recentJsonFile.createNewFile()) {
-            recentJsonFile.writeText(Gson().toJson(RecentFiles()))
+    private fun ensureRecentFilesConfigExists() {
+        if (recentFilesConfig.createNewFile()) {
+            recentFilesConfig.writeText(Gson().toJson(RecentFiles()))
         }
     }
 
-    private fun readRecentJsonFile() {
-        recentJsonFile.reader().use {
+    private fun readRecentFilesConfig() {
+        recentFilesConfig.reader().use {
             recentFiles = Gson().fromJson(it, RecentFiles::class.java)
             validateRecentFiles()
             updateRecentEnvironmentsList()
@@ -55,7 +55,7 @@ class RecentFilesController : EventConsumer, EventSender {
     }
 
     private fun writeRecentJsonFile() {
-        recentJsonFile.writeText(Gson().toJson(recentFiles))
+        recentFilesConfig.writeText(Gson().toJson(recentFiles))
     }
 
     private fun validateRecentFiles() {

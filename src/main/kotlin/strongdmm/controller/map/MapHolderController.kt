@@ -6,6 +6,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
+import strongdmm.controller.preferences.Preferences
 import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
@@ -19,6 +20,8 @@ class MapHolderController : EventSender, EventConsumer {
     companion object {
         private val backupsDir: Path = StrongDMM.homeDir.resolve("backups")
     }
+
+    private lateinit var providedPreferences: Preferences
 
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
@@ -35,6 +38,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(EventMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(EventGlobalProvider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
     }
 
     fun postInit() {
@@ -129,7 +133,7 @@ class MapHolderController : EventSender, EventConsumer {
     private fun handleSaveSelectedMap() {
         selectedMap?.let { map ->
             val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
-            SaveMap(map, initialDmmData, initialDmmData.isTgm)
+            SaveMap(map, initialDmmData, providedPreferences)
             sendEvent(EventActionController.ResetActionBalance())
         }
     }
@@ -159,5 +163,9 @@ class MapHolderController : EventSender, EventConsumer {
                 availableMapsPathsWithVisibleMapsPaths.add(absoluteFilePath to visibleName)
             }
         }
+    }
+
+    private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
+        providedPreferences = event.body
     }
 }

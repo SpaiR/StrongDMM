@@ -4,15 +4,22 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.parser.DmmData
 import strongdmm.byond.dmm.parser.saveAsByond
 import strongdmm.byond.dmm.parser.saveAsTGM
+import strongdmm.controller.preferences.MapSaveMode
+import strongdmm.controller.preferences.Preferences
 import java.io.File
 
 class SaveMap(
     private val dmm: Dmm,
     private val initialDmmData: DmmData,
-    isTgm: Boolean
+    private val prefs: Preferences
 ) {
     private val outputDmmData: DmmData = DmmData().apply {
-        this.isTgm = isTgm
+        isTgm = when (prefs.mapSaveMode) {
+            MapSaveMode.PROVIDED -> initialDmmData.isTgm
+            MapSaveMode.TGM -> true
+            else -> false
+        }
+
         keyLength = initialDmmData.keyLength
         setDmmSize(initialDmmData.maxZ, initialDmmData.maxY, initialDmmData.maxX)
     }
@@ -25,10 +32,17 @@ class SaveMap(
     }
 
     private fun save() {
-        sanitizeMap()
+        if (prefs.sanitizeInitialVariables.get()) {
+            sanitizeMap()
+        }
+
         fillWithReusedKeys()
         loopThroughRemainingTiles()
-        removeUnusedKeys()
+
+        if (prefs.cleanUnusedKeys.get()) {
+            removeUnusedKeys()
+        }
+
         saveToFile()
     }
 
