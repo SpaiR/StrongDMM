@@ -6,6 +6,7 @@ import strongdmm.controller.canvas.CanvasController
 import strongdmm.controller.frame.FrameController
 import strongdmm.controller.map.MapHolderController
 import strongdmm.controller.map.MapModifierController
+import strongdmm.controller.recent.RecentFilesController
 import strongdmm.controller.shortcut.ShortcutController
 import strongdmm.controller.tool.ToolsController
 import strongdmm.ui.*

@@ -30,7 +30,7 @@ switch (OperatingSystem.current()) {
 ext {
     lwjglVersion = '3.2.3'
     trove4jVersion = '3.0.3'
-    minimalJsonjVersion = '0.9.5'
+    gsonVersion = '2.8.6'
     pngjVersion = '2.1.0'
     imguiVersion = '1.75-0.7.1'
 }
@@ -39,7 +39,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
     implementation "net.sf.trove4j:trove4j:$trove4jVersion"
-    implementation "com.eclipsesource.minimal-json:minimal-json:$minimalJsonjVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "ar.com.hjg:pngj:$pngjVersion"
 
     implementation "io.imgui.java:binding:$imguiVersion"

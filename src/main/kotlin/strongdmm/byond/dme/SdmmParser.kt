@@ -1,9 +1,9 @@
 package strongdmm.byond.dme
 
-import com.eclipsesource.json.Json
-import com.eclipsesource.json.JsonArray
-import com.eclipsesource.json.JsonObject
-import com.eclipsesource.json.JsonValue
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import strongdmm.byond.VAR_NAME
 import java.io.File
 import java.nio.file.Files
@@ -45,10 +45,8 @@ class SdmmParser {
         val dmeItems = mutableMapOf<String, DmeItem>()
         val dme = Dme(dmeFile.nameWithoutExtension, dmeFile.parent, dmeFile.absolutePath, dmeItems)
 
-        tmpFile.reader().use {
-            Json.parse(it).asObject().getChildren().forEach { child ->
-                traverseTreeRecurs(child.asObject(), dme, dmeItems)
-            }
+        tmpFile.reader(Charsets.UTF_8).use {
+            traverseTreeRecurs(JsonParser.parseReader(it).asJsonObject, dme, dmeItems)
         }
 
         dme.postInit()
@@ -81,7 +79,7 @@ class SdmmParser {
 
         root.getChildren().forEach { child ->
             childrenList.add(child.getPath())
-            traverseTreeRecurs(child.asObject(), dme, dmeItems)
+            traverseTreeRecurs(child.asJsonObject, dme, dmeItems)
         }
 
         // Sort names by natural order
@@ -100,10 +98,10 @@ class SdmmParser {
         }
     }
 
-    private fun JsonObject.getVars(): JsonArray = get("vars").asArray()
-    private fun JsonObject.getPath(): String = get("path").asString()
-    private fun JsonObject.getChildren(): JsonArray = get("children").asArray()
-    private fun JsonValue.getPath(): String = asObject().get("path").asString()
-    private fun JsonValue.getName(): String = asObject().get("name").asString()
-    private fun JsonValue.getValue(): String = asObject().get("value").asString()
+    private fun JsonObject.getVars(): JsonArray = get("vars").asJsonArray
+    private fun JsonObject.getPath(): String = get("path").asString
+    private fun JsonObject.getChildren(): JsonArray = get("children").asJsonArray
+    private fun JsonElement.getPath(): String = asJsonObject.get("path").asString
+    private fun JsonElement.getName(): String = asJsonObject.get("name").asString
+    private fun JsonElement.getValue(): String = asJsonObject.get("value").asString
 }

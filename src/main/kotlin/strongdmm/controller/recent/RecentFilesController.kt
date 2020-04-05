@@ -1,8 +1,6 @@
-package strongdmm.controller
+package strongdmm.controller.recent
 
-import com.eclipsesource.json.Json
-import com.eclipsesource.json.JsonArray
-import com.eclipsesource.json.JsonObject
+import com.google.gson.Gson
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
@@ -18,17 +16,13 @@ import java.io.File
 
 class RecentFilesController : EventConsumer, EventSender {
     companion object {
-        private const val RECENT_ENVIRONMENTS_KEY = "recent_environments"
-        private const val READABLE_MAP_PATH_KEY = "readable"
-        private const val ABSOLUTE_MAP_PATH_KEY = "absolute"
-
         private val recentJsonFile: File = File(StrongDMM.homeDir.toFile(), "recent.json")
     }
 
-    private val recentEnvironments: MutableList<String> = mutableListOf()
-    private val recentMaps: MutableList<MapPath> = mutableListOf() // list will be updated after current environment is changed
+    private lateinit var recentFiles: RecentFiles
 
-    private val allRecentMaps: MutableMap<String, MutableList<MapPath>> = mutableMapOf()
+    private val recentEnvironments: MutableList<String> = mutableListOf()
+    private val recentMaps: MutableList<MapPath> = mutableListOf()
 
     init {
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
@@ -48,66 +42,69 @@ class RecentFilesController : EventConsumer, EventSender {
 
     private fun ensureRecentJsonFileExists() {
         if (recentJsonFile.createNewFile()) {
-            recentJsonFile.appendText("{\"$RECENT_ENVIRONMENTS_KEY\":{}}")
+            recentJsonFile.writeText(Gson().toJson(RecentFiles()))
         }
     }
 
     private fun readRecentJsonFile() {
         recentJsonFile.reader().use {
-            val json = Json.parse(it).asObject()
-            val recent = json.get(RECENT_ENVIRONMENTS_KEY).asObject()
-
-            recent.forEach { recentEnv ->
-                val envPath = recentEnv.name
-                recentEnvironments.add(envPath)
-                recentEnv.value.asArray().forEach { recentMap ->
-                    recentMap.asObject().let { path ->
-                        val mapPath = MapPath(path[READABLE_MAP_PATH_KEY].asString(), path[ABSOLUTE_MAP_PATH_KEY].asString())
-                        allRecentMaps.getOrPut(envPath) { mutableListOf() }.add(mapPath)
-                    }
-                }
-            }
+            recentFiles = Gson().fromJson(it, RecentFiles::class.java)
+            validateRecentFiles()
+            updateRecentEnvironmentsList()
         }
     }
 
     private fun writeRecentJsonFile() {
-        recentJsonFile.writeText(JsonObject().apply {
-            add(RECENT_ENVIRONMENTS_KEY, JsonObject().apply {
-                recentEnvironments.forEach { environmentPath ->
-                    add(environmentPath, JsonArray().apply {
-                        allRecentMaps[environmentPath]?.forEach { mapPath ->
-                            add(JsonObject().apply {
-                                add(READABLE_MAP_PATH_KEY, mapPath.readable)
-                                add(ABSOLUTE_MAP_PATH_KEY, mapPath.absolute)
-                            })
-                        }
-                    })
+        recentJsonFile.writeText(Gson().toJson(recentFiles))
+    }
+
+    private fun validateRecentFiles() {
+        recentFiles.environments.toList().forEach {
+            if (!File(it).exists()) {
+                recentFiles.environments.remove(it)
+            }
+        }
+        recentFiles.maps.toMap().forEach { (envPath, mapPaths) ->
+            if (File(envPath).exists()) {
+                mapPaths.toList().forEach { mapPath ->
+                    if (!File(mapPath.absolute).exists()) {
+                        mapPaths.remove(mapPath)
+                    }
                 }
-            })
-        }.toString())
+            } else {
+                recentFiles.maps.remove(envPath)
+            }
+        }
     }
 
     private fun addEnvironment(environmentPath: String) {
-        recentEnvironments.remove(environmentPath)
-        recentEnvironments.add(0, environmentPath)
+        recentFiles.environments.remove(environmentPath)
+        recentFiles.environments.add(0, environmentPath)
         writeRecentJsonFile()
+        updateRecentEnvironmentsList()
     }
 
     private fun addMap(environmentPath: String, mapPath: MapPath) {
-        val maps = allRecentMaps.getOrPut(environmentPath) { mutableListOf() }
+        val maps = recentFiles.maps.getOrPut(environmentPath) { mutableListOf() }
         maps.remove(mapPath)
         maps.add(0, mapPath)
         writeRecentJsonFile()
+        updateRecentMapsList(environmentPath)
+    }
+
+    private fun updateRecentEnvironmentsList() {
+        recentEnvironments.clear()
+        recentEnvironments.addAll(recentFiles.environments)
     }
 
     private fun updateRecentMapsList(currentEnvironmentPath: String) {
         recentMaps.clear()
-        recentMaps.addAll(allRecentMaps.getOrPut(currentEnvironmentPath) { mutableListOf() })
+        recentMaps.addAll(recentFiles.maps.getOrPut(currentEnvironmentPath) { mutableListOf() })
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
-        updateRecentMapsList(event.body.absEnvPath)
         addEnvironment(event.body.absEnvPath)
+        updateRecentMapsList(event.body.absEnvPath)
     }
 
     private fun handleEnvironmentReset() {
@@ -117,13 +114,12 @@ class RecentFilesController : EventConsumer, EventSender {
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
             addMap(environment.absEnvPath, event.body.mapPath)
-            updateRecentMapsList(environment.absEnvPath)
         })
     }
 
     private fun handleClearRecentEnvironments() {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
-            recentEnvironments.clear()
+            recentFiles.environments.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)
         })
@@ -131,7 +127,7 @@ class RecentFilesController : EventConsumer, EventSender {
 
     private fun handleClearRecentMaps() {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
-            allRecentMaps[environment.absEnvPath]?.clear()
+            recentFiles.maps[environment.absEnvPath]?.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)
         })
