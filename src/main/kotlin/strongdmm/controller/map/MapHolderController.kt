@@ -9,6 +9,7 @@ import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.controller.EventActionController
 import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapHolderController
 import java.io.File
@@ -128,10 +129,9 @@ class MapHolderController : EventSender, EventConsumer {
 
     private fun handleSaveSelectedMap() {
         selectedMap?.let { map ->
-            thread(start = true) {
-                val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
-                SaveMap(map, initialDmmData, true)
-            }
+            val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
+            SaveMap(map, initialDmmData, true)
+            sendEvent(EventActionController.ResetActionBalance())
         }
     }
 

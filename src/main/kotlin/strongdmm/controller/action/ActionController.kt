@@ -22,6 +22,7 @@ class ActionController : EventConsumer, EventSender {
         consumeEvent(EventActionController.AddAction::class.java, ::handleAddAction)
         consumeEvent(EventActionController.UndoAction::class.java, ::handleUndoAction)
         consumeEvent(EventActionController.RedoAction::class.java, ::handleRedoAction)
+        consumeEvent(EventActionController.ResetActionBalance::class.java, ::handleResetActionBalance)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -83,6 +84,12 @@ class ActionController : EventConsumer, EventSender {
                 updateActionBalance(true)
                 sendEvent(EventFrameController.RefreshFrame())
             }
+        })
+    }
+
+    private fun handleResetActionBalance() {
+        sendEvent(EventMapHolderController.FetchSelectedMap { currentMap ->
+            actionBalanceStorage.put(currentMap, 0)
         })
     }
 

@@ -116,7 +116,6 @@ abstract class AppWindow(title: String) {
         val io = ImGui.getIO()
 
         io.iniFilename = null
-        io.configFlags = ImGuiConfigFlags.NavEnableKeyboard
         io.backendFlags = ImGuiBackendFlags.HasMouseCursors
 
         // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
