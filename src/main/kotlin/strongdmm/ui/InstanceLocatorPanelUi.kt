@@ -23,6 +23,7 @@ import strongdmm.util.imgui.button
 import strongdmm.util.imgui.inputInt
 import strongdmm.util.imgui.inputText
 import strongdmm.util.imgui.window
+import strongdmm.window.AppWindow
 
 class InstanceLocatorPanelUi : EventSender, EventConsumer {
     companion object {
@@ -59,7 +60,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
             return
         }
 
-        setNextWindowPos(345f, 535f, ImGuiCond.Once)
+        setNextWindowPos(345f, AppWindow.windowHeight / 1.7f, ImGuiCond.Once)
         setNextWindowSize(300f, 180f, ImGuiCond.Once)
 
         window("Instance Locator", showInstanceLocator) {

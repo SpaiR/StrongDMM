@@ -12,21 +12,20 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventInstanceController
 import strongdmm.event.type.controller.EventTileItemController
 import strongdmm.event.type.ui.EventEditVarsDialogUi
 import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
 import strongdmm.event.type.ui.EventObjectPanelUi
 import strongdmm.util.imgui.*
+import strongdmm.window.AppWindow
 
 class ObjectPanelUi : EventConsumer, EventSender {
     companion object {
         private const val ICON_SIZE: Float = 32f
     }
 
-    private val showVarsPreview: ImBool = ImBool(false)
-    private lateinit var providedShowInstanceLocator: ImBool
+    private val showVarsPreview: ImBool = ImBool(true)
     private val columnsCount: ImInt = ImInt(1)
 
     private var scrolledToItem: Boolean = false
@@ -38,20 +37,18 @@ class ObjectPanelUi : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(EventObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
     fun process() {
-        setNextWindowPos(10f, 535f, ImGuiCond.Once)
-        setNextWindowSize(330f, 390f, ImGuiCond.Once)
+        setNextWindowPos(10f, AppWindow.windowHeight / 1.7f, ImGuiCond.Once)
+        setNextWindowSize(330f, AppWindow.windowHeight - AppWindow.windowHeight / 1.7f - 15, ImGuiCond.Once)
 
         val title = if (tileItems?.size ?: 0 > 0) "(${tileItems!!.size}) $tileItemType###object_panel" else "Object Panel###object_panel"
 
         window(title) {
             popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
                 checkbox("Show Variables Preview", showVarsPreview)
-                checkbox("Show Instance Locator", providedShowInstanceLocator)
                 setNextItemWidth(75f)
                 if (inputInt("Columns count", columnsCount)) {
                     if (columnsCount.get() <= 0) {
@@ -114,7 +111,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
         }
 
         if (showVarsPreview.get()) {
-            setNextWindowPos(345f, 730f, ImGuiCond.Once)
+            setNextWindowPos(345f, AppWindow.windowHeight - 210f, ImGuiCond.Once)
             setNextWindowSize(300f, 195f, ImGuiCond.Once)
 
             window("Variables Preview", showVarsPreview) {
@@ -162,10 +159,6 @@ class ObjectPanelUi : EventConsumer, EventSender {
         if (tileItemType.isNotEmpty()) {
             tileItems = getTileItemsByTypeSorted(tileItemType)
         }
-    }
-
-    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
-        providedShowInstanceLocator = event.body
     }
 
     private fun handleUpdate() {

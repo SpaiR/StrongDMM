@@ -24,6 +24,7 @@ import strongdmm.event.type.controller.EventTileItemController
 import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.*
+import strongdmm.window.AppWindow
 import java.io.File
 
 class EnvironmentTreePanelUi : EventConsumer, EventSender {
@@ -59,7 +60,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     fun process() {
         setNextWindowPos(10f, 30f, ImGuiCond.Once)
-        setNextWindowSize(330f, 500f, ImGuiCond.Once)
+        setNextWindowSize(330f, AppWindow.windowHeight / 1.8f, ImGuiCond.Once)
 
         window("Environment Tree") {
             if (currentEnv == null) {
