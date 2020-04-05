@@ -48,6 +48,11 @@ class ObjectPanelUi : EventConsumer, EventSender {
 
         window(title) {
             popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
+                if (tileItemType.isNotEmpty()) {
+                    button("Copy Type To Clipboard") {
+                        setClipboardText(tileItemType)
+                    }
+                }
                 checkbox("Show Variables Preview", showVarsPreview)
                 setNextItemWidth(75f)
                 if (inputInt("Columns count", columnsCount)) {
