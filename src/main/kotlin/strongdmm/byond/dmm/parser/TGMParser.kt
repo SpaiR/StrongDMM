@@ -28,6 +28,7 @@ class TGMParser(
 
         val tiles = readTiles(rawMapContent.substring(posIdx))
 
+        dmmData.isTgm = true
         dmmData.setDmmSize(tiles.size, tiles[0].size, tiles[0][0].size)
 
         for (z in 1..dmmData.maxZ) {

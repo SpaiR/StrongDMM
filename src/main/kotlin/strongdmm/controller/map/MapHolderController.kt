@@ -129,7 +129,7 @@ class MapHolderController : EventSender, EventConsumer {
     private fun handleSaveSelectedMap() {
         selectedMap?.let { map ->
             val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
-            SaveMap(map, initialDmmData, true)
+            SaveMap(map, initialDmmData, initialDmmData.isTgm)
             sendEvent(EventActionController.ResetActionBalance())
         }
     }
