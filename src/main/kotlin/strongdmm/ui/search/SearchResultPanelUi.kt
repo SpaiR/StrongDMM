@@ -3,6 +3,7 @@ package strongdmm.ui.search
 import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
+import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmm.Dmm
@@ -17,6 +18,7 @@ import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapModifierController
 import strongdmm.event.type.ui.EventSearchResultPanelUi
 import strongdmm.util.imgui.*
+import strongdmm.window.AppWindow
 
 class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableMap<String, SearchResult> = mutableMapOf()
@@ -56,7 +58,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                 continue
             }
 
-            setNextWindowPos(655f, 535f, ImGuiCond.Once)
+            setNextWindowPos((AppWindow.windowWidth - 357f) / 2, (AppWindow.windowHeight - 390f) / 2, ImGuiCond.Once)
             setNextWindowSize(375f, 390f, ImGuiCond.Once)
 
             window("Search Result: ${searchResult.searchValue} (${searchResult.positions.size})###${searchResult.searchValue}", openState) {
@@ -72,9 +74,21 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                         searchResIterator.remove()
                     }
                 } else {
+                    if (!isReplaceEnabled) {
+                        pushStyleColor(ImGuiCol.Button, GREY32)
+                        pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
+                        pushStyleColor(ImGuiCol.ButtonActive, GREY32)
+                    }
+
                     button("Replace All##replace_all_${searchResult.searchValue}") {
-                        replaceAll(searchResult)
-                        searchResIterator.remove()
+                        if (isReplaceEnabled) {
+                            replaceAll(searchResult)
+                            searchResIterator.remove()
+                        }
+                    }
+
+                    if (!isReplaceEnabled) {
+                        popStyleColor(3)
                     }
                 }
                 sameLine()
