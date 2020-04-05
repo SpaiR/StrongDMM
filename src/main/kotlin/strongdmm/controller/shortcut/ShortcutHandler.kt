@@ -1,8 +1,17 @@
 package strongdmm.controller.shortcut
 
-open class ShortcutHandler {
+import strongdmm.event.Event
+import strongdmm.event.EventConsumer
+import strongdmm.event.type.EventGlobal
+
+open class ShortcutHandler : EventConsumer {
     companion object {
         val globalShortcuts: MutableSet<Shortcut> = mutableSetOf() // used to iterate through all registered shortcuts
+    }
+
+    init {
+        @Suppress("LeakingThis")
+        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
     }
 
     private val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()
@@ -25,7 +34,7 @@ open class ShortcutHandler {
         addShortcut(firstPair.second, secondPair.first, third, action)
     }
 
-    fun handleShortcut(shortcut: Shortcut) {
-        shortcuts[shortcut]?.invoke()
+    private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
+        shortcuts[event.body]?.invoke()
     }
 }

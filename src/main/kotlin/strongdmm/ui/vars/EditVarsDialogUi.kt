@@ -71,16 +71,16 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, ImGuiCond.Once)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_$WINDOW_ID") {
-                drawControls()
+                showControls()
                 separator()
                 child("vars_table") {
-                    drawVariables()
+                    showVariables()
                 }
             }
         }
     }
 
-    private fun drawControls() {
+    private fun showControls() {
         checkbox("##is_show_modified_vars", isShowModifiedVars)
         setItemHoveredTooltip("Show modified variables")
         sameLine()
@@ -98,7 +98,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         button("Cancel", block = ::discardChangesAndDispose)
     }
 
-    private fun drawVariables() {
+    private fun showVariables() {
         var rowCount = 0
 
         columns(2, "edit_vars_columns", true)

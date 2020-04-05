@@ -1,6 +1,7 @@
 package strongdmm.event.type.controller
 
 import strongdmm.byond.dmm.Dmm
+import strongdmm.event.ActiveZ
 import strongdmm.event.Event
 import strongdmm.event.MapId
 import java.io.File
@@ -11,4 +12,5 @@ abstract class EventMapHolderController {
     class FetchSelectedMap(callback: ((Dmm) -> Unit)) : Event<Unit, Dmm>(Unit, callback)
     class ChangeSelectedMap(body: MapId) : Event<MapId, Unit>(body, null)
     class SaveSelectedMap : Event<Unit, Unit>(Unit, null)
+    class ChangeActiveZ(body: ActiveZ) : Event<ActiveZ, Unit>(body, null)
 }

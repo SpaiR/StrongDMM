@@ -7,6 +7,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.tool.ToolType
+import strongdmm.event.ActiveZ
 import strongdmm.event.DmeItemType
 import strongdmm.event.EnvironmentLoadedStatus
 import strongdmm.event.Event
@@ -20,6 +21,7 @@ abstract class EventGlobal {
 
     class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
     class OpenedMapClosed(body: Dmm) : Event<Dmm, Unit>(body, null)
+    class SelectedMapZActiveChanged(body: ActiveZ) : Event<ActiveZ, Unit>(body, null)
 
     class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
     class MapMouseDragStarted : Event<Unit, Unit>(Unit, null)

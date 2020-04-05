@@ -32,6 +32,7 @@ class FrameController : EventConsumer, EventSender {
 
     init {
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -41,39 +42,6 @@ class FrameController : EventConsumer, EventSender {
     fun postInit() {
         sendEvent(EventGlobalProvider.FrameControllerComposedFrame(cache))
         sendEvent(EventGlobalProvider.FrameControllerFramedTiles(framedTiles))
-    }
-
-    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
-        cache.clear()
-        framedTiles.clear()
-        updateFrameCache()
-    }
-
-    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
-        currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
-        updateFrameCache()
-    }
-
-    private fun handleEnvironmentReset() {
-        selectedMapId = Dmm.MAP_ID_NONE
-        cache.clear()
-        framedTiles.clear()
-    }
-
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (selectedMapId == event.body.id) {
-            selectedMapId = Dmm.MAP_ID_NONE
-            cache.clear()
-            framedTiles.clear()
-        }
-    }
-
-    private fun handleRefreshFrame() {
-        cache.clear()
-        framedTiles.clear()
-        updateFrameCache()
-        sendEvent(EventGlobal.FrameRefreshed())
     }
 
     private fun updateFrameCache() {
@@ -143,5 +111,46 @@ class FrameController : EventConsumer, EventSender {
         if (dir != 0) {
             framedTiles.add(FramedTile(x, y, dir))
         }
+    }
+
+    private fun refreshFrame() {
+        cache.clear()
+        framedTiles.clear()
+        updateFrameCache()
+        sendEvent(EventGlobal.FrameRefreshed())
+    }
+
+    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
+        selectedMapId = event.body.id
+        cache.clear()
+        framedTiles.clear()
+        updateFrameCache()
+    }
+
+    private fun handleSelectedMapZActiveChanged() {
+        refreshFrame()
+    }
+
+    private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
+        currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+        updateFrameCache()
+    }
+
+    private fun handleEnvironmentReset() {
+        selectedMapId = Dmm.MAP_ID_NONE
+        cache.clear()
+        framedTiles.clear()
+    }
+
+    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
+        if (selectedMapId == event.body.id) {
+            selectedMapId = Dmm.MAP_ID_NONE
+            cache.clear()
+            framedTiles.clear()
+        }
+    }
+
+    private fun handleRefreshFrame() {
+        refreshFrame()
     }
 }

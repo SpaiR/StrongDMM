@@ -52,7 +52,6 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
-        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
 
         consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(EventGlobalProvider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
@@ -83,7 +82,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         mainMenuBar {
             menu("File") {
                 menuItem("Open Environment...", enabled = progressText == null, block = ::doOpenEnvironment)
-                menu("Recent Environments") {
+                menu("Recent Environments", enabled = progressText == null) {
                     showRecentEnvironments()
                 }
                 separator()
@@ -305,10 +304,6 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         isTurfLayerActive.set(!event.body.contains(TYPE_TURF))
         isObjLayerActive.set(!event.body.contains(TYPE_OBJ))
         isMobLayerActive.set(!event.body.contains(TYPE_MOB))
-    }
-
-    private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
-        handleShortcut(event.body)
     }
 
     private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {

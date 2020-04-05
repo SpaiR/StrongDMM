@@ -22,7 +22,6 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
 
     init {
         consumeEvent(EventGlobal.ActiveToolChanged::class.java, ::handleActiveToolChanged)
-        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
 
         addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_1) { selectTool(tools[0]) }
         addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_2) { selectTool(tools[1]) }
@@ -66,9 +65,5 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
 
     private fun handleActiveToolChanged(event: Event<ToolType, Unit>) {
         activeTool = event.body
-    }
-
-    private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
-        handleShortcut(event.body)
     }
 }

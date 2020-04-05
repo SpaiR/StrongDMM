@@ -29,6 +29,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val searchResultPanelUi = SearchResultPanelUi()
     private val layersFilterPanelUi = LayersFilterPanelUi()
     private val toolSelectPanelUi = ToolSelectPanelUi()
+    private val levelSwitchPanelUi = LevelSwitchPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapHolderController = MapHolderController()
@@ -69,6 +70,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         searchResultPanelUi.process()
         layersFilterPanelUi.process()
         toolSelectPanelUi.process()
+        levelSwitchPanelUi.process()
 
         // Controllers
         canvasController.process()

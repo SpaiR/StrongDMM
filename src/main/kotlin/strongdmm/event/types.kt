@@ -15,3 +15,5 @@ typealias AbsoluteFilePath = String
 typealias VisibleFilePath = String
 
 typealias EnvironmentLoadedStatus = Boolean
+
+typealias ActiveZ = Int

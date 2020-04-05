@@ -26,6 +26,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventToolsController.ChangeTool::class.java, ::handleChangeTool)
@@ -61,6 +62,10 @@ class ToolsController : EventConsumer, EventSender {
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         currentTool.reset()
         selectedMapId = event.body.id
+    }
+
+    private fun handleSelectedMapZActiveChanged() {
+        currentTool.reset()
     }
 
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {

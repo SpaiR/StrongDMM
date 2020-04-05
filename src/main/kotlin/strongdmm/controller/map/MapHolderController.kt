@@ -6,10 +6,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
-import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
-import strongdmm.event.MapId
+import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventEnvironmentController
@@ -35,6 +32,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(EventMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
         consumeEvent(EventMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
         consumeEvent(EventMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        consumeEvent(EventMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
     }
@@ -134,6 +132,17 @@ class MapHolderController : EventSender, EventConsumer {
                 val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
                 SaveMap(map, initialDmmData, true)
             }
+        }
+    }
+
+    private fun handleChangeActiveZ(event: Event<ActiveZ, Unit>) {
+        selectedMap?.let { map ->
+            if (event.body == map.zActive || event.body < 1 || event.body > map.maxZ) {
+                return
+            }
+
+            map.zActive = event.body
+            sendEvent(EventGlobal.SelectedMapZActiveChanged(map.zActive))
         }
     }
 
