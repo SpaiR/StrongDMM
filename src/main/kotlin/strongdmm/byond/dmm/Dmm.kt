@@ -1,8 +1,8 @@
 package strongdmm.byond.dmm
 
-import io.github.spair.dmm.io.DmmData
-import io.github.spair.dmm.io.TileContent
 import strongdmm.byond.dme.Dme
+import strongdmm.byond.dmm.parser.DmmData
+import strongdmm.byond.dmm.parser.TileContent
 import java.io.File
 import java.nio.file.Paths
 
@@ -27,36 +27,42 @@ class Dmm(
         private set
     var maxY: Int = initialDmmData.maxY
         private set
+    var maxZ: Int = initialDmmData.maxZ
+        private set
 
-    private var tiles: Array<Array<LongArray>> = Array(maxY) { Array(maxX) { LongArray(0) } }
+    var zActive: Int = 1
+
+    private var tiles: Array<Array<Array<LongArray>>> = Array(maxZ) { Array(maxY) { Array(maxX) { LongArray(0) } } }
 
     init {
-        for (x in 1..maxX) {
+        for (z in 1..maxZ) {
             for (y in 1..maxY) {
-                var tileItems = LongArray(0)
+                for (x in 1..maxX) {
+                    var tileItems = LongArray(0)
 
-                initialDmmData.getTileContentByLocation(x, y)?.let {
-                    for (tileObject in it) {
-                        if (dme.getItem(tileObject.type) != null) {
-                            tileItems += GlobalTileItemHolder.getOrCreate(tileObject.type, tileObject.vars).id
+                    initialDmmData.getTileContentByLocation(x, y, z)?.let { tileContent ->
+                        for (tileObject in tileContent.content) {
+                            if (dme.getItem(tileObject.type) != null) {
+                                tileItems += GlobalTileItemHolder.getOrCreate(tileObject.type, tileObject.vars).id
+                            }
                         }
                     }
-                }
 
-                tiles[y - 1][x - 1] = tileItems
+                    tiles[z - 1][y - 1][x - 1] = tileItems
+                }
             }
         }
     }
 
-    fun getTileContentByLocation(x: Int, y: Int): TileContent {
-        return getTile(x, y).getTileContent()
+    fun getTileContentByLocation(x: Int, y: Int, z: Int): TileContent {
+        return getTile(x, y, z).getTileContent()
     }
 
-    fun getTile(x: Int, y: Int): Tile = Tile(this, x, y)
-    fun getTileItemsId(x: Int, y: Int): LongArray = tiles[y - 1][x - 1]
+    fun getTile(x: Int, y: Int, z: Int): Tile = Tile(this, x, y, z)
+    fun getTileItemsId(x: Int, y: Int, z: Int): LongArray = tiles[z - 1][y - 1][x - 1]
 
-    fun setTileItemsId(x: Int, y: Int, tileItemsId: LongArray) {
-        tiles[y - 1][x - 1] = tileItemsId
+    fun setTileItemsId(x: Int, y: Int, z: Int, tileItemsId: LongArray) {
+        tiles[z - 1][y - 1][x - 1] = tileItemsId
     }
 
     override fun equals(other: Any?): Boolean {

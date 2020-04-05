@@ -40,7 +40,7 @@ class MapModifierController : EventConsumer, EventSender {
 
                     for (x in (activeArea.x1..activeArea.x2)) {
                         for (y in (activeArea.y1..activeArea.y2)) {
-                            val tile = selectedMap.getTile(x, y)
+                            val tile = selectedMap.getTile(x, y, selectedMap.zActive)
                             val initialTileItems = tile.getTileItemsId()
 
                             tile.getFilteredTileItems(filteredLayers).let { filteredTileItems ->
@@ -86,7 +86,7 @@ class MapModifierController : EventConsumer, EventSender {
                         x2 = xPos
                         y2 = yPos
 
-                        val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y)
+                        val tile = selectedMap.getTile(currentMapPos.x + x, currentMapPos.y + y, selectedMap.zActive)
 
                         reverseActions.add(ReplaceTileAction(tile) {
                             tile.getFilteredTileItems(filteredLayers).forEach { tileItem ->
@@ -115,7 +115,7 @@ class MapModifierController : EventConsumer, EventSender {
             val replaceActions = mutableListOf<Undoable>()
 
             event.body.second.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y)
+                val tile = dmm.getTile(pos.x, pos.y, dmm.zActive)
                 replaceActions.add(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem.type, replaceWithTileItem)
                 })
@@ -132,7 +132,7 @@ class MapModifierController : EventConsumer, EventSender {
             val replaceActions = mutableListOf<Undoable>()
 
             event.body.second.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y)
+                val tile = dmm.getTile(pos.x, pos.y, dmm.zActive)
                 replaceActions.add(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem.id, replaceWithTileItem)
                 })
@@ -148,7 +148,7 @@ class MapModifierController : EventConsumer, EventSender {
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y)
+                val tile = dmm.getTile(pos.x, pos.y, dmm.zActive)
                 deleteActions.add(ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem.type)
                 })
@@ -164,7 +164,7 @@ class MapModifierController : EventConsumer, EventSender {
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y)
+                val tile = dmm.getTile(pos.x, pos.y, dmm.zActive)
                 deleteActions.add(ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem.id)
                 })

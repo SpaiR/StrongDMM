@@ -44,7 +44,7 @@ class FillAddTool : Tool(), EventSender {
         sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
             for (x in x1..x2) {
                 for (y in y1..y2) {
-                    val tile = selectedMap.getTile(x, y)
+                    val tile = selectedMap.getTile(x, y, selectedMap.zActive)
 
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.addTileItem(activeTileItem!!)

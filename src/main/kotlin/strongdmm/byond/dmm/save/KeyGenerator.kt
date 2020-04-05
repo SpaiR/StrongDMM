@@ -1,7 +1,7 @@
 package strongdmm.byond.dmm.save
 
 import gnu.trove.list.array.TIntArrayList
-import io.github.spair.dmm.io.DmmData
+import strongdmm.byond.dmm.parser.DmmData
 import kotlin.math.floor
 
 class KeyGenerator(private val dmmData: DmmData) {

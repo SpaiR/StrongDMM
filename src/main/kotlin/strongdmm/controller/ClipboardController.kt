@@ -44,7 +44,7 @@ class ClipboardController : EventConsumer, EventSender {
 
                     for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
                         for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
-                            val tile = selectedMap.getTile(x, y)
+                            val tile = selectedMap.getTile(x, y, selectedMap.zActive)
                             tileItems[xLocal][yLocal] = tile.getFilteredTileItems(filteredLayers)
                         }
                     }

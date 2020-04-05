@@ -110,7 +110,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 alignTextToFramePadding()
                 bullet()
                 sameLine()
-                button(envPath.replace('\\', '/').substringAfterLast('/')) {
+                button(envPath.replace('\\', '/').substringAfterLast('/') + "##$envPath") {
                     sendEvent(EventEnvironmentController.OpenEnvironment(File(envPath)))
                 }
                 setItemHoveredTooltip(envPath)

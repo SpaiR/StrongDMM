@@ -71,7 +71,7 @@ class InstanceController : EventConsumer, EventSender {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {
                     for (y in (y1..y2)) {
-                        map.getTileItemsId(x, y).forEach { tileItemId ->
+                        map.getTileItemsId(x, y, map.zActive).forEach { tileItemId ->
                             val tileItem = GlobalTileItemHolder.getById(tileItemId)
                             if (tileItem.type == event.body.second) {
                                 positions.add(Pair(tileItem, MapPos(x, y)))
@@ -93,7 +93,7 @@ class InstanceController : EventConsumer, EventSender {
 
             for (x in (x1..x2)) {
                 for (y in (y1..y2)) {
-                    map.getTileItemsId(x, y).forEach { tileItemId ->
+                    map.getTileItemsId(x, y, map.zActive).forEach { tileItemId ->
                         val tileItem = GlobalTileItemHolder.getById(tileItemId)
                         if (tileItem.id == event.body.second) {
                             positions.add(Pair(tileItem, MapPos(x, y)))

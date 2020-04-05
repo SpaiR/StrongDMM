@@ -45,7 +45,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
                 sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
                     for (x in selectedArea.x1..selectedArea.x2) {
                         for (y in selectedArea.y1..selectedArea.y2) {
-                            val filteredTileItems = selectedMap.getTile(x, y).getFilteredTileItems(filteredTypes)
+                            val filteredTileItems = selectedMap.getTile(x, y, selectedMap.zActive).getFilteredTileItems(filteredTypes)
                             tilesItemsToMove.put(x, y, filteredTileItems)
                             tilesItemsStored.put(x, y, filteredTileItems)
                         }
@@ -63,7 +63,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
                 // Restore initial tiles state and create a reverse action
                 for (x in initialArea.x1..initialArea.x2) {
                     for (y in initialArea.y1..initialArea.y2) {
-                        val tile = selectedMap.getTile(x, y)
+                        val tile = selectedMap.getTile(x, y, selectedMap.zActive)
                         var movedTileItems: List<TileItem>? = null
 
                         // If it's a part of the selected area, then it filled with moved items
@@ -128,7 +128,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
             // Restore tile items for tiles we left out of the selection
             for (x in selectedArea.x1..selectedArea.x2) {
                 for (y in selectedArea.y1..selectedArea.y2) {
-                    val tile = selectedMap.getTile(x, y)
+                    val tile = selectedMap.getTile(x, y, selectedMap.zActive)
 
                     tile.getFilteredTileItems(filteredTypes).forEach { tileIem ->
                         tile.deleteTileItem(tileIem)
@@ -152,7 +152,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
             for (x in selectedArea.x1..selectedArea.x2) {
                 for (y in selectedArea.y1..selectedArea.y2) {
-                    val tile = selectedMap.getTile(x, y)
+                    val tile = selectedMap.getTile(x, y, selectedMap.zActive)
                     val filteredTileItems = tile.getFilteredTileItems(filteredTypes)
 
                     tilesItemsStored.put(x, y, filteredTileItems)

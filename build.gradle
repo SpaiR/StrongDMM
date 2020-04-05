@@ -29,7 +29,6 @@ switch (OperatingSystem.current()) {
 
 ext {
     lwjglVersion = '3.2.3'
-    dmmioVersion = '1.6.1'
     trove4jVersion = '3.0.3'
     minimalJsonjVersion = '0.9.5'
     pngjVersion = '2.1.0'
@@ -39,7 +38,6 @@ ext {
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
-    implementation "io.github.spair:dmm-io:$dmmioVersion"
     implementation "net.sf.trove4j:trove4j:$trove4jVersion"
     implementation "com.eclipsesource.minimal-json:minimal-json:$minimalJsonjVersion"
     implementation "ar.com.hjg:pngj:$pngjVersion"

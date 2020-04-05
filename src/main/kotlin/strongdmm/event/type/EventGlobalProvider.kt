@@ -19,6 +19,7 @@ abstract class EventGlobalProvider {
 
     class MapHolderControllerAvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) :
         Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
+
     class FrameControllerComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
 
     class FrameControllerFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)

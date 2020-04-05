@@ -1,10 +1,10 @@
 package strongdmm.controller.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
-import io.github.spair.dmm.io.reader.DmmReader
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -81,7 +81,7 @@ class MapHolderController : EventSender, EventConsumer {
             }
 
             sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
-                val dmmData = DmmReader.readMap(mapFile)
+                val dmmData = DmmParser.parse(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 
                 createBackupFile(environment, mapFile, id)
@@ -131,7 +131,7 @@ class MapHolderController : EventSender, EventConsumer {
     private fun handleSaveSelectedMap() {
         selectedMap?.let { map ->
             thread(start = true) {
-                val initialDmmData = DmmReader.readMap(File(mapsBackupPathsById.get(map.id)))
+                val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
                 SaveMap(map, initialDmmData, true)
             }
         }

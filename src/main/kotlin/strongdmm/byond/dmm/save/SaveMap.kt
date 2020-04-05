@@ -1,8 +1,9 @@
 package strongdmm.byond.dmm.save
 
-import gnu.trove.list.array.TLongArrayList
-import io.github.spair.dmm.io.DmmData
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.parser.DmmData
+import strongdmm.byond.dmm.parser.saveAsByond
+import strongdmm.byond.dmm.parser.saveAsTGM
 import java.io.File
 
 class SaveMap(
@@ -11,9 +12,9 @@ class SaveMap(
     isTgm: Boolean
 ) {
     private val outputDmmData: DmmData = DmmData().apply {
-        setDmmSize(initialDmmData.maxX, initialDmmData.maxY)
-        keyLength = initialDmmData.keyLength
         this.isTgm = isTgm
+        keyLength = initialDmmData.keyLength
+        setDmmSize(initialDmmData.maxZ, initialDmmData.maxY, initialDmmData.maxX)
     }
 
     private val keyGenerator: KeyGenerator = KeyGenerator(outputDmmData)
@@ -32,25 +33,27 @@ class SaveMap(
 
     // Sanitize custom vars from values defined in the code
     private fun sanitizeMap() {
-        for (x in 1..dmm.maxX) {
+        for (z in 1..dmm.maxZ) {
             for (y in 1..dmm.maxY) {
-                val tile = dmm.getTile(x, y)
+                for (x in 1..dmm.maxX) {
+                    val tile = dmm.getTile(x, y, z)
 
-                for ((index, tileItem) in tile.tileItems.withIndex()) {
-                    if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
-                        continue // We won't find default vars for sure
-                    }
-
-                    val newVars = mutableMapOf<String, String>()
-
-                    tileItem.customVars.forEach { (name, value) ->
-                        if (value != tileItem.dmeItem.getVar(name)) {
-                            newVars[name] = value
+                    for ((index, tileItem) in tile.tileItems.withIndex()) {
+                        if (tileItem.customVars == null || tileItem.customVars.isEmpty()) {
+                            continue // We won't find default vars for sure
                         }
-                    }
 
-                    if (tileItem.customVars != newVars) {
-                        tile.modifyItemVars(index, if (newVars.isEmpty()) null else newVars)
+                        val newVars = mutableMapOf<String, String>()
+
+                        tileItem.customVars.forEach { (name, value) ->
+                            if (value != tileItem.dmeItem.getVar(name)) {
+                                newVars[name] = value
+                            }
+                        }
+
+                        if (tileItem.customVars != newVars) {
+                            tile.modifyItemVars(index, if (newVars.isEmpty()) null else newVars)
+                        }
                     }
                 }
             }
@@ -58,18 +61,20 @@ class SaveMap(
     }
 
     private fun fillWithReusedKeys() {
-        for (x in 1..outputDmmData.maxX) {
-            for (y in 1..outputDmmData.maxY) {
-                val newContent = dmm.getTileContentByLocation(x, y)
-                val originalKey = initialDmmData.getKeyByLocation(x, y)
-                val originalContent = initialDmmData.getTileContentByKey(originalKey)
+        for (z in 1..dmm.maxZ) {
+            for (y in 1..dmm.maxY) {
+                for (x in 1..dmm.maxX) {
+                    val newContent = dmm.getTileContentByLocation(x, y, z)
+                    val originalKey = initialDmmData.getKeyByLocation(x, y, z)
+                    val originalContent = initialDmmData.getTileContentByKey(originalKey)
 
-                if (!outputDmmData.hasKeyByTileContent(newContent) && originalKey != null && originalContent == newContent) {
-                    outputDmmData.addKeyAndTileContent(originalKey, newContent)
-                    unusedKeys.remove(originalKey)
+                    if (!outputDmmData.hasKeyByTileContent(newContent) && originalKey != null && originalContent == newContent) {
+                        outputDmmData.addKeyAndTileContent(originalKey, newContent)
+                        unusedKeys.remove(originalKey)
+                    }
+
+                    outputDmmData.addTileContentByLocation(x, y, z, newContent)
                 }
-
-                outputDmmData.addTileContentByLocation(x, y, newContent)
             }
         }
     }
@@ -97,21 +102,19 @@ class SaveMap(
             return // All locations have its own key
         }
 
-        val locsWithoutKey = TLongArrayList()
+        data class Loc(val x: Int, val y: Int, val z: Int)
 
-        // Store two ints in one long. Yes, it matters. Yes, for performance reasons. No, don't repeat that at home.
-        fun setValue(x: Int, y: Int): Long = (x.toLong() shl 32) or (y.toLong() and 0xffffffffL)
-
-        fun getX(value: Long): Int = (value shr 32).toInt()
-        fun getY(value: Long): Int = value.toInt()
+        val locsWithoutKey = mutableListOf<Loc>()
 
         // Collect all locs without keys
-        for (y in outputDmmData.maxY downTo 1) {
-            for (x in 1..outputDmmData.maxX) {
-                val tileContent = dmm.getTileContentByLocation(x, y)
+        for (z in 1..outputDmmData.maxZ) {
+            for (y in outputDmmData.maxY downTo 1) {
+                for (x in 1..outputDmmData.maxX) {
+                    val tileContent = dmm.getTileContentByLocation(x, y, z)
 
-                if (!outputDmmData.hasKeyByTileContent(tileContent)) {
-                    locsWithoutKey.add(setValue(x, y))
+                    if (!outputDmmData.hasKeyByTileContent(tileContent)) {
+                        locsWithoutKey.add(Loc(x, y, z))
+                    }
                 }
             }
         }
@@ -119,26 +122,25 @@ class SaveMap(
         // Try to find the most appropriate key for location
         for (unusedKey in unusedKeys.toSet()) {
             for (loc in locsWithoutKey) {
-                val x = getX(loc)
-                val y = getY(loc)
-                if (initialDmmData.getKeyByLocation(x, y) == unusedKey) {
+                val (x, y, z) = loc
+
+                if (initialDmmData.getKeyByLocation(x, y, z) == unusedKey) {
                     unusedKeys.remove(unusedKey)
-                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(x, y))
+                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(x, y, z))
                     locsWithoutKey.remove(loc)
                     break
                 }
             }
         }
 
-        if (!locsWithoutKey.isEmpty) {
+        if (locsWithoutKey.isNotEmpty()) {
             keyGenerator.initKeysPool()
         }
 
         // Handle remaining locations
         for (loc in locsWithoutKey) {
-            val x = getX(loc)
-            val y = getY(loc)
-            val tileContent = dmm.getTileContentByLocation(x, y)
+            val (x, y, z) = loc
+            val tileContent = dmm.getTileContentByLocation(x, y, z)
 
             if (outputDmmData.hasKeyByTileContent(tileContent)) {
                 continue

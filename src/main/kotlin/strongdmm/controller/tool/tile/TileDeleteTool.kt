@@ -63,7 +63,7 @@ class TileDeleteTool : Tool(), EventSender {
 
     private fun deleteTopmostTileItem(pos: MapPos) {
         sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
-            val tile = selectedMap.getTile(pos.x, pos.y)
+            val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zActive)
 
             sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->

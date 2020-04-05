@@ -88,7 +88,7 @@ class FrameController : EventConsumer, EventSender {
                 for (y in 1..map.maxY) {
                     readTileFrames(map, x, y)
 
-                    for (tileItemId in map.getTileItemsId(x, y)) {
+                    for (tileItemId in map.getTileItemsId(x, y, map.zActive)) {
                         val tileItem = GlobalTileItemHolder.getById(tileItemId)
 
                         if (filteredTypes != null && filteredTypes!!.contains(tileItem.type)) {
@@ -124,7 +124,7 @@ class FrameController : EventConsumer, EventSender {
     private fun readTileFrames(selectedMap: Dmm, x: Int, y: Int) {
         fun getArea(x: Int, y: Int): TileItem? {
             return if (x in 1..selectedMap.maxX && y in 1..selectedMap.maxY) {
-                selectedMap.getTileItemsId(x, y).map { GlobalTileItemHolder.getById(it) }.find { it.isType(TYPE_AREA) }
+                selectedMap.getTileItemsId(x, y, selectedMap.zActive).map { GlobalTileItemHolder.getById(it) }.find { it.isType(TYPE_AREA) }
             } else {
                 null
             }

@@ -1,9 +1,9 @@
 package strongdmm.byond.dmm
 
-import io.github.spair.dmm.io.TileContent
-import io.github.spair.dmm.io.TileObject
-import io.github.spair.dmm.io.TileObjectComparator
 import strongdmm.byond.*
+import strongdmm.byond.dmm.parser.TileContent
+import strongdmm.byond.dmm.parser.TileObject
+import strongdmm.byond.dmm.parser.TileObjectComparator
 
 /**
  * Helper class to do a very specific tile things like objects replacing or vars modifying.
@@ -12,7 +12,8 @@ import strongdmm.byond.*
 class Tile(
     val dmm: Dmm,
     val x: Int,
-    val y: Int
+    val y: Int,
+    val z: Int
 ) {
     lateinit var tileItems: List<TileItem>
         private set
@@ -30,7 +31,7 @@ class Tile(
         readObjectsFromMap()
     }
 
-    fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y)
+    fun getTileItemsId(): LongArray = dmm.getTileItemsId(x, y, z)
 
     fun getFilteredTileItems(filteredTypes: Collection<String>): List<TileItem> = tileItems.filter { !filteredTypes.contains(it.type) }
 
@@ -47,7 +48,7 @@ class Tile(
                 }
             }
             else -> {
-                dmm.setTileItemsId(x, y, getTileItemsId() + tileItem.id)
+                dmm.setTileItemsId(x, y, z, getTileItemsId() + tileItem.id)
             }
         }
         readObjectsFromMap()
@@ -113,7 +114,7 @@ class Tile(
                     }
                 }
 
-                dmm.setTileItemsId(x, y, newIds)
+                dmm.setTileItemsId(x, y, z, newIds)
             }
         }
 
@@ -121,7 +122,7 @@ class Tile(
     }
 
     fun replaceTileItemsId(tileItemsId: LongArray) {
-        dmm.setTileItemsId(x, y, tileItemsId)
+        dmm.setTileItemsId(x, y, z, tileItemsId)
         readObjectsFromMap()
     }
 
@@ -155,12 +156,12 @@ class Tile(
 
         tileItems.forEach { tileItem ->
             val tileObject = TileObject(tileItem.type)
-            tileItem.customVars?.forEach { (k, v) -> tileObject.putVar(k, v) }
+            tileObject.setVars(tileItem.customVars)
             tileObjects.add(tileObject)
         }
 
         // Consider to look into the TileObjectComparator source if this line cause you a question
-        tileObjects.sortedWith(TileObjectComparator()).forEach(tileContent::addTileObject)
+        tileContent.content.addAll(tileObjects.sortedWith(TileObjectComparator()))
 
         return tileContent
     }
@@ -172,7 +173,7 @@ class Tile(
     private fun setTileItemsIdWithReplace(tileItemIdx: Int, replaceWithId: Long) {
         val tileItemsId = getTileItemsId().copyOf()
         tileItemsId[tileItemIdx] = replaceWithId
-        dmm.setTileItemsId(x, y, tileItemsId)
+        dmm.setTileItemsId(x, y, z, tileItemsId)
     }
 
     private fun shiftItem(list: List<IndexedValue<TileItem>>, tileItemIdx: Int, shiftValue: Int) {
@@ -188,7 +189,7 @@ class Tile(
                 val tileItemsId = getTileItemsId().copyOf()
                 tileItemsId[swapWithItem.index] = it.value.id
                 tileItemsId[it.index] = swapWithItem.value.id
-                dmm.setTileItemsId(x, y, tileItemsId)
+                dmm.setTileItemsId(x, y, z, tileItemsId)
             }
         }
 
