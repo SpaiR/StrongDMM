@@ -3,7 +3,6 @@ package strongdmm.controller
 import strongdmm.event.*
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.controller.EventEnvironmentController
-import strongdmm.event.type.controller.EventFrameController
 import strongdmm.event.type.controller.EventLayersFilterController
 
 class LayersFilterController : EventConsumer, EventSender {
@@ -20,21 +19,18 @@ class LayersFilterController : EventConsumer, EventSender {
     private fun handleFilterLayersById(event: Event<DmeItemIdArray, Unit>) {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
             filteredTypes = dme.items.values.filter { event.body.contains(it.id) }.map { it.type }.toMutableSet()
-            sendEvent(EventFrameController.RefreshFrame())
             sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }
 
     private fun handleShowLayersByType(event: Event<DmeItemType, Unit>) {
         filteredTypes.removeIf { it.contains(event.body) }
-        sendEvent(EventFrameController.RefreshFrame())
         sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
     }
 
     private fun handleHideLayersByType(event: Event<DmeItemType, Unit>) {
         sendEvent(EventEnvironmentController.FetchOpenedEnvironment { dme ->
             filteredTypes.addAll(dme.items.values.filter { it.type.contains(event.body) }.map { it.type })
-            sendEvent(EventFrameController.RefreshFrame())
             sendEvent(EventGlobal.LayersFilterRefreshed(filteredTypes))
         })
     }

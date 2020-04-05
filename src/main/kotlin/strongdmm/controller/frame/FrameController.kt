@@ -36,6 +36,7 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(EventFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
@@ -122,9 +123,7 @@ class FrameController : EventConsumer, EventSender {
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
-        cache.clear()
-        framedTiles.clear()
-        updateFrameCache()
+        refreshFrame()
     }
 
     private fun handleSelectedMapZActiveChanged() {
@@ -133,7 +132,7 @@ class FrameController : EventConsumer, EventSender {
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
-        updateFrameCache()
+        refreshFrame()
     }
 
     private fun handleEnvironmentReset() {
@@ -148,6 +147,10 @@ class FrameController : EventConsumer, EventSender {
             cache.clear()
             framedTiles.clear()
         }
+    }
+
+    private fun handleLayersFilterRefreshed() {
+        refreshFrame()
     }
 
     private fun handleRefreshFrame() {

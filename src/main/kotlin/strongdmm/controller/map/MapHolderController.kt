@@ -14,7 +14,6 @@ import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapHolderController
 import java.io.File
 import java.nio.file.Path
-import kotlin.concurrent.thread
 
 class MapHolderController : EventSender, EventConsumer {
     companion object {
