@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
 
-// Modified https://github.com/SpaiR/imgui-java/blob/v1.75-0.6/imgui-lwjgl3/src/test/java/ImGuiGlfwExample.java
 abstract class AppWindow(title: String) {
     companion object {
         private const val DEFAULT_WIDTH = 1280

@@ -11,8 +11,8 @@ class DmmData {
 
     lateinit var tiles: Array<Array<Array<TileContent?>>>
 
-    private val tileContentsByKey: MutableMap<String, TileContent> = mutableMapOf()
-    private val keysByTileContent: MutableMap<TileContent, String> = mutableMapOf()
+    val tileContentsByKey: MutableMap<String, TileContent> = mutableMapOf()
+    val keysByTileContent: MutableMap<TileContent, String> = mutableMapOf()
 
     val keys: List<String>
         get() = tileContentsByKey.keys.sortedWith(TileKeyComparator())

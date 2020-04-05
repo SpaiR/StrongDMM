@@ -28,6 +28,7 @@ class SaveMap(
         sanitizeMap()
         fillWithReusedKeys()
         loopThroughRemainingTiles()
+        removeUnusedKeys()
         saveToFile()
     }
 
@@ -161,6 +162,15 @@ class SaveMap(
 
         // Drop all unused keys.
         unusedKeys.clear()
+    }
+
+    private fun removeUnusedKeys() {
+        if (outputDmmData.keysByTileContent.size != outputDmmData.tileContentsByKey.size) {
+            val unusedKeys = outputDmmData.tileContentsByKey.keys - outputDmmData.keysByTileContent.values
+            unusedKeys.forEach {
+                outputDmmData.tileContentsByKey.remove(it)
+            }
+        }
     }
 
     private fun clearKeyAndTileContent() {
