@@ -1,6 +1,7 @@
 package strongdmm.event
 
 typealias MapId = Int
+typealias MapsCloseStatus = Boolean
 
 typealias DmeItemIdArray = LongArray
 typealias DmeItemType = String

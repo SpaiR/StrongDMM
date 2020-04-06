@@ -51,6 +51,8 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val recentFilesController = RecentFilesController()
     private val preferencesController = PreferencesController()
 
+    private val applicationCloseController = ApplicationCloseController()
+
     init {
         ensureHomeDirExists()
 
@@ -84,6 +86,9 @@ class StrongDMM(title: String) : AppWindow(title) {
         // Controllers
         canvasController.process()
         shortcutController.process()
+
+        // This should always be the last
+        applicationCloseController.process()
     }
 
     private fun ensureHomeDirExists() {

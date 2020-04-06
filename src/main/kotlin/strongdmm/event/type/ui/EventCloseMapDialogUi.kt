@@ -2,8 +2,8 @@ package strongdmm.event.type.ui
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.ui.closemap.CloseMapStatus
+import strongdmm.ui.closemap.CloseMapDialogStatus
 
 abstract class EventCloseMapDialogUi {
-    class Open(body: Dmm, callback: ((CloseMapStatus) -> Unit)) : Event<Dmm, CloseMapStatus>(body, callback)
+    class Open(body: Dmm, callback: ((CloseMapDialogStatus) -> Unit)) : Event<Dmm, CloseMapDialogStatus>(body, callback)
 }

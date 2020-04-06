@@ -15,7 +15,7 @@ import strongdmm.event.type.controller.EventActionController
 import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapHolderController
 import strongdmm.event.type.ui.EventCloseMapDialogUi
-import strongdmm.ui.closemap.CloseMapStatus
+import strongdmm.ui.closemap.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
 
@@ -36,6 +36,7 @@ class MapHolderController : EventSender, EventConsumer {
     init {
         consumeEvent(EventMapHolderController.OpenMap::class.java, ::handleOpenMap)
         consumeEvent(EventMapHolderController.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventMapHolderController.CloseAllMaps::class.java, ::handleCloseAllMaps)
         consumeEvent(EventMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
         consumeEvent(EventMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
         consumeEvent(EventMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
@@ -97,6 +98,26 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
+    private fun tryCloseMap(map: Dmm, callback: ((Boolean) -> Unit)? = null) {
+        if (isMapHasChanges(map)) {
+            sendEvent(EventCloseMapDialogUi.Open(map) { closeMapStatus ->
+                when (closeMapStatus) {
+                    CloseMapDialogStatus.CLOSE_WITH_SAVE -> {
+                        saveMap(map)
+                        closeMap(map)
+                    }
+                    CloseMapDialogStatus.CLOSE -> closeMap(map)
+                    CloseMapDialogStatus.CANCEL -> {}
+                }
+
+                callback?.invoke(closeMapStatus != CloseMapDialogStatus.CANCEL)
+            })
+        } else {
+            closeMap(map)
+            callback?.invoke(true)
+        }
+    }
+
     private fun handleOpenMap(event: Event<File, Unit>) {
         val id = event.body.absolutePath.hashCode()
 
@@ -131,20 +152,22 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleCloseMap(event: Event<MapId, Unit>) {
-        openedMaps.find { it.id == event.body }?.let { map ->
-            if (isMapHasChanges(map)) {
-                sendEvent(EventCloseMapDialogUi.Open(map) { closeMapStatus ->
-                    when (closeMapStatus) {
-                        CloseMapStatus.SAVE -> {
-                            saveMap(map)
-                            closeMap(map)
-                        }
-                        CloseMapStatus.CLOSE -> closeMap(map)
-                        else -> {}
-                    }
-                })
-            } else {
-                closeMap(map)
+        openedMaps.find { it.id == event.body }?.let { tryCloseMap(it) }
+    }
+
+    private fun handleCloseAllMaps(event: Event<Unit, MapsCloseStatus>) {
+        if (openedMaps.isEmpty()) {
+            event.reply(true)
+            return
+        }
+
+        openedMaps.firstOrNull()?.let { map ->
+            tryCloseMap(map) {
+                if (it) {
+                    handleCloseAllMaps(event)
+                } else {
+                    event.reply(false)
+                }
             }
         }
     }

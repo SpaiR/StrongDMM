@@ -40,6 +40,8 @@ abstract class AppWindow(title: String) {
             get() = winWidth[0]
         val windowHeight: Int
             get() = winHeight[0]
+
+        var isRunning: Boolean = true
     }
 
     // For mouse tracking
@@ -236,7 +238,7 @@ abstract class AppWindow(title: String) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         // Run the rendering loop until the user has attempted to close the window
-        while (!glfwWindowShouldClose(window)) { // Count frame delta value
+        while (isRunning) { // Count frame delta value
             val currentTime = glfwGetTime()
             val deltaTime = if (time > 0) currentTime - time else (1f / 60f).toDouble()
             time = currentTime

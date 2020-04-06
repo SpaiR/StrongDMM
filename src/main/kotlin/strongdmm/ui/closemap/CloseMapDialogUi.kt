@@ -15,7 +15,7 @@ import strongdmm.util.imgui.popupModal
 class CloseMapDialogUi : EventSender, EventConsumer {
     private var isDoOpen: Boolean = false
 
-    private var eventToReply: Event<Dmm, CloseMapStatus>? = null
+    private var eventToReply: Event<Dmm, CloseMapDialogStatus>? = null
 
     init {
         consumeEvent(EventCloseMapDialogUi.Open::class.java, ::handleOpen)
@@ -28,27 +28,27 @@ class CloseMapDialogUi : EventSender, EventConsumer {
             isDoOpen = false
         }
 
-        setNextWindowSize(350f, 100f, ImGuiCond.Once)
+        setNextWindowSize(400f, 100f, ImGuiCond.Once)
 
         popupModal("Save Map?##close_map_dialog", ImGuiWindowFlags.NoResize) {
             text("Map ${eventToReply?.body?.mapName} has been modified. Save changes?")
             newLine()
-            button("Yes") { closeDialog(CloseMapStatus.SAVE) }
+            button("Yes") { closeDialog(CloseMapDialogStatus.CLOSE_WITH_SAVE) }
             sameLine()
-            button("No") { closeDialog(CloseMapStatus.CLOSE) }
+            button("No") { closeDialog(CloseMapDialogStatus.CLOSE) }
             sameLine()
-            button("Cancel") { closeDialog(CloseMapStatus.CANCEL) }
+            button("Cancel") { closeDialog(CloseMapDialogStatus.CANCEL) }
         }
     }
 
-    private fun closeDialog(status: CloseMapStatus) {
+    private fun closeDialog(status: CloseMapDialogStatus) {
         closeCurrentPopup()
         sendEvent(EventCanvasController.BlockCanvas(false))
         eventToReply?.reply(status)
         eventToReply = null
     }
 
-    private fun handleOpen(event: Event<Dmm, CloseMapStatus>) {
+    private fun handleOpen(event: Event<Dmm, CloseMapDialogStatus>) {
         isDoOpen = true
         eventToReply = event
     }
