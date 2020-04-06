@@ -17,7 +17,8 @@ import strongdmm.util.imgui.popupModal
 import strongdmm.util.imgui.withIndent
 
 class PreferencesPanelUi : EventConsumer, EventSender {
-    private var isOpened: ImBool = ImBool(false)
+    private var isDoOpen: Boolean = false
+    private val isOpened: ImBool = ImBool(false)
     private var checkOpenStatus: Boolean = false
 
     private lateinit var providedPrefs: Preferences
@@ -30,10 +31,11 @@ class PreferencesPanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        if (isOpened.get()) {
+        if (isDoOpen) {
             checkOpenStatus = true
             openPopup("Preferences")
             sendEvent(EventCanvasController.BlockCanvas(true))
+            isDoOpen = false
         }
 
         setNextWindowSize(400f, 500f, ImGuiCond.Once)
@@ -69,7 +71,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
     private fun showSanitizeInitialVariables() {
         bullet()
         sameLine()
-        textWrapped("Sanitize variables")
+        textWrapped("Sanitize variables:")
         withIndent(20f) {
             val label = getCheckboxStatusLabel(providedPrefs.sanitizeInitialVariables.get())
             if (checkbox("$label##sanitize_variables", providedPrefs.sanitizeInitialVariables)) {
@@ -102,5 +104,6 @@ class PreferencesPanelUi : EventConsumer, EventSender {
 
     private fun handleOpen() {
         isOpened.set(true)
+        isDoOpen = true
     }
 }

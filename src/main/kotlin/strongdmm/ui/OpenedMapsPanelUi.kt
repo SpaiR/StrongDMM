@@ -18,8 +18,9 @@ import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
 
 class OpenedMapsPanelUi : EventConsumer, EventSender {
-    private var providedOpenedMaps: Set<Dmm> = emptySet()
-    private var providedActionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
+    private lateinit var providedOpenedMaps: Set<Dmm>
+    private lateinit var providedActionBalanceStorage: TObjectIntHashMap<Dmm>
+
     private var selectedMap: Dmm? = null
 
     init {
@@ -36,7 +37,6 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
         setNextWindowPos(AppWindow.windowWidth - 160f, 30f, ImGuiCond.Once)
         setNextWindowSize(150f, 150f, ImGuiCond.Once)
-        setNextWindowCollapsed(true, ImGuiCond.Once)
 
         window("${getMapName(selectedMap!!)}###opened_maps") {
             providedOpenedMaps.toTypedArray().forEach { map ->

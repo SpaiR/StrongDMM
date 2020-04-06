@@ -1,6 +1,7 @@
 package strongdmm.controller.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
+import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
@@ -13,6 +14,8 @@ import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventActionController
 import strongdmm.event.type.controller.EventEnvironmentController
 import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.ui.EventCloseMapDialogUi
+import strongdmm.ui.closemap.CloseMapStatus
 import java.io.File
 import java.nio.file.Path
 
@@ -22,6 +25,7 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private lateinit var providedPreferences: Preferences
+    private lateinit var providedActionBalanceStorage: TObjectIntHashMap<Dmm>
 
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
@@ -39,6 +43,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobalProvider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(EventGlobalProvider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
     }
 
     fun postInit() {
@@ -61,6 +66,35 @@ class MapHolderController : EventSender, EventConsumer {
         tmpDmmDataFile.deleteOnExit()
 
         mapsBackupPathsById.put(id, tmpDmmDataFile.absolutePath)
+    }
+
+    private fun isMapHasChanges(map: Dmm): Boolean {
+        return providedActionBalanceStorage.containsKey(map) && providedActionBalanceStorage[map] != 0
+    }
+
+    private fun saveMap(map: Dmm) {
+        val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
+        SaveMap(map, initialDmmData, providedPreferences)
+        sendEvent(EventActionController.ResetActionBalance())
+    }
+
+    private fun closeMap(map: Dmm) {
+        val mapIndex = openedMaps.indexOf(map)
+
+        mapsBackupPathsById.remove(map.id)
+        openedMaps.remove(map)
+        sendEvent(EventGlobal.OpenedMapClosed(map))
+
+        if (selectedMap === map) {
+            if (openedMaps.isEmpty()) {
+                selectedMap = null
+            } else {
+                val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
+                val nextMap = openedMaps.toList()[index]
+                selectedMap = nextMap
+                sendEvent(EventGlobal.SelectedMapChanged(nextMap))
+            }
+        }
     }
 
     private fun handleOpenMap(event: Event<File, Unit>) {
@@ -97,22 +131,20 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleCloseMap(event: Event<MapId, Unit>) {
-        openedMaps.find { it.id == event.body }?.let {
-            val mapIndex = openedMaps.indexOf(it)
-
-            mapsBackupPathsById.remove(it.id)
-            openedMaps.remove(it)
-            sendEvent(EventGlobal.OpenedMapClosed(it))
-
-            if (selectedMap === it) {
-                if (openedMaps.isEmpty()) {
-                    selectedMap = null
-                } else {
-                    val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
-                    val nextMap = openedMaps.toList()[index]
-                    selectedMap = nextMap
-                    sendEvent(EventGlobal.SelectedMapChanged(nextMap))
-                }
+        openedMaps.find { it.id == event.body }?.let { map ->
+            if (isMapHasChanges(map)) {
+                sendEvent(EventCloseMapDialogUi.Open(map) { closeMapStatus ->
+                    when (closeMapStatus) {
+                        CloseMapStatus.SAVE -> {
+                            saveMap(map)
+                            closeMap(map)
+                        }
+                        CloseMapStatus.CLOSE -> closeMap(map)
+                        else -> {}
+                    }
+                })
+            } else {
+                closeMap(map)
             }
         }
     }
@@ -131,11 +163,7 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleSaveSelectedMap() {
-        selectedMap?.let { map ->
-            val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
-            SaveMap(map, initialDmmData, providedPreferences)
-            sendEvent(EventActionController.ResetActionBalance())
-        }
+        selectedMap?.let(this::saveMap)
     }
 
     private fun handleChangeActiveZ(event: Event<ActiveZ, Unit>) {
@@ -167,5 +195,9 @@ class MapHolderController : EventSender, EventConsumer {
 
     private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
         providedPreferences = event.body
+    }
+
+    private fun handleProviderActionControllerActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+        providedActionBalanceStorage = event.body
     }
 }

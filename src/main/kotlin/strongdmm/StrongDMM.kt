@@ -11,6 +11,7 @@ import strongdmm.controller.recent.RecentFilesController
 import strongdmm.controller.shortcut.ShortcutController
 import strongdmm.controller.tool.ToolsController
 import strongdmm.ui.*
+import strongdmm.ui.closemap.CloseMapDialogUi
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.AppWindow
@@ -33,6 +34,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val toolSelectPanelUi = ToolSelectPanelUi()
     private val levelSwitchPanelUi = LevelSwitchPanelUi()
     private val preferencesPanelUi = PreferencesPanelUi()
+    private val closeMapDialogUi = CloseMapDialogUi()
 
     private val environmentController = EnvironmentController()
     private val mapHolderController = MapHolderController()
@@ -77,6 +79,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         toolSelectPanelUi.process()
         levelSwitchPanelUi.process()
         preferencesPanelUi.process()
+        closeMapDialogUi.process()
 
         // Controllers
         canvasController.process()
