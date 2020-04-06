@@ -61,6 +61,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseMap)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseAllMaps)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_S, action = ::doSave)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
@@ -89,9 +91,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 separator()
                 menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpened, block = ::doOpenMap)
                 menuItem("Open Available Map", shortcut = "Ctrl+Shift+O", enabled = isEnvironmentOpened, block = ::doOpenAvailableMap)
-                menu("Recent Maps", enabled = isEnvironmentOpened) {
-                    showRecentMaps()
-                }
+                menu("Recent Maps", enabled = isEnvironmentOpened) { showRecentMaps() }
+                separator()
+                menuItem("Close Map", shortcut = "Ctrl+W", enabled = isEnvironmentOpened, block = ::doCloseMap)
+                menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = isEnvironmentOpened, block = ::doCloseAllMaps)
                 separator()
                 menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::doSave)
             }
@@ -183,6 +186,18 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private fun doOpenAvailableMap() {
         if (isEnvironmentOpened) {
             sendEvent(EventAvailableMapsDialogUi.Open())
+        }
+    }
+
+    private fun doCloseMap() {
+        if (isEnvironmentOpened) {
+            sendEvent(EventMapHolderController.CloseSelectedMap())
+        }
+    }
+
+    private fun doCloseAllMaps() {
+        if (isEnvironmentOpened) {
+            sendEvent(EventMapHolderController.CloseAllMaps())
         }
     }
 

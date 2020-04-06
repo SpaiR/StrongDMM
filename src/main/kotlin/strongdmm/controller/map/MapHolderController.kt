@@ -36,6 +36,7 @@ class MapHolderController : EventSender, EventConsumer {
     init {
         consumeEvent(EventMapHolderController.OpenMap::class.java, ::handleOpenMap)
         consumeEvent(EventMapHolderController.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(EventMapHolderController.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
         consumeEvent(EventMapHolderController.CloseAllMaps::class.java, ::handleCloseAllMaps)
         consumeEvent(EventMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
         consumeEvent(EventMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
@@ -153,6 +154,10 @@ class MapHolderController : EventSender, EventConsumer {
 
     private fun handleCloseMap(event: Event<MapId, Unit>) {
         openedMaps.find { it.id == event.body }?.let { tryCloseMap(it) }
+    }
+
+    private fun handleCloseSelectedMap() {
+        selectedMap?.let { map -> tryCloseMap(map) }
     }
 
     private fun handleCloseAllMaps(event: Event<Unit, MapsCloseStatus>) {
