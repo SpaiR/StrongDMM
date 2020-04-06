@@ -20,7 +20,6 @@ import strongdmm.event.EventSender
 import strongdmm.event.TileItemIdx
 import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventCanvasController
 import strongdmm.event.type.controller.EventFrameController
 import strongdmm.event.type.ui.EventEditVarsDialogUi
 import strongdmm.event.type.ui.EventObjectPanelUi
@@ -269,12 +268,12 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilter.set("")
         isShowModifiedVars.set(false)
         variables.clear()
-        sendEvent(EventCanvasController.BlockCanvas(false))
+        sendEvent(EventGlobal.ApplicationBlockChanged(false))
     }
 
     private fun open() {
         isFistOpen = true
-        sendEvent(EventCanvasController.BlockCanvas(true))
+        sendEvent(EventGlobal.ApplicationBlockChanged(true))
         WINDOW_ID++
     }
 

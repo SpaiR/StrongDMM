@@ -7,13 +7,12 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.tool.ToolType
-import strongdmm.event.ActiveZ
-import strongdmm.event.DmeItemType
-import strongdmm.event.EnvironmentLoadedStatus
-import strongdmm.event.Event
+import strongdmm.event.*
 import java.io.File
 
 abstract class EventGlobal {
+    class ApplicationBlockChanged(body: ApplicationBlockStatus) : Event<ApplicationBlockStatus, Unit>(body, null)
+
     class EnvironmentReset : Event<Unit, Unit>(Unit, null)
     class EnvironmentLoading(body: File) : Event<File, Unit>(body, null)
     class EnvironmentLoaded(body: EnvironmentLoadedStatus) : Event<EnvironmentLoadedStatus, Unit>(body, null)

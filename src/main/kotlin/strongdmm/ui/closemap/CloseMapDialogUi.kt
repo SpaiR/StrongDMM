@@ -7,7 +7,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.controller.EventCanvasController
+import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.ui.EventCloseMapDialogUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
@@ -24,7 +24,7 @@ class CloseMapDialogUi : EventSender, EventConsumer {
     fun process() {
         if (isDoOpen) {
             openPopup("Save Map?##close_map_dialog")
-            sendEvent(EventCanvasController.BlockCanvas(true))
+            sendEvent(EventGlobal.ApplicationBlockChanged(true))
             isDoOpen = false
         }
 
@@ -43,7 +43,7 @@ class CloseMapDialogUi : EventSender, EventConsumer {
 
     private fun closeDialog(status: CloseMapDialogStatus) {
         closeCurrentPopup()
-        sendEvent(EventCanvasController.BlockCanvas(false))
+        sendEvent(EventGlobal.ApplicationBlockChanged(false))
         eventToReply?.reply(status)
         eventToReply = null
     }

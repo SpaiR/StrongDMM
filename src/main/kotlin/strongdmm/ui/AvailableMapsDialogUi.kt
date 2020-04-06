@@ -8,8 +8,8 @@ import org.lwjgl.glfw.GLFW.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventCanvasController
 import strongdmm.event.type.controller.EventMapHolderController
 import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.util.imgui.*
@@ -87,13 +87,13 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = ""
-        sendEvent(EventCanvasController.BlockCanvas(false))
+        sendEvent(EventGlobal.ApplicationBlockChanged(false))
     }
 
     private fun handleOpen() {
         isDoOpen = true
         isFirstOpen = true
-        sendEvent(EventCanvasController.BlockCanvas(true))
+        sendEvent(EventGlobal.ApplicationBlockChanged(true))
     }
 
     private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {

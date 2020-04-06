@@ -10,7 +10,7 @@ typealias TileItemType = String
 typealias TileItemId = Long
 typealias TileItemIdx = Int
 
-typealias CanvasBlockStatus = Boolean
+typealias ApplicationBlockStatus = Boolean
 
 typealias AbsoluteFilePath = String
 typealias VisibleFilePath = String

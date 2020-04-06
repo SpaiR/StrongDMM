@@ -8,8 +8,8 @@ import strongdmm.controller.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventCanvasController
 import strongdmm.event.type.controller.EventPreferencesController
 import strongdmm.event.type.ui.EventPreferencesPanelUi
 import strongdmm.util.imgui.helpMark
@@ -34,7 +34,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         if (isDoOpen) {
             checkOpenStatus = true
             openPopup("Preferences")
-            sendEvent(EventCanvasController.BlockCanvas(true))
+            sendEvent(EventGlobal.ApplicationBlockChanged(true))
             isDoOpen = false
         }
 
@@ -50,7 +50,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
 
         if (checkOpenStatus && !isOpened.get()) {
             checkOpenStatus = false
-            sendEvent(EventCanvasController.BlockCanvas(false))
+            sendEvent(EventGlobal.ApplicationBlockChanged(false))
         }
     }
 

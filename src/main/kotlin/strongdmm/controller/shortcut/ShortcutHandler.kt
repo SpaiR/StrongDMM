@@ -1,17 +1,21 @@
 package strongdmm.controller.shortcut
 
+import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.type.EventGlobal
 
+@Suppress("LeakingThis")
 open class ShortcutHandler : EventConsumer {
     companion object {
         val globalShortcuts: MutableSet<Shortcut> = mutableSetOf() // used to iterate through all registered shortcuts
     }
 
+    private var isShortcutsBlocked: Boolean = false
+
     init {
-        @Suppress("LeakingThis")
         consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+        consumeEvent(EventGlobal.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
     }
 
     private val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()
@@ -35,6 +39,12 @@ open class ShortcutHandler : EventConsumer {
     }
 
     private fun handleShortcutTriggered(event: Event<Shortcut, Unit>) {
-        shortcuts[event.body]?.invoke()
+        if (!isShortcutsBlocked) {
+            shortcuts[event.body]?.invoke()
+        }
+    }
+
+    private fun handleApplicationBlockChanged(event: Event<ApplicationBlockStatus, Unit>) {
+        isShortcutsBlocked = event.body
     }
 }

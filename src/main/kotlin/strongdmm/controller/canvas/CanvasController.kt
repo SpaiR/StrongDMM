@@ -13,7 +13,7 @@ import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.controller.frame.FramedTile
-import strongdmm.event.CanvasBlockStatus
+import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -41,7 +41,8 @@ class CanvasController : EventSender, EventConsumer {
 
     private var activeTileItem: TileItem? = null
 
-    private var isBlocked: Boolean = false
+    private var isCanvasBlocked: Boolean = false
+
     private var isHasMap: Boolean = false
     private var iconSize: Int = DEFAULT_ICON_SIZE
 
@@ -63,6 +64,7 @@ class CanvasController : EventSender, EventConsumer {
     private val canvasRenderer = CanvasRenderer()
 
     init {
+        consumeEvent(EventGlobal.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
@@ -71,7 +73,6 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(EventGlobalProvider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
         consumeEvent(EventGlobalProvider.FrameControllerFramedTiles::class.java, ::handleProviderFrameControllerFramedTiles)
-        consumeEvent(EventCanvasController.BlockCanvas::class.java, ::handleBlockCanvas)
         consumeEvent(EventCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(EventCanvasController.MarkPosition::class.java, ::handleMarkPosition)
         consumeEvent(EventCanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
@@ -92,7 +93,7 @@ class CanvasController : EventSender, EventConsumer {
 
         ImGui.getMousePos(mousePos)
 
-        if (!isBlocked && !isImGuiInUse()) {
+        if (!isCanvasBlocked && !isImGuiInUse()) {
             processViewTranslate()
             processViewScale()
             processTilePopupClick()
@@ -321,6 +322,10 @@ class CanvasController : EventSender, EventConsumer {
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
     }
 
+    private fun handleApplicationBlockChanged(event: Event<ApplicationBlockStatus, Unit>) {
+        isCanvasBlocked = event.body
+    }
+
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         canvasRenderer.markedPosition = null
         renderData = renderDataStorageByMapId.getOrPut(event.body.id) { RenderData(event.body.id) }
@@ -363,10 +368,6 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleProviderFrameControllerFramedTiles(event: Event<List<FramedTile>, Unit>) {
         canvasRenderer.providedFramedTiles = event.body
-    }
-
-    private fun handleBlockCanvas(event: Event<CanvasBlockStatus, Unit>) {
-        isBlocked = event.body
     }
 
     private fun handleCenterCanvasByPosition(event: Event<MapPos, Unit>) {
