@@ -32,6 +32,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     init {
         consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(EventGlobal.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
         consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(EventSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
@@ -192,6 +193,10 @@ class SearchResultPanelUi : EventConsumer, EventSender {
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
         selectedMapId = event.body.id
+        clearAll()
+    }
+
+    private fun handleSelectedMapZActiveChanged() {
         clearAll()
     }
 
