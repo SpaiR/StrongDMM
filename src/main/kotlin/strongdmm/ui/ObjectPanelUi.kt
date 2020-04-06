@@ -3,7 +3,6 @@ package strongdmm.ui
 import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImInt
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
@@ -41,8 +40,8 @@ class ObjectPanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        setNextWindowPos(10f, AppWindow.windowHeight / 1.7f, ImGuiCond.Once)
-        setNextWindowSize(330f, AppWindow.windowHeight - AppWindow.windowHeight / 1.7f - 15, ImGuiCond.Once)
+        setNextWindowPos(10f, AppWindow.windowHeight / 1.7f, AppWindow.defaultWindowCond)
+        setNextWindowSize(330f, AppWindow.windowHeight - AppWindow.windowHeight / 1.7f - 15, AppWindow.defaultWindowCond)
 
         val title = if (tileItems?.size ?: 0 > 0) "(${tileItems!!.size}) $tileItemType###object_panel" else "Object Panel###object_panel"
 
@@ -116,8 +115,8 @@ class ObjectPanelUi : EventConsumer, EventSender {
         }
 
         if (showVarsPreview.get()) {
-            setNextWindowPos(345f, AppWindow.windowHeight - 210f, ImGuiCond.Once)
-            setNextWindowSize(300f, 195f, ImGuiCond.Once)
+            setNextWindowPos(345f, AppWindow.windowHeight - 210f, AppWindow.defaultWindowCond)
+            setNextWindowSize(300f, 195f, AppWindow.defaultWindowCond)
 
             window("Variables Preview", showVarsPreview) {
                 tileItems?.let { objs ->

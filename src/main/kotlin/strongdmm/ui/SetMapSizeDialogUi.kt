@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.ImInt
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.dmm.MapSize
 import strongdmm.event.EventConsumer
@@ -13,6 +12,7 @@ import strongdmm.event.type.controller.EventMapModifierController
 import strongdmm.event.type.ui.EventSetMapSizeDialogUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
+import strongdmm.window.AppWindow
 
 class SetMapSizeDialogUi : EventConsumer, EventSender {
     private var isDoOpen: Boolean = false
@@ -32,7 +32,7 @@ class SetMapSizeDialogUi : EventConsumer, EventSender {
             isDoOpen = false
         }
 
-        setNextWindowSize(295f, 100f, ImGuiCond.Once)
+        setNextWindowSize(295f, 100f, AppWindow.defaultWindowCond)
 
         popupModal("Set Map Size", ImGuiWindowFlags.NoResize) {
             setNextItemWidth(75f)

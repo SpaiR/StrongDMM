@@ -3,7 +3,6 @@ package strongdmm.ui
 import gnu.trove.map.hash.TObjectIntHashMap
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiCond
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -35,8 +34,8 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
             return
         }
 
-        setNextWindowPos(AppWindow.windowWidth - 160f, 30f, ImGuiCond.Once)
-        setNextWindowSize(150f, 150f, ImGuiCond.Once)
+        setNextWindowPos(AppWindow.windowWidth - 160f, 30f, AppWindow.defaultWindowCond)
+        setNextWindowSize(150f, 150f, AppWindow.defaultWindowCond)
 
         window("${getMapName(selectedMap!!)}###opened_maps") {
             providedOpenedMaps.toTypedArray().forEach { map ->

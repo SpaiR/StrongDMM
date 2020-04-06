@@ -4,7 +4,6 @@ import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
@@ -59,8 +58,8 @@ class SearchResultPanelUi : EventConsumer, EventSender {
                 continue
             }
 
-            setNextWindowPos((AppWindow.windowWidth - 357f) / 2, (AppWindow.windowHeight - 390f) / 2, ImGuiCond.Once)
-            setNextWindowSize(375f, 390f, ImGuiCond.Once)
+            setNextWindowPos((AppWindow.windowWidth - 357f) / 2, (AppWindow.windowHeight - 390f) / 2, AppWindow.defaultWindowCond)
+            setNextWindowSize(375f, 390f, AppWindow.defaultWindowCond)
 
             window("Search Result: ${searchResult.searchValue} (${searchResult.positions.size})###${searchResult.searchValue}", openState) {
                 if (inputText("##replace_type", replaceType, "Replace Type")) {

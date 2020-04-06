@@ -4,7 +4,6 @@ import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW.*
@@ -66,8 +65,8 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
     fun process() {
         getTileItem()?.let { tileItem ->
-            setNextWindowPos((AppWindow.windowWidth - DIALOG_WIDTH) / 2f, (AppWindow.windowHeight - DIALOG_HEIGHT) / 2f, ImGuiCond.Once)
-            setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, ImGuiCond.Once)
+            setNextWindowPos((AppWindow.windowWidth - DIALOG_WIDTH) / 2f, (AppWindow.windowHeight - DIALOG_HEIGHT) / 2f, AppWindow.defaultWindowCond)
+            setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, AppWindow.defaultWindowCond)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_$WINDOW_ID") {
                 showControls()

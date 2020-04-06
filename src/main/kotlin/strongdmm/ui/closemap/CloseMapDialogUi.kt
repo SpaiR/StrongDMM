@@ -1,7 +1,6 @@
 package strongdmm.ui.closemap
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
@@ -11,6 +10,7 @@ import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.ui.EventCloseMapDialogUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
+import strongdmm.window.AppWindow
 
 class CloseMapDialogUi : EventSender, EventConsumer {
     private var isDoOpen: Boolean = false
@@ -28,7 +28,7 @@ class CloseMapDialogUi : EventSender, EventConsumer {
             isDoOpen = false
         }
 
-        setNextWindowSize(400f, 100f, ImGuiCond.Once)
+        setNextWindowSize(400f, 100f, AppWindow.defaultWindowCond)
 
         popupModal("Save Map?##close_map_dialog", ImGuiWindowFlags.NoResize) {
             text("Map \"${eventToReply?.body?.mapName}\" has been modified. Save changes?")

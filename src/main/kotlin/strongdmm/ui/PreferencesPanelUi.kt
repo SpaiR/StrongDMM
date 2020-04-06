@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImBool
 import imgui.ImGui.*
-import imgui.enums.ImGuiCond
 import strongdmm.controller.preferences.MapSaveMode
 import strongdmm.controller.preferences.Preferences
 import strongdmm.event.Event
@@ -15,6 +14,7 @@ import strongdmm.event.type.ui.EventPreferencesPanelUi
 import strongdmm.util.imgui.helpMark
 import strongdmm.util.imgui.popupModal
 import strongdmm.util.imgui.withIndent
+import strongdmm.window.AppWindow
 
 class PreferencesPanelUi : EventConsumer, EventSender {
     private var isDoOpen: Boolean = false
@@ -38,7 +38,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
             isDoOpen = false
         }
 
-        setNextWindowSize(400f, 500f, ImGuiCond.Once)
+        setNextWindowSize(400f, 500f, AppWindow.defaultWindowCond)
 
         popupModal("Preferences", isOpened) {
             text("Save options")

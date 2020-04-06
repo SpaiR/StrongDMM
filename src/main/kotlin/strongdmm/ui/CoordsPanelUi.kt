@@ -1,7 +1,6 @@
 package strongdmm.ui
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
@@ -32,7 +31,7 @@ class CoordsPanelUi : EventConsumer {
             return
         }
 
-        setNextWindowPos(AppWindow.windowWidth - 110f, AppWindow.windowHeight - 40f, ImGuiCond.Once)
+        setNextWindowPos(AppWindow.windowWidth - 110f, AppWindow.windowHeight - 40f, AppWindow.defaultWindowCond)
         setNextWindowSize(100f, 10f)
 
         window("coords_panel", ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {

@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.byond.dmm.Dmm
@@ -35,7 +34,7 @@ class LevelSwitchPanelUi : ShortcutHandler(), EventConsumer, EventSender {
             return
         }
 
-        setNextWindowPos(AppWindow.windowWidth - 100f, AppWindow.windowHeight - 75f, ImGuiCond.Once)
+        setNextWindowPos(AppWindow.windowWidth - 100f, AppWindow.windowHeight - 75f, AppWindow.defaultWindowCond)
         setNextWindowSize(90f, 10f)
 
         window("lavel_switch_panel", ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {

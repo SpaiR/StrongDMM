@@ -4,7 +4,6 @@ import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImInt
 import imgui.ImString
-import imgui.enums.ImGuiCond
 import org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER
 import org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER
 import strongdmm.byond.dmm.Dmm
@@ -60,8 +59,8 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
             return
         }
 
-        setNextWindowPos(345f, AppWindow.windowHeight / 1.7f, ImGuiCond.Once)
-        setNextWindowSize(300f, 180f, ImGuiCond.Once)
+        setNextWindowPos(345f, AppWindow.windowHeight / 1.7f, AppWindow.defaultWindowCond)
+        setNextWindowSize(300f, 180f, AppWindow.defaultWindowCond)
 
         window("Instance Locator", showInstanceLocator) {
             if (isFirstOpen) {

@@ -5,6 +5,7 @@ import imgui.ImGui
 import imgui.callbacks.ImStrConsumer
 import imgui.callbacks.ImStrSupplier
 import imgui.enums.ImGuiBackendFlags
+import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiKey
 import imgui.enums.ImGuiMouseCursor
 import imgui.gl3.ImGuiImplGl3
@@ -42,6 +43,14 @@ abstract class AppWindow(title: String) {
             get() = winHeight[0]
 
         var isRunning: Boolean = true
+
+        var defaultWindowCond: Int = ImGuiCond.Once
+            private set
+
+        // We will restore 'Once' condition after the first passed render cycle
+        fun resetWindows() {
+            defaultWindowCond = ImGuiCond.Always
+        }
     }
 
     // For mouse tracking
@@ -267,6 +276,7 @@ abstract class AppWindow(title: String) {
             ImGui.render()
 
             imGuiGl3.render(ImGui.getDrawData())
+            defaultWindowCond = ImGuiCond.Once // reset windows condition
 
             glfwSwapBuffers(window) // swap the color buffers
 

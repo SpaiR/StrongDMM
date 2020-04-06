@@ -49,8 +49,8 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
             return
         }
 
-        setNextWindowPos(AppWindow.windowWidth / 2 - 200f, AppWindow.windowHeight / 2 - 225f, ImGuiCond.Once)
-        setNextWindowSize(400f, 450f, ImGuiCond.Once)
+        setNextWindowPos(AppWindow.windowWidth / 2 - 200f, AppWindow.windowHeight / 2 - 225f, AppWindow.defaultWindowCond)
+        setNextWindowSize(400f, 450f, AppWindow.defaultWindowCond)
 
         window("Layers Filter", isOpened) {
             if (currentEnv == null) {

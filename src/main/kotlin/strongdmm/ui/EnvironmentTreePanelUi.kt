@@ -4,7 +4,6 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiTreeNodeFlags
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.*
@@ -59,8 +58,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     fun process() {
-        setNextWindowPos(10f, 30f, ImGuiCond.Once)
-        setNextWindowSize(330f, AppWindow.windowHeight / 1.8f, ImGuiCond.Once)
+        setNextWindowPos(10f, 30f, AppWindow.defaultWindowCond)
+        setNextWindowSize(330f, AppWindow.windowHeight / 1.8f, AppWindow.defaultWindowCond)
 
         window("Environment Tree") {
             if (currentEnv == null) {

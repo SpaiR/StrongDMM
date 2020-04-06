@@ -129,6 +129,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Preferences...", block = ::doOpenPreferences)
             }
 
+            menu("Window") {
+                menuItem("Reset Windows", block = ::doResetWindows)
+            }
+
             progressText?.let {
                 val count = (ImGui.getTime() / 0.25).toInt() and 3
                 val bar = charArrayOf('|', '/', '-', '\\')
@@ -309,6 +313,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         } else {
             sendEvent(EventLayersFilterController.HideLayersByType(layerType))
         }
+    }
+
+    private fun doResetWindows() {
+        AppWindow.resetWindows()
     }
 
     private fun handleEnvironmentLoading(event: Event<File, Unit>) {

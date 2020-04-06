@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.ImString
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW.*
 import strongdmm.event.Event
@@ -13,6 +12,7 @@ import strongdmm.event.type.EventGlobalProvider
 import strongdmm.event.type.controller.EventMapHolderController
 import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.util.imgui.*
+import strongdmm.window.AppWindow
 import java.io.File
 
 class AvailableMapsDialogUi : EventSender, EventConsumer {
@@ -36,7 +36,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
             isDoOpen = false
         }
 
-        setNextWindowSize(600f, 285f, ImGuiCond.Once)
+        setNextWindowSize(600f, 285f, AppWindow.defaultWindowCond)
 
         popupModal("Available Maps") {
             text("Selected: $selectionStatus")

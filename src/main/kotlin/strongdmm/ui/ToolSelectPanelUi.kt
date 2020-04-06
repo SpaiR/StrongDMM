@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.controller.shortcut.Shortcut
@@ -15,6 +14,7 @@ import strongdmm.event.type.EventGlobal
 import strongdmm.event.type.controller.EventToolsController
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
+import strongdmm.window.AppWindow
 
 class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     private val tools: Array<ToolType> = ToolType.values()
@@ -29,8 +29,8 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     }
 
     fun process() {
-        setNextWindowPos(350f, 30f, ImGuiCond.Once)
-        setNextWindowSize(80f, 35f, ImGuiCond.Once)
+        setNextWindowPos(350f, 30f, AppWindow.defaultWindowCond)
+        setNextWindowSize(80f, 35f, AppWindow.defaultWindowCond)
 
         window("Tool", ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize) {
             tools.forEach { tool ->
