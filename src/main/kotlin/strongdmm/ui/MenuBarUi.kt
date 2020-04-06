@@ -119,16 +119,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             }
 
             menu("Options") {
+                menuItem("Layers Filter", enabled = isEnvironmentOpened, block = ::doOpenLayersFilter)
+                menuItem("Toggle Area", shortcut = "Ctrl+1", enabled = isEnvironmentOpened, selected = isAreaLayerActive, block = ::toggleAreaLayer)
+                menuItem("Toggle Turf", shortcut = "Ctrl+2", enabled = isEnvironmentOpened, selected = isTurfLayerActive, block = ::toggleTurfLayer)
+                menuItem("Toggle Object", shortcut = "Ctrl+3", enabled = isEnvironmentOpened, selected = isObjLayerActive, block = ::toggleObjLayer)
+                menuItem("Toggle Mob", shortcut = "Ctrl+4", enabled = isEnvironmentOpened, selected = isMobLayerActive, block = ::toggleMobLayer)
+                separator()
                 menuItem("Frame Areas", selected = providedFrameAreas, block = {})
                 menuItem("Preferences...", block = ::doOpenPreferences)
-            }
-
-            menu("Layers") {
-                menuItem("Layers Filter", enabled = isEnvironmentOpened, block = ::doOpenLayersFilter)
-                menuItem("Area", shortcut = "Ctrl+1", enabled = isEnvironmentOpened, selected = isAreaLayerActive, block = ::toggleAreaLayer)
-                menuItem("Turf", shortcut = "Ctrl+2", enabled = isEnvironmentOpened, selected = isTurfLayerActive, block = ::toggleTurfLayer)
-                menuItem("Object", shortcut = "Ctrl+3", enabled = isEnvironmentOpened, selected = isObjLayerActive, block = ::toggleObjLayer)
-                menuItem("Mob", shortcut = "Ctrl+4", enabled = isEnvironmentOpened, selected = isMobLayerActive, block = ::toggleMobLayer)
             }
 
             progressText?.let {
