@@ -23,6 +23,7 @@ import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.EventAvailableMapsDialogUi
 import strongdmm.event.type.ui.EventLayersFilterPanelUi
 import strongdmm.event.type.ui.EventPreferencesPanelUi
+import strongdmm.event.type.ui.EventSetMapSizeDialogUi
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -113,6 +114,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Delete", shortcut = "Delete", enabled = isEnvironmentOpened, block = ::doDelete)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
                 separator()
+                menuItem("Set Map Size...", enabled = isEnvironmentOpened, block = ::doSetMapSize)
                 menuItem("Find Instance...", shortcut = "Ctrl+F", block = ::doFindInstance)
             }
 
@@ -241,6 +243,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doDeselectAll() {
         sendEvent(EventToolsController.ResetTool())
+    }
+
+    private fun doSetMapSize() {
+        sendEvent(EventSetMapSizeDialogUi.Open())
     }
 
     private fun doFindInstance() {

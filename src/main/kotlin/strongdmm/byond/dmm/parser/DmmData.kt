@@ -17,12 +17,25 @@ class DmmData {
     val keys: List<String>
         get() = tileContentsByKey.keys.sortedWith(TileKeyComparator())
 
-    fun setDmmSize(maxZ: Int, maxY: Int, maxX: Int) {
+    fun setDmmSize(maxZ: Int, maxY: Int, maxX: Int, saveContent: Boolean = false) {
+        val tiles = Array(maxZ) { Array(maxY) { Array<TileContent?>(maxX) { null } } }
+
+        if (saveContent) {
+            for (z in 1..maxZ) {
+                for (y in 1..maxY) {
+                    for (x in 1..maxX) {
+                        if (this.maxZ >= z && this.maxY >= y && this.maxX >= x) {
+                            tiles[z - 1][y - 1][x - 1] = getTileContentByLocation(x, y, z)
+                        }
+                    }
+                }
+            }
+        }
+
         this.maxZ = maxZ
         this.maxY = maxY
         this.maxX = maxX
-
-        tiles = Array(maxZ) { Array(maxY) { Array<TileContent?>(maxX) { null } } }
+        this.tiles = tiles
     }
 
     fun addKeyAndTileContent(key: String, tileContent: TileContent) {

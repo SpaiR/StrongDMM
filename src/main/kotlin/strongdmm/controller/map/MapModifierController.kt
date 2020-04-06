@@ -1,9 +1,6 @@
 package strongdmm.controller.map
 
-import strongdmm.byond.dmm.GlobalTileItemHolder
-import strongdmm.byond.dmm.MapArea
-import strongdmm.byond.dmm.MapPos
-import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.MultiAction
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
@@ -26,6 +23,7 @@ class MapModifierController : EventConsumer, EventSender {
         consumeEvent(EventMapModifierController.ReplaceTileItemsWithIdInPositions::class.java, ::handleReplaceTileItemsWithIdInPositions)
         consumeEvent(EventMapModifierController.DeleteTileItemsWithTypeInPositions::class.java, ::handleDeleteTileItemsWithTypeInPositions)
         consumeEvent(EventMapModifierController.DeleteTileItemsWithIdInPositions::class.java, ::handleDeleteTileItemsWithIdInPositions)
+        consumeEvent(EventMapModifierController.ChangeMapSize::class.java, ::handleChangeMapSize)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -171,6 +169,13 @@ class MapModifierController : EventConsumer, EventSender {
             }
 
             sendEvent(EventActionController.AddAction(MultiAction(deleteActions)))
+            sendEvent(EventFrameController.RefreshFrame())
+        })
+    }
+
+    private fun handleChangeMapSize(event: Event<MapSize, Unit>) {
+        sendEvent(EventMapHolderController.FetchSelectedMap { dmm ->
+            dmm.setMapSize(event.body.maxZ, event.body.maxY, event.body.maxX)
             sendEvent(EventFrameController.RefreshFrame())
         })
     }

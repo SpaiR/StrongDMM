@@ -35,6 +35,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val levelSwitchPanelUi = LevelSwitchPanelUi()
     private val preferencesPanelUi = PreferencesPanelUi()
     private val closeMapDialogUi = CloseMapDialogUi()
+    private val setMapSizeDialogUi = SetMapSizeDialogUi()
 
     private val environmentController = EnvironmentController()
     private val mapHolderController = MapHolderController()
@@ -82,6 +83,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         levelSwitchPanelUi.process()
         preferencesPanelUi.process()
         closeMapDialogUi.process()
+        setMapSizeDialogUi.process()
 
         // Controllers
         canvasController.process()

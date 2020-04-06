@@ -21,6 +21,11 @@ class SaveMap(
         }
 
         keyLength = initialDmmData.keyLength
+
+        if (dmm.maxX != initialDmmData.maxX || dmm.maxY != initialDmmData.maxY || dmm.maxZ != initialDmmData.maxZ) {
+            initialDmmData.setDmmSize(dmm.maxZ, dmm.maxY, dmm.maxX, true)
+        }
+
         setDmmSize(initialDmmData.maxZ, initialDmmData.maxY, initialDmmData.maxX)
     }
 
