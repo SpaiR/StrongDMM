@@ -27,6 +27,7 @@ import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
+import strongdmm.window.AppWindow
 import java.io.File
 
 class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
@@ -64,6 +65,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseAllMaps)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_S, action = ::doSave)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Q, action = ::doExit)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = ::doRedo)
@@ -97,6 +99,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = isEnvironmentOpened, block = ::doCloseAllMaps)
                 separator()
                 menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::doSave)
+                separator()
+                menuItem("Exit", shortcut = "Ctrl+Q", block = ::doExit)
             }
 
             menu("Edit") {
@@ -205,6 +209,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         if (isEnvironmentOpened) {
             sendEvent(EventMapHolderController.SaveSelectedMap())
         }
+    }
+
+    private fun doExit() {
+        GLFW.glfwSetWindowShouldClose(AppWindow.window, true)
     }
 
     private fun doUndo() {

@@ -31,7 +31,7 @@ class CloseMapDialogUi : EventSender, EventConsumer {
         setNextWindowSize(400f, 100f, ImGuiCond.Once)
 
         popupModal("Save Map?##close_map_dialog", ImGuiWindowFlags.NoResize) {
-            text("Map ${eventToReply?.body?.mapName} has been modified. Save changes?")
+            text("Map \"${eventToReply?.body?.mapName}\" has been modified. Save changes?")
             newLine()
             button("Yes") { closeDialog(CloseMapDialogStatus.CLOSE_WITH_SAVE) }
             sameLine()
