@@ -11,6 +11,7 @@ import java.io.File
 class SaveMap(
     private val dmm: Dmm,
     private val initialDmmData: DmmData,
+    private val fileToSave: File?,
     private val prefs: Preferences
 ) {
     private val outputDmmData: DmmData = DmmData().apply {
@@ -197,10 +198,11 @@ class SaveMap(
     }
 
     private fun saveToFile() {
+        val fileToSave = this.fileToSave ?: File(dmm.mapPath.absolute)
         if (outputDmmData.isTgm) {
-            outputDmmData.saveAsTGM(File(dmm.mapPath.absolute))
+            outputDmmData.saveAsTGM(fileToSave)
         } else {
-            outputDmmData.saveAsByond(File(dmm.mapPath.absolute))
+            outputDmmData.saveAsByond(fileToSave)
         }
     }
 }

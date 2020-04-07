@@ -100,11 +100,12 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Open Available Map", shortcut = "Ctrl+Shift+O", enabled = isEnvironmentOpened, block = ::doOpenAvailableMap)
                 menu("Recent Maps", enabled = isEnvironmentOpened) { showRecentMaps() }
                 separator()
-                menuItem("Close Map", shortcut = "Ctrl+W", enabled = isEnvironmentOpened, block = ::doCloseMap)
-                menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = isEnvironmentOpened, block = ::doCloseAllMaps)
+                menuItem("Close Map", shortcut = "Ctrl+W", enabled = isMapOpened, block = ::doCloseMap)
+                menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = isMapOpened, block = ::doCloseAllMaps)
                 separator()
-                menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::doSave)
-                menuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = isEnvironmentOpened, block = ::doSaveAll)
+                menuItem("Save", shortcut = "Ctrl+S", enabled = isMapOpened, block = ::doSave)
+                menuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = isMapOpened, block = ::doSaveAll)
+                menuItem("Save As...", enabled = isMapOpened, block = ::doSaveAs)
                 separator()
                 menuItem("Exit", shortcut = "Ctrl+Q", block = ::doExit)
             }
@@ -113,13 +114,13 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
                 menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
                 separator()
-                menuItem("Cut", shortcut = "Ctrl+X", enabled = isEnvironmentOpened, block = ::doCut)
-                menuItem("Copy", shortcut = "Ctrl+C", enabled = isEnvironmentOpened, block = ::doCopy)
-                menuItem("Paste", shortcut = "Ctrl+V", enabled = isEnvironmentOpened, block = ::doPaste)
-                menuItem("Delete", shortcut = "Delete", enabled = isEnvironmentOpened, block = ::doDelete)
+                menuItem("Cut", shortcut = "Ctrl+X", enabled = isMapOpened, block = ::doCut)
+                menuItem("Copy", shortcut = "Ctrl+C", enabled = isMapOpened, block = ::doCopy)
+                menuItem("Paste", shortcut = "Ctrl+V", enabled = isMapOpened, block = ::doPaste)
+                menuItem("Delete", shortcut = "Delete", enabled = isMapOpened, block = ::doDelete)
                 menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
                 separator()
-                menuItem("Set Map Size...", enabled = isEnvironmentOpened, block = ::doSetMapSize)
+                menuItem("Set Map Size...", enabled = isMapOpened, block = ::doSetMapSize)
                 menuItem("Find Instance...", shortcut = "Ctrl+F", block = ::doFindInstance)
             }
 
@@ -224,6 +225,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         if (isEnvironmentOpened) {
             sendEvent(TriggerMapHolderController.SaveAllMaps())
         }
+    }
+
+    private fun doSaveAs() {
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+            NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
+                sendEvent(TriggerMapHolderController.SaveSelectedMapToFile(file))
+            }
+        })
     }
 
     private fun doExit() {

@@ -41,6 +41,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(TriggerMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
         consumeEvent(TriggerMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
         consumeEvent(TriggerMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        consumeEvent(TriggerMapHolderController.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
         consumeEvent(TriggerMapHolderController.SaveAllMaps::class.java, ::handleSaveAllMaps)
         consumeEvent(TriggerMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
@@ -75,9 +76,9 @@ class MapHolderController : EventSender, EventConsumer {
         return providedActionBalanceStorage.containsKey(map) && providedActionBalanceStorage[map] != 0
     }
 
-    private fun saveMap(map: Dmm) {
+    private fun saveMap(map: Dmm, fileToSave: File? = null) {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
-        SaveMap(map, initialDmmData, providedPreferences)
+        SaveMap(map, initialDmmData, fileToSave, providedPreferences)
         sendEvent(TriggerActionController.ResetActionBalance(map))
     }
 
@@ -195,11 +196,15 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleSaveSelectedMap() {
-        selectedMap?.let(this::saveMap)
+        selectedMap?.let { saveMap(it) }
+    }
+
+    private fun handleSaveSelectedMapToFile(event: Event<File, Unit>) {
+        selectedMap?.let { saveMap(it, event.body) }
     }
 
     private fun handleSaveAllMaps() {
-        openedMaps.forEach(this::saveMap)
+        openedMaps.forEach { saveMap(it) }
     }
 
     private fun handleChangeActiveZ(event: Event<ActiveZ, Unit>) {

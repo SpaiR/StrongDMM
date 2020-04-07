@@ -16,4 +16,16 @@ object NfdUtil {
         MemoryUtil.memFree(buff)
         return file
     }
+
+    fun saveFile(filter: String, defaultPath: String = System.getProperty("user.home")): File? {
+        var file: File? = null
+        val buff = MemoryUtil.memAllocPointer(1)
+
+        if (NativeFileDialog.NFD_SaveDialog(filter, defaultPath, buff) == NativeFileDialog.NFD_OKAY) {
+            file = File(buff.stringUTF8)
+        }
+
+        MemoryUtil.memFree(buff)
+        return file
+    }
 }

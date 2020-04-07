@@ -15,6 +15,7 @@ abstract class TriggerMapHolderController {
     class FetchSelectedMap(callback: ((Dmm) -> Unit)) : Event<Unit, Dmm>(Unit, callback)
     class ChangeSelectedMap(body: MapId) : Event<MapId, Unit>(body, null)
     class SaveSelectedMap : Event<Unit, Unit>(Unit, null)
+    class SaveSelectedMapToFile(body: File) : Event<File, Unit>(body, null)
     class SaveAllMaps : Event<Unit, Unit>(Unit, null)
     class ChangeActiveZ(body: ActiveZ) : Event<ActiveZ, Unit>(body, null)
 }
