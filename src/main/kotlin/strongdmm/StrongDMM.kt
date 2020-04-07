@@ -1,5 +1,6 @@
 package strongdmm
 
+import org.slf4j.LoggerFactory
 import strongdmm.controller.*
 import strongdmm.controller.action.ActionController
 import strongdmm.controller.canvas.CanvasController
@@ -56,6 +57,7 @@ class StrongDMM(title: String) : AppWindow(title) {
 
     init {
         ensureHomeDirExists()
+        ensureLogsDirExists()
 
         instanceLocatorPanelUi.postInit()
         mapHolderController.postInit()
@@ -93,18 +95,22 @@ class StrongDMM(title: String) : AppWindow(title) {
         applicationCloseController.process()
     }
 
-    private fun ensureHomeDirExists() {
-        homeDir.toFile().mkdirs()
-    }
+    private fun ensureHomeDirExists() = homeDir.toFile().mkdirs()
+    private fun ensureLogsDirExists() = logsDir.toFile().mkdirs()
 
     companion object {
         const val TITLE: String = "StrongDMM"
 
         val homeDir: Path = Paths.get(System.getProperty("user.home")).resolve(".strongdmm")
+        val logsDir: Path = homeDir.resolve("logs")
 
         @JvmStatic
         fun main(args: Array<String>) {
-            StrongDMM(TITLE).start()
+            try {
+                StrongDMM(TITLE).start()
+            } catch (e: Exception) {
+                LoggerFactory.getLogger(this::class.java).error("Unhandled exception", e)
+            }
         }
     }
 }
