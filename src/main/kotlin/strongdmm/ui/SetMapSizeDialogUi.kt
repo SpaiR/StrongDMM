@@ -13,6 +13,7 @@ import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
 import strongdmm.window.AppWindow
+import kotlin.math.max
 
 class SetMapSizeDialogUi : EventConsumer, EventSender {
     private var isDoOpen: Boolean = false
@@ -71,9 +72,9 @@ class SetMapSizeDialogUi : EventConsumer, EventSender {
 
     private fun handleOpen() {
         sendEvent(TriggerMapHolderController.FetchSelectedMap {
-            newX.set(it.maxX)
-            newY.set(it.maxY)
-            newZ.set(it.maxZ)
+            newX.set(max(1, it.maxX))
+            newY.set(max(1, it.maxY))
+            newZ.set(max(1, it.maxZ))
 
             isDoOpen = true
         })

@@ -3,6 +3,7 @@ package strongdmm.event.type
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
+import strongdmm.byond.dmm.MapSize
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.shortcut.Shortcut
@@ -22,6 +23,7 @@ abstract class Reaction {
     class SelectedMapClosed : Event<Unit, Unit>(Unit, null)
     class OpenedMapClosed(body: Dmm) : Event<Dmm, Unit>(body, null)
     class SelectedMapZActiveChanged(body: ActiveZ) : Event<ActiveZ, Unit>(body, null)
+    class SelectedMapMapSizeChanged(body: MapSize) : Event<MapSize, Unit>(body, null)
 
     class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)
     class MapMouseDragStarted : Event<Unit, Unit>(Unit, null)

@@ -176,7 +176,7 @@ class MapModifierController : EventConsumer, EventSender {
     private fun handleChangeMapSize(event: Event<MapSize, Unit>) {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
             dmm.setMapSize(event.body.maxZ, event.body.maxY, event.body.maxX)
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(Reaction.SelectedMapMapSizeChanged(event.body))
         })
     }
 }

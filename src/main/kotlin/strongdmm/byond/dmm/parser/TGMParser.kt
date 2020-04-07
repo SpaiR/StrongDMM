@@ -1,5 +1,7 @@
 package strongdmm.byond.dmm.parser
 
+import kotlin.math.max
+
 class TGMParser(
     private val rawMapContent: String
 ) {
@@ -29,7 +31,8 @@ class TGMParser(
         val tiles = readTiles(rawMapContent.substring(posIdx))
 
         dmmData.isTgm = true
-        dmmData.setDmmSize(tiles.size, tiles[0].size, tiles[0][0].size)
+        dmmData.keyLength = max(1, dmmData.keyLength)
+        dmmData.setDmmSize(max(1, tiles.size), runCatching { tiles[0].size }.getOrDefault(1), runCatching { tiles[0][0].size }.getOrDefault(1))
 
         for (z in 1..dmmData.maxZ) {
             for (y in 1..dmmData.maxY) {

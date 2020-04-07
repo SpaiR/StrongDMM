@@ -15,6 +15,7 @@ import strongdmm.event.type.controller.TriggerActionController
 import strongdmm.event.type.controller.TriggerEnvironmentController
 import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.event.type.ui.TriggerCloseMapDialogUi
+import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.ui.closemap.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
@@ -34,6 +35,7 @@ class MapHolderController : EventSender, EventConsumer {
     private var selectedMap: Dmm? = null
 
     init {
+        consumeEvent(TriggerMapHolderController.CreateNewMap::class.java, ::handleCreateNewMap)
         consumeEvent(TriggerMapHolderController.OpenMap::class.java, ::handleOpenMap)
         consumeEvent(TriggerMapHolderController.CloseMap::class.java, ::handleCloseMap)
         consumeEvent(TriggerMapHolderController.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
@@ -122,6 +124,16 @@ class MapHolderController : EventSender, EventConsumer {
             closeMap(map)
             callback?.invoke(true)
         }
+    }
+
+    private fun handleCreateNewMap(event: Event<File, Unit>) {
+        this::class.java.classLoader.getResourceAsStream("new_map_data.txt").use {
+            event.body.writeBytes(it!!.readAllBytes())
+        }
+
+        sendEvent(TriggerMapHolderController.OpenMap(event.body))
+        selectedMap?.setMapSize(0, 0, 0) // -_-
+        sendEvent(TriggerSetMapSizeDialogUi.Open())
     }
 
     private fun handleOpenMap(event: Event<File, Unit>) {

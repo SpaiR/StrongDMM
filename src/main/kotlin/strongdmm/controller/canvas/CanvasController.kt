@@ -66,6 +66,7 @@ class CanvasController : EventSender, EventConsumer {
     init {
         consumeEvent(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -333,6 +334,11 @@ class CanvasController : EventSender, EventConsumer {
         maxY = event.body.maxY
         canvasRenderer.invalidateCanvasTexture()
         isHasMap = true
+    }
+
+    private fun handleSelectedMapMapSizeChanged(event: Event<MapSize, Unit>) {
+        maxX = event.body.maxX
+        maxY = event.body.maxY
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {

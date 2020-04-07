@@ -64,6 +64,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleProviderRecentFilesControllerRecentEnvironments)
         consumeEvent(Provider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
 
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_N, action = ::doNewMap)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseMap)
@@ -96,6 +97,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                     showRecentEnvironments()
                 }
                 separator()
+                menuItem("New Map...", shortcut = "Ctrl+N", enabled = isEnvironmentOpened, block = ::doNewMap)
                 menuItem("Open Map...", shortcut = "Ctrl+O", enabled = isEnvironmentOpened, block = ::doOpenMap)
                 menuItem("Open Available Map", shortcut = "Ctrl+Shift+O", enabled = isEnvironmentOpened, block = ::doOpenAvailableMap)
                 menu("Recent Maps", enabled = isEnvironmentOpened) { showRecentMaps() }
@@ -183,6 +185,18 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         NfdUtil.selectFile("dme")?.let { file ->
             sendEvent(TriggerEnvironmentController.OpenEnvironment(file))
         }
+    }
+
+    private fun doNewMap() {
+        if (!isEnvironmentOpened) {
+            return
+        }
+
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+            NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
+                sendEvent(TriggerMapHolderController.CreateNewMap(file))
+            }
+        })
     }
 
     private fun doOpenMap() {

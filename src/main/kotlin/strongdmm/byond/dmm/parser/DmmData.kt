@@ -1,5 +1,7 @@
 package strongdmm.byond.dmm.parser
 
+import kotlin.math.max
+
 class DmmData {
     var isTgm: Boolean = false
 
@@ -32,9 +34,9 @@ class DmmData {
             }
         }
 
-        this.maxZ = maxZ
-        this.maxY = maxY
-        this.maxX = maxX
+        this.maxZ = max(1, maxZ)
+        this.maxY = max(1, maxY)
+        this.maxX = max(1, maxX)
         this.tiles = tiles
     }
 
