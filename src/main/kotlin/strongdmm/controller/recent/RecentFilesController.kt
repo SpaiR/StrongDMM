@@ -8,10 +8,10 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventEnvironmentController
-import strongdmm.event.type.controller.EventRecentFilesController
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.controller.TriggerRecentFilesController
 import java.io.File
 
 class RecentFilesController : EventConsumer, EventSender {
@@ -25,19 +25,19 @@ class RecentFilesController : EventConsumer, EventSender {
     private val recentMaps: MutableList<MapPath> = mutableListOf()
 
     init {
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventRecentFilesController.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
-        consumeEvent(EventRecentFilesController.ClearRecentMaps::class.java, ::handleClearRecentMaps)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(TriggerRecentFilesController.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
+        consumeEvent(TriggerRecentFilesController.ClearRecentMaps::class.java, ::handleClearRecentMaps)
     }
 
     fun postInit() {
         ensureRecentFilesConfigExists()
         readRecentFilesConfig()
 
-        sendEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments(recentEnvironments))
-        sendEvent(EventGlobalProvider.RecentFilesControllerRecentMaps(recentMaps))
+        sendEvent(Provider.RecentFilesControllerRecentEnvironments(recentEnvironments))
+        sendEvent(Provider.RecentFilesControllerRecentMaps(recentMaps))
     }
 
     private fun ensureRecentFilesConfigExists() {
@@ -112,13 +112,13 @@ class RecentFilesController : EventConsumer, EventSender {
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
             addMap(environment.absEnvPath, event.body.mapPath)
         })
     }
 
     private fun handleClearRecentEnvironments() {
-        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
             recentFiles.environments.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)
@@ -126,7 +126,7 @@ class RecentFilesController : EventConsumer, EventSender {
     }
 
     private fun handleClearRecentMaps() {
-        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
             recentFiles.maps[environment.absEnvPath]?.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)

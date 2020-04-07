@@ -9,11 +9,11 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.controller.EventLayersFilterController
-import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerFrameController
+import strongdmm.event.type.controller.TriggerLayersFilterController
+import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameController : EventConsumer, EventSender {
@@ -31,25 +31,25 @@ class FrameController : EventConsumer, EventSender {
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
-        consumeEvent(EventFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        consumeEvent(TriggerFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.FrameControllerComposedFrame(cache))
-        sendEvent(EventGlobalProvider.FrameControllerFramedTiles(framedTiles))
+        sendEvent(Provider.FrameControllerComposedFrame(cache))
+        sendEvent(Provider.FrameControllerFramedTiles(framedTiles))
     }
 
     private fun updateFrameCache() {
-        sendEvent(EventMapHolderController.FetchSelectedMap { map ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->
             var filteredTypes: Set<String>? = null
 
-            sendEvent(EventLayersFilterController.FetchFilteredLayers {
+            sendEvent(TriggerLayersFilterController.FetchFilteredLayers {
                 filteredTypes = it
             })
 
@@ -118,7 +118,7 @@ class FrameController : EventConsumer, EventSender {
         cache.clear()
         framedTiles.clear()
         updateFrameCache()
-        sendEvent(EventGlobal.FrameRefreshed())
+        sendEvent(Reaction.FrameRefreshed())
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

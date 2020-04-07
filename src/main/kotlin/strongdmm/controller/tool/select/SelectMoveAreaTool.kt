@@ -38,11 +38,11 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
             initialArea = selectedArea
 
-            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredTypes ->
+            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 this.filteredTypes = filteredTypes // We need to know, which layers were filtered at the beginning
 
                 // Save initial tile items
-                sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+                sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
                     for (x in selectedArea.x1..selectedArea.x2) {
                         for (y in selectedArea.y1..selectedArea.y2) {
                             val filteredTileItems = selectedMap.getTile(x, y, selectedMap.zActive).getFilteredTileItems(filteredTypes)
@@ -59,7 +59,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
         isActive = false
 
         if (!tilesItemsToMove.isEmpty) {
-            sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
                 // Restore initial tiles state and create a reverse action
                 for (x in initialArea.x1..initialArea.x2) {
                     for (y in initialArea.y1..initialArea.y2) {
@@ -97,8 +97,8 @@ class SelectMoveAreaTool : Tool(), EventSender {
         }
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(EventActionController.AddAction(MultiAction(reverseActions.toList())))
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions.toList())))
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
         tilesItemsToMove.clear()
@@ -120,7 +120,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
         prevMapPosX = mapPos.x
         prevMapPosY = mapPos.y
 
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             if (x1 !in 1..selectedMap.maxX || y1 !in 1..selectedMap.maxY || x2 !in 1..selectedMap.maxX || y2 !in 1..selectedMap.maxY) {
                 return@FetchSelectedMap
             }
@@ -178,8 +178,8 @@ class SelectMoveAreaTool : Tool(), EventSender {
                 }
             }
 
-            sendEvent(EventFrameController.RefreshFrame())
-            sendEvent(EventCanvasController.SelectArea(selectedArea))
+            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerCanvasController.SelectArea(selectedArea))
         })
     }
 
@@ -192,7 +192,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
     override fun reset() {
         onStop()
         selectedArea = MapArea.OUT_OF_BOUNDS_AREA
-        sendEvent(EventCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
     override fun destroy() {

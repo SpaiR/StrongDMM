@@ -7,7 +7,7 @@ import strongdmm.event.TileItemId
 import strongdmm.event.TileItemType
 import strongdmm.ui.search.SearchRect
 
-abstract class EventInstanceController {
+abstract class TriggerInstanceController {
     class GenerateInstancesFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
     class GenerateInstancesFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
 

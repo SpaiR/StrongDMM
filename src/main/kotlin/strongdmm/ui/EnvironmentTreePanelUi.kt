@@ -16,10 +16,10 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventEnvironmentController
-import strongdmm.event.type.controller.EventTileItemController
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.controller.TriggerTileItemController
 import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.*
@@ -49,12 +49,12 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var createdTeeNodesInCycle: Int = 0
 
     init {
-        consumeEvent(EventGlobal.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
-        consumeEvent(EventGlobal.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments::class.java, ::handleRecentFilesControllerRecentEnvironments)
+        consumeEvent(Reaction.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
+        consumeEvent(Reaction.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleRecentFilesControllerRecentEnvironments)
     }
 
     fun process() {
@@ -98,7 +98,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private fun showEnvironmentOpenControls() {
         button("Open Environment...") {
             NfdUtil.selectFile("dme")?.let { file ->
-                sendEvent(EventEnvironmentController.OpenEnvironment(file))
+                sendEvent(TriggerEnvironmentController.OpenEnvironment(file))
             }
         }
 
@@ -111,7 +111,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
                 bullet()
                 sameLine()
                 button(envPath.replace('\\', '/').substringAfterLast('/') + "##$envPath") {
-                    sendEvent(EventEnvironmentController.OpenEnvironment(File(envPath)))
+                    sendEvent(TriggerEnvironmentController.OpenEnvironment(File(envPath)))
                 }
                 setItemHoveredTooltip(envPath)
             }
@@ -182,7 +182,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
     private fun selectType(type: String) {
         if (!isSelectedInCycle) {
-            sendEvent(EventTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getOrCreate(type)))
+            sendEvent(TriggerTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getOrCreate(type)))
             isSelectedInCycle = true
         }
     }

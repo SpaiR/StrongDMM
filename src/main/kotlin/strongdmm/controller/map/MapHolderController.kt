@@ -9,12 +9,12 @@ import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.controller.preferences.Preferences
 import strongdmm.event.*
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventEnvironmentController
-import strongdmm.event.type.controller.EventMapHolderController
-import strongdmm.event.type.ui.EventCloseMapDialogUi
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerActionController
+import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.ui.TriggerCloseMapDialogUi
 import strongdmm.ui.closemap.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
@@ -34,25 +34,25 @@ class MapHolderController : EventSender, EventConsumer {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(EventMapHolderController.OpenMap::class.java, ::handleOpenMap)
-        consumeEvent(EventMapHolderController.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(EventMapHolderController.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
-        consumeEvent(EventMapHolderController.CloseAllMaps::class.java, ::handleCloseAllMaps)
-        consumeEvent(EventMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
-        consumeEvent(EventMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
-        consumeEvent(EventMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
-        consumeEvent(EventMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobalProvider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
-        consumeEvent(EventGlobalProvider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
+        consumeEvent(TriggerMapHolderController.OpenMap::class.java, ::handleOpenMap)
+        consumeEvent(TriggerMapHolderController.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(TriggerMapHolderController.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
+        consumeEvent(TriggerMapHolderController.CloseAllMaps::class.java, ::handleCloseAllMaps)
+        consumeEvent(TriggerMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
+        consumeEvent(TriggerMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
+        consumeEvent(TriggerMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        consumeEvent(TriggerMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(Provider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
     }
 
     fun postInit() {
         ensureBackupsDirExists()
 
-        sendEvent(EventGlobalProvider.MapHolderControllerOpenedMaps(openedMaps))
-        sendEvent(EventGlobalProvider.MapHolderControllerAvailableMaps(availableMapsPathsWithVisibleMapsPaths))
+        sendEvent(Provider.MapHolderControllerOpenedMaps(openedMaps))
+        sendEvent(Provider.MapHolderControllerAvailableMaps(availableMapsPathsWithVisibleMapsPaths))
     }
 
     private fun ensureBackupsDirExists() {
@@ -77,7 +77,7 @@ class MapHolderController : EventSender, EventConsumer {
     private fun saveMap(map: Dmm) {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
         SaveMap(map, initialDmmData, providedPreferences)
-        sendEvent(EventActionController.ResetActionBalance())
+        sendEvent(TriggerActionController.ResetActionBalance())
     }
 
     private fun closeMap(map: Dmm) {
@@ -85,7 +85,7 @@ class MapHolderController : EventSender, EventConsumer {
 
         mapsBackupPathsById.remove(map.id)
         openedMaps.remove(map)
-        sendEvent(EventGlobal.OpenedMapClosed(map))
+        sendEvent(Reaction.OpenedMapClosed(map))
 
         if (selectedMap === map) {
             if (openedMaps.isEmpty()) {
@@ -94,21 +94,22 @@ class MapHolderController : EventSender, EventConsumer {
                 val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
                 val nextMap = openedMaps.toList()[index]
                 selectedMap = nextMap
-                sendEvent(EventGlobal.SelectedMapChanged(nextMap))
+                sendEvent(Reaction.SelectedMapChanged(nextMap))
             }
         }
     }
 
     private fun tryCloseMap(map: Dmm, callback: ((Boolean) -> Unit)? = null) {
         if (isMapHasChanges(map)) {
-            sendEvent(EventCloseMapDialogUi.Open(map) { closeMapStatus ->
+            sendEvent(TriggerCloseMapDialogUi.Open(map) { closeMapStatus ->
                 when (closeMapStatus) {
                     CloseMapDialogStatus.CLOSE_WITH_SAVE -> {
                         saveMap(map)
                         closeMap(map)
                     }
                     CloseMapDialogStatus.CLOSE -> closeMap(map)
-                    CloseMapDialogStatus.CANCEL -> {}
+                    CloseMapDialogStatus.CANCEL -> {
+                    }
                 }
 
                 callback?.invoke(closeMapStatus != CloseMapDialogStatus.CANCEL)
@@ -130,7 +131,7 @@ class MapHolderController : EventSender, EventConsumer {
 
         if (dmm != null) {
             selectedMap = dmm
-            sendEvent(EventGlobal.SelectedMapChanged(dmm))
+            sendEvent(Reaction.SelectedMapChanged(dmm))
         } else {
             val mapFile = event.body
 
@@ -138,7 +139,7 @@ class MapHolderController : EventSender, EventConsumer {
                 return
             }
 
-            sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+            sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
                 val dmmData = DmmParser.parse(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 
@@ -147,7 +148,7 @@ class MapHolderController : EventSender, EventConsumer {
                 openedMaps.add(map)
                 selectedMap = map
 
-                sendEvent(EventGlobal.SelectedMapChanged(map))
+                sendEvent(Reaction.SelectedMapChanged(map))
             })
         }
     }
@@ -185,7 +186,7 @@ class MapHolderController : EventSender, EventConsumer {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
-                sendEvent(EventGlobal.SelectedMapChanged(it))
+                sendEvent(Reaction.SelectedMapChanged(it))
             }
         }
     }
@@ -201,7 +202,7 @@ class MapHolderController : EventSender, EventConsumer {
             }
 
             map.zActive = event.body
-            sendEvent(EventGlobal.SelectedMapZActiveChanged(map.zActive))
+            sendEvent(Reaction.SelectedMapZActiveChanged(map.zActive))
         }
     }
 

@@ -29,20 +29,19 @@ abstract class AppWindow(title: String) {
         private const val DEFAULT_WIDTH = 1280
         private const val DEFAULT_HEIGHT = 768
 
+        var window: Long = 0
+        var isRunning: Boolean = true
+
         // Those are used to track window size properties
         private val winWidth: IntArray = IntArray(1)
         private val winHeight: IntArray = IntArray(1)
         private val fbWidth: IntArray = IntArray(1)
         private val fbHeight: IntArray = IntArray(1)
 
-        var window: Long = 0
-
         val windowWidth: Int
             get() = winWidth[0]
         val windowHeight: Int
             get() = winHeight[0]
-
-        var isRunning: Boolean = true
 
         var defaultWindowCond: Int = ImGuiCond.Once
             private set

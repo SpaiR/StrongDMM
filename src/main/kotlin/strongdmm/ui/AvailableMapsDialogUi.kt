@@ -7,10 +7,10 @@ import org.lwjgl.glfw.GLFW.*
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventMapHolderController
-import strongdmm.event.type.ui.EventAvailableMapsDialogUi
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.ui.TriggerAvailableMapsDialogUi
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 import java.io.File
@@ -26,8 +26,8 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
     private val mapFilter: ImString = ImString().apply { inputData.isResizable = true }
 
     init {
-        consumeEvent(EventAvailableMapsDialogUi.Open::class.java, ::handleOpen)
-        consumeEvent(EventGlobalProvider.MapHolderControllerAvailableMaps::class.java, ::handleProviderMapHolderControllerAvailableMaps)
+        consumeEvent(TriggerAvailableMapsDialogUi.Open::class.java, ::handleOpen)
+        consumeEvent(Provider.MapHolderControllerAvailableMaps::class.java, ::handleProviderMapHolderControllerAvailableMaps)
     }
 
     fun process() {
@@ -78,7 +78,7 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
 
     private fun openSelectedMapAndClosePopup() {
         selectedMapPath?.let {
-            sendEvent(EventMapHolderController.OpenMap(File(it)))
+            sendEvent(TriggerMapHolderController.OpenMap(File(it)))
             closePopup()
         }
     }
@@ -87,13 +87,13 @@ class AvailableMapsDialogUi : EventSender, EventConsumer {
         closeCurrentPopup()
         selectedMapPath = null
         selectionStatus = ""
-        sendEvent(EventGlobal.ApplicationBlockChanged(false))
+        sendEvent(Reaction.ApplicationBlockChanged(false))
     }
 
     private fun handleOpen() {
         isDoOpen = true
         isFirstOpen = true
-        sendEvent(EventGlobal.ApplicationBlockChanged(true))
+        sendEvent(Reaction.ApplicationBlockChanged(true))
     }
 
     private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {

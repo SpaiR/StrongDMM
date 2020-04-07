@@ -8,10 +8,10 @@ import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.EventSender
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventCanvasController
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.controller.TriggerActionController
+import strongdmm.event.type.controller.TriggerCanvasController
+import strongdmm.event.type.controller.TriggerFrameController
+import strongdmm.event.type.controller.TriggerMapHolderController
 import kotlin.math.max
 import kotlin.math.min
 
@@ -41,7 +41,7 @@ class FillAddTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             for (x in x1..x2) {
                 for (y in y1..y2) {
                     val tile = selectedMap.getTile(x, y, selectedMap.zActive)
@@ -54,11 +54,11 @@ class FillAddTool : Tool(), EventSender {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
-        sendEvent(EventCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -71,7 +71,7 @@ class FillAddTool : Tool(), EventSender {
 
     override fun reset() {
         isActive = false
-        sendEvent(EventCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
     override fun destroy() {
@@ -84,6 +84,6 @@ class FillAddTool : Tool(), EventSender {
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-        sendEvent(EventCanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
+        sendEvent(TriggerCanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
     }
 }

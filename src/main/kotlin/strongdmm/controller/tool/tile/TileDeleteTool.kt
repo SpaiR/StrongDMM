@@ -53,7 +53,7 @@ class TileDeleteTool : Tool(), EventSender {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(EventCanvasController.ResetSelectedTiles())
+        sendEvent(TriggerCanvasController.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -62,17 +62,17 @@ class TileDeleteTool : Tool(), EventSender {
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zActive)
 
-            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredTypes ->
+            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.deleteTileItem(tileItem)
                     })
 
-                    sendEvent(EventCanvasController.SelectTiles(dirtyTiles))
-                    sendEvent(EventFrameController.RefreshFrame())
+                    sendEvent(TriggerCanvasController.SelectTiles(dirtyTiles))
+                    sendEvent(TriggerFrameController.RefreshFrame())
                 }
             })
         })
@@ -83,6 +83,6 @@ class TileDeleteTool : Tool(), EventSender {
             return
         }
 
-        sendEvent(EventActionController.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions.toList())))
     }
 }

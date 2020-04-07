@@ -42,8 +42,8 @@ class FillDeleteTool : Tool(), EventSender {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredTypes ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 for (x in x1..x2) {
                     for (y in y1..y2) {
                         val tile = selectedMap.getTile(x, y, selectedMap.zActive)
@@ -59,11 +59,11 @@ class FillDeleteTool : Tool(), EventSender {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(EventActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
-        sendEvent(EventCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -83,7 +83,7 @@ class FillDeleteTool : Tool(), EventSender {
 
     override fun reset() {
         isActive = false
-        sendEvent(EventCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
     override fun destroy() {
@@ -96,6 +96,6 @@ class FillDeleteTool : Tool(), EventSender {
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-        sendEvent(EventCanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
+        sendEvent(TriggerCanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
     }
 }

@@ -4,7 +4,10 @@ import gnu.trove.set.hash.TLongHashSet
 import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
-import imgui.enums.*
+import imgui.enums.ImGuiCol
+import imgui.enums.ImGuiMouseCursor
+import imgui.enums.ImGuiTreeNodeFlags
+import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
@@ -15,10 +18,10 @@ import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventEnvironmentController
-import strongdmm.event.type.controller.EventLayersFilterController
-import strongdmm.event.type.ui.EventLayersFilterPanelUi
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.controller.TriggerLayersFilterController
+import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
 import strongdmm.util.imgui.GREEN32
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.child
@@ -38,10 +41,10 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
     private val typesFilter: ImString = ImString(50)
 
     init {
-        consumeEvent(EventLayersFilterPanelUi.Open::class.java, ::handleOpen)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        consumeEvent(TriggerLayersFilterPanelUi.Open::class.java, ::handleOpen)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
     }
 
     fun process() {
@@ -109,7 +112,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
 
         if (smallButton(" ##layer_filter_${dmeItem.id}")) {
             toggleItemFilter(dmeItem, isFilteredType)
-            sendEvent(EventLayersFilterController.FilterLayersById(filteredTypesId.toArray()))
+            sendEvent(TriggerLayersFilterController.FilterLayersById(filteredTypesId.toArray()))
         }
 
         if (isItemHovered()) {
@@ -151,7 +154,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
     }
 
     private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
-        sendEvent(EventEnvironmentController.FetchOpenedEnvironment {
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
             filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->
                 if (event.body.contains(dmeItem.type)) {

@@ -17,11 +17,11 @@ import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
 import strongdmm.event.TileItemIdx
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.ui.EventEditVarsDialogUi
-import strongdmm.event.type.ui.EventObjectPanelUi
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerActionController
+import strongdmm.event.type.controller.TriggerFrameController
+import strongdmm.event.type.ui.TriggerEditVarsDialogUi
+import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -31,9 +31,9 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         private const val DIALOG_HEIGHT: Float = 450f
         private const val FILTER_BUFFER: Int = 10
 
-        private var WINDOW_ID: Long = 0 // To ensure every window will be unique.
+        private var windowId: Long = 0 // To ensure every window will be unique.
 
-        private val HIDDEN_VARS: Set<String> = setOf(
+        private val hiddenVars: Set<String> = setOf(
             VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_CONTENTS, VAR_FILTERS, VAR_LOC, VAR_MAPTEXT,
             VAR_MAPTEXT_WIDTH, VAR_MAPTEXT_HEIGHT, VAR_MAPTEXT_X, VAR_MAPTEXT_Y, VAR_OVERLAYS, VAR_UNDERLAYS, VAR_VERBS,
             VAR_APPEARANCE, VAR_VIS_CONTENTS, VAR_VIS_LOCS
@@ -43,9 +43,11 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var isFistOpen: Boolean = true
 
     private var currentTileItem: TileItem? = null // We can open edit menu with a tile item...
+
     private var currentTile: Tile? = null // ...or with a tile. If opened with the tile, then changes will be applied to a map.
     private var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
     private var currentTileItemIndex: Int = 0 // This index is an item index inside of a Tile objects list
+
     private var currentEditVar: Var? = null
 
     // Variables filter buffer, resizable string
@@ -56,11 +58,11 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private var variableInputFocused: Boolean = false // On first var select we will focus its input. Var is to check if we've already did it
 
     init {
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventEditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
-        consumeEvent(EventEditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(TriggerEditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
+        consumeEvent(TriggerEditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }
 
     fun process() {
@@ -68,7 +70,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
             setNextWindowPos((AppWindow.windowWidth - DIALOG_WIDTH) / 2f, (AppWindow.windowHeight - DIALOG_HEIGHT) / 2f, AppWindow.defaultWindowCond)
             setNextWindowSize(DIALOG_WIDTH, DIALOG_HEIGHT, AppWindow.defaultWindowCond)
 
-            window("Edit Variables: ${tileItem.type}##edit_variables_$WINDOW_ID") {
+            window("Edit Variables: ${tileItem.type}##edit_variables_$windowId") {
                 showControls()
                 separator()
                 child("vars_table") {
@@ -171,7 +173,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
         // To collect vars from the dme hierarchy
         fun collectVars(dmeItem: DmeItem) {
-            dmeItem.vars.filterKeys { variableName -> variableName !in HIDDEN_VARS }.forEach { (name, value) ->
+            dmeItem.vars.filterKeys { variableName -> variableName !in hiddenVars }.forEach { (name, value) ->
                 if (variables.none { variable -> variable.name == name }) {
                     variables.add(Var(name, value ?: "null", value ?: "null"))
                 }
@@ -182,7 +184,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
 
         // To collect vars from the current tile item
         getTileItem()?.let { tileItem ->
-            tileItem.customVars?.filterKeys { variableName -> variableName !in HIDDEN_VARS }?.forEach { name, value ->
+            tileItem.customVars?.filterKeys { variableName -> variableName !in hiddenVars }?.forEach { name, value ->
                 variables.add(Var(name, value, tileItem.dmeItem.getVar(name) ?: "null"))
             }
 
@@ -217,7 +219,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
                 GlobalTileItemHolder.tmpOperation {
                     it.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                 }
-                sendEvent(EventFrameController.RefreshFrame())
+                sendEvent(TriggerFrameController.RefreshFrame())
             }
         }
     }
@@ -225,7 +227,7 @@ class EditVarsDialogUi : EventSender, EventConsumer {
     private fun discardTmpTileChanges() {
         if (currentTile != null && initialTileItemsId != null) {
             currentTile!!.replaceTileItemsId(initialTileItemsId!!)
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
     }
 
@@ -236,19 +238,19 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         getNewItemVars()?.let { newItemVars ->
             if (currentTile != null) { // in case if we have a tile to apply changes
                 sendEvent(
-                    EventActionController.AddAction(
+                    TriggerActionController.AddAction(
                         ReplaceTileAction(currentTile!!) {
                             currentTile!!.modifyItemVars(currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                         }
                     )
                 )
 
-                sendEvent(EventFrameController.RefreshFrame())
+                sendEvent(TriggerFrameController.RefreshFrame())
             } else if (currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 GlobalTileItemHolder.getOrCreate(currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 
-            sendEvent(EventObjectPanelUi.Update())
+            sendEvent(TriggerObjectPanelUi.Update())
         }
 
         dispose()
@@ -267,13 +269,13 @@ class EditVarsDialogUi : EventSender, EventConsumer {
         varsFilter.set("")
         isShowModifiedVars.set(false)
         variables.clear()
-        sendEvent(EventGlobal.ApplicationBlockChanged(false))
+        sendEvent(Reaction.ApplicationBlockChanged(false))
     }
 
     private fun open() {
         isFistOpen = true
-        sendEvent(EventGlobal.ApplicationBlockChanged(true))
-        WINDOW_ID++
+        sendEvent(Reaction.ApplicationBlockChanged(true))
+        windowId++
     }
 
     private fun handleEnvironmentReset() {

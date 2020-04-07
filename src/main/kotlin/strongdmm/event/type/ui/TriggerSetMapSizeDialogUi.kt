@@ -2,6 +2,6 @@ package strongdmm.event.type.ui
 
 import strongdmm.event.Event
 
-class EventSetMapSizeDialogUi {
+class TriggerSetMapSizeDialogUi {
     class Open : Event<Unit, Unit>(Unit, null)
 }

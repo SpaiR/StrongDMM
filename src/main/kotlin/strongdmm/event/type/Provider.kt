@@ -11,7 +11,7 @@ import strongdmm.event.AbsoluteFilePath
 import strongdmm.event.Event
 import strongdmm.event.VisibleFilePath
 
-abstract class EventGlobalProvider {
+abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
     class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
     class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)

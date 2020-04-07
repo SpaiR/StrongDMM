@@ -15,11 +15,11 @@ import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
-import strongdmm.event.type.ui.EventEditVarsDialogUi
-import strongdmm.event.type.ui.EventObjectPanelUi
-import strongdmm.event.type.ui.EventTilePopupUi
+import strongdmm.event.type.ui.TriggerEditVarsDialogUi
+import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.event.type.ui.TriggerTilePopupUi
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
@@ -42,12 +42,12 @@ class TilePopupUi : EventConsumer, EventSender {
     private val pixelYNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap()
 
     init {
-        consumeEvent(EventTilePopupUi.Open::class.java, ::handleOpen)
-        consumeEvent(EventTilePopupUi.Close::class.java, ::handleClose)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        consumeEvent(TriggerTilePopupUi.Open::class.java, ::handleOpen)
+        consumeEvent(TriggerTilePopupUi.Close::class.java, ::handleClose)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
     }
 
     fun process() {
@@ -100,43 +100,43 @@ class TilePopupUi : EventConsumer, EventSender {
         separator()
 
         menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(EventActionController.AddAction(
+            sendEvent(TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.moveToTop(tileItem, tileItemIdx)
                 }
             ))
 
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
         menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(EventActionController.AddAction(
+            sendEvent(TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.moveToBottom(tileItem, tileItemIdx)
                 }
             ))
 
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
         separator()
 
         menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
-            sendEvent(EventTileItemController.ChangeActiveTileItem(tileItem))
+            sendEvent(TriggerTileItemController.ChangeActiveTileItem(tileItem))
         }
 
         menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
-            sendEvent(EventEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+            sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
         }
 
         menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB") {
-            sendEvent(EventActionController.AddAction(
+            sendEvent(TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItemIdx)
                 }
             ))
 
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
         menuItem(
@@ -145,13 +145,13 @@ class TilePopupUi : EventConsumer, EventSender {
             enabled = (activeTileItem?.isSameType(tileItem) ?: false)
         ) {
             activeTileItem?.let { activeTileItem ->
-                sendEvent(EventActionController.AddAction(
+                sendEvent(TriggerActionController.AddAction(
                     ReplaceTileAction(tile) {
                         tile.replaceTileItem(tileItemIdx, activeTileItem)
                     }
                 ))
 
-                sendEvent(EventFrameController.RefreshFrame())
+                sendEvent(TriggerFrameController.RefreshFrame())
             }
         }
     }
@@ -166,7 +166,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
             }
 
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerFrameController.RefreshFrame())
         }
 
         if (isItemDeactivatedAfterEdit()) {
@@ -174,14 +174,14 @@ class TilePopupUi : EventConsumer, EventSender {
                 tile.nudge(isXAxis, tileItem, tileItemIdx, initialValue)
             }
 
-            sendEvent(EventActionController.AddAction(
+            sendEvent(TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
                     tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
                 }
             ))
 
-            sendEvent(EventFrameController.RefreshFrame())
-            sendEvent(EventObjectPanelUi.Update())
+            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerObjectPanelUi.Update())
 
             if (isXAxis) {
                 pixelXNudgeArrays.clear()
@@ -192,31 +192,31 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun doUndo() {
-        sendEvent(EventActionController.UndoAction())
+        sendEvent(TriggerActionController.UndoAction())
     }
 
     private fun doRedo() {
-        sendEvent(EventActionController.RedoAction())
+        sendEvent(TriggerActionController.RedoAction())
     }
 
     private fun doCut() {
-        sendEvent(EventClipboardController.Cut())
+        sendEvent(TriggerClipboardController.Cut())
     }
 
     private fun doCopy() {
-        sendEvent(EventClipboardController.Copy())
+        sendEvent(TriggerClipboardController.Copy())
     }
 
     private fun doPaste() {
-        sendEvent(EventClipboardController.Paste())
+        sendEvent(TriggerClipboardController.Paste())
     }
 
     private fun doDelete() {
-        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun doDeselectAll() {
-        sendEvent(EventToolsController.ResetTool())
+        sendEvent(TriggerToolsController.ResetTool())
     }
 
     private fun dispose() {

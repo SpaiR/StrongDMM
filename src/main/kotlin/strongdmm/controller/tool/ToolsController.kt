@@ -9,8 +9,8 @@ import strongdmm.controller.tool.tile.TileComplexTool
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventToolsController
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerToolsController
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ToolsController : EventConsumer, EventSender {
@@ -21,18 +21,18 @@ class ToolsController : EventConsumer, EventSender {
     private var activeTileItem: TileItem? = null
 
     init {
-        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(EventGlobal.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
-        consumeEvent(EventGlobal.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
-        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventToolsController.ChangeTool::class.java, ::handleChangeTool)
-        consumeEvent(EventToolsController.ResetTool::class.java, ::handleResetTool)
-        consumeEvent(EventToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
-        consumeEvent(EventToolsController.SelectActiveArea::class.java, ::handleSelectActiveArea)
+        consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(Reaction.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
+        consumeEvent(Reaction.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
+        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(TriggerToolsController.ChangeTool::class.java, ::handleChangeTool)
+        consumeEvent(TriggerToolsController.ResetTool::class.java, ::handleResetTool)
+        consumeEvent(TriggerToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
+        consumeEvent(TriggerToolsController.SelectActiveArea::class.java, ::handleSelectActiveArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -85,7 +85,7 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onTileItemSwitch(activeTileItem)
-        sendEvent(EventGlobal.ActiveToolChanged(event.body))
+        sendEvent(Reaction.ActiveToolChanged(event.body))
     }
 
     private fun handleResetTool() {
@@ -105,7 +105,7 @@ class ToolsController : EventConsumer, EventSender {
     }
 
     private fun handleSelectActiveArea(event: Event<MapArea, Unit>) {
-        sendEvent(EventToolsController.ChangeTool(ToolType.SELECT))
+        sendEvent(TriggerToolsController.ChangeTool(ToolType.SELECT))
         (currentTool as SelectComplexTool).selectArea(event.body)
     }
 }

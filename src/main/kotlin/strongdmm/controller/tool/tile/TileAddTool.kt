@@ -7,10 +7,10 @@ import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.action.undoable.Undoable
 import strongdmm.controller.tool.Tool
 import strongdmm.event.EventSender
-import strongdmm.event.type.controller.EventActionController
-import strongdmm.event.type.controller.EventCanvasController
-import strongdmm.event.type.controller.EventFrameController
-import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.controller.TriggerActionController
+import strongdmm.event.type.controller.TriggerCanvasController
+import strongdmm.event.type.controller.TriggerFrameController
+import strongdmm.event.type.controller.TriggerMapHolderController
 
 class TileAddTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
@@ -45,7 +45,7 @@ class TileAddTool : Tool(), EventSender {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(EventCanvasController.ResetSelectedTiles())
+        sendEvent(TriggerCanvasController.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -54,15 +54,15 @@ class TileAddTool : Tool(), EventSender {
     }
 
     private fun addTileItem(pos: MapPos) {
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zActive)
 
             reverseActions.add(ReplaceTileAction(tile) {
                 tile.addTileItem(activeTileItem!!)
             })
 
-            sendEvent(EventCanvasController.SelectTiles(dirtyTiles))
-            sendEvent(EventFrameController.RefreshFrame())
+            sendEvent(TriggerCanvasController.SelectTiles(dirtyTiles))
+            sendEvent(TriggerFrameController.RefreshFrame())
         })
     }
 
@@ -71,6 +71,6 @@ class TileAddTool : Tool(), EventSender {
             return
         }
 
-        sendEvent(EventActionController.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions.toList())))
     }
 }

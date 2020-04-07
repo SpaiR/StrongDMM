@@ -4,8 +4,8 @@ import com.google.gson.Gson
 import strongdmm.StrongDMM
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventPreferencesController
+import strongdmm.event.type.Provider
+import strongdmm.event.type.controller.TriggerPreferencesController
 import java.io.File
 
 class PreferencesController : EventSender, EventConsumer {
@@ -16,14 +16,14 @@ class PreferencesController : EventSender, EventConsumer {
     private lateinit var preferences: Preferences
 
     init {
-        consumeEvent(EventPreferencesController.SavePreferences::class.java, ::handleSavePreferences)
+        consumeEvent(TriggerPreferencesController.SavePreferences::class.java, ::handleSavePreferences)
     }
 
     fun postInit() {
         ensurePreferencesConfigExists()
         readPreferencesConfig()
 
-        sendEvent(EventGlobalProvider.PreferencesControllerPreferences(preferences))
+        sendEvent(Provider.PreferencesControllerPreferences(preferences))
     }
 
     private fun ensurePreferencesConfigExists() {

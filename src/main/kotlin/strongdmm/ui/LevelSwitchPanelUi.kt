@@ -10,8 +10,8 @@ import strongdmm.controller.shortcut.ShortcutHandler
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.util.imgui.GREY32
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
@@ -21,9 +21,9 @@ class LevelSwitchPanelUi : ShortcutHandler(), EventConsumer, EventSender {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_LEFT, action = ::doDecreaseActiveZ)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_RIGHT, action = ::doIncreaseActiveZ)
@@ -73,11 +73,11 @@ class LevelSwitchPanelUi : ShortcutHandler(), EventConsumer, EventSender {
     }
 
     private fun doDecreaseActiveZ() {
-        sendEvent(EventMapHolderController.ChangeActiveZ(selectedMap!!.zActive - 1))
+        sendEvent(TriggerMapHolderController.ChangeActiveZ(selectedMap!!.zActive - 1))
     }
 
     private fun doIncreaseActiveZ() {
-        sendEvent(EventMapHolderController.ChangeActiveZ(selectedMap!!.zActive + 1))
+        sendEvent(TriggerMapHolderController.ChangeActiveZ(selectedMap!!.zActive + 1))
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

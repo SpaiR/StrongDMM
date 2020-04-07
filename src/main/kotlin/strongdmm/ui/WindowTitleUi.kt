@@ -5,16 +5,16 @@ import strongdmm.StrongDMM
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.Reaction
 import strongdmm.window.AppWindow
 
 class WindowTitleUi : EventConsumer {
     private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

@@ -17,13 +17,13 @@ import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
-import strongdmm.event.type.ui.EventAvailableMapsDialogUi
-import strongdmm.event.type.ui.EventLayersFilterPanelUi
-import strongdmm.event.type.ui.EventPreferencesPanelUi
-import strongdmm.event.type.ui.EventSetMapSizeDialogUi
+import strongdmm.event.type.ui.TriggerAvailableMapsDialogUi
+import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
+import strongdmm.event.type.ui.TriggerPreferencesPanelUi
+import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -49,17 +49,17 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private lateinit var providedRecentMaps: List<MapPath>
 
     init {
-        consumeEvent(EventGlobal.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
-        consumeEvent(EventGlobal.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
-        consumeEvent(EventGlobal.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        consumeEvent(EventGlobal.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        consumeEvent(Reaction.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
+        consumeEvent(Reaction.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
+        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
 
-        consumeEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
-        consumeEvent(EventGlobalProvider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
-        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentEnvironments::class.java, ::handleProviderRecentFilesControllerRecentEnvironments)
-        consumeEvent(EventGlobalProvider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
+        consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
+        consumeEvent(Provider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
+        consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleProviderRecentFilesControllerRecentEnvironments)
+        consumeEvent(Provider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = ::doOpenAvailableMap)
@@ -148,12 +148,12 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         providedRecentEnvironments.toTypedArray().forEach { recentEnvironmentPath ->
             menuItem(recentEnvironmentPath) {
-                sendEvent(EventEnvironmentController.OpenEnvironment(File(recentEnvironmentPath)))
+                sendEvent(TriggerEnvironmentController.OpenEnvironment(File(recentEnvironmentPath)))
             }
         }
         separator()
         menuItem("Clear Recent Environments") {
-            sendEvent(EventRecentFilesController.ClearRecentEnvironments())
+            sendEvent(TriggerRecentFilesController.ClearRecentEnvironments())
         }
     }
 
@@ -164,18 +164,18 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
         providedRecentMaps.toTypedArray().forEach { (readable, absolute) ->
             menuItem(readable) {
-                sendEvent(EventMapHolderController.OpenMap(File(absolute)))
+                sendEvent(TriggerMapHolderController.OpenMap(File(absolute)))
             }
         }
         separator()
         menuItem("Clear Recent Maps") {
-            sendEvent(EventRecentFilesController.ClearRecentMaps())
+            sendEvent(TriggerRecentFilesController.ClearRecentMaps())
         }
     }
 
     private fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(EventEnvironmentController.OpenEnvironment(file))
+            sendEvent(TriggerEnvironmentController.OpenEnvironment(file))
         }
     }
 
@@ -184,34 +184,34 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             return
         }
 
-        sendEvent(EventEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
             NfdUtil.selectFile("dmm", environment.absRootDirPath)?.let { path ->
-                sendEvent(EventMapHolderController.OpenMap(path))
+                sendEvent(TriggerMapHolderController.OpenMap(path))
             }
         })
     }
 
     private fun doOpenAvailableMap() {
         if (isEnvironmentOpened) {
-            sendEvent(EventAvailableMapsDialogUi.Open())
+            sendEvent(TriggerAvailableMapsDialogUi.Open())
         }
     }
 
     private fun doCloseMap() {
         if (isEnvironmentOpened) {
-            sendEvent(EventMapHolderController.CloseSelectedMap())
+            sendEvent(TriggerMapHolderController.CloseSelectedMap())
         }
     }
 
     private fun doCloseAllMaps() {
         if (isEnvironmentOpened) {
-            sendEvent(EventMapHolderController.CloseAllMaps())
+            sendEvent(TriggerMapHolderController.CloseAllMaps())
         }
     }
 
     private fun doSave() {
         if (isEnvironmentOpened) {
-            sendEvent(EventMapHolderController.SaveSelectedMap())
+            sendEvent(TriggerMapHolderController.SaveSelectedMap())
         }
     }
 
@@ -220,35 +220,35 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doUndo() {
-        sendEvent(EventActionController.UndoAction())
+        sendEvent(TriggerActionController.UndoAction())
     }
 
     private fun doRedo() {
-        sendEvent(EventActionController.RedoAction())
+        sendEvent(TriggerActionController.RedoAction())
     }
 
     private fun doCut() {
-        sendEvent(EventClipboardController.Cut())
+        sendEvent(TriggerClipboardController.Cut())
     }
 
     private fun doCopy() {
-        sendEvent(EventClipboardController.Copy())
+        sendEvent(TriggerClipboardController.Copy())
     }
 
     private fun doPaste() {
-        sendEvent(EventClipboardController.Paste())
+        sendEvent(TriggerClipboardController.Paste())
     }
 
     private fun doDelete() {
-        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun doDeselectAll() {
-        sendEvent(EventToolsController.ResetTool())
+        sendEvent(TriggerToolsController.ResetTool())
     }
 
     private fun doSetMapSize() {
-        sendEvent(EventSetMapSizeDialogUi.Open())
+        sendEvent(TriggerSetMapSizeDialogUi.Open())
     }
 
     private fun doFindInstance() {
@@ -256,11 +256,11 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doOpenPreferences() {
-        sendEvent(EventPreferencesPanelUi.Open())
+        sendEvent(TriggerPreferencesPanelUi.Open())
     }
 
     private fun doOpenLayersFilter() {
-        sendEvent(EventLayersFilterPanelUi.Open())
+        sendEvent(TriggerLayersFilterPanelUi.Open())
     }
 
     private fun toggleAreaLayer() {
@@ -309,9 +309,9 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun toggleLayer(layerStatus: ImBool, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(EventLayersFilterController.ShowLayersByType(layerType))
+            sendEvent(TriggerLayersFilterController.ShowLayersByType(layerType))
         } else {
-            sendEvent(EventLayersFilterController.HideLayersByType(layerType))
+            sendEvent(TriggerLayersFilterController.HideLayersByType(layerType))
         }
     }
 

@@ -5,7 +5,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
 import strongdmm.util.OUT_OF_BOUNDS
 
@@ -14,11 +14,11 @@ class ClipboardController : EventConsumer, EventSender {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(EventClipboardController.Cut::class.java, ::handleCut)
-        consumeEvent(EventClipboardController.Copy::class.java, ::handleCopy)
-        consumeEvent(EventClipboardController.Paste::class.java, ::handlePaste)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(TriggerClipboardController.Cut::class.java, ::handleCut)
+        consumeEvent(TriggerClipboardController.Copy::class.java, ::handleCopy)
+        consumeEvent(TriggerClipboardController.Paste::class.java, ::handlePaste)
     }
 
     private fun handleEnvironmentReset() {
@@ -30,14 +30,14 @@ class ClipboardController : EventConsumer, EventSender {
     }
 
     private fun handleCut() {
-        sendEvent(EventClipboardController.Copy())
-        sendEvent(EventMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerClipboardController.Copy())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
     }
 
     private fun handleCopy() {
-        sendEvent(EventMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(EventLayersFilterController.FetchFilteredLayers { filteredLayers ->
-                sendEvent(EventToolsController.FetchActiveArea { activeArea ->
+        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
+                sendEvent(TriggerToolsController.FetchActiveArea { activeArea ->
                     val width = activeArea.x2 - activeArea.x1 + 1
                     val height = activeArea.y2 - activeArea.y1 + 1
                     val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
@@ -57,7 +57,7 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handlePaste() {
         if (!currentMapPos.isOutOfBounds() && tileItems != null) {
-            sendEvent(EventMapModifierController.FillSelectedMapPositionWithTileItems(tileItems!!))
+            sendEvent(TriggerMapModifierController.FillSelectedMapPositionWithTileItems(tileItems!!))
         }
     }
 }

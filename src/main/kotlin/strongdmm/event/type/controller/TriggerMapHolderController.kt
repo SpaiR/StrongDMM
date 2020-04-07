@@ -7,7 +7,7 @@ import strongdmm.event.MapId
 import strongdmm.event.MapsCloseStatus
 import java.io.File
 
-abstract class EventMapHolderController {
+abstract class TriggerMapHolderController {
     class OpenMap(body: File) : Event<File, Unit>(body, null)
     class CloseMap(body: MapId) : Event<MapId, Unit>(body, null)
     class CloseSelectedMap : Event<Unit, Unit>(Unit, null)

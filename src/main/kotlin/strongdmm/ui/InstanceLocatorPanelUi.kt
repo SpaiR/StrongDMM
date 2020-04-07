@@ -10,12 +10,12 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventInstanceController
-import strongdmm.event.type.controller.EventToolsController
-import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
-import strongdmm.event.type.ui.EventSearchResultPanelUi
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerInstanceController
+import strongdmm.event.type.controller.TriggerToolsController
+import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
+import strongdmm.event.type.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.search.SearchRect
 import strongdmm.ui.search.SearchResult
 import strongdmm.util.imgui.button
@@ -43,14 +43,14 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
     private val searchY2: ImInt = ImInt(255)
 
     init {
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventInstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
-        consumeEvent(EventInstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(TriggerInstanceLocatorPanelUi.SearchByType::class.java, ::handleSearchByType)
+        consumeEvent(TriggerInstanceLocatorPanelUi.SearchById::class.java, ::handleSearchById)
     }
 
     fun postInit() {
-        sendEvent(EventGlobalProvider.InstanceLocatorPanelUiOpen(showInstanceLocator))
+        sendEvent(Provider.InstanceLocatorPanelUiOpen(showInstanceLocator))
     }
 
     fun process() {
@@ -95,7 +95,7 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
     }
 
     private fun setSearchRectToActiveArea() {
-        sendEvent(EventToolsController.FetchActiveArea { activeArea ->
+        sendEvent(TriggerToolsController.FetchActiveArea { activeArea ->
             searchX1.set(activeArea.x1)
             searchY1.set(activeArea.y1)
             searchX2.set(activeArea.x2)
@@ -122,14 +122,14 @@ class InstanceLocatorPanelUi : EventSender, EventConsumer {
 
         val openSearchResult = { it: List<Pair<TileItem, MapPos>> ->
             if (it.isNotEmpty()) {
-                sendEvent(EventSearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
+                sendEvent(TriggerSearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
             }
         }
 
         if (tileItemId != null) {
-            sendEvent(EventInstanceController.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
+            sendEvent(TriggerInstanceController.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
         } else {
-            sendEvent(EventInstanceController.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
+            sendEvent(TriggerInstanceController.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
         }
     }
 

@@ -3,7 +3,7 @@ package strongdmm.controller.shortcut
 import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.Reaction
 
 @Suppress("LeakingThis")
 open class ShortcutHandler : EventConsumer {
@@ -14,8 +14,8 @@ open class ShortcutHandler : EventConsumer {
     private var isShortcutsBlocked: Boolean = false
 
     init {
-        consumeEvent(EventGlobal.ShortcutTriggered::class.java, ::handleShortcutTriggered)
-        consumeEvent(EventGlobal.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
+        consumeEvent(Reaction.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+        consumeEvent(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
     }
 
     private val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()

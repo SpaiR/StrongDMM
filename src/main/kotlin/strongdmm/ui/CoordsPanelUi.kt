@@ -6,7 +6,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
-import strongdmm.event.type.EventGlobal
+import strongdmm.event.type.Reaction
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
@@ -20,10 +20,10 @@ class CoordsPanelUi : EventConsumer {
     private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     init {
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {

@@ -7,9 +7,9 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventMapHolderController
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.util.imgui.RED32
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.smallButton
@@ -23,10 +23,10 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(EventGlobalProvider.MapHolderControllerOpenedMaps::class.java, ::handleProviderMapHolderControllerOpenedMaps)
-        consumeEvent(EventGlobalProvider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventGlobal.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Provider.MapHolderControllerOpenedMaps::class.java, ::handleProviderMapHolderControllerOpenedMaps)
+        consumeEvent(Provider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {
@@ -41,7 +41,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
             providedOpenedMaps.toTypedArray().forEach { map ->
                 pushStyleColor(ImGuiCol.ButtonHovered, RED32)
                 smallButton("X##close_map_${map.mapPath.readable}") {
-                    sendEvent(EventMapHolderController.CloseMap(map.id))
+                    sendEvent(TriggerMapHolderController.CloseMap(map.id))
                 }
                 popStyleColor()
 
@@ -49,7 +49,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
 
                 if (selectable(getMapName(map), selectedMap === map)) {
                     if (selectedMap !== map) {
-                        sendEvent(EventMapHolderController.ChangeSelectedMap(map.id))
+                        sendEvent(TriggerMapHolderController.ChangeSelectedMap(map.id))
                     }
                 }
                 setItemHoveredTooltip(map.mapPath.readable)

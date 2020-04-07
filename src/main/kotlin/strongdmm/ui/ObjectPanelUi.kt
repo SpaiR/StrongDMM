@@ -10,12 +10,12 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventInstanceController
-import strongdmm.event.type.controller.EventTileItemController
-import strongdmm.event.type.ui.EventEditVarsDialogUi
-import strongdmm.event.type.ui.EventInstanceLocatorPanelUi
-import strongdmm.event.type.ui.EventObjectPanelUi
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerInstanceController
+import strongdmm.event.type.controller.TriggerTileItemController
+import strongdmm.event.type.ui.TriggerEditVarsDialogUi
+import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
+import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -33,10 +33,10 @@ class ObjectPanelUi : EventConsumer, EventSender {
     private var selectedObjIdx: Int = 0
 
     init {
-        consumeEvent(EventGlobal.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(EventGlobal.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
-        consumeEvent(EventGlobal.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(EventObjectPanelUi.Update::class.java, ::handleUpdate)
+        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(TriggerObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
     fun process() {
@@ -68,7 +68,7 @@ class ObjectPanelUi : EventConsumer, EventSender {
             tileItems?.forEachIndexed { index, tileItem ->
                 val isSelected = index == selectedObjIdx
                 selectable("##tile_item_$index", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
-                    sendEvent(EventTileItemController.ChangeActiveTileItem(tileItem))
+                    sendEvent(TriggerTileItemController.ChangeActiveTileItem(tileItem))
                     scrolledToItem = true // do not scroll panel in the next cycle
                 }
                 if (isSelected && !scrolledToItem) {
@@ -77,22 +77,22 @@ class ObjectPanelUi : EventConsumer, EventSender {
                 }
                 popupContextItem("object_options_$index", ImGuiMouseButton.Right) {
                     menuItem("Find Instance on Map") {
-                        sendEvent(EventInstanceLocatorPanelUi.SearchById(tileItem.id))
+                        sendEvent(TriggerInstanceLocatorPanelUi.SearchById(tileItem.id))
                     }
                     menuItem("Fine All Objects on Map") {
-                        sendEvent(EventInstanceLocatorPanelUi.SearchByType(tileItem.type))
+                        sendEvent(TriggerInstanceLocatorPanelUi.SearchByType(tileItem.type))
                     }
                     separator()
                     menuItem("New Instance...") {
-                        sendEvent(EventEditVarsDialogUi.OpenWithTileItem(tileItem))
+                        sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(tileItem))
                     }
                     menuItem("Generate Instances from Icon-states") {
-                        sendEvent(EventInstanceController.GenerateInstancesFromIconStates(tileItem) {
+                        sendEvent(TriggerInstanceController.GenerateInstancesFromIconStates(tileItem) {
                             handleUpdate()
                         })
                     }
                     menuItem("Generate Instances from Directions") {
-                        sendEvent(EventInstanceController.GenerateInstancesFromDirections(tileItem) {
+                        sendEvent(TriggerInstanceController.GenerateInstancesFromDirections(tileItem) {
                             handleUpdate()
                         })
                     }

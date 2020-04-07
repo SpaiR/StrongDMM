@@ -6,10 +6,10 @@ import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.dmm.MapSize
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.controller.EventMapHolderController
-import strongdmm.event.type.controller.EventMapModifierController
-import strongdmm.event.type.ui.EventSetMapSizeDialogUi
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.controller.TriggerMapModifierController
+import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
 import strongdmm.window.AppWindow
@@ -22,13 +22,13 @@ class SetMapSizeDialogUi : EventConsumer, EventSender {
     private val newZ: ImInt = ImInt(0)
 
     init {
-        consumeEvent(EventSetMapSizeDialogUi.Open::class.java, ::handleOpen)
+        consumeEvent(TriggerSetMapSizeDialogUi.Open::class.java, ::handleOpen)
     }
 
     fun process() {
         if (isDoOpen) {
             openPopup("Set Map Size")
-            sendEvent(EventGlobal.ApplicationBlockChanged(true))
+            sendEvent(Reaction.ApplicationBlockChanged(true))
             isDoOpen = false
         }
 
@@ -46,7 +46,7 @@ class SetMapSizeDialogUi : EventConsumer, EventSender {
 
             newLine()
             button("OK") {
-                sendEvent(EventMapModifierController.ChangeMapSize(MapSize(newX.get(), newY.get(), newZ.get())))
+                sendEvent(TriggerMapModifierController.ChangeMapSize(MapSize(newX.get(), newY.get(), newZ.get())))
                 closeDialog()
             }
             sameLine()
@@ -66,11 +66,11 @@ class SetMapSizeDialogUi : EventConsumer, EventSender {
 
     private fun closeDialog() {
         closeCurrentPopup()
-        sendEvent(EventGlobal.ApplicationBlockChanged(false))
+        sendEvent(Reaction.ApplicationBlockChanged(false))
     }
 
     private fun handleOpen() {
-        sendEvent(EventMapHolderController.FetchSelectedMap {
+        sendEvent(TriggerMapHolderController.FetchSelectedMap {
             newX.set(it.maxX)
             newY.set(it.maxY)
             newZ.set(it.maxZ)

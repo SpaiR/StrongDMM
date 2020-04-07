@@ -10,7 +10,7 @@ import strongdmm.controller.tool.ToolType
 import strongdmm.event.*
 import java.io.File
 
-abstract class EventGlobal {
+abstract class Reaction {
     class ApplicationBlockChanged(body: ApplicationBlockStatus) : Event<ApplicationBlockStatus, Unit>(body, null)
 
     class EnvironmentReset : Event<Unit, Unit>(Unit, null)

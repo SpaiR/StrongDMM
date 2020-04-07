@@ -7,10 +7,10 @@ import strongdmm.controller.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.type.EventGlobal
-import strongdmm.event.type.EventGlobalProvider
-import strongdmm.event.type.controller.EventPreferencesController
-import strongdmm.event.type.ui.EventPreferencesPanelUi
+import strongdmm.event.type.Provider
+import strongdmm.event.type.Reaction
+import strongdmm.event.type.controller.TriggerPreferencesController
+import strongdmm.event.type.ui.TriggerPreferencesPanelUi
 import strongdmm.util.imgui.helpMark
 import strongdmm.util.imgui.popupModal
 import strongdmm.util.imgui.withIndent
@@ -26,15 +26,15 @@ class PreferencesPanelUi : EventConsumer, EventSender {
     private val mapSaveModes: Array<MapSaveMode> = MapSaveMode.values()
 
     init {
-        consumeEvent(EventGlobalProvider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
-        consumeEvent(EventPreferencesPanelUi.Open::class.java, ::handleOpen)
+        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(TriggerPreferencesPanelUi.Open::class.java, ::handleOpen)
     }
 
     fun process() {
         if (isDoOpen) {
             checkOpenStatus = true
             openPopup("Preferences")
-            sendEvent(EventGlobal.ApplicationBlockChanged(true))
+            sendEvent(Reaction.ApplicationBlockChanged(true))
             isDoOpen = false
         }
 
@@ -50,7 +50,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
 
         if (checkOpenStatus && !isOpened.get()) {
             checkOpenStatus = false
-            sendEvent(EventGlobal.ApplicationBlockChanged(false))
+            sendEvent(Reaction.ApplicationBlockChanged(false))
         }
     }
 
@@ -60,7 +60,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
             mapSaveModes.forEach { mode ->
                 if (radioButton(mode.name, providedPrefs.mapSaveMode == mode)) {
                     providedPrefs.mapSaveMode = mode
-                    sendEvent(EventPreferencesController.SavePreferences())
+                    sendEvent(TriggerPreferencesController.SavePreferences())
                 }
                 sameLine()
                 helpMark(mode.desc)
@@ -75,7 +75,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         withIndent(20f) {
             val label = getCheckboxStatusLabel(providedPrefs.sanitizeInitialVariables.get())
             if (checkbox("$label##sanitize_variables", providedPrefs.sanitizeInitialVariables)) {
-                sendEvent(EventPreferencesController.SavePreferences())
+                sendEvent(TriggerPreferencesController.SavePreferences())
             }
             sameLine()
             helpMark("Sanitize variables which are declared for the object on the map, but have the same value as in the environment.")
@@ -89,7 +89,7 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         withIndent(20f) {
             val label = getCheckboxStatusLabel(providedPrefs.cleanUnusedKeys.get())
             if (checkbox("$label##clean_unused_keys", providedPrefs.cleanUnusedKeys)) {
-                sendEvent(EventPreferencesController.SavePreferences())
+                sendEvent(TriggerPreferencesController.SavePreferences())
             }
             sameLine()
             helpMark("Remove tile keys which are not used on the map.")
