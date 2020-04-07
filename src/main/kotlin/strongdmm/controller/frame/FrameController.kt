@@ -26,7 +26,6 @@ class FrameController : EventConsumer, EventSender {
 
     private val cache: MutableList<FrameMesh> = mutableListOf()
     private val framedTiles: MutableList<FramedTile> = mutableListOf()
-    private var selectedMapId: Int = Dmm.MAP_ID_NONE
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
@@ -35,7 +34,7 @@ class FrameController : EventConsumer, EventSender {
         consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         consumeEvent(TriggerFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
     }
@@ -121,8 +120,7 @@ class FrameController : EventConsumer, EventSender {
         sendEvent(Reaction.FrameRefreshed())
     }
 
-    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
+    private fun handleSelectedMapChanged() {
         refreshFrame()
     }
 
@@ -136,17 +134,13 @@ class FrameController : EventConsumer, EventSender {
     }
 
     private fun handleEnvironmentReset() {
-        selectedMapId = Dmm.MAP_ID_NONE
         cache.clear()
         framedTiles.clear()
     }
 
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (selectedMapId == event.body.id) {
-            selectedMapId = Dmm.MAP_ID_NONE
-            cache.clear()
-            framedTiles.clear()
-        }
+    private fun handleSelectedMapClosed() {
+        cache.clear()
+        framedTiles.clear()
     }
 
     private fun handleLayersFilterRefreshed() {

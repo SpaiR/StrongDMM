@@ -89,6 +89,8 @@ class MapHolderController : EventSender, EventConsumer {
         sendEvent(Reaction.OpenedMapClosed(map))
 
         if (selectedMap === map) {
+            sendEvent(Reaction.SelectedMapClosed())
+
             if (openedMaps.isEmpty()) {
                 selectedMap = null
             } else {

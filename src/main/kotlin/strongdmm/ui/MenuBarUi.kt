@@ -34,6 +34,7 @@ import java.io.File
 class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private var progressText: String? = null
     private var isEnvironmentOpened: Boolean = false
+    private var isMapOpened: Boolean = false
 
     private var isUndoEnabled: Boolean = false
     private var isRedoEnabled: Boolean = false
@@ -53,6 +54,8 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         consumeEvent(Reaction.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
 
@@ -341,6 +344,14 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun handleEnvironmentReset() {
         isEnvironmentOpened = false
+    }
+
+    private fun handleSelectedMapChanged() {
+        isMapOpened = true
+    }
+
+    private fun handleSelectedMapClosed() {
+        isMapOpened = false
     }
 
     private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {

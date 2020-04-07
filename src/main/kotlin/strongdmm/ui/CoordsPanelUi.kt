@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
@@ -12,22 +11,20 @@ import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
 
 class CoordsPanelUi : EventConsumer {
-    private var isHasMap: Boolean = false
+    private var isMapOpened: Boolean = false
 
     private var xMapMousePos: Int = OUT_OF_BOUNDS
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
-    private var selectedMapId: Int = Dmm.MAP_ID_NONE
-
     init {
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     fun process() {
-        if (!isHasMap) {
+        if (!isMapOpened) {
             return
         }
 
@@ -43,24 +40,20 @@ class CoordsPanelUi : EventConsumer {
         }
     }
 
-    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
-        isHasMap = true
+    private fun handleSelectedMapChanged() {
+        isMapOpened = true
+    }
+
+    private fun handleSelectedMapClosed() {
+        isMapOpened = false
     }
 
     private fun handleEnvironmentReset() {
-        isHasMap = false
+        isMapOpened = false
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
         xMapMousePos = event.body.x
         yMapMousePos = event.body.y
-    }
-
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (selectedMapId == event.body.id) {
-            selectedMapId = Dmm.MAP_ID_NONE
-            isHasMap = false
-        }
     }
 }

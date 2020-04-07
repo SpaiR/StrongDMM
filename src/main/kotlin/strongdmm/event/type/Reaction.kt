@@ -19,6 +19,7 @@ abstract class Reaction {
     class EnvironmentChanged(body: Dme) : Event<Dme, Unit>(body, null)
 
     class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
+    class SelectedMapClosed : Event<Unit, Unit>(Unit, null)
     class OpenedMapClosed(body: Dmm) : Event<Dmm, Unit>(body, null)
     class SelectedMapZActiveChanged(body: ActiveZ) : Event<ActiveZ, Unit>(body, null)
 

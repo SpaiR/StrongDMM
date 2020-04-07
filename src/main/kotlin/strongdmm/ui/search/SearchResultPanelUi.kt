@@ -5,7 +5,6 @@ import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiMouseButton
-import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
@@ -23,8 +22,6 @@ class SearchResultPanelUi : EventConsumer, EventSender {
     private val searchResults: MutableMap<String, SearchResult> = mutableMapOf()
     private val panelsOpenState: MutableMap<String, ImBool> = mutableMapOf()
 
-    private var selectedMapId: Int = Dmm.MAP_ID_NONE
-
     private val replaceType: ImString = ImString(50).apply { inputData.isResizable = true }
     private var isReplaceEnabled: Boolean = false
 
@@ -32,7 +29,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(TriggerSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
 
@@ -190,8 +187,7 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         clearAll()
     }
 
-    private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        selectedMapId = event.body.id
+    private fun handleSelectedMapChanged() {
         clearAll()
     }
 
@@ -199,11 +195,8 @@ class SearchResultPanelUi : EventConsumer, EventSender {
         clearAll()
     }
 
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (event.body.id == selectedMapId) {
-            selectedMapId = Dmm.MAP_ID_NONE
-            clearAll()
-        }
+    private fun handleSelectedMapClosed() {
+        clearAll()
     }
 
     private fun handleOpen(event: Event<SearchResult, Unit>) {

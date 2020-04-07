@@ -23,7 +23,7 @@ class LevelSwitchPanelUi : ShortcutHandler(), EventConsumer, EventSender {
     init {
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_LEFT, action = ::doDecreaseActiveZ)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_RIGHT, action = ::doIncreaseActiveZ)
@@ -88,9 +88,7 @@ class LevelSwitchPanelUi : ShortcutHandler(), EventConsumer, EventSender {
         selectedMap = null
     }
 
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (selectedMap === event.body) {
-            selectedMap = null
-        }
+    private fun handleSelectedMapClosed() {
+        selectedMap = null
     }
 }

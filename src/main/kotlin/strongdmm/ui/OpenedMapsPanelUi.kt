@@ -26,7 +26,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         consumeEvent(Provider.MapHolderControllerOpenedMaps::class.java, ::handleProviderMapHolderControllerOpenedMaps)
         consumeEvent(Provider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
     }
 
     fun process() {
@@ -73,9 +73,7 @@ class OpenedMapsPanelUi : EventConsumer, EventSender {
         selectedMap = event.body
     }
 
-    private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
-        if (event.body === selectedMap) {
-            selectedMap = null
-        }
+    private fun handleSelectedMapClosed() {
+        selectedMap = null
     }
 }
