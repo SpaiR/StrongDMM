@@ -87,10 +87,8 @@ class ActionController : EventConsumer, EventSender {
         })
     }
 
-    private fun handleResetActionBalance() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
-            actionBalanceStorage.put(currentMap, 0)
-        })
+    private fun handleResetActionBalance(event: Event<Dmm, Unit>) {
+        actionBalanceStorage.put(event.body, 0)
     }
 
     private fun handleEnvironmentReset() {

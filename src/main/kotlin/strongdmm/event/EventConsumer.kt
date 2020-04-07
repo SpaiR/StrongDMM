@@ -13,9 +13,8 @@ interface EventConsumer {
 
     private fun <T, R> checkConsumerClass(event: Class<out Event<T, R>>) {
         require(
-            event.name.contains("EventGlobal$") ||
-                event.name.contains("EventGlobalProvider$") ||
-                event.name.contains("\$Global$") ||
+            event.name.contains("Reaction") ||
+                event.name.contains("Provider") ||
                 event.name.contains("${this::class.java.name.substringAfterLast('.')}$")
         ) {
             "Unable to consume the event: ${event.name}! Event should be global or designed for a specific class."

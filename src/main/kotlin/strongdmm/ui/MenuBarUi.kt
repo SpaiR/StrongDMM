@@ -66,6 +66,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseMap)
         addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_W, action = ::doCloseAllMaps)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_S, action = ::doSave)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_S, action = ::doSaveAll)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Q, action = ::doExit)
 
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = ::doUndo)
@@ -100,6 +101,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = isEnvironmentOpened, block = ::doCloseAllMaps)
                 separator()
                 menuItem("Save", shortcut = "Ctrl+S", enabled = isEnvironmentOpened, block = ::doSave)
+                menuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = isEnvironmentOpened, block = ::doSaveAll)
                 separator()
                 menuItem("Exit", shortcut = "Ctrl+Q", block = ::doExit)
             }
@@ -212,6 +214,12 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     private fun doSave() {
         if (isEnvironmentOpened) {
             sendEvent(TriggerMapHolderController.SaveSelectedMap())
+        }
+    }
+
+    private fun doSaveAll() {
+        if (isEnvironmentOpened) {
+            sendEvent(TriggerMapHolderController.SaveAllMaps())
         }
     }
 

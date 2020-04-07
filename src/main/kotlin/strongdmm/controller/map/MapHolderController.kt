@@ -41,6 +41,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(TriggerMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
         consumeEvent(TriggerMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
         consumeEvent(TriggerMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        consumeEvent(TriggerMapHolderController.SaveAllMaps::class.java, ::handleSaveAllMaps)
         consumeEvent(TriggerMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
@@ -77,7 +78,7 @@ class MapHolderController : EventSender, EventConsumer {
     private fun saveMap(map: Dmm) {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
         SaveMap(map, initialDmmData, providedPreferences)
-        sendEvent(TriggerActionController.ResetActionBalance())
+        sendEvent(TriggerActionController.ResetActionBalance(map))
     }
 
     private fun closeMap(map: Dmm) {
@@ -193,6 +194,10 @@ class MapHolderController : EventSender, EventConsumer {
 
     private fun handleSaveSelectedMap() {
         selectedMap?.let(this::saveMap)
+    }
+
+    private fun handleSaveAllMaps() {
+        openedMaps.forEach(this::saveMap)
     }
 
     private fun handleChangeActiveZ(event: Event<ActiveZ, Unit>) {
