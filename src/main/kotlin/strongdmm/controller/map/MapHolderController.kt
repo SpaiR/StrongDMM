@@ -16,6 +16,7 @@ import strongdmm.event.type.controller.TriggerEnvironmentController
 import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.event.type.ui.TriggerCloseMapDialogUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
+import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
 import strongdmm.ui.closemap.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
@@ -165,6 +166,10 @@ class MapHolderController : EventSender, EventConsumer {
                 selectedMap = map
 
                 sendEvent(Reaction.SelectedMapChanged(map))
+
+                if (map.unknownTypes.isNotEmpty()) {
+                    sendEvent(TriggerUnknownTypesPanelUi.Open(map.unknownTypes))
+                }
             })
         }
     }

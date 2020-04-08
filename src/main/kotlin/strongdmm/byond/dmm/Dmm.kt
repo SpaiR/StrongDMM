@@ -11,10 +11,6 @@ class Dmm(
     initialDmmData: DmmData,
     dme: Dme
 ) {
-    companion object {
-        const val MAP_ID_NONE: Int = -1
-    }
-
     val basicAreaType: String = dme.basicAreaType
     val basicTurfType: String = dme.basicTurfType
 
@@ -22,6 +18,7 @@ class Dmm(
     val mapName: String = mapFile.nameWithoutExtension
 
     val mapPath: MapPath = MapPath(Paths.get(dme.absRootDirPath).relativize(mapFile.toPath()).toString(), mapFile.absolutePath)
+    val unknownTypes: List<Pair<MapPos, String>>
 
     var maxX: Int = initialDmmData.maxX
         private set
@@ -35,6 +32,8 @@ class Dmm(
     private var tiles: Array<Array<Array<LongArray>>> = Array(maxZ) { Array(maxY) { Array(maxX) { LongArray(0) } } }
 
     init {
+        val unknownTypes = mutableListOf<Pair<MapPos, String>>()
+
         for (z in 1..maxZ) {
             for (y in 1..maxY) {
                 for (x in 1..maxX) {
@@ -44,6 +43,8 @@ class Dmm(
                         for (tileObject in tileContent.content) {
                             if (dme.getItem(tileObject.type) != null) {
                                 tileItems += GlobalTileItemHolder.getOrCreate(tileObject.type, tileObject.vars).id
+                            } else {
+                                unknownTypes.add(Pair(MapPos(x, y, z), tileObject.type))
                             }
                         }
                     }
@@ -52,6 +53,8 @@ class Dmm(
                 }
             }
         }
+
+        this.unknownTypes = unknownTypes
     }
 
     fun setMapSize(maxZ: Int, maxY: Int, maxX: Int) {
