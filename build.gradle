@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
@@ -14,6 +16,15 @@ application {
 repositories {
     jcenter()
     mavenCentral()
+}
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        project.ext.nativesType = "natives-linux"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.nativesType = "natives-windows"
+        break
 }
 
 ext {
@@ -39,15 +50,13 @@ dependencies {
 
     implementation "io.imgui.java:binding:$imguiVersion"
     implementation "io.imgui.java:lwjgl3:$imguiVersion"
-    runtimeOnly "io.imgui.java:natives-linux:$imguiVersion"
-    runtimeOnly "io.imgui.java:natives-windows:$imguiVersion"
+    runtimeOnly "io.imgui.java:$nativesType:$imguiVersion"
 
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     ['', '-opengl', '-glfw', '-stb', '-nfd'].each {
         implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
-        runtimeOnly "org.lwjgl:lwjgl$it::natives-linux"
-        runtimeOnly "org.lwjgl:lwjgl$it::natives-windows"
+        runtimeOnly "org.lwjgl:lwjgl$it::$nativesType"
     }
 }
 
