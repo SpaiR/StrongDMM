@@ -4,7 +4,6 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
-import strongdmm.controller.shortcut.Shortcut
 import strongdmm.controller.shortcut.ShortcutHandler
 import strongdmm.controller.tool.ToolType
 import strongdmm.event.Event
@@ -23,9 +22,9 @@ class ToolSelectPanelUi : EventConsumer, EventSender, ShortcutHandler() {
     init {
         consumeEvent(Reaction.ActiveToolChanged::class.java, ::handleActiveToolChanged)
 
-        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_1) { selectTool(tools[0]) }
-        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_2) { selectTool(tools[1]) }
-        addShortcut(Shortcut.ALT_PAIR, GLFW.GLFW_KEY_3) { selectTool(tools[2]) }
+        addShortcut(GLFW.GLFW_KEY_1) { selectTool(tools[0]) }
+        addShortcut(GLFW.GLFW_KEY_2) { selectTool(tools[1]) }
+        addShortcut(GLFW.GLFW_KEY_3) { selectTool(tools[2]) }
     }
 
     fun process() {

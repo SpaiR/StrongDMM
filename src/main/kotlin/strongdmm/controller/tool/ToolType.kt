@@ -10,21 +10,21 @@ enum class ToolType(
     val createTool: () -> Tool
 ) {
     TILE("T", """
-    Tile (Alt+1)
+    Tile (1)
     ------------
     Click - Place selected object
     Ctrl+Click - Delete topmost object
     """.trimIndent(), { TileComplexTool() }),
 
     FILL("F", """
-    Fill (Alt+2)
+    Fill (2)
     ------------
     Click & Drag - Fill the area with selected object
     Ctrl+[Click & Drag] - Delete all topmost objects in the area
     """.trimIndent(), { FillComplexTool() }),
 
     SELECT("S", """
-    Select (Alt+3)
+    Select (3)
     --------------
     Click & Drag - Select the area / Move selection with visible objects inside
     """.trimIndent(), { SelectComplexTool() })
