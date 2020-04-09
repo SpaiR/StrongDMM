@@ -6,6 +6,7 @@ import imgui.ImGui
 import imgui.ImVec2
 import imgui.enums.ImGuiHoveredFlags
 import imgui.enums.ImGuiMouseButton
+import org.lwjgl.glfw.GLFW
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
@@ -110,7 +111,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processViewTranslate() {
-        if (!(ImGui.isMouseDown(ImGuiMouseButton.Middle) || (ImGui.getIO().keyAlt && ImGui.isMouseDown(ImGuiMouseButton.Left)))) {
+        if (!(ImGui.isMouseDown(ImGuiMouseButton.Middle) || (ImGui.isKeyDown(GLFW.GLFW_KEY_SPACE) && ImGui.isMouseDown(ImGuiMouseButton.Left)))) {
             return
         }
 
