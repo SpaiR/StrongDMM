@@ -7,10 +7,11 @@ object DmmParser {
 
     fun parse(mapFile: File): DmmData {
         return mapFile.readText(Charsets.UTF_8).let { rawMapContent ->
+            val sanitizedRawMapContent = rawMapContent.replace("\r\n", "\n")
             if (rawMapContent.startsWith(TGM_MARKER)) {
-                TGMParser(rawMapContent.replace("\r\n", "\n")).parse()
+                TGMParser(sanitizedRawMapContent).parse()
             } else {
-                ByondParser(rawMapContent.replace("\r\n", "\n")).parse()
+                ByondParser(sanitizedRawMapContent).parse()
             }
         }
     }

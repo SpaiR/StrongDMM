@@ -17,7 +17,7 @@ class TGMParser(
         var posIdx = 0
 
         for (line in rawMapContent.lineSequence()) {
-            posIdx += line.length + System.lineSeparator().length
+            posIdx += line.length + 1
 
             if (line.isBlank()) {
                 break
