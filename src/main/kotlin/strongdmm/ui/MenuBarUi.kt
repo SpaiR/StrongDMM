@@ -79,7 +79,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = ::doCopy)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = ::doPaste)
         addShortcut(GLFW.GLFW_KEY_DELETE, action = ::doDelete)
-        addShortcut(GLFW.GLFW_KEY_ESCAPE, action = ::doDeselectAll)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_D, action = ::doDeselectAll)
         addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_F, action = ::doFindInstance)
 
         // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
@@ -120,7 +120,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
                 menuItem("Copy", shortcut = "Ctrl+C", enabled = isMapOpened, block = ::doCopy)
                 menuItem("Paste", shortcut = "Ctrl+V", enabled = isMapOpened, block = ::doPaste)
                 menuItem("Delete", shortcut = "Delete", enabled = isMapOpened, block = ::doDelete)
-                menuItem("Deselect All", shortcut = "Esc", block = ::doDeselectAll)
+                menuItem("Deselect All", shortcut = "Ctrl+D", block = ::doDeselectAll)
                 separator()
                 menuItem("Set Map Size...", enabled = isMapOpened, block = ::doSetMapSize)
                 menuItem("Find Instance...", shortcut = "Ctrl+F", block = ::doFindInstance)
