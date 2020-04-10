@@ -30,7 +30,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     companion object {
         private const val ICON_SIZE: Float = 13f
         private const val TREE_NODES_CREATION_LIMIT_PER_CYCLE: Int = 25
-        private const val MIN_FILTER_CHARS: Int = 4
+        private const val MIN_FILTER_CHARS: Int = 1
     }
 
     private var isEnvironmentLoading: Boolean = false
@@ -80,7 +80,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             setItemHoveredTooltip("Show icons")
             sameLine()
             setNextItemWidth(-1f)
-            inputText("##types_filter", typeFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS chars to apply")
+            inputText("##types_filter", typeFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS char to apply")
 
             separator()
 
