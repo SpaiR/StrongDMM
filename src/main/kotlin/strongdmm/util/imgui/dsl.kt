@@ -121,3 +121,10 @@ inline fun withIndent(indent: Float, block: () -> Unit) {
     block()
     ImGui.unindent(indent)
 }
+
+inline fun combo(label: String, previewValue: String, block: () -> Unit) {
+    if (ImGui.beginCombo(label, previewValue)) {
+        block()
+        ImGui.endCombo()
+    }
+}

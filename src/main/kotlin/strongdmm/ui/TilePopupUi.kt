@@ -2,7 +2,6 @@ package strongdmm.ui
 
 import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.ImGui.*
-import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.VAR_NAME
