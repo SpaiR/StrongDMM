@@ -60,7 +60,7 @@ class TilePopupUi : EventConsumer, EventSender {
                 return
             }
 
-            popup(POPUP_ID, ImGuiWindowFlags.NoMove) {
+            popup(POPUP_ID) {
                 menuItem("Undo", shortcut = "Ctrl+Z", enabled = isUndoEnabled, block = ::doUndo)
                 menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = isRedoEnabled, block = ::doRedo)
                 separator()

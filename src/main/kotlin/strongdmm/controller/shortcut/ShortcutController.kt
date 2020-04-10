@@ -12,7 +12,9 @@ class ShortcutController : EventSender, ShortcutHandler() {
             val (firstKey, secondKey, thirdKey) = shortcut
 
             if (secondKey == -1 && thirdKey == -1 && ImGui.isKeyPressed(firstKey)) {
-                shortcutToTrigger = shortcut
+                if (shortcutToTrigger == null || shortcutToTrigger.weight < shortcut.weight) {
+                    shortcutToTrigger = shortcut
+                }
             } else if (ImGui.isKeyDown(firstKey)) {
                 if (thirdKey != -1) {
                     if (ImGui.isKeyDown(secondKey) && ImGui.isKeyPressed(thirdKey)) {
