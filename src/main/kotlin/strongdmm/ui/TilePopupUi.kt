@@ -157,6 +157,16 @@ class TilePopupUi : EventConsumer, EventSender {
                 sendEvent(TriggerFrameController.RefreshFrame())
             }
         }
+
+        menuItem("Reset to Default##reset_to_default_$tileItemIdx") {
+            sendEvent(TriggerActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.replaceTileItem(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItem.type))
+                }
+            ))
+
+            sendEvent(TriggerFrameController.RefreshFrame())
+        }
     }
 
     private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
