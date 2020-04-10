@@ -212,7 +212,7 @@ abstract class AppWindow(title: String) {
 
         io.setGetClipboardTextFn(object : ImStrSupplier() {
             override fun get(): String? {
-                return glfwGetClipboardString(window)
+                return glfwGetClipboardString(window).let { it ?: "" }
             }
         })
 
