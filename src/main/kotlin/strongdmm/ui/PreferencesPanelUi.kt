@@ -2,9 +2,11 @@ package strongdmm.ui
 
 import imgui.ImBool
 import imgui.ImGui.*
+import imgui.enums.ImGuiStyleVar
 import strongdmm.controller.preferences.MapSaveMode
 import strongdmm.controller.preferences.NudgeMode
 import strongdmm.controller.preferences.Preferences
+import strongdmm.controller.preferences.Selectable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -12,9 +14,10 @@ import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerPreferencesController
 import strongdmm.event.type.ui.TriggerPreferencesPanelUi
-import strongdmm.util.imgui.popupModal
 import strongdmm.util.imgui.combo
+import strongdmm.util.imgui.popupModal
 import strongdmm.util.imgui.selectable
+import strongdmm.util.imgui.withStyleVar
 import strongdmm.window.AppWindow
 
 class PreferencesPanelUi : EventConsumer, EventSender {
@@ -24,8 +27,8 @@ class PreferencesPanelUi : EventConsumer, EventSender {
 
     private lateinit var providedPrefs: Preferences
 
-    private val mapSaveModes: Array<MapSaveMode> = MapSaveMode.values()
-    private val nudgeModes: Array<NudgeMode> = NudgeMode.values()
+    private val mapSaveModes: List<Selectable> = MapSaveMode.values().toList()
+    private val nudgeModes: List<NudgeMode> = NudgeMode.values().toList()
 
     init {
         consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
@@ -45,13 +48,39 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         popupModal("Preferences", isOpened) {
             text("Save options")
             separator()
-            showMapSaveModes()
+
+            showSelectOption(
+                "Map save format",
+                "Controls the format used by the editor to save the map.",
+                "##map_save_format", providedPrefs.mapSaveMode.toString(),
+                mapSaveModes
+            ) {
+                providedPrefs.mapSaveMode = it as MapSaveMode
+            }
+
             newLine()
-            showSanitizeInitialVariables()
+            showToggleOption(
+                "Sanitize variables",
+                "Enables sanitizing for variables equals to their analogues in the environment.",
+                "##sanitize_variables", providedPrefs.sanitizeInitialVariables
+            )
+
             newLine()
-            showCleanUnusedKeys()
+            showToggleOption(
+                "Clean unused keys",
+                "When enabled, content tile keys which are not used on the map will be removed.",
+                "##clean_unused_keys", providedPrefs.cleanUnusedKeys
+            )
+
             newLine()
-            showNudgeMode()
+            showSelectOption(
+                "Nudge mode",
+                "Controls which variables will be changed during the nudge.",
+                "##nudge_mode", providedPrefs.nudgeMode.toString(),
+                nudgeModes
+            ) {
+                providedPrefs.nudgeMode = it as NudgeMode
+            }
         }
 
         if (checkOpenStatus && !isOpened.get()) {
@@ -60,58 +89,39 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         }
     }
 
-    private fun showMapSaveModes() {
-        textWrapped("Map save format")
+    private inline fun showSelectOption(
+        header: String,
+        desc: String,
+        selectLabel: String,
+        selectPreview: String,
+        selectVariants: List<Selectable>,
+        action: (Selectable) -> Unit
+    ) {
+        textWrapped(header)
         pushTextWrapPos()
-        textDisabled("Controls the format used by the editor to save the map.")
+        textDisabled(desc)
         popTextWrapPos()
-        combo("##map_save_format", providedPrefs.mapSaveMode.name) {
-            mapSaveModes.forEach { mode ->
-                selectable(mode.name, providedPrefs.mapSaveMode == mode) {
-                    providedPrefs.mapSaveMode = mode
+        combo(selectLabel, selectPreview) {
+            selectVariants.forEach { mode ->
+                selectable(mode.toString(), providedPrefs.mapSaveMode == mode) {
+                    action(mode)
                     sendEvent(TriggerPreferencesController.SavePreferences())
                 }
             }
         }
     }
 
-    private fun showSanitizeInitialVariables() {
-        textWrapped("Sanitize variables")
-        if (checkbox("##sanitize_variables", providedPrefs.sanitizeInitialVariables)) {
-            sendEvent(TriggerPreferencesController.SavePreferences())
-        }
-        sameLine()
-        alignTextToFramePadding()
-        pushTextWrapPos()
-        textDisabled("Enables sanitizing for variables equals to their analogues in the environment.")
-        popTextWrapPos()
-    }
-
-    private fun showCleanUnusedKeys() {
-        textWrapped("Clean unused keys")
-        if (checkbox("##clean_unused_keys", providedPrefs.cleanUnusedKeys)) {
-            sendEvent(TriggerPreferencesController.SavePreferences())
-        }
-        sameLine()
-        alignTextToFramePadding()
-        pushTextWrapPos()
-        textDisabled("When enabled, content tile keys which are not used on the map will be removed.")
-        popTextWrapPos()
-    }
-
-    private fun showNudgeMode() {
-        textWrapped("Nudge mode")
-        pushTextWrapPos()
-        textDisabled("Controls which variable (pixel_x/pixel_y or step_x/step_y) will be changed during the nudge.")
-        popTextWrapPos()
-        combo("##nudge_mode", providedPrefs.nudgeMode.name) {
-            nudgeModes.forEach { mode ->
-                selectable(mode.name, providedPrefs.nudgeMode == mode) {
-                    providedPrefs.nudgeMode = mode
-                    sendEvent(TriggerPreferencesController.SavePreferences())
-                }
+    private fun showToggleOption(header: String, desc: String, checkboxLabel: String, active: ImBool) {
+        textWrapped(header)
+        withStyleVar(ImGuiStyleVar.FramePadding, 1f, 1f) {
+            if (checkbox(checkboxLabel, active)) {
+                sendEvent(TriggerPreferencesController.SavePreferences())
             }
         }
+        sameLine()
+        pushTextWrapPos()
+        textDisabled(desc)
+        popTextWrapPos()
     }
 
     private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {

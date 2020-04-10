@@ -1,7 +1,11 @@
 package strongdmm.controller.preferences
 
-enum class MapSaveMode {
+enum class MapSaveMode : Selectable {
     PROVIDED,
     BYOND,
-    TGM
+    TGM;
+
+    override fun toString(): String {
+        return name.toLowerCase().capitalize()
+    }
 }

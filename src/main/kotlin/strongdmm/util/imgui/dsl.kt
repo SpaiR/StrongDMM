@@ -116,6 +116,12 @@ inline fun withStyleColor(imGuiCol: Int, col: Int, block: () -> Unit) {
     ImGui.popStyleColor()
 }
 
+inline fun withStyleVar(imGuiStyleVar: Int, valX: Float, valY: Float, block: () -> Unit) {
+    ImGui.pushStyleVar(imGuiStyleVar, valX, valY)
+    block()
+    ImGui.popStyleVar()
+}
+
 inline fun withIndent(indent: Float, block: () -> Unit) {
     ImGui.indent(indent)
     block()
