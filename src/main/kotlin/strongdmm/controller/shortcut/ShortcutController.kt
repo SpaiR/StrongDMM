@@ -30,7 +30,9 @@ class ShortcutController : EventSender, ShortcutHandler() {
         }
 
         shortcutToTrigger?.let {
-            sendEvent(Reaction.ShortcutTriggered(it))
+            if (!ImGui.isAnyItemActive()) {
+                sendEvent(Reaction.ShortcutTriggered(it))
+            }
         }
     }
 }
