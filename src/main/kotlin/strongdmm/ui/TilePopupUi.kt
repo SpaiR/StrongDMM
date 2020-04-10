@@ -2,18 +2,19 @@ package strongdmm.ui
 
 import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.ImGui.*
-import strongdmm.byond.TYPE_MOB
-import strongdmm.byond.TYPE_OBJ
-import strongdmm.byond.VAR_NAME
+import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.controller.action.ActionStatus
 import strongdmm.controller.action.undoable.ReplaceTileAction
+import strongdmm.controller.preferences.NudgeMode
+import strongdmm.controller.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
+import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
@@ -29,6 +30,8 @@ class TilePopupUi : EventConsumer, EventSender {
         private const val ICON_SIZE: Float = 16f
         private const val POPUP_ID: String = "tile_popup"
     }
+
+    private lateinit var providedPreferences: Preferences
 
     private var isDoOpen: Boolean = false
     private var currentTile: Tile? = null
@@ -47,6 +50,7 @@ class TilePopupUi : EventConsumer, EventSender {
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
     }
 
     fun process() {
@@ -93,8 +97,8 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        showNudgeOption(true, tile, tileItem, tileItemIdx, pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelX to intArrayOf(tileItem.pixelX) })
-        showNudgeOption(false, tile, tileItem, tileItemIdx, pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelY to intArrayOf(tileItem.pixelY) })
+        showNudgeOption(true, tile, tileItem, tileItemIdx)
+        showNudgeOption(false, tile, tileItem, tileItemIdx)
 
         separator()
 
@@ -155,14 +159,31 @@ class TilePopupUi : EventConsumer, EventSender {
         }
     }
 
-    private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, nudgeValue: Pair<Int, IntArray>) {
+    private fun showNudgeOption(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
+        val nudgeValue = when (providedPreferences.nudgeMode) {
+            NudgeMode.PIXEL -> {
+                if (isXAxis) {
+                    pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelX to intArrayOf(tileItem.pixelX) }
+                } else {
+                    pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelY to intArrayOf(tileItem.pixelY) }
+                }
+            }
+            NudgeMode.STEP -> {
+                if (isXAxis) {
+                    pixelXNudgeArrays.getOrPut(tileItemIdx) { (tileItem.getVarInt(VAR_STEP_X) ?: 0) to intArrayOf(tileItem.getVarInt(VAR_STEP_X) ?: 0) }
+                } else {
+                    pixelYNudgeArrays.getOrPut(tileItemIdx) { (tileItem.getVarInt(VAR_STEP_Y) ?: 0) to intArrayOf(tileItem.getVarInt(VAR_STEP_Y) ?: 0) }
+                }
+            }
+        }
+
         val (initialValue, pixelNudge) = nudgeValue
 
         setNextItemWidth(50f)
 
         if (dragInt("Nudge %s-axis".format(if (isXAxis) "X" else "Y"), pixelNudge, .25f)) {
             GlobalTileItemHolder.tmpOperation {
-                tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
+                tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], providedPreferences.nudgeMode)
             }
 
             sendEvent(TriggerFrameController.RefreshFrame())
@@ -170,12 +191,12 @@ class TilePopupUi : EventConsumer, EventSender {
 
         if (isItemDeactivatedAfterEdit()) {
             GlobalTileItemHolder.tmpOperation {
-                tile.nudge(isXAxis, tileItem, tileItemIdx, initialValue)
+                tile.nudge(isXAxis, tileItem, tileItemIdx, initialValue, providedPreferences.nudgeMode)
             }
 
             sendEvent(TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
-                    tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0])
+                    tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], providedPreferences.nudgeMode)
                 }
             ))
 
@@ -249,5 +270,9 @@ class TilePopupUi : EventConsumer, EventSender {
     private fun handleActionStatusChanged(event: Event<ActionStatus, Unit>) {
         isUndoEnabled = event.body.hasUndoAction
         isRedoEnabled = event.body.hasRedoAction
+    }
+
+    private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
+        providedPreferences = event.body
     }
 }
