@@ -65,8 +65,8 @@ class FrameController : EventConsumer, EventSender {
                         }
 
                         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
-                        val x1 = (x - 1) * currentIconSize + tileItem.pixelX
-                        val y1 = (y - 1) * currentIconSize + tileItem.pixelY
+                        val x1 = (x - 1) * currentIconSize + tileItem.pixelX + tileItem.stepX
+                        val y1 = (y - 1) * currentIconSize + tileItem.pixelY + tileItem.stepY
                         val x2 = x1 + sprite.iconWidth
                         val y2 = y1 + sprite.iconHeight
                         val colorR = tileItem.colorR

@@ -19,6 +19,8 @@ class TileItem(
     val layer: Float = getVarFloat(VAR_LAYER) ?: 0f
     val pixelX: Int = getVarInt(VAR_PIXEL_X) ?: 0
     val pixelY: Int = getVarInt(VAR_PIXEL_Y) ?: 0
+    val stepX: Int = getVarInt(VAR_STEP_X) ?: 0
+    val stepY: Int = getVarInt(VAR_STEP_Y) ?: 0
     val dir: Int = getVarInt(VAR_DIR) ?: 0
     val name: String = getVarText(VAR_NAME) ?: ""
     val colorR: Float

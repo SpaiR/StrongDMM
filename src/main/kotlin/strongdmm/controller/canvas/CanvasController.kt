@@ -267,8 +267,14 @@ class CanvasController : EventSender, EventConsumer {
         if (tileItem.pixelX != 0) {
             x += (-1 * tileItem.pixelX / iconSize.toFloat() + if (tileItem.pixelX > 0) -.5 else .5).toInt()
         }
+        if (tileItem.stepX != 0) {
+            x += (-1 * tileItem.stepX / iconSize.toFloat() + if (tileItem.stepX > 0) -.5 else .5).toInt()
+        }
         if (tileItem.pixelY != 0) {
             y += (-1 * tileItem.pixelY / iconSize.toFloat() + if (tileItem.pixelY > 0) -.5 else .5).toInt()
+        }
+        if (tileItem.stepY != 0) {
+            y += (-1 * tileItem.stepY / iconSize.toFloat() + if (tileItem.stepY > 0) -.5 else .5).toInt()
         }
 
         return MapPos(x, y)

@@ -170,9 +170,9 @@ class TilePopupUi : EventConsumer, EventSender {
             }
             NudgeMode.STEP -> {
                 if (isXAxis) {
-                    pixelXNudgeArrays.getOrPut(tileItemIdx) { (tileItem.getVarInt(VAR_STEP_X) ?: 0) to intArrayOf(tileItem.getVarInt(VAR_STEP_X) ?: 0) }
+                    pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepX to intArrayOf(tileItem.stepX) }
                 } else {
-                    pixelYNudgeArrays.getOrPut(tileItemIdx) { (tileItem.getVarInt(VAR_STEP_Y) ?: 0) to intArrayOf(tileItem.getVarInt(VAR_STEP_Y) ?: 0) }
+                    pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepY to intArrayOf(tileItem.stepY) }
                 }
             }
         }
