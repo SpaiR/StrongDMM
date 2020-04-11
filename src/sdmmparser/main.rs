@@ -1,17 +1,16 @@
 extern crate dreammaker as dm;
 extern crate serde;
-
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 
-use dm::constants::Constant;
-use dm::objtree::TypeRef;
-use dm::Context;
-
-use std::str;
 use std::env;
 use std::fs;
+use std::str;
+
+use dm::constants::Constant;
+use dm::Context;
+use dm::objtree::TypeRef;
 
 #[derive(Serialize)]
 pub struct ObjectTreeType {
@@ -28,13 +27,21 @@ pub struct ObjectTreeVar {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    ::std::process::exit(parse_env(&args[1], &args[2]));
+
+    let exit_code = if args.len() < 2 {
+        println!("Invalid arguments count, expected: 2");
+        1
+    } else {
+        parse_env(&args[1], &args[2])
+    };
+
+    std::process::exit(exit_code);
 }
 
 fn parse_env(env_path: &str, file_name: &str) -> i32 {
     let objtree = match Context::default().parse_environment(env_path.as_ref()) {
         Ok(t) => t,
-        Err(_e) => return 1
+        Err(_e) => return 1,
     };
 
     let root = recurse_objtree(objtree.root());
@@ -42,7 +49,7 @@ fn parse_env(env_path: &str, file_name: &str) -> i32 {
 
     return match fs::write(file_name, json) {
         Ok(_t) => 0,
-        Err(_e) => 1
+        Err(_e) => 1,
     };
 }
 
