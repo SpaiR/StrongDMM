@@ -52,6 +52,8 @@ class CanvasRenderer {
     var isTileItemSelectMode: Boolean = false
     var tileItemSelectColor: ImVec4 = GREEN_RGBA
     var tileItemIdMouseOver: Long = 0
+    var xForTileItemMouseOver: Int = 0
+    var yForTileItemMouseOver: Int = 0
     private var pixelsBuffer: ByteBuffer = BufferUtils.createByteBuffer(512 * 512 * 4) // used to read item texture, could be resized to store more data
     private var markedTileItemLvl: Int = -1 // level of the marker item; marked means that the pixel under the mouse for this item is opaque
 
@@ -286,7 +288,7 @@ class CanvasRenderer {
         markedTileItemLvl = -1
 
         for (frameMesh in providedFrameMeshes) {
-            val (tileItemId, sprite, x1, y1, x2, y2) = frameMesh
+            val (tileItemId, sprite, xReal, yReal, x1, y1, x2, y2) = frameMesh
 
             var colorR = frameMesh.colorR
             var colorG = frameMesh.colorG
@@ -325,6 +327,8 @@ class CanvasRenderer {
                         colorB = tileItemSelectColor.z
                         colorA = tileItemSelectColor.w
                         tileItemIdMouseOver = tileItemId
+                        xForTileItemMouseOver = xReal
+                        yForTileItemMouseOver = yReal
                     }
                 }
 

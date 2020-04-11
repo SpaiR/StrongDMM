@@ -266,36 +266,15 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true // Do one more redraw, so our canvas texture will render proper data (no highlighting etc)
     }
 
-    private fun getTileItemCoordUnderMouse(): MapPos {
-        val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
-
-        var x = xMapMousePos
-        var y = yMapMousePos
-
-        if (tileItem.pixelX != 0) {
-            x += (-1 * tileItem.pixelX / iconSize.toFloat() + if (tileItem.pixelX > 0) -.5 else .5).toInt()
-        }
-        if (tileItem.stepX != 0) {
-            x += (-1 * tileItem.stepX / iconSize.toFloat() + if (tileItem.stepX > 0) -.5 else .5).toInt()
-        }
-        if (tileItem.pixelY != 0) {
-            y += (-1 * tileItem.pixelY / iconSize.toFloat() + if (tileItem.pixelY > 0) -.5 else .5).toInt()
-        }
-        if (tileItem.stepY != 0) {
-            y += (-1 * tileItem.stepY / iconSize.toFloat() + if (tileItem.stepY > 0) -.5 else .5).toInt()
-        }
-
-        return MapPos(x, y)
-    }
-
     private fun replaceTileItemUnderMouseWithSelected(map: Dmm) {
         if (activeTileItem == null) {
             return
         }
 
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
-        val pos = getTileItemCoordUnderMouse()
-        val tile = map.getTile(pos.x, pos.y, map.zActive)
+        val x = canvasRenderer.xForTileItemMouseOver
+        val y = canvasRenderer.yForTileItemMouseOver
+        val tile = map.getTile(x, y, map.zActive)
 
         sendEvent(
             TriggerActionController.AddAction(
@@ -310,8 +289,9 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun deleteTileItemUnderMouse(map: Dmm) {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
-        val pos = getTileItemCoordUnderMouse()
-        val tile = map.getTile(pos.x, pos.y, map.zActive)
+        val x = canvasRenderer.xForTileItemMouseOver
+        val y = canvasRenderer.yForTileItemMouseOver
+        val tile = map.getTile(x, y, map.zActive)
 
         sendEvent(
             TriggerActionController.AddAction(
@@ -326,8 +306,9 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun openTileItemUnderMouseForEdit(map: Dmm) {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
-        val pos = getTileItemCoordUnderMouse()
-        val tile = map.getTile(pos.x, pos.y, map.zActive)
+        val x = canvasRenderer.xForTileItemMouseOver
+        val y = canvasRenderer.yForTileItemMouseOver
+        val tile = map.getTile(x, y, map.zActive)
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))

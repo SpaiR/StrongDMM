@@ -35,6 +35,7 @@ class UnknownTypesPanelUi : EventConsumer, EventSender {
                 text("X:${map_pos.x} Y:${map_pos.y} Z:${map_pos.z}")
                 nextColumn()
                 text(type)
+                nextColumn()
             }
         }
     }
