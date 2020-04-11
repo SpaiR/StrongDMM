@@ -2,6 +2,8 @@ package strongdmm.ui
 
 import imgui.ImBool
 import imgui.ImGui.*
+import imgui.enums.ImGuiMouseButton
+import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiStyleVar
 import strongdmm.controller.preferences.MapSaveMode
 import strongdmm.controller.preferences.NudgeMode
@@ -122,6 +124,15 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         pushTextWrapPos()
         textDisabled(desc)
         popTextWrapPos()
+
+        if (isItemHovered()) {
+            setMouseCursor(ImGuiMouseCursor.Hand)
+        }
+
+        if (isItemClicked(ImGuiMouseButton.Left)) {
+            active.set(!active.get())
+            sendEvent(TriggerPreferencesController.SavePreferences())
+        }
     }
 
     private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
