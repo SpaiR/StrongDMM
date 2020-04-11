@@ -56,9 +56,11 @@ class TilePopupUi : EventConsumer, EventSender {
     fun process() {
         currentTile?.let { tile ->
             if (isDoOpen) {
+                sendEvent(Reaction.TilePopupOpened())
                 openPopup(POPUP_ID)
                 isDoOpen = false
             } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
+                sendEvent(Reaction.TilePopupClosed())
                 dispose()
                 return
             }

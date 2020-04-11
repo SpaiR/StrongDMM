@@ -35,4 +35,7 @@ abstract class Reaction {
     class LayersFilterRefreshed(body: Set<DmeItemType>) : Event<Set<DmeItemType>, Unit>(body, null)
     class ActiveToolChanged(body: ToolType) : Event<ToolType, Unit>(body, null)
     class ShortcutTriggered(body: Shortcut) : Event<Shortcut, Unit>(body, null)
+
+    class TilePopupOpened : Event<Unit, Unit>(Unit, null)
+    class TilePopupClosed : Event<Unit, Unit>(Unit, null)
 }

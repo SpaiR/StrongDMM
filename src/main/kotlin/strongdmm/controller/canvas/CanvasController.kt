@@ -29,6 +29,8 @@ import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.GREEN_RGBA
 import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.AppWindow
+import java.util.Timer
+import java.util.TimerTask
 
 class CanvasController : EventSender, EventConsumer {
     companion object {
@@ -57,6 +59,8 @@ class CanvasController : EventSender, EventConsumer {
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
     private var isMapMouseDragged: Boolean = false
+    private var isMovingCanvas: Boolean = false
+    private var isBlockCanvasInteraction: Boolean = false
 
     // To handle user input
     private val mousePos: ImVec2 = ImVec2()
@@ -73,6 +77,8 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
         consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
+        consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
         consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
         consumeEvent(Provider.FrameControllerFramedTiles::class.java, ::handleProviderFrameControllerFramedTiles)
         consumeEvent(TriggerCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
@@ -108,6 +114,7 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.render()
 
         postProcessTileItemSelectMode()
+        postProcessCanvasMovingChecks()
     }
 
     private fun processViewTranslate() {
@@ -115,6 +122,7 @@ class CanvasController : EventSender, EventConsumer {
             return
         }
 
+        isMovingCanvas = true
         ImGui.getIO().getMouseDelta(mouseDelta)
 
         if (mouseDelta.x != 0f || mouseDelta.y != 0f) {
@@ -180,8 +188,8 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processMapMouseDrag() {
-        if (ImGui.getIO().keyShift) {
-            return // do not do anything while this modifier is in play, since it's used by SHIFT+Click actions
+        if (isMovingCanvas || isBlockCanvasInteraction || ImGui.getIO().keyShift) {
+            return
         }
 
         if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
@@ -325,6 +333,12 @@ class CanvasController : EventSender, EventConsumer {
         sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
     }
 
+    private fun postProcessCanvasMovingChecks() {
+        if (isMovingCanvas && ImGui.isMouseReleased(ImGuiMouseButton.Left)) {
+            isMovingCanvas = false
+        }
+    }
+
     private fun isImGuiInUse(): Boolean {
         return ImGui.isWindowHovered(ImGuiHoveredFlags.AnyWindow or ImGuiHoveredFlags.AllowWhenBlockedByPopup or ImGuiHoveredFlags.AllowWhenBlockedByActiveItem) ||
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
@@ -373,6 +387,18 @@ class CanvasController : EventSender, EventConsumer {
 
     private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
         activeTileItem = event.body
+    }
+
+    private fun handleTilePopupOpened() {
+        isBlockCanvasInteraction = true
+    }
+
+    private fun handleTilePopupClosed() {
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                isBlockCanvasInteraction = false
+            }
+        }, 500)
     }
 
     private fun handleProviderFrameControllerComposedFrame(event: Event<List<FrameMesh>, Unit>) {

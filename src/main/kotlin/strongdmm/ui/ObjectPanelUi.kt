@@ -141,7 +141,11 @@ class ObjectPanelUi : EventConsumer, EventSender {
     }
 
     private fun getTileItemsByTypeSorted(type: String): List<TileItem> {
-        return GlobalTileItemHolder.getTileItemsByType(type).sortedBy { it.iconState }.sortedBy { it.dir }.sortedBy { it.customVars?.size }
+        val tileItems = GlobalTileItemHolder.getTileItemsByType(type).sortedBy { it.name }.sortedBy { it.iconState }.toMutableList()
+        val initialItem = GlobalTileItemHolder.getOrCreate(type)
+        tileItems.remove(initialItem)
+        tileItems.add(0, initialItem)
+        return tileItems
     }
 
     private fun handleEnvironmentReset() {
