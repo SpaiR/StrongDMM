@@ -23,7 +23,7 @@ class UnknownTypesPanelUi : EventConsumer, EventSender {
             return
         }
 
-        setNextWindowPos(AppWindow.windowWidth / 2 - 200f, AppWindow.windowHeight / 2 - 225f, AppWindow.defaultWindowCond)
+        setNextWindowPos((AppWindow.windowWidth - 300f) / 2, (AppWindow.windowHeight - 450f) / 2, AppWindow.defaultWindowCond)
         setNextWindowSize(300f, 450f, AppWindow.defaultWindowCond)
 
         window("Unknown Types", isOpened) {

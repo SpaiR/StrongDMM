@@ -20,10 +20,7 @@ import strongdmm.event.EventSender
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
-import strongdmm.event.type.ui.TriggerAvailableMapsDialogUi
-import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
-import strongdmm.event.type.ui.TriggerPreferencesPanelUi
-import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
+import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
@@ -139,6 +136,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
             menu("Window") {
                 menuItem("Reset Windows", block = ::doResetWindows)
+            }
+
+            menu("Help") {
+                menuItem("About", block = ::doAbout)
             }
 
             progressText?.let {
@@ -351,6 +352,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doResetWindows() {
         AppWindow.resetWindows()
+    }
+
+    private fun doAbout() {
+        sendEvent(TriggerAboutPanelUi.Open())
     }
 
     private fun handleEnvironmentLoading(event: Event<File, Unit>) {

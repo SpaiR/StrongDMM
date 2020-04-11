@@ -69,3 +69,10 @@ compileKotlin {
 runShadow {
     jvmArgs(['-Dsdmmparser.path=./libs'])
 }
+
+processResources {
+    filesMatching('about.txt') {
+        def gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()
+        filter { line -> line.replace('$revision', gitCommitHash) }
+    }
+}
