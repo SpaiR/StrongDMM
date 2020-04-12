@@ -59,7 +59,7 @@ class CanvasController : EventSender, EventConsumer {
     private var yMapMousePos: Int = OUT_OF_BOUNDS
 
     private var isMapMouseDragged: Boolean = false
-    private var isMovingCanvas: Boolean = false
+    private var isMovingCanvasWithLmb: Boolean = false
     private var isBlockCanvasInteraction: Boolean = false
 
     // To handle user input
@@ -122,7 +122,10 @@ class CanvasController : EventSender, EventConsumer {
             return
         }
 
-        isMovingCanvas = true
+        if (ImGui.isKeyDown(GLFW.GLFW_KEY_SPACE) && ImGui.isMouseDown(ImGuiMouseButton.Left)) {
+            isMovingCanvasWithLmb = true
+        }
+
         ImGui.getIO().getMouseDelta(mouseDelta)
 
         if (mouseDelta.x != 0f || mouseDelta.y != 0f) {
@@ -188,7 +191,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun processMapMouseDrag() {
-        if (isMovingCanvas || isBlockCanvasInteraction || ImGui.getIO().keyShift) {
+        if (isMovingCanvasWithLmb || isBlockCanvasInteraction || ImGui.getIO().keyShift) {
             return
         }
 
@@ -315,8 +318,8 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun postProcessCanvasMovingChecks() {
-        if (isMovingCanvas && ImGui.isMouseReleased(ImGuiMouseButton.Left)) {
-            isMovingCanvas = false
+        if (isMovingCanvasWithLmb && ImGui.isMouseReleased(ImGuiMouseButton.Left)) {
+            isMovingCanvasWithLmb = false
         }
     }
 
