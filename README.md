@@ -1,69 +1,74 @@
 [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest)
 [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
 
-## Strong Dream Map Maker
+# Strong Dream Map Maker
 Yet another robust map editor for BYOND.
 
-
 ### What is it
-StrongDMM is an alternative map editor for BYOND. It was built with thoughts to create more flexible, fast and extensible instrument,
-than out of the box editor. Under the hood, StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser so the process of opening
-dme project takes several seconds instead of eternity, which BYOND editor provides.
+StrongDMM is an alternative map editor for BYOND. It was built with thoughts to create a more flexible, fast and extensible tool,
+than the native one.
 
-From the other point, StrongDMM doesn't make mapping experience absolutely different. Familiar hotkeys, similar editing behaviour,
-all of that was made to make the process of migrating to the new editor fast and smooth.
+The editor provides a bunch of new features:
+ * Almost instant environment open
+ * Smooth zoom-in/zoom-out with the scroll
+ * Robust "search & replace"
+ * Improved shortcuts
+ * Variables preview for the active object
+ * Improved variables editing
+ * Optional variables sanitizing
 
+...and a lot of more...
 
-### Features
-* Usage of [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser to parse environment. That means that StrongDMM has full support
-of sophisticated BYOND syntax and can work with stuff like definition through macros, etc.
-* Much specific display filters! Separate menu with which you can hide and show exactly what you want.
-    * Example: [GIF](https://imgur.com/a/e8apLGT)
-* Built in map merger. This thing will minimize changes in file, so resulted diff won't be too big. The algorithm itself is similar that uses TG codebase.
-* Map file cleanings. StrongDMM will sanitize variables which declared for specific instance on map, but have the same value in environment.
-That means that all instances which were made by providing same variable as in code, will be deleted from the map and replaced with initial object.
-* Simplified way of looking through the instances. Now you can view instances variables in selection menu.
-    * Example: [PNG](https://imgur.com/a/PykpCmw)
-* Improved variables editing. Searching and ability to show only instance variables.
-    * Example: [GIF](https://imgur.com/a/ew38gYU)
-* Map synchronization. You can open different maps in different files and work with them like if they are in the same file, but on different z-levels.
-* TGM support out of the box. You don't need to manually convert map after editing.
+### How to Use
+The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
 
-**Disclaimer!**<br>
-StrongDMM doesn't support multi-z map files. It was done on purpose. Multi-z maps are absolutely unmaintainable from the perspective of Open Source contribution.
-Divide your z-levels in different files and use **Map Synchronization** option.
+**Download links:**
+* [Windows](https://github.com/SpaiR/StrongDMM/releases/download/v1.0.0/sdmmlauncher.exe)
+* [Linux](https://github.com/SpaiR/StrongDMM/releases/download/v1.0.0/sdmmlauncher)
 
+You are also able to download the editor manually. Go to the [releases](https://github.com/SpaiR/StrongDMM/releases/latest)
+page and download zip for your OS.
 
-### How to install
-Open [releases](https://github.com/SpaiR/StrongDMM/releases) page and download distribution package you want.
-No dependencies required, all packages are fully self containable.<br>
-**Notice!** If you're experiencing a problem when while opening an environment everything is stuck,
-then try to start the editor as an administrator or try to use a zipped version.
+### Usage FAQ
+**Q.** I'm experiencing an eternal environment parsing. What to do?<br>
+**A.** Start the editor (launcher or proper script file) **as an administrator**.
 
-### How to build
-**Pre-requests:** JDK 8 or higher, Rust to compile 'sdmmparser'
+**Q.** How to move the map?<br>
+**A.** ~~Use zoom-in/zoom-out.~~ Drag your mouse while holding the **middle mouse button**.
+Alternatively you can hold **space bar** and drag the mouse while holding the **left mouse button**.
+
+**Q.** How to change a save format?<br>
+**A.** In the menu bar: `Options->Preferences...` and change the format you would like to use.
+
+**Q.** How to copy a type of the currently selected object to the clipboard?<br>
+**A.** Click on the title (blue line at the top) of the **objects window** with the right mouse button. 
+You'll find "Copy Type to Clipboard" button.
+
+**Q.** The editor went crush. Where I can find the error logs?<br>
+**A.** In your user home dir: `.strongdmm/logs`.
+
+<hr>
+
+### How to Build
+**Pre-requests:** [JDK 11](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot) or higher, latest
+[Rust](https://www.rust-lang.org/) to compile `sdmmparser` and `sdmmlauncher`.
 
 #### Editor:
 - **Build:** `gradlew clean build`
 - **Run:** `gradlew runShadow`
 - **Auto-format (for linter)**: `gradlew formatKotlin`
 
-#### sdmmparser (Optional):
-- **Build from root**: `cargo build --manifest-path=./src/sdmmparser/Cargo.toml`
-- **Build from sdmmparser folder**: `cargo build`
-- To build release (optimized) version just add `--release` flag in the end of the command.
+#### sdmmparser/sdmmlauncher (Optional):
+- **Build**: `cargo build`
+- To build a release (optimized) version just add `--release` flag in the end of the command.
 
-To parse BYOND environment StrongDMM uses SpacemanDMM parser. To utilize its functionality 'sdmmparser' is used.
-Most of the time you won't need to build it manually since pre-built exe could be found in `~/libs` folder.
-But if you'll decide to do it, you'll need to move your compiled executable under the `~/libs` folder.
-
+To parse the BYOND environment StrongDMM uses SpacemanDMM parser. `sdmmparser` is used to utilize its functionality.
+While starting the editor with `runShadow` command, provided executables under the `./libs` folder will be used.
 
 ### Credits
-Thanks to original [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
-and later supported by [TG](https://github.com/tgstation/FastDMM). A lot of good ideas were taken from there.<br>
-Special thanks to [SpaceManiac](https://github.com/SpaceManiac) for his amazing [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser.
-This guy makes BYOND development better.
-
+Special thanks to [SpaceManiac](https://github.com/SpaceManiac) for his amazing [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser.<br>
+Thanks to the [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
+and later supported by [TG](https://github.com/tgstation/FastDMM) for some of good ideas.
 
 ### License
 See the LICENSE file for license rights and limitations (GPL-3.0).
