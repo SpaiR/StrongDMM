@@ -9,8 +9,8 @@ use std::fs;
 use std::str;
 
 use dm::constants::Constant;
-use dm::Context;
 use dm::objtree::TypeRef;
+use dm::Context;
 
 #[derive(Serialize)]
 pub struct ObjectTreeType {

@@ -1,5 +1,3 @@
-extern crate colored;
-extern crate core;
 extern crate dirs;
 extern crate indicatif;
 extern crate reqwest;
@@ -12,15 +10,13 @@ use std::io::{Read, Write};
 use std::path::PathBuf;
 use std::process::Command;
 
-use colored::Colorize;
-
 mod archive;
 mod download;
 
-const HOME_DIR_NAME: &str = ".strongdmm";
+const EDITOR_HOME_DIR_NAME: &str = ".strongdmm";
 const LOCAL_VERSION_FILE_NAME: &str = "version";
 const REMOTE_VERSION_PATH: &str = "https://spair.github.io/StrongDMM/version.txt";
-const DOWNLOAD_PATH: &str = "https://github.com/SpaiR/test/releases/download";
+const DOWNLOAD_PATH: &str = "https://github.com/SpaiR/StrongDMM/releases/download";
 
 #[cfg(target_os = "linux")]
 const DOWNLOAD_FILE_NAME: &str = "strongdmm-linux.zip";
@@ -33,98 +29,80 @@ fn main() {
 
     println!("Checking for updates...");
 
-    let home_dir_path = get_home_dir_path();
-    let bin_dir_path = get_bin_dir_path(&home_dir_path);
+    let editor_home_dir_path = get_editor_home_dir_path();
+    let editor_bin_dir_path = get_editor_editor_bin_dir_path(&editor_home_dir_path);
 
-    let mut local_version_file = get_local_version_file(&home_dir_path);
+    let mut local_version_file = get_local_version_file(&editor_home_dir_path);
     let local_version = read_local_version(&mut local_version_file);
     let remote_version = read_remote_version();
 
+    println!(" * Local version: {}", local_version);
+    println!(" * Remote version: {}", remote_version);
+
     let zip_file = if local_version != remote_version {
-        println!("Local version: {}", local_version);
-        println!("Remote version: {}", remote_version);
-        println!("{}", "Downloading...".yellow());
-        remove_bin_dir(&bin_dir_path);
+        println!("Downloading...");
+        remove_bin_dir(&editor_bin_dir_path);
         Some(download_remote_version(&remote_version))
     } else {
-        println!("{}", "Local version is up to date!".green());
+        println!("Local version is up to date!");
         None
     };
 
     if let Some(zip_file) = zip_file {
         println!("Installing downloaded version...");
-        archive::unzip(zip_file, &bin_dir_path).unwrap_or_else(|_| {
-            drop_with_error("unable to install downloaded version");
-        });
+
+        archive::unzip(zip_file, &editor_bin_dir_path)
+            .expect("downloaded archive should installed");
+
         update_local_version(&mut local_version_file, &remote_version);
     }
 
-    println!("{}", "Starting the editor!".yellow().bold());
-
-    if cfg!(target_os = "linux") {
-        Command::new("sh")
-            .current_dir(get_child_path(&bin_dir_path, "strongdmm"))
-            .arg("run.sh")
-            .spawn()
-            .unwrap_or_else(|_| drop_with_error("unable to start the editor"));
-    } else {
-        Command::new("start")
-            .current_dir(get_child_path(&bin_dir_path, "strongdmm"))
-            .arg("\"\"")
-            .arg("run.bat")
-            .spawn()
-            .unwrap_or_else(|_| drop_with_error("unable to start the editor"));
-    }
-
-    hide_console_window();
+    println!("Starting the editor...");
+    start_the_editor(&editor_bin_dir_path);
 }
 
 fn print_logo() {
-    println!("{}", include_str!("../res/logo.txt").yellow());
+    println!(include_str!("../res/logo.txt"));
     println!(
-        "{}  {}  {}\n",
-        ":: StrongDMM Launcher ::".green().bold(),
-        "(v1.0.0)".magenta(),
-        format!("[{}]", env!("GIT_HASH")).blue()
+        ":: StrongDMM Launcher ::  (v{})  [{}]\n",
+        env!("CARGO_PKG_VERSION"),
+        env!("GIT_HASH")
     );
 }
 
-fn get_home_dir_path() -> PathBuf {
-    let gen_home_dir_path = dirs::home_dir().unwrap_or_else(|| {
-        drop_with_error("unable to get a user home dir");
-    });
+fn get_editor_home_dir_path() -> PathBuf {
+    let user_home_dir_path = dirs::home_dir().expect("user home dir should be available");
 
-    let home_dir_path = get_child_path(&gen_home_dir_path, HOME_DIR_NAME);
+    let editor_home_dir_path = get_child_path(&user_home_dir_path, EDITOR_HOME_DIR_NAME);
 
-    if !home_dir_path.exists() {
-        fs::create_dir(&home_dir_path)
-            .unwrap_or_else(|_| drop_with_error("unable to create an application home dir"));
+    if !editor_home_dir_path.exists() {
+        fs::create_dir(&editor_home_dir_path)
+            .expect("editor home dir should be available for creation");
     }
 
-    home_dir_path
+    editor_home_dir_path
 }
 
-fn get_bin_dir_path(home_dir_path: &PathBuf) -> PathBuf {
-    let bin_dir_path = get_child_path(&home_dir_path, "bin");
+fn get_editor_editor_bin_dir_path(editor_home_dir_path: &PathBuf) -> PathBuf {
+    let editor_bin_dir_path = get_child_path(&editor_home_dir_path, "bin");
 
-    if !bin_dir_path.exists() {
-        fs::create_dir(&bin_dir_path).unwrap_or_else(|_| {
-            drop_with_error("unable to create a dir to store application binaries")
-        });
+    if !editor_bin_dir_path.exists() {
+        fs::create_dir(&editor_bin_dir_path)
+            .expect("editor bin dir should be available for creation");
     }
 
-    bin_dir_path
+    editor_bin_dir_path
 }
 
-fn get_local_version_file(home_dir_path: &PathBuf) -> File {
-    let version_file_path = get_child_path(home_dir_path, LOCAL_VERSION_FILE_NAME);
+fn get_local_version_file(editor_home_dir_path: &PathBuf) -> File {
+    let version_file_path = get_child_path(editor_home_dir_path, LOCAL_VERSION_FILE_NAME);
 
     OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
         .open(version_file_path)
-        .unwrap_or_else(|_| drop_with_error("unable to get local version file"))
+        .expect("local version file should be read or created")
 }
 
 fn read_local_version(local_version_file: &mut File) -> String {
@@ -132,7 +110,7 @@ fn read_local_version(local_version_file: &mut File) -> String {
 
     local_version_file
         .read_to_string(&mut local_version)
-        .unwrap_or_else(|_| drop_with_error("unable to read local application version"));
+        .expect("local version file should be available for read");
 
     local_version = local_version.trim().to_string();
 
@@ -145,22 +123,30 @@ fn read_local_version(local_version_file: &mut File) -> String {
 
 fn read_remote_version() -> String {
     let resp = reqwest::blocking::get(REMOTE_VERSION_PATH);
-    resp.unwrap_or_else(|_| drop_with_error("unable to get remote application version"))
-        .text()
-        .unwrap_or_else(|_| drop_with_error("unable to parse remote application version"))
-        .trim()
-        .to_string()
+    resp.unwrap_or_else(|_| {
+        drop_with_error(
+            format!(
+                "unable to get remote application version by path: {}",
+                REMOTE_VERSION_PATH
+            )
+            .as_str(),
+        )
+    })
+    .text()
+    .expect("remote editor version should be available")
+    .trim()
+    .to_string()
 }
 
-fn remove_bin_dir(bin_dir_path: &PathBuf) {
-    fs::remove_dir_all(&bin_dir_path)
-        .unwrap_or_else(|_| drop_with_error("unable to remove dir with application binaries"));
+fn remove_bin_dir(editor_bin_dir_path: &PathBuf) {
+    fs::remove_dir_all(&editor_bin_dir_path)
+        .expect("editor binaries folder should be available for deletion");
 }
 
 fn download_remote_version(remote_version: &str) -> File {
     download::download_with_pb(
         format!(
-            "{}/v{}/{}",
+            "{}/{}/{}",
             DOWNLOAD_PATH, remote_version, DOWNLOAD_FILE_NAME
         )
         .as_str(),
@@ -170,6 +156,24 @@ fn download_remote_version(remote_version: &str) -> File {
 
 fn update_local_version(local_version_file: &mut File, new_version: &str) {
     local_version_file.write(new_version.as_bytes()).unwrap();
+}
+
+#[cfg(target_os = "linux")]
+fn start_the_editor(editor_bin_dir_path: &PathBuf) {
+    Command::new("sh")
+        .current_dir(get_child_path(&editor_bin_dir_path, "strongdmm"))
+        .arg("run.sh")
+        .spawn()
+        .expect("failed to start the editor");
+}
+
+#[cfg(target_os = "windows")]
+fn start_the_editor(editor_bin_dir_path: &PathBuf) {
+    Command::new("cmd")
+        .current_dir(get_child_path(&editor_bin_dir_path, "strongdmm"))
+        .args(&["/C", "run.bat"])
+        .spawn()
+        .expect("failed to start the editor");
 }
 
 fn get_child_path(root: &PathBuf, child: &str) -> PathBuf {
@@ -183,23 +187,4 @@ fn get_child_path(root: &PathBuf, child: &str) -> PathBuf {
 fn drop_with_error(error: &str) -> ! {
     println!("Error: {}", error);
     std::process::exit(1)
-}
-
-fn hide_console_window() {
-    #[cfg(target_os = "windows")]
-    {
-        extern crate winapi;
-        extern crate user32;
-        extern crate kernel32;
-
-        use core::ptr;
-
-        let window = unsafe { kernel32::GetConsoleWindow() };
-        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms633548%28v=vs.85%29.aspx
-        if window != ptr::null_mut() {
-            unsafe {
-                user32::ShowWindow(window, winapi::SW_HIDE);
-            }
-        }
-    }
 }

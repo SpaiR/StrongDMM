@@ -7,13 +7,17 @@ name = "sdmmlauncher"
 path = "src/main.rs"
 
 [dependencies]
-openssl = { version = "0.10.4", features = ["vendored"] }
 reqwest = { version = "0.10.4", features = ["blocking"] }
-colored = "1.9.3"
 dirs = "2.0.2"
 indicatif = "0.14.0"
 tempfile = "3.1.0"
 zip = "0.5"
+
+[target.'cfg(linux)'.dependencies]
+openssl = { version = "0.10.4", features = ["vendored"] }
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
 
 [profile.release]
 lto = true
