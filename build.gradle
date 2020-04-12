@@ -9,7 +9,7 @@ plugins {
 
 application {
     group 'io.github.spair'
-    version '0.0.10'
+    version '1.0.0'
     mainClassName = 'strongdmm.StrongDMM'
 }
 
