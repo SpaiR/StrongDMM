@@ -4,7 +4,7 @@ version = "1.0.0"
 
 [[bin]]
 name = "sdmmparser"
-path = "main.rs"
+path = "src/main.rs"
 
 [dependencies]
 serde = "1.0.106"
