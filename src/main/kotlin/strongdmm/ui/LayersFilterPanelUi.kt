@@ -30,7 +30,7 @@ import strongdmm.window.AppWindow
 
 class LayersFilterPanelUi : EventConsumer, EventSender {
     companion object {
-        private const val MIN_FILTER_CHARS: Int = 4
+        private const val MIN_FILTER_CHARS: Int = 1
     }
 
     private val isOpened: ImBool = ImBool(false)
@@ -62,7 +62,7 @@ class LayersFilterPanelUi : EventConsumer, EventSender {
             }
 
             setNextItemWidth(-1f)
-            strongdmm.util.imgui.inputText("##types_filter", typesFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS chars to apply")
+            strongdmm.util.imgui.inputText("##types_filter", typesFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS char to apply")
 
             separator()
 
