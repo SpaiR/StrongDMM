@@ -12,6 +12,8 @@ class ByondParser(
 
     private lateinit var keySplit: Regex
 
+    private val tileObjectComparator = TileObjectComparator()
+
     private val dmmData: DmmData = DmmData()
 
     fun parse(): DmmData {
@@ -58,7 +60,7 @@ class ByondParser(
 
     private fun readTileContent(rawContent: String): TileContent {
         val allObjects = objsRegex.split(rawContent.trim()).filter { it.isNotBlank() }
-        val tileContent = mutableListOf<TileObject>()
+        val tileObjects = mutableListOf<TileObject>()
 
         for (item in allObjects) {
             var type: String
@@ -83,10 +85,14 @@ class ByondParser(
 
             val tileObject = TileObject(type)
             tileObject.setVars(if (vars.isEmpty()) null else vars)
-            tileContent.add(tileObject)
+            tileObjects.add(tileObject)
         }
 
-        return TileContent().apply { content.addAll(tileContent) }
+        tileObjects.sortWith(tileObjectComparator)
+
+        val tileContent = TileContent()
+        tileContent.content.addAll(tileObjects)
+        return tileContent
     }
 
     private fun readTiles(rawTiles: String): MutableList<MutableList<MutableList<String>>> {

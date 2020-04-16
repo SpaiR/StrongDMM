@@ -11,6 +11,8 @@ class TGMParser(
     private var currentTileContent: TileContent = TileContent()
     private lateinit var currentTileObject: TileObject
 
+    private val tileObjectComparator = TileObjectComparator()
+
     private val dmmData: DmmData = DmmData()
 
     fun parse(): DmmData {
@@ -26,7 +28,10 @@ class TGMParser(
             readTileDeclaration(line)
         }
 
-        tileContentsByKey.forEach { (key, tileContent) -> dmmData.addKeyAndTileContent(key, tileContent) }
+        tileContentsByKey.forEach { (key, tileContent) ->
+            tileContent.content.sortWith(tileObjectComparator)
+            dmmData.addKeyAndTileContent(key, tileContent)
+        }
 
         val tiles = readTiles(rawMapContent.substring(posIdx))
 
