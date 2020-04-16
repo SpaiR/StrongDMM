@@ -79,11 +79,34 @@ class KeyGenerator(private val dmmData: DmmData) {
         }
     }
 
-    private lateinit var keysPool: TIntArrayList
+    private var keysPool: TIntArrayList? = null
     private var freeKeys: Int = 0
 
-    fun initKeysPool() {
-        keysPool = TIntArrayList()
+    fun createKey(): String {
+        if (keysPool == null) {
+            keysPool = createKeysPool()
+        }
+
+        val keysPool = this.keysPool!!
+
+        if (keysPool.isEmpty) {
+            this.keysPool = null
+            when (freeKeys) {
+                REAL_TIER_1_LIMIT -> throw RecreateKeysException(2)
+                REAL_TIER_2_LIMIT -> throw RecreateKeysException(3)
+                else -> throw IllegalStateException("Unable to create a new key. Limit of keys exceeded.")
+            }
+        }
+
+        // ... and pick randomly from it
+        val index = (0 until keysPool.size()).random()
+        val key = keysPool[index]
+        keysPool.removeAt(index)
+        return KEYS[key]
+    }
+
+    private fun createKeysPool(): TIntArrayList {
+        val keysPool = TIntArrayList()
 
         freeKeys = when (dmmData.keyLength) {
             1 -> REAL_TIER_1_LIMIT
@@ -104,21 +127,7 @@ class KeyGenerator(private val dmmData: DmmData) {
                 keysPool.add(num)
             }
         }
-    }
 
-    fun createKey(): String {
-        if (keysPool.isEmpty) {
-            when (freeKeys) {
-                REAL_TIER_1_LIMIT -> throw RecreateKeysException(2)
-                REAL_TIER_2_LIMIT -> throw RecreateKeysException(3)
-                else -> throw IllegalStateException("Unable to create a new key. Limit of keys exceeded.")
-            }
-        }
-
-        // ... and pick randomly from it
-        val index = (0 until keysPool.size()).random()
-        val key = keysPool[index]
-        keysPool.removeAt(index)
-        return KEYS[key]
+        return keysPool
     }
 }

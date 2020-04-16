@@ -108,7 +108,7 @@ class SaveMap(
                 fillRemainingTiles()
             } catch (e: RecreateKeysException) {
                 outputDmmData.keyLength = e.newSize
-                clearKeyAndTileContent()
+                outputDmmData.clearKeysAndTileContent()
                 continue
             }
 
@@ -118,11 +118,6 @@ class SaveMap(
 
     // Fill remaining tiles (use unused keys or generate a new one)
     private fun fillRemainingTiles() {
-        if (outputDmmData.hasLocationsWithoutContent()) {
-            unusedKeys.clear()
-            return // All locations have its own key
-        }
-
         data class Loc(val x: Int, val y: Int, val z: Int)
 
         val locsWithoutKey = mutableListOf<Loc>()
@@ -131,7 +126,7 @@ class SaveMap(
         for (z in 1..outputDmmData.maxZ) {
             for (y in outputDmmData.maxY downTo 1) {
                 for (x in 1..outputDmmData.maxX) {
-                    val tileContent = dmm.getTileContentByLocation(x, y, z)
+                    val tileContent = outputDmmData.getTileContentByLocation(x, y, z)!!
 
                     if (!outputDmmData.hasKeyByTileContent(tileContent)) {
                         locsWithoutKey.add(Loc(x, y, z))
@@ -147,21 +142,17 @@ class SaveMap(
 
                 if (initialDmmData.getKeyByLocation(x, y, z) == unusedKey) {
                     unusedKeys.remove(unusedKey)
-                    outputDmmData.addKeyAndTileContent(unusedKey, dmm.getTileContentByLocation(x, y, z))
+                    outputDmmData.addKeyAndTileContent(unusedKey, outputDmmData.getTileContentByLocation(x, y, z)!!)
                     locsWithoutKey.remove(loc)
                     break
                 }
             }
         }
 
-        if (locsWithoutKey.isNotEmpty()) {
-            keyGenerator.initKeysPool()
-        }
-
         // Handle remaining locations
         for (loc in locsWithoutKey) {
             val (x, y, z) = loc
-            val tileContent = dmm.getTileContentByLocation(x, y, z)
+            val tileContent = outputDmmData.getTileContentByLocation(x, y, z)!!
 
             if (outputDmmData.hasKeyByTileContent(tileContent)) {
                 continue
@@ -179,9 +170,6 @@ class SaveMap(
 
             outputDmmData.addKeyAndTileContent(key, tileContent)
         }
-
-        // Drop all unused keys.
-        unusedKeys.clear()
     }
 
     private fun removeUnusedKeys() {
@@ -191,10 +179,6 @@ class SaveMap(
                 outputDmmData.tileContentsByKey.remove(it)
             }
         }
-    }
-
-    private fun clearKeyAndTileContent() {
-        outputDmmData.keys.toSet().forEach { outputDmmData.removeKeyAndTileContent(it) }
     }
 
     private fun saveToFile() {

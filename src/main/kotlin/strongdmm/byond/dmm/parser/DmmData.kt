@@ -61,20 +61,8 @@ class DmmData {
         tiles[z - 1][y - 1][x - 1] = tileContent
     }
 
-    fun hasLocationsWithoutContent(): Boolean {
-        for (z in 1..maxZ) {
-            for (y in 1..maxY) {
-                for (x in 1..maxX) {
-                    if (getTileContentByLocation(x, y, z) == null) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
-
-    fun removeKeyAndTileContent(key: String?) {
-        keysByTileContent.remove(tileContentsByKey.remove(key))
+    fun clearKeysAndTileContent() {
+        keysByTileContent.clear()
+        tileContentsByKey.clear()
     }
 }
