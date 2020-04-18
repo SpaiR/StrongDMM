@@ -9,3 +9,4 @@ Fixes:
 
 Tweaks:
  * From the tile popup, for turfs and areas, the options to change "movable" parameters are removed.
+ * The editor window title will show the name of the currently opened environment.
