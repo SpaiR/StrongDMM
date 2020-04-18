@@ -99,32 +99,34 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        showNudgeOption(true, tile, tileItem, tileItemIdx)
-        showNudgeOption(false, tile, tileItem, tileItemIdx)
+        if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
+            showNudgeOption(true, tile, tileItem, tileItemIdx)
+            showNudgeOption(false, tile, tileItem, tileItemIdx)
 
-        separator()
+            separator()
 
-        menuItem("Move To Top##move_to_top_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(TriggerActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.moveToTop(tileItem, tileItemIdx)
-                }
-            ))
+            menuItem("Move To Top##move_to_top_$tileItemIdx") {
+                sendEvent(TriggerActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.moveToTop(tileItem, tileItemIdx)
+                    }
+                ))
 
-            sendEvent(TriggerFrameController.RefreshFrame())
+                sendEvent(TriggerFrameController.RefreshFrame())
+            }
+
+            menuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
+                sendEvent(TriggerActionController.AddAction(
+                    ReplaceTileAction(tile) {
+                        tile.moveToBottom(tileItem, tileItemIdx)
+                    }
+                ))
+
+                sendEvent(TriggerFrameController.RefreshFrame())
+            }
+
+            separator()
         }
-
-        menuItem("Move To Bottom##move_to_bottom_$tileItemIdx", enabled = (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB))) {
-            sendEvent(TriggerActionController.AddAction(
-                ReplaceTileAction(tile) {
-                    tile.moveToBottom(tileItem, tileItemIdx)
-                }
-            ))
-
-            sendEvent(TriggerFrameController.RefreshFrame())
-        }
-
-        separator()
 
         menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
             sendEvent(TriggerTileItemController.ChangeActiveTileItem(tileItem))

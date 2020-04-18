@@ -7,3 +7,7 @@ Features:
 
 Fixes:
   * An ancient bug which was the reason for map corruptions.
+
+Tweaks:
+  * For tile popup: nudge options, as well as "Move To Top" and "Move To Bottom",
+    are hidden for turfs and areas.
