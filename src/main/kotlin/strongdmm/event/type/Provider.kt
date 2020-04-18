@@ -16,6 +16,7 @@ abstract class Provider {
     class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
     class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
     class PreferencesControllerPreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
+    class ChangelogControllerChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
 
     class MapHolderControllerOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
     class MapHolderControllerAvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) :

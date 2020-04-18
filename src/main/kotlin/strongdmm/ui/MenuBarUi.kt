@@ -139,6 +139,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
             }
 
             menu("Help") {
+                menuItem("Changelog", block = ::doChangelog)
                 menuItem("About", block = ::doAbout)
             }
 
@@ -352,6 +353,10 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
 
     private fun doResetWindows() {
         AppWindow.resetWindows()
+    }
+
+    private fun doChangelog() {
+        sendEvent(TriggerChangelogPanelUi.Open())
     }
 
     private fun doAbout() {

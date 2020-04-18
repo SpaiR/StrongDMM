@@ -1,0 +1,6 @@
+Features:
+  * A built in changelog. Will be auto-shown when updated.
+    Could be manually opened with: "Help->Changelog".
+
+Fixes:
+  * An ancient bug which was the reason for map corruptions.

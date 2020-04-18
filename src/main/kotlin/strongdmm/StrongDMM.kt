@@ -39,6 +39,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val setMapSizeDialogUi = SetMapSizeDialogUi()
     private val unknownTypesPanelUi = UnknownTypesPanelUi()
     private val aboutPanelUi = AboutPanelUi()
+    private val changelogPanelUi = ChangelogPanelUi()
 
     private val environmentController = EnvironmentController()
     private val mapHolderController = MapHolderController()
@@ -54,6 +55,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val tileItemController = TileItemController()
     private val recentFilesController = RecentFilesController()
     private val preferencesController = PreferencesController()
+    private val changelogController = ChangelogController()
 
     private val applicationCloseController = ApplicationCloseController()
 
@@ -68,6 +70,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         canvasController.postInit()
         recentFilesController.postInit()
         preferencesController.postInit()
+        changelogController.postInit()
     }
 
     override fun appLoop() {
@@ -90,6 +93,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         setMapSizeDialogUi.process()
         unknownTypesPanelUi.process()
         aboutPanelUi.process()
+        changelogPanelUi.process()
 
         // Controllers
         canvasController.process()
