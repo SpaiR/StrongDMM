@@ -152,6 +152,12 @@ class Tile(
         }
     }
 
+    fun setDir(tileItem: TileItem, tileItemIdx: Int, dir: Int) {
+        val vars = tileItem.customVars?.toMutableMap() ?: mutableMapOf()
+        vars[VAR_DIR] = dir.toString()
+        modifyItemVars(tileItemIdx, vars)
+    }
+
     fun moveToTop(tileItem: TileItem, tileItemIdx: Int) {
         shiftItem((if (tileItem.isType(TYPE_MOB)) mobs else objs), tileItemIdx, -1)
     }

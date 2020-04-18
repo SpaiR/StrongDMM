@@ -1,13 +1,11 @@
 Features:
-  * A built in changelog. Will be auto-shown when updated.
-    Could be manually opened with: "Help->Changelog".
-  * When creating a new map the "dmm" extension will be set to file automatically.
-  * "Show Icons" checkbox for the environment tree was replaced with "Collapse All" button.
-    With it you can fold all opened nodes into the initial state.
+ * Built in changelog. Will be auto-shown when updated. Could be opened with: "Help->Changelog".
+ * When creating a new map the editor will add "dmm" extension to the file automatically.
+ * "Show Icons" checkbox for "Environment Tree" is replaced by "Collapse All" button.
+ * Added a widget for quick modification of the "dir" variable right from the tile popup.
 
 Fixes:
-  * An ancient bug which was the reason for map corruptions.
+ * The old bug which was the reason for map corruptions.
 
 Tweaks:
-  * For tile popup: nudge options, as well as "Move To Top" and "Move To Bottom",
-    are hidden for turfs and areas.
+ * From the tile popup, for turfs and areas, the options to change "movable" parameters are removed.

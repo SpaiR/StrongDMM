@@ -40,8 +40,10 @@ class TilePopupUi : EventConsumer, EventSender {
     private var isUndoEnabled: Boolean = false
     private var isRedoEnabled: Boolean = false
 
-    private val pixelXNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap()
-    private val pixelYNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap()
+    private val pixelXNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap() // initial+current
+    private val pixelYNudgeArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap() // initial+current
+
+    private val dirArrays: TIntObjectHashMap<Pair<Int, IntArray>> = TIntObjectHashMap() // initial+current
 
     init {
         consumeEvent(TriggerTilePopupUi.Open::class.java, ::handleOpen)
@@ -102,6 +104,10 @@ class TilePopupUi : EventConsumer, EventSender {
         if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
             showNudgeOption(true, tile, tileItem, tileItemIdx)
             showNudgeOption(false, tile, tileItem, tileItemIdx)
+
+            separator()
+
+            showDirOption(tile, tileItem, tileItemIdx)
 
             separator()
 
@@ -192,10 +198,11 @@ class TilePopupUi : EventConsumer, EventSender {
         }
 
         val (initialValue, pixelNudge) = nudgeValue
+        val axisName = if (isXAxis) "X" else "Y"
 
         setNextItemWidth(50f)
 
-        if (dragInt("Nudge %s-axis".format(if (isXAxis) "X" else "Y"), pixelNudge, .25f)) {
+        if (dragInt("Nudge $axisName-axis###nudge_${axisName}_option_$tileItemIdx", pixelNudge, .25f)) {
             GlobalTileItemHolder.tmpOperation {
                 tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], providedPreferences.nudgeMode)
             }
@@ -217,11 +224,52 @@ class TilePopupUi : EventConsumer, EventSender {
             sendEvent(TriggerFrameController.RefreshFrame())
             sendEvent(TriggerObjectPanelUi.Update())
 
+            // to properly create a reverse action
             if (isXAxis) {
                 pixelXNudgeArrays.clear()
             } else {
                 pixelYNudgeArrays.clear()
             }
+        }
+    }
+
+    private fun showDirOption(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
+        val maxDirs = GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.dirs ?: 1
+
+        if (maxDirs == 1) {
+            textDisabled("No Dirs to Choose")
+            return
+        }
+
+        val dirValue = dirArrays.getOrPut(tileItemIdx) { tileItem.dir to intArrayOf(dirToRel(tileItem.dir)) }
+        val (initialValue, relDir) = dirValue
+        val transformedDir = relToDir(relDir[0])
+
+        setNextItemWidth(100f)
+
+        if (sliderInt("Dir [${dirToStr(transformedDir)}]###dir_option_$tileItemIdx", relDir, 1, maxDirs, "$transformedDir")) {
+            GlobalTileItemHolder.tmpOperation {
+                tile.setDir(tileItem, tileItemIdx, relToDir(relDir[0]))
+            }
+
+            sendEvent(TriggerFrameController.RefreshFrame())
+        }
+
+        if (isItemDeactivatedAfterEdit()) {
+            GlobalTileItemHolder.tmpOperation {
+                tile.setDir(tileItem, tileItemIdx, initialValue)
+            }
+
+            sendEvent(TriggerActionController.AddAction(
+                ReplaceTileAction(tile) {
+                    tile.setDir(tileItem, tileItemIdx, relToDir(relDir[0]))
+                }
+            ))
+
+            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerObjectPanelUi.Update())
+
+            dirArrays.clear() // to properly create a reverse action
         }
     }
 
@@ -257,6 +305,7 @@ class TilePopupUi : EventConsumer, EventSender {
         currentTile = null
         pixelXNudgeArrays.clear()
         pixelYNudgeArrays.clear()
+        dirArrays.clear()
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {
