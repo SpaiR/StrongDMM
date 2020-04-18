@@ -1,7 +1,6 @@
 package strongdmm.ui
 
 import gnu.trove.map.hash.TLongObjectHashMap
-import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImString
 import imgui.enums.ImGuiTreeNodeFlags
@@ -43,7 +42,7 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     private var activeTileItemType: String = ""
     private var isSelectedInCycle: Boolean = false
 
-    private val isShowIcons: ImBool = ImBool(true)
+    private var collapseAll: Boolean = false
     private val typeFilter: ImString = ImString(50)
 
     private var createdTeeNodesInCycle: Int = 0
@@ -76,8 +75,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
 
             pushID(currentEnv!!.absRootDirPath)
 
-            checkbox("##show_icons", isShowIcons)
-            setItemHoveredTooltip("Show icons")
+            button("-##collapse_all") { collapseAll = true }
+            setItemHoveredTooltip("Collapse All")
             sameLine()
             setNextItemWidth(-1f)
             inputText("##types_filter", typeFilter, "Types Filter", "Provide at least $MIN_FILTER_CHARS char to apply")
@@ -92,6 +91,10 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             }
 
             popID()
+        }
+
+        if (collapseAll) {
+            collapseAll = false
         }
     }
 
@@ -141,9 +144,17 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
             if (dmeItem.children.isEmpty()) {
                 treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
             } else {
-                if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag)) {
+                if (collapseAll) {
+                    setNextItemOpen(false)
+                }
+
+                if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag) || collapseAll) {
                     if (isItemClicked()) {
                         selectType(dmeItem.type)
+                    }
+
+                    if (collapseAll) {
+                        treePush(treeNode.name)
                     }
 
                     dmeItem.children.forEach { child ->
@@ -174,10 +185,8 @@ class EnvironmentTreePanelUi : EventConsumer, EventSender {
     }
 
     private fun showTreeNodeImage(treeNode: TreeNode) {
-        if (isShowIcons.get()) {
-            treeNode.sprite.run { image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2) }
-            sameLine()
-        }
+        treeNode.sprite.run { image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2) }
+        sameLine()
     }
 
     private fun selectType(type: String) {

@@ -24,8 +24,8 @@ class ChangelogPanelUi : EventConsumer {
             return
         }
 
-        setNextWindowPos((AppWindow.windowWidth - 600f) / 2, (AppWindow.windowHeight - 500f) / 2, AppWindow.defaultWindowCond)
-        setNextWindowSize(600f, 500f, AppWindow.defaultWindowCond)
+        setNextWindowPos((AppWindow.windowWidth - 800f) / 2, (AppWindow.windowHeight - 500f) / 2, AppWindow.defaultWindowCond)
+        setNextWindowSize(800f, 500f, AppWindow.defaultWindowCond)
 
         window("Changelog", isOpened) {
             textWrapped(providedChangelogText)
