@@ -128,7 +128,21 @@ class Tile(
     }
 
     fun modifyItemVars(tileItemIdx: Int, vars: Map<String, String>?) {
-        setTileItemsIdWithReplace(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, vars).id)
+        var newVars: MutableMap<String, String>? = null
+
+        // internal vars sanitizing to prevent problems BYOND does
+        if (vars != null && vars.isNotEmpty()) {
+            val tileItem = tileItems[tileItemIdx]
+            newVars = vars.toMutableMap()
+
+            vars.forEach { (key, value) ->
+                if (tileItem.dmeItem.getVar(key) == value) {
+                    newVars.remove(key)
+                }
+            }
+        }
+
+        setTileItemsIdWithReplace(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItems[tileItemIdx].type, newVars).id)
         readObjectsFromMap()
     }
 
