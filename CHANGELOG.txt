@@ -1,6 +1,7 @@
 Features:
   * A built in changelog. Will be auto-shown when updated.
     Could be manually opened with: "Help->Changelog".
+  * When creating a new map the "dmm" extension will be set to file automatically.
 
 Fixes:
   * An ancient bug which was the reason for map corruptions.

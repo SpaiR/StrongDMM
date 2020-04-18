@@ -128,11 +128,17 @@ class MapHolderController : EventSender, EventConsumer {
     }
 
     private fun handleCreateNewMap(event: Event<File, Unit>) {
-        this::class.java.classLoader.getResourceAsStream("new_map_data.txt").use {
-            event.body.writeBytes(it!!.readAllBytes())
+        var newMapFile: File = event.body
+
+        if (!newMapFile.exists() && event.body.extension != "dmm") {
+            newMapFile = File(event.body.parent, "${event.body.name}.dmm")
         }
 
-        sendEvent(TriggerMapHolderController.OpenMap(event.body))
+        this::class.java.classLoader.getResourceAsStream("new_map_data.txt").use {
+            newMapFile.writeBytes(it!!.readAllBytes())
+        }
+
+        sendEvent(TriggerMapHolderController.OpenMap(newMapFile))
         selectedMap?.setMapSize(0, 0, 0) // -_-
         sendEvent(TriggerSetMapSizeDialogUi.Open())
     }
