@@ -58,11 +58,9 @@ class TilePopupUi : EventConsumer, EventSender {
     fun process() {
         currentTile?.let { tile ->
             if (isDoOpen) {
-                sendEvent(Reaction.TilePopupOpened())
                 openPopup(POPUP_ID)
                 isDoOpen = false
             } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
-                sendEvent(Reaction.TilePopupClosed())
                 dispose()
                 return
             }
@@ -302,6 +300,7 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun dispose() {
+        sendEvent(Reaction.TilePopupClosed())
         currentTile = null
         pixelXNudgeArrays.clear()
         pixelYNudgeArrays.clear()
@@ -309,6 +308,7 @@ class TilePopupUi : EventConsumer, EventSender {
     }
 
     private fun handleOpen(event: Event<Tile, Unit>) {
+        sendEvent(Reaction.TilePopupOpened())
         currentTile = event.body
         isDoOpen = true
     }
