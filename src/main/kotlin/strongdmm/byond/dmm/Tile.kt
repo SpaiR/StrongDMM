@@ -133,23 +133,19 @@ class Tile(
     }
 
     fun nudge(isXAxis: Boolean, tileItem: TileItem, tileItemIdx: Int, value: Int, nudgeMode: NudgeMode) {
-        val atoms = if (tileItem.isType(TYPE_MOB)) mobs else objs
-        val item = atoms.find { it.index == tileItemIdx }
-        if (item != null) {
-            val vars = if (item.value.customVars != null) HashMap(item.value.customVars) else mutableMapOf<String, String>()
+        val vars = tileItem.customVars?.toMutableMap() ?: mutableMapOf()
 
-            val axis = when (nudgeMode) {
-                NudgeMode.PIXEL -> {
-                    if (isXAxis) VAR_PIXEL_X else VAR_PIXEL_Y
-                }
-                NudgeMode.STEP -> {
-                    if (isXAxis) VAR_STEP_X else VAR_STEP_Y
-                }
+        val axis = when (nudgeMode) {
+            NudgeMode.PIXEL -> {
+                if (isXAxis) VAR_PIXEL_X else VAR_PIXEL_Y
             }
-
-            vars[axis] = value.toString()
-            modifyItemVars(tileItemIdx, vars)
+            NudgeMode.STEP -> {
+                if (isXAxis) VAR_STEP_X else VAR_STEP_Y
+            }
         }
+
+        vars[axis] = value.toString()
+        modifyItemVars(tileItemIdx, vars)
     }
 
     fun setDir(tileItem: TileItem, tileItemIdx: Int, dir: Int) {

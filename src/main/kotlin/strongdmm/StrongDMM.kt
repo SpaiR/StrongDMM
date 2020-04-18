@@ -18,6 +18,7 @@ import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.AppWindow
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 class StrongDMM(title: String) : AppWindow(title) {
     private val menuBarUi = MenuBarUi()
@@ -116,6 +117,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         fun main(args: Array<String>) {
             try {
                 StrongDMM(TITLE).start()
+                exitProcess(0)
             } catch (e: Exception) {
                 LoggerFactory.getLogger(this::class.java).error("Unhandled exception", e)
             }

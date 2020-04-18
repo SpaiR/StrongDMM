@@ -48,11 +48,11 @@ class PreferencesPanelUi : EventConsumer, EventSender {
         setNextWindowSize(450f, 500f, AppWindow.defaultWindowCond)
 
         popupModal("Preferences", isOpened) {
-            text("Save options")
+            text("Save Options")
             separator()
 
             showSelectOption(
-                "Map save format",
+                "Map Save Format",
                 "Controls the format used by the editor to save the map.",
                 "##map_save_format", providedPrefs.mapSaveMode.toString(),
                 mapSaveModes
@@ -62,21 +62,21 @@ class PreferencesPanelUi : EventConsumer, EventSender {
 
             newLine()
             showToggleOption(
-                "Sanitize variables",
-                "Enables sanitizing for variables equals to their analogues in the environment.",
+                "Sanitize Variables",
+                "Enables sanitizing for variables which are declared on the map, but the same as default.",
                 "##sanitize_variables", providedPrefs.sanitizeInitialVariables
             )
 
             newLine()
             showToggleOption(
-                "Clean unused keys",
+                "Clean Unused Keys",
                 "When enabled, content tile keys which are not used on the map will be removed.",
                 "##clean_unused_keys", providedPrefs.cleanUnusedKeys
             )
 
             newLine()
             showSelectOption(
-                "Nudge mode",
+                "Nudge Mode",
                 "Controls which variables will be changed during the nudge.",
                 "##nudge_mode", providedPrefs.nudgeMode.toString(),
                 nudgeModes
