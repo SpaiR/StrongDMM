@@ -12,6 +12,7 @@ import strongdmm.controller.recent.RecentFilesController
 import strongdmm.controller.shortcut.ShortcutController
 import strongdmm.controller.tool.ToolsController
 import strongdmm.ui.*
+import strongdmm.ui.available.maps.dialog.AvailableMapsDialogUi
 import strongdmm.ui.closemap.CloseMapDialogUi
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.tool.select.panel.ToolSelectPanelUi
