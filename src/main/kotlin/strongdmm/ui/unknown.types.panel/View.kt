@@ -1,4 +1,4 @@
-package strongdmm.ui.unknown.types
+package strongdmm.ui.unknown.types.panel
 
 import imgui.ImGui.*
 import strongdmm.util.imgui.WindowUtil

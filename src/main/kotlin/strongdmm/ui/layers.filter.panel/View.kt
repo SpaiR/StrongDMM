@@ -69,7 +69,7 @@ class View(
         }
 
         dmeItem.children.forEach { child ->
-            showTreeNodes(state.currentEnvironment!!.getItem(child)!!)
+            showFilteredNodes(state.currentEnvironment!!.getItem(child)!!)
         }
     }
 
@@ -81,7 +81,7 @@ class View(
             treeNodeEx(dmeItem.type, LEAF_FLAGS)
         } else if (treeNode(dmeItem.type)) {
             dmeItem.children.forEach { child ->
-                showTreeNodes(state.currentEnvironment!!.getItem(child)!!)
+                showAllNodes(state.currentEnvironment!!.getItem(child)!!)
             }
 
             treePop()

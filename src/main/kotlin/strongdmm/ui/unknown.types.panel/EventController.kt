@@ -1,4 +1,4 @@
-package strongdmm.ui.unknown.types
+package strongdmm.ui.unknown.types.panel
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
