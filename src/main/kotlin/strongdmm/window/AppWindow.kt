@@ -29,7 +29,7 @@ abstract class AppWindow(title: String) {
         private const val DEFAULT_WIDTH = 1280
         private const val DEFAULT_HEIGHT = 768
 
-        var window: Long = 0
+        var windowPtr: Long = 0
         var isRunning: Boolean = true
 
         // Those are used to track window size properties
@@ -88,9 +88,9 @@ abstract class AppWindow(title: String) {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE) // the window will be maximized
 
         // Create the window
-        window = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL)
+        windowPtr = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL)
 
-        if (window == MemoryUtil.NULL) {
+        if (windowPtr == MemoryUtil.NULL) {
             throw RuntimeException("Failed to create the GLFW window")
         }
 
@@ -99,19 +99,19 @@ abstract class AppWindow(title: String) {
             val pHeight = stack.mallocInt(1) // int*
 
             // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight)
+            glfwGetWindowSize(windowPtr, pWidth, pHeight)
 
             // Get the resolution of the primary monitor
             val vidmode: GLFWVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())!!
 
             // Center the window
-            glfwSetWindowPos(window, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
+            glfwSetWindowPos(windowPtr, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
             loadWindowIcon(stack)
         }
 
-        glfwMakeContextCurrent(window) // Make the OpenGL context current
+        glfwMakeContextCurrent(windowPtr) // Make the OpenGL context current
         glfwSwapInterval(GLFW_TRUE) // Enable v-sync
-        glfwShowWindow(window) // Make the window visible
+        glfwShowWindow(windowPtr) // Make the window visible
 
         GL.createCapabilities()
     }
@@ -164,7 +164,7 @@ abstract class AppWindow(title: String) {
         mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
 
         // Here goes GLFW callbacks to update user input stuff in ImGui
-        glfwSetKeyCallback(window) { _, key: Int, _, action: Int, _ ->
+        glfwSetKeyCallback(windowPtr) { _, key: Int, _, action: Int, _ ->
             if (action == GLFW_PRESS) {
                 io.setKeysDown(key, true)
             } else if (action == GLFW_RELEASE) {
@@ -177,13 +177,13 @@ abstract class AppWindow(title: String) {
             io.keySuper = io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER)
         }
 
-        glfwSetCharCallback(window) { _, c: Int ->
+        glfwSetCharCallback(windowPtr) { _, c: Int ->
             if (c != GLFW_KEY_DELETE) {
                 io.addInputCharacter(c)
             }
         }
 
-        glfwSetMouseButtonCallback(window) { _, button: Int, action: Int, _ ->
+        glfwSetMouseButtonCallback(windowPtr) { _, button: Int, action: Int, _ ->
             val mouseDown = BooleanArray(5)
 
             mouseDown[0] = button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE
@@ -199,20 +199,20 @@ abstract class AppWindow(title: String) {
             }
         }
 
-        glfwSetScrollCallback(window) { _, xOffset: Double, yOffset: Double ->
+        glfwSetScrollCallback(windowPtr) { _, xOffset: Double, yOffset: Double ->
             io.mouseWheelH = io.mouseWheelH + xOffset.toFloat()
             io.mouseWheel = io.mouseWheel + yOffset.toFloat()
         }
 
         io.setSetClipboardTextFn(object : ImStrConsumer() {
             override fun accept(s: String) {
-                glfwSetClipboardString(window, s)
+                glfwSetClipboardString(windowPtr, s)
             }
         })
 
         io.setGetClipboardTextFn(object : ImStrSupplier() {
             override fun get(): String? {
-                return glfwGetClipboardString(window).let { it ?: "" }
+                return glfwGetClipboardString(windowPtr).let { it ?: "" }
             }
         })
 
@@ -252,9 +252,9 @@ abstract class AppWindow(title: String) {
             time = currentTime
 
             // Get window size properties and mouse position
-            glfwGetWindowSize(window, winWidth, winHeight)
-            glfwGetFramebufferSize(window, fbWidth, fbHeight)
-            glfwGetCursorPos(window, mousePosX, mousePosY)
+            glfwGetWindowSize(windowPtr, winWidth, winHeight)
+            glfwGetFramebufferSize(windowPtr, fbWidth, fbHeight)
+            glfwGetCursorPos(windowPtr, mousePosX, mousePosY)
 
             val io = ImGui.getIO()
             io.setDisplaySize(winWidth[0].toFloat(), winHeight[0].toFloat())
@@ -264,8 +264,8 @@ abstract class AppWindow(title: String) {
 
             // Update mouse cursor
             val imguiCursor = ImGui.getMouseCursor()
-            glfwSetCursor(window, mouseCursors[imguiCursor])
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
+            glfwSetCursor(windowPtr, mouseCursors[imguiCursor])
+            glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
 
             // Clear the framebuffer
             glClear(GL_COLOR_BUFFER_BIT)
@@ -277,7 +277,7 @@ abstract class AppWindow(title: String) {
             imGuiGl3.render(ImGui.getDrawData())
             defaultWindowCond = ImGuiCond.Once // reset windows condition
 
-            glfwSwapBuffers(window) // swap the color buffers
+            glfwSwapBuffers(windowPtr) // swap the color buffers
 
             // Poll for window events. The key callback above will only be invoked during this call.
             glfwPollEvents()
@@ -316,7 +316,7 @@ abstract class AppWindow(title: String) {
             image.set(icon.width, icon.height, imageBuffer)
             imagePtr.put(0, image)
 
-            glfwSetWindowIcon(window, imagePtr)
+            glfwSetWindowIcon(windowPtr, imagePtr)
             STBImage.stbi_image_free(imageBuffer)
 
             imagePtr.free()
@@ -334,8 +334,8 @@ abstract class AppWindow(title: String) {
         for (mouseCursor in mouseCursors) {
             glfwDestroyCursor(mouseCursor)
         }
-        Callbacks.glfwFreeCallbacks(window)
-        glfwDestroyWindow(window)
+        Callbacks.glfwFreeCallbacks(windowPtr)
+        glfwDestroyWindow(windowPtr)
         glfwTerminate()
         Objects.requireNonNull(glfwSetErrorCallback(null))!!.free()
     }

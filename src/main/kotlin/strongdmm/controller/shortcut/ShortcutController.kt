@@ -4,11 +4,11 @@ import imgui.ImGui
 import strongdmm.event.EventSender
 import strongdmm.event.type.Reaction
 
-class ShortcutController : EventSender, ShortcutHandler() {
+class ShortcutController : EventSender {
     fun process() {
         var shortcutToTrigger: Shortcut? = null
 
-        for (shortcut in globalShortcuts) {
+        for (shortcut in ShortcutHandler.globalShortcuts) {
             val (firstKey, secondKey, thirdKey) = shortcut
 
             if (secondKey == -1 && thirdKey == -1 && ImGui.isKeyPressed(firstKey)) {

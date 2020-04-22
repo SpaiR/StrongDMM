@@ -252,7 +252,7 @@ class MenuBarUi : EventSender, EventConsumer, ShortcutHandler() {
     }
 
     private fun doExit() {
-        GLFW.glfwSetWindowShouldClose(AppWindow.window, true)
+        GLFW.glfwSetWindowShouldClose(AppWindow.windowPtr, true)
     }
 
     private fun doUndo() {

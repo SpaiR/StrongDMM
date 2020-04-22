@@ -20,19 +20,19 @@ class WindowTitleUi : EventConsumer {
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        glfwSetWindowTitle(AppWindow.window, "$environmentName [${event.body.mapPath.readable}] - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(AppWindow.windowPtr, "$environmentName [${event.body.mapPath.readable}] - ${StrongDMM.TITLE}")
     }
 
     private fun handleSelectedMapClosed() {
-        glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
+        glfwSetWindowTitle(AppWindow.windowPtr, StrongDMM.TITLE)
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         environmentName = event.body.name
-        glfwSetWindowTitle(AppWindow.window, "$environmentName - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(AppWindow.windowPtr, "$environmentName - ${StrongDMM.TITLE}")
     }
 
     private fun handleEnvironmentReset() {
-        glfwSetWindowTitle(AppWindow.window, StrongDMM.TITLE)
+        glfwSetWindowTitle(AppWindow.windowPtr, StrongDMM.TITLE)
     }
 }

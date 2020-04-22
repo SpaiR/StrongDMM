@@ -7,12 +7,12 @@ import strongdmm.window.AppWindow
 
 class ApplicationCloseController : EventSender {
     fun process() {
-        if (GLFW.glfwWindowShouldClose(AppWindow.window)) {
+        if (GLFW.glfwWindowShouldClose(AppWindow.windowPtr)) {
             sendEvent(TriggerMapHolderController.CloseAllMaps {
                 if (it) {
                     AppWindow.isRunning = false
                 } else {
-                    GLFW.glfwSetWindowShouldClose(AppWindow.window, false)
+                    GLFW.glfwSetWindowShouldClose(AppWindow.windowPtr, false)
                 }
             })
         }
