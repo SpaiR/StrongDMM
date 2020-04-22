@@ -9,7 +9,7 @@ import java.io.File
 class ViewController(
     private val state: State
 ) : EventHandler {
-    fun isFilteredVisibleFilePath(visibleFilePath: String): Boolean {
+    fun isFilteredOutVisibleFilePath(visibleFilePath: String): Boolean {
         return state.mapFilter.length > 0 && !visibleFilePath.contains(state.mapFilter.get(), ignoreCase = true)
     }
 

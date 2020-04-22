@@ -39,7 +39,7 @@ class View(
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 for ((absoluteFilePath, visibleFilePath) in state.providedAvailableMaps) {
-                    if (viewController.isFilteredVisibleFilePath(visibleFilePath)) {
+                    if (viewController.isFilteredOutVisibleFilePath(visibleFilePath)) {
                         continue
                     }
 
