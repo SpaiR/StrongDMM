@@ -9,10 +9,6 @@ import java.io.File
 class ViewController(
     private val state: State
 ) : EventHandler {
-    fun isFilteredOutVisibleFilePath(visibleFilePath: String): Boolean {
-        return state.mapFilter.length > 0 && !visibleFilePath.contains(state.mapFilter.get(), ignoreCase = true)
-    }
-
     fun doSelectMapPath(absoluteFilePath: String, visibleFilePath: String) {
         state.selectedAbsMapPath = absoluteFilePath
         state.selectionStatus = visibleFilePath
@@ -23,6 +19,10 @@ class ViewController(
             sendEvent(TriggerMapHolderController.OpenMap(File(it)))
             dispose()
         }
+    }
+
+    fun isFilteredOutVisibleFilePath(visibleFilePath: String): Boolean {
+        return state.mapFilter.length > 0 && !visibleFilePath.contains(state.mapFilter.get(), ignoreCase = true)
     }
 
     fun dispose() {
