@@ -15,6 +15,7 @@ import strongdmm.ui.*
 import strongdmm.ui.about.panel.AboutPanelUi
 import strongdmm.ui.available.maps.dialog.AvailableMapsDialogUi
 import strongdmm.ui.closemap.CloseMapDialogUi
+import strongdmm.ui.environment.tree.panel.EnvironmentTreePanelUi
 import strongdmm.ui.layers.filter.panel.LayersFilterPanelUi
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.tile.popup.TilePopupUi
