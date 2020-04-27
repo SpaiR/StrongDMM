@@ -2,7 +2,7 @@ package strongdmm.event.type.ui
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.ui.close_map_dialog.model.CloseMapDialogStatus
+import strongdmm.ui.dialog.close_map_dialog.model.CloseMapDialogStatus
 
 abstract class TriggerCloseMapDialogUi {
     class Open(body: Dmm, callback: ((CloseMapDialogStatus) -> Unit)) : Event<Dmm, CloseMapDialogStatus>(body, callback)
