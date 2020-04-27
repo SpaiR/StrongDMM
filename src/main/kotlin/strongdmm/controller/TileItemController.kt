@@ -8,20 +8,20 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerTileItemController
 
 class TileItemController : EventSender, EventConsumer {
-    private var activeTileItem: TileItem? = null
+    private var selectedTileItem: TileItem? = null
 
     init {
-        consumeEvent(TriggerTileItemController.ChangeActiveTileItem::class.java, ::handleChangeActive)
+        consumeEvent(TriggerTileItemController.ChangeSelectedTileItem::class.java, ::handleChangeSelectedTileItem)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
-    private fun handleChangeActive(event: Event<TileItem, Unit>) {
-        activeTileItem = event.body
-        sendEvent(Reaction.ActiveTileItemChanged(event.body))
+    private fun handleChangeSelectedTileItem(event: Event<TileItem, Unit>) {
+        selectedTileItem = event.body
+        sendEvent(Reaction.SelectedTileItemChanged(event.body))
     }
 
     private fun handleEnvironmentReset() {
-        activeTileItem = null
-        sendEvent(Reaction.ActiveTileItemChanged(null))
+        selectedTileItem = null
+        sendEvent(Reaction.SelectedTileItemChanged(null))
     }
 }

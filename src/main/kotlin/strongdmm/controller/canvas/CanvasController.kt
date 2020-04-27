@@ -76,7 +76,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
-        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
         consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
         consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
@@ -251,7 +251,7 @@ class CanvasController : EventSender, EventConsumer {
                         deleteTileItemUnderMouse(currentMap)
                     })
                 } else { // Select tile item
-                    sendEvent(TriggerTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+                    sendEvent(TriggerTileItemController.ChangeSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
                 sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->

@@ -9,10 +9,10 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Reaction.ActiveToolChanged::class.java, ::handleActiveToolChanged)
+        consumeEvent(Reaction.SelectedToolChanged::class.java, ::handleSelectedToolChanged)
     }
 
-    private fun handleActiveToolChanged(event: Event<ToolType, Unit>) {
+    private fun handleSelectedToolChanged(event: Event<ToolType, Unit>) {
         state.activeTool = event.body
     }
 }

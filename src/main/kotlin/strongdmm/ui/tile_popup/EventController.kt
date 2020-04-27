@@ -18,7 +18,7 @@ class EventController(
         consumeEvent(TriggerTilePopupUi.Close::class.java, ::handleClose)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
     }

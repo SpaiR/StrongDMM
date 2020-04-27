@@ -17,6 +17,7 @@ import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
 import strongdmm.ui.panel.changelog.ChangelogPanelUi
 import strongdmm.ui.dialog.close_map.CloseMapDialogUi
 import strongdmm.ui.dialog.set_map_size.SetMapSizeDialogUi
+import strongdmm.ui.panel.objects.ObjectsPanelUi
 import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.ui.panel.instance_locator.InstanceLocatorPanelUi
@@ -26,6 +27,7 @@ import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.tile_popup.TilePopupUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
 import strongdmm.ui.panel.unknown_types.UnknownTypesPanelUi
+import strongdmm.ui.panel.variables_preview.VariablesPreviewPanelUi
 import strongdmm.ui.vars.EditVarsDialogUi
 import strongdmm.window.AppWindow
 import java.nio.file.Path
@@ -41,7 +43,8 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val tilePopupUi = TilePopupUi()
     private val editVarsDialogUi = EditVarsDialogUi()
     private val environmentTreePanelUi = EnvironmentTreePanelUi()
-    private val objectPanelUi = ObjectPanelUi()
+    private val objectsPanelUi = ObjectsPanelUi()
+    private val variablesPreviewPanelUi = VariablesPreviewPanelUi()
     private val instanceLocatorPanelUi = InstanceLocatorPanelUi()
     private val searchResultPanelUi = SearchResultPanelUi()
     private val layersFilterPanelUi = LayersFilterPanelUi()
@@ -95,7 +98,8 @@ class StrongDMM(title: String) : AppWindow(title) {
         tilePopupUi.process()
         editVarsDialogUi.process()
         environmentTreePanelUi.process()
-        objectPanelUi.process()
+        objectsPanelUi.process()
+        variablesPreviewPanelUi.process()
         instanceLocatorPanelUi.process()
         searchResultPanelUi.process()
         layersFilterPanelUi.process()

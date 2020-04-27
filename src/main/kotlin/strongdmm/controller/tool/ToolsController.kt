@@ -23,7 +23,7 @@ class ToolsController : EventConsumer, EventSender {
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(Reaction.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
         consumeEvent(Reaction.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
-        consumeEvent(Reaction.ActiveTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleActiveTileItemChanged)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
@@ -82,7 +82,7 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onTileItemSwitch(activeTileItem)
-        sendEvent(Reaction.ActiveToolChanged(event.body))
+        sendEvent(Reaction.SelectedToolChanged(event.body))
     }
 
     private fun handleResetTool() {

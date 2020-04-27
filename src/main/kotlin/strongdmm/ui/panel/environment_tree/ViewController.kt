@@ -68,7 +68,7 @@ class ViewController(
 
     fun selectType(type: String) {
         if (!state.isSelectedInCycle) {
-            sendEvent(TriggerTileItemController.ChangeActiveTileItem(GlobalTileItemHolder.getOrCreate(type)))
+            sendEvent(TriggerTileItemController.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
             state.isSelectedInCycle = true
         }
     }

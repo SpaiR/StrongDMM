@@ -20,7 +20,7 @@ class View(
         private const val POS_Y: Float = 30f
 
         private const val WIDTH: Float = 330f
-        private const val HEIGHT_PERCENT: Int = 55
+        private const val HEIGHT_PERCENT: Int = 56
 
         private const val TITLE: String = "Environment Tree"
 

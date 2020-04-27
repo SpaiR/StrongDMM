@@ -63,7 +63,7 @@ class ViewController(
     }
 
     fun doMakeActiveObject(tileItem: TileItem) {
-        sendEvent(TriggerTileItemController.ChangeActiveTileItem(tileItem))
+        sendEvent(TriggerTileItemController.ChangeSelectedTileItem(tileItem))
     }
 
     fun doEdit(tile: Tile, tileItemIdx: Int) {

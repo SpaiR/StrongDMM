@@ -9,7 +9,7 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_X: Float = 345f
+        private const val POS_X: Float = 350f
         private const val POS_Y_PERCENT: Int = 60
 
         private const val WIDTH: Float = 300f
