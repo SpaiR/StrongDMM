@@ -23,6 +23,7 @@ import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.ui.panel.instance_locator.InstanceLocatorPanelUi
 import strongdmm.ui.panel.layers_filter.LayersFilterPanelUi
 import strongdmm.ui.panel.level_switch.LevelSwitchPanelUi
+import strongdmm.ui.panel.opened_maps.OpenedMapsPanelUi
 import strongdmm.ui.search.SearchResultPanelUi
 import strongdmm.ui.tile_popup.TilePopupUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
