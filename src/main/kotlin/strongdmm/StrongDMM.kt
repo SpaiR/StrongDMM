@@ -17,6 +17,7 @@ import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
 import strongdmm.ui.panel.changelog.ChangelogPanelUi
 import strongdmm.ui.dialog.close_map.CloseMapDialogUi
 import strongdmm.ui.dialog.set_map_size.SetMapSizeDialogUi
+import strongdmm.ui.menu_bar.MenuBarUi
 import strongdmm.ui.panel.objects.ObjectsPanelUi
 import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
