@@ -1,4 +1,4 @@
-package strongdmm.ui.environment.tree.panel.model
+package strongdmm.ui.panel.environment_tree.model
 
 import strongdmm.byond.VAR_ICON
 import strongdmm.byond.VAR_ICON_STATE

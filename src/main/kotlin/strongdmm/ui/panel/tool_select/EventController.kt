@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.tool_select_panel
+package strongdmm.ui.panel.tool_select
 
 import strongdmm.controller.tool.ToolType
 import strongdmm.event.Event

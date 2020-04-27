@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.environment_tree_panel
+package strongdmm.ui.panel.environment_tree
 
 class EnvironmentTreePanelUi {
     private val state = State()

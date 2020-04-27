@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.layers_filter_panel
+package strongdmm.ui.panel.layers_filter
 
 import strongdmm.byond.dme.Dme
 import strongdmm.event.DmeItemType

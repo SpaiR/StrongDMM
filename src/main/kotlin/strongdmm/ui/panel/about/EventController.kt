@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.about_panel
+package strongdmm.ui.panel.about
 
 import strongdmm.event.EventHandler
 import strongdmm.event.type.ui.TriggerAboutPanelUi

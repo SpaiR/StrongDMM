@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.changelog_panel
+package strongdmm.ui.panel.changelog
 
 import strongdmm.event.Event
 import strongdmm.event.EventHandler

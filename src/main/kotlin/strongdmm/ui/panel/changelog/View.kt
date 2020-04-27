@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.changelog_panel
+package strongdmm.ui.panel.changelog
 
 import imgui.ImGui
 import strongdmm.util.imgui.WindowUtil

@@ -1,4 +1,4 @@
-package strongdmm.ui.dialog.available_maps_dialog
+package strongdmm.ui.dialog.available_maps
 
 import imgui.ImGui
 import strongdmm.event.EventHandler

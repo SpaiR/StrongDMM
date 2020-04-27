@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.environment_tree_panel
+package strongdmm.ui.panel.environment_tree
 
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.TileItem

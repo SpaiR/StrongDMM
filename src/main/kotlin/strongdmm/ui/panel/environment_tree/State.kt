@@ -1,9 +1,9 @@
-package strongdmm.ui.panel.environment_tree_panel
+package strongdmm.ui.panel.environment_tree
 
 import gnu.trove.map.hash.TLongObjectHashMap
 import imgui.ImString
 import strongdmm.byond.dme.Dme
-import strongdmm.ui.environment.tree.panel.model.TreeNode
+import strongdmm.ui.panel.environment_tree.model.TreeNode
 
 class State {
     lateinit var providedRecentEnvironments: List<String>

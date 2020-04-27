@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.coords_panel
+package strongdmm.ui.panel.coords
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags

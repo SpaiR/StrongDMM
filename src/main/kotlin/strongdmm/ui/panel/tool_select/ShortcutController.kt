@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.tool_select_panel
+package strongdmm.ui.panel.tool_select
 
 import org.lwjgl.glfw.GLFW
 import strongdmm.controller.shortcut.refactor.ShortcutHandler

@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.unknown_types_panel
+package strongdmm.ui.panel.unknown_types
 
 class UnknownTypesPanelUi {
     private val state = State()

@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.tool_select_panel
+package strongdmm.ui.panel.tool_select
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol

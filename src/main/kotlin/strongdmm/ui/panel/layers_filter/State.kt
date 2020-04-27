@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.layers_filter_panel
+package strongdmm.ui.panel.layers_filter
 
 import gnu.trove.set.hash.TLongHashSet
 import imgui.ImBool

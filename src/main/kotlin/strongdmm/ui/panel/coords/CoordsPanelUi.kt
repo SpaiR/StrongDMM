@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.coords_panel
+package strongdmm.ui.panel.coords
 
 class CoordsPanelUi {
     private val state = State()

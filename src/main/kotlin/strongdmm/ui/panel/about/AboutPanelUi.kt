@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.about_panel
+package strongdmm.ui.panel.about
 
 class AboutPanelUi {
     private val state = State()

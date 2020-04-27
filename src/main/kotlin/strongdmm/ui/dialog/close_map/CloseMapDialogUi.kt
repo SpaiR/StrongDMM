@@ -1,4 +1,4 @@
-package strongdmm.ui.dialog.close_map_dialog
+package strongdmm.ui.dialog.close_map
 
 class CloseMapDialogUi {
     private val state = State()

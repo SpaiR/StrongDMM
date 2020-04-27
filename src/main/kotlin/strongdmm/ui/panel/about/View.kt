@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.about_panel
+package strongdmm.ui.panel.about
 
 import imgui.ImGui.textWrapped
 import strongdmm.util.imgui.WindowUtil

@@ -1,4 +1,4 @@
-package strongdmm.ui.dialog.close_map_dialog.model
+package strongdmm.ui.dialog.close_map.model
 
 enum class CloseMapDialogStatus {
     CLOSE_WITH_SAVE, CLOSE, CANCEL

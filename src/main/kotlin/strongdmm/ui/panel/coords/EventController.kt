@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.coords_panel
+package strongdmm.ui.panel.coords
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event

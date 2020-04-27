@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.environment_tree_panel
+package strongdmm.ui.panel.environment_tree
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiTreeNodeFlags
@@ -9,7 +9,7 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
-import strongdmm.ui.environment.tree.panel.model.TreeNode
+import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.imgui.*
 
 class View(

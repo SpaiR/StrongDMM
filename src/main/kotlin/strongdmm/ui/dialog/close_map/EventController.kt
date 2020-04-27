@@ -1,10 +1,10 @@
-package strongdmm.ui.dialog.close_map_dialog
+package strongdmm.ui.dialog.close_map
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.ui.TriggerCloseMapDialogUi
-import strongdmm.ui.dialog.close_map_dialog.model.CloseMapDialogStatus
+import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
 
 class EventController(
     private val state: State

@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.unknown_types_panel
+package strongdmm.ui.panel.unknown_types
 
 import imgui.ImBool
 import strongdmm.byond.dmm.MapPos

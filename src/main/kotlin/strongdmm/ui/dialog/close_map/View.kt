@@ -1,4 +1,4 @@
-package strongdmm.ui.dialog.close_map_dialog
+package strongdmm.ui.dialog.close_map
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags

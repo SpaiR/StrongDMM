@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.changelog_panel
+package strongdmm.ui.panel.changelog
 
 class ChangelogPanelUi {
     private val state = State()

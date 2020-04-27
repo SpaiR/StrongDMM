@@ -17,7 +17,7 @@ import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.event.type.ui.TriggerCloseMapDialogUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
-import strongdmm.ui.dialog.close_map_dialog.model.CloseMapDialogStatus
+import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
 

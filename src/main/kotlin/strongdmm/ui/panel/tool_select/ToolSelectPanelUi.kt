@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.tool_select_panel
+package strongdmm.ui.panel.tool_select
 
 class ToolSelectPanelUi {
     private val state = State()

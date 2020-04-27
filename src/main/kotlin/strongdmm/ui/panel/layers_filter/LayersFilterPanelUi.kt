@@ -1,4 +1,4 @@
-package strongdmm.ui.panel.layers_filter_panel
+package strongdmm.ui.panel.layers_filter
 
 class LayersFilterPanelUi {
     private val state = State()
