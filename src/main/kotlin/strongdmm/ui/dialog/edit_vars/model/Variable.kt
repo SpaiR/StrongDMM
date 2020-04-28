@@ -1,12 +1,13 @@
-package strongdmm.ui.vars
+package strongdmm.ui.dialog.edit_vars.model
 
 import imgui.ImString
 
-class Var(
+class Variable(
     val name: String,
     private val initialValue: String, // value currently used by tile item (taken from map)
     private val originalValue: String // value from dme item (taken from code)
 ) {
+    val hash: Int = name.hashCode()
 
     var value: String = initialValue // The actual value for current variable
         private set
