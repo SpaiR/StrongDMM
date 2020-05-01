@@ -1,11 +1,11 @@
-package strongdmm.ui.search
+package strongdmm.ui.panel.search_result.model
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 
 class SearchResult(
-    val searchValue: String, // This could be an object type or an instance ID
-    val isSearchById: Boolean, // Do we used tile item ID or tile item type
+    val searchObject: String, // This could be an object type or an instance ID
+    val isSearchById: Boolean, // Are we using tile item ID or tile item type
     positions: List<Pair<TileItem, MapPos>>
 ) {
     val positions: MutableList<SearchPosition> = ArrayList(positions.size)
@@ -22,7 +22,9 @@ class SearchResult(
                 currentIdx = 0
             }
 
-            this.positions.add(SearchPosition(currentIdx, type, pos))
+            this.positions.add(SearchPosition(type, pos))
         }
     }
+
+    fun isEmpty(): Boolean = positions.isEmpty()
 }

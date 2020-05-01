@@ -3,13 +3,13 @@ package strongdmm.controller
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.*
 import strongdmm.event.type.controller.TriggerEnvironmentController
 import strongdmm.event.type.controller.TriggerInstanceController
 import strongdmm.event.type.controller.TriggerMapHolderController
-import strongdmm.ui.search.SearchRect
 
 class InstanceController : EventConsumer, EventSender {
     init {
@@ -63,7 +63,7 @@ class InstanceController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleFindInstancePositionsByType(event: Event<Pair<SearchRect, TileItemType>, List<Pair<TileItem, MapPos>>>) {
+    private fun handleFindInstancePositionsByType(event: Event<Pair<MapArea, TileItemType>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->
@@ -85,7 +85,7 @@ class InstanceController : EventConsumer, EventSender {
         event.reply(positions)
     }
 
-    private fun handleFindInstancePositionsById(event: Event<Pair<SearchRect, TileItemId>, List<Pair<TileItem, MapPos>>>) {
+    private fun handleFindInstancePositionsById(event: Event<Pair<MapArea, TileItemId>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
         sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->

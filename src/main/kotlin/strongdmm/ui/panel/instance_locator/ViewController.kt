@@ -1,13 +1,13 @@
 package strongdmm.ui.panel.instance_locator
 
+import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
 import strongdmm.event.type.controller.TriggerInstanceController
 import strongdmm.event.type.controller.TriggerToolsController
 import strongdmm.event.type.ui.TriggerSearchResultPanelUi
-import strongdmm.ui.search.SearchRect
-import strongdmm.ui.search.SearchResult
+import strongdmm.ui.panel.search_result.model.SearchResult
 
 class ViewController(
     private val state: State
@@ -20,7 +20,7 @@ class ViewController(
         }
 
         val tileItemId = type.toLongOrNull()
-        val searchRect = SearchRect(state.searchX1.get(), state.searchY1.get(), state.searchX2.get(), state.searchY2.get())
+        val searchRect = MapArea(state.searchX1.get(), state.searchY1.get(), state.searchX2.get(), state.searchY2.get())
 
         val openSearchResult = { it: List<Pair<TileItem, MapPos>> ->
             if (it.isNotEmpty()) {

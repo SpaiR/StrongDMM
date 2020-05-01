@@ -27,7 +27,7 @@ import strongdmm.ui.panel.layers_filter.LayersFilterPanelUi
 import strongdmm.ui.panel.level_switch.LevelSwitchPanelUi
 import strongdmm.ui.panel.opened_maps.OpenedMapsPanelUi
 import strongdmm.ui.panel.preferences.PreferencesPanelUi
-import strongdmm.ui.search.SearchResultPanelUi
+import strongdmm.ui.panel.search_result.SearchResultPanelUi
 import strongdmm.ui.tile_popup.TilePopupUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
 import strongdmm.ui.panel.unknown_types.UnknownTypesPanelUi
