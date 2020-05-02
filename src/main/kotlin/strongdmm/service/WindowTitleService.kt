@@ -1,4 +1,4 @@
-package strongdmm.ui
+package strongdmm.service
 
 import org.lwjgl.glfw.GLFW.glfwSetWindowTitle
 import strongdmm.StrongDMM
@@ -9,7 +9,7 @@ import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.window.AppWindow
 
-class WindowTitleUi : EventHandler {
+class WindowTitleService : EventHandler {
     private var environmentName: String = ""
 
     init {

@@ -11,7 +11,6 @@ import strongdmm.service.preferences.PreferencesService
 import strongdmm.service.recent.RecentFilesService
 import strongdmm.service.shortcut.ShortcutService
 import strongdmm.service.tool.ToolsService
-import strongdmm.ui.WindowTitleUi
 import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
 import strongdmm.ui.dialog.close_map.CloseMapDialogUi
 import strongdmm.ui.dialog.edit_vars.EditVarsDialogUi
@@ -41,7 +40,6 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val menuBarUi = MenuBarUi()
     private val coordsPanelUi = CoordsPanelUi()
     private val openedMapsPanelUi = OpenedMapsPanelUi()
-    private val windowTitleUi = WindowTitleUi()
     private val availableMapsDialogUi = AvailableMapsDialogUi()
     private val tilePopupUi = TilePopupUi()
     private val editVarsDialogUi = EditVarsDialogUi()
@@ -60,6 +58,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val aboutPanelUi = AboutPanelUi()
     private val changelogPanelUi = ChangelogPanelUi()
 
+    private val windowTitleService = WindowTitleService()
     private val environmentController = EnvironmentService()
     private val mapHolderController = MapHolderService()
     private val mapModifierController = MapModifierService()
