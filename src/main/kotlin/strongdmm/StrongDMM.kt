@@ -60,51 +60,42 @@ class StrongDMM(title: String) : AppWindow(title) {
         ChangelogPanelUi()
     )
 
-    private val windowTitleService = WindowTitleService()
-    private val environmentController = EnvironmentService()
-    private val mapHolderController = MapHolderService()
-    private val mapModifierController = MapModifierService()
-    private val canvasController = CanvasService()
-    private val frameController = FrameService()
-    private val actionController = ActionService()
-    private val instanceController = InstanceService()
-    private val layersFilterController = LayersFilterService()
-    private val toolsController = ToolsService()
-    private val shortcutController = ShortcutService()
-    private val clipboardController = ClipboardService()
-    private val tileItemController = TileItemService()
-    private val recentFilesController = RecentFilesService()
-    private val preferencesController = PreferencesService()
-    private val changelogController = ChangelogService()
+    private val serviceList: List<Service> = listOf(
+        WindowTitleService(),
+        EnvironmentService(),
+        MapHolderService(),
+        MapModifierService(),
+        CanvasService(),
+        FrameService(),
+        ActionService(),
+        InstanceService(),
+        LayersFilterService(),
+        ToolsService(),
+        ShortcutService(),
+        ClipboardService(),
+        TileItemService(),
+        RecentFilesService(),
+        PreferencesService(),
+        ChangelogService(),
+        ApplicationCloseService()
+    )
 
-    private val applicationCloseController = ApplicationCloseService()
-
-    private val processableList: List<Processable> = uiList.filterIsInstance(Processable::class.java)
+    private val processableList: List<Processable> = uiList.filterIsInstance(Processable::class.java) + serviceList.filterIsInstance(Processable::class.java)
 
     init {
+        check(serviceList.last() is ApplicationCloseService) {
+            "ApplicationCloseService SHOULD be always the LAST in the services list"
+        }
+
         ensureHomeDirExists()
         ensureLogsDirExists()
 
         uiList.filterIsInstance(PostInitialize::class.java).forEach(PostInitialize::postInit)
-
-        mapHolderController.postInit()
-        frameController.postInit()
-        actionController.postInit()
-        canvasController.postInit()
-        recentFilesController.postInit()
-        preferencesController.postInit()
-        changelogController.postInit()
+        serviceList.filterIsInstance(PostInitialize::class.java).forEach(PostInitialize::postInit)
     }
 
     override fun appLoop() {
         processableList.forEach(Processable::process)
-
-        // Controllers
-        canvasController.process()
-        shortcutController.process()
-
-        // This should always be the last
-        applicationCloseController.process()
     }
 
     private fun ensureHomeDirExists() = homeDir.toFile().mkdirs()
