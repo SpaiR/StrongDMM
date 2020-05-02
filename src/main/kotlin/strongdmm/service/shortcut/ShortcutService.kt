@@ -1,10 +1,10 @@
 package strongdmm.service.shortcut
 
 import imgui.ImGui
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 
-class ShortcutService : EventSender {
+class ShortcutService : EventHandler {
     fun process() {
         var shortcutToTrigger: Shortcut? = null
 

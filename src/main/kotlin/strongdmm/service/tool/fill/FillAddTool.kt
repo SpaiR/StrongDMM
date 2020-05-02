@@ -3,11 +3,11 @@ package strongdmm.service.tool.fill
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.EventSender
 import strongdmm.event.type.controller.TriggerActionController
 import strongdmm.event.type.controller.TriggerCanvasController
 import strongdmm.event.type.controller.TriggerFrameController
@@ -15,7 +15,7 @@ import strongdmm.event.type.controller.TriggerMapHolderController
 import kotlin.math.max
 import kotlin.math.min
 
-class FillAddTool : Tool(), EventSender {
+class FillAddTool : Tool(), EventHandler {
     private var xStart: Int = 0
     private var yStart: Int = 0
 

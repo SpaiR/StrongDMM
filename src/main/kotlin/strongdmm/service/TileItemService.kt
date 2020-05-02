@@ -2,12 +2,11 @@ package strongdmm.service
 
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerTileItemController
 
-class TileItemService : EventSender, EventConsumer {
+class TileItemService : EventHandler {
     private var selectedTileItem: TileItem? = null
 
     init {

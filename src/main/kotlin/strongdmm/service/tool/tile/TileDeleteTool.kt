@@ -6,14 +6,14 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.EventSender
 import strongdmm.event.type.controller.*
 
-class TileDeleteTool : Tool(), EventSender {
+class TileDeleteTool : Tool(), EventHandler {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 

@@ -7,8 +7,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerFrameController
@@ -16,7 +15,7 @@ import strongdmm.event.type.controller.TriggerLayersFilterController
 import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.util.DEFAULT_ICON_SIZE
 
-class FrameService : EventConsumer, EventSender {
+class FrameService : EventHandler {
     companion object {
         private const val PLANE_DEPTH: Short = 10000
         private const val LAYER_DEPTH: Short = 1000

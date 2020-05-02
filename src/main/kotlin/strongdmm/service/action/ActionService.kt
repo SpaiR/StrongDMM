@@ -4,8 +4,7 @@ import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.byond.dmm.Dmm
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerActionController
@@ -14,7 +13,7 @@ import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
-class ActionService : EventConsumer, EventSender {
+class ActionService : EventHandler {
     private val actionStacks: MutableMap<Dmm, ActionStack> = mutableMapOf()
     private val actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
 

@@ -4,15 +4,15 @@ import gnu.trove.map.hash.TIntObjectHashMap
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.EventSender
 import strongdmm.event.type.controller.*
 import strongdmm.util.extension.getOrPut
 
-class SelectMoveAreaTool : Tool(), EventSender {
+class SelectMoveAreaTool : Tool(), EventHandler {
     private var prevMapPosX: Int = 0
     private var prevMapPosY: Int = 0
 

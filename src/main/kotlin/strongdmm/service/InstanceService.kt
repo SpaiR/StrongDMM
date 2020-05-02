@@ -7,13 +7,12 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.controller.TriggerEnvironmentController
 import strongdmm.event.type.controller.TriggerInstanceController
 import strongdmm.event.type.controller.TriggerMapHolderController
 
-class InstanceService : EventConsumer, EventSender {
+class InstanceService : EventHandler {
     init {
         consumeEvent(TriggerInstanceController.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
         consumeEvent(TriggerInstanceController.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)

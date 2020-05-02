@@ -5,13 +5,12 @@ import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
 import strongdmm.util.OUT_OF_BOUNDS
 
-class MapModifierService : EventConsumer, EventSender {
+class MapModifierService : EventHandler {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {

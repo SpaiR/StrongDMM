@@ -1,11 +1,11 @@
 package strongdmm.service
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.controller.TriggerMapHolderController
 import strongdmm.window.AppWindow
 
-class ApplicationCloseService : EventSender {
+class ApplicationCloseService : EventHandler {
     fun process() {
         if (GLFW.glfwWindowShouldClose(AppWindow.windowPtr)) {
             sendEvent(TriggerMapHolderController.CloseAllMaps {

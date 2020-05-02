@@ -6,13 +6,12 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.service.tool.select.SelectComplexTool
 import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerToolsController
 import strongdmm.util.OUT_OF_BOUNDS
 
-class ToolsService : EventConsumer, EventSender {
+class ToolsService : EventHandler {
     private var currentTool: Tool = TileComplexTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 

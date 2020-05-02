@@ -5,14 +5,13 @@ import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerEnvironmentController
 import java.io.File
 import kotlin.concurrent.thread
 
-class EnvironmentService : EventSender, EventConsumer {
+class EnvironmentService : EventHandler {
     private lateinit var environment: Dme
 
     init {

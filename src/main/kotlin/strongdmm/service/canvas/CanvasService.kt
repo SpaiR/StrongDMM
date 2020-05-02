@@ -15,8 +15,7 @@ import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
@@ -30,7 +29,7 @@ import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.AppWindow
 import java.util.*
 
-class CanvasService : EventSender, EventConsumer {
+class CanvasService : EventHandler {
     companion object {
         private const val ZOOM_FACTOR: Double = 1.5
         private const val MIN_SCALE: Int = 0

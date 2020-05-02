@@ -2,17 +2,17 @@ package strongdmm.service.tool.tile
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.EventSender
 import strongdmm.event.type.controller.TriggerActionController
 import strongdmm.event.type.controller.TriggerCanvasController
 import strongdmm.event.type.controller.TriggerFrameController
 import strongdmm.event.type.controller.TriggerMapHolderController
 
-class TileAddTool : Tool(), EventSender {
+class TileAddTool : Tool(), EventHandler {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 

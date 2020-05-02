@@ -6,15 +6,14 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerEnvironmentController
 import strongdmm.event.type.controller.TriggerRecentFilesController
 import java.io.File
 
-class RecentFilesService : EventConsumer, EventSender {
+class RecentFilesService : EventHandler {
     companion object {
         private val recentFilesConfig: File = File(StrongDMM.homeDir.toFile(), "recent.json")
     }

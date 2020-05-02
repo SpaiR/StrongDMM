@@ -5,11 +5,11 @@ import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.window.AppWindow
 
-class WindowTitleUi : EventConsumer {
+class WindowTitleUi : EventHandler {
     private var environmentName: String = ""
 
     init {

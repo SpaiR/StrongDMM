@@ -2,13 +2,12 @@ package strongdmm.service.preferences
 
 import com.google.gson.Gson
 import strongdmm.StrongDMM
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.controller.TriggerPreferencesController
 import java.io.File
 
-class PreferencesService : EventSender, EventConsumer {
+class PreferencesService : EventHandler {
     companion object {
         private val preferencesConfig: File = File(StrongDMM.homeDir.toFile(), "preferences.json")
     }

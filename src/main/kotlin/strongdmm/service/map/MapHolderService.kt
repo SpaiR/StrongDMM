@@ -10,8 +10,7 @@ import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
-import strongdmm.event.EventConsumer
-import strongdmm.event.EventSender
+import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerActionController
@@ -24,7 +23,7 @@ import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
 
-class MapHolderService : EventSender, EventConsumer {
+class MapHolderService : EventHandler {
     companion object {
         private val backupsDir: Path = StrongDMM.homeDir.resolve("backups")
     }

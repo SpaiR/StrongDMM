@@ -3,13 +3,13 @@ package strongdmm.service.tool.select
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
 import strongdmm.service.tool.Tool
-import strongdmm.event.EventSender
 import strongdmm.event.type.controller.TriggerCanvasController
 import kotlin.math.max
 import kotlin.math.min
 
-class SelectAddAreaTool : Tool(), EventSender {
+class SelectAddAreaTool : Tool(), EventHandler {
     private var xStart: Int = 0
     private var yStart: Int = 0
 
