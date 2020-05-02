@@ -1,5 +1,6 @@
 package strongdmm.service.tool
 
+import strongdmm.Service
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
@@ -11,7 +12,7 @@ import strongdmm.service.tool.select.SelectComplexTool
 import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.util.OUT_OF_BOUNDS
 
-class ToolsService : EventHandler {
+class ToolsService : Service, EventHandler {
     private var currentTool: Tool = TileComplexTool()
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 

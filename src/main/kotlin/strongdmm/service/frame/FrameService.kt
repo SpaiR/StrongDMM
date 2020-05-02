@@ -1,6 +1,7 @@
 package strongdmm.service.frame
 
 import strongdmm.PostInitialize
+import strongdmm.Service
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmi.GlobalDmiHolder
@@ -16,7 +17,7 @@ import strongdmm.event.type.service.TriggerLayersFilterService
 import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.util.DEFAULT_ICON_SIZE
 
-class FrameService : EventHandler, PostInitialize {
+class FrameService : Service, EventHandler, PostInitialize {
     companion object {
         private const val PLANE_DEPTH: Short = 10000
         private const val LAYER_DEPTH: Short = 1000

@@ -1,5 +1,6 @@
 package strongdmm.service
 
+import strongdmm.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmi.GlobalDmiHolder
@@ -11,7 +12,7 @@ import strongdmm.event.type.service.TriggerEnvironmentService
 import java.io.File
 import kotlin.concurrent.thread
 
-class EnvironmentService : EventHandler {
+class EnvironmentService : Service, EventHandler {
     private lateinit var environment: Dme
 
     init {

@@ -1,13 +1,14 @@
 package strongdmm.service
 
 import strongdmm.PostInitialize
+import strongdmm.Service
 import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.ui.TriggerChangelogPanelUi
 import java.io.File
 
-class ChangelogService : EventHandler, PostInitialize {
+class ChangelogService : Service, EventHandler, PostInitialize {
     companion object {
         private val lastOpenedChangelogHashFile: File = File(StrongDMM.homeDir.toFile(), "loch.dat")
     }

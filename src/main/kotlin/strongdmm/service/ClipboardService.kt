@@ -1,5 +1,6 @@
 package strongdmm.service
 
+import strongdmm.Service
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
@@ -8,7 +9,7 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.util.OUT_OF_BOUNDS
 
-class ClipboardService : EventHandler {
+class ClipboardService : Service, EventHandler {
     private var tileItems: Array<Array<List<TileItem>>>? = null
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 

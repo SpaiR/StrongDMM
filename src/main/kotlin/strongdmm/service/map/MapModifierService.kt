@@ -1,5 +1,6 @@
 package strongdmm.service.map
 
+import strongdmm.Service
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
@@ -10,7 +11,7 @@ import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.OUT_OF_BOUNDS
 
-class MapModifierService : EventHandler {
+class MapModifierService : Service, EventHandler {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {

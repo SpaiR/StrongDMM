@@ -2,6 +2,7 @@ package strongdmm.service.recent
 
 import com.google.gson.Gson
 import strongdmm.PostInitialize
+import strongdmm.Service
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
@@ -14,7 +15,7 @@ import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerRecentFilesService
 import java.io.File
 
-class RecentFilesService : EventHandler, PostInitialize {
+class RecentFilesService : Service, EventHandler, PostInitialize {
     companion object {
         private val recentFilesConfig: File = File(StrongDMM.homeDir.toFile(), "recent.json")
     }

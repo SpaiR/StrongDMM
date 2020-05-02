@@ -3,6 +3,7 @@ package strongdmm.service.map
 import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.PostInitialize
+import strongdmm.Service
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
@@ -24,7 +25,7 @@ import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
 
-class MapHolderService : EventHandler, PostInitialize {
+class MapHolderService : Service, EventHandler, PostInitialize {
     companion object {
         private val backupsDir: Path = StrongDMM.homeDir.resolve("backups")
     }

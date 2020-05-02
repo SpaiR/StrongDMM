@@ -1,12 +1,13 @@
 package strongdmm.service
 
+import strongdmm.Service
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerLayersFilterService
 
-class LayersFilterService : EventHandler {
+class LayersFilterService : Service, EventHandler {
     private var filteredTypes: MutableSet<String> = HashSet()
 
     init {

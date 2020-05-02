@@ -1,12 +1,13 @@
 package strongdmm.service
 
+import strongdmm.Service
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerTileItemService
 
-class TileItemService : EventHandler {
+class TileItemService : Service, EventHandler {
     private var selectedTileItem: TileItem? = null
 
     init {

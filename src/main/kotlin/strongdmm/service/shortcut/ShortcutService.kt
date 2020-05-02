@@ -2,10 +2,11 @@ package strongdmm.service.shortcut
 
 import imgui.ImGui
 import strongdmm.Processable
+import strongdmm.Service
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 
-class ShortcutService : EventHandler, Processable {
+class ShortcutService : Service, EventHandler, Processable {
     override fun process() {
         var shortcutToTrigger: Shortcut? = null
 

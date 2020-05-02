@@ -1,5 +1,6 @@
 package strongdmm.service
 
+import strongdmm.Service
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
@@ -12,7 +13,7 @@ import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerInstanceService
 import strongdmm.event.type.service.TriggerMapHolderService
 
-class InstanceService : EventHandler {
+class InstanceService : Service, EventHandler {
     init {
         consumeEvent(TriggerInstanceService.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
         consumeEvent(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
