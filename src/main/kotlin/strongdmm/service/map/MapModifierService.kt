@@ -1,13 +1,13 @@
 package strongdmm.service.map
 
 import strongdmm.byond.dmm.*
-import strongdmm.service.action.undoable.MultiAction
-import strongdmm.service.action.undoable.ReplaceTileAction
-import strongdmm.service.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.*
+import strongdmm.event.type.service.*
+import strongdmm.service.action.undoable.MultiAction
+import strongdmm.service.action.undoable.ReplaceTileAction
+import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.OUT_OF_BOUNDS
 
 class MapModifierService : EventHandler {
@@ -15,13 +15,13 @@ class MapModifierService : EventHandler {
 
     init {
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea::class.java, ::handleDeleteTileItemsInSelectedArea)
-        consumeEvent(TriggerMapModifierController.FillSelectedMapPositionWithTileItems::class.java, ::handleFillSelectedMapPositionWithTileItems)
-        consumeEvent(TriggerMapModifierController.ReplaceTileItemsWithTypeInPositions::class.java, ::handleReplaceTileItemsWithTypeInPositions)
-        consumeEvent(TriggerMapModifierController.ReplaceTileItemsWithIdInPositions::class.java, ::handleReplaceTileItemsWithIdInPositions)
-        consumeEvent(TriggerMapModifierController.DeleteTileItemsWithTypeInPositions::class.java, ::handleDeleteTileItemsWithTypeInPositions)
-        consumeEvent(TriggerMapModifierController.DeleteTileItemsWithIdInPositions::class.java, ::handleDeleteTileItemsWithIdInPositions)
-        consumeEvent(TriggerMapModifierController.ChangeMapSize::class.java, ::handleChangeMapSize)
+        consumeEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea::class.java, ::handleDeleteTileItemsInSelectedArea)
+        consumeEvent(TriggerMapModifierService.FillSelectedMapPositionWithTileItems::class.java, ::handleFillSelectedMapPositionWithTileItems)
+        consumeEvent(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions::class.java, ::handleReplaceTileItemsWithTypeInPositions)
+        consumeEvent(TriggerMapModifierService.ReplaceTileItemsWithIdInPositions::class.java, ::handleReplaceTileItemsWithIdInPositions)
+        consumeEvent(TriggerMapModifierService.DeleteTileItemsWithTypeInPositions::class.java, ::handleDeleteTileItemsWithTypeInPositions)
+        consumeEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions::class.java, ::handleDeleteTileItemsWithIdInPositions)
+        consumeEvent(TriggerMapModifierService.ChangeMapSize::class.java, ::handleChangeMapSize)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -29,9 +29,9 @@ class MapModifierService : EventHandler {
     }
 
     private fun handleDeleteTileItemsInSelectedArea() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
-                sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredLayers ->
+                sendEvent(TriggerToolsService.FetchSelectedArea { selectedArea ->
                     val reverseActions = mutableListOf<Undoable>()
 
                     for (x in (selectedArea.x1..selectedArea.x2)) {
@@ -54,8 +54,8 @@ class MapModifierService : EventHandler {
                     }
 
                     if (reverseActions.isNotEmpty()) {
-                        sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
-                        sendEvent(TriggerFrameController.RefreshFrame())
+                        sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+                        sendEvent(TriggerFrameService.RefreshFrame())
                     }
                 })
             })
@@ -63,8 +63,8 @@ class MapModifierService : EventHandler {
     }
 
     private fun handleFillSelectedMapPositionWithTileItems(event: Event<Array<Array<List<TileItem>>>, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredLayers ->
                 val reverseActions = mutableListOf<Undoable>()
 
                 var x2 = currentMapPos.x
@@ -97,16 +97,16 @@ class MapModifierService : EventHandler {
                 }
 
                 if (reverseActions.isNotEmpty()) {
-                    sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
-                    sendEvent(TriggerToolsController.SelectArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
-                    sendEvent(TriggerFrameController.RefreshFrame())
+                    sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+                    sendEvent(TriggerToolsService.SelectArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
+                    sendEvent(TriggerFrameService.RefreshFrame())
                 }
             })
         })
     }
 
     private fun handleReplaceTileItemsWithTypeInPositions(event: Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
 
@@ -117,13 +117,13 @@ class MapModifierService : EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionController.AddAction(MultiAction(replaceActions)))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerActionService.AddAction(MultiAction(replaceActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
 
     private fun handleReplaceTileItemsWithIdInPositions(event: Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
 
@@ -134,13 +134,13 @@ class MapModifierService : EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionController.AddAction(MultiAction(replaceActions)))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerActionService.AddAction(MultiAction(replaceActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
 
     private fun handleDeleteTileItemsWithTypeInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
@@ -150,13 +150,13 @@ class MapModifierService : EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionController.AddAction(MultiAction(deleteActions)))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerActionService.AddAction(MultiAction(deleteActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
 
     private fun handleDeleteTileItemsWithIdInPositions(event: Event<List<Pair<TileItem, MapPos>>, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
@@ -166,13 +166,13 @@ class MapModifierService : EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionController.AddAction(MultiAction(deleteActions)))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerActionService.AddAction(MultiAction(deleteActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
 
     private fun handleChangeMapSize(event: Event<MapSize, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             dmm.setMapSize(event.body.maxZ, event.body.maxY, event.body.maxX)
             sendEvent(Reaction.SelectedMapMapSizeChanged(event.body))
         })

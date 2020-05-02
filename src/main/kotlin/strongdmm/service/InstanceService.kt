@@ -8,21 +8,21 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerInstanceController
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerInstanceService
+import strongdmm.event.type.service.TriggerMapHolderService
 
 class InstanceService : EventHandler {
     init {
-        consumeEvent(TriggerInstanceController.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
-        consumeEvent(TriggerInstanceController.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
-        consumeEvent(TriggerInstanceController.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
-        consumeEvent(TriggerInstanceController.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
+        consumeEvent(TriggerInstanceService.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
+        consumeEvent(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
+        consumeEvent(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
+        consumeEvent(TriggerInstanceService.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
     }
 
     private fun handleGenerateInstancesFromIconStates(event: Event<TileItem, Unit>) {
         GlobalDmiHolder.getDmi(event.body.icon)?.let { dmi ->
-            sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { dme ->
+            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val itemType = event.body.type
                 val dmeItem = dme.getItem(itemType)!!
                 val initialIconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
@@ -42,7 +42,7 @@ class InstanceService : EventHandler {
     private fun handleGenerateInstancesFromDirections(event: Event<TileItem, Unit>) {
         val tileItem = event.body
         GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
-            sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { dme ->
+            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val dmeItem = dme.getItem(tileItem.type)!!
                 val initialDir = dmeItem.getVarInt(VAR_DIR) ?: DEFAULT_DIR
 
@@ -67,7 +67,7 @@ class InstanceService : EventHandler {
     private fun handleFindInstancePositionsByType(event: Event<Pair<MapArea, String>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
             if (event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
                 for (x in (x1..x2)) {
@@ -89,7 +89,7 @@ class InstanceService : EventHandler {
     private fun handleFindInstancePositionsById(event: Event<Pair<MapArea, Long>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
             val (x1, y1, x2, y2) = event.body.first
 
             for (x in (x1..x2)) {

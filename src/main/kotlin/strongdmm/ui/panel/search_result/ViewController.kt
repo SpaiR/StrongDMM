@@ -3,9 +3,9 @@ package strongdmm.ui.panel.search_result
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerCanvasController
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerMapModifierController
+import strongdmm.event.type.service.TriggerCanvasService
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerMapModifierService
 import strongdmm.ui.panel.search_result.model.SearchPosition
 
 class ViewController(
@@ -30,8 +30,8 @@ class ViewController(
     }
 
     fun doJump(searchPosition: SearchPosition) {
-        sendEvent(TriggerCanvasController.CenterCanvasByPosition(searchPosition.pos))
-        sendEvent(TriggerCanvasController.MarkPosition(searchPosition.pos))
+        sendEvent(TriggerCanvasService.CenterCanvasByPosition(searchPosition.pos))
+        sendEvent(TriggerCanvasService.MarkPosition(searchPosition.pos))
     }
 
     fun dispose() {
@@ -41,12 +41,12 @@ class ViewController(
 
     private fun delete(deletionList: List<Pair<TileItem, MapPos>>) {
         if (state.searchResult!!.isSearchById) {
-            sendEvent(TriggerMapModifierController.DeleteTileItemsWithIdInPositions(deletionList))
+            sendEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(deletionList))
         } else {
-            sendEvent(TriggerMapModifierController.DeleteTileItemsWithTypeInPositions(deletionList))
+            sendEvent(TriggerMapModifierService.DeleteTileItemsWithTypeInPositions(deletionList))
         }
 
-        sendEvent(TriggerCanvasController.ResetMarkedPosition())
+        sendEvent(TriggerCanvasService.ResetMarkedPosition())
     }
 
     private fun replace(replaceList: List<Pair<TileItem, MapPos>>) {
@@ -55,16 +55,16 @@ class ViewController(
         }
 
         if (state.searchResult!!.isSearchById) {
-            sendEvent(TriggerMapModifierController.ReplaceTileItemsWithIdInPositions(Pair(state.replaceType.get(), replaceList)))
+            sendEvent(TriggerMapModifierService.ReplaceTileItemsWithIdInPositions(Pair(state.replaceType.get(), replaceList)))
         } else {
-            sendEvent(TriggerMapModifierController.ReplaceTileItemsWithTypeInPositions(Pair(state.replaceType.get(), replaceList)))
+            sendEvent(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions(Pair(state.replaceType.get(), replaceList)))
         }
 
-        sendEvent(TriggerCanvasController.ResetMarkedPosition())
+        sendEvent(TriggerCanvasService.ResetMarkedPosition())
     }
 
     fun checkReplaceModeEnabled() {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
             state.isReplaceEnabled = it.getItem(state.replaceType.get()) != null
         })
     }

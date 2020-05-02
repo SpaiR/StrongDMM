@@ -8,17 +8,17 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
-import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerActionController
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerActionService
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.ui.TriggerCloseMapDialogUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
+import strongdmm.service.preferences.Preferences
 import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
 import java.io.File
 import java.nio.file.Path
@@ -38,17 +38,17 @@ class MapHolderService : EventHandler {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(TriggerMapHolderController.CreateNewMap::class.java, ::handleCreateNewMap)
-        consumeEvent(TriggerMapHolderController.OpenMap::class.java, ::handleOpenMap)
-        consumeEvent(TriggerMapHolderController.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(TriggerMapHolderController.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
-        consumeEvent(TriggerMapHolderController.CloseAllMaps::class.java, ::handleCloseAllMaps)
-        consumeEvent(TriggerMapHolderController.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
-        consumeEvent(TriggerMapHolderController.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
-        consumeEvent(TriggerMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
-        consumeEvent(TriggerMapHolderController.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
-        consumeEvent(TriggerMapHolderController.SaveAllMaps::class.java, ::handleSaveAllMaps)
-        consumeEvent(TriggerMapHolderController.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
+        consumeEvent(TriggerMapHolderService.CreateNewMap::class.java, ::handleCreateNewMap)
+        consumeEvent(TriggerMapHolderService.OpenMap::class.java, ::handleOpenMap)
+        consumeEvent(TriggerMapHolderService.CloseMap::class.java, ::handleCloseMap)
+        consumeEvent(TriggerMapHolderService.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
+        consumeEvent(TriggerMapHolderService.CloseAllMaps::class.java, ::handleCloseAllMaps)
+        consumeEvent(TriggerMapHolderService.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
+        consumeEvent(TriggerMapHolderService.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
+        consumeEvent(TriggerMapHolderService.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        consumeEvent(TriggerMapHolderService.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
+        consumeEvent(TriggerMapHolderService.SaveAllMaps::class.java, ::handleSaveAllMaps)
+        consumeEvent(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
@@ -84,7 +84,7 @@ class MapHolderService : EventHandler {
     private fun saveMap(map: Dmm, fileToSave: File? = null) {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
         SaveMap(map, initialDmmData, fileToSave, providedPreferences)
-        sendEvent(TriggerActionController.ResetActionBalance(map))
+        sendEvent(TriggerActionService.ResetActionBalance(map))
     }
 
     private fun closeMap(map: Dmm) {
@@ -140,7 +140,7 @@ class MapHolderService : EventHandler {
             newMapFile.writeBytes(it!!.readAllBytes())
         }
 
-        sendEvent(TriggerMapHolderController.OpenMap(newMapFile))
+        sendEvent(TriggerMapHolderService.OpenMap(newMapFile))
         selectedMap?.setMapSize(0, 0, 0) // -_-
         sendEvent(TriggerSetMapSizeDialogUi.Open())
     }
@@ -164,7 +164,7 @@ class MapHolderService : EventHandler {
                 return
             }
 
-            sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
+            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
                 val dmmData = DmmParser.parse(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 

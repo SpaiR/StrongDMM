@@ -3,12 +3,12 @@ package strongdmm.service.tool
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.service.tool.select.SelectComplexTool
-import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerToolsController
+import strongdmm.event.type.service.TriggerToolsService
+import strongdmm.service.tool.select.SelectComplexTool
+import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ToolsService : EventHandler {
@@ -27,10 +27,10 @@ class ToolsService : EventHandler {
         consumeEvent(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(TriggerToolsController.ChangeTool::class.java, ::handleChangeTool)
-        consumeEvent(TriggerToolsController.ResetTool::class.java, ::handleResetTool)
-        consumeEvent(TriggerToolsController.FetchSelectedArea::class.java, ::handleFetchSelectedArea)
-        consumeEvent(TriggerToolsController.SelectArea::class.java, ::handleSelectArea)
+        consumeEvent(TriggerToolsService.ChangeTool::class.java, ::handleChangeTool)
+        consumeEvent(TriggerToolsService.ResetTool::class.java, ::handleResetTool)
+        consumeEvent(TriggerToolsService.FetchSelectedArea::class.java, ::handleFetchSelectedArea)
+        consumeEvent(TriggerToolsService.SelectArea::class.java, ::handleSelectArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -101,7 +101,7 @@ class ToolsService : EventHandler {
     }
 
     private fun handleSelectArea(event: Event<MapArea, Unit>) {
-        sendEvent(TriggerToolsController.ChangeTool(ToolType.SELECT))
+        sendEvent(TriggerToolsService.ChangeTool(ToolType.SELECT))
         (currentTool as SelectComplexTool).selectArea(event.body)
     }
 }

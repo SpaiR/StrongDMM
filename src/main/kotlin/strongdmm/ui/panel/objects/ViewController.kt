@@ -5,8 +5,8 @@ import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerInstanceController
-import strongdmm.event.type.controller.TriggerTileItemController
+import strongdmm.event.type.service.TriggerInstanceService
+import strongdmm.event.type.service.TriggerTileItemService
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
 
@@ -14,7 +14,7 @@ class ViewController(
     private val state: State
 ) : EventHandler {
     fun doSelectItem(tileItem: TileItem) {
-        sendEvent(TriggerTileItemController.ChangeSelectedTileItem(tileItem))
+        sendEvent(TriggerTileItemService.ChangeSelectedTileItem(tileItem))
         state.scrolledToItem = true // do not scroll panel in the next cycle
     }
 
@@ -31,13 +31,13 @@ class ViewController(
     }
 
     fun doGenerateInstancesFromIconStates(tileItem: TileItem) {
-        sendEvent(TriggerInstanceController.GenerateInstancesFromIconStates(tileItem) {
+        sendEvent(TriggerInstanceService.GenerateInstancesFromIconStates(tileItem) {
             updateTileItems()
         })
     }
 
     fun doGenerateInstancesFromDirections(tileItem: TileItem) {
-        sendEvent(TriggerInstanceController.GenerateInstancesFromDirections(tileItem) {
+        sendEvent(TriggerInstanceService.GenerateInstancesFromDirections(tileItem) {
             updateTileItems()
         })
     }

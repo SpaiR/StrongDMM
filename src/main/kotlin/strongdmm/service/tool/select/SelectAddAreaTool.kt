@@ -4,8 +4,8 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
+import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.service.tool.Tool
-import strongdmm.event.type.controller.TriggerCanvasController
 import kotlin.math.max
 import kotlin.math.min
 
@@ -42,7 +42,7 @@ class SelectAddAreaTool : Tool(), EventHandler {
     override fun reset() {
         isActive = false
         currentSelectedArea = MapArea.OUT_OF_BOUNDS_AREA
-        sendEvent(TriggerCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun destroy() {
@@ -55,6 +55,6 @@ class SelectAddAreaTool : Tool(), EventHandler {
         val x2 = max(xStart, x)
         val y2 = max(yStart, y)
         currentSelectedArea = MapArea(x1, y1, x2, y2)
-        sendEvent(TriggerCanvasController.SelectArea(currentSelectedArea))
+        sendEvent(TriggerCanvasService.SelectArea(currentSelectedArea))
     }
 }

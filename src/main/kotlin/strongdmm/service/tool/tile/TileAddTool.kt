@@ -3,14 +3,14 @@ package strongdmm.service.tool.tile
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
+import strongdmm.event.type.service.TriggerActionService
+import strongdmm.event.type.service.TriggerCanvasService
+import strongdmm.event.type.service.TriggerFrameService
+import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.type.controller.TriggerActionController
-import strongdmm.event.type.controller.TriggerCanvasController
-import strongdmm.event.type.controller.TriggerFrameController
-import strongdmm.event.type.controller.TriggerMapHolderController
 
 class TileAddTool : Tool(), EventHandler {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
@@ -45,7 +45,7 @@ class TileAddTool : Tool(), EventHandler {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(TriggerCanvasController.ResetSelectedTiles())
+        sendEvent(TriggerCanvasService.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -54,15 +54,15 @@ class TileAddTool : Tool(), EventHandler {
     }
 
     private fun addTileItem(pos: MapPos) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
             reverseActions.add(ReplaceTileAction(tile) {
                 tile.addTileItem(selectedTileItem!!)
             })
 
-            sendEvent(TriggerCanvasController.SelectTiles(dirtyTiles))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerCanvasService.SelectTiles(dirtyTiles))
+            sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
 
@@ -71,6 +71,6 @@ class TileAddTool : Tool(), EventHandler {
             return
         }
 
-        sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions.toList())))
     }
 }

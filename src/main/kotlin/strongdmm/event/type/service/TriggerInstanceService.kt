@@ -1,11 +1,11 @@
-package strongdmm.event.type.controller
+package strongdmm.event.type.service
 
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 
-abstract class TriggerInstanceController {
+abstract class TriggerInstanceService {
     class GenerateInstancesFromIconStates(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
     class GenerateInstancesFromDirections(body: TileItem, callback: (Unit) -> Unit) : Event<TileItem, Unit>(body, callback)
 

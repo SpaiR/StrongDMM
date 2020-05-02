@@ -4,12 +4,12 @@ import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
-import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerActionController
-import strongdmm.event.type.controller.TriggerFrameController
+import strongdmm.event.type.service.TriggerActionService
+import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.ui.dialog.edit_vars.model.Variable
 
 class ViewController(
@@ -30,14 +30,14 @@ class ViewController(
         getNewItemVars()?.let { newItemVars ->
             if (state.currentTile != null) { // in case if we have a tile to apply changes
                 sendEvent(
-                    TriggerActionController.AddAction(
+                    TriggerActionService.AddAction(
                         ReplaceTileAction(state.currentTile!!) {
                             state.currentTile!!.modifyItemVars(state.currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                         }
                     )
                 )
 
-                sendEvent(TriggerFrameController.RefreshFrame())
+                sendEvent(TriggerFrameService.RefreshFrame())
             } else if (state.currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 GlobalTileItemHolder.getOrCreate(state.currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
@@ -115,7 +115,7 @@ class ViewController(
                 GlobalTileItemHolder.tmpOperation {
                     it.modifyItemVars(state.currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                 }
-                sendEvent(TriggerFrameController.RefreshFrame())
+                sendEvent(TriggerFrameService.RefreshFrame())
             }
         }
     }
@@ -123,7 +123,7 @@ class ViewController(
     private fun discardTmpTileChanges() {
         if (state.currentTile != null && state.initialTileItemsId != null) {
             state.currentTile!!.replaceTileItemsId(state.initialTileItemsId!!)
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerFrameService.RefreshFrame())
         }
     }
 

@@ -4,7 +4,7 @@ import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
 
 class EventController(
@@ -31,7 +31,7 @@ class EventController(
     }
 
     private fun handleLayersFilterRefreshed(event: Event<Set<String>, Unit>) {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
             state.filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->
                 if (event.body.contains(dmeItem.type)) {

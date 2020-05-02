@@ -2,14 +2,14 @@ package strongdmm.service.action
 
 import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.byond.dmm.Dmm
-import strongdmm.service.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerActionController
-import strongdmm.event.type.controller.TriggerFrameController
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerActionService
+import strongdmm.event.type.service.TriggerFrameService
+import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
@@ -18,10 +18,10 @@ class ActionService : EventHandler {
     private val actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
 
     init {
-        consumeEvent(TriggerActionController.AddAction::class.java, ::handleAddAction)
-        consumeEvent(TriggerActionController.UndoAction::class.java, ::handleUndoAction)
-        consumeEvent(TriggerActionController.RedoAction::class.java, ::handleRedoAction)
-        consumeEvent(TriggerActionController.ResetActionBalance::class.java, ::handleResetActionBalance)
+        consumeEvent(TriggerActionService.AddAction::class.java, ::handleAddAction)
+        consumeEvent(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
+        consumeEvent(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
+        consumeEvent(TriggerActionService.ResetActionBalance::class.java, ::handleResetActionBalance)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
@@ -34,7 +34,7 @@ class ActionService : EventHandler {
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
 
     private fun updateActionBalance(isPositive: Boolean) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
             val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
             actionBalanceStorage.put(currentMap, newBalance)
@@ -49,7 +49,7 @@ class ActionService : EventHandler {
     }
 
     private fun handleAddAction(event: Event<Undoable, Unit>) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.clear()
                 undo.push(event.body)
@@ -59,7 +59,7 @@ class ActionService : EventHandler {
     }
 
     private fun handleUndoAction() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 if (undo.isEmpty()) {
                     return@FetchSelectedMap
@@ -67,13 +67,13 @@ class ActionService : EventHandler {
 
                 redo.push(undo.pop().doAction())
                 updateActionBalance(false)
-                sendEvent(TriggerFrameController.RefreshFrame())
+                sendEvent(TriggerFrameService.RefreshFrame())
             }
         })
     }
 
     private fun handleRedoAction() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 if (redo.isEmpty()) {
                     return@FetchSelectedMap
@@ -81,7 +81,7 @@ class ActionService : EventHandler {
 
                 undo.push(redo.pop().doAction())
                 updateActionBalance(true)
-                sendEvent(TriggerFrameController.RefreshFrame())
+                sendEvent(TriggerFrameService.RefreshFrame())
             }
         })
     }

@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.level_switch
 
 import org.lwjgl.glfw.GLFW
+import strongdmm.event.EventHandler
 import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
-import strongdmm.event.EventHandler
 
 class ShortcutController(
     viewController: ViewController

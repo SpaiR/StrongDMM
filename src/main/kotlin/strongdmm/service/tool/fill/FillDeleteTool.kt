@@ -8,11 +8,11 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
+import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.type.controller.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -42,8 +42,8 @@ class FillDeleteTool : Tool(), EventHandler {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
                 for (x in x1..x2) {
                     for (y in y1..y2) {
                         val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
@@ -59,11 +59,11 @@ class FillDeleteTool : Tool(), EventHandler {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
         }
 
-        sendEvent(TriggerCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -83,7 +83,7 @@ class FillDeleteTool : Tool(), EventHandler {
 
     override fun reset() {
         isActive = false
-        sendEvent(TriggerCanvasController.ResetSelectedArea())
+        sendEvent(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun destroy() {
@@ -96,6 +96,6 @@ class FillDeleteTool : Tool(), EventHandler {
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-        sendEvent(TriggerCanvasController.SelectArea(MapArea(x1, y1, x2, y2)))
+        sendEvent(TriggerCanvasService.SelectArea(MapArea(x1, y1, x2, y2)))
     }
 }

@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.tool_select
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.event.EventHandler
+import strongdmm.service.shortcut.ShortcutHandler
 
 class ShortcutController(
     private val state: State

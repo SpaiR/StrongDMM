@@ -1,10 +1,10 @@
-package strongdmm.event.type.controller
+package strongdmm.event.type.service
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import java.io.File
 
-abstract class TriggerMapHolderController {
+abstract class TriggerMapHolderService {
     class CreateNewMap(body: File) : Event<File, Unit>(body, null)
     class OpenMap(body: File) : Event<File, Unit>(body, null)
     class CloseMap(mapId: Int) : Event<Int, Unit>(mapId, null)

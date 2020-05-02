@@ -10,9 +10,9 @@ import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerFrameController
-import strongdmm.event.type.controller.TriggerLayersFilterController
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerFrameService
+import strongdmm.event.type.service.TriggerLayersFilterService
+import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameService : EventHandler {
@@ -36,7 +36,7 @@ class FrameService : EventHandler {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
-        consumeEvent(TriggerFrameController.RefreshFrame::class.java, ::handleRefreshFrame)
+        consumeEvent(TriggerFrameService.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
     fun postInit() {
@@ -45,10 +45,10 @@ class FrameService : EventHandler {
     }
 
     private fun updateFrameCache() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { map ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
             var filteredTypes: Set<String>? = null
 
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers {
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers {
                 filteredTypes = it
             })
 

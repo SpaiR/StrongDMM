@@ -1,7 +1,7 @@
-package strongdmm.event.type.controller
+package strongdmm.event.type.service
 
 import strongdmm.event.Event
 
-abstract class TriggerPreferencesController {
+abstract class TriggerPreferencesService {
     class SavePreferences : Event<Unit, Unit>(Unit, null)
 }

@@ -1,10 +1,10 @@
 package strongdmm.ui.panel.preferences
 
 import imgui.ImBool
-import strongdmm.service.preferences.Selectable
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerPreferencesController
+import strongdmm.event.type.service.TriggerPreferencesService
+import strongdmm.service.preferences.Selectable
 
 class ViewController(
     private val state: State
@@ -20,7 +20,7 @@ class ViewController(
     }
 
     fun savePreferences() {
-        sendEvent(TriggerPreferencesController.SavePreferences())
+        sendEvent(TriggerPreferencesService.SavePreferences())
     }
 
     fun blockApplication() {

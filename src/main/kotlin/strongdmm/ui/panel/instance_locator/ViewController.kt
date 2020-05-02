@@ -4,8 +4,8 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerInstanceController
-import strongdmm.event.type.controller.TriggerToolsController
+import strongdmm.event.type.service.TriggerInstanceService
+import strongdmm.event.type.service.TriggerToolsService
 import strongdmm.event.type.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.panel.search_result.model.SearchResult
 
@@ -29,14 +29,14 @@ class ViewController(
         }
 
         if (tileItemId != null) {
-            sendEvent(TriggerInstanceController.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
+            sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
         } else {
-            sendEvent(TriggerInstanceController.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
+            sendEvent(TriggerInstanceService.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
         }
     }
 
     fun doSelection() {
-        sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
+        sendEvent(TriggerToolsService.FetchSelectedArea { selectedArea ->
             state.searchX1.set(selectedArea.x1)
             state.searchY1.set(selectedArea.y1)
             state.searchX2.set(selectedArea.x2)

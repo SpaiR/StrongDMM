@@ -4,13 +4,13 @@ import imgui.ImGui
 import strongdmm.byond.dmm.MapSize
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerMapModifierController
+import strongdmm.event.type.service.TriggerMapModifierService
 
 class ViewController(
     private val state: State
 ) : EventHandler {
     fun doOk() {
-        sendEvent(TriggerMapModifierController.ChangeMapSize(MapSize(state.newX.get(), state.newY.get(), state.newZ.get())))
+        sendEvent(TriggerMapModifierService.ChangeMapSize(MapSize(state.newX.get(), state.newY.get(), state.newZ.get())))
         dispose()
     }
 

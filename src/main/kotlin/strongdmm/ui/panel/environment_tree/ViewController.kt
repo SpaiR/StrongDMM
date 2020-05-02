@@ -4,8 +4,8 @@ import imgui.enums.ImGuiTreeNodeFlags
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerTileItemController
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerTileItemService
 import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut
@@ -20,12 +20,12 @@ class ViewController(
 
     fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(TriggerEnvironmentController.OpenEnvironment(file))
+            sendEvent(TriggerEnvironmentService.OpenEnvironment(file))
         }
     }
 
     fun doOpenEnvironment(environmentPath: String) {
-        sendEvent(TriggerEnvironmentController.OpenEnvironment(File(environmentPath)))
+        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
     fun doCollapseAll() {
@@ -68,7 +68,7 @@ class ViewController(
 
     fun selectType(type: String) {
         if (!state.isSelectedInCycle) {
-            sendEvent(TriggerTileItemController.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
+            sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
             state.isSelectedInCycle = true
         }
     }

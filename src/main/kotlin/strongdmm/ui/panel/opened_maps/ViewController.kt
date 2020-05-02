@@ -2,18 +2,18 @@ package strongdmm.ui.panel.opened_maps
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerMapHolderService
 
 class ViewController(
     private val state: State
 ) : EventHandler {
     fun doCloseMap(map: Dmm) {
-        sendEvent(TriggerMapHolderController.CloseMap(map.id))
+        sendEvent(TriggerMapHolderService.CloseMap(map.id))
     }
 
     fun doOpenMap(map: Dmm) {
         if (state.selectedMap !== map) {
-            sendEvent(TriggerMapHolderController.ChangeSelectedMap(map.id))
+            sendEvent(TriggerMapHolderService.ChangeSelectedMap(map.id))
         }
     }
 

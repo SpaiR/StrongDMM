@@ -3,22 +3,22 @@ package strongdmm.service
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerLayersFilterController
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerLayersFilterService
 
 class LayersFilterService : EventHandler {
     private var filteredTypes: MutableSet<String> = HashSet()
 
     init {
-        consumeEvent(TriggerLayersFilterController.FilterLayersById::class.java, ::handleFilterLayersById)
-        consumeEvent(TriggerLayersFilterController.ShowLayersByType::class.java, ::handleShowLayersByType)
-        consumeEvent(TriggerLayersFilterController.HideLayersByType::class.java, ::handleHideLayersByType)
-        consumeEvent(TriggerLayersFilterController.FetchFilteredLayers::class.java, ::handleFetchFilteredLayers)
+        consumeEvent(TriggerLayersFilterService.FilterLayersById::class.java, ::handleFilterLayersById)
+        consumeEvent(TriggerLayersFilterService.ShowLayersByType::class.java, ::handleShowLayersByType)
+        consumeEvent(TriggerLayersFilterService.HideLayersByType::class.java, ::handleHideLayersByType)
+        consumeEvent(TriggerLayersFilterService.FetchFilteredLayers::class.java, ::handleFetchFilteredLayers)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleFilterLayersById(event: Event<LongArray, Unit>) {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { dme ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
             filteredTypes = dme.items.values.filter { event.body.contains(it.id) }.map { it.type }.toMutableSet()
             sendEvent(Reaction.LayersFilterRefreshed(filteredTypes))
         })
@@ -30,7 +30,7 @@ class LayersFilterService : EventHandler {
     }
 
     private fun handleHideLayersByType(event: Event<String, Unit>) {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { dme ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
             filteredTypes.addAll(dme.items.values.filter { it.type.contains(event.body) }.map { it.type })
             sendEvent(Reaction.LayersFilterRefreshed(filteredTypes))
         })

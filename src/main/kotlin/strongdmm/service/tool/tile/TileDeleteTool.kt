@@ -7,11 +7,11 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
+import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
-import strongdmm.event.type.controller.*
 
 class TileDeleteTool : Tool(), EventHandler {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
@@ -53,7 +53,7 @@ class TileDeleteTool : Tool(), EventHandler {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(TriggerCanvasController.ResetSelectedTiles())
+        sendEvent(TriggerCanvasService.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -62,17 +62,17 @@ class TileDeleteTool : Tool(), EventHandler {
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.deleteTileItem(tileItem)
                     })
 
-                    sendEvent(TriggerCanvasController.SelectTiles(dirtyTiles))
-                    sendEvent(TriggerFrameController.RefreshFrame())
+                    sendEvent(TriggerCanvasService.SelectTiles(dirtyTiles))
+                    sendEvent(TriggerFrameService.RefreshFrame())
                 }
             })
         })
@@ -83,6 +83,6 @@ class TileDeleteTool : Tool(), EventHandler {
             return
         }
 
-        sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions.toList())))
     }
 }

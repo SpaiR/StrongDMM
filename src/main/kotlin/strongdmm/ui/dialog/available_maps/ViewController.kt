@@ -4,7 +4,7 @@ import imgui.ImGui
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerMapHolderController
+import strongdmm.event.type.service.TriggerMapHolderService
 import java.io.File
 
 class ViewController(
@@ -16,7 +16,7 @@ class ViewController(
 
     fun doOpenSelectedMapAndDispose() {
         state.selectedMapPath?.let {
-            sendEvent(TriggerMapHolderController.OpenMap(File(it.absolute)))
+            sendEvent(TriggerMapHolderService.OpenMap(File(it.absolute)))
             dispose()
         }
     }

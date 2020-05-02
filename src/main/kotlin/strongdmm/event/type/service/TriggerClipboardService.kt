@@ -1,8 +1,8 @@
-package strongdmm.event.type.controller
+package strongdmm.event.type.service
 
 import strongdmm.event.Event
 
-abstract class TriggerClipboardController {
+abstract class TriggerClipboardService {
     class Cut : Event<Unit, Unit>(Unit, null)
     class Copy : Event<Unit, Unit>(Unit, null)
     class Paste : Event<Unit, Unit>(Unit, null)

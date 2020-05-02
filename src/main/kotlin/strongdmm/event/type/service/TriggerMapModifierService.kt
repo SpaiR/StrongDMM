@@ -1,11 +1,11 @@
-package strongdmm.event.type.controller
+package strongdmm.event.type.service
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.MapSize
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 
-abstract class TriggerMapModifierController {
+abstract class TriggerMapModifierService {
     class DeleteTileItemsInSelectedArea : Event<Unit, Unit>(Unit, null)
     class FillSelectedMapPositionWithTileItems(body: Array<Array<List<TileItem>>>) : Event<Array<Array<List<TileItem>>>, Unit>(body, null)
 

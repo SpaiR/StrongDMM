@@ -9,8 +9,8 @@ import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerEnvironmentController
-import strongdmm.event.type.controller.TriggerRecentFilesController
+import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerRecentFilesService
 import java.io.File
 
 class RecentFilesService : EventHandler {
@@ -27,8 +27,8 @@ class RecentFilesService : EventHandler {
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(TriggerRecentFilesController.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
-        consumeEvent(TriggerRecentFilesController.ClearRecentMaps::class.java, ::handleClearRecentMaps)
+        consumeEvent(TriggerRecentFilesService.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
+        consumeEvent(TriggerRecentFilesService.ClearRecentMaps::class.java, ::handleClearRecentMaps)
     }
 
     fun postInit() {
@@ -111,13 +111,13 @@ class RecentFilesService : EventHandler {
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             addMap(environment.absEnvPath, event.body.mapPath)
         })
     }
 
     private fun handleClearRecentEnvironments() {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             recentFiles.environments.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)
@@ -125,7 +125,7 @@ class RecentFilesService : EventHandler {
     }
 
     private fun handleClearRecentMaps() {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             recentFiles.maps[environment.absEnvPath]?.clear()
             writeRecentJsonFile()
             updateRecentMapsList(environment.absEnvPath)

@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.tool_select
 
-import strongdmm.service.tool.ToolType
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
+import strongdmm.service.tool.ToolType
 
 class EventController(
     private val state: State

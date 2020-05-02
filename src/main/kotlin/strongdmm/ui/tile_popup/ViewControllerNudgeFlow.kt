@@ -3,12 +3,12 @@ package strongdmm.ui.tile_popup
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.EventHandler
+import strongdmm.event.type.service.TriggerActionService
+import strongdmm.event.type.service.TriggerFrameService
+import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.preferences.NudgeMode
-import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.TriggerActionController
-import strongdmm.event.type.controller.TriggerFrameController
-import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.util.extension.getOrPut
 
 class ViewControllerNudgeFlow(
@@ -19,7 +19,7 @@ class ViewControllerNudgeFlow(
             tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], state.providedPreferences.nudgeMode)
         }
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     fun getNudgeValueToShow(isXAxis: Boolean, tileItem: TileItem, tileItemIdx: Int): Pair<Int, IntArray> {
@@ -47,13 +47,13 @@ class ViewControllerNudgeFlow(
         }
 
         sendEvent(
-            TriggerActionController.AddAction(
+            TriggerActionService.AddAction(
                 ReplaceTileAction(tile) {
                     tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], state.providedPreferences.nudgeMode)
                 }
             ))
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
         sendEvent(TriggerObjectPanelUi.Update())
 
         // to properly create a reverse action

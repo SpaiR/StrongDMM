@@ -2,13 +2,13 @@ package strongdmm.ui.tile_popup
 
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.service.action.ActionStatus
-import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.ui.TriggerTilePopupUi
+import strongdmm.service.action.ActionStatus
+import strongdmm.service.preferences.Preferences
 
 class EventController(
     private val state: State

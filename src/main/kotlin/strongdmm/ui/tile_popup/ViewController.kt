@@ -3,11 +3,11 @@ package strongdmm.ui.tile_popup
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.*
+import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
+import strongdmm.service.action.undoable.ReplaceTileAction
 
 class ViewController(
     private val state: State
@@ -16,55 +16,55 @@ class ViewController(
     private val dirFlow = ViewControllerDirFlow(state)
 
     fun doUndo() {
-        sendEvent(TriggerActionController.UndoAction())
+        sendEvent(TriggerActionService.UndoAction())
     }
 
     fun doRedo() {
-        sendEvent(TriggerActionController.RedoAction())
+        sendEvent(TriggerActionService.RedoAction())
     }
 
     fun doCut() {
-        sendEvent(TriggerClipboardController.Cut())
+        sendEvent(TriggerClipboardService.Cut())
     }
 
     fun doCopy() {
-        sendEvent(TriggerClipboardController.Copy())
+        sendEvent(TriggerClipboardService.Copy())
     }
 
     fun doPaste() {
-        sendEvent(TriggerClipboardController.Paste())
+        sendEvent(TriggerClipboardService.Paste())
     }
 
     fun doDelete() {
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
+        sendEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
     }
 
     fun doDeselectAll() {
-        sendEvent(TriggerToolsController.ResetTool())
+        sendEvent(TriggerToolsService.ResetTool())
     }
 
     fun doMoveToTop(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionController.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.AddAction(ReplaceTileAction(tile) {
                 tile.moveToTop(tileItem, tileItemIdx)
             })
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     fun doMoveToBottom(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionController.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.AddAction(ReplaceTileAction(tile) {
                 tile.moveToBottom(tileItem, tileItemIdx)
             })
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     fun doMakeActiveObject(tileItem: TileItem) {
-        sendEvent(TriggerTileItemController.ChangeSelectedTileItem(tileItem))
+        sendEvent(TriggerTileItemService.ChangeSelectedTileItem(tileItem))
     }
 
     fun doEdit(tile: Tile, tileItemIdx: Int) {
@@ -73,34 +73,34 @@ class ViewController(
 
     fun doDeleteObject(tile: Tile, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionController.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.AddAction(ReplaceTileAction(tile) {
                 tile.deleteTileItem(tileItemIdx)
             })
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     fun doReplaceWithSelectedTileItem(tile: Tile, tileItemIdx: Int) {
         state.selectedTileItem?.let { selectedTileItem ->
             sendEvent(
-                TriggerActionController.AddAction(ReplaceTileAction(tile) {
+                TriggerActionService.AddAction(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItemIdx, selectedTileItem)
                 })
             )
 
-            sendEvent(TriggerFrameController.RefreshFrame())
+            sendEvent(TriggerFrameService.RefreshFrame())
         }
     }
 
     fun doResetToDefault(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionController.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.AddAction(ReplaceTileAction(tile) {
                 tile.replaceTileItem(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItem.type))
             })
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     fun doNudge(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, pixelNudge: IntArray) {

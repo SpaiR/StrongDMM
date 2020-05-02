@@ -11,16 +11,16 @@ import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
-import strongdmm.service.action.undoable.ReplaceTileAction
-import strongdmm.service.frame.FrameMesh
-import strongdmm.service.frame.FramedTile
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.*
+import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 import strongdmm.event.type.ui.TriggerTilePopupUi
+import strongdmm.service.action.undoable.ReplaceTileAction
+import strongdmm.service.frame.FrameMesh
+import strongdmm.service.frame.FramedTile
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
@@ -78,13 +78,13 @@ class CanvasService : EventHandler {
         consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
         consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
         consumeEvent(Provider.FrameControllerFramedTiles::class.java, ::handleProviderFrameControllerFramedTiles)
-        consumeEvent(TriggerCanvasController.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
-        consumeEvent(TriggerCanvasController.MarkPosition::class.java, ::handleMarkPosition)
-        consumeEvent(TriggerCanvasController.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
-        consumeEvent(TriggerCanvasController.SelectTiles::class.java, ::handleSelectTiles)
-        consumeEvent(TriggerCanvasController.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
-        consumeEvent(TriggerCanvasController.SelectArea::class.java, ::handleSelectArea)
-        consumeEvent(TriggerCanvasController.ResetSelectedArea::class.java, ::handleResetSelectedArea)
+        consumeEvent(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
+        consumeEvent(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
+        consumeEvent(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
+        consumeEvent(TriggerCanvasService.SelectTiles::class.java, ::handleSelectTiles)
+        consumeEvent(TriggerCanvasService.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
+        consumeEvent(TriggerCanvasService.SelectArea::class.java, ::handleSelectArea)
+        consumeEvent(TriggerCanvasService.ResetSelectedArea::class.java, ::handleResetSelectedArea)
     }
 
     fun postInit() {
@@ -180,7 +180,7 @@ class CanvasService : EventHandler {
             return
         }
 
-        sendEvent(TriggerMapHolderController.FetchSelectedMap {
+        sendEvent(TriggerMapHolderService.FetchSelectedMap {
             if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
                 sendEvent(TriggerTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos, it.zSelected)))
             }
@@ -244,14 +244,14 @@ class CanvasService : EventHandler {
         if (canvasRenderer.tileItemIdMouseOver != 0L) {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                 if (ImGui.getIO().keyCtrl) { // Delete tile item
-                    sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+                    sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
                         deleteTileItemUnderMouse(currentMap)
                     })
                 } else { // Select tile item
-                    sendEvent(TriggerTileItemController.ChangeSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+                    sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
-                sendEvent(TriggerMapHolderController.FetchSelectedMap { currentMap ->
+                sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
                     if (ImGui.getIO().keyCtrl) { // Replace tile item
                         replaceTileItemUnderMouseWithSelected(currentMap)
                     } else { // Open for edit
@@ -277,14 +277,14 @@ class CanvasService : EventHandler {
         val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
-            TriggerActionController.AddAction(
+            TriggerActionService.AddAction(
                 ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem, selectedTileItem!!)
                 }
             )
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     private fun deleteTileItemUnderMouse(map: Dmm) {
@@ -294,14 +294,14 @@ class CanvasService : EventHandler {
         val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
-            TriggerActionController.AddAction(
+            TriggerActionService.AddAction(
                 ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem)
                 }
             )
         )
 
-        sendEvent(TriggerFrameController.RefreshFrame())
+        sendEvent(TriggerFrameService.RefreshFrame())
     }
 
     private fun openTileItemUnderMouseForEdit(map: Dmm) {

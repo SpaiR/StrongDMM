@@ -7,7 +7,7 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.event.EventHandler
-import strongdmm.event.type.controller.*
+import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
 import strongdmm.window.AppWindow
@@ -18,16 +18,16 @@ class ViewController(
 ) : EventHandler {
     fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(TriggerEnvironmentController.OpenEnvironment(file))
+            sendEvent(TriggerEnvironmentService.OpenEnvironment(file))
         }
     }
 
     fun doOpenRecentEnvironment(environmentPath: String) {
-        sendEvent(TriggerEnvironmentController.OpenEnvironment(File(environmentPath)))
+        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
     fun doClearRecentEnvironments() {
-        sendEvent(TriggerRecentFilesController.ClearRecentEnvironments())
+        sendEvent(TriggerRecentFilesService.ClearRecentEnvironments())
     }
 
     fun doNewMap() {
@@ -35,9 +35,9 @@ class ViewController(
             return
         }
 
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
             NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
-                sendEvent(TriggerMapHolderController.CreateNewMap(file))
+                sendEvent(TriggerMapHolderService.CreateNewMap(file))
             }
         })
     }
@@ -47,9 +47,9 @@ class ViewController(
             return
         }
 
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment { environment ->
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             NfdUtil.selectFile("dmm", environment.absRootDirPath)?.let { path ->
-                sendEvent(TriggerMapHolderController.OpenMap(path))
+                sendEvent(TriggerMapHolderService.OpenMap(path))
             }
         })
     }
@@ -61,41 +61,41 @@ class ViewController(
     }
 
     fun doOpenRecentMap(mapPath: String) {
-        sendEvent(TriggerMapHolderController.OpenMap(File(mapPath)))
+        sendEvent(TriggerMapHolderService.OpenMap(File(mapPath)))
     }
 
     fun doClearRecentMaps() {
-        sendEvent(TriggerRecentFilesController.ClearRecentMaps())
+        sendEvent(TriggerRecentFilesService.ClearRecentMaps())
     }
 
     fun doCloseMap() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderController.CloseSelectedMap())
+            sendEvent(TriggerMapHolderService.CloseSelectedMap())
         }
     }
 
     fun doCloseAllMaps() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderController.CloseAllMaps())
+            sendEvent(TriggerMapHolderService.CloseAllMaps())
         }
     }
 
     fun doSave() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderController.SaveSelectedMap())
+            sendEvent(TriggerMapHolderService.SaveSelectedMap())
         }
     }
 
     fun doSaveAll() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderController.SaveAllMaps())
+            sendEvent(TriggerMapHolderService.SaveAllMaps())
         }
     }
 
     fun doSaveAs() {
-        sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
+        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
             NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
-                sendEvent(TriggerMapHolderController.SaveSelectedMapToFile(file))
+                sendEvent(TriggerMapHolderService.SaveSelectedMapToFile(file))
             }
         })
     }
@@ -105,31 +105,31 @@ class ViewController(
     }
 
     fun doUndo() {
-        sendEvent(TriggerActionController.UndoAction())
+        sendEvent(TriggerActionService.UndoAction())
     }
 
     fun doRedo() {
-        sendEvent(TriggerActionController.RedoAction())
+        sendEvent(TriggerActionService.RedoAction())
     }
 
     fun doCut() {
-        sendEvent(TriggerClipboardController.Cut())
+        sendEvent(TriggerClipboardService.Cut())
     }
 
     fun doCopy() {
-        sendEvent(TriggerClipboardController.Copy())
+        sendEvent(TriggerClipboardService.Copy())
     }
 
     fun doPaste() {
-        sendEvent(TriggerClipboardController.Paste())
+        sendEvent(TriggerClipboardService.Paste())
     }
 
     fun doDelete() {
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
+        sendEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
     }
 
     fun doDeselectAll() {
-        sendEvent(TriggerToolsController.ResetTool())
+        sendEvent(TriggerToolsService.ResetTool())
     }
 
     fun doSetMapSize() {
@@ -206,9 +206,9 @@ class ViewController(
 
     fun toggleLayer(layerStatus: ImBool, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(TriggerLayersFilterController.ShowLayersByType(layerType))
+            sendEvent(TriggerLayersFilterService.ShowLayersByType(layerType))
         } else {
-            sendEvent(TriggerLayersFilterController.HideLayersByType(layerType))
+            sendEvent(TriggerLayersFilterService.HideLayersByType(layerType))
         }
     }
 }

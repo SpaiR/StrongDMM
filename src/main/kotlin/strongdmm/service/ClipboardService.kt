@@ -5,7 +5,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.*
+import strongdmm.event.type.service.*
 import strongdmm.util.OUT_OF_BOUNDS
 
 class ClipboardService : EventHandler {
@@ -15,9 +15,9 @@ class ClipboardService : EventHandler {
     init {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(TriggerClipboardController.Cut::class.java, ::handleCut)
-        consumeEvent(TriggerClipboardController.Copy::class.java, ::handleCopy)
-        consumeEvent(TriggerClipboardController.Paste::class.java, ::handlePaste)
+        consumeEvent(TriggerClipboardService.Cut::class.java, ::handleCut)
+        consumeEvent(TriggerClipboardService.Copy::class.java, ::handleCopy)
+        consumeEvent(TriggerClipboardService.Paste::class.java, ::handlePaste)
     }
 
     private fun handleEnvironmentReset() {
@@ -29,14 +29,14 @@ class ClipboardService : EventHandler {
     }
 
     private fun handleCut() {
-        sendEvent(TriggerClipboardController.Copy())
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
+        sendEvent(TriggerClipboardService.Copy())
+        sendEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
     }
 
     private fun handleCopy() {
-        sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-            sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
-                sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredLayers ->
+                sendEvent(TriggerToolsService.FetchSelectedArea { selectedArea ->
                     val width = selectedArea.x2 - selectedArea.x1 + 1
                     val height = selectedArea.y2 - selectedArea.y1 + 1
                     val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
@@ -56,7 +56,7 @@ class ClipboardService : EventHandler {
 
     private fun handlePaste() {
         if (!currentMapPos.isOutOfBounds() && tileItems != null) {
-            sendEvent(TriggerMapModifierController.FillSelectedMapPositionWithTileItems(tileItems!!))
+            sendEvent(TriggerMapModifierService.FillSelectedMapPositionWithTileItems(tileItems!!))
         }
     }
 }

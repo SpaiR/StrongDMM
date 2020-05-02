@@ -6,11 +6,11 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
-import strongdmm.service.action.ActionStatus
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.service.action.ActionStatus
 import java.io.File
 
 class EventController(

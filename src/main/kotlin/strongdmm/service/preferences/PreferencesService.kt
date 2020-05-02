@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
-import strongdmm.event.type.controller.TriggerPreferencesController
+import strongdmm.event.type.service.TriggerPreferencesService
 import java.io.File
 
 class PreferencesService : EventHandler {
@@ -15,7 +15,7 @@ class PreferencesService : EventHandler {
     private lateinit var preferences: Preferences
 
     init {
-        consumeEvent(TriggerPreferencesController.SavePreferences::class.java, ::handleSavePreferences)
+        consumeEvent(TriggerPreferencesService.SavePreferences::class.java, ::handleSavePreferences)
     }
 
     fun postInit() {

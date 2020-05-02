@@ -4,10 +4,10 @@ import gnu.trove.map.hash.TObjectIntHashMap
 import imgui.ImBool
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
+import strongdmm.event.Event
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.service.preferences.Preferences
-import strongdmm.event.Event
 
 abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)

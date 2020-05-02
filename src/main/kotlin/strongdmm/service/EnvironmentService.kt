@@ -7,7 +7,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.controller.TriggerEnvironmentController
+import strongdmm.event.type.service.TriggerEnvironmentService
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -15,8 +15,8 @@ class EnvironmentService : EventHandler {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(TriggerEnvironmentController.OpenEnvironment::class.java, ::handleOpenEnvironment)
-        consumeEvent(TriggerEnvironmentController.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
+        consumeEvent(TriggerEnvironmentService.OpenEnvironment::class.java, ::handleOpenEnvironment)
+        consumeEvent(TriggerEnvironmentService.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
     }
 
     private fun handleOpenEnvironment(event: Event<File, Unit>) {
