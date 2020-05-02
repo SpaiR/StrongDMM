@@ -1,8 +1,8 @@
 Fixes:
- * Possible fix of crush when editing variables.
+ * Crush when editing variables.
 
 Tweaks:
- * Turfs dir could be changed with "easy-dir switcher" from tile popup.
+ * "Easy-dir switcher" in tile popup is available for turfs.
 
 -------------------------
  v1.1.0 (2020-04-18)
