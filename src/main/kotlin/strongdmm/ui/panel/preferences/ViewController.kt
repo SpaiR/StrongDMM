@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.preferences
 
 import imgui.ImBool
-import strongdmm.controller.preferences.Selectable
+import strongdmm.service.preferences.Selectable
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerPreferencesController

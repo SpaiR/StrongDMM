@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.level_switch
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.controller.shortcut.Shortcut
-import strongdmm.controller.shortcut.refactor.ShortcutHandler
+import strongdmm.service.shortcut.Shortcut
+import strongdmm.service.shortcut.refactor.ShortcutHandler
 import strongdmm.event.EventHandler
 
 class ShortcutController(

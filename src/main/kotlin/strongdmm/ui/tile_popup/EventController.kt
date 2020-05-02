@@ -2,8 +2,8 @@ package strongdmm.ui.tile_popup
 
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.controller.action.ActionStatus
-import strongdmm.controller.preferences.Preferences
+import strongdmm.service.action.ActionStatus
+import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider

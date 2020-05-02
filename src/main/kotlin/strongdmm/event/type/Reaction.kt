@@ -5,9 +5,9 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.MapSize
 import strongdmm.byond.dmm.TileItem
-import strongdmm.controller.action.ActionStatus
-import strongdmm.controller.shortcut.Shortcut
-import strongdmm.controller.tool.ToolType
+import strongdmm.service.action.ActionStatus
+import strongdmm.service.shortcut.Shortcut
+import strongdmm.service.tool.ToolType
 import strongdmm.event.Event
 import java.io.File
 

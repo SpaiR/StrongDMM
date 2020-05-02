@@ -3,7 +3,7 @@ package strongdmm.ui.tile_popup
 import gnu.trove.map.hash.TIntObjectHashMap
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.controller.preferences.Preferences
+import strongdmm.service.preferences.Preferences
 
 class State {
     lateinit var providedPreferences: Preferences

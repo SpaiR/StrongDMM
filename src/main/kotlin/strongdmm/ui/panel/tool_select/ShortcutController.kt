@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.tool_select
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.controller.shortcut.refactor.ShortcutHandler
+import strongdmm.service.shortcut.refactor.ShortcutHandler
 import strongdmm.event.EventHandler
 
 class ShortcutController(

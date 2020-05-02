@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.preferences
 
-import strongdmm.controller.preferences.Preferences
+import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider

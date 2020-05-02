@@ -5,9 +5,9 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiMouseButton
 import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiStyleVar
-import strongdmm.controller.preferences.MapSaveMode
-import strongdmm.controller.preferences.NudgeMode
-import strongdmm.controller.preferences.Selectable
+import strongdmm.service.preferences.MapSaveMode
+import strongdmm.service.preferences.NudgeMode
+import strongdmm.service.preferences.Selectable
 import strongdmm.util.imgui.*
 
 class View(

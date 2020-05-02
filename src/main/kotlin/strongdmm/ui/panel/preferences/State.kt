@@ -1,10 +1,10 @@
 package strongdmm.ui.panel.preferences
 
 import imgui.ImBool
-import strongdmm.controller.preferences.MapSaveMode
-import strongdmm.controller.preferences.NudgeMode
-import strongdmm.controller.preferences.Preferences
-import strongdmm.controller.preferences.Selectable
+import strongdmm.service.preferences.MapSaveMode
+import strongdmm.service.preferences.NudgeMode
+import strongdmm.service.preferences.Preferences
+import strongdmm.service.preferences.Selectable
 
 class State {
     lateinit var providedPreferences: Preferences

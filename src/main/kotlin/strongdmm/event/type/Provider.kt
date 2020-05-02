@@ -4,9 +4,9 @@ import gnu.trove.map.hash.TObjectIntHashMap
 import imgui.ImBool
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
-import strongdmm.controller.frame.FrameMesh
-import strongdmm.controller.frame.FramedTile
-import strongdmm.controller.preferences.Preferences
+import strongdmm.service.frame.FrameMesh
+import strongdmm.service.frame.FramedTile
+import strongdmm.service.preferences.Preferences
 import strongdmm.event.Event
 
 abstract class Provider {

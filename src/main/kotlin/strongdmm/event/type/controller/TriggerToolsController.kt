@@ -1,7 +1,7 @@
 package strongdmm.event.type.controller
 
 import strongdmm.byond.dmm.MapArea
-import strongdmm.controller.tool.ToolType
+import strongdmm.service.tool.ToolType
 import strongdmm.event.Event
 
 abstract class TriggerToolsController {

@@ -3,7 +3,7 @@ package strongdmm.ui.tile_popup
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.controller.action.undoable.ReplaceTileAction
+import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*

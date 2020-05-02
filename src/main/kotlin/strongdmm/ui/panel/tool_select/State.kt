@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.tool_select
 
-import strongdmm.controller.tool.ToolType
+import strongdmm.service.tool.ToolType
 
 class State {
     val tools: Array<ToolType> = ToolType.values()

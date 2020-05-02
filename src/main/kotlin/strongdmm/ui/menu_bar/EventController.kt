@@ -6,7 +6,7 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
-import strongdmm.controller.action.ActionStatus
+import strongdmm.service.action.ActionStatus
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider

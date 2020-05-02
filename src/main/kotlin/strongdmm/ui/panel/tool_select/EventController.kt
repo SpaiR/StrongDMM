@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.tool_select
 
-import strongdmm.controller.tool.ToolType
+import strongdmm.service.tool.ToolType
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction

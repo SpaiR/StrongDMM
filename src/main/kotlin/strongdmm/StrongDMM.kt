@@ -1,16 +1,16 @@
 package strongdmm
 
 import org.slf4j.LoggerFactory
-import strongdmm.controller.*
-import strongdmm.controller.action.ActionController
-import strongdmm.controller.canvas.CanvasController
-import strongdmm.controller.frame.FrameController
-import strongdmm.controller.map.MapHolderController
-import strongdmm.controller.map.MapModifierController
-import strongdmm.controller.preferences.PreferencesController
-import strongdmm.controller.recent.RecentFilesController
-import strongdmm.controller.shortcut.ShortcutController
-import strongdmm.controller.tool.ToolsController
+import strongdmm.service.*
+import strongdmm.service.action.ActionService
+import strongdmm.service.canvas.CanvasService
+import strongdmm.service.frame.FrameService
+import strongdmm.service.map.MapHolderService
+import strongdmm.service.map.MapModifierService
+import strongdmm.service.preferences.PreferencesService
+import strongdmm.service.recent.RecentFilesService
+import strongdmm.service.shortcut.ShortcutService
+import strongdmm.service.tool.ToolsService
 import strongdmm.ui.WindowTitleUi
 import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
 import strongdmm.ui.dialog.close_map.CloseMapDialogUi
@@ -60,23 +60,23 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val aboutPanelUi = AboutPanelUi()
     private val changelogPanelUi = ChangelogPanelUi()
 
-    private val environmentController = EnvironmentController()
-    private val mapHolderController = MapHolderController()
-    private val mapModifierController = MapModifierController()
-    private val canvasController = CanvasController()
-    private val frameController = FrameController()
-    private val actionController = ActionController()
-    private val instanceController = InstanceController()
-    private val layersFilterController = LayersFilterController()
-    private val toolsController = ToolsController()
-    private val shortcutController = ShortcutController()
-    private val clipboardController = ClipboardController()
-    private val tileItemController = TileItemController()
-    private val recentFilesController = RecentFilesController()
-    private val preferencesController = PreferencesController()
-    private val changelogController = ChangelogController()
+    private val environmentController = EnvironmentService()
+    private val mapHolderController = MapHolderService()
+    private val mapModifierController = MapModifierService()
+    private val canvasController = CanvasService()
+    private val frameController = FrameService()
+    private val actionController = ActionService()
+    private val instanceController = InstanceService()
+    private val layersFilterController = LayersFilterService()
+    private val toolsController = ToolsService()
+    private val shortcutController = ShortcutService()
+    private val clipboardController = ClipboardService()
+    private val tileItemController = TileItemService()
+    private val recentFilesController = RecentFilesService()
+    private val preferencesController = PreferencesService()
+    private val changelogController = ChangelogService()
 
-    private val applicationCloseController = ApplicationCloseController()
+    private val applicationCloseController = ApplicationCloseService()
 
     init {
         ensureHomeDirExists()

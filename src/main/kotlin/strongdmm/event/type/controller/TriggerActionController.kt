@@ -1,7 +1,7 @@
 package strongdmm.event.type.controller
 
 import strongdmm.byond.dmm.Dmm
-import strongdmm.controller.action.undoable.Undoable
+import strongdmm.service.action.undoable.Undoable
 import strongdmm.event.Event
 
 abstract class TriggerActionController {
