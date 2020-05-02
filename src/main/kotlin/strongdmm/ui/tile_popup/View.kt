@@ -1,13 +1,10 @@
 package strongdmm.ui.tile_popup
 
 import imgui.ImGui.*
-import strongdmm.byond.TYPE_MOB
-import strongdmm.byond.TYPE_OBJ
-import strongdmm.byond.dirToStr
+import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.byond.relToDir
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
@@ -67,14 +64,20 @@ class View(
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        if (tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)) {
+        val isMovable = tileItem.isType(TYPE_OBJ) || tileItem.isType(TYPE_MOB)
+
+        if (isMovable) {
             showNudgeOption(true, tile, tileItem, tileItemIdx)
             showNudgeOption(false, tile, tileItem, tileItemIdx)
-
             separator()
+        }
+
+        if (!tileItem.isType(TYPE_AREA)) {
             showDirOption(tile, tileItem, tileItemIdx)
             separator()
+        }
 
+        if (isMovable) {
             menuItem("Move To Top##move_to_top_$tileItemIdx") {
                 viewController.doMoveToTop(tile, tileItem, tileItemIdx)
             }
