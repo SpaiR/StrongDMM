@@ -1,6 +1,8 @@
 package strongdmm.ui.tile_popup
 
-class TilePopupUi {
+import strongdmm.Processable
+
+class TilePopupUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class TilePopupUi {
         eventController.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

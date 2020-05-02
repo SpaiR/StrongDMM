@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.opened_maps
 
-class OpenedMapsPanelUi {
+import strongdmm.Processable
+
+class OpenedMapsPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -10,7 +12,7 @@ class OpenedMapsPanelUi {
         view.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

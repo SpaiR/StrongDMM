@@ -1,6 +1,8 @@
 package strongdmm.ui.dialog.set_map_size
 
-class SetMapSizeDialogUi {
+import strongdmm.Processable
+
+class SetMapSizeDialogUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -10,7 +12,7 @@ class SetMapSizeDialogUi {
         view.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

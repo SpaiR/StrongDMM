@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.environment_tree
 
-class EnvironmentTreePanelUi {
+import strongdmm.Processable
+
+class EnvironmentTreePanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -10,7 +12,7 @@ class EnvironmentTreePanelUi {
         view.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

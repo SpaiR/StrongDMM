@@ -1,11 +1,13 @@
 package strongdmm.ui.panel.coords
 
-class CoordsPanelUi {
+import strongdmm.Processable
+
+class CoordsPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val eventController = EventController(state)
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

@@ -1,8 +1,9 @@
 package strongdmm.ui.panel.instance_locator
 
 import strongdmm.PostInitialize
+import strongdmm.Processable
 
-class InstanceLocatorPanelUi : PostInitialize {
+class InstanceLocatorPanelUi : Processable, PostInitialize {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -17,7 +18,7 @@ class InstanceLocatorPanelUi : PostInitialize {
         eventController.postInit()
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

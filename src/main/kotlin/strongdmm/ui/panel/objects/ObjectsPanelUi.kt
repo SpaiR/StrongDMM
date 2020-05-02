@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.objects
 
-class ObjectsPanelUi {
+import strongdmm.Processable
+
+class ObjectsPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class ObjectsPanelUi {
         eventController.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

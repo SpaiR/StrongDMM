@@ -1,6 +1,8 @@
 package strongdmm.ui.menu_bar
 
-class MenuBarUi {
+import strongdmm.Processable
+
+class MenuBarUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class MenuBarUi {
         view.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

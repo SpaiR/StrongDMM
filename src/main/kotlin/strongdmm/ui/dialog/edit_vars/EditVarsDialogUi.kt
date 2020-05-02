@@ -1,6 +1,8 @@
 package strongdmm.ui.dialog.edit_vars
 
-class EditVarsDialogUi {
+import strongdmm.Processable
+
+class EditVarsDialogUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class EditVarsDialogUi {
         eventController.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

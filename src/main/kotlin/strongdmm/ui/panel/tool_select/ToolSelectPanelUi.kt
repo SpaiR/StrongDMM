@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.tool_select
 
-class ToolSelectPanelUi {
+import strongdmm.Processable
+
+class ToolSelectPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController()
@@ -12,7 +14,7 @@ class ToolSelectPanelUi {
         shortcutController.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

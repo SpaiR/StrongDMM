@@ -1,11 +1,13 @@
 package strongdmm.ui.panel.changelog
 
-class ChangelogPanelUi {
+import strongdmm.Processable
+
+class ChangelogPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val eventController = EventController(state)
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }

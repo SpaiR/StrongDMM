@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.search_result
 
-class SearchResultPanelUi {
+import strongdmm.Processable
+
+class SearchResultPanelUi : Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class SearchResultPanelUi {
         eventController.viewController = viewController
     }
 
-    fun process() {
+    override fun process() {
         view.process()
     }
 }
