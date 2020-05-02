@@ -1,5 +1,6 @@
 package strongdmm.service.frame
 
+import strongdmm.PostInitialize
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmi.GlobalDmiHolder
@@ -15,7 +16,7 @@ import strongdmm.event.type.service.TriggerLayersFilterService
 import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.util.DEFAULT_ICON_SIZE
 
-class FrameService : EventHandler {
+class FrameService : EventHandler, PostInitialize {
     companion object {
         private const val PLANE_DEPTH: Short = 10000
         private const val LAYER_DEPTH: Short = 1000
@@ -39,7 +40,7 @@ class FrameService : EventHandler {
         consumeEvent(TriggerFrameService.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
-    fun postInit() {
+    override fun postInit() {
         sendEvent(Provider.FrameControllerComposedFrame(cache))
         sendEvent(Provider.FrameControllerFramedTiles(framedTiles))
     }

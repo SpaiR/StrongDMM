@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.instance_locator
 
-class InstanceLocatorPanelUi {
+import strongdmm.PostInitialize
+
+class InstanceLocatorPanelUi : PostInitialize {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
@@ -11,7 +13,7 @@ class InstanceLocatorPanelUi {
         eventController.viewController = viewController
     }
 
-    fun postInit() {
+    override fun postInit() {
         eventController.postInit()
     }
 

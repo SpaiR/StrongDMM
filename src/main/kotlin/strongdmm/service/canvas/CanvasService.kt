@@ -7,6 +7,7 @@ import imgui.ImVec2
 import imgui.enums.ImGuiHoveredFlags
 import imgui.enums.ImGuiMouseButton
 import org.lwjgl.glfw.GLFW
+import strongdmm.PostInitialize
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
@@ -29,7 +30,7 @@ import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.AppWindow
 import java.util.*
 
-class CanvasService : EventHandler {
+class CanvasService : EventHandler, PostInitialize {
     companion object {
         private const val ZOOM_FACTOR: Double = 1.5
         private const val MIN_SCALE: Int = 0
@@ -87,7 +88,7 @@ class CanvasService : EventHandler {
         consumeEvent(TriggerCanvasService.ResetSelectedArea::class.java, ::handleResetSelectedArea)
     }
 
-    fun postInit() {
+    override fun postInit() {
         sendEvent(Provider.CanvasControllerFrameAreas(frameAreas))
     }
 

@@ -1,12 +1,13 @@
 package strongdmm.service
 
+import strongdmm.PostInitialize
 import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.ui.TriggerChangelogPanelUi
 import java.io.File
 
-class ChangelogService : EventHandler {
+class ChangelogService : EventHandler, PostInitialize {
     companion object {
         private val lastOpenedChangelogHashFile: File = File(StrongDMM.homeDir.toFile(), "loch.dat")
     }
@@ -15,7 +16,7 @@ class ChangelogService : EventHandler {
         it.readAllBytes().toString(Charsets.UTF_8)
     }
 
-    fun postInit() {
+    override fun postInit() {
         sendEvent(Provider.ChangelogControllerChangelogText(changelogText))
 
         if (!lastOpenedChangelogHashFile.exists()) {

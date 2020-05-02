@@ -1,6 +1,7 @@
 package strongdmm.service.action
 
 import gnu.trove.map.hash.TObjectIntHashMap
+import strongdmm.PostInitialize
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
@@ -13,7 +14,7 @@ import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
-class ActionService : EventHandler {
+class ActionService : EventHandler, PostInitialize {
     private val actionStacks: MutableMap<Dmm, ActionStack> = mutableMapOf()
     private val actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
 
@@ -27,7 +28,7 @@ class ActionService : EventHandler {
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
-    fun postInit() {
+    override fun postInit() {
         sendEvent(Provider.ActionControllerActionBalanceStorage(actionBalanceStorage))
     }
 
