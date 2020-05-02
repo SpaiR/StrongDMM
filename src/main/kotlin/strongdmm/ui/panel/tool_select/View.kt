@@ -28,9 +28,9 @@ class View(
 
         window(TITLE, FLAGS) {
             state.tools.forEach { tool ->
-                val isToolActive = tool == state.activeTool
+                val isToolSelected = tool == state.selectedTool
 
-                if (isToolActive) {
+                if (isToolSelected) {
                     pushStyleColor(ImGuiCol.Button, 0f, .5f, 0f, 1f)
                     pushStyleColor(ImGuiCol.ButtonHovered, 0f, .8f, 0f, 1f)
                     pushStyleColor(ImGuiCol.ButtonActive, 0f, .5f, 0f, 1f)
@@ -44,7 +44,7 @@ class View(
                     setTooltip(tool.toolDesc)
                 }
 
-                if (isToolActive) {
+                if (isToolSelected) {
                     popStyleColor(3)
                 }
 

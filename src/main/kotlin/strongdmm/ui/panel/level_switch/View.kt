@@ -37,7 +37,7 @@ class View(
                     showDisabledSwitch("<")
                 } else {
                     if (smallButton("<")) {
-                        viewController.doDecreaseActiveZ()
+                        viewController.doDecreaseSelectedZ()
                     }
 
                     setItemHoveredTooltip("Prev Z level (Ctrl+Left Arrow)")
@@ -51,7 +51,7 @@ class View(
                     showDisabledSwitch(">")
                 } else {
                     if (smallButton(">")) {
-                        viewController.doIncreaseActiveZ()
+                        viewController.doIncreaseSelectedZ()
                     }
 
                     setItemHoveredTooltip("Next Z level (Ctrl+Right Arrow)")

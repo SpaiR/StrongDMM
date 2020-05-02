@@ -240,7 +240,7 @@ class MapHolderController : EventSender, EventConsumer {
             }
 
             map.zSelected = event.body
-            sendEvent(Reaction.SelectedMapZActiveChanged(map.zSelected))
+            sendEvent(Reaction.SelectedMapZSelectedChanged(map.zSelected))
         }
     }
 

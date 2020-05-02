@@ -7,6 +7,6 @@ import strongdmm.event.Event
 abstract class TriggerToolsController {
     class ChangeTool(body: ToolType) : Event<ToolType, Unit>(body, null)
     class ResetTool : Event<Unit, Unit>(Unit, null)
-    class FetchActiveArea(callback: ((MapArea) -> Unit)) : Event<Unit, MapArea>(Unit, callback)
-    class SelectActiveArea(body: MapArea) : Event<MapArea, Unit>(body, null)
+    class FetchSelectedArea(callback: ((MapArea) -> Unit)) : Event<Unit, MapArea>(Unit, callback)
+    class SelectArea(body: MapArea) : Event<MapArea, Unit>(body, null)
 }

@@ -99,11 +99,11 @@ class View(
         }
 
         menuItem(
-            "Replace With Active Object##replace_with_active_object_$tileItemIdx",
+            "Replace With Selected Object##replace_with_selected_object_$tileItemIdx",
             shortcut = "Ctrl+Shift+RMB",
             enabled = viewController.isSameTypeAsSelectedObject(tileItem)
         ) {
-            viewController.doReplaceWithActiveObject(tile, tileItemIdx)
+            viewController.doReplaceWithSelectedTileItem(tile, tileItemIdx)
         }
 
         menuItem("Reset to Default##reset_to_default_$tileItemIdx") {

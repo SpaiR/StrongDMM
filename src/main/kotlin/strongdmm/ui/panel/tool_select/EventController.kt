@@ -13,6 +13,6 @@ class EventController(
     }
 
     private fun handleSelectedToolChanged(event: Event<ToolType, Unit>) {
-        state.activeTool = event.body
+        state.selectedTool = event.body
     }
 }

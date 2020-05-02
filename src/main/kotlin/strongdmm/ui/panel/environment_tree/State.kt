@@ -13,7 +13,7 @@ class State {
     var currentEnvironment: Dme? = null
     val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
 
-    var activeTileItemType: String = ""
+    var selectedTileItemType: String = ""
     var isSelectedInCycle: Boolean = false
 
     var isDoCollapseAll: Boolean = false

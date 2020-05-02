@@ -16,7 +16,7 @@ class MapModifierController : EventConsumer, EventSender {
 
     init {
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea::class.java, ::handleDeleteTileItemsInActiveArea)
+        consumeEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea::class.java, ::handleDeleteTileItemsInSelectedArea)
         consumeEvent(TriggerMapModifierController.FillSelectedMapPositionWithTileItems::class.java, ::handleFillSelectedMapPositionWithTileItems)
         consumeEvent(TriggerMapModifierController.ReplaceTileItemsWithTypeInPositions::class.java, ::handleReplaceTileItemsWithTypeInPositions)
         consumeEvent(TriggerMapModifierController.ReplaceTileItemsWithIdInPositions::class.java, ::handleReplaceTileItemsWithIdInPositions)
@@ -29,14 +29,14 @@ class MapModifierController : EventConsumer, EventSender {
         currentMapPos = event.body
     }
 
-    private fun handleDeleteTileItemsInActiveArea() {
+    private fun handleDeleteTileItemsInSelectedArea() {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
-                sendEvent(TriggerToolsController.FetchActiveArea { activeArea ->
+                sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
                     val reverseActions = mutableListOf<Undoable>()
 
-                    for (x in (activeArea.x1..activeArea.x2)) {
-                        for (y in (activeArea.y1..activeArea.y2)) {
+                    for (x in (selectedArea.x1..selectedArea.x2)) {
+                        for (y in (selectedArea.y1..selectedArea.y2)) {
                             val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
                             val initialTileItems = tile.getTileItemsId()
 
@@ -99,7 +99,7 @@ class MapModifierController : EventConsumer, EventSender {
 
                 if (reverseActions.isNotEmpty()) {
                     sendEvent(TriggerActionController.AddAction(MultiAction(reverseActions)))
-                    sendEvent(TriggerToolsController.SelectActiveArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
+                    sendEvent(TriggerToolsController.SelectArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
                     sendEvent(TriggerFrameController.RefreshFrame())
                 }
             })

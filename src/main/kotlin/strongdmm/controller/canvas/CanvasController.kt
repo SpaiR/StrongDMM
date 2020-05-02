@@ -40,7 +40,7 @@ class CanvasController : EventSender, EventConsumer {
     private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
     private lateinit var renderData: RenderData
 
-    private var activeTileItem: TileItem? = null
+    private var selectedTileItem: TileItem? = null
 
     private var isCanvasBlocked: Boolean = false
 
@@ -74,7 +74,7 @@ class CanvasController : EventSender, EventConsumer {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
-        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         consumeEvent(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
         consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
         consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
@@ -268,7 +268,7 @@ class CanvasController : EventSender, EventConsumer {
     }
 
     private fun replaceTileItemUnderMouseWithSelected(map: Dmm) {
-        if (activeTileItem == null) {
+        if (selectedTileItem == null) {
             return
         }
 
@@ -280,7 +280,7 @@ class CanvasController : EventSender, EventConsumer {
         sendEvent(
             TriggerActionController.AddAction(
                 ReplaceTileAction(tile) {
-                    tile.replaceTileItem(tileItem, activeTileItem!!)
+                    tile.replaceTileItem(tileItem, selectedTileItem!!)
                 }
             )
         )
@@ -367,8 +367,8 @@ class CanvasController : EventSender, EventConsumer {
         canvasRenderer.redraw = true
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
-        activeTileItem = event.body
+    private fun handleSelectedTileItemChanged(event: Event<TileItem?, Unit>) {
+        selectedTileItem = event.body
     }
 
     private fun handleTilePopupOpened() {

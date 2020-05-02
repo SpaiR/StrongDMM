@@ -15,7 +15,7 @@ class SelectComplexTool : ComplexTool(), EventSender {
     override var currentTool: Tool = add
 
     override fun onStart(mapPos: MapPos) {
-        if (currentTool is SelectMoveAreaTool && !move.selectedArea.isInBounds(mapPos.x, mapPos.y)) {
+        if (currentTool is SelectMoveAreaTool && !move.currentSelectedArea.isInBounds(mapPos.x, mapPos.y)) {
             currentTool = add
         }
 
@@ -27,9 +27,9 @@ class SelectComplexTool : ComplexTool(), EventSender {
 
         if (currentTool is SelectAddAreaTool) {
             currentTool = move
-            move.selectedArea = add.selectedArea
+            move.currentSelectedArea = add.currentSelectedArea
         } else {
-            add.selectedArea = move.selectedArea
+            add.currentSelectedArea = move.currentSelectedArea
         }
     }
 
@@ -41,7 +41,7 @@ class SelectComplexTool : ComplexTool(), EventSender {
         // unused
     }
 
-    override fun getActiveArea(): MapArea = currentTool.getActiveArea()
+    override fun getSelectedArea(): MapArea = currentTool.getSelectedArea()
 
     override fun reset() {
         add.reset()
@@ -56,7 +56,7 @@ class SelectComplexTool : ComplexTool(), EventSender {
 
     fun selectArea(area: MapArea) {
         reset()
-        add.selectedArea = area
+        add.currentSelectedArea = area
         onStop()
         sendEvent(TriggerCanvasController.SelectArea(area))
     }

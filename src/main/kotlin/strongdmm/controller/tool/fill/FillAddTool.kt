@@ -24,10 +24,10 @@ class FillAddTool : Tool(), EventSender {
     private var x2: Int = 0
     private var y2: Int = 0
 
-    private var activeTileItem: TileItem? = null
+    private var selectedTileItem: TileItem? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = activeTileItem != null
+        isActive = selectedTileItem != null
 
         if (isActive) {
             xStart = mapPos.x
@@ -47,7 +47,7 @@ class FillAddTool : Tool(), EventSender {
                     val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
 
                     reverseActions.add(ReplaceTileAction(tile) {
-                        tile.addTileItem(activeTileItem!!)
+                        tile.addTileItem(selectedTileItem!!)
                     })
                 }
             }
@@ -66,7 +66,7 @@ class FillAddTool : Tool(), EventSender {
     }
 
     override fun onTileItemSwitch(tileItem: TileItem?) {
-        activeTileItem = tileItem
+        selectedTileItem = tileItem
     }
 
     override fun reset() {
@@ -76,7 +76,7 @@ class FillAddTool : Tool(), EventSender {
 
     override fun destroy() {
         reset()
-        activeTileItem = null
+        selectedTileItem = null
     }
 
     private fun fillAreaRect(x: Int, y: Int) {

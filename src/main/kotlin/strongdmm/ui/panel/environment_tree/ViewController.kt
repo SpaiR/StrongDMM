@@ -46,7 +46,7 @@ class ViewController(
     }
 
     fun getTreeNodeSelectedFlag(dmeItem: DmeItem): Int {
-        return if (dmeItem.type == state.activeTileItemType) ImGuiTreeNodeFlags.Selected else 0
+        return if (dmeItem.type == state.selectedTileItemType) ImGuiTreeNodeFlags.Selected else 0
     }
 
     fun isFilteredNode(dmeItem: DmeItem): Boolean {

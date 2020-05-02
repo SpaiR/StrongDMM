@@ -36,7 +36,7 @@ class ViewController(
     }
 
     fun doDelete() {
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
     }
 
     fun doDeselectAll() {
@@ -81,11 +81,11 @@ class ViewController(
         sendEvent(TriggerFrameController.RefreshFrame())
     }
 
-    fun doReplaceWithActiveObject(tile: Tile, tileItemIdx: Int) {
-        state.selectedTileItem?.let { activeTileItem ->
+    fun doReplaceWithSelectedTileItem(tile: Tile, tileItemIdx: Int) {
+        state.selectedTileItem?.let { selectedTileItem ->
             sendEvent(
                 TriggerActionController.AddAction(ReplaceTileAction(tile) {
-                    tile.replaceTileItem(tileItemIdx, activeTileItem)
+                    tile.replaceTileItem(tileItemIdx, selectedTileItem)
                 })
             )
 

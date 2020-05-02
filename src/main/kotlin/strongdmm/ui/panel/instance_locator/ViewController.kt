@@ -36,11 +36,11 @@ class ViewController(
     }
 
     fun doSelection() {
-        sendEvent(TriggerToolsController.FetchActiveArea { activeArea ->
-            state.searchX1.set(activeArea.x1)
-            state.searchY1.set(activeArea.y1)
-            state.searchX2.set(activeArea.x2)
-            state.searchY2.set(activeArea.y2)
+        sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
+            state.searchX1.set(selectedArea.x1)
+            state.searchY1.set(selectedArea.y1)
+            state.searchX2.set(selectedArea.x2)
+            state.searchY2.set(selectedArea.y2)
         })
     }
 

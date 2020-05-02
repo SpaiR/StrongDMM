@@ -38,7 +38,7 @@ class EventController(
     }
 
     private fun handleSelectedTileItemChanged(event: Event<TileItem?, Unit>) {
-        state.activeTileItemType = event.body?.type ?: ""
+        state.selectedTileItemType = event.body?.type ?: ""
     }
 
     private fun handleRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {

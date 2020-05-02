@@ -13,7 +13,7 @@ class SelectAddAreaTool : Tool(), EventSender {
     private var xStart: Int = 0
     private var yStart: Int = 0
 
-    var selectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
+    var currentSelectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
 
     override fun onStart(mapPos: MapPos) {
         isActive = true
@@ -37,11 +37,11 @@ class SelectAddAreaTool : Tool(), EventSender {
         // unused
     }
 
-    override fun getActiveArea(): MapArea = selectedArea
+    override fun getSelectedArea(): MapArea = currentSelectedArea
 
     override fun reset() {
         isActive = false
-        selectedArea = MapArea.OUT_OF_BOUNDS_AREA
+        currentSelectedArea = MapArea.OUT_OF_BOUNDS_AREA
         sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 
@@ -54,7 +54,7 @@ class SelectAddAreaTool : Tool(), EventSender {
         val y1 = min(yStart, y)
         val x2 = max(xStart, x)
         val y2 = max(yStart, y)
-        selectedArea = MapArea(x1, y1, x2, y2)
-        sendEvent(TriggerCanvasController.SelectArea(selectedArea))
+        currentSelectedArea = MapArea(x1, y1, x2, y2)
+        sendEvent(TriggerCanvasController.SelectArea(currentSelectedArea))
     }
 }

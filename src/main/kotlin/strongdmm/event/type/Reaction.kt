@@ -22,7 +22,7 @@ abstract class Reaction {
     class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
     class SelectedMapClosed : Event<Unit, Unit>(Unit, null)
     class OpenedMapClosed(body: Dmm) : Event<Dmm, Unit>(body, null)
-    class SelectedMapZActiveChanged(zSelected: Int) : Event<Int, Unit>(zSelected, null)
+    class SelectedMapZSelectedChanged(zSelected: Int) : Event<Int, Unit>(zSelected, null)
     class SelectedMapMapSizeChanged(body: MapSize) : Event<MapSize, Unit>(body, null)
 
     class MapMousePosChanged(body: MapPos) : Event<MapPos, Unit>(body, null)

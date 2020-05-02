@@ -6,11 +6,11 @@ import strongdmm.event.type.controller.TriggerMapHolderController
 class ViewController(
     private val state: State
 ) : EventHandler {
-    fun doDecreaseActiveZ() {
+    fun doDecreaseSelectedZ() {
         sendEvent(TriggerMapHolderController.ChangeSelectedZ(state.selectedMap!!.zSelected - 1))
     }
 
-    fun doIncreaseActiveZ() {
+    fun doIncreaseSelectedZ() {
         sendEvent(TriggerMapHolderController.ChangeSelectedZ(state.selectedMap!!.zSelected + 1))
     }
 

@@ -125,7 +125,7 @@ class ViewController(
     }
 
     fun doDelete() {
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
     }
 
     fun doDeselectAll() {

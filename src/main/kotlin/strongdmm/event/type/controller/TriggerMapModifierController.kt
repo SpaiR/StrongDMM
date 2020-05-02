@@ -6,7 +6,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 
 abstract class TriggerMapModifierController {
-    class DeleteTileItemsInActiveArea : Event<Unit, Unit>(Unit, null)
+    class DeleteTileItemsInSelectedArea : Event<Unit, Unit>(Unit, null)
     class FillSelectedMapPositionWithTileItems(body: Array<Array<List<TileItem>>>) : Event<Array<Array<List<TileItem>>>, Unit>(body, null)
 
     class ReplaceTileItemsWithTypeInPositions(body: Pair<String, List<Pair<TileItem, MapPos>>>) :

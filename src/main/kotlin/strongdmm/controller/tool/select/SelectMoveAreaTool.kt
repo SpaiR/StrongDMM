@@ -26,8 +26,8 @@ class SelectMoveAreaTool : Tool(), EventSender {
 
     private var filteredTypes: Set<String> = emptySet()
 
-    var selectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
-    private var initialArea: MapArea = selectedArea
+    var currentSelectedArea: MapArea = MapArea.OUT_OF_BOUNDS_AREA
+    private var initialArea: MapArea = currentSelectedArea
 
     override fun onStart(mapPos: MapPos) {
         isActive = true
@@ -36,15 +36,15 @@ class SelectMoveAreaTool : Tool(), EventSender {
             prevMapPosX = mapPos.x
             prevMapPosY = mapPos.y
 
-            initialArea = selectedArea
+            initialArea = currentSelectedArea
 
             sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredTypes ->
                 this.filteredTypes = filteredTypes // We need to know, which layers were filtered at the beginning
 
                 // Save initial tile items
                 sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-                    for (x in selectedArea.x1..selectedArea.x2) {
-                        for (y in selectedArea.y1..selectedArea.y2) {
+                    for (x in currentSelectedArea.x1..currentSelectedArea.x2) {
+                        for (y in currentSelectedArea.y1..currentSelectedArea.y2) {
                             val filteredTileItems = selectedMap.getTile(x, y, selectedMap.zSelected).getFilteredTileItems(filteredTypes)
                             tilesItemsToMove.put(x, y, filteredTileItems)
                             tilesItemsStored.put(x, y, filteredTileItems)
@@ -67,7 +67,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
                         var movedTileItems: List<TileItem>? = null
 
                         // If it's a part of the selected area, then it filled with moved items
-                        if (selectedArea.isInBounds(x, y)) {
+                        if (currentSelectedArea.isInBounds(x, y)) {
                             movedTileItems = tile.getFilteredTileItems(filteredTypes)
                             movedTileItems.forEach { tileIem ->
                                 tile.deleteTileItem(tileIem) // So we delete them..
@@ -112,10 +112,10 @@ class SelectMoveAreaTool : Tool(), EventSender {
         val xAxisShift = mapPos.x - prevMapPosX
         val yAxisShift = mapPos.y - prevMapPosY
 
-        val x1 = selectedArea.x1 + xAxisShift
-        val y1 = selectedArea.y1 + yAxisShift
-        val x2 = selectedArea.x2 + xAxisShift
-        val y2 = selectedArea.y2 + yAxisShift
+        val x1 = currentSelectedArea.x1 + xAxisShift
+        val y1 = currentSelectedArea.y1 + yAxisShift
+        val x2 = currentSelectedArea.x2 + xAxisShift
+        val y2 = currentSelectedArea.y2 + yAxisShift
 
         prevMapPosX = mapPos.x
         prevMapPosY = mapPos.y
@@ -126,8 +126,8 @@ class SelectMoveAreaTool : Tool(), EventSender {
             }
 
             // Restore tile items for tiles we left out of the selection
-            for (x in selectedArea.x1..selectedArea.x2) {
-                for (y in selectedArea.y1..selectedArea.y2) {
+            for (x in currentSelectedArea.x1..currentSelectedArea.x2) {
+                for (y in currentSelectedArea.y1..currentSelectedArea.y2) {
                     val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
 
                     tile.getFilteredTileItems(filteredTypes).forEach { tileIem ->
@@ -148,10 +148,10 @@ class SelectMoveAreaTool : Tool(), EventSender {
             totalXShift += xAxisShift
             totalYShift += yAxisShift
 
-            selectedArea = MapArea(x1, y1, x2, y2)
+            currentSelectedArea = MapArea(x1, y1, x2, y2)
 
-            for (x in selectedArea.x1..selectedArea.x2) {
-                for (y in selectedArea.y1..selectedArea.y2) {
+            for (x in currentSelectedArea.x1..currentSelectedArea.x2) {
+                for (y in currentSelectedArea.y1..currentSelectedArea.y2) {
                     val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
                     val filteredTileItems = tile.getFilteredTileItems(filteredTypes)
 
@@ -179,7 +179,7 @@ class SelectMoveAreaTool : Tool(), EventSender {
             }
 
             sendEvent(TriggerFrameController.RefreshFrame())
-            sendEvent(TriggerCanvasController.SelectArea(selectedArea))
+            sendEvent(TriggerCanvasController.SelectArea(currentSelectedArea))
         })
     }
 
@@ -187,11 +187,11 @@ class SelectMoveAreaTool : Tool(), EventSender {
         // unused
     }
 
-    override fun getActiveArea(): MapArea = selectedArea
+    override fun getSelectedArea(): MapArea = currentSelectedArea
 
     override fun reset() {
         onStop()
-        selectedArea = MapArea.OUT_OF_BOUNDS_AREA
+        currentSelectedArea = MapArea.OUT_OF_BOUNDS_AREA
         sendEvent(TriggerCanvasController.ResetSelectedArea())
     }
 

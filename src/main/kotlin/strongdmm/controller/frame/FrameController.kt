@@ -31,7 +31,7 @@ class FrameController : EventConsumer, EventSender {
 
     init {
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
+        consumeEvent(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
         consumeEvent(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
@@ -125,7 +125,7 @@ class FrameController : EventConsumer, EventSender {
         refreshFrame()
     }
 
-    private fun handleSelectedMapZActiveChanged() {
+    private fun handleSelectedMapZSelectedChanged() {
         refreshFrame()
     }
 

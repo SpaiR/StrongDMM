@@ -16,10 +16,10 @@ class TileAddTool : Tool(), EventSender {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
-    private var activeTileItem: TileItem? = null
+    private var selectedTileItem: TileItem? = null
 
     override fun onStart(mapPos: MapPos) {
-        isActive = activeTileItem != null
+        isActive = selectedTileItem != null
 
         if (isActive && dirtyTiles.add(mapPos)) {
             addTileItem(mapPos)
@@ -38,7 +38,7 @@ class TileAddTool : Tool(), EventSender {
     }
 
     override fun onTileItemSwitch(tileItem: TileItem?) {
-        activeTileItem = tileItem
+        selectedTileItem = tileItem
     }
 
     override fun reset() {
@@ -50,7 +50,7 @@ class TileAddTool : Tool(), EventSender {
 
     override fun destroy() {
         reset()
-        activeTileItem = null
+        selectedTileItem = null
     }
 
     private fun addTileItem(pos: MapPos) {
@@ -58,7 +58,7 @@ class TileAddTool : Tool(), EventSender {
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
             reverseActions.add(ReplaceTileAction(tile) {
-                tile.addTileItem(activeTileItem!!)
+                tile.addTileItem(selectedTileItem!!)
             })
 
             sendEvent(TriggerCanvasController.SelectTiles(dirtyTiles))

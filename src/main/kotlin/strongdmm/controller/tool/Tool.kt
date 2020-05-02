@@ -11,7 +11,7 @@ abstract class Tool {
     abstract fun onStop()
     abstract fun onMapPosChanged(mapPos: MapPos)
     abstract fun onTileItemSwitch(tileItem: TileItem?)
-    open fun getActiveArea(): MapArea = MapArea.OUT_OF_BOUNDS_AREA
+    open fun getSelectedArea(): MapArea = MapArea.OUT_OF_BOUNDS_AREA
     abstract fun reset()
     abstract fun destroy()
 }

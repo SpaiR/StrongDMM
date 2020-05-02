@@ -31,19 +31,19 @@ class ClipboardController : EventConsumer, EventSender {
 
     private fun handleCut() {
         sendEvent(TriggerClipboardController.Copy())
-        sendEvent(TriggerMapModifierController.DeleteTileItemsInActiveArea())
+        sendEvent(TriggerMapModifierController.DeleteTileItemsInSelectedArea())
     }
 
     private fun handleCopy() {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
             sendEvent(TriggerLayersFilterController.FetchFilteredLayers { filteredLayers ->
-                sendEvent(TriggerToolsController.FetchActiveArea { activeArea ->
-                    val width = activeArea.x2 - activeArea.x1 + 1
-                    val height = activeArea.y2 - activeArea.y1 + 1
+                sendEvent(TriggerToolsController.FetchSelectedArea { selectedArea ->
+                    val width = selectedArea.x2 - selectedArea.x1 + 1
+                    val height = selectedArea.y2 - selectedArea.y1 + 1
                     val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
 
-                    for ((xLocal, x) in (activeArea.x1..activeArea.x2).withIndex()) {
-                        for ((yLocal, y) in (activeArea.y1..activeArea.y2).withIndex()) {
+                    for ((xLocal, x) in (selectedArea.x1..selectedArea.x2).withIndex()) {
+                        for ((yLocal, y) in (selectedArea.y1..selectedArea.y2).withIndex()) {
                             val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
                             tileItems[xLocal][yLocal] = tile.getFilteredTileItems(filteredLayers)
                         }

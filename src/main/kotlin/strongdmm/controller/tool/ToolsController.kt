@@ -17,21 +17,21 @@ class ToolsController : EventConsumer, EventSender {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     private var isMapOpened: Boolean = false
-    private var activeTileItem: TileItem? = null
+    private var selectedTileItem: TileItem? = null
 
     init {
         consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         consumeEvent(Reaction.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
         consumeEvent(Reaction.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
-        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleActiveTileItemChanged)
+        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapZActiveChanged::class.java, ::handleSelectedMapZActiveChanged)
+        consumeEvent(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(TriggerToolsController.ChangeTool::class.java, ::handleChangeTool)
         consumeEvent(TriggerToolsController.ResetTool::class.java, ::handleResetTool)
-        consumeEvent(TriggerToolsController.FetchActiveArea::class.java, ::handleFetchActiveArea)
-        consumeEvent(TriggerToolsController.SelectActiveArea::class.java, ::handleSelectActiveArea)
+        consumeEvent(TriggerToolsController.FetchSelectedArea::class.java, ::handleFetchSelectedArea)
+        consumeEvent(TriggerToolsController.SelectArea::class.java, ::handleSelectArea)
     }
 
     private fun handleMapMousePosChanged(event: Event<MapPos, Unit>) {
@@ -53,8 +53,8 @@ class ToolsController : EventConsumer, EventSender {
         }
     }
 
-    private fun handleActiveTileItemChanged(event: Event<TileItem?, Unit>) {
-        activeTileItem = event.body
+    private fun handleSelectedTileItemChanged(event: Event<TileItem?, Unit>) {
+        selectedTileItem = event.body
         currentTool.onTileItemSwitch(event.body)
     }
 
@@ -63,7 +63,7 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.reset()
     }
 
-    private fun handleSelectedMapZActiveChanged() {
+    private fun handleSelectedMapZSelectedChanged() {
         currentTool.reset()
     }
 
@@ -81,7 +81,7 @@ class ToolsController : EventConsumer, EventSender {
     private fun handleChangeTool(event: Event<ToolType, Unit>) {
         currentTool.destroy()
         currentTool = event.body.createTool()
-        currentTool.onTileItemSwitch(activeTileItem)
+        currentTool.onTileItemSwitch(selectedTileItem)
         sendEvent(Reaction.SelectedToolChanged(event.body))
     }
 
@@ -89,19 +89,19 @@ class ToolsController : EventConsumer, EventSender {
         currentTool.reset()
     }
 
-    private fun handleFetchActiveArea(event: Event<Unit, MapArea>) {
-        val activeArea = if (currentTool is SelectComplexTool) {
-            currentTool.getActiveArea()
+    private fun handleFetchSelectedArea(event: Event<Unit, MapArea>) {
+        val selectedArea = if (currentTool is SelectComplexTool) {
+            currentTool.getSelectedArea()
         } else {
             MapArea(currentMapPos.x, currentMapPos.y, currentMapPos.x, currentMapPos.y)
         }
 
-        if (activeArea.isNotOutOfBounds()) {
-            event.reply(activeArea)
+        if (selectedArea.isNotOutOfBounds()) {
+            event.reply(selectedArea)
         }
     }
 
-    private fun handleSelectActiveArea(event: Event<MapArea, Unit>) {
+    private fun handleSelectArea(event: Event<MapArea, Unit>) {
         sendEvent(TriggerToolsController.ChangeTool(ToolType.SELECT))
         (currentTool as SelectComplexTool).selectArea(event.body)
     }
