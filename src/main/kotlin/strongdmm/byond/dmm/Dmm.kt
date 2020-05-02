@@ -27,7 +27,7 @@ class Dmm(
     var maxZ: Int = initialDmmData.maxZ
         private set
 
-    var zActive: Int = 1
+    var zSelected: Int = 1
 
     private var tiles: Array<Array<Array<LongArray>>> = Array(maxZ) { Array(maxY) { Array(maxX) { LongArray(0) } } }
 

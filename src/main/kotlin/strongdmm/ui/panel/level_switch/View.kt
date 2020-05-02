@@ -33,7 +33,7 @@ class View(
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->
-                if (map.zActive == 1) {
+                if (map.zSelected == 1) {
                     showDisabledSwitch("<")
                 } else {
                     if (smallButton("<")) {
@@ -44,10 +44,10 @@ class View(
                 }
 
                 sameLine()
-                text("Z:${map.zActive}")
+                text("Z:${map.zSelected}")
                 sameLine()
 
-                if (map.zActive == map.maxZ) {
+                if (map.zSelected == map.maxZ) {
                     showDisabledSwitch(">")
                 } else {
                     if (smallButton(">")) {

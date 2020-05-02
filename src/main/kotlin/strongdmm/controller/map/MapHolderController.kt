@@ -49,7 +49,7 @@ class MapHolderController : EventSender, EventConsumer {
         consumeEvent(TriggerMapHolderController.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
         consumeEvent(TriggerMapHolderController.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
         consumeEvent(TriggerMapHolderController.SaveAllMaps::class.java, ::handleSaveAllMaps)
-        consumeEvent(TriggerMapHolderController.ChangeActiveZ::class.java, ::handleChangeActiveZ)
+        consumeEvent(TriggerMapHolderController.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
@@ -233,14 +233,14 @@ class MapHolderController : EventSender, EventConsumer {
         openedMaps.forEach { saveMap(it) }
     }
 
-    private fun handleChangeActiveZ(event: Event<Int, Unit>) {
+    private fun handleChangeSelectedZ(event: Event<Int, Unit>) {
         selectedMap?.let { map ->
-            if (event.body == map.zActive || event.body < 1 || event.body > map.maxZ) {
+            if (event.body == map.zSelected || event.body < 1 || event.body > map.maxZ) {
                 return
             }
 
-            map.zActive = event.body
-            sendEvent(Reaction.SelectedMapZActiveChanged(map.zActive))
+            map.zSelected = event.body
+            sendEvent(Reaction.SelectedMapZActiveChanged(map.zSelected))
         }
     }
 

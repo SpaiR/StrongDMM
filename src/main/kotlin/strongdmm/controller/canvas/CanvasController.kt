@@ -183,7 +183,7 @@ class CanvasController : EventSender, EventConsumer {
 
         sendEvent(TriggerMapHolderController.FetchSelectedMap {
             if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
-                sendEvent(TriggerTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos, it.zActive)))
+                sendEvent(TriggerTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos, it.zSelected)))
             }
         })
     }
@@ -275,7 +275,7 @@ class CanvasController : EventSender, EventConsumer {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
         val x = canvasRenderer.xForTileItemMouseOver
         val y = canvasRenderer.yForTileItemMouseOver
-        val tile = map.getTile(x, y, map.zActive)
+        val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
             TriggerActionController.AddAction(
@@ -292,7 +292,7 @@ class CanvasController : EventSender, EventConsumer {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
         val x = canvasRenderer.xForTileItemMouseOver
         val y = canvasRenderer.yForTileItemMouseOver
-        val tile = map.getTile(x, y, map.zActive)
+        val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
             TriggerActionController.AddAction(
@@ -309,7 +309,7 @@ class CanvasController : EventSender, EventConsumer {
         val tileItem = GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)
         val x = canvasRenderer.xForTileItemMouseOver
         val y = canvasRenderer.yForTileItemMouseOver
-        val tile = map.getTile(x, y, map.zActive)
+        val tile = map.getTile(x, y, map.zSelected)
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))

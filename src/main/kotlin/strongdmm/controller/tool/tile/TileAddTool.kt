@@ -55,7 +55,7 @@ class TileAddTool : Tool(), EventSender {
 
     private fun addTileItem(pos: MapPos) {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { selectedMap ->
-            val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zActive)
+            val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
             reverseActions.add(ReplaceTileAction(tile) {
                 tile.addTileItem(activeTileItem!!)

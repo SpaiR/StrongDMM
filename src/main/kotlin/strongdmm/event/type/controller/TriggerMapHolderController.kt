@@ -15,5 +15,5 @@ abstract class TriggerMapHolderController {
     class SaveSelectedMap : Event<Unit, Unit>(Unit, null)
     class SaveSelectedMapToFile(body: File) : Event<File, Unit>(body, null)
     class SaveAllMaps : Event<Unit, Unit>(Unit, null)
-    class ChangeActiveZ(zSelected: Int) : Event<Int, Unit>(zSelected, null)
+    class ChangeSelectedZ(zSelected: Int) : Event<Int, Unit>(zSelected, null)
 }
