@@ -35,8 +35,8 @@ class ViewControllerDirFlow(
         sendEvent(
             TriggerActionController.AddAction(ReplaceTileAction(tile) {
                 tile.setDir(tileItem, tileItemIdx, relToDir(relativeDir[0]))
-            }
-        ))
+            })
+        )
 
         sendEvent(TriggerFrameController.RefreshFrame())
         sendEvent(TriggerObjectPanelUi.Update())

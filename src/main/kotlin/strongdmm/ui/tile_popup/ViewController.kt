@@ -52,6 +52,7 @@ class ViewController(
 
         sendEvent(TriggerFrameController.RefreshFrame())
     }
+
     fun doMoveToBottom(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
             TriggerActionController.AddAction(ReplaceTileAction(tile) {

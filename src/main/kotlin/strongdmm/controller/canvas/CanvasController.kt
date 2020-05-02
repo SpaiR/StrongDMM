@@ -14,7 +14,6 @@ import strongdmm.byond.dmm.*
 import strongdmm.controller.action.undoable.ReplaceTileAction
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.controller.frame.FramedTile
-import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
@@ -29,8 +28,7 @@ import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.GREEN_RGBA
 import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.AppWindow
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 
 class CanvasController : EventSender, EventConsumer {
     companion object {
@@ -328,7 +326,7 @@ class CanvasController : EventSender, EventConsumer {
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
     }
 
-    private fun handleApplicationBlockChanged(event: Event<ApplicationBlockStatus, Unit>) {
+    private fun handleApplicationBlockChanged(event: Event<Boolean, Unit>) {
         isCanvasBlocked = event.body
     }
 

@@ -1,9 +1,11 @@
 package strongdmm.ui.panel.instance_locator
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.*
+import strongdmm.util.imgui.WindowUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.inputInt
+import strongdmm.util.imgui.inputText
+import strongdmm.util.imgui.window
 
 class View(
     private val state: State

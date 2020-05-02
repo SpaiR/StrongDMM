@@ -1,5 +1,6 @@
 package strongdmm.ui.dialog.available_maps
 
+import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
@@ -20,7 +21,7 @@ class EventController(
         sendEvent(Reaction.ApplicationBlockChanged(true))
     }
 
-    private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<Pair<String, String>>, Unit>) {
-        state.providedAvailableMaps = event.body
+    private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<MapPath>, Unit>) {
+        state.providedAvailableMapPaths = event.body
     }
 }

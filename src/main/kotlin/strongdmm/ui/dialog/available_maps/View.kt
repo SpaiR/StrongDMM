@@ -26,7 +26,7 @@ class View(
         WindowUtil.setNextSize(WIDTH, HEIGHT)
 
         popupModal(TITLE) {
-            text("Selected: ${state.selectionStatus}")
+            text("Selected: ${state.selectedMapPath?.readable ?: ""}")
 
             setNextItemWidth(getWindowWidth() - 20)
 
@@ -38,15 +38,15 @@ class View(
             inputText("##maps_path_filter", state.mapFilter, "Paths Filter")
 
             child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
-                for ((absoluteFilePath, visibleFilePath) in state.providedAvailableMaps) {
-                    if (viewController.isFilteredOutVisibleFilePath(visibleFilePath)) {
+                for (mapPath in state.providedAvailableMapPaths) {
+                    if (viewController.isFilteredOutVisibleFilePath(mapPath.readable)) {
                         continue
                     }
 
                     bullet()
                     sameLine()
-                    selectable(visibleFilePath, state.selectedAbsMapPath == absoluteFilePath) {
-                        viewController.doSelectMapPath(absoluteFilePath, visibleFilePath)
+                    selectable(mapPath.readable, state.selectedMapPath === mapPath) {
+                        viewController.doSelectMapPath(mapPath)
                     }
                 }
             }

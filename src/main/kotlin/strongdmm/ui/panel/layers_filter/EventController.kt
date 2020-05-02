@@ -1,7 +1,6 @@
 package strongdmm.ui.panel.layers_filter
 
 import strongdmm.byond.dme.Dme
-import strongdmm.event.DmeItemType
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
@@ -31,7 +30,7 @@ class EventController(
         state.currentEnvironment = event.body
     }
 
-    private fun handleLayersFilterRefreshed(event: Event<Set<DmeItemType>, Unit>) {
+    private fun handleLayersFilterRefreshed(event: Event<Set<String>, Unit>) {
         sendEvent(TriggerEnvironmentController.FetchOpenedEnvironment {
             state.filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->

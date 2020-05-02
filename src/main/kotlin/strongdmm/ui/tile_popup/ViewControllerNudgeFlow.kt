@@ -48,10 +48,10 @@ class ViewControllerNudgeFlow(
 
         sendEvent(
             TriggerActionController.AddAction(
-            ReplaceTileAction(tile) {
-                tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], state.providedPreferences.nudgeMode)
-            }
-        ))
+                ReplaceTileAction(tile) {
+                    tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], state.providedPreferences.nudgeMode)
+                }
+            ))
 
         sendEvent(TriggerFrameController.RefreshFrame())
         sendEvent(TriggerObjectPanelUi.Update())

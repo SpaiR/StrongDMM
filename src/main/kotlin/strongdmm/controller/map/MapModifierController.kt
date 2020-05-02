@@ -7,7 +7,6 @@ import strongdmm.controller.action.undoable.Undoable
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.EventSender
-import strongdmm.event.TileItemType
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.*
 import strongdmm.util.OUT_OF_BOUNDS
@@ -107,7 +106,7 @@ class MapModifierController : EventConsumer, EventSender {
         })
     }
 
-    private fun handleReplaceTileItemsWithTypeInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
+    private fun handleReplaceTileItemsWithTypeInPositions(event: Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>) {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
@@ -124,7 +123,7 @@ class MapModifierController : EventConsumer, EventSender {
         })
     }
 
-    private fun handleReplaceTileItemsWithIdInPositions(event: Event<Pair<TileItemType, List<Pair<TileItem, MapPos>>>, Unit>) {
+    private fun handleReplaceTileItemsWithIdInPositions(event: Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>) {
         sendEvent(TriggerMapHolderController.FetchSelectedMap { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
             val replaceActions = mutableListOf<Undoable>()

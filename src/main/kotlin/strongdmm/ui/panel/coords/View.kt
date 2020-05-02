@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.coords
 
-import imgui.ImGui.*
+import imgui.ImGui.text
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.WindowUtil

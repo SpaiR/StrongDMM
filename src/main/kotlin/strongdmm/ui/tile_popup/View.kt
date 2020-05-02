@@ -1,10 +1,13 @@
 package strongdmm.ui.tile_popup
 
 import imgui.ImGui.*
-import strongdmm.byond.*
+import strongdmm.byond.TYPE_MOB
+import strongdmm.byond.TYPE_OBJ
+import strongdmm.byond.dirToStr
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.byond.relToDir
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup

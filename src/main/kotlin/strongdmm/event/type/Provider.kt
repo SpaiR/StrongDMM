@@ -7,9 +7,7 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.controller.frame.FrameMesh
 import strongdmm.controller.frame.FramedTile
 import strongdmm.controller.preferences.Preferences
-import strongdmm.event.AbsoluteFilePath
 import strongdmm.event.Event
-import strongdmm.event.VisibleFilePath
 
 abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
@@ -19,8 +17,7 @@ abstract class Provider {
     class ChangelogControllerChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
 
     class MapHolderControllerOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
-    class MapHolderControllerAvailableMaps(body: Set<Pair<AbsoluteFilePath, VisibleFilePath>>) :
-        Event<Set<Pair<AbsoluteFilePath, VisibleFilePath>>, Unit>(body, null)
+    class MapHolderControllerAvailableMaps(body: Set<MapPath>) : Event<Set<MapPath>, Unit>(body, null)
 
     class FrameControllerComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
     class FrameControllerFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)

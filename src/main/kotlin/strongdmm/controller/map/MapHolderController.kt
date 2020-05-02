@@ -5,10 +5,13 @@ import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
+import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.controller.preferences.Preferences
-import strongdmm.event.*
+import strongdmm.event.Event
+import strongdmm.event.EventConsumer
+import strongdmm.event.EventSender
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerActionController
@@ -31,7 +34,7 @@ class MapHolderController : EventSender, EventConsumer {
 
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
-    private val availableMapsPathsWithVisibleMapsPaths: MutableSet<Pair<String, String>> = mutableSetOf()
+    private val availableMapsPaths: MutableSet<MapPath> = mutableSetOf()
 
     private var selectedMap: Dmm? = null
 
@@ -57,7 +60,7 @@ class MapHolderController : EventSender, EventConsumer {
         ensureBackupsDirExists()
 
         sendEvent(Provider.MapHolderControllerOpenedMaps(openedMaps))
-        sendEvent(Provider.MapHolderControllerAvailableMaps(availableMapsPathsWithVisibleMapsPaths))
+        sendEvent(Provider.MapHolderControllerAvailableMaps(availableMapsPaths))
     }
 
     private fun ensureBackupsDirExists() {
@@ -180,7 +183,7 @@ class MapHolderController : EventSender, EventConsumer {
         }
     }
 
-    private fun handleCloseMap(event: Event<MapId, Unit>) {
+    private fun handleCloseMap(event: Event<Int, Unit>) {
         openedMaps.find { it.id == event.body }?.let { tryCloseMap(it) }
     }
 
@@ -188,7 +191,7 @@ class MapHolderController : EventSender, EventConsumer {
         selectedMap?.let { map -> tryCloseMap(map) }
     }
 
-    private fun handleCloseAllMaps(event: Event<Unit, MapsCloseStatus>) {
+    private fun handleCloseAllMaps(event: Event<Unit, Boolean>) {
         if (openedMaps.isEmpty()) {
             event.reply(true)
             return
@@ -209,7 +212,7 @@ class MapHolderController : EventSender, EventConsumer {
         selectedMap?.let { event.reply(it) }
     }
 
-    private fun handleChangeSelectedMap(event: Event<MapId, Unit>) {
+    private fun handleChangeSelectedMap(event: Event<Int, Unit>) {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
@@ -230,7 +233,7 @@ class MapHolderController : EventSender, EventConsumer {
         openedMaps.forEach { saveMap(it) }
     }
 
-    private fun handleChangeActiveZ(event: Event<ActiveZ, Unit>) {
+    private fun handleChangeActiveZ(event: Event<Int, Unit>) {
         selectedMap?.let { map ->
             if (event.body == map.zActive || event.body < 1 || event.body > map.maxZ) {
                 return
@@ -244,15 +247,15 @@ class MapHolderController : EventSender, EventConsumer {
     private fun handleEnvironmentReset() {
         selectedMap = null
         openedMaps.clear()
-        availableMapsPathsWithVisibleMapsPaths.clear()
+        availableMapsPaths.clear()
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         File(event.body.absRootDirPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
                 val absoluteFilePath = it.absolutePath
-                val visibleName = File(event.body.absRootDirPath).toPath().relativize(it.toPath()).toString()
-                availableMapsPathsWithVisibleMapsPaths.add(absoluteFilePath to visibleName)
+                val readableName = File(event.body.absRootDirPath).toPath().relativize(it.toPath()).toString()
+                availableMapsPaths.add(MapPath(readableName, absoluteFilePath))
             }
         }
     }

@@ -1,11 +1,10 @@
 package strongdmm.controller.shortcut.refactor
 
 import strongdmm.controller.shortcut.Shortcut
-import strongdmm.controller.shortcut.ShortcutHandler as LegacyShortcutHandler
-import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
+import strongdmm.controller.shortcut.ShortcutHandler as LegacyShortcutHandler
 
 @Suppress("LeakingThis")
 class ShortcutHandler(
@@ -44,7 +43,7 @@ class ShortcutHandler(
         }
     }
 
-    private fun handleApplicationBlockChanged(event: Event<ApplicationBlockStatus, Unit>) {
+    private fun handleApplicationBlockChanged(event: Event<Boolean, Unit>) {
         isShortcutsBlocked = event.body
     }
 }

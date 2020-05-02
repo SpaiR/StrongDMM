@@ -1,6 +1,5 @@
 package strongdmm.controller.shortcut
 
-import strongdmm.event.ApplicationBlockStatus
 import strongdmm.event.Event
 import strongdmm.event.EventConsumer
 import strongdmm.event.type.Reaction
@@ -44,7 +43,7 @@ open class ShortcutHandler : EventConsumer {
         }
     }
 
-    private fun handleApplicationBlockChanged(event: Event<ApplicationBlockStatus, Unit>) {
+    private fun handleApplicationBlockChanged(event: Event<Boolean, Unit>) {
         isShortcutsBlocked = event.body
     }
 }

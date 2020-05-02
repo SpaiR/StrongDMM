@@ -1,6 +1,7 @@
 package strongdmm.ui.dialog.available_maps
 
 import imgui.ImGui
+import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.controller.TriggerMapHolderController
@@ -9,14 +10,13 @@ import java.io.File
 class ViewController(
     private val state: State
 ) : EventHandler {
-    fun doSelectMapPath(absoluteFilePath: String, visibleFilePath: String) {
-        state.selectedAbsMapPath = absoluteFilePath
-        state.selectionStatus = visibleFilePath
+    fun doSelectMapPath(mapPath: MapPath) {
+        state.selectedMapPath = mapPath
     }
 
     fun doOpenSelectedMapAndDispose() {
-        state.selectedAbsMapPath?.let {
-            sendEvent(TriggerMapHolderController.OpenMap(File(it)))
+        state.selectedMapPath?.let {
+            sendEvent(TriggerMapHolderController.OpenMap(File(it.absolute)))
             dispose()
         }
     }
@@ -27,8 +27,7 @@ class ViewController(
 
     fun dispose() {
         ImGui.closeCurrentPopup()
-        state.selectedAbsMapPath = null
-        state.selectionStatus = ""
+        state.selectedMapPath = null
         sendEvent(Reaction.ApplicationBlockChanged(false))
     }
 }
