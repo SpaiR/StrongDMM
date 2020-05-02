@@ -37,26 +37,28 @@ import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 class StrongDMM(title: String) : AppWindow(title) {
-    private val menuBarUi = MenuBarUi()
-    private val coordsPanelUi = CoordsPanelUi()
-    private val openedMapsPanelUi = OpenedMapsPanelUi()
-    private val availableMapsDialogUi = AvailableMapsDialogUi()
-    private val tilePopupUi = TilePopupUi()
-    private val editVarsDialogUi = EditVarsDialogUi()
-    private val environmentTreePanelUi = EnvironmentTreePanelUi()
-    private val objectsPanelUi = ObjectsPanelUi()
-    private val variablesPreviewPanelUi = VariablesPreviewPanelUi()
-    private val instanceLocatorPanelUi = InstanceLocatorPanelUi()
-    private val searchResultPanelUi = SearchResultPanelUi()
-    private val layersFilterPanelUi = LayersFilterPanelUi()
-    private val toolSelectPanelUi = ToolSelectPanelUi()
-    private val levelSwitchPanelUi = LevelSwitchPanelUi()
-    private val preferencesPanelUi = PreferencesPanelUi()
-    private val closeMapDialogUi = CloseMapDialogUi()
-    private val setMapSizeDialogUi = SetMapSizeDialogUi()
-    private val unknownTypesPanelUi = UnknownTypesPanelUi()
-    private val aboutPanelUi = AboutPanelUi()
-    private val changelogPanelUi = ChangelogPanelUi()
+    private val uiList: List<Ui> = listOf(
+        MenuBarUi(),
+        CoordsPanelUi(),
+        OpenedMapsPanelUi(),
+        AvailableMapsDialogUi(),
+        TilePopupUi(),
+        EditVarsDialogUi(),
+        EnvironmentTreePanelUi(),
+        ObjectsPanelUi(),
+        VariablesPreviewPanelUi(),
+        InstanceLocatorPanelUi(),
+        SearchResultPanelUi(),
+        LayersFilterPanelUi(),
+        ToolSelectPanelUi(),
+        LevelSwitchPanelUi(),
+        PreferencesPanelUi(),
+        CloseMapDialogUi(),
+        SetMapSizeDialogUi(),
+        UnknownTypesPanelUi(),
+        AboutPanelUi(),
+        ChangelogPanelUi()
+    )
 
     private val windowTitleService = WindowTitleService()
     private val environmentController = EnvironmentService()
@@ -77,11 +79,14 @@ class StrongDMM(title: String) : AppWindow(title) {
 
     private val applicationCloseController = ApplicationCloseService()
 
+    private val processableList: List<Processable> = uiList.filterIsInstance(Processable::class.java)
+
     init {
         ensureHomeDirExists()
         ensureLogsDirExists()
 
-        instanceLocatorPanelUi.postInit()
+        uiList.filterIsInstance(PostInitialize::class.java).forEach(PostInitialize::postInit)
+
         mapHolderController.postInit()
         frameController.postInit()
         actionController.postInit()
@@ -92,27 +97,7 @@ class StrongDMM(title: String) : AppWindow(title) {
     }
 
     override fun appLoop() {
-        // UIs
-        menuBarUi.process()
-        coordsPanelUi.process()
-        openedMapsPanelUi.process()
-        availableMapsDialogUi.process()
-        tilePopupUi.process()
-        editVarsDialogUi.process()
-        environmentTreePanelUi.process()
-        objectsPanelUi.process()
-        variablesPreviewPanelUi.process()
-        instanceLocatorPanelUi.process()
-        searchResultPanelUi.process()
-        layersFilterPanelUi.process()
-        toolSelectPanelUi.process()
-        levelSwitchPanelUi.process()
-        preferencesPanelUi.process()
-        closeMapDialogUi.process()
-        setMapSizeDialogUi.process()
-        unknownTypesPanelUi.process()
-        aboutPanelUi.process()
-        changelogPanelUi.process()
+        processableList.forEach(Processable::process)
 
         // Controllers
         canvasController.process()
