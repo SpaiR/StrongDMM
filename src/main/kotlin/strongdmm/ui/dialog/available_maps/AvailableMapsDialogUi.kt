@@ -1,8 +1,9 @@
 package strongdmm.ui.dialog.available_maps
 
 import strongdmm.Processable
+import strongdmm.Ui
 
-class AvailableMapsDialogUi : Processable {
+class AvailableMapsDialogUi : Ui, Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)

@@ -1,8 +1,9 @@
 package strongdmm.ui.panel.level_switch
 
 import strongdmm.Processable
+import strongdmm.Ui
 
-class LevelSwitchPanelUi : Processable {
+class LevelSwitchPanelUi : Ui, Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)

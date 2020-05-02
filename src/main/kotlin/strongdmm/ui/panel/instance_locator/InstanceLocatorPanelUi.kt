@@ -2,8 +2,9 @@ package strongdmm.ui.panel.instance_locator
 
 import strongdmm.PostInitialize
 import strongdmm.Processable
+import strongdmm.Ui
 
-class InstanceLocatorPanelUi : Processable, PostInitialize {
+class InstanceLocatorPanelUi : Ui, Processable, PostInitialize {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)

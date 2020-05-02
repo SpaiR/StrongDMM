@@ -1,8 +1,9 @@
 package strongdmm.ui.panel.search_result
 
 import strongdmm.Processable
+import strongdmm.Ui
 
-class SearchResultPanelUi : Processable {
+class SearchResultPanelUi : Ui, Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)

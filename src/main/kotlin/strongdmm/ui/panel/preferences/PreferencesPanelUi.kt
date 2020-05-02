@@ -1,8 +1,9 @@
 package strongdmm.ui.panel.preferences
 
 import strongdmm.Processable
+import strongdmm.Ui
 
-class PreferencesPanelUi : Processable {
+class PreferencesPanelUi : Ui, Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)
