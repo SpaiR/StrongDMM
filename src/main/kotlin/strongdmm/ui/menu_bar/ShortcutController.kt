@@ -2,7 +2,7 @@ package strongdmm.ui.menu_bar
 
 import org.lwjgl.glfw.GLFW
 import strongdmm.service.shortcut.Shortcut
-import strongdmm.service.shortcut.refactor.ShortcutHandler
+import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.event.EventHandler
 
 class ShortcutController(
