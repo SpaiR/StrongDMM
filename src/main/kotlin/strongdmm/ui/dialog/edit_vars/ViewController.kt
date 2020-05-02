@@ -62,7 +62,6 @@ class ViewController(
         }
 
         state.currentEditVar = variable
-        variable.startEdit()
     }
 
     fun doStopEdit() {
@@ -151,7 +150,7 @@ class ViewController(
         val newItemVars = mutableMapOf<String, String>()
 
         state.variables.filter { it.isChanged || it.isModified }.forEach {
-            newItemVars[it.name] = it.value
+            newItemVars[it.name] = it.value.get()
         }
 
         return newItemVars

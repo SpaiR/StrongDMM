@@ -96,7 +96,7 @@ class View(
             state.variableInputFocused = true
         }
 
-        inputText("##${variable.name}", variable.buffer!!)
+        inputText("##${variable.name}", variable.value)
 
         if (isKeyPressed(GLFW.GLFW_KEY_ENTER) || isKeyPressed(GLFW.GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             viewController.doStopEdit()

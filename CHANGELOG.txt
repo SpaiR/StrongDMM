@@ -1,3 +1,6 @@
+Fixes:
+ * Possible fix of crush when editing variables.
+
 -------------------------
  v1.1.0 (2020-04-18)
 -------------------------
