@@ -5,6 +5,7 @@ Fixes:
  * Crush when editing variables.
 
 Tweaks:
+ * New application icon designed by Clément "Topy".
  * Allow to quickly change turfs dir in the tile popup.
 
 -------------------------

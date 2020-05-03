@@ -24,8 +24,8 @@ The editor provides a bunch of new features:
 The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
 
 **Download links:**
-* [Windows](https://github.com/SpaiR/StrongDMM/releases/download/v1.0.0/sdmmlauncher.exe)
-* [Linux](https://github.com/SpaiR/StrongDMM/releases/download/v1.0.0/sdmmlauncher)
+* [Windows](https://github.com/SpaiR/StrongDMM/releases/latest/download/sdmmlauncher.exe)
+* [Linux](https://github.com/SpaiR/StrongDMM/releases/latest/download/sdmmlauncher)
 
 You are also able to download the editor manually. Go to the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
 page and download zip for your OS.
@@ -63,13 +63,11 @@ You'll find a button named "Copy Type to Clipboard".
 - **Build**: `cargo build`
 - To build a release (optimized) version just add `--release` flag in the end of the command.
 
-To parse the BYOND environment StrongDMM uses SpacemanDMM parser. `sdmmparser` is used to utilize its functionality.
-While starting the editor with `runShadow` command, provided executables under the `./libs` folder will be used.
-
 ### Credits
-Special thanks to [SpaceManiac](https://github.com/SpaceManiac) for his amazing [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser.<br>
-Thanks to [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
-and later supported by [TG](https://github.com/tgstation/FastDMM) for some of good ideas.
+StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made by [SpaceManiac](https://github.com/SpaceManiac).<br>
+The application icon is designed by [Clément "Topy"](https://github.com/clement-or).<br>
+Some of the initial ideas are taken from [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
+and later supported by [/tg/station](https://github.com/tgstation/FastDMM).
 
 ### License
 See the LICENSE file for license rights and limitations (GPL-3.0).
