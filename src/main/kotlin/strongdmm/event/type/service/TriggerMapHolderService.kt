@@ -10,7 +10,7 @@ abstract class TriggerMapHolderService {
     class CloseMap(mapId: Int) : Event<Int, Unit>(mapId, null)
     class CloseSelectedMap : Event<Unit, Unit>(Unit, null)
     class CloseAllMaps(callback: ((Boolean) -> Unit)? = null) : Event<Unit, Boolean>(Unit, callback)
-    class FetchSelectedMap(callback: ((Dmm) -> Unit)) : Event<Unit, Dmm>(Unit, callback)
+    class FetchSelectedMap(callback: (Dmm) -> Unit) : Event<Unit, Dmm>(Unit, callback)
     class ChangeSelectedMap(mapId: Int) : Event<Int, Unit>(mapId, null)
     class SaveSelectedMap : Event<Unit, Unit>(Unit, null)
     class SaveSelectedMapToFile(body: File) : Event<File, Unit>(body, null)

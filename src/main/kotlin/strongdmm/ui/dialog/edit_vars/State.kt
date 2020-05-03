@@ -13,6 +13,7 @@ class State {
 
     var windowId: Long = 0 // To ensure every window will be unique.
     var isFistOpen: Boolean = true
+    var isDoUpdatePinnedVariables: Boolean = false
 
     var currentTileItem: TileItem? = null // We can open edit menu with a tile item...
 
@@ -23,6 +24,7 @@ class State {
     var currentEditVar: Variable? = null
 
     val variables: MutableList<Variable> = mutableListOf()
+    val pinnedVariables: MutableList<Variable> = mutableListOf()
 
     // Variables filter buffer, resizable string
     var varsFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }

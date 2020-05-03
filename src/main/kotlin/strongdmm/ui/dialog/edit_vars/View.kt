@@ -12,7 +12,7 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 400f
+        private const val WIDTH: Float = 435f
         private const val HEIGHT: Float = 450f
     }
 
@@ -31,6 +31,8 @@ class View(
                     showVariables()
                 }
             }
+
+            viewController.checkPinnedVariables()
         }
     }
 
@@ -54,41 +56,70 @@ class View(
     }
 
     private fun showVariables() {
+        if (state.pinnedVariables.isNotEmpty()) {
+            textColored(1f, .84f, 0f, 1f, "Pinned")
+            columns(2, "pinned_edit_vars_columns", true)
+            showPinnedVariables()
+            columns(1)
+            newLine()
+            textDisabled("Other")
+        }
+
         columns(2, "edit_vars_columns", true)
+        showOtherVariables()
+    }
 
-        for (variable in state.variables) {
-            // Filtering when we need to show only modified vars
-            if (state.isShowModifiedVars.get() && viewController.isNotModifiedVariable(variable)) {
-                continue
-            }
-
-            // Filtering when 'filter input' is not empty
-            if (state.varsFilter.length > 0 && viewController.isNotFilteredVariable(variable)) {
-                continue
-            }
-
-            alignTextToFramePadding()
-
-            if (variable.isModified || variable.isChanged) {
-                textColored(0f, 1f, 0f, 1f, variable.name)
-            } else {
-                text(variable.name)
-            }
-
-            nextColumn()
-
-            if (variable === state.currentEditVar) {
-                showCurrentEditVariable(variable)
-            } else {
-                showVariable(variable)
-            }
-
-            nextColumn()
-            separator()
+    private fun showPinnedVariables() {
+        state.pinnedVariables.forEach {
+            showVariable(it)
         }
     }
 
-    private fun showCurrentEditVariable(variable: Variable) {
+    private fun showOtherVariables() {
+        state.variables.forEach {
+            if (!it.isPinned) {
+                showVariable(it)
+            }
+        }
+    }
+
+    private fun showVariable(variable: Variable) {
+        if (viewController.isFilteredOutVariable(variable)) {
+            return
+        }
+
+        showVariablePinOption(variable)
+
+        sameLine(0f, 15f)
+        alignTextToFramePadding()
+
+        if (variable.isModified || variable.isChanged) {
+            textColored(0f, 1f, 0f, 1f, variable.name)
+        } else {
+            text(variable.name)
+        }
+
+        nextColumn()
+
+        if (variable === state.currentEditVar) {
+            showVariableEditField(variable)
+        } else {
+            showVariableValue(variable)
+        }
+
+        nextColumn()
+        separator()
+    }
+
+    private fun showVariablePinOption(variable: Variable) {
+        withStyleVar(ImGuiStyleVar.FramePadding, .25f, .25f) {
+            if (radioButton("##variable_pin__${variable.hash}", variable.isPinned)) {
+                viewController.doPinVariable(variable)
+            }
+        }
+    }
+
+    private fun showVariableEditField(variable: Variable) {
         setNextItemWidth(getColumnWidth(-1))
 
         if (!state.variableInputFocused) {
@@ -96,19 +127,19 @@ class View(
             state.variableInputFocused = true
         }
 
-        inputText("##${variable.name}", variable.value)
+        inputText("##variable_edit_${variable.hash}", variable.value)
 
         if (isKeyPressed(GLFW.GLFW_KEY_ENTER) || isKeyPressed(GLFW.GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             viewController.doStopEdit()
         }
     }
 
-    private fun showVariable(variable: Variable) {
+    private fun showVariableValue(variable: Variable) {
         pushStyleColor(ImGuiCol.Button, 0)
         pushStyleColor(ImGuiCol.ButtonHovered, .25f, .58f, .98f, .5f)
         pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
 
-        button("${variable.value}##variable_btn_${variable.hash}", getColumnWidth(-1)) {
+        button("${variable.value}##variable_value_${variable.hash}", getColumnWidth(-1)) {
             viewController.doStartEdit(variable)
         }
 

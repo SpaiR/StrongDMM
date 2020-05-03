@@ -37,12 +37,14 @@ class EventController(
         state.currentTile = event.body.first
         state.initialTileItemsId = event.body.first.getTileItemsId().clone()
         state.currentTileItemIndex = event.body.second
-        viewController.collectVarsToDisplay()
+        viewController.collectDisplayVariables()
+        viewController.collectPinnedVariables()
     }
 
     private fun handleOpenWithTileItem(event: Event<TileItem, Unit>) {
         viewController.open()
         state.currentTileItem = event.body
-        viewController.collectVarsToDisplay()
+        viewController.collectDisplayVariables()
+        viewController.collectPinnedVariables()
     }
 }

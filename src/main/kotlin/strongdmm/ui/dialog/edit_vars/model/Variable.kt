@@ -22,6 +22,8 @@ class Variable(
     var isChanged: Boolean = false
         private set
 
+    var isPinned: Boolean = false
+
     fun stopEdit() {
         if (value.get().isBlank()) {
             value.set("null")

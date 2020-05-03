@@ -7,6 +7,7 @@ import strongdmm.service.canvas.CanvasService
 import strongdmm.service.frame.FrameService
 import strongdmm.service.map.MapHolderService
 import strongdmm.service.map.MapModifierService
+import strongdmm.service.pinned_variables.PinnedVariablesService
 import strongdmm.service.preferences.PreferencesService
 import strongdmm.service.recent.RecentFilesService
 import strongdmm.service.shortcut.ShortcutService
@@ -77,6 +78,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         RecentFilesService(),
         PreferencesService(),
         ChangelogService(),
+        PinnedVariablesService(),
         ApplicationCloseService()
     )
 

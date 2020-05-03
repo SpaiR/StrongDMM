@@ -1,22 +1,25 @@
+Features:
+ * Allow to pin variables in "Edit Variables" window.
+
 Fixes:
  * Crush when editing variables.
 
 Tweaks:
- * "Easy-dir switcher" in tile popup is available for turfs.
+ * Allow to quickly change turfs dir in the tile popup.
 
 -------------------------
  v1.1.0 (2020-04-18)
 -------------------------
 
 Features:
- * Built in changelog. Will be auto-shown when updated. Could be opened with: "Help->Changelog".
- * When creating a new map the editor will add "dmm" extension to the file automatically.
- * "Show Icons" checkbox for "Environment Tree" is replaced by "Collapse All" button.
- * Added a widget for quick modification of the "dir" variable right from the tile popup.
+ * Add a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog".
+ * When creating a new map, "dmm" extension will be added automatically.
+ * Replace "Show Icons" checkbox for "Environment Tree" with "Collapse All" button.
+ * Add a tile popup widget for quick dir modification.
 
 Fixes:
  * The old bug which was the reason for map corruptions.
 
 Tweaks:
- * From the tile popup, for turfs and areas, the options to change "movable" parameters are removed.
- * The editor window title will show the name of the currently opened environment.
+ * Remove "movable" options for turfs and areas.
+ * Editor title will show the name of the currently opened environment.

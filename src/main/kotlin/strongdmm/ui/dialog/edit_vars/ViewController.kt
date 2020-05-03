@@ -8,6 +8,7 @@ import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
+import strongdmm.event.type.service.TriggerPinnedVariablesService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.ui.dialog.edit_vars.model.Variable
@@ -53,6 +54,18 @@ class ViewController(
         dispose()
     }
 
+    fun doPinVariable(variable: Variable) {
+        variable.isPinned = !variable.isPinned
+
+        if (variable.isPinned) {
+            sendEvent(TriggerPinnedVariablesService.PinVariable(variable.name))
+        } else {
+            sendEvent(TriggerPinnedVariablesService.UnpinVariable(variable.name))
+        }
+
+        state.isDoUpdatePinnedVariables = true
+    }
+
     fun doStartEdit(variable: Variable) {
         state.variableInputFocused = false
 
@@ -76,10 +89,7 @@ class ViewController(
         state.windowId++
     }
 
-    fun collectVarsToDisplay() {
-        state.currentEditVar = null
-        state.variables.clear()
-
+    fun collectDisplayVariables() {
         // To collect vars from the dme hierarchy
         fun collectVarsFromEnvironment(dmeItem: DmeItem) {
             dmeItem.vars.filterKeys { variableName -> variableName !in hiddenVars }.forEach { (name, value) ->
@@ -104,9 +114,38 @@ class ViewController(
         state.variables.sortBy { it.name }
     }
 
-    fun isNotModifiedVariable(variable: Variable): Boolean = !(variable.isModified || variable.isChanged)
+    fun collectPinnedVariables() {
+        sendEvent(TriggerPinnedVariablesService.FetchPinnedVariables { pinnedVariables ->
+            state.variables.forEach { variable ->
+                if (pinnedVariables.contains(variable.name)) {
+                    variable.isPinned = true
+                    state.pinnedVariables.add(variable)
+                }
+            }
+        })
+    }
 
-    fun isNotFilteredVariable(variable: Variable): Boolean = !variable.name.contains(state.varsFilter.get())
+    fun checkPinnedVariables() {
+        if (state.isDoUpdatePinnedVariables) {
+            state.isDoUpdatePinnedVariables = false
+            state.pinnedVariables.clear()
+            collectPinnedVariables()
+        }
+    }
+
+    fun isFilteredOutVariable(variable: Variable): Boolean {
+        // Filter when we need to show only modified vars
+        if (state.isShowModifiedVars.get() && !(variable.isModified || variable.isChanged)) {
+            return true
+        }
+
+        // Filter when 'filter input' is not empty
+        if (state.varsFilter.length > 0 && !variable.name.contains(state.varsFilter.get())) {
+            return true
+        }
+
+        return false
+    }
 
     private fun applyTmpTileChanges() {
         getNewItemVars()?.let { newItemVars ->
@@ -134,6 +173,7 @@ class ViewController(
         state.varsFilter.set("")
         state.isShowModifiedVars.set(false)
         state.variables.clear()
+        state.pinnedVariables.clear()
 
         sendEvent(Reaction.ApplicationBlockChanged(false))
     }
