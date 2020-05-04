@@ -19,13 +19,15 @@ class TGMParser(
         var posIdx = 0
 
         for (line in rawMapContent.lineSequence()) {
-            posIdx += line.length + 1
-
             if (line.isBlank()) {
+                posIdx += line.length + 1
+                continue
+            } else if (line.startsWith("(1,1,1)")) {
                 break
             }
 
-            readTileDeclaration(line)
+            posIdx += line.length + 1
+            readTileContentDeclaration(line)
         }
 
         tileContentsByKey.forEach { (key, tileContent) ->
@@ -50,7 +52,7 @@ class TGMParser(
         return dmmData
     }
 
-    private fun readTileDeclaration(currentLine: String) {
+    private fun readTileContentDeclaration(currentLine: String) {
         when (currentLine[0]) {
             '"' -> addNewTileContent(currentLine)
             '/' -> addNewTileObject(currentLine)

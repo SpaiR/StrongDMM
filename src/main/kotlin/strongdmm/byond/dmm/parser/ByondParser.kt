@@ -20,12 +20,14 @@ class ByondParser(
         var posIdx = 0
 
         for (line in rawMapContent.lineSequence()) {
-            posIdx += line.length + 1
-
             if (line.isBlank()) {
+                posIdx += line.length + 1
+                continue
+            } else if (line.startsWith("(1,1,1)")) {
                 break
             }
 
+            posIdx += line.length + 1
             readTileContentDeclaration(line)
         }
 
