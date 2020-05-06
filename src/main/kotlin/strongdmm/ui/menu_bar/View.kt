@@ -40,7 +40,7 @@ class View(
 
                 separator()
 
-                menuItem("Screenshot...", block = viewController::doScreenshot)
+                menuItem("Preferences...", block = viewController::doOpenPreferences)
 
                 separator()
 
@@ -103,7 +103,10 @@ class View(
                 separator()
 
                 menuItem("Frame Areas", selected = state.providedFrameAreas, block = {})
-                menuItem("Preferences...", block = viewController::doOpenPreferences)
+
+                separator()
+
+                menuItem("Screenshot...", block = viewController::doScreenshot)
             }
 
             menu("Window") {

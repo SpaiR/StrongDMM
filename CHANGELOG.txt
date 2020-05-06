@@ -2,7 +2,7 @@ Features:
  * Allow to pin variables in "Edit Variables" window.
  * Add a "Screenshot" tool to do high resolution map images.
    Screenshot could be made for the whole map or just a selected area.
-   Available from the menu bar: "File->Screenshot...".
+   Available from the menu bar: "Options->Screenshot...".
 
 Fixes:
  * Crush when editing variables.
@@ -10,7 +10,8 @@ Fixes:
 Tweaks:
  * New application icon designed by Clément "Topy".
  * Allow to quickly change turfs dir in the tile popup.
- * Make the map reading algorithm more error-proof.
+ * Make the map parser algorithm more error-proof.
+ * Move "Preferences" button under the "File" menu item.
 
 -------------------------
  v1.1.0 (2020-04-18)

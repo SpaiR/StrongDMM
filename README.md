@@ -14,8 +14,7 @@ The editor provides a bunch of new features:
  * Smooth zoom-in/zoom-out
  * Robust "search&replace"
  * Improved shortcuts
- * Variables preview for the active object
- * Robust variables editor
+ * Robust variables editor and variables preview
  * Optional variables sanitizing
 
 ...and a lot of more...
