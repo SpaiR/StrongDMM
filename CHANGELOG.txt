@@ -12,6 +12,7 @@ Tweaks:
  * Allow to quickly change turfs dir in the tile popup.
  * Make the map parser algorithm more error-proof.
  * Move "Preferences" button under the "File" menu item.
+ * When trying to change the environment, if there are changes on the map, you will be asked to save them.
 
 -------------------------
  v1.1.0 (2020-04-18)
