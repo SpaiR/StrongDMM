@@ -1,5 +1,5 @@
 package strongdmm.service.pinned_variables
 
-class PinnedVariables {
+class PinnedVariablesServiceSettings {
     var pinnedVariables: MutableMap<String, MutableSet<String>> = mutableMapOf()
 }

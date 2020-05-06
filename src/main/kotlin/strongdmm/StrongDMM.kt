@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import strongdmm.service.*
 import strongdmm.service.action.ActionService
 import strongdmm.service.canvas.CanvasService
+import strongdmm.service.changelog.ChangelogService
 import strongdmm.service.frame.FrameService
 import strongdmm.service.map.MapHolderService
 import strongdmm.service.map.MapModifierService
@@ -11,6 +12,7 @@ import strongdmm.service.pinned_variables.PinnedVariablesService
 import strongdmm.service.preferences.PreferencesService
 import strongdmm.service.recent.RecentFilesService
 import strongdmm.service.screenshot.ScreenshotService
+import strongdmm.service.settings.SettingsService
 import strongdmm.service.shortcut.ShortcutService
 import strongdmm.service.tool.ToolsService
 import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
@@ -83,6 +85,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         ChangelogService(),
         PinnedVariablesService(),
         ScreenshotService(),
+        SettingsService(),
         ApplicationCloseService()
     )
 

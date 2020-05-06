@@ -2,10 +2,7 @@ package strongdmm.ui.panel.screenshot
 
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.EventHandler
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.event.type.service.TriggerScreenshotService
-import strongdmm.event.type.service.TriggerToolsService
+import strongdmm.event.type.service.*
 import strongdmm.util.NfdUtil
 import java.io.File
 
@@ -37,6 +34,7 @@ class ViewController(
             })
         }
 
+        saveScreenshotSettings()
         sendEvent(TriggerScreenshotService.TakeScreenshot(Pair(File(state.screenshotFilePath.get()), mapArea)))
     }
 
@@ -50,5 +48,11 @@ class ViewController(
 
     fun isScreenshotDisabled(): Boolean {
         return !state.isMapOpened || state.isTakingScreenshot || state.screenshotFilePath.length == 0
+    }
+
+    private fun saveScreenshotSettings() {
+        state.screenshotPanelUiSettings.path = state.screenshotFilePath.get()
+        state.screenshotPanelUiSettings.isFullMapImage = state.isFullMapImage
+        sendEvent(TriggerSettingsService.SaveSettings())
     }
 }

@@ -8,12 +8,14 @@ import strongdmm.event.Event
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.service.preferences.Preferences
+import strongdmm.service.settings.Settings
 
 abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
     class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
     class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
     class PreferencesControllerPreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
+    class SettingsServiceSettings(body: Settings) : Event<Settings, Unit>(body, null)
     class ChangelogControllerChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
 
     class MapHolderControllerOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
