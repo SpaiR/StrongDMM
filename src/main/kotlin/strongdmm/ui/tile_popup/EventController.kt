@@ -20,7 +20,7 @@ class EventController(
         consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
     }
 
     lateinit var viewController: ViewController
@@ -53,7 +53,7 @@ class EventController(
         state.isRedoEnabled = event.body.hasRedoAction
     }
 
-    private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
+    private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
         state.providedPreferences = event.body
     }
 }

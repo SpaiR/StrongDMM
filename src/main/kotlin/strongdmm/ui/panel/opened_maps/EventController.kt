@@ -11,17 +11,17 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Provider.MapHolderControllerOpenedMaps::class.java, ::handleProviderMapHolderControllerOpenedMaps)
-        consumeEvent(Provider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
+        consumeEvent(Provider.MapHolderServiceOpenedMaps::class.java, ::handleProviderMapHolderServiceOpenedMaps)
+        consumeEvent(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
     }
 
-    private fun handleProviderMapHolderControllerOpenedMaps(event: Event<Set<Dmm>, Unit>) {
+    private fun handleProviderMapHolderServiceOpenedMaps(event: Event<Set<Dmm>, Unit>) {
         state.providedOpenedMaps = event.body
     }
 
-    private fun handleProviderActionControllerActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+    private fun handleProviderActionServiceActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
         state.providedActionBalanceStorage = event.body
     }
 

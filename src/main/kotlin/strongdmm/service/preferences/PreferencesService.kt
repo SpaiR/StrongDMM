@@ -24,7 +24,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
         ensurePreferencesConfigExists()
         readPreferencesConfig()
 
-        sendEvent(Provider.PreferencesControllerPreferences(preferences))
+        sendEvent(Provider.PreferencesServicePreferences(preferences))
     }
 
     private fun ensurePreferencesConfigExists() {

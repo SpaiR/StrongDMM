@@ -77,8 +77,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         consumeEvent(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
         consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
-        consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
-        consumeEvent(Provider.FrameControllerFramedTiles::class.java, ::handleProviderFrameControllerFramedTiles)
+        consumeEvent(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
+        consumeEvent(Provider.FrameServiceFramedTiles::class.java, ::handleProviderFrameServiceFramedTiles)
         consumeEvent(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
         consumeEvent(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
@@ -89,7 +89,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     override fun postInit() {
-        sendEvent(Provider.CanvasControllerFrameAreas(frameAreas))
+        sendEvent(Provider.CanvasServiceFrameAreas(frameAreas))
     }
 
     override fun process() {
@@ -383,11 +383,11 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         }, 500)
     }
 
-    private fun handleProviderFrameControllerComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+    private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {
         canvasRenderer.providedFrameMeshes = event.body
     }
 
-    private fun handleProviderFrameControllerFramedTiles(event: Event<List<FramedTile>, Unit>) {
+    private fun handleProviderFrameServiceFramedTiles(event: Event<List<FramedTile>, Unit>) {
         canvasRenderer.providedFramedTiles = event.body
     }
 

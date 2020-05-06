@@ -53,15 +53,15 @@ class MapHolderService : Service, EventHandler, PostInitialize {
         consumeEvent(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
-        consumeEvent(Provider.ActionControllerActionBalanceStorage::class.java, ::handleProviderActionControllerActionBalanceStorage)
+        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
     }
 
     override fun postInit() {
         ensureBackupsDirExists()
 
-        sendEvent(Provider.MapHolderControllerOpenedMaps(openedMaps))
-        sendEvent(Provider.MapHolderControllerAvailableMaps(availableMapsPaths))
+        sendEvent(Provider.MapHolderServiceOpenedMaps(openedMaps))
+        sendEvent(Provider.MapHolderServiceAvailableMaps(availableMapsPaths))
     }
 
     private fun ensureBackupsDirExists() {
@@ -265,7 +265,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
         providedPreferences = event.body
     }
 
-    private fun handleProviderActionControllerActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+    private fun handleProviderActionServiceActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
         providedActionBalanceStorage = event.body
     }
 }

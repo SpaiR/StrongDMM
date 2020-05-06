@@ -12,7 +12,7 @@ class EventController(
 ) : EventHandler {
     init {
         consumeEvent(TriggerAvailableMapsDialogUi.Open::class.java, ::handleOpen)
-        consumeEvent(Provider.MapHolderControllerAvailableMaps::class.java, ::handleProviderMapHolderControllerAvailableMaps)
+        consumeEvent(Provider.MapHolderServiceAvailableMaps::class.java, ::handleProviderMapHolderServiceAvailableMaps)
     }
 
     private fun handleOpen() {
@@ -21,7 +21,7 @@ class EventController(
         sendEvent(Reaction.ApplicationBlockChanged(true))
     }
 
-    private fun handleProviderMapHolderControllerAvailableMaps(event: Event<Set<MapPath>, Unit>) {
+    private fun handleProviderMapHolderServiceAvailableMaps(event: Event<Set<MapPath>, Unit>) {
         state.providedAvailableMapPaths = event.body
     }
 }

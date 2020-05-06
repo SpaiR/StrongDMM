@@ -12,18 +12,18 @@ import strongdmm.service.settings.Settings
 
 abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
-    class ActionControllerActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
-    class CanvasControllerFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
-    class PreferencesControllerPreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
+    class ActionServiceActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
+    class CanvasServiceFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
+    class PreferencesServicePreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
     class SettingsServiceSettings(body: Settings) : Event<Settings, Unit>(body, null)
-    class ChangelogControllerChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
+    class ChangelogServiceChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
 
-    class MapHolderControllerOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
-    class MapHolderControllerAvailableMaps(body: Set<MapPath>) : Event<Set<MapPath>, Unit>(body, null)
+    class MapHolderServiceOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
+    class MapHolderServiceAvailableMaps(body: Set<MapPath>) : Event<Set<MapPath>, Unit>(body, null)
 
-    class FrameControllerComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
-    class FrameControllerFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
+    class FrameServiceComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
+    class FrameServiceFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
 
-    class RecentFilesControllerRecentEnvironments(body: List<String>) : Event<List<String>, Unit>(body, null)
-    class RecentFilesControllerRecentMaps(body: List<MapPath>) : Event<List<MapPath>, Unit>(body, null)
+    class RecentFilesServiceRecentEnvironments(body: List<String>) : Event<List<String>, Unit>(body, null)
+    class RecentFilesServiceRecentMaps(body: List<MapPath>) : Event<List<MapPath>, Unit>(body, null)
 }

@@ -10,11 +10,11 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Provider.PreferencesControllerPreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
         consumeEvent(TriggerPreferencesPanelUi.Open::class.java, ::handleOpen)
     }
 
-    private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
+    private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
         state.providedPreferences = event.body
     }
 

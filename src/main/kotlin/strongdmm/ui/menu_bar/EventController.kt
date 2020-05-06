@@ -29,9 +29,9 @@ class EventController(
         consumeEvent(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
 
         consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
-        consumeEvent(Provider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
-        consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleProviderRecentFilesControllerRecentEnvironments)
-        consumeEvent(Provider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
+        consumeEvent(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
+        consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
+        consumeEvent(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
     }
 
     private fun handleEnvironmentLoadStarted(event: Event<File, Unit>) {
@@ -82,15 +82,15 @@ class EventController(
         state.providedShowInstanceLocator = event.body
     }
 
-    private fun handleProviderCanvasControllerFrameAreas(event: Event<ImBool, Unit>) {
+    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBool, Unit>) {
         state.providedFrameAreas = event.body
     }
 
-    private fun handleProviderRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {
+    private fun handleProviderRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
         state.providedRecentEnvironments = event.body
     }
 
-    private fun handleProviderRecentFilesControllerRecentMaps(event: Event<List<MapPath>, Unit>) {
+    private fun handleProviderRecentFilesServiceRecentMaps(event: Event<List<MapPath>, Unit>) {
         state.providedRecentMaps = event.body
     }
 }

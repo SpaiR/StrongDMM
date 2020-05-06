@@ -9,11 +9,11 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Provider.ChangelogControllerChangelogText::class.java, ::handleProviderChangelogControllerChangelogText)
+        consumeEvent(Provider.ChangelogServiceChangelogText::class.java, ::handleProviderChangelogServiceChangelogText)
         consumeEvent(TriggerChangelogPanelUi.Open::class.java, ::handleOpen)
     }
 
-    private fun handleProviderChangelogControllerChangelogText(event: Event<String, Unit>) {
+    private fun handleProviderChangelogServiceChangelogText(event: Event<String, Unit>) {
         state.providedChangelogText = event.body
     }
 

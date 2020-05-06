@@ -22,7 +22,7 @@ class ScreenshotService : Service, EventHandler {
     private val screenshotRenderer = ScreenshotRenderer()
 
     init {
-        consumeEvent(Provider.FrameControllerComposedFrame::class.java, ::handleProviderFrameControllerComposedFrame)
+        consumeEvent(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
         consumeEvent(TriggerScreenshotService.TakeScreenshot::class.java, ::handleTakeScreenshot)
     }
 
@@ -81,7 +81,7 @@ class ScreenshotService : Service, EventHandler {
         saveImageBytesToPng(imageBytes, width, height, file)
     }
 
-    private fun handleProviderFrameControllerComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+    private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {
         screenshotRenderer.providedFrameMeshes = event.body
     }
 }

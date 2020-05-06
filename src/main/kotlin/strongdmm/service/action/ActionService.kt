@@ -30,7 +30,7 @@ class ActionService : Service, EventHandler, PostInitialize {
     }
 
     override fun postInit() {
-        sendEvent(Provider.ActionControllerActionBalanceStorage(actionBalanceStorage))
+        sendEvent(Provider.ActionServiceActionBalanceStorage(actionBalanceStorage))
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }

@@ -42,8 +42,8 @@ class FrameService : Service, EventHandler, PostInitialize {
     }
 
     override fun postInit() {
-        sendEvent(Provider.FrameControllerComposedFrame(cache))
-        sendEvent(Provider.FrameControllerFramedTiles(framedTiles))
+        sendEvent(Provider.FrameServiceComposedFrame(cache))
+        sendEvent(Provider.FrameServiceFramedTiles(framedTiles))
     }
 
     private fun updateFrameCache() {

@@ -19,7 +19,7 @@ class ChangelogService : Service, EventHandler, PostInitialize {
     }
 
     override fun postInit() {
-        sendEvent(Provider.ChangelogControllerChangelogText(changelogText))
+        sendEvent(Provider.ChangelogServiceChangelogText(changelogText))
     }
 
     private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {

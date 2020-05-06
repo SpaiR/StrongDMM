@@ -16,7 +16,7 @@ class EventController(
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleRecentFilesControllerRecentEnvironments)
+        consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleRecentFilesServiceRecentEnvironments)
     }
 
     private fun handleEnvironmentLoadStarted() {
@@ -41,7 +41,7 @@ class EventController(
         state.selectedTileItemType = event.body?.type ?: ""
     }
 
-    private fun handleRecentFilesControllerRecentEnvironments(event: Event<List<String>, Unit>) {
+    private fun handleRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
         state.providedRecentEnvironments = event.body
     }
 }
