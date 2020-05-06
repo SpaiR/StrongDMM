@@ -10,8 +10,6 @@ import org.lwjgl.glfw.GLFW
 import strongdmm.PostInitialize
 import strongdmm.Processable
 import strongdmm.Service
-import strongdmm.byond.TYPE_WORLD
-import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
@@ -347,7 +345,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
-        iconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+        iconSize = event.body.getWorldIconSize()
     }
 
     private fun handleEnvironmentReset() {

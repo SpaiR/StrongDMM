@@ -15,8 +15,8 @@ abstract class Reaction {
     class ApplicationBlockChanged(applicationBlockStatus: Boolean) : Event<Boolean, Unit>(applicationBlockStatus, null)
 
     class EnvironmentReset : Event<Unit, Unit>(Unit, null)
-    class EnvironmentLoading(body: File) : Event<File, Unit>(body, null)
-    class EnvironmentLoaded(environmentLoadedStatus: Boolean) : Event<Boolean, Unit>(environmentLoadedStatus, null)
+    class EnvironmentLoadStarted(body: File) : Event<File, Unit>(body, null)
+    class EnvironmentLoadStopped(environmentLoadedStatus: Boolean) : Event<Boolean, Unit>(environmentLoadedStatus, null)
     class EnvironmentChanged(body: Dme) : Event<Dme, Unit>(body, null)
 
     class SelectedMapChanged(body: Dmm) : Event<Dmm, Unit>(body, null)
@@ -38,4 +38,7 @@ abstract class Reaction {
 
     class TilePopupOpened : Event<Unit, Unit>(Unit, null)
     class TilePopupClosed : Event<Unit, Unit>(Unit, null)
+
+    class ScreenshotTakeStarted : Event<Unit, Unit>(Unit, null)
+    class ScreenshotTakeStopped : Event<Unit, Unit>(Unit, null)
 }

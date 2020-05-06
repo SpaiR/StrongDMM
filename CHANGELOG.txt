@@ -1,5 +1,8 @@
 Features:
  * Allow to pin variables in "Edit Variables" window.
+ * Add a "Screenshot" tool to do high resolution map images.
+   Screenshot could be made for the whole map or just a selected area.
+   Available from the menu bar: "File->Screenshot...".
 
 Fixes:
  * Crush when editing variables.
@@ -14,7 +17,7 @@ Tweaks:
 -------------------------
 
 Features:
- * Add a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog".
+ * Add a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog...".
  * When creating a new map, "dmm" extension will be added automatically.
  * Replace "Show Icons" checkbox for "Environment Tree" with "Collapse All" button.
  * Add a tile popup widget for quick dir modification.

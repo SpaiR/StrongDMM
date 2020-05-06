@@ -238,9 +238,6 @@ abstract class AppWindow(title: String) {
     private fun loop() {
         var time = 0.0 // to track our frame delta value
 
-        // Set the clear color
-        glClearColor(.25f, .25f, .5f, 1f)
-
         // Respect alpha channel
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -268,6 +265,7 @@ abstract class AppWindow(title: String) {
             glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
 
             // Clear the framebuffer
+            glClearColor(.25f, .25f, .5f, 1f)
             glClear(GL_COLOR_BUFFER_BIT)
 
             ImGui.newFrame()

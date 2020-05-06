@@ -67,7 +67,7 @@ compileKotlin {
 }
 
 runShadow {
-    jvmArgs(['-Dsdmmparser.path=./libs'])
+    jvmArgs(['-Dsdmmparser.path=./libs', '-Xmx500m'])
 }
 
 processResources {

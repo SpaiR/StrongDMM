@@ -134,3 +134,9 @@ inline fun combo(label: String, previewValue: String, block: () -> Unit) {
         ImGui.endCombo()
     }
 }
+
+inline fun radioButton(label: String, active: Boolean, block: () -> Unit) {
+    if (ImGui.radioButton(label, active)) {
+        block()
+    }
+}

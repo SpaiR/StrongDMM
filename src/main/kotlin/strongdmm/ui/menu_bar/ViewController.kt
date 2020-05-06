@@ -140,6 +140,10 @@ class ViewController(
         state.providedShowInstanceLocator.set(!state.providedShowInstanceLocator.get())
     }
 
+    fun doScreenshot() {
+        sendEvent(TriggerScreenshotPanelUi.Open())
+    }
+
     fun doOpenPreferences() {
         sendEvent(TriggerPreferencesPanelUi.Open())
     }

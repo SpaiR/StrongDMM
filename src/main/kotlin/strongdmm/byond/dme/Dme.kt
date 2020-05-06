@@ -2,7 +2,9 @@ package strongdmm.byond.dme
 
 import strongdmm.byond.TYPE_WORLD
 import strongdmm.byond.VAR_AREA
+import strongdmm.byond.VAR_ICON_SIZE
 import strongdmm.byond.VAR_TURF
+import strongdmm.util.DEFAULT_ICON_SIZE
 
 class Dme(
     val name: String,
@@ -22,4 +24,6 @@ class Dme(
     }
 
     fun getItem(type: String): DmeItem? = items[type]
+
+    fun getWorldIconSize(): Int = getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
 }

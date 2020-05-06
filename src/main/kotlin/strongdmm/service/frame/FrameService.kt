@@ -135,7 +135,7 @@ class FrameService : Service, EventHandler, PostInitialize {
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
-        currentIconSize = event.body.getItem(TYPE_WORLD)!!.getVarInt(VAR_ICON_SIZE) ?: DEFAULT_ICON_SIZE
+        currentIconSize = event.body.getWorldIconSize()
         refreshFrame()
     }
 

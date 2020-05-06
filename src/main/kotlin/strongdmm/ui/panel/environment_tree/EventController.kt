@@ -11,19 +11,19 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Reaction.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
-        consumeEvent(Reaction.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
+        consumeEvent(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        consumeEvent(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         consumeEvent(Provider.RecentFilesControllerRecentEnvironments::class.java, ::handleRecentFilesControllerRecentEnvironments)
     }
 
-    private fun handleEnvironmentLoading() {
+    private fun handleEnvironmentLoadStarted() {
         state.isEnvironmentLoading = true
     }
 
-    private fun handleEnvironmentLoaded() {
+    private fun handleEnvironmentLoadStopped() {
         state.isEnvironmentLoading = false
     }
 

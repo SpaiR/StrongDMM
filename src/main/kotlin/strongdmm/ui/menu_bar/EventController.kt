@@ -17,14 +17,16 @@ class EventController(
     private val state: State
 ) : EventHandler {
     init {
-        consumeEvent(Reaction.EnvironmentLoading::class.java, ::handleEnvironmentLoading)
-        consumeEvent(Reaction.EnvironmentLoaded::class.java, ::handleEnvironmentLoaded)
+        consumeEvent(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        consumeEvent(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        consumeEvent(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
+        consumeEvent(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
 
         consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(Provider.CanvasControllerFrameAreas::class.java, ::handleProviderCanvasControllerFrameAreas)
@@ -32,11 +34,11 @@ class EventController(
         consumeEvent(Provider.RecentFilesControllerRecentMaps::class.java, ::handleProviderRecentFilesControllerRecentMaps)
     }
 
-    private fun handleEnvironmentLoading(event: Event<File, Unit>) {
+    private fun handleEnvironmentLoadStarted(event: Event<File, Unit>) {
         state.progressText = "Loading " + event.body.absolutePath.replace('\\', '/').substringAfterLast("/")
     }
 
-    private fun handleEnvironmentLoaded() {
+    private fun handleEnvironmentLoadStopped() {
         state.progressText = null
     }
 
@@ -66,6 +68,14 @@ class EventController(
         state.isTurfLayerActive.set(!event.body.contains(TYPE_TURF))
         state.isObjLayerActive.set(!event.body.contains(TYPE_OBJ))
         state.isMobLayerActive.set(!event.body.contains(TYPE_MOB))
+    }
+
+    private fun handleScreenshotTakeStarted() {
+        state.progressText = "Screenshot"
+    }
+
+    private fun handleScreenshotTakeStopped() {
+        state.progressText = null
     }
 
     private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {

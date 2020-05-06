@@ -27,7 +27,7 @@ class EnvironmentService : Service, EventHandler {
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            sendEvent(Reaction.EnvironmentLoading(event.body))
+            sendEvent(Reaction.EnvironmentLoadStarted(event.body))
 
             environment = SdmmParser().parseDme(event.body)
 
@@ -37,7 +37,7 @@ class EnvironmentService : Service, EventHandler {
             System.gc()
 
             sendEvent(Reaction.EnvironmentChanged(environment))
-            sendEvent(Reaction.EnvironmentLoaded(true))
+            sendEvent(Reaction.EnvironmentLoadStopped(true))
         }
     }
 

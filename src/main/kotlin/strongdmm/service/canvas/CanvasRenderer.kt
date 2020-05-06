@@ -288,7 +288,7 @@ class CanvasRenderer {
         markedTileItemLvl = -1
 
         for (frameMesh in providedFrameMeshes) {
-            val (tileItemId, sprite, xReal, yReal, x1, y1, x2, y2) = frameMesh
+            val (tileItemId, sprite, mapX, mapY, x1, y1, x2, y2) = frameMesh
 
             var colorR = frameMesh.colorR
             var colorG = frameMesh.colorG
@@ -327,8 +327,8 @@ class CanvasRenderer {
                         colorB = tileItemSelectColor.z
                         colorA = tileItemSelectColor.w
                         tileItemIdMouseOver = tileItemId
-                        xForTileItemMouseOver = xReal
-                        yForTileItemMouseOver = yReal
+                        xForTileItemMouseOver = mapX
+                        yForTileItemMouseOver = mapY
                     }
                 }
 
@@ -361,7 +361,6 @@ class CanvasRenderer {
 
         if (neededPixelsBufferSize > pixelsBuffer.limit()) {
             pixelsBuffer = BufferUtils.createByteBuffer(neededPixelsBufferSize)
-            System.gc()
         }
 
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelsBuffer)

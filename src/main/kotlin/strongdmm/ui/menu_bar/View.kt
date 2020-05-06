@@ -22,7 +22,7 @@ class View(
 
                 menuItem("New Map...", shortcut = "Ctrl+N", enabled = state.isEnvironmentOpened, block = viewController::doNewMap)
                 menuItem("Open Map...", shortcut = "Ctrl+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenMap)
-                menuItem("Open Available Map", shortcut = "Ctrl+Shift+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenAvailableMap)
+                menuItem("Open Available Map...", shortcut = "Ctrl+Shift+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenAvailableMap)
                 menu("Recent Maps", enabled = state.isEnvironmentOpened) {
                     showRecentMaps()
                 }
@@ -31,11 +31,16 @@ class View(
 
                 menuItem("Close Map", shortcut = "Ctrl+W", enabled = state.isMapOpened, block = viewController::doCloseMap)
                 menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = state.isMapOpened, block = viewController::doCloseAllMaps)
+
                 separator()
 
                 menuItem("Save", shortcut = "Ctrl+S", enabled = state.isMapOpened, block = viewController::doSave)
                 menuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = state.isMapOpened, block = viewController::doSaveAll)
                 menuItem("Save As...", enabled = state.isMapOpened, block = viewController::doSaveAs)
+
+                separator()
+
+                menuItem("Screenshot...", block = viewController::doScreenshot)
 
                 separator()
 
@@ -61,7 +66,7 @@ class View(
             }
 
             menu("Options") {
-                menuItem("Layers Filter", enabled = state.isEnvironmentOpened, block = viewController::doOpenLayersFilter)
+                menuItem("Layers Filter...", enabled = state.isEnvironmentOpened, block = viewController::doOpenLayersFilter)
 
                 menuItem(
                     "Toggle Area",
@@ -106,8 +111,8 @@ class View(
             }
 
             menu("Help") {
-                menuItem("Changelog", block = viewController::doChangelog)
-                menuItem("About", block = viewController::doAbout)
+                menuItem("Changelog...", block = viewController::doChangelog)
+                menuItem("About...", block = viewController::doAbout)
             }
 
             state.progressText?.let {

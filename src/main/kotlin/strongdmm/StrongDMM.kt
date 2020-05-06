@@ -10,6 +10,7 @@ import strongdmm.service.map.MapModifierService
 import strongdmm.service.pinned_variables.PinnedVariablesService
 import strongdmm.service.preferences.PreferencesService
 import strongdmm.service.recent.RecentFilesService
+import strongdmm.service.screenshot.ScreenshotService
 import strongdmm.service.shortcut.ShortcutService
 import strongdmm.service.tool.ToolsService
 import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
@@ -27,6 +28,7 @@ import strongdmm.ui.panel.level_switch.LevelSwitchPanelUi
 import strongdmm.ui.panel.objects.ObjectsPanelUi
 import strongdmm.ui.panel.opened_maps.OpenedMapsPanelUi
 import strongdmm.ui.panel.preferences.PreferencesPanelUi
+import strongdmm.ui.panel.screenshot.ScreenshotPanelUi
 import strongdmm.ui.panel.search_result.SearchResultPanelUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
 import strongdmm.ui.panel.unknown_types.UnknownTypesPanelUi
@@ -58,7 +60,8 @@ class StrongDMM(title: String) : AppWindow(title) {
         SetMapSizeDialogUi(),
         UnknownTypesPanelUi(),
         AboutPanelUi(),
-        ChangelogPanelUi()
+        ChangelogPanelUi(),
+        ScreenshotPanelUi()
     )
 
     private val serviceList: List<Service> = listOf(
@@ -79,6 +82,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         PreferencesService(),
         ChangelogService(),
         PinnedVariablesService(),
+        ScreenshotService(),
         ApplicationCloseService()
     )
 
