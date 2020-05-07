@@ -1,17 +1,16 @@
 Features:
- * Allow to pin variables in "Edit Variables" window.
- * Add a "Screenshot" tool to do high resolution map images.
-   Screenshot could be made for the whole map or just a selected area.
-   Available from the menu bar: "Options->Screenshot...".
+ * Added an option to pin variables in "Edit Variables" window.
+ * Added "Screenshot" tool to create high-resolution map images.
+   Screenshot could be made for the map or just a selected area.
+   It's available from the menu bar: "Options->Screenshot...".
 
 Fixes:
  * Crush when editing variables.
 
 Tweaks:
- * New application icon designed by Clément "Topy".
- * Allow to quickly change turfs dir in the tile popup.
- * Make the map parser algorithm more error-proof.
- * Move "Preferences" button under the "File" menu item.
+ * The editor now has its own logo! It was designed by Clément "Topy", thank him for that.
+ * Allowed for turfs to change their dir from the tile popup menu.
+ * "Preferences" button moved under the "File" menu item.
  * When trying to change the environment, if there are changes on the map, you will be asked to save them.
 
 -------------------------
@@ -19,14 +18,14 @@ Tweaks:
 -------------------------
 
 Features:
- * Add a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog...".
+ * Added a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog...".
  * When creating a new map, "dmm" extension will be added automatically.
- * Replace "Show Icons" checkbox for "Environment Tree" with "Collapse All" button.
- * Add a tile popup widget for quick dir modification.
+ * "Show Icons" checkbox for "Environment Tree" replaced with "Collapse All" button.
+ * Added a tile popup widget for quick dir modification.
 
 Fixes:
  * The old bug which was the reason for map corruptions.
 
 Tweaks:
- * Remove "movable" options for turfs and areas.
+ * Removed "movable" options for turfs and areas.
  * Editor title will show the name of the currently opened environment.
