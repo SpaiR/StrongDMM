@@ -31,8 +31,21 @@ class EventController(
         state.mapMaxX = event.body.maxX
         state.mapMaxY = event.body.maxY
 
-        state.searchX2.set(state.mapMaxX)
-        state.searchY2.set(state.mapMaxY)
+        if (state.searchX1.get() > state.mapMaxX) {
+            state.searchX1.set(1)
+        }
+
+        if (state.searchY1.get() > state.mapMaxX) {
+            state.searchY1.set(1)
+        }
+
+        if (state.searchX2.get() > state.mapMaxX) {
+            state.searchX2.set(state.mapMaxX)
+        }
+
+        if (state.searchY2.get() > state.mapMaxX) {
+            state.searchY2.set(state.mapMaxY)
+        }
     }
 
     private fun handleSearchByType(event: Event<String, Unit>) {
