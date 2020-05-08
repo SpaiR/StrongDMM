@@ -5,6 +5,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventHandler
 import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.service.TriggerMapModifierService
 import strongdmm.ui.panel.search_result.model.SearchPosition
 
@@ -12,7 +13,8 @@ class ViewController(
     private val state: State
 ) : EventHandler {
     fun doDelete(searchPosition: SearchPosition) {
-        delete(mutableListOf(Pair(searchPosition.tileItem, searchPosition.pos)))
+        delete(listOf(Pair(searchPosition.tileItem, searchPosition.pos)))
+        state.positionsToRemove.add(searchPosition)
     }
 
     fun doDeleteAll() {
@@ -21,15 +23,19 @@ class ViewController(
     }
 
     fun doReplace(searchPosition: SearchPosition) {
-        replace(mutableListOf(Pair(searchPosition.tileItem, searchPosition.pos)))
+        if (replace(listOf(Pair(searchPosition.tileItem, searchPosition.pos)))) {
+            state.positionsToRemove.add(searchPosition)
+        }
     }
 
     fun doReplaceAll() {
-        replace(state.searchResult!!.positions.asSequence().map { Pair(it.tileItem, it.pos) }.toList())
-        dispose()
+        if (replace(state.searchResult!!.positions.asSequence().map { Pair(it.tileItem, it.pos) }.toList())) {
+            dispose()
+        }
     }
 
     fun doJump(searchPosition: SearchPosition) {
+        sendEvent(TriggerMapHolderService.ChangeSelectedZ(searchPosition.pos.z))
         sendEvent(TriggerCanvasService.CenterCanvasByPosition(searchPosition.pos))
         sendEvent(TriggerCanvasService.MarkPosition(searchPosition.pos))
     }
@@ -49,9 +55,9 @@ class ViewController(
         sendEvent(TriggerCanvasService.ResetMarkedPosition())
     }
 
-    private fun replace(replaceList: List<Pair<TileItem, MapPos>>) {
+    private fun replace(replaceList: List<Pair<TileItem, MapPos>>): Boolean {
         if (!state.isReplaceEnabled) {
-            return
+            return false
         }
 
         if (state.searchResult!!.isSearchById) {
@@ -61,11 +67,19 @@ class ViewController(
         }
 
         sendEvent(TriggerCanvasService.ResetMarkedPosition())
+        return true
     }
 
     fun checkReplaceModeEnabled() {
         sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
             state.isReplaceEnabled = it.getItem(state.replaceType.get()) != null
         })
+    }
+
+    fun checkSearchPositionsToRemove() {
+        if (state.positionsToRemove.isNotEmpty()) {
+            state.searchResult?.positions?.removeAll(state.positionsToRemove)
+            state.positionsToRemove.clear()
+        }
     }
 }

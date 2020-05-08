@@ -12,6 +12,8 @@ class View(
     companion object {
         private const val WIDTH: Float = 375f
         private const val HEIGHT: Float = 390f
+
+        private const val COLUMN_WIDTH: Int = 125
     }
 
     lateinit var viewController: ViewController
@@ -30,6 +32,8 @@ class View(
                 separator()
                 showSearchPositions(searchResult)
             }
+
+            viewController.checkSearchPositionsToRemove()
         }
     }
 
@@ -69,25 +73,18 @@ class View(
 
     private fun showSearchPositions(searchResult: SearchResult) {
         child("search_result_positions") {
-            columns(getWindowWidth().toInt() / 100, "search_result_columns", false)
+            columns(getWindowWidth().toInt() / COLUMN_WIDTH, "search_result_columns", false)
 
-            val searchPositionItr = searchResult.positions.listIterator()
-            var idx = 0
-
-            while (searchPositionItr.hasNext()) {
-                val searchPosition = searchPositionItr.next()
-
-                button("x:%03d y:%03d##jump_btn_${idx++}".format(searchPosition.pos.x, searchPosition.pos.y)) {
+            searchResult.positions.forEachIndexed { index, searchPosition ->
+                button("x:%03d y:%03d z:%02d##jump_btn_$index".format(searchPosition.pos.x, searchPosition.pos.y, searchPosition.pos.z)) {
                     viewController.doJump(searchPosition)
                 }
 
                 if (isItemClicked(ImGuiMouseButton.Right)) {
                     if (state.replaceType.length == 0) {
                         viewController.doDelete(searchPosition)
-                        searchPositionItr.remove()
                     } else if (state.isReplaceEnabled) {
                         viewController.doReplace(searchPosition)
-                        searchPositionItr.remove()
                     }
                 }
 

@@ -87,8 +87,8 @@ class View(
                 viewController.doFindInstanceOnMap(tileItem)
             }
 
-            menuItem("Fine All Objects on Map") {
-                viewController.doFindAllObjectsOnMap(tileItem)
+            menuItem("Fine Object on Map") {
+                viewController.doFindObjectOnMap(tileItem)
             }
 
             separator()

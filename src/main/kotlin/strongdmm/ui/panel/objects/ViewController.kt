@@ -22,7 +22,7 @@ class ViewController(
         sendEvent(TriggerInstanceLocatorPanelUi.SearchById(tileItem.id))
     }
 
-    fun doFindAllObjectsOnMap(tileItem: TileItem) {
+    fun doFindObjectOnMap(tileItem: TileItem) {
         sendEvent(TriggerInstanceLocatorPanelUi.SearchByType(tileItem.type))
     }
 

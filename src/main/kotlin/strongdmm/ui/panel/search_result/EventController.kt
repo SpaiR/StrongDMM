@@ -12,7 +12,6 @@ class EventController(
     init {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(TriggerSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
@@ -24,10 +23,6 @@ class EventController(
     }
 
     private fun handleSelectedMapChanged() {
-        viewController.dispose()
-    }
-
-    private fun handleSelectedMapZSelectedChanged() {
         viewController.dispose()
     }
 

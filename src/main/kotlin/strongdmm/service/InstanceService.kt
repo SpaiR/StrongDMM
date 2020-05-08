@@ -71,12 +71,15 @@ class InstanceService : Service, EventHandler {
         sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
             if (event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
-                for (x in (x1..x2)) {
-                    for (y in (y1..y2)) {
-                        map.getTileItemsId(x, y, map.zSelected).forEach { tileItemId ->
-                            val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                            if (tileItem.type == event.body.second) {
-                                positions.add(Pair(tileItem, MapPos(x, y)))
+
+                for (z in (1..map.maxZ)) {
+                    for (x in (x1..x2)) {
+                        for (y in (y1..y2)) {
+                            map.getTileItemsId(x, y, z).forEach { tileItemId ->
+                                val tileItem = GlobalTileItemHolder.getById(tileItemId)
+                                if (tileItem.type == event.body.second) {
+                                    positions.add(Pair(tileItem, MapPos(x, y, z)))
+                                }
                             }
                         }
                     }
@@ -93,12 +96,14 @@ class InstanceService : Service, EventHandler {
         sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
             val (x1, y1, x2, y2) = event.body.first
 
-            for (x in (x1..x2)) {
-                for (y in (y1..y2)) {
-                    map.getTileItemsId(x, y, map.zSelected).forEach { tileItemId ->
-                        val tileItem = GlobalTileItemHolder.getById(tileItemId)
-                        if (tileItem.id == event.body.second) {
-                            positions.add(Pair(tileItem, MapPos(x, y)))
+            for (z in (1..map.maxZ)) {
+                for (x in (x1..x2)) {
+                    for (y in (y1..y2)) {
+                        map.getTileItemsId(x, y, z).forEach { tileItemId ->
+                            val tileItem = GlobalTileItemHolder.getById(tileItemId)
+                            if (tileItem.id == event.body.second) {
+                                positions.add(Pair(tileItem, MapPos(x, y, z)))
+                            }
                         }
                     }
                 }

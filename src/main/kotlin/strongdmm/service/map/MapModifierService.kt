@@ -112,7 +112,7 @@ class MapModifierService : Service, EventHandler {
             val replaceActions = mutableListOf<Undoable>()
 
             event.body.second.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y, dmm.zSelected)
+                val tile = dmm.getTile(pos.x, pos.y, pos.z)
                 replaceActions.add(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem.type, replaceWithTileItem)
                 })
@@ -129,7 +129,7 @@ class MapModifierService : Service, EventHandler {
             val replaceActions = mutableListOf<Undoable>()
 
             event.body.second.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y, dmm.zSelected)
+                val tile = dmm.getTile(pos.x, pos.y, pos.z)
                 replaceActions.add(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem.id, replaceWithTileItem)
                 })
@@ -145,7 +145,7 @@ class MapModifierService : Service, EventHandler {
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y, dmm.zSelected)
+                val tile = dmm.getTile(pos.x, pos.y, pos.z)
                 deleteActions.add(ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem.type)
                 })
@@ -161,7 +161,7 @@ class MapModifierService : Service, EventHandler {
             val deleteActions = mutableListOf<Undoable>()
 
             event.body.forEach { (tileItem, pos) ->
-                val tile = dmm.getTile(pos.x, pos.y, dmm.zSelected)
+                val tile = dmm.getTile(pos.x, pos.y, pos.z)
                 deleteActions.add(ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem.id)
                 })
