@@ -17,11 +17,13 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.event.type.ui.TriggerCloseMapDialogUi
+import strongdmm.event.type.ui.TriggerConfirmationDialogUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
 import strongdmm.service.preferences.Preferences
-import strongdmm.ui.dialog.close_map.model.CloseMapDialogStatus
+import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
+import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
+import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import java.io.File
 import java.nio.file.Path
 
@@ -112,18 +114,27 @@ class MapHolderService : Service, EventHandler, PostInitialize {
 
     private fun tryCloseMap(map: Dmm, callback: ((Boolean) -> Unit)? = null) {
         if (isMapHasChanges(map)) {
-            sendEvent(TriggerCloseMapDialogUi.Open(map) { closeMapStatus ->
-                when (closeMapStatus) {
-                    CloseMapDialogStatus.CLOSE_WITH_SAVE -> {
+            val confirmTitle = "Save Map?"
+            val confirmQuestion = "Map \"${map.mapName}\" has been modified. Save changes?"
+            val confirmData = ConfirmationDialogData(ConfirmationDialogType.YES_NO_CANCEL, confirmTitle, confirmQuestion)
+
+            sendEvent(TriggerConfirmationDialogUi.Open(confirmData) { confirmationStatus ->
+                var mapClosed = true
+
+                when (confirmationStatus) {
+                    ConfirmationDialogStatus.YES -> {
                         saveMap(map)
                         closeMap(map)
                     }
-                    CloseMapDialogStatus.CLOSE -> closeMap(map)
-                    CloseMapDialogStatus.CANCEL -> {
+                    ConfirmationDialogStatus.NO -> {
+                        closeMap(map)
+                    }
+                    ConfirmationDialogStatus.CANCEL -> {
+                        mapClosed = false
                     }
                 }
 
-                callback?.invoke(closeMapStatus != CloseMapDialogStatus.CANCEL)
+                callback?.invoke(mapClosed)
             })
         } else {
             closeMap(map)

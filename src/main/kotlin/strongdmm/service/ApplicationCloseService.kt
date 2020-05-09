@@ -10,11 +10,10 @@ import strongdmm.window.AppWindow
 class ApplicationCloseService : Service, EventHandler, Processable {
     override fun process() {
         if (GLFW.glfwWindowShouldClose(AppWindow.windowPtr)) {
+            GLFW.glfwSetWindowShouldClose(AppWindow.windowPtr, false)
             sendEvent(TriggerMapHolderService.CloseAllMaps {
                 if (it) {
                     AppWindow.isRunning = false
-                } else {
-                    GLFW.glfwSetWindowShouldClose(AppWindow.windowPtr, false)
                 }
             })
         }

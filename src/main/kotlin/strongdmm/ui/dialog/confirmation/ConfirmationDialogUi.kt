@@ -1,9 +1,9 @@
-package strongdmm.ui.dialog.close_map
+package strongdmm.ui.dialog.confirmation
 
 import strongdmm.Processable
 import strongdmm.Ui
 
-class CloseMapDialogUi : Ui, Processable {
+class ConfirmationDialogUi : Ui, Processable {
     private val state = State()
     private val view = View(state)
     private val viewController = ViewController(state)

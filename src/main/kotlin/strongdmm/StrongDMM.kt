@@ -16,7 +16,7 @@ import strongdmm.service.settings.SettingsService
 import strongdmm.service.shortcut.ShortcutService
 import strongdmm.service.tool.ToolsService
 import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
-import strongdmm.ui.dialog.close_map.CloseMapDialogUi
+import strongdmm.ui.dialog.confirmation.ConfirmationDialogUi
 import strongdmm.ui.dialog.edit_vars.EditVarsDialogUi
 import strongdmm.ui.dialog.set_map_size.SetMapSizeDialogUi
 import strongdmm.ui.menu_bar.MenuBarUi
@@ -58,12 +58,12 @@ class StrongDMM(title: String) : AppWindow(title) {
         ToolSelectPanelUi(),
         LevelSwitchPanelUi(),
         PreferencesPanelUi(),
-        CloseMapDialogUi(),
         SetMapSizeDialogUi(),
         UnknownTypesPanelUi(),
         AboutPanelUi(),
         ChangelogPanelUi(),
-        ScreenshotPanelUi()
+        ScreenshotPanelUi(),
+        ConfirmationDialogUi()
     )
 
     private val serviceList: List<Service> = listOf(
