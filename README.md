@@ -1,7 +1,4 @@
-[![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest)
-[![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
-
-# Strong Dream Map Maker
+# Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
 StrongDMM is an alternative yet robust map editor for BYOND. It was built with idea to create a more flexible, fast and extensible tool,
 than BYOND provides. The editor has full feature parity with DM and at the same time the editor provides much more and improves map editing experience.
 
