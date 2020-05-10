@@ -4,7 +4,6 @@ import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.PostInitialize
 import strongdmm.Service
-import strongdmm.StrongDMM
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
@@ -25,13 +24,9 @@ import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.Files
 
 class MapHolderService : Service, EventHandler, PostInitialize {
-    companion object {
-        private val backupsDir: Path = StrongDMM.homeDir.resolve("backups")
-    }
-
     private lateinit var providedPreferences: Preferences
     private lateinit var providedActionBalanceStorage: TObjectIntHashMap<Dmm>
 
@@ -60,21 +55,13 @@ class MapHolderService : Service, EventHandler, PostInitialize {
     }
 
     override fun postInit() {
-        ensureBackupsDirExists()
-
         sendEvent(Provider.MapHolderServiceOpenedMaps(openedMaps))
         sendEvent(Provider.MapHolderServiceAvailableMaps(availableMapsPaths))
     }
 
-    private fun ensureBackupsDirExists() {
-        backupsDir.toFile().mkdirs()
-    }
+    private fun createBackupFile(mapFile: File, id: Int) {
+        val tmpDmmDataFile = Files.createTempFile("sdmm.", ".backup").toFile()
 
-    private fun createBackupFile(environment: Dme, mapFile: File, id: Int) {
-        val tmpFileName = "${environment.name}-${mapFile.nameWithoutExtension}-${System.currentTimeMillis()}.backup"
-        val tmpDmmDataFile = File(backupsDir.toFile(), tmpFileName)
-
-        tmpDmmDataFile.createNewFile()
         tmpDmmDataFile.writeBytes(mapFile.readBytes())
         tmpDmmDataFile.deleteOnExit()
 
@@ -181,7 +168,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
                 val dmmData = DmmParser.parse(mapFile)
                 val map = Dmm(mapFile, dmmData, environment)
 
-                createBackupFile(environment, mapFile, id)
+                createBackupFile(mapFile, id)
 
                 openedMaps.add(map)
                 selectedMap = map
