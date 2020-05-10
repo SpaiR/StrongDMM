@@ -2,22 +2,22 @@
 [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
 
 # Strong Dream Map Maker
-Yet another robust map editor for BYOND.
-
-### What is it
-StrongDMM is an alternative map editor for BYOND. It was built with thoughts to create a more flexible, fast and extensible tool,
-than the native one.
+StrongDMM is an alternative yet robust map editor for BYOND. It was built with idea to create a more flexible, fast and extensible tool,
+than BYOND provides. It has a 99% features parity with DM, with exclusion of very specific things which could be called useless.
+At the same time the editor provides much more and improves map editing experience in a thousand times.
 
 The editor provides a bunch of new features:
  * TGM support with built in map merger (no need to use external scripts and pre-commit hooks)
  * Almost instant environment open
+ * Custom layers filter
+ * Built-in screenshot tool
  * Smooth zoom-in/zoom-out
- * Robust "search&replace"
+ * Robust "Search&Replace"
  * Improved shortcuts
  * Robust variables editor and variables preview
  * Optional variables sanitizing
 
-...and a lot of more...
+...and a lot more...
 
 ### How to Use
 The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
@@ -51,21 +51,21 @@ You'll find a button named "Copy Type to Clipboard".
 
 ### How to Build
 **Pre-requests:** [JDK 11](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot) or higher, latest
-[Rust](https://www.rust-lang.org/) to compile `sdmmparser` and `sdmmlauncher`.
+[Rust](https://www.rust-lang.org/) to compile `sdmmparser`
 
 #### Editor:
 - **Build:** `gradlew clean build`
 - **Run:** `gradlew runShadow`
 - **Auto-format (for linter)**: `gradlew formatKotlin`
 
-#### sdmmparser/sdmmlauncher (Optional):
+#### sdmmparser (Optional):
 - **Build**: `cargo build`
 - To build a release (optimized) version just add `--release` flag in the end of the command.
 
 ### Credits
 StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made by [SpaceManiac](https://github.com/SpaceManiac).<br>
 The application icon is designed by [Clément "Topy"](https://github.com/clement-or).<br>
-Some of the initial ideas are taken from [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
+The editor took some initial ideas from [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
 and later supported by [/tg/station](https://github.com/tgstation/FastDMM).
 
 ### License
