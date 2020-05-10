@@ -1,6 +1,6 @@
 # Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
 
-<img align="right" width="150" src="https://github.com/SpaiR/StrongDMM/blob/master/docs/sdmm-logo.png">
+<img align="right" width="150" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/blob/master/docs/sdmm-logo.png">
 
 StrongDMM is an alternative yet robust map editor for BYOND. 
 
@@ -23,7 +23,7 @@ The editor provides a bunch of new features:
 ...and a lot more...
 
 <p align="center">
-  <img width="450"src="https://github.com/SpaiR/StrongDMM/blob/master/docs/sdmm-example.png">
+  <img width="450"src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-example.png">
 </p>
 
 ## How to Use
