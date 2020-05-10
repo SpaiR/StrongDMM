@@ -1,3 +1,9 @@
+-------------------------
+ v1.2.0 (2020-05-10)
+-------------------------
+
+!! Please ensure you're using the latest version of SDMMLauncher !!
+
 Features:
  * Added an option to pin variables in "Edit Variables" window.
  * Added "Screenshot" tool to create high-resolution map images.
