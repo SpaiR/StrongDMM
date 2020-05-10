@@ -1,6 +1,13 @@
 # Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
-StrongDMM is an alternative yet robust map editor for BYOND. It was built with idea to create a more flexible, fast and extensible tool,
+
+<img align="right" width="150" src="https://github.com/SpaiR/StrongDMM/blob/master/docs/sdmm-logo.png">
+
+StrongDMM is an alternative yet robust map editor for BYOND. 
+
+It was built with idea to create a more flexible, fast and extensible tool,
 than BYOND provides. The editor has full feature parity with DM and at the same time the editor provides much more and improves map editing experience.
+
+## Features
 
 The editor provides a bunch of new features:
  * TGM support with built in map merger (no need to use external scripts and pre-commit hooks)
@@ -15,7 +22,11 @@ The editor provides a bunch of new features:
 
 ...and a lot more...
 
-### How to Use
+<p align="center">
+  <img width="450"src="https://github.com/SpaiR/StrongDMM/blob/master/docs/sdmm-example.png">
+</p>
+
+## How to Use
 The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
 
 **Download links:**
@@ -25,7 +36,7 @@ The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are 
 You are also able to download the editor manually. Go to the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
 page and download zip for your OS.
 
-### Usage FAQ
+## Usage FAQ
 **Q.** I'm experiencing an eternal environment parsing. What to do?<br>
 **A.** Start the editor (launcher or proper script file) **as an administrator**.
 
@@ -43,9 +54,9 @@ You'll find a button named "Copy Type to Clipboard".
 **Q.** The editor went crush. Where I can find the error logs?<br>
 **A.** In your user home dir: `.strongdmm/logs`.
 
-<hr>
+---
 
-### How to Build
+## How to Build
 **Pre-requests:** [JDK 11](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot) or higher, latest
 [Rust](https://www.rust-lang.org/) to compile `sdmmparser`
 
