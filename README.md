@@ -4,7 +4,7 @@
 
 StrongDMM is an alternative yet robust map editor for BYOND. 
 
-It was built with idea to create a more flexible, fast and extensible tool, than BYOND provides. The editor has same features DM has , but provides much more and improves general map editing experience.
+It was built with idea to create a more flexible, fast and extensible tool, than BYOND built-in map editor. The editor has same features DM has, but provides much more and improves general map editing experience.
 
 ## Features
 
