@@ -3,8 +3,7 @@
 
 # Strong Dream Map Maker
 StrongDMM is an alternative yet robust map editor for BYOND. It was built with idea to create a more flexible, fast and extensible tool,
-than BYOND provides. It has a 99% features parity with DM, with exclusion of very specific things which could be called useless.
-At the same time the editor provides much more and improves map editing experience in a thousand times.
+than BYOND provides. The editor has full feature parity with DM and at the same time the editor provides much more and improves map editing experience.
 
 The editor provides a bunch of new features:
  * TGM support with built in map merger (no need to use external scripts and pre-commit hooks)
@@ -23,8 +22,8 @@ The editor provides a bunch of new features:
 The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
 
 **Download links:**
-* [Windows](https://github.com/SpaiR/StrongDMM/releases/latest/download/sdmmlauncher.exe)
-* [Linux](https://github.com/SpaiR/StrongDMM/releases/latest/download/sdmmlauncher)
+* [Windows](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe)
+* [Linux](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher)
 
 You are also able to download the editor manually. Go to the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
 page and download zip for your OS.
