@@ -68,8 +68,19 @@ class ViewController(
 
     fun selectType(type: String) {
         if (!state.isSelectedInCycle) {
-            sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
             state.isSelectedInCycle = true
+            sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
         }
+    }
+
+    fun isPartOfOpenedSelectedType(type: String): Boolean = state.isDoOpenSelectedType && state.selectedTileItemType.startsWith(type)
+
+    fun isSelectedTypeOpened(currentType: String): Boolean {
+        if (state.isDoOpenSelectedType && state.selectedTileItemType == currentType) {
+            state.isDoOpenSelectedType = false
+            return true
+        }
+
+        return false
     }
 }

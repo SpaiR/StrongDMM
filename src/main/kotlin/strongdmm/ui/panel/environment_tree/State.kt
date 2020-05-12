@@ -15,6 +15,7 @@ class State {
 
     var selectedTileItemType: String = ""
     var isSelectedInCycle: Boolean = false
+    var isDoOpenSelectedType: Boolean = false
 
     var isDoCollapseAll: Boolean = false
     val typeFilter: ImString = ImString(50)

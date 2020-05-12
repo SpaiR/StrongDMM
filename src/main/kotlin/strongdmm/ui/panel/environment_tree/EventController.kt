@@ -39,6 +39,10 @@ class EventController(
 
     private fun handleSelectedTileItemChanged(event: Event<TileItem?, Unit>) {
         state.selectedTileItemType = event.body?.type ?: ""
+
+        if (!state.isSelectedInCycle) {
+            state.isDoOpenSelectedType = true
+        }
     }
 
     private fun handleRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {

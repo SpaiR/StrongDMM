@@ -126,12 +126,22 @@ class View(
 
         if (dmeItem.children.isEmpty()) {
             treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
+
+            if (viewController.isSelectedTypeOpened(dmeItem.type)) {
+                setScrollHereY()
+            }
         } else {
             if (state.isDoCollapseAll) {
                 setNextItemOpen(false)
+            } else if (viewController.isPartOfOpenedSelectedType(dmeItem.type)) {
+                setNextItemOpen(true)
             }
 
             if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag) || state.isDoCollapseAll) {
+                if (viewController.isSelectedTypeOpened(dmeItem.type)) {
+                    setScrollHereY()
+                }
+
                 if (isItemClicked()) {
                     viewController.selectType(dmeItem.type)
                 }
