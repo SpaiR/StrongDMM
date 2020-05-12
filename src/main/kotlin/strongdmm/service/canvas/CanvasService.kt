@@ -93,6 +93,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
         shortcutHandler.addShortcut(Shortcut.PLUS_PAIR, action = ::zoomIn)
         shortcutHandler.addShortcut(Shortcut.MINUS_PAIR, action = ::zoomOut)
+        shortcutHandler.addShortcut(GLFW.GLFW_KEY_UP, action = ::translateCanvasUp)
+        shortcutHandler.addShortcut(GLFW.GLFW_KEY_DOWN, action = ::translateCanvasDown)
+        shortcutHandler.addShortcut(GLFW.GLFW_KEY_LEFT, action = ::translateCanvasLeft)
+        shortcutHandler.addShortcut(GLFW.GLFW_KEY_RIGHT, action = ::translateCanvasRight)
     }
 
     override fun postInit() {
@@ -134,13 +138,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         ImGui.getIO().getMouseDelta(mouseDelta)
 
         if (mouseDelta.x != 0f || mouseDelta.y != 0f) {
-            canvasRenderer.run {
-                renderData.viewTranslateX += mouseDelta.x * renderData.viewScale
-                renderData.viewTranslateY -= mouseDelta.y * renderData.viewScale
-                redraw = true
-            }
-
-            sendEvent(TriggerTilePopupUi.Close())
+            translateCanvas(-mouseDelta.x, mouseDelta.y)
         }
     }
 
@@ -291,6 +289,32 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+    }
+
+    private fun translateCanvas(xShift: Float, yShift: Float) {
+        canvasRenderer.run {
+            renderData.viewTranslateX -= xShift * renderData.viewScale
+            renderData.viewTranslateY -= yShift * renderData.viewScale
+            redraw = true
+        }
+
+        sendEvent(TriggerTilePopupUi.Close())
+    }
+
+    private fun translateCanvasUp() {
+        translateCanvas(0f, iconSize.toFloat())
+    }
+
+    private fun translateCanvasDown() {
+        translateCanvas(0f, -iconSize.toFloat())
+    }
+
+    private fun translateCanvasLeft() {
+        translateCanvas(-iconSize.toFloat(), 0f)
+    }
+
+    private fun translateCanvasRight() {
+        translateCanvas(iconSize.toFloat(), 0f)
     }
 
     private fun zoom(isZoomIn: Boolean) {

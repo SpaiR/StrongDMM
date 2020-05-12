@@ -1,6 +1,7 @@
 Features:
  * Item selection will open the item in the environment tree.
  * Added shortcuts to do a zoom-in/zoom-out with keyboard buttons plus/minus.
+ * Added canvas panning with arrow keys.
 
 -------------------------
  v1.2.0 (2020-05-10)
