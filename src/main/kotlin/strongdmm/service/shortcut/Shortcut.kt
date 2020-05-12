@@ -11,6 +11,8 @@ data class Shortcut(
         val CONTROL_PAIR: Pair<Int, Int> = Pair(GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL)
         val ALT_PAIR: Pair<Int, Int> = Pair(GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT)
         val SHIFT_PAIR: Pair<Int, Int> = Pair(GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT)
+        val PLUS_PAIR: Pair<Int, Int> = Pair(GLFW_KEY_KP_ADD, GLFW_KEY_EQUAL)
+        val MINUS_PAIR: Pair<Int, Int> = Pair(GLFW_KEY_KP_SUBTRACT, GLFW_KEY_MINUS)
     }
 
     val weight: Int

@@ -22,6 +22,8 @@ import strongdmm.event.type.ui.TriggerTilePopupUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
+import strongdmm.service.shortcut.Shortcut
+import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
@@ -66,6 +68,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     private val canvasRenderer = CanvasRenderer()
 
+    private val shortcutHandler = ShortcutHandler(this)
+
     init {
         consumeEvent(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
         consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
@@ -86,6 +90,9 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         consumeEvent(TriggerCanvasService.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
         consumeEvent(TriggerCanvasService.SelectArea::class.java, ::handleSelectArea)
         consumeEvent(TriggerCanvasService.ResetSelectedArea::class.java, ::handleResetSelectedArea)
+
+        shortcutHandler.addShortcut(Shortcut.PLUS_PAIR, action = ::zoomIn)
+        shortcutHandler.addShortcut(Shortcut.MINUS_PAIR, action = ::zoomOut)
     }
 
     override fun postInit() {
@@ -144,36 +151,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
             return
         }
 
-        val isZoomIn = mouseWheel > 0
-        val x = mousePos.x
-        val y = mousePos.y
-
-        if (!isHasMap || x < 0 || y < 0) {
-            return
-        }
-
-        // I guess it could be simplified, but it works as a scale limiter
-        if ((isZoomIn && renderData.scaleCount - 1 < MIN_SCALE) || (!isZoomIn && renderData.scaleCount + 1 > MAX_SCALE)) {
-            return
-        } else {
-            renderData.scaleCount += if (isZoomIn) -1 else 1
-        }
-
-        canvasRenderer.run {
-            if (isZoomIn) {
-                renderData.viewScale /= ZOOM_FACTOR
-                renderData.viewTranslateX -= x * renderData.viewScale / 2
-                renderData.viewTranslateY -= (windowHeight - y) * renderData.viewScale / 2
-            } else {
-                renderData.viewTranslateX += x * renderData.viewScale / 2
-                renderData.viewTranslateY += (windowHeight - y) * renderData.viewScale / 2
-                renderData.viewScale *= ZOOM_FACTOR
-            }
-
-            redraw = true
-        }
-
-        sendEvent(TriggerTilePopupUi.Close())
+        zoom(mouseWheel > 0)
     }
 
     private fun processTilePopupClick() {
@@ -313,6 +291,46 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
         sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+    }
+
+    private fun zoom(isZoomIn: Boolean) {
+        val x = mousePos.x
+        val y = mousePos.y
+
+        if (!isHasMap || x < 0 || y < 0) {
+            return
+        }
+
+        // I guess it could be simplified, but it works as a scale limiter
+        if ((isZoomIn && renderData.scaleCount - 1 < MIN_SCALE) || (!isZoomIn && renderData.scaleCount + 1 > MAX_SCALE)) {
+            return
+        } else {
+            renderData.scaleCount += if (isZoomIn) -1 else 1
+        }
+
+        canvasRenderer.run {
+            if (isZoomIn) {
+                renderData.viewScale /= ZOOM_FACTOR
+                renderData.viewTranslateX -= x * renderData.viewScale / 2
+                renderData.viewTranslateY -= (windowHeight - y) * renderData.viewScale / 2
+            } else {
+                renderData.viewTranslateX += x * renderData.viewScale / 2
+                renderData.viewTranslateY += (windowHeight - y) * renderData.viewScale / 2
+                renderData.viewScale *= ZOOM_FACTOR
+            }
+
+            redraw = true
+        }
+
+        sendEvent(TriggerTilePopupUi.Close())
+    }
+
+    private fun zoomIn() {
+        zoom(true)
+    }
+
+    private fun zoomOut() {
+        zoom(false)
     }
 
     private fun postProcessCanvasMovingChecks() {
