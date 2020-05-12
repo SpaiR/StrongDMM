@@ -1,3 +1,9 @@
+-------------------------
+ v1.3.0 (2020-05-12)
+-------------------------
+
+!! Please ensure you're using the latest version of SDMMLauncher !!
+
 Features:
  * Item selection will open the item in the environment tree.
  * Added shortcuts to do a zoom-in/zoom-out with keyboard buttons plus and minus.
@@ -9,8 +15,6 @@ Fixes:
 -------------------------
  v1.2.0 (2020-05-10)
 -------------------------
-
-!! Please ensure you're using the latest version of SDMMLauncher !!
 
 Features:
  * Added an option to pin variables in "Edit Variables" window.
