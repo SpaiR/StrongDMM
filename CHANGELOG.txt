@@ -1,7 +1,10 @@
 Features:
  * Item selection will open the item in the environment tree.
- * Added shortcuts to do a zoom-in/zoom-out with keyboard buttons plus/minus.
+ * Added shortcuts to do a zoom-in/zoom-out with keyboard buttons plus and minus.
  * Added canvas panning with arrow keys.
+
+Fixes:
+ * Reset marked tile after closing of the search result panel.
 
 -------------------------
  v1.2.0 (2020-05-10)

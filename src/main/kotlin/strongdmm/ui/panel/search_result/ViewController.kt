@@ -41,6 +41,7 @@ class ViewController(
     }
 
     fun dispose() {
+        sendEvent(TriggerCanvasService.ResetMarkedPosition())
         state.isOpen.set(false)
         state.searchResult = null
     }
