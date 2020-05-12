@@ -292,6 +292,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun translateCanvas(xShift: Float, yShift: Float) {
+        if (!isHasMap) {
+            return
+        }
+
         canvasRenderer.run {
             renderData.viewTranslateX -= xShift * renderData.viewScale
             renderData.viewTranslateY -= yShift * renderData.viewScale
@@ -318,6 +322,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun zoom(isZoomIn: Boolean) {
+        if (!isHasMap) {
+            return
+        }
+
         val x = mousePos.x
         val y = mousePos.y
 
