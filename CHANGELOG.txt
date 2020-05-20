@@ -1,8 +1,10 @@
+Fixes:
+ * Nasty crashes when copy-pasting anything into the "Edit Variables" window.
+ * Impropper rendering of the typed russian letters in the "Edit Variables" window.
+
 -------------------------
  v1.3.0 (2020-05-12)
 -------------------------
-
-!! Please ensure you're using the latest version of SDMMLauncher !!
 
 Features:
  * Item selection will open the item in the environment tree.
