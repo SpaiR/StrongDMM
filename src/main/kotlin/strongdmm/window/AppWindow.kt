@@ -248,41 +248,53 @@ abstract class AppWindow(title: String) {
             val deltaTime = if (time > 0) currentTime - time else (1f / 60f).toDouble()
             time = currentTime
 
-            // Get window size properties and mouse position
-            glfwGetWindowSize(windowPtr, winWidth, winHeight)
-            glfwGetFramebufferSize(windowPtr, fbWidth, fbHeight)
-            glfwGetCursorPos(windowPtr, mousePosX, mousePosY)
+            updateWindowProperties()
+            updateImGuiIO(deltaTime.toFloat())
+            updateMouseCursor()
 
-            val io = ImGui.getIO()
-            io.setDisplaySize(winWidth[0].toFloat(), winHeight[0].toFloat())
-            io.setDisplayFramebufferScale(fbWidth[0].toFloat() / winWidth[0], fbHeight[0].toFloat() / winHeight[0])
-            io.setMousePos(mousePosX[0].toFloat(), mousePosY[0].toFloat())
-            io.deltaTime = deltaTime.toFloat()
-
-            // Update mouse cursor
-            val imguiCursor = ImGui.getMouseCursor()
-            glfwSetCursor(windowPtr, mouseCursors[imguiCursor])
-            glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
-
-            // Clear the framebuffer
-            glClearColor(.25f, .25f, .5f, 1f)
-            glClear(GL_COLOR_BUFFER_BIT)
-
-            ImGui.newFrame()
+            startFrame()
             appLoop()
-            ImGui.render()
-
-            imGuiGl3.render(ImGui.getDrawData())
-            defaultWindowCond = ImGuiCond.Once // reset windows condition
-
-            glfwSwapBuffers(windowPtr) // swap the color buffers
-
-            // Poll for window events. The key callback above will only be invoked during this call.
-            glfwPollEvents()
+            endFrame()
 
             // 60 fps lock
             sync.sync(60)
         }
+    }
+
+    private fun updateWindowProperties() {
+        glfwGetWindowSize(windowPtr, winWidth, winHeight)
+        glfwGetFramebufferSize(windowPtr, fbWidth, fbHeight)
+        glfwGetCursorPos(windowPtr, mousePosX, mousePosY)
+    }
+
+    private fun updateImGuiIO(deltaTime: Float) {
+        val io = ImGui.getIO()
+        io.setDisplaySize(winWidth[0].toFloat(), winHeight[0].toFloat())
+        io.setDisplayFramebufferScale(fbWidth[0].toFloat() / winWidth[0], fbHeight[0].toFloat() / winHeight[0])
+        io.setMousePos(mousePosX[0].toFloat(), mousePosY[0].toFloat())
+        io.deltaTime = deltaTime
+    }
+
+    private fun updateMouseCursor() {
+        val imguiCursor = ImGui.getMouseCursor()
+        glfwSetCursor(windowPtr, mouseCursors[imguiCursor])
+        glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
+    }
+
+    private fun startFrame() {
+        glClearColor(.25f, .25f, .5f, 1f)
+        glClear(GL_COLOR_BUFFER_BIT)
+        ImGui.newFrame()
+    }
+
+    private fun endFrame() {
+        ImGui.render()
+
+        imGuiGl3.render(ImGui.getDrawData())
+        defaultWindowCond = ImGuiCond.Once // reset windows condition
+
+        glfwSwapBuffers(windowPtr) // swap the color buffers
+        glfwPollEvents()
     }
 
     abstract fun appLoop()
