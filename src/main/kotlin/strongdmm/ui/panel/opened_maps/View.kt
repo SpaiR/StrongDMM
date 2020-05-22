@@ -3,6 +3,7 @@ package strongdmm.ui.panel.opened_maps
 import imgui.ImGui.sameLine
 import imgui.ImGui.selectable
 import imgui.enums.ImGuiCol
+import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
 import strongdmm.window.AppWindow
 
@@ -29,7 +30,7 @@ class View(
         window("${viewController.getMapName(state.selectedMap!!)}###opened_maps") {
             state.providedOpenedMaps.toTypedArray().forEach { map ->
                 withStyleColor(ImGuiCol.ButtonHovered, RED32) {
-                    smallButton("X##close_map_${map.mapPath.readable}") {
+                    smallButton("$ICON_FA_TIMES##close_map_${map.mapPath.readable}") {
                         viewController.doCloseMap(map)
                     }
                 }

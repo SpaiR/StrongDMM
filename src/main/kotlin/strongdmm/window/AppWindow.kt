@@ -18,6 +18,8 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
+import strongdmm.util.icons.ICON_MAX_FA
+import strongdmm.util.icons.ICON_MIN_FA
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
@@ -222,6 +224,14 @@ abstract class AppWindow(title: String) {
 
         javaClass.classLoader.getResourceAsStream("Ruda-Bold.ttf")!!.use {
             fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 15f, fontConfig, fontAtlas.glyphRangesCyrillic)
+        }
+
+        // Add Font Awesome icons
+        javaClass.classLoader.getResourceAsStream("fa-solid-900.ttf")!!.use {
+            fontConfig.mergeMode = true
+            fontConfig.glyphMaxAdvanceX = 13f
+            val iconRange = shortArrayOf(ICON_MIN_FA, ICON_MAX_FA)
+            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 13f, fontConfig, iconRange)
         }
 
         ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)

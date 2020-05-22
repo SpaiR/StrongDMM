@@ -10,6 +10,7 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
 import strongdmm.ui.panel.environment_tree.model.TreeNode
+import strongdmm.util.icons.ICON_FA_MINUS
 import strongdmm.util.imgui.*
 
 class View(
@@ -75,7 +76,7 @@ class View(
     }
 
     private fun showControls() {
-        button("-##collapse_all", block = viewController::doCollapseAll)
+        button("$ICON_FA_MINUS##collapse_all", block = viewController::doCollapseAll)
         setItemHoveredTooltip("Collapse All")
         sameLine()
         setNextItemWidth(-1f)
