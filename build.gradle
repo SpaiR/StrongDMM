@@ -32,7 +32,7 @@ ext {
     trove4jVersion = '3.0.3'
     gsonVersion = '2.8.6'
     pngjVersion = '2.1.0'
-    imguiVersion = '1.76-0.8.1'
+    imguiVersion = '1.76-0.9'
     logabackVersion = '1.2.3'
     slf4jVersion = '1.7.30'
 }

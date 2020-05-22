@@ -1,8 +1,7 @@
 package strongdmm.ui.panel.layers_filter
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiMouseCursor
+import imgui.enums.ImGuiStyleVar
 import imgui.enums.ImGuiTreeNodeFlags
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
@@ -90,20 +89,11 @@ class View(
 
     private fun showToggleButton(dmeItem: DmeItem) {
         val isFilteredType = viewController.isFilteredType(dmeItem)
-        val buttonColor = if (isFilteredType) RED32 else GREEN32
 
-        pushStyleColor(ImGuiCol.Button, buttonColor)
-        pushStyleColor(ImGuiCol.ButtonActive, buttonColor)
-        pushStyleColor(ImGuiCol.ButtonHovered, buttonColor)
-
-        if (smallButton(" ##layer_filter_${dmeItem.id}")) {
-            viewController.doToggleTypeFilter(dmeItem, isFilteredType)
+        withStyleVar(ImGuiStyleVar.FramePadding, 1f, 1f) {
+            if (checkbox("##layer_filter_${dmeItem.id}", !isFilteredType)) {
+                viewController.doToggleTypeFilter(dmeItem, isFilteredType)
+            }
         }
-
-        if (isItemHovered()) {
-            setMouseCursor(ImGuiMouseCursor.Hand)
-        }
-
-        popStyleColor(3)
     }
 }
