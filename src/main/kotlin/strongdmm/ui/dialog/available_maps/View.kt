@@ -37,7 +37,7 @@ class View(
 
             inputText("##maps_path_filter", state.mapFilter, "Paths Filter")
 
-            child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 100, true, ImGuiWindowFlags.HorizontalScrollbar) {
+            child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 110, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 for (mapPath in state.providedAvailableMapPaths) {
                     if (viewController.isFilteredOutVisibleFilePath(mapPath.readable)) {
                         continue

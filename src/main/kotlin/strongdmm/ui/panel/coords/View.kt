@@ -14,7 +14,7 @@ class View(
         private const val RELATIVE_POS_X: Float = 110f
         private const val RELATIVE_POS_Y: Float = 40f
 
-        private const val WIDTH: Float = 100f
+        private const val WIDTH: Float = 87f
         private const val HEIGHT: Float = 10f
 
         private const val TITLE: String = "coords_panel"

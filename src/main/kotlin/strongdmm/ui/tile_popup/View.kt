@@ -60,7 +60,7 @@ class View(
             showTileItemOptions(tile, tileItem, tileItemIdx)
         }
         sameLine()
-        text("[${tileItem.type}]  ") // Two spaces in the end to make text not to overlap over the menu arrow.
+        text("[${tileItem.type}]\t\t") // Tabs to make text not to overlap over the menu arrow.
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {

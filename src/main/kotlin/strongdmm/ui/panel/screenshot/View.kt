@@ -24,15 +24,13 @@ class View(
         WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
         window(TITLE, state.isOpened) {
-            button("Select File", block = viewController::doSelectFile)
+            button("Select File...", block = viewController::doSelectFile)
             sameLine()
             inputText("##screenshot_file_path", state.screenshotFilePath)
 
             radioButton("Full", state.isFullMapImage, viewController::doFull)
             sameLine()
             radioButton("Selection", !state.isFullMapImage, viewController::doSelection)
-
-            newLine()
 
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 

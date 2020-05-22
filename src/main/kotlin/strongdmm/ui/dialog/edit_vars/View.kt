@@ -47,7 +47,7 @@ class View(
             state.isFistOpen = false
         }
 
-        setNextItemWidth(getWindowWidth() - 130f)
+        setNextItemWidth(getWindowWidth() - 135f)
         inputText("##vars_filter", state.varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = viewController::doOk)

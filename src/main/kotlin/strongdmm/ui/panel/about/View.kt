@@ -9,7 +9,7 @@ class View(
 ) {
     companion object {
         private const val WIDTH: Float = 550f
-        private const val HEIGHT: Float = 150f
+        private const val HEIGHT: Float = 170f
 
         private const val TITLE: String = "About"
     }

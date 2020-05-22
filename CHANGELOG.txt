@@ -1,15 +1,18 @@
--------------------------
+Features:
+ * New appearance!
+
+--------------------------------------
  v1.3.1 (2020-05-20)
--------------------------
+--------------------------------------
 
 Fixes:
  * Nasty crashes when copy-pasting anything into the "Edit Variables" window.
  * Impropper rendering of the typed russian letters in the "Edit Variables" window.
  * Saving logs to a file.
 
--------------------------
+--------------------------------------
  v1.3.0 (2020-05-12)
--------------------------
+--------------------------------------
 
 Features:
  * Item selection will open the item in the environment tree.
@@ -19,9 +22,9 @@ Features:
 Fixes:
  * Reset marked tile after closing of the search result panel.
 
--------------------------
+--------------------------------------
  v1.2.0 (2020-05-10)
--------------------------
+--------------------------------------
 
 Features:
  * Added an option to pin variables in "Edit Variables" window.
@@ -38,9 +41,9 @@ Tweaks:
  * "Preferences" button moved under the "File" menu item.
  * When trying to change the environment, if there are changes on the map, you will be asked to save them.
 
--------------------------
+--------------------------------------
  v1.1.0 (2020-04-18)
--------------------------
+--------------------------------------
 
 Features:
  * Added a built-in changelog. Auto-shown when updated. Could be opened with: "Help->Changelog...".

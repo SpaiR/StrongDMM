@@ -11,7 +11,7 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 295f
+        private const val WIDTH: Float = 300f
         private const val HEIGHT: Float = 100f
 
         private const val TITLE: String = "Set Map Size"
@@ -35,7 +35,6 @@ class View(
             sameLine()
             showInput("Z", state.newZ)
 
-            newLine()
             button("OK", block = viewController::doOk)
             sameLine()
             button("Cancel", block = viewController::doCancel)

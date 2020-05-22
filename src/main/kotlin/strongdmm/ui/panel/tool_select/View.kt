@@ -18,7 +18,7 @@ class View(
         private const val HEIGHT: Float = 35f
 
         private const val TITLE: String = "Tool"
-        private const val FLAGS: Int = ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize
+        private const val FLAGS: Int = ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysAutoResize
     }
 
     lateinit var viewController: ViewController
