@@ -110,7 +110,7 @@ class View(
             }
 
             menu("Window") {
-                menuItem("Reset Windows", block = viewController::doResetWindows)
+                menuItem("Reset Windows", shortcut = "F5", block = viewController::doResetWindows)
             }
 
             menu("Help") {

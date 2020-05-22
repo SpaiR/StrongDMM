@@ -1,5 +1,6 @@
 Features:
  * New appearance!
+ * Added a hotkey (F5) to Reset Windows state (initial sizes and position).
 
 --------------------------------------
  v1.3.1 (2020-05-20)

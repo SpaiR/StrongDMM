@@ -44,9 +44,11 @@ abstract class AppWindow(title: String) {
         var defaultWindowCond: Int = ImGuiCond.Once
             private set
 
+        private var resetWindows: Boolean = false
+
         // We will restore 'Once' condition after the first passed render cycle
         fun resetWindows() {
-            defaultWindowCond = ImGuiCond.Always
+            resetWindows = true
         }
     }
 
@@ -339,10 +341,18 @@ abstract class AppWindow(title: String) {
         ImGui.render()
 
         imGuiGl3.render(ImGui.getDrawData())
-        defaultWindowCond = ImGuiCond.Once // reset windows condition
+        checkWindowsState()
 
         glfwSwapBuffers(windowPtr) // swap the color buffers
         glfwPollEvents()
+    }
+
+    private fun checkWindowsState() {
+        defaultWindowCond = ImGuiCond.Once // reset windows condition
+        if (resetWindows) {
+            resetWindows = false
+            defaultWindowCond = ImGuiCond.Always
+        }
     }
 
     abstract fun appLoop()
