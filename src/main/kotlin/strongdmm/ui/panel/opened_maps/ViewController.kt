@@ -18,6 +18,6 @@ class ViewController(
     }
 
     fun getMapName(map: Dmm): String {
-        return map.mapName + if (state.providedActionBalanceStorage[map] != 0) " *" else ""
+        return (if (state.providedActionBalanceStorage[map] != 0) "* " else "") + map.mapName
     }
 }

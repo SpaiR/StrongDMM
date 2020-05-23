@@ -11,7 +11,6 @@ import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.service.action.ActionStatus
-import java.io.File
 
 class EventController(
     private val state: State
@@ -25,8 +24,6 @@ class EventController(
         consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
-        consumeEvent(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
-        consumeEvent(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
 
         consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
@@ -34,12 +31,12 @@ class EventController(
         consumeEvent(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
     }
 
-    private fun handleEnvironmentLoadStarted(event: Event<File, Unit>) {
-        state.progressText = "Loading " + event.body.absolutePath.replace('\\', '/').substringAfterLast("/")
+    private fun handleEnvironmentLoadStarted() {
+        state.isLoadingEnvironment = true
     }
 
     private fun handleEnvironmentLoadStopped() {
-        state.progressText = null
+        state.isLoadingEnvironment = false
     }
 
     private fun handleEnvironmentChanged() {
@@ -68,14 +65,6 @@ class EventController(
         state.isTurfLayerActive.set(!event.body.contains(TYPE_TURF))
         state.isObjLayerActive.set(!event.body.contains(TYPE_OBJ))
         state.isMobLayerActive.set(!event.body.contains(TYPE_MOB))
-    }
-
-    private fun handleScreenshotTakeStarted() {
-        state.progressText = "Screenshot"
-    }
-
-    private fun handleScreenshotTakeStopped() {
-        state.progressText = null
     }
 
     private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {

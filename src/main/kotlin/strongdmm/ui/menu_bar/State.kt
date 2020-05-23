@@ -9,7 +9,7 @@ class State {
     lateinit var providedRecentEnvironments: List<String>
     lateinit var providedRecentMaps: List<MapPath>
 
-    var progressText: String? = null
+    var isLoadingEnvironment: Boolean = false
     var isEnvironmentOpened: Boolean = false
     var isMapOpened: Boolean = false
 

@@ -30,6 +30,7 @@ import strongdmm.ui.panel.level_switch.LevelSwitchPanelUi
 import strongdmm.ui.panel.objects.ObjectsPanelUi
 import strongdmm.ui.panel.opened_maps.OpenedMapsPanelUi
 import strongdmm.ui.panel.preferences.PreferencesPanelUi
+import strongdmm.ui.panel.progress.ProgressPanelUi
 import strongdmm.ui.panel.screenshot.ScreenshotPanelUi
 import strongdmm.ui.panel.search_result.SearchResultPanelUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
@@ -63,7 +64,8 @@ class StrongDMM(title: String) : AppWindow(title) {
         AboutPanelUi(),
         ChangelogPanelUi(),
         ScreenshotPanelUi(),
-        ConfirmationDialogUi()
+        ConfirmationDialogUi(),
+        ProgressPanelUi()
     )
 
     private val serviceList: List<Service> = listOf(

@@ -13,8 +13,8 @@ class View(
     fun process() {
         mainMenuBar {
             menu("File") {
-                menuItem("Open Environment...", enabled = state.progressText == null, block = viewController::doOpenEnvironment)
-                menu("Recent Environments", enabled = state.progressText == null) {
+                menuItem("Open Environment...", enabled = !state.isLoadingEnvironment, block = viewController::doOpenEnvironment)
+                menu("Recent Environments", enabled = !state.isLoadingEnvironment) {
                     showRecentEnvironments()
                 }
 
@@ -116,12 +116,6 @@ class View(
             menu("Help") {
                 menuItem("Changelog...", block = viewController::doChangelog)
                 menuItem("About...", block = viewController::doAbout)
-            }
-
-            state.progressText?.let {
-                val count = (getTime() / 0.25).toInt() and 3
-                val bar = charArrayOf('|', '/', '-', '\\')
-                text("${bar[count]} $it${".".repeat(count)}")
             }
         }
     }
