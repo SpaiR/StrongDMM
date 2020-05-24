@@ -11,9 +11,11 @@ class View(
     companion object {
         private const val POS_X: Float = 350f
         private const val RELATIVE_POS_Y: Float = 210f
+        private const val RELATIVE_POS_Y_COLLAPSED: Float = 80f
 
         private const val WIDTH: Float = 300f
         private const val HEIGHT: Float = 195f
+        private const val HEIGHT_COLLAPSED: Float = 65f
 
         private const val TITLE: String = "Variables Preview"
     }
@@ -23,10 +25,16 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        val isEmpty = state.selectedTileItem?.customVars == null
 
-        window(TITLE) {
-            if (state.selectedTileItem?.customVars == null) {
+        if (isEmpty) {
+            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y_COLLAPSED, WIDTH, HEIGHT_COLLAPSED)
+        } else {
+            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        }
+
+        window("$TITLE##variables_preview_$isEmpty") {
+            if (isEmpty) {
                 text("Empty (instance with initial vars)")
             } else {
                 columns(2)
