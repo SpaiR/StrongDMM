@@ -73,7 +73,7 @@ class View(
 
     private fun showSearchPositions(searchResult: SearchResult) {
         child("search_result_positions") {
-            columns(getWindowWidth().toInt() / COLUMN_WIDTH, "search_result_columns", false)
+            columns(Math.max(1, getWindowWidth().toInt() / COLUMN_WIDTH), "search_result_columns", false)
 
             searchResult.positions.forEachIndexed { index, searchPosition ->
                 button("x:%03d y:%03d z:%02d##jump_btn_$index".format(searchPosition.pos.x, searchPosition.pos.y, searchPosition.pos.z)) {

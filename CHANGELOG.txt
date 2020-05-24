@@ -1,6 +1,6 @@
 Features:
  * New appearance!
- * Added an option to sort variables by their type to the Edit Variables window.
+ * Added an option to sort variables by their type in the Edit Variables window.
  * Environment panel will show recent maps. Thus you can directly open the map in the corresponding environment.
  * Added a hotkey (F5) to Reset Windows state (initial sizes and position).
 
