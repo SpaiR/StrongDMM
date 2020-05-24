@@ -37,6 +37,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
         ensureRecentFilesConfigExists()
         readRecentFilesConfig()
 
+        sendEvent(Provider.RecentFilesServiceRecentEnvironmentsWithMaps(recentFiles.maps))
         sendEvent(Provider.RecentFilesServiceRecentEnvironments(recentEnvironments))
         sendEvent(Provider.RecentFilesServiceRecentMaps(recentMaps))
     }

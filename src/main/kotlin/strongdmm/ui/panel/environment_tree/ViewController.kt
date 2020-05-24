@@ -3,8 +3,10 @@ package strongdmm.ui.panel.environment_tree
 import imgui.enums.ImGuiTreeNodeFlags
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
+import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventHandler
 import strongdmm.event.type.service.TriggerEnvironmentService
+import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.service.TriggerTileItemService
 import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.NfdUtil
@@ -28,6 +30,12 @@ class ViewController(
         sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
+    fun doOpenEnvironmentWithMap(environmentPath: String, mapPath: MapPath) {
+        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)) {
+            state.mapToOpen = mapPath
+        })
+    }
+
     fun doCollapseAll() {
         state.isDoCollapseAll = true
     }
@@ -43,6 +51,11 @@ class ViewController(
 
     fun stopCycle() {
         state.isDoCollapseAll = false
+
+        state.mapToOpen?.let {
+            sendEvent(TriggerMapHolderService.OpenMap(File(it.absolute)))
+            state.mapToOpen = null
+        }
     }
 
     fun getTreeNodeSelectedFlag(dmeItem: DmeItem): Int {

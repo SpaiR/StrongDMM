@@ -1,6 +1,7 @@
 package strongdmm.ui.panel.environment_tree
 
 import strongdmm.byond.dme.Dme
+import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
@@ -16,7 +17,7 @@ class EventController(
         consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleRecentFilesServiceRecentEnvironments)
+        consumeEvent(Provider.RecentFilesServiceRecentEnvironmentsWithMaps::class.java, ::handleRecentFilesServiceRecentEnvironmentsWithMaps)
     }
 
     private fun handleEnvironmentLoadStarted() {
@@ -45,7 +46,7 @@ class EventController(
         }
     }
 
-    private fun handleRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
-        state.providedRecentEnvironments = event.body
+    private fun handleRecentFilesServiceRecentEnvironmentsWithMaps(event: Event<Map<String, List<MapPath>>, Unit>) {
+        state.providedRecentEnvironmentsWithMaps = event.body.toMap().mapValues { it.value.toList() }
     }
 }

@@ -255,7 +255,8 @@ class MapHolderService : Service, EventHandler, PostInitialize {
         File(event.body.absRootDirPath).walkTopDown().forEach {
             if (it.extension == "dmm") {
                 val absoluteFilePath = it.absolutePath
-                val readableName = File(event.body.absRootDirPath).toPath().relativize(it.toPath()).toString()
+                val mapFile = File(event.body.absRootDirPath)
+                val readableName = mapFile.toPath().relativize(it.toPath()).toString()
                 availableMapsPaths.add(MapPath(readableName, absoluteFilePath))
             }
         }

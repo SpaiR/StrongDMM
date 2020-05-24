@@ -61,9 +61,9 @@ class View(
 
         separator()
 
-        if (state.providedRecentEnvironments.isNotEmpty()) {
+        if (state.providedRecentEnvironmentsWithMaps.isNotEmpty()) {
             text("Recent Environments:")
-            state.providedRecentEnvironments.toTypedArray().forEach { environmentPath ->
+            state.providedRecentEnvironmentsWithMaps.forEach { (environmentPath, maps) ->
                 alignTextToFramePadding()
                 bullet()
                 sameLine()
@@ -71,6 +71,18 @@ class View(
                     viewController.doOpenEnvironment(environmentPath)
                 }
                 setItemHoveredTooltip(environmentPath)
+
+                maps.forEach { mapPath ->
+                    withIndent(20f) {
+                        alignTextToFramePadding()
+                        text("-")
+                        sameLine()
+                        smallButton(mapPath.fileName + "##${mapPath.absolute}") {
+                            viewController.doOpenEnvironmentWithMap(environmentPath, mapPath)
+                        }
+                        setItemHoveredTooltip(mapPath.readable)
+                    }
+                }
             }
         }
     }

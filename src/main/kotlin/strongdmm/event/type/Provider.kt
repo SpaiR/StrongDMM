@@ -24,6 +24,7 @@ abstract class Provider {
     class FrameServiceComposedFrame(body: List<FrameMesh>) : Event<List<FrameMesh>, Unit>(body, null)
     class FrameServiceFramedTiles(body: List<FramedTile>) : Event<List<FramedTile>, Unit>(body, null)
 
+    class RecentFilesServiceRecentEnvironmentsWithMaps(body: Map<String, List<MapPath>>) : Event<Map<String, List<MapPath>>, Unit>(body, null)
     class RecentFilesServiceRecentEnvironments(body: List<String>) : Event<List<String>, Unit>(body, null)
     class RecentFilesServiceRecentMaps(body: List<MapPath>) : Event<List<MapPath>, Unit>(body, null)
 }

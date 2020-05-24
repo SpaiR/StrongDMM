@@ -1,11 +1,11 @@
 Features:
  * New appearance!
- * Edit Variables window now has an option to sort variables by their type.
+ * Added an option to sort variables by their type to the Edit Variables window.
+ * Environment panel will show recent maps. Thus you can directly open the map in the corresponding environment.
  * Added a hotkey (F5) to Reset Windows state (initial sizes and position).
 
 Tweaks:
- * Progress text is now shown in a separate panel.
- * Modified map in the opened maps panel will be highlighted with a color, not an asterisk.
+ * Modified map will be highlighted with a color instead of the asterisk.
  * Variables preview window will collapse when the instance has initial variables.
 
 --------------------------------------

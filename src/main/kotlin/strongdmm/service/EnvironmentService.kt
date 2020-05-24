@@ -21,16 +21,16 @@ class EnvironmentService : Service, EventHandler {
         consumeEvent(TriggerEnvironmentService.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
     }
 
-    private fun openEnvironment(file: File) {
+    private fun openEnvironment(event: Event<File, Unit>) {
         sendEvent(Reaction.EnvironmentReset())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            sendEvent(Reaction.EnvironmentLoadStarted(file))
+            sendEvent(Reaction.EnvironmentLoadStarted(event.body))
 
-            environment = SdmmParser().parseDme(file)
+            environment = SdmmParser().parseDme(event.body)
 
             GlobalDmiHolder.environmentRootPath = environment.absRootDirPath
             GlobalTileItemHolder.environment = environment
@@ -39,6 +39,8 @@ class EnvironmentService : Service, EventHandler {
 
             sendEvent(Reaction.EnvironmentChanged(environment))
             sendEvent(Reaction.EnvironmentLoadStopped(true))
+
+            event.reply(Unit)
         }
     }
 
@@ -46,11 +48,11 @@ class EnvironmentService : Service, EventHandler {
         if (this::environment.isInitialized) {
             sendEvent(TriggerMapHolderService.CloseAllMaps {
                 if (it) {
-                    openEnvironment(event.body)
+                    openEnvironment(event)
                 }
             })
         } else {
-            openEnvironment(event.body)
+            openEnvironment(event)
         }
     }
 
