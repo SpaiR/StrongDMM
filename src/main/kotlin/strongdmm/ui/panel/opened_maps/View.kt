@@ -1,7 +1,6 @@
 package strongdmm.ui.panel.opened_maps
 
-import imgui.ImGui.sameLine
-import imgui.ImGui.selectable
+import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
@@ -27,7 +26,17 @@ class View(
 
         WindowUtil.setNextPosAndSize(AppWindow.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
 
-        window("${viewController.getMapName(state.selectedMap!!)}###opened_maps") {
+        val isSelectedMapModified = viewController.isModifiedMap(state.selectedMap!!)
+
+        if (isSelectedMapModified) {
+            pushStyleColor(ImGuiCol.Text, 1f, .84f, 0f, 1f)
+        }
+
+        if (begin("${state.selectedMap!!.mapName}###opened_maps")) {
+            if (isSelectedMapModified) {
+                popStyleColor()
+            }
+
             state.providedOpenedMaps.toTypedArray().forEach { map ->
                 withStyleColor(ImGuiCol.ButtonHovered, RED32) {
                     smallButton("$ICON_FA_TIMES##close_map_${map.mapPath.readable}") {
@@ -37,12 +46,26 @@ class View(
 
                 sameLine()
 
-                if (selectable(viewController.getMapName(map), state.selectedMap === map)) {
+                val isMapModified = viewController.isModifiedMap(map)
+
+                if (isMapModified) {
+                    pushStyleColor(ImGuiCol.Text, 1f, .84f, 0f, 1f)
+                }
+
+                if (selectable(map.mapName, viewController.isSelectedMap(map))) {
                     viewController.doOpenMap(map)
+                }
+
+                if (isMapModified) {
+                    popStyleColor()
                 }
 
                 setItemHoveredTooltip(map.mapPath.readable)
             }
+        } else if (isSelectedMapModified) {
+            popStyleColor()
         }
+
+        end()
     }
 }

@@ -17,7 +17,7 @@ class ViewController(
         }
     }
 
-    fun getMapName(map: Dmm): String {
-        return (if (state.providedActionBalanceStorage[map] != 0) "* " else "") + map.mapName
-    }
+    fun isSelectedMap(map: Dmm): Boolean = state.selectedMap === map
+
+    fun isModifiedMap(map: Dmm): Boolean = state.providedActionBalanceStorage[map] != 0
 }

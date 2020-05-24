@@ -4,6 +4,7 @@ Features:
 
 Tweaks:
  * Progress text is now shown in a separate panel.
+ * Modified map in the opened maps panel will be highlighted with a color, not an asterisk.
 
 --------------------------------------
  v1.3.1 (2020-05-20)
