@@ -1,5 +1,6 @@
 Features:
  * New appearance!
+ * Edit Variables window now has an option to sort variables by their type.
  * Added a hotkey (F5) to Reset Windows state (initial sizes and position).
 
 Tweaks:

@@ -5,6 +5,7 @@ import imgui.ImString
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.ui.dialog.edit_vars.model.Variable
+import java.util.*
 
 class State {
     companion object {
@@ -24,11 +25,14 @@ class State {
     var currentEditVar: Variable? = null
 
     val variables: MutableList<Variable> = mutableListOf()
+    val variablesByType: TreeMap<String, List<Variable>> = TreeMap(Comparator.reverseOrder())
     val pinnedVariables: MutableList<Variable> = mutableListOf()
 
     // Variables filter buffer, resizable string
-    var varsFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }
+    val varsFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }
+    val typesFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }
 
     val isShowModifiedVars: ImBool = ImBool(false)
+    val isShowVarsByType: ImBool = ImBool(false)
     var variableInputFocused: Boolean = false // On first var select we will focus its input. Var is to check if we've already did it
 }

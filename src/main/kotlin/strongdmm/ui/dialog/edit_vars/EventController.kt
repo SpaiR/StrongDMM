@@ -38,6 +38,7 @@ class EventController(
         state.initialTileItemsId = event.body.first.getTileItemsId().clone()
         state.currentTileItemIndex = event.body.second
         viewController.collectDisplayVariables()
+        viewController.collectVariablesByType()
         viewController.collectPinnedVariables()
     }
 
@@ -45,6 +46,7 @@ class EventController(
         viewController.open()
         state.currentTileItem = event.body
         viewController.collectDisplayVariables()
+        viewController.collectVariablesByType()
         viewController.collectPinnedVariables()
     }
 }

@@ -12,8 +12,8 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 435f
-        private const val HEIGHT: Float = 450f
+        private const val WIDTH: Float = 500f
+        private const val HEIGHT: Float = 550f
     }
 
     lateinit var viewController: ViewController
@@ -28,7 +28,11 @@ class View(
                 separator()
 
                 child("vars_table") {
-                    showVariables()
+                    if (state.isShowVarsByType.get()) {
+                        showVariablesByType()
+                    } else {
+                        showAllVariables()
+                    }
                 }
             }
 
@@ -37,25 +41,44 @@ class View(
     }
 
     private fun showControls() {
-        checkbox("##is_show_modified_vars", state.isShowModifiedVars)
-        setItemHoveredTooltip("Show modified variables")
-
-        sameLine()
-
         if (state.isFistOpen) {
             setKeyboardFocusHere()
             state.isFistOpen = false
         }
 
-        setNextItemWidth(getWindowWidth() - 135f)
+        setNextItemWidth(getWindowWidth() - 105f)
         inputText("##vars_filter", state.varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = viewController::doOk)
         sameLine()
         button("Cancel", block = viewController::doCancel)
+
+        checkbox("Modified##is_show_modified_vars", state.isShowModifiedVars)
+        sameLine()
+        checkbox("By Type##is_show_vars_by_type", state.isShowVarsByType)
+
+        if (state.isShowVarsByType.get()) {
+            setNextItemWidth(-1f)
+            inputText("##types_filter", state.typesFilter, "Types Filter")
+        }
     }
 
-    private fun showVariables() {
+    private fun showVariablesByType() {
+        for ((type, variables) in state.variablesByType) {
+            if (viewController.isFilteredOutType(type)) {
+                continue
+            }
+
+            text(type)
+            sameLine()
+            textDisabled("(${variables.size})")
+            columns(2, "variables_by_$type", true)
+            variables.forEach(::showVariable)
+            columns(1)
+        }
+    }
+
+    private fun showAllVariables() {
         if (state.pinnedVariables.isNotEmpty()) {
             textColored(1f, .84f, 0f, 1f, "Pinned")
             columns(2, "pinned_edit_vars_columns", true)
@@ -70,9 +93,7 @@ class View(
     }
 
     private fun showPinnedVariables() {
-        state.pinnedVariables.forEach {
-            showVariable(it)
-        }
+        state.pinnedVariables.forEach(::showVariable)
     }
 
     private fun showOtherVariables() {

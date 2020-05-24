@@ -90,11 +90,30 @@ class ViewController(
     }
 
     fun collectDisplayVariables() {
+        fun getVariableType(dmeItem: DmeItem, variableName: String): String {
+            val items = mutableListOf<DmeItem>()
+
+            fun collectItemTree(item: DmeItem) {
+                item.getParent()?.let { collectItemTree(it) }
+                items.add(item)
+            }
+
+            collectItemTree(dmeItem)
+
+            items.forEach {
+                if (it.vars.containsKey(variableName)) {
+                    return it.type
+                }
+            }
+
+            return ""
+        }
+
         // To collect vars from the dme hierarchy
         fun collectVarsFromEnvironment(dmeItem: DmeItem) {
             dmeItem.vars.filterKeys { variableName -> variableName !in hiddenVars }.forEach { (name, value) ->
                 if (state.variables.none { variable -> variable.name == name }) {
-                    state.variables.add(Variable(name, value ?: "null", value ?: "null"))
+                    state.variables.add(Variable(getVariableType(dmeItem, name), name, value ?: "null", value ?: "null"))
                 }
             }
 
@@ -104,7 +123,7 @@ class ViewController(
         // To collect vars from the current tile item
         getTileItem()?.let { tileItem ->
             tileItem.customVars?.filterKeys { variableName -> variableName !in hiddenVars }?.forEach { name, value ->
-                state.variables.add(Variable(name, value, tileItem.dmeItem.getVar(name) ?: "null"))
+                state.variables.add(Variable(getVariableType(tileItem.dmeItem, name), name, value, tileItem.dmeItem.getVar(name) ?: "null"))
             }
 
             // After we got vars from the tile item we need to go though its dme representation and all children
@@ -112,6 +131,10 @@ class ViewController(
         }
 
         state.variables.sortBy { it.name }
+    }
+
+    fun collectVariablesByType() {
+        state.variablesByType.putAll(state.variables.map { variable -> variable.type to state.variables.filter { variable.type == it.type } })
     }
 
     fun collectPinnedVariables() {
@@ -131,6 +154,10 @@ class ViewController(
             state.pinnedVariables.clear()
             collectPinnedVariables()
         }
+    }
+
+    fun isFilteredOutType(type: String): Boolean {
+        return state.isShowVarsByType.get() && state.typesFilter.length > 0 && !type.contains(state.typesFilter.get())
     }
 
     fun isFilteredOutVariable(variable: Variable): Boolean {
@@ -173,6 +200,7 @@ class ViewController(
         state.varsFilter.set("")
         state.isShowModifiedVars.set(false)
         state.variables.clear()
+        state.variablesByType.clear()
         state.pinnedVariables.clear()
 
         sendEvent(Reaction.ApplicationBlockChanged(false))
