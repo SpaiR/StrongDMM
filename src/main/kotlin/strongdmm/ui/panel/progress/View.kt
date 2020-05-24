@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.progress
 
 import imgui.ImGui.*
+import imgui.enums.ImGuiCol
+import imgui.enums.ImGuiStyleVar
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.imgui.window
 import strongdmm.window.AppWindow
@@ -20,15 +22,18 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        if (state.progressText == null && state.windowWidth <= 0) {
-            return
-        }
-
         if (viewController.isOpening() || viewController.isClosing()) {
             setNextWindowSize(state.windowWidth, HEIGHT)
         }
 
+        if (state.progressText == null && state.windowWidth <= 0) {
+            return
+        }
+
         setNextWindowPos((AppWindow.windowWidth - state.progressTextWidth) / 2, POS_Y)
+
+        pushStyleColor(ImGuiCol.WindowBg, getColorU32(ImGuiCol.MenuBarBg))
+        pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)
 
         window(TITLE, FLAGS) {
             if (state.progressText != null) {
@@ -36,5 +41,8 @@ class View(
                 text("${progressBarVisual[count]} ${state.progressText} ${progressBarVisual[count]}")
             }
         }
+
+        popStyleVar()
+        popStyleColor()
     }
 }

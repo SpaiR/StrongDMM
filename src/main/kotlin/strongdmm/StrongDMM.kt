@@ -27,6 +27,7 @@ import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.ui.panel.instance_locator.InstanceLocatorPanelUi
 import strongdmm.ui.panel.layers_filter.LayersFilterPanelUi
 import strongdmm.ui.panel.level_switch.LevelSwitchPanelUi
+import strongdmm.ui.panel.notification.NotificationPanelUi
 import strongdmm.ui.panel.objects.ObjectsPanelUi
 import strongdmm.ui.panel.opened_maps.OpenedMapsPanelUi
 import strongdmm.ui.panel.preferences.PreferencesPanelUi
@@ -65,6 +66,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         ChangelogPanelUi(),
         ScreenshotPanelUi(),
         ConfirmationDialogUi(),
+        NotificationPanelUi(),
         ProgressPanelUi()
     )
 

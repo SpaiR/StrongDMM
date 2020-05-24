@@ -9,5 +9,7 @@ val RED32: Int = col32abgr(255, 0, 0, 255)
 val GREEN32: Int = col32abgr(0, 255, 0, 255)
 val GREY32: Int = col32abgr(128, 128, 128, 255)
 
+val LIGHT_BLUE_HIGHLIGHT32: Int = col32abgr(129, 178, 202, 255)
+
 val GREEN_RGBA: ImVec4 = ImVec4(0f, 1f, 0f, 1f)
 val RED_RGBA: ImVec4 = ImVec4(1f, 0f, 0f, 1f)

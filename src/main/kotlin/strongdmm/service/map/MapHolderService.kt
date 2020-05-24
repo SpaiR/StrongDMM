@@ -17,6 +17,7 @@ import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
+import strongdmm.event.type.ui.TriggerNotificationPanelUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
 import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
 import strongdmm.service.preferences.Preferences
@@ -76,6 +77,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
         SaveMap(map, initialDmmData, fileToSave, providedPreferences)
         sendEvent(TriggerActionService.ResetActionBalance(map))
+        sendEvent(TriggerNotificationPanelUi.Notify("${map.mapName} saved!"))
     }
 
     private fun closeMap(map: Dmm) {
