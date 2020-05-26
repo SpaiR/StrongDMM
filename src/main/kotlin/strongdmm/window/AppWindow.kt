@@ -87,7 +87,6 @@ abstract class AppWindow(title: String) {
         glfwDefaultWindowHints() // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE) // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
-        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE) // the window will be maximized
 
         // Create the window
         windowPtr = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL)
@@ -114,6 +113,7 @@ abstract class AppWindow(title: String) {
         glfwMakeContextCurrent(windowPtr) // Make the OpenGL context current
         glfwSwapInterval(GLFW_TRUE) // Enable v-sync
         glfwShowWindow(windowPtr) // Make the window visible
+        glfwMaximizeWindow(windowPtr)
 
         GL.createCapabilities()
     }
