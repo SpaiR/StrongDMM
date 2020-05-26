@@ -439,6 +439,10 @@ abstract class AppWindow(title: String) {
         val mode = glfwGetVideoMode(currentMonitor)!!
 
         glfwSetWindowMonitor(windowPtr, if (isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
+
+        if (!isFullscreen) {
+            glfwMaximizeWindow(windowPtr)
+        }
     }
 
     private fun getCurrentMonitor(): Long {
