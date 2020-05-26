@@ -1,8 +1,12 @@
+--------------------------------------
+ v1.5.0 (2020-05-26)
+--------------------------------------
+
 Features:
  * Added a fullscreen mode! Use "Window->Fullscreen" or F11 hotkey to toggle.
 
 Fixes:
- * Incorrect window maximization on start. The window will cover the whole screen properly.
+ * Incorrect window maximization on start. The window will cover the screen correctly.
 
 --------------------------------------
  v1.4.0 (2020-05-24)
