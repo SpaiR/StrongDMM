@@ -4,6 +4,7 @@ import imgui.ImGui.*
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
+import strongdmm.window.AppWindow
 
 class View(
     private val state: State
@@ -111,6 +112,7 @@ class View(
 
             menu("Window") {
                 menuItem("Reset Windows", shortcut = "F5", block = viewController::doResetWindows)
+                menuItem("Fullscreen", shortcut = "F11", selected = AppWindow.isFullscreen, block = viewController::doFullscreen)
             }
 
             menu("Help") {

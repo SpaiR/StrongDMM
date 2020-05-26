@@ -156,6 +156,10 @@ class ViewController(
         AppWindow.resetWindows()
     }
 
+    fun doFullscreen() {
+        AppWindow.toggleFullscreen()
+    }
+
     fun doChangelog() {
         sendEvent(TriggerChangelogPanelUi.Open())
     }

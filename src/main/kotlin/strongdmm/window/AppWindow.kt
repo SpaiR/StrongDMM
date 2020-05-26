@@ -23,6 +23,8 @@ import strongdmm.util.icons.ICON_MIN_FA
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
+import kotlin.math.max
+import kotlin.math.min
 
 abstract class AppWindow(title: String) {
     companion object {
@@ -31,6 +33,7 @@ abstract class AppWindow(title: String) {
 
         var windowPtr: Long = 0
         var isRunning: Boolean = true
+        var isFullscreen: Boolean = false
 
         // Those are used to track window size properties
         private val winWidth: IntArray = IntArray(1)
@@ -47,10 +50,15 @@ abstract class AppWindow(title: String) {
             private set
 
         private var resetWindows: Boolean = false
+        private var toggleFullscreen: Boolean = false
 
         // We will restore 'Once' condition after the first passed render cycle
         fun resetWindows() {
             resetWindows = true
+        }
+
+        fun toggleFullscreen() {
+            toggleFullscreen = true
         }
     }
 
@@ -359,9 +367,15 @@ abstract class AppWindow(title: String) {
 
     private fun checkWindowsState() {
         defaultWindowCond = ImGuiCond.Once // reset windows condition
+
         if (resetWindows) {
             resetWindows = false
             defaultWindowCond = ImGuiCond.Always
+        }
+
+        if (toggleFullscreen) {
+            toggleFullscreen = false
+            toggleFullscreen()
         }
     }
 
@@ -416,5 +430,52 @@ abstract class AppWindow(title: String) {
         glfwDestroyWindow(windowPtr)
         glfwTerminate()
         Objects.requireNonNull(glfwSetErrorCallback(null))!!.free()
+    }
+
+    private fun toggleFullscreen() {
+        isFullscreen = !isFullscreen
+
+        val currentMonitor = getCurrentMonitor()
+        val mode = glfwGetVideoMode(currentMonitor)!!
+
+        glfwSetWindowMonitor(windowPtr, if (isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
+    }
+
+    private fun getCurrentMonitor(): Long {
+        val wx = IntArray(1)
+        val wy = IntArray(1)
+        val ww = IntArray(1)
+        val wh = IntArray(1)
+
+        val mx = IntArray(1)
+        val my = IntArray(1)
+
+        glfwGetWindowPos(windowPtr, wx, wy)
+        glfwGetWindowSize(windowPtr, ww, wh)
+
+        val monitors = glfwGetMonitors()!!
+
+        var bestOverlap = 0
+        var bestMonitor = 0L
+
+        for (i in 0 until monitors.limit()) {
+            val monitor = monitors[i]
+            val mode = glfwGetVideoMode(monitor)!!
+
+            glfwGetMonitorPos(monitor, mx, my)
+
+            val mw = mode.width()
+            val mh = mode.height()
+
+            val overlap = max(0, min(wx[0] + ww[0], mx[0] + mw) - max(wx[0], mx[0])) *
+                max(0, min(wy[0] + wh[0], my[0] + mh) - max(wy[0], my[0]))
+
+            if (bestOverlap < overlap) {
+                bestOverlap = overlap
+                bestMonitor = monitor
+            }
+        }
+
+        return bestMonitor
     }
 }

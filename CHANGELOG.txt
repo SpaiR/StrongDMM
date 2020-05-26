@@ -1,3 +1,6 @@
+Features:
+ * Added a fullscreen mode! Use "Window->Fullscreen" or F11 hotkey to toggle.
+
 Fixes:
  * Incorrect window maximization on start. The window will cover the whole screen properly.
 

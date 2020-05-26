@@ -36,5 +36,6 @@ class ShortcutController(
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_4, action = viewController::toggleMobLayerManual)
 
         shortcutHandler.addShortcut(GLFW.GLFW_KEY_F5, action = viewController::doResetWindows)
+        shortcutHandler.addShortcut(GLFW.GLFW_KEY_F11, action = viewController::doFullscreen)
     }
 }
