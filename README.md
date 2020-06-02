@@ -1,5 +1,14 @@
 # Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Build Status](https://travis-ci.org/SpaiR/StrongDMM.svg?branch=master)](https://travis-ci.org/SpaiR/StrongDMM)
 
+<p align="center">
+  <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe">
+    <img src="http://img.shields.io/badge/Download%20For%20Windows-0078D7?style=for-the-badge"/>
+  </a>
+  <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher">
+    <img src="http://img.shields.io/badge/Download%20For%20Linux-E95420?style=for-the-badge"/>
+  </a>
+</p>
+
 <img align="right" width="150" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-logo.png">
 
 StrongDMM is an alternative yet robust map editor for BYOND. 
@@ -53,8 +62,6 @@ You'll find a button named "Copy Type to Clipboard".
 **Q.** The editor went crush. Where I can find the error logs?<br>
 **A.** In your user home dir: `.strongdmm/logs`.
 
----
-
 ## How to Build
 **Pre-requests:** [JDK 11](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot) or higher, latest
 [Rust](https://www.rust-lang.org/) to compile `sdmmparser`
@@ -68,11 +75,11 @@ You'll find a button named "Copy Type to Clipboard".
 - **Build**: `cargo build`
 - To build a release (optimized) version just add `--release` flag in the end of the command.
 
-### Credits
+## Credits
 StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made by [SpaceManiac](https://github.com/SpaceManiac).<br>
 The application icon is designed by [Clément "Topy"](https://github.com/clement-or).<br>
 The editor took some initial ideas from [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
 and later supported by [/tg/station](https://github.com/tgstation/FastDMM).
 
-### License
+## License
 See the LICENSE file for license rights and limitations (GPL-3.0).
