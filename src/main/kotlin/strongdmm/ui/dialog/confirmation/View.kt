@@ -3,7 +3,7 @@ package strongdmm.ui.dialog.confirmation
 import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
 
@@ -26,7 +26,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextSize(WIDTH, HEIGHT)
 
         popupModal(title, ImGuiWindowFlags.NoResize) {
             textWrapped(state.data.question)

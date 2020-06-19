@@ -24,7 +24,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
 
         val isSelectedMapModified = viewController.isModifiedMap(state.selectedMap!!)
 

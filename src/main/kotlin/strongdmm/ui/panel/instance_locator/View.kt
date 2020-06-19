@@ -1,11 +1,12 @@
 package strongdmm.ui.panel.instance_locator
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.inputInt
 import strongdmm.util.imgui.inputText
 import strongdmm.util.imgui.window
+import strongdmm.window.WindowUtil
 
 class View(
     private val state: State
@@ -30,7 +31,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(POS_X, WindowUtil.getHeightPercent(POS_Y_PERCENT), WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSize(POS_X, WindowUtil.getHeightPercent(POS_Y_PERCENT), WIDTH, HEIGHT)
 
         window(TITLE, state.showInstanceLocator) {
             if (state.isFirstOpen) {

@@ -25,7 +25,7 @@ class View(
                 return
             }
 
-            WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+            ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
             window("Search Result: ${searchResult.searchObject} (${searchResult.positions.size})###search_result", state.isOpen) {
                 showControls(searchResult)

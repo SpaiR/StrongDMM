@@ -23,7 +23,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextSize(WIDTH, HEIGHT)
 
         popupModal(TITLE) {
             text("Selected: ${state.selectedMapPath?.readable ?: ""}")

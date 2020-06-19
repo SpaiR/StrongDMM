@@ -30,7 +30,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
         window(TITLE, state.isOpened) {
             if (state.currentEnvironment == null) {

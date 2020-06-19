@@ -12,6 +12,7 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.icons.ICON_FA_MINUS
 import strongdmm.util.imgui.*
+import strongdmm.window.WindowUtil
 
 class View(
     private val state: State
@@ -31,7 +32,7 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        WindowUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, WindowUtil.getHeightPercent(HEIGHT_PERCENT))
+        ImGuiUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, WindowUtil.getHeightPercent(HEIGHT_PERCENT))
 
         window(TITLE) {
             if (state.currentEnvironment == null) {

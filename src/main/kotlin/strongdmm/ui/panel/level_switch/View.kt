@@ -6,7 +6,7 @@ import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.GREY32
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -31,7 +31,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->

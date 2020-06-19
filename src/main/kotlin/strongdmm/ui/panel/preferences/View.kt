@@ -30,7 +30,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextSize(WIDTH, HEIGHT)
 
         popupModal(TITLE, state.isOpened) {
             text("Save Options")

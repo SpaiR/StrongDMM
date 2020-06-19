@@ -3,7 +3,7 @@ package strongdmm.ui.dialog.set_map_size
 import imgui.ImGui.*
 import imgui.ImInt
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
 
@@ -26,7 +26,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextSize(WIDTH, HEIGHT)
 
         popupModal(TITLE, ImGuiWindowFlags.NoResize) {
             showInput("X", state.newX)

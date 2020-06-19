@@ -3,11 +3,7 @@ package strongdmm.util.imgui
 import imgui.ImGui
 import strongdmm.window.Window
 
-object WindowUtil {
-    fun getHeightPercent(percents: Int): Float {
-        return Window.windowHeight / 100f * percents
-    }
-
+object ImGuiUtil {
     fun setNextSize(windowWidth: Float, windowHeight: Float) {
         ImGui.setNextWindowSize(windowWidth, windowHeight, Window.defaultWindowCond)
     }

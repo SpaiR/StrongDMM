@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.unknown_types
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
 
 class View(
@@ -19,7 +19,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
         window(TITLE, state.isOpened) {
             textWrapped("There are unknown types on the map. They were removed.")

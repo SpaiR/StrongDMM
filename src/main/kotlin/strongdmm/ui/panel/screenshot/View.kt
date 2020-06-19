@@ -21,7 +21,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
         window(TITLE, state.isOpened) {
             button("Select File...", block = viewController::doSelectFile)

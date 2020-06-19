@@ -3,7 +3,7 @@ package strongdmm.ui.panel.tool_select
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 
@@ -24,7 +24,7 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        WindowUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, HEIGHT)
 
         window(TITLE, FLAGS) {
             state.tools.forEach { tool ->

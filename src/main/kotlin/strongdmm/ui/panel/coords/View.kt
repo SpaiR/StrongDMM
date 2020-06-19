@@ -3,7 +3,7 @@ package strongdmm.ui.panel.coords
 import imgui.ImGui.text
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -25,7 +25,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             if (state.xMapMousePos == OUT_OF_BOUNDS || state.yMapMousePos == OUT_OF_BOUNDS) {

@@ -20,7 +20,7 @@ class View(
 
     fun process() {
         viewController.getTileItem()?.let { tileItem ->
-            WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+            ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_${state.windowId}") {
                 showControls()
