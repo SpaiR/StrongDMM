@@ -29,7 +29,7 @@ import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.extension.getOrPut
 import strongdmm.util.imgui.GREEN_RGBA
 import strongdmm.util.imgui.RED_RGBA
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 import java.util.*
 
 class CanvasService : Service, EventHandler, PostInitialize, Processable {
@@ -183,7 +183,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val y = mousePos.y
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize
-        val yMap = ((AppWindow.windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
+        val yMap = ((Window.windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
 
         val xMapMousePosNew = if (xMap > 0 && xMap <= maxX) xMap.toInt() + 1 else OUT_OF_BOUNDS
         val yMapMousePosNew = if (yMap > 0 && yMap <= maxY) yMap.toInt() + 1 else OUT_OF_BOUNDS
@@ -209,7 +209,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         canvasRenderer.iconSize = iconSize
         canvasRenderer.realIconSize = (iconSize / renderData.viewScale).toInt()
         canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
-        canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
+        canvasRenderer.mousePosY = (Window.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
         canvasRenderer.frameAreas = frameAreas.get()
     }
 
@@ -442,8 +442,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun handleCenterCanvasByPosition(event: Event<MapPos, Unit>) {
-        renderData.viewTranslateX = AppWindow.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
-        renderData.viewTranslateY = AppWindow.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
+        renderData.viewTranslateX = Window.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
+        renderData.viewTranslateY = Window.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
         canvasRenderer.redraw = true
     }
 

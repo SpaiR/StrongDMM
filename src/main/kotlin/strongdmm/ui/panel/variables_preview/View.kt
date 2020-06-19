@@ -3,7 +3,7 @@ package strongdmm.ui.panel.variables_preview
 import imgui.ImGui.*
 import strongdmm.util.imgui.WindowUtil
 import strongdmm.util.imgui.window
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
@@ -28,9 +28,9 @@ class View(
         val isEmpty = state.selectedTileItem?.customVars == null
 
         if (isEmpty) {
-            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y_COLLAPSED, WIDTH, HEIGHT_COLLAPSED)
+            WindowUtil.setNextPosAndSize(POS_X, Window.windowHeight - RELATIVE_POS_Y_COLLAPSED, WIDTH, HEIGHT_COLLAPSED)
         } else {
-            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+            WindowUtil.setNextPosAndSize(POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
         }
 
         window("$TITLE##variables_preview_$isEmpty") {

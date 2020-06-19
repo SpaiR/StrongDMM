@@ -5,7 +5,7 @@ import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiStyleVar
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.imgui.window
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
@@ -28,7 +28,7 @@ class View(
             return
         }
 
-        setNextWindowPos((AppWindow.windowWidth - state.notificationTextWidth) / 2, POS_Y)
+        setNextWindowPos((Window.windowWidth - state.notificationTextWidth) / 2, POS_Y)
 
         pushStyleColor(ImGuiCol.WindowBg, getColorU32(ImGuiCol.MenuBarBg))
         pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)

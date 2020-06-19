@@ -9,7 +9,7 @@ import strongdmm.util.imgui.GREY32
 import strongdmm.util.imgui.WindowUtil
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
@@ -31,7 +31,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(AppWindow.windowWidth - RELATIVE_POS_X, AppWindow.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        WindowUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->

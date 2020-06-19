@@ -4,7 +4,7 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.*
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
@@ -23,7 +23,7 @@ class View(
     fun process() {
         val height = WindowUtil.getHeightPercent(POS_Y_PERCENT)
 
-        WindowUtil.setNextPosAndSize(POS_X, height, WIDTH, AppWindow.windowHeight - height - 15)
+        WindowUtil.setNextPosAndSize(POS_X, height, WIDTH, Window.windowHeight - height - 15)
 
         window(viewController.getTitle()) {
             showConfigContextMenu()

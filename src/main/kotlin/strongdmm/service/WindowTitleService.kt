@@ -8,7 +8,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class WindowTitleService : Service, EventHandler {
     private var environmentName: String = ""
@@ -21,19 +21,19 @@ class WindowTitleService : Service, EventHandler {
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {
-        glfwSetWindowTitle(AppWindow.windowPtr, "$environmentName [${event.body.mapPath.readable}] - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(Window.ptr, "$environmentName [${event.body.mapPath.readable}] - ${StrongDMM.TITLE}")
     }
 
     private fun handleSelectedMapClosed() {
-        glfwSetWindowTitle(AppWindow.windowPtr, StrongDMM.TITLE)
+        glfwSetWindowTitle(Window.ptr, StrongDMM.TITLE)
     }
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         environmentName = event.body.name
-        glfwSetWindowTitle(AppWindow.windowPtr, "$environmentName - ${StrongDMM.TITLE}")
+        glfwSetWindowTitle(Window.ptr, "$environmentName - ${StrongDMM.TITLE}")
     }
 
     private fun handleEnvironmentReset() {
-        glfwSetWindowTitle(AppWindow.windowPtr, StrongDMM.TITLE)
+        glfwSetWindowTitle(Window.ptr, StrongDMM.TITLE)
     }
 }

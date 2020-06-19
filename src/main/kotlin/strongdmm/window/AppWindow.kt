@@ -28,37 +28,13 @@ import kotlin.math.min
 
 abstract class AppWindow(title: String) {
     companion object {
-        private const val DEFAULT_WIDTH = 1280
-        private const val DEFAULT_HEIGHT = 768
-
-        var windowPtr: Long = 0
-        var isRunning: Boolean = true
-        var isFullscreen: Boolean = false
-
-        // Those are used to track window size properties
-        private val winWidth: IntArray = IntArray(1)
-        private val winHeight: IntArray = IntArray(1)
-        private val fbWidth: IntArray = IntArray(1)
-        private val fbHeight: IntArray = IntArray(1)
-
-        val windowWidth: Int
-            get() = winWidth[0]
-        val windowHeight: Int
-            get() = winHeight[0]
-
-        var defaultWindowCond: Int = ImGuiCond.Once
-            private set
-
-        private var resetWindows: Boolean = false
-        private var toggleFullscreen: Boolean = false
-
         // We will restore 'Once' condition after the first passed render cycle
         fun resetWindows() {
-            resetWindows = true
+            Window._resetWindows = true
         }
 
         fun toggleFullscreen() {
-            toggleFullscreen = true
+            Window._toggleFullscreen = true
         }
     }
 
@@ -97,9 +73,9 @@ abstract class AppWindow(title: String) {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
 
         // Create the window
-        windowPtr = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL)
+        Window.ptr = glfwCreateWindow(1280, 768, title, MemoryUtil.NULL, MemoryUtil.NULL)
 
-        if (windowPtr == MemoryUtil.NULL) {
+        if (Window.ptr == MemoryUtil.NULL) {
             throw RuntimeException("Failed to create the GLFW window")
         }
 
@@ -108,20 +84,20 @@ abstract class AppWindow(title: String) {
             val pHeight = stack.mallocInt(1) // int*
 
             // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(windowPtr, pWidth, pHeight)
+            glfwGetWindowSize(Window.ptr, pWidth, pHeight)
 
             // Get the resolution of the primary monitor
             val vidmode: GLFWVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())!!
 
             // Center the window
-            glfwSetWindowPos(windowPtr, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
+            glfwSetWindowPos(Window.ptr, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
             loadWindowIcon(stack)
         }
 
-        glfwMakeContextCurrent(windowPtr) // Make the OpenGL context current
+        glfwMakeContextCurrent(Window.ptr) // Make the OpenGL context current
         glfwSwapInterval(GLFW_TRUE) // Enable v-sync
-        glfwShowWindow(windowPtr) // Make the window visible
-        glfwMaximizeWindow(windowPtr)
+        glfwShowWindow(Window.ptr) // Make the window visible
+        glfwMaximizeWindow(Window.ptr)
 
         GL.createCapabilities()
     }
@@ -174,7 +150,7 @@ abstract class AppWindow(title: String) {
         mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
 
         // Here goes GLFW callbacks to update user input stuff in ImGui
-        glfwSetKeyCallback(windowPtr) { _, key: Int, _, action: Int, _ ->
+        glfwSetKeyCallback(Window.ptr) { _, key: Int, _, action: Int, _ ->
             if (action == GLFW_PRESS) {
                 io.setKeysDown(key, true)
             } else if (action == GLFW_RELEASE) {
@@ -187,13 +163,13 @@ abstract class AppWindow(title: String) {
             io.keySuper = io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER)
         }
 
-        glfwSetCharCallback(windowPtr) { _, c: Int ->
+        glfwSetCharCallback(Window.ptr) { _, c: Int ->
             if (c != GLFW_KEY_DELETE) {
                 io.addInputCharacter(c)
             }
         }
 
-        glfwSetMouseButtonCallback(windowPtr) { _, button: Int, action: Int, _ ->
+        glfwSetMouseButtonCallback(Window.ptr) { _, button: Int, action: Int, _ ->
             val mouseDown = BooleanArray(5)
 
             mouseDown[0] = button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE
@@ -209,20 +185,20 @@ abstract class AppWindow(title: String) {
             }
         }
 
-        glfwSetScrollCallback(windowPtr) { _, xOffset: Double, yOffset: Double ->
+        glfwSetScrollCallback(Window.ptr) { _, xOffset: Double, yOffset: Double ->
             io.mouseWheelH = io.mouseWheelH + xOffset.toFloat()
             io.mouseWheel = io.mouseWheel + yOffset.toFloat()
         }
 
         io.setSetClipboardTextFn(object : ImStrConsumer() {
             override fun accept(s: String) {
-                glfwSetClipboardString(windowPtr, s)
+                glfwSetClipboardString(Window.ptr, s)
             }
         })
 
         io.setGetClipboardTextFn(object : ImStrSupplier() {
             override fun get(): String? {
-                return glfwGetClipboardString(windowPtr).let { it ?: "" }
+                return glfwGetClipboardString(Window.ptr).let { it ?: "" }
             }
         })
 
@@ -311,7 +287,7 @@ abstract class AppWindow(title: String) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         // Run the rendering loop until the user has attempted to close the window
-        while (isRunning) { // Count frame delta value
+        while (Window.isRunning) { // Count frame delta value
             val currentTime = glfwGetTime()
             val deltaTime = if (time > 0) currentTime - time else (1f / 60f).toDouble()
             time = currentTime
@@ -330,23 +306,28 @@ abstract class AppWindow(title: String) {
     }
 
     private fun updateWindowProperties() {
-        glfwGetWindowSize(windowPtr, winWidth, winHeight)
-        glfwGetFramebufferSize(windowPtr, fbWidth, fbHeight)
-        glfwGetCursorPos(windowPtr, mousePosX, mousePosY)
+        glfwGetWindowSize(Window.ptr, Window._width, Window._height)
+        glfwGetFramebufferSize(Window.ptr, Window._fbWidth, Window._fbHeight)
+        glfwGetCursorPos(Window.ptr, mousePosX, mousePosY)
     }
 
     private fun updateImGuiIO(deltaTime: Float) {
         val io = ImGui.getIO()
-        io.setDisplaySize(winWidth[0].toFloat(), winHeight[0].toFloat())
-        io.setDisplayFramebufferScale(fbWidth[0].toFloat() / winWidth[0], fbHeight[0].toFloat() / winHeight[0])
-        io.setMousePos(mousePosX[0].toFloat(), mousePosY[0].toFloat())
+
+        val scaleX = Window._fbWidth[0].toFloat() / Window._width[0]
+        val scaleY = Window._fbHeight[0].toFloat() / Window._height[0]
+
+        io.setDisplaySize(Window._fbWidth[0].toFloat(), Window._fbHeight[0].toFloat())
+        io.setDisplayFramebufferScale(scaleX, scaleY)
+        io.setMousePos(mousePosX[0].toFloat() * scaleX, mousePosY[0].toFloat() * scaleY)
+
         io.deltaTime = deltaTime
     }
 
     private fun updateMouseCursor() {
         val imguiCursor = ImGui.getMouseCursor()
-        glfwSetCursor(windowPtr, mouseCursors[imguiCursor])
-        glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
+        glfwSetCursor(Window.ptr, mouseCursors[imguiCursor])
+        glfwSetInputMode(Window.ptr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
     }
 
     private fun startFrame() {
@@ -361,20 +342,20 @@ abstract class AppWindow(title: String) {
         imGuiGl3.render(ImGui.getDrawData())
         checkWindowsState()
 
-        glfwSwapBuffers(windowPtr) // swap the color buffers
+        glfwSwapBuffers(Window.ptr) // swap the color buffers
         glfwPollEvents()
     }
 
     private fun checkWindowsState() {
-        defaultWindowCond = ImGuiCond.Once // reset windows condition
+        Window.defaultWindowCond = ImGuiCond.Once // reset windows condition
 
-        if (resetWindows) {
-            resetWindows = false
-            defaultWindowCond = ImGuiCond.Always
+        if (Window._resetWindows) {
+            Window._resetWindows = false
+            Window.defaultWindowCond = ImGuiCond.Always
         }
 
-        if (toggleFullscreen) {
-            toggleFullscreen = false
+        if (Window._toggleFullscreen) {
+            Window._toggleFullscreen = false
             toggleFullscreen()
         }
     }
@@ -408,7 +389,7 @@ abstract class AppWindow(title: String) {
             image.set(icon.width, icon.height, imageBuffer)
             imagePtr.put(0, image)
 
-            glfwSetWindowIcon(windowPtr, imagePtr)
+            glfwSetWindowIcon(Window.ptr, imagePtr)
             STBImage.stbi_image_free(imageBuffer)
 
             imagePtr.free()
@@ -426,22 +407,22 @@ abstract class AppWindow(title: String) {
         for (mouseCursor in mouseCursors) {
             glfwDestroyCursor(mouseCursor)
         }
-        Callbacks.glfwFreeCallbacks(windowPtr)
-        glfwDestroyWindow(windowPtr)
+        Callbacks.glfwFreeCallbacks(Window.ptr)
+        glfwDestroyWindow(Window.ptr)
         glfwTerminate()
         Objects.requireNonNull(glfwSetErrorCallback(null))!!.free()
     }
 
     private fun toggleFullscreen() {
-        isFullscreen = !isFullscreen
+        Window.isFullscreen = !Window.isFullscreen
 
         val currentMonitor = getCurrentMonitor()
         val mode = glfwGetVideoMode(currentMonitor)!!
 
-        glfwSetWindowMonitor(windowPtr, if (isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
+        glfwSetWindowMonitor(Window.ptr, if (Window.isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
 
-        if (!isFullscreen) {
-            glfwMaximizeWindow(windowPtr)
+        if (!Window.isFullscreen) {
+            glfwMaximizeWindow(Window.ptr)
         }
     }
 
@@ -454,8 +435,8 @@ abstract class AppWindow(title: String) {
         val mx = IntArray(1)
         val my = IntArray(1)
 
-        glfwGetWindowPos(windowPtr, wx, wy)
-        glfwGetWindowSize(windowPtr, ww, wh)
+        glfwGetWindowPos(Window.ptr, wx, wy)
+        glfwGetWindowSize(Window.ptr, ww, wh)
 
         val monitors = glfwGetMonitors()!!
 

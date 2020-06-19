@@ -11,6 +11,7 @@ import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
 import strongdmm.window.AppWindow
+import strongdmm.window.Window
 import java.io.File
 
 class ViewController(
@@ -101,7 +102,7 @@ class ViewController(
     }
 
     fun doExit() {
-        GLFW.glfwSetWindowShouldClose(AppWindow.windowPtr, true)
+        GLFW.glfwSetWindowShouldClose(Window.ptr, true)
     }
 
     fun doUndo() {

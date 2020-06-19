@@ -4,7 +4,7 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
@@ -24,7 +24,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSize(AppWindow.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
+        WindowUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
 
         val isSelectedMapModified = viewController.isModifiedMap(state.selectedMap!!)
 
