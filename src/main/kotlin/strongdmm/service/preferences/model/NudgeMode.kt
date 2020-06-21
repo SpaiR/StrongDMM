@@ -1,4 +1,4 @@
-package strongdmm.service.preferences
+package strongdmm.service.preferences.model
 
 enum class NudgeMode : Selectable {
     PIXEL {

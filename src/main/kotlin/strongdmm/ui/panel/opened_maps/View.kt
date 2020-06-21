@@ -2,6 +2,8 @@ package strongdmm.ui.panel.opened_maps
 
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
+import strongdmm.ui.UiConstant
+import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
@@ -10,11 +12,15 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val RELATIVE_POS_X: Float = 160f
-        private const val POS_Y: Float = 30f
+        private val posX: Float
+            get() = Window.windowWidth - width - UiConstant.ELEMENT_MARGIN
+        private val posY: Float
+            get() = EnvironmentTreePanelUi.posY
 
-        private const val WIDTH: Float = 150f
-        private const val HEIGHT: Float = 150f
+        private val width: Float
+            get() = 150f * Window.pointSize
+        private val height: Float
+            get() = 150f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -24,7 +30,8 @@ class View(
             return
         }
 
-        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, POS_Y, WIDTH, HEIGHT)
+        setNextWindowPos(posX, posY, Window.windowCond)
+        setNextWindowSize(width, height, Window.windowCond)
 
         val isSelectedMapModified = viewController.isModifiedMap(state.selectedMap!!)
 

@@ -4,7 +4,7 @@ import strongdmm.byond.*
 import strongdmm.byond.dmm.parser.TileContent
 import strongdmm.byond.dmm.parser.TileObject
 import strongdmm.byond.dmm.parser.TileObjectComparator
-import strongdmm.service.preferences.NudgeMode
+import strongdmm.service.preferences.model.NudgeMode
 
 /**
  * Helper class to do a very specific tile things like objects replacing or vars modifying.

@@ -7,6 +7,7 @@ import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerPreferencesService
+import strongdmm.window.Window
 import java.io.File
 
 class PreferencesService : Service, EventHandler, PostInitialize {
@@ -23,6 +24,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
     override fun postInit() {
         ensurePreferencesConfigExists()
         readPreferencesConfig()
+        applyModifiedPreferences()
 
         sendEvent(Provider.PreferencesServicePreferences(preferences))
     }
@@ -44,6 +46,11 @@ class PreferencesService : Service, EventHandler, PostInitialize {
     }
 
     private fun handleSavePreferences() {
+        applyModifiedPreferences()
         writePreferencesConfig()
+    }
+
+    private fun applyModifiedPreferences() {
+        Window.newPointSize = preferences.interfaceScalePercent.get() / 100f
     }
 }

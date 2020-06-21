@@ -48,14 +48,17 @@ fun inputText(label: String, text: ImString, placeholder: String, helpText: Stri
     return valueChanged
 }
 
-fun inputInt(label: String, v: ImInt, min: Int, max: Int) {
-    if (ImGui.inputInt(label, v)) {
+fun inputIntClamp(label: String, v: ImInt, min: Int, max: Int, step: Int = 1, stepFast: Int = 10): Boolean {
+    if (ImGui.inputInt(label, v, step, stepFast)) {
         if (v.get() > max) {
             v.set(max)
         } else if (v.get() < min) {
             v.set(min)
         }
+
+        return true
     }
+    return false
 }
 
 fun helpMark(helpText: String) {

@@ -4,6 +4,7 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiStyleVar
 import imgui.enums.ImGuiWindowFlags
+import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -11,10 +12,12 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_Y: Float = 30f
+        private val posY: Float
+            get() = EnvironmentTreePanelUi.posY
+
         private const val TITLE: String = "notification_panel"
-        private const val FLAGS: Int =
-            ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoScrollbar
+
+        private const val FLAGS: Int = ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoScrollbar
     }
 
     lateinit var viewController: ViewController
@@ -28,7 +31,7 @@ class View(
             return
         }
 
-        setNextWindowPos((Window.windowWidth - state.notificationTextWidth) / 2, POS_Y)
+        setNextWindowPos((Window.windowWidth - state.notificationTextWidth) / 2, posY)
 
         pushStyleColor(ImGuiCol.WindowBg, getColorU32(ImGuiCol.MenuBarBg))
         pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)

@@ -8,13 +8,15 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
         private const val POPUP_ID: String = "tile_popup"
-        private const val ICON_SIZE: Float = 16f
+        private val iconSize: Float
+            get() = 16f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -54,7 +56,7 @@ class View(
     private fun showTileItem(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
 
-        image(sprite.textureId, ICON_SIZE, ICON_SIZE, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
+        image(sprite.textureId, iconSize, iconSize, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
         sameLine()
         menu("${tileItem.name}##tile_item_row_$tileItemIdx") {
             showTileItemOptions(tile, tileItem, tileItemIdx)

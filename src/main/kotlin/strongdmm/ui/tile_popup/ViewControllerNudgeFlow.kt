@@ -8,7 +8,7 @@ import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
-import strongdmm.service.preferences.NudgeMode
+import strongdmm.service.preferences.model.NudgeMode
 import strongdmm.util.extension.getOrPut
 
 class ViewControllerNudgeFlow(

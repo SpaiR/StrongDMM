@@ -3,10 +3,11 @@ package strongdmm.ui.panel.level_switch
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiWindowFlags
+import strongdmm.ui.UiConstant
+import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.GREY32
-import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -15,11 +16,15 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val RELATIVE_POS_X: Float = 110f
-        private const val RELATIVE_POS_Y: Float = 75f
+        private val posX: Float
+            get() = CoordsPanelUi.posX
+        private val posY: Float
+            get() = CoordsPanelUi.posY - height - UiConstant.ELEMENT_MARGIN
 
-        private const val WIDTH: Float = 87f
-        private const val HEIGHT: Float = 10f
+        private val width: Float
+            get() = CoordsPanelUi.width
+        private val height: Float
+            get() = CoordsPanelUi.height
 
         private const val TITLE: String = "lavel_switch_panel"
     }
@@ -31,7 +36,8 @@ class View(
             return
         }
 
-        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        setNextWindowPos(posX, posY, Window.windowCond)
+        setNextWindowSize(width, height, Window.windowCond)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->

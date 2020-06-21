@@ -1,26 +1,25 @@
 package strongdmm.ui.panel.instance_locator
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.inputInt
-import strongdmm.util.imgui.inputText
-import strongdmm.util.imgui.window
-import strongdmm.window.WindowUtil
+import strongdmm.util.imgui.*
+import strongdmm.util.imgui.inputIntClamp
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_X: Float = 350f
-        private const val POS_Y_PERCENT: Int = 60
-
-        private const val WIDTH: Float = 300f
-        private const val HEIGHT: Float = 180f
+        private val width: Float
+            get() = 300f * Window.pointSize
+        private val height: Float
+            get() = 180f * Window.pointSize
 
         private const val TITLE: String = "Instance Locator"
 
-        private const val SEARCH_INPUT_WIDTH: Float = 100f
+        private val searchTypeInputWidth: Float
+            get() = getWindowWidth() - (75f * Window.pointSize)
+        private val searchCoordInputWidth: Float
+            get() = 100f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -31,7 +30,7 @@ class View(
             return
         }
 
-        ImGuiUtil.setNextPosAndSize(POS_X, WindowUtil.getHeightPercent(POS_Y_PERCENT), WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height, Window.windowCond)
 
         window(TITLE, state.showInstanceLocator) {
             if (state.isFirstOpen) {
@@ -39,7 +38,7 @@ class View(
                 state.isFirstOpen = false
             }
 
-            setNextItemWidth(getWindowWidth() - 75)
+            setNextItemWidth(searchTypeInputWidth)
             inputText("##search_type", state.searchType, "Search Type")
             sameLine()
 
@@ -47,16 +46,16 @@ class View(
 
             newLine()
             text("Search Rect:")
-            setNextItemWidth(SEARCH_INPUT_WIDTH)
-            inputInt("x1", state.searchX1, 1, state.mapMaxX)
+            setNextItemWidth(searchCoordInputWidth)
+            inputIntClamp("x1", state.searchX1, 1, state.mapMaxX)
             sameLine()
-            setNextItemWidth(SEARCH_INPUT_WIDTH)
-            inputInt("y1", state.searchY1, 1, state.mapMaxY)
-            setNextItemWidth(SEARCH_INPUT_WIDTH)
-            inputInt("x2", state.searchX2, 1, state.mapMaxX)
+            setNextItemWidth(searchCoordInputWidth)
+            inputIntClamp("y1", state.searchY1, 1, state.mapMaxY)
+            setNextItemWidth(searchCoordInputWidth)
+            inputIntClamp("x2", state.searchX2, 1, state.mapMaxX)
             sameLine()
-            setNextItemWidth(SEARCH_INPUT_WIDTH)
-            inputInt("y2", state.searchY2, 1, state.mapMaxY)
+            setNextItemWidth(searchCoordInputWidth)
+            inputIntClamp("y2", state.searchY2, 1, state.mapMaxY)
 
             button("Selection", block = viewController::doSelection)
             sameLine()

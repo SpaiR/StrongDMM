@@ -3,30 +3,30 @@ package strongdmm.ui.panel.tool_select
 import imgui.ImGui.*
 import imgui.enums.ImGuiCol
 import imgui.enums.ImGuiWindowFlags
-import strongdmm.util.imgui.ImGuiUtil
+import strongdmm.ui.UiConstant
+import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_X: Float = 350f
-        private const val POS_Y: Float = 30f
-
-        private const val WIDTH: Float = 80f
-        private const val HEIGHT: Float = 35f
+        private val posX: Float
+            get() = EnvironmentTreePanelUi.posX + EnvironmentTreePanelUi.width + UiConstant.ELEMENT_MARGIN
+        private val posY: Float
+            get() = EnvironmentTreePanelUi.posY
 
         private const val TITLE: String = "Tool"
-        private const val FLAGS: Int = ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysAutoResize
     }
 
     lateinit var viewController: ViewController
 
     fun process() {
-        ImGuiUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, HEIGHT)
+        setNextWindowPos(posX, posY, Window.windowCond)
 
-        window(TITLE, FLAGS) {
+        window(TITLE, ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysAutoResize) {
             state.tools.forEach { tool ->
                 val isToolSelected = tool == state.selectedTool
 

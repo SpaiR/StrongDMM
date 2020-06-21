@@ -7,20 +7,26 @@ import imgui.enums.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 500f
-        private const val HEIGHT: Float = 550f
+        private val width: Float
+            get() = 500f * Window.pointSize
+        private val height: Float
+            get() = 550f * Window.pointSize
+
+        private val controlsFilterWidth: Float
+            get() = getWindowWidth() - (105f * Window.pointSize)
     }
 
     lateinit var viewController: ViewController
 
     fun process() {
         viewController.getTileItem()?.let { tileItem ->
-            ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+            ImGuiUtil.setNextWindowCentered(width, height)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_${state.windowId}") {
                 showControls()
@@ -46,7 +52,7 @@ class View(
             state.isFistOpen = false
         }
 
-        setNextItemWidth(getWindowWidth() - 105f)
+        setNextItemWidth(controlsFilterWidth)
         inputText("##vars_filter", state.varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = viewController::doOk)

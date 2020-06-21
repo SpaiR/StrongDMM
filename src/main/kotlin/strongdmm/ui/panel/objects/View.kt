@@ -5,26 +5,28 @@ import imgui.enums.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
-import strongdmm.window.WindowUtil
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val ICON_SIZE: Float = 32f
+        private val iconSize: Float
+            get() = 32f * Window.pointSize
 
-        private const val POS_X: Float = 10f
-        private const val POS_Y_PERCENT: Int = 60
+        private val textIndent: Float
+            get() = 36f * Window.pointSize
+        private val iconIndent: Float
+            get() = 1f * Window.pointSize
 
-        private const val WIDTH: Float = 330f
+        private val columnsCountInputWidth: Float
+            get() = 75f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
 
     fun process() {
-        val height = WindowUtil.getHeightPercent(POS_Y_PERCENT)
-
-        ImGuiUtil.setNextPosAndSize(POS_X, height, WIDTH, Window.windowHeight - height - 15)
+        setNextWindowPos(ObjectsPanelUi.posX, ObjectsPanelUi.posY, Window.windowCond)
+        setNextWindowSize(ObjectsPanelUi.width, ObjectsPanelUi.height, Window.windowCond)
 
         window(viewController.getTitle()) {
             showConfigContextMenu()
@@ -34,7 +36,7 @@ class View(
             state.tileItems?.forEach { tileItem ->
                 val isSelected = tileItem.id == state.selectedTileItemId
 
-                selectable("##tile_item_${tileItem.id}", selected = isSelected, sizeX = getColumnWidth() - 1f, sizeY = ICON_SIZE) {
+                selectable("##tile_item_${tileItem.id}", selected = isSelected, sizeX = getColumnWidth() - iconIndent, sizeY = iconSize) {
                     viewController.doSelectItem(tileItem)
                 }
 
@@ -46,14 +48,14 @@ class View(
                 showItemContextMenu(tileItem)
 
                 sameLine()
-                withIndent(36f) {
+                withIndent(textIndent) {
                     text(tileItem.name)
                 }
 
                 sameLine()
-                withIndent(1f) {
+                withIndent(iconIndent) {
                     viewController.getIconSprite(tileItem).run {
-                        image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
+                        image(textureId, iconSize, iconSize, u1, v1, u2, v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
                     }
                 }
 
@@ -70,13 +72,13 @@ class View(
                 }
             }
 
-            setNextItemWidth(75f)
+            setNextItemWidth(columnsCountInputWidth)
 
             if (inputInt("Columns count", state.columnsCount)) {
                 if (state.columnsCount.get() <= 0) {
                     state.columnsCount.set(1)
-                } else if (state.columnsCount.get() > 64) { // 64 - maximum number of columns in ImGui
-                    state.columnsCount.set(64)
+                } else if (state.columnsCount.get() > 16) {
+                    state.columnsCount.set(16)
                 }
             }
         }

@@ -4,17 +4,8 @@ import imgui.ImGui
 import strongdmm.window.Window
 
 object ImGuiUtil {
-    fun setNextSize(windowWidth: Float, windowHeight: Float) {
-        ImGui.setNextWindowSize(windowWidth, windowHeight, Window.defaultWindowCond)
-    }
-
-    fun setNextPosAndSize(x: Float, y: Float, windowWidth: Float, windowHeight: Float) {
-        ImGui.setNextWindowPos(x, y, Window.defaultWindowCond)
-        ImGui.setNextWindowSize(windowWidth, windowHeight, Window.defaultWindowCond)
-    }
-
-    fun setNextPosAndSizeCentered(windowWidth: Float, windowHeight: Float) {
-        ImGui.setNextWindowPos((Window.windowWidth - windowWidth) / 2, (Window.windowHeight - windowHeight) / 2, Window.defaultWindowCond)
-        ImGui.setNextWindowSize(windowWidth, windowHeight, Window.defaultWindowCond)
+    fun setNextWindowCentered(windowWidth: Float, windowHeight: Float, imGuiCond: Int = Window.windowCond) {
+        ImGui.setNextWindowPos((Window.windowWidth - windowWidth) / 2, (Window.windowHeight - windowHeight) / 2, imGuiCond)
+        ImGui.setNextWindowSize(windowWidth, windowHeight, imGuiCond)
     }
 }

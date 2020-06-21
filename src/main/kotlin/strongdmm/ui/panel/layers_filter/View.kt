@@ -10,17 +10,22 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.DmeItem
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 400f
-        private const val HEIGHT: Float = 450f
+        private val WIDTH: Float
+            get() = 400f * Window.pointSize
+        private val HEIGHT: Float
+            get() = 450f * Window.pointSize
 
         private const val TITLE: String = "Layers Filter"
-
         private const val LEAF_FLAGS: Int = ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen
+
+        private val toggleButtonPadding: Float
+            get() = Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -30,7 +35,7 @@ class View(
             return
         }
 
-        ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(WIDTH, HEIGHT)
 
         window(TITLE, state.isOpened) {
             if (state.currentEnvironment == null) {
@@ -90,7 +95,7 @@ class View(
     private fun showToggleButton(dmeItem: DmeItem) {
         val isFilteredType = viewController.isFilteredType(dmeItem)
 
-        withStyleVar(ImGuiStyleVar.FramePadding, 1f, 1f) {
+        withStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
             if (checkbox("##layer_filter_${dmeItem.id}", !isFilteredType)) {
                 viewController.doToggleTypeFilter(dmeItem, isFilteredType)
             }

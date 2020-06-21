@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.coords
 
-import imgui.ImGui.text
+import imgui.ImGui.*
+import imgui.ImVec2
 import imgui.enums.ImGuiWindowFlags
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -11,28 +11,29 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val RELATIVE_POS_X: Float = 110f
-        private const val RELATIVE_POS_Y: Float = 40f
-
-        private const val WIDTH: Float = 87f
-        private const val HEIGHT: Float = 10f
-
         private const val TITLE: String = "coords_panel"
     }
+
+    private val textSize: ImVec2 = ImVec2()
 
     fun process() {
         if (!state.isMapOpened) {
             return
         }
 
-        ImGuiUtil.setNextPosAndSize(Window.windowWidth - RELATIVE_POS_X, Window.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+        setNextWindowPos(CoordsPanelUi.posX, CoordsPanelUi.posY, Window.windowCond)
+        setNextWindowSize(CoordsPanelUi.width, CoordsPanelUi.height, Window.windowCond)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
-            if (state.xMapMousePos == OUT_OF_BOUNDS || state.yMapMousePos == OUT_OF_BOUNDS) {
-                text("out of bound")
+            val text = if (state.xMapMousePos == OUT_OF_BOUNDS || state.yMapMousePos == OUT_OF_BOUNDS) {
+                "out of bound"
             } else {
-                text("X:%03d Y:%03d".format(state.xMapMousePos, state.yMapMousePos))
+                "X:%03d Y:%03d".format(state.xMapMousePos, state.yMapMousePos)
             }
+
+            calcTextSize(textSize, text)
+            setCursorPos((CoordsPanelUi.width - textSize.x) / 2, (CoordsPanelUi.height - textSize.y) / 2)
+            text(text)
         }
     }
 }

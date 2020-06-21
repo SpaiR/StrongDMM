@@ -48,6 +48,9 @@ abstract class AppWindow(title: String) {
     private val sync: Sync = Sync()
     private val imGuiGl3: ImGuiImplGl3 = ImGuiImplGl3()
 
+    private lateinit var fontData: ByteArray
+    private lateinit var iconData: ByteArray
+
     init {
         initGlfw(title)
         initImGui()
@@ -203,23 +206,18 @@ abstract class AppWindow(title: String) {
         })
 
         // Fonts configuration
-        val fontAtlas = io.fonts
-        val fontConfig = ImFontConfig()
 
+        // Read font
         javaClass.classLoader.getResourceAsStream("Ruda-Bold.ttf")!!.use {
-            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 15f, fontConfig, fontAtlas.glyphRangesCyrillic)
+            fontData = it.readAllBytes()
         }
 
-        // Add Font Awesome icons
+        // Read Font Awesome icons
         javaClass.classLoader.getResourceAsStream("fa-solid-900.ttf")!!.use {
-            fontConfig.mergeMode = true
-            fontConfig.glyphMaxAdvanceX = 13f
-            val iconRange = shortArrayOf(ICON_MIN_FA, ICON_MAX_FA)
-            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 13f, fontConfig, iconRange)
+            iconData = it.readAllBytes()
         }
 
-        ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)
-        fontConfig.destroy()
+        configureFonts()
 
         // Custom Styling
         ImGui.getStyle().apply {
@@ -340,27 +338,58 @@ abstract class AppWindow(title: String) {
         ImGui.render()
 
         imGuiGl3.render(ImGui.getDrawData())
-        checkWindowsState()
 
         glfwSwapBuffers(Window.ptr) // swap the color buffers
         glfwPollEvents()
+
+        checkWindowStateChanged()
     }
 
-    private fun checkWindowsState() {
-        Window.defaultWindowCond = ImGuiCond.Once // reset windows condition
+    private fun checkWindowStateChanged() {
+        Window.windowCond = ImGuiCond.Once // reset windows condition
 
         if (Window._resetWindows) {
             Window._resetWindows = false
-            Window.defaultWindowCond = ImGuiCond.Always
+            Window.windowCond = ImGuiCond.Always
         }
 
         if (Window._toggleFullscreen) {
             Window._toggleFullscreen = false
             toggleFullscreen()
         }
+
+        if (Window.pointSize != Window.newPointSize) {
+            Window.pointSize = Window.newPointSize
+
+            configureFonts()
+            imGuiGl3.updateFontsTexture()
+
+            Window.windowCond = ImGuiCond.Always
+        }
     }
 
     abstract fun appLoop()
+
+    private fun configureFonts() {
+        val fontAtlas = ImGui.getIO().fonts
+        val fontConfig = ImFontConfig()
+
+        fontAtlas.clear()
+
+        // Add default font
+        fontAtlas.addFontFromMemoryTTF(fontData, 15f * Window.pointSize, fontConfig, fontAtlas.glyphRangesCyrillic)
+
+        // Add Font Awesome icons
+        val iconSize = 13f * Window.pointSize
+
+        fontConfig.mergeMode = true
+        fontConfig.glyphMaxAdvanceX = iconSize
+
+        fontAtlas.addFontFromMemoryTTF(iconData, iconSize, fontConfig, shortArrayOf(ICON_MIN_FA, ICON_MAX_FA))
+
+        ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)
+        fontConfig.destroy()
+    }
 
     private fun loadWindowIcon(stack: MemoryStack) {
         val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("icon.png"))

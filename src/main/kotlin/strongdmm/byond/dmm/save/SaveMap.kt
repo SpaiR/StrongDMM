@@ -4,7 +4,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.parser.DmmData
 import strongdmm.byond.dmm.parser.saveAsByond
 import strongdmm.byond.dmm.parser.saveAsTGM
-import strongdmm.service.preferences.MapSaveMode
+import strongdmm.service.preferences.model.MapSaveMode
 import strongdmm.service.preferences.Preferences
 import java.io.File
 

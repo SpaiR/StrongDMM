@@ -3,13 +3,16 @@ package strongdmm.ui.panel.unknown_types
 import imgui.ImGui.*
 import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 300f
-        private const val HEIGHT: Float = 450f
+        private val width: Float
+            get() = 300f * Window.pointSize
+        private val height: Float
+            get() = 450f * Window.pointSize
 
         private const val TITLE: String = "Unknown Types"
     }
@@ -19,7 +22,7 @@ class View(
             return
         }
 
-        ImGuiUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         window(TITLE, state.isOpened) {
             textWrapped("There are unknown types on the map. They were removed.")

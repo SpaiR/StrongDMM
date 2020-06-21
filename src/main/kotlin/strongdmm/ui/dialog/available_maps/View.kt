@@ -4,13 +4,16 @@ import imgui.ImGui.*
 import imgui.enums.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 600f
-        private const val HEIGHT: Float = 285f
+        private val width: Float
+            get() = 600f * Window.pointSize
+        private val height: Float
+            get() = 285f * Window.pointSize
 
         private const val TITLE: String = "Available Maps"
     }
@@ -23,7 +26,7 @@ class View(
             state.isDoOpen = false
         }
 
-        ImGuiUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         popupModal(TITLE) {
             text("Selected: ${state.selectedMapPath?.readable ?: ""}")

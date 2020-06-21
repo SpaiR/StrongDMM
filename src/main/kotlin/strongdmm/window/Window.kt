@@ -17,8 +17,11 @@ object Window {
     val windowHeight: Int
         get() = _height[0]
 
-    var defaultWindowCond: Int = ImGuiCond.Once
+    var windowCond: Int = ImGuiCond.Once
 
     var _resetWindows: Boolean = false
     var _toggleFullscreen: Boolean = false
+
+    var pointSize: Float = 1f
+    var newPointSize: Float = pointSize
 }

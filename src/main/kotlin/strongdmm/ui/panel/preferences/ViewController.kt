@@ -4,7 +4,7 @@ import imgui.ImBool
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerPreferencesService
-import strongdmm.service.preferences.Selectable
+import strongdmm.service.preferences.model.Selectable
 
 class ViewController(
     private val state: State
