@@ -1,14 +1,15 @@
 package strongdmm.service.preferences
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
 import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerPreferencesService
-import strongdmm.window.Window
+import strongdmm.service.preferences.prefs.Preference
 import java.io.File
+import java.lang.Exception
 
 class PreferencesService : Service, EventHandler, PostInitialize {
     companion object {
@@ -16,6 +17,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
     }
 
     private lateinit var preferences: Preferences
+    private val objectMapper: ObjectMapper = ObjectMapper()
 
     init {
         consumeEvent(TriggerPreferencesService.SavePreferences::class.java, ::handleSavePreferences)
@@ -31,26 +33,34 @@ class PreferencesService : Service, EventHandler, PostInitialize {
 
     private fun ensurePreferencesConfigExists() {
         if (preferencesConfig.createNewFile()) {
-            preferencesConfig.writeText(Gson().toJson(Preferences()))
+            writePreferencesConfig(preferences)
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun readPreferencesConfig() {
-        preferencesConfig.reader().use {
-            preferences = Gson().fromJson(it, Preferences::class.java)
+        try {
+            preferences = objectMapper.readValue(preferencesConfig, Preferences::class.java)
+            preferences.rawValues = preferences::class.java.declaredFields.mapNotNull {
+                it.isAccessible = true
+                it.get(preferences) as? Preference<Any>
+            }
+        } catch (e: Exception) {
+            writePreferencesConfig(Preferences())
+            readPreferencesConfig()
         }
     }
 
-    private fun writePreferencesConfig() {
-        preferencesConfig.writeText(Gson().toJson(preferences))
+    private fun writePreferencesConfig(preferences: Preferences) {
+        objectMapper.writeValue(preferencesConfig, preferences)
     }
 
     private fun handleSavePreferences() {
         applyModifiedPreferences()
-        writePreferencesConfig()
+        writePreferencesConfig(preferences)
     }
 
     private fun applyModifiedPreferences() {
-        Window.newPointSize = preferences.interfaceScalePercent.get() / 100f
+        preferences.rawValues.forEach(Preference<Any>::applyModify)
     }
 }

@@ -8,7 +8,7 @@ import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
-import strongdmm.service.preferences.model.NudgeMode
+import strongdmm.service.preferences.prefs.enums.NudgeMode
 import strongdmm.util.extension.getOrPut
 
 class ViewControllerNudgeFlow(
@@ -23,20 +23,17 @@ class ViewControllerNudgeFlow(
     }
 
     fun getNudgeValueToShow(isXAxis: Boolean, tileItem: TileItem, tileItemIdx: Int): Pair<Int, IntArray> {
-        return when (state.providedPreferences.nudgeMode) {
-            NudgeMode.PIXEL -> {
-                if (isXAxis) {
-                    state.pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelX to intArrayOf(tileItem.pixelX) }
-                } else {
-                    state.pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelY to intArrayOf(tileItem.pixelY) }
-                }
+        return if (state.providedPreferences.nudgeMode == NudgeMode.PIXEL) {
+            if (isXAxis) {
+                state.pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelX to intArrayOf(tileItem.pixelX) }
+            } else {
+                state.pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.pixelY to intArrayOf(tileItem.pixelY) }
             }
-            NudgeMode.STEP -> {
-                if (isXAxis) {
-                    state.pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepX to intArrayOf(tileItem.stepX) }
-                } else {
-                    state.pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepY to intArrayOf(tileItem.stepY) }
-                }
+        } else {
+            if (isXAxis) {
+                state.pixelXNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepX to intArrayOf(tileItem.stepX) }
+            } else {
+                state.pixelYNudgeArrays.getOrPut(tileItemIdx) { tileItem.stepY to intArrayOf(tileItem.stepY) }
             }
         }
     }

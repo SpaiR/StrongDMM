@@ -4,7 +4,7 @@ import strongdmm.byond.*
 import strongdmm.byond.dmm.parser.TileContent
 import strongdmm.byond.dmm.parser.TileObject
 import strongdmm.byond.dmm.parser.TileObjectComparator
-import strongdmm.service.preferences.model.NudgeMode
+import strongdmm.service.preferences.prefs.enums.NudgeMode
 
 /**
  * Helper class to do a very specific tile things like objects replacing or vars modifying.
@@ -149,13 +149,10 @@ class Tile(
     fun nudge(isXAxis: Boolean, tileItem: TileItem, tileItemIdx: Int, value: Int, nudgeMode: NudgeMode) {
         val vars = tileItem.customVars?.toMutableMap() ?: mutableMapOf()
 
-        val axis = when (nudgeMode) {
-            NudgeMode.PIXEL -> {
-                if (isXAxis) VAR_PIXEL_X else VAR_PIXEL_Y
-            }
-            NudgeMode.STEP -> {
-                if (isXAxis) VAR_STEP_X else VAR_STEP_Y
-            }
+        val axis = if (nudgeMode == NudgeMode.PIXEL) {
+            if (isXAxis) VAR_PIXEL_X else VAR_PIXEL_Y
+        } else {
+            if (isXAxis) VAR_STEP_X else VAR_STEP_Y
         }
 
         vars[axis] = value.toString()

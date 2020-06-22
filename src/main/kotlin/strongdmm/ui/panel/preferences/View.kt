@@ -1,15 +1,14 @@
 package strongdmm.ui.panel.preferences
 
-import imgui.ImBool
 import imgui.ImGui.*
 import imgui.ImInt
 import imgui.enums.ImGuiCond
 import imgui.enums.ImGuiMouseButton
 import imgui.enums.ImGuiMouseCursor
 import imgui.enums.ImGuiStyleVar
-import strongdmm.service.preferences.model.MapSaveMode
-import strongdmm.service.preferences.model.NudgeMode
-import strongdmm.service.preferences.model.Selectable
+import strongdmm.service.preferences.prefs.PreferenceBoolean
+import strongdmm.service.preferences.prefs.PreferenceEnum
+import strongdmm.service.preferences.prefs.PreferenceInteger
 import strongdmm.util.imgui.*
 import strongdmm.util.imgui.inputIntClamp
 import strongdmm.window.Window
@@ -34,6 +33,8 @@ class View(
 
     lateinit var viewController: ViewController
 
+    private val imInt: ImInt = ImInt()
+
     fun process() {
         if (state.isDoOpen) {
             state.checkOpenStatus = true
@@ -45,64 +46,20 @@ class View(
         ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
         popupModal(TITLE, state.isOpened) {
-            textColored(1f, .84f, 0f, .75f, "Interface Options")
-            separator()
+            state.preferencesByGroups.forEach { (groupName, preferences) ->
+                textColored(1f, .84f, 0f, .75f, groupName)
+                separator()
 
-            withIndent(optionsIndent) {
-                showInputIntOption(
-                    "Scale",
-                    "Controls the interface scale.",
-                    "Scale Percent",
-                    state.providedPreferences.interfaceScalePercent,
-                    50,
-                    250,
-                    1,
-                    10
-                )
-            }
+                withIndent(optionsIndent) {
+                    preferences.forEach { pref ->
+                        when (pref) {
+                            is PreferenceInteger -> showInputIntOption(pref)
+                            is PreferenceEnum -> showSelectOption(pref)
+                            is PreferenceBoolean -> showToggleOption(pref)
+                        }
 
-            newLine()
-
-            textColored(1f, .84f, 0f, .75f, "Save Options")
-            separator()
-
-            withIndent(optionsIndent) {
-                showSelectOption(
-                    "Map Save Format",
-                    "Controls the format used by the editor to save the map.",
-                    "##map_save_format", state.providedPreferences.mapSaveMode.toString(),
-                    state.mapSaveModes,
-                    state.providedPreferences.mapSaveMode
-                ) {
-                    state.providedPreferences.mapSaveMode = it as MapSaveMode
-                }
-
-                newLine()
-
-                showToggleOption(
-                    "Sanitize Variables",
-                    "Enables sanitizing for variables which are declared on the map, but the same as default.",
-                    "##sanitize_variables", state.providedPreferences.sanitizeInitialVariables
-                )
-
-                newLine()
-
-                showToggleOption(
-                    "Clean Unused Keys",
-                    "When enabled, content tile keys which are not used on the map will be removed.",
-                    "##clean_unused_keys", state.providedPreferences.cleanUnusedKeys
-                )
-
-                newLine()
-
-                showSelectOption(
-                    "Nudge Mode",
-                    "Controls which variables will be changed during the nudge.",
-                    "##nudge_mode", state.providedPreferences.nudgeMode.toString(),
-                    state.nudgeModes,
-                    state.providedPreferences.nudgeMode
-                ) {
-                    state.providedPreferences.nudgeMode = it as NudgeMode
+                        newLine()
+                    }
                 }
             }
         }
@@ -110,55 +67,49 @@ class View(
         viewController.checkOpenStatus()
     }
 
-    private fun showInputIntOption(header: String, desc: String, inputLabel: String, option: ImInt, min: Int, max: Int, step: Int, stepFast: Int) {
-        textWrapped(header)
+    private fun showInputIntOption(pref: PreferenceInteger) {
+        textWrapped(pref.getHeader())
 
         pushTextWrapPos()
-        textDisabled(desc)
+        textDisabled(pref.getDesc())
         popTextWrapPos()
 
-        if (inputIntClamp(inputLabel, option, min, max, step, stepFast)) {
+        imInt.set(pref.getValue().data)
+        if (inputIntClamp(pref.getLabel(), imInt, pref.getMin(), pref.getMax(), pref.getStep(), pref.getStepFast())) {
+            pref.getValue().data = imInt.get()
             viewController.savePreferences()
         }
     }
 
-    private inline fun showSelectOption(
-        header: String,
-        desc: String,
-        selectLabel: String,
-        selectPreview: String,
-        selectVariants: List<Selectable>,
-        selectedVariant: Selectable,
-        action: (Selectable) -> Unit
-    ) {
-        textWrapped(header)
+    private fun showSelectOption(pref: PreferenceEnum) {
+        textWrapped(pref.getHeader())
 
         pushTextWrapPos()
-        textDisabled(desc)
+        textDisabled(pref.getDesc())
         popTextWrapPos()
 
-        combo(selectLabel, selectPreview) {
-            selectVariants.forEach { mode ->
-                selectable(mode.toString(), selectedVariant == mode) {
-                    viewController.doSelectOption(mode, action)
+        combo(pref.getLabel(), pref.getReadableName()) {
+            pref.getEnums().forEach { mode ->
+                selectable(mode.getReadableName(), pref == mode) {
+                    viewController.doSelectOption(mode, pref)
                 }
             }
         }
     }
 
-    private fun showToggleOption(header: String, desc: String, checkboxLabel: String, option: ImBool) {
-        textWrapped(header)
+    private fun showToggleOption(pref: PreferenceBoolean) {
+        textWrapped(pref.getHeader())
 
         withStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
-            if (checkbox(checkboxLabel, option)) {
-                viewController.savePreferences()
+            if (checkbox(pref.getLabel(), pref.getValue().data)) {
+                viewController.doToggleOption(pref)
             }
         }
 
         sameLine()
 
         pushTextWrapPos()
-        textDisabled(desc)
+        textDisabled(pref.getDesc())
         popTextWrapPos()
 
         if (isItemHovered()) {
@@ -166,7 +117,7 @@ class View(
         }
 
         if (isItemClicked(ImGuiMouseButton.Left)) {
-            viewController.doToggleOption(option)
+            viewController.doToggleOption(pref)
         }
     }
 }
