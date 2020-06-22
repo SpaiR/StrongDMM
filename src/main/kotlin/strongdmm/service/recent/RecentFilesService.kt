@@ -1,5 +1,6 @@
 package strongdmm.service.recent
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
@@ -22,7 +23,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
 
     private lateinit var recentFiles: RecentFiles
 
-    private val objectMapper: ObjectMapper = ObjectMapper()
+    private val objectMapper: ObjectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     private val recentEnvironments: MutableList<String> = mutableListOf()
     private val recentMaps: MutableList<MapPath> = mutableListOf()
