@@ -59,7 +59,7 @@ class View(
                     pushStyleColor(ImGuiCol.Text, 1f, .84f, 0f, 1f)
                 }
 
-                if (selectable(map.mapName, viewController.isSelectedMap(map))) {
+                if (selectable("${map.mapName}##open_${map.mapPath.absolute}", viewController.isSelectedMap(map))) {
                     viewController.doOpenMap(map)
                 }
 

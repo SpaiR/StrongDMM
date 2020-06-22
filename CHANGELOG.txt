@@ -2,6 +2,9 @@ Features:
  * Added scaling support! You can now scale the interface in the "Preferences" panel.
  * Added customizable color schemas. Could be found in the "Preferences".
 
+Fixes:
+ * Inability to switch between maps with the same name.
+
 --------------------------------------
  v1.5.0 (2020-05-26)
 --------------------------------------
