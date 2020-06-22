@@ -1,6 +1,5 @@
 package strongdmm.service.canvas
 
-import gnu.trove.map.hash.TIntObjectHashMap
 import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.ImVec2
@@ -39,7 +38,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         private const val MAX_SCALE: Int = 12
     }
 
-    private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
+    private val renderDataStorageByMapId: MutableMap<Int, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
     private var selectedTileItem: TileItem? = null
@@ -53,6 +52,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private var maxY: Int = OUT_OF_BOUNDS
 
     private val frameAreas: ImBoolean = ImBoolean(true)
+    private val synchronizeMapsView: ImBoolean = ImBoolean(false)
 
     // Tile of the map covered with mouse
     private var xMapMousePos: Int = OUT_OF_BOUNDS
@@ -101,6 +101,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     override fun postInit() {
         sendEvent(Provider.CanvasServiceFrameAreas(frameAreas))
+        sendEvent(Provider.CanvasServiceSynchronizeMapsView(synchronizeMapsView))
     }
 
     override fun process() {
@@ -124,6 +125,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
         postProcessTileItemSelectMode()
         postProcessCanvasMovingChecks()
+        postProcessSynchronizeMapsView()
     }
 
     private fun processViewTranslate() {
@@ -368,6 +370,17 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private fun postProcessCanvasMovingChecks() {
         if (isMovingCanvasWithLmb && ImGui.isMouseReleased(ImGuiMouseButton.Left)) {
             isMovingCanvasWithLmb = false
+        }
+    }
+
+    private fun postProcessSynchronizeMapsView() {
+        if (synchronizeMapsView.get()) {
+            renderDataStorageByMapId.filterNot { it.value === renderData }.forEach { (_, data) ->
+                data.viewScale = renderData.viewScale
+                data.scaleCount = renderData.scaleCount
+                data.viewTranslateX = renderData.viewTranslateX
+                data.viewTranslateY = renderData.viewTranslateY
+            }
         }
     }
 

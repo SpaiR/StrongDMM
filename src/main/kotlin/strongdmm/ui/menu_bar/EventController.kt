@@ -27,6 +27,7 @@ class EventController(
 
         consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
+        consumeEvent(Provider.CanvasServiceSynchronizeMapsView::class.java, ::handleProviderCanvasServiceSynchronizeMapsView)
         consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
         consumeEvent(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
     }
@@ -73,6 +74,10 @@ class EventController(
 
     private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBoolean, Unit>) {
         state.providedFrameAreas = event.body
+    }
+
+    private fun handleProviderCanvasServiceSynchronizeMapsView(event: Event<ImBoolean, Unit>) {
+        state.providedSynchronizeMapsView = event.body
     }
 
     private fun handleProviderRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
