@@ -1,6 +1,6 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 import org.lwjgl.glfw.GLFW
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
@@ -213,7 +213,7 @@ class ViewController(
         }
     }
 
-    fun toggleLayer(layerStatus: ImBool, layerType: String) {
+    fun toggleLayer(layerStatus: ImBoolean, layerType: String) {
         if (layerStatus.get()) {
             sendEvent(TriggerLayersFilterService.ShowLayersByType(layerType))
         } else {

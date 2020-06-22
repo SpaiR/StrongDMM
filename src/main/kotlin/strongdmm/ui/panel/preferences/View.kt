@@ -1,11 +1,11 @@
 package strongdmm.ui.panel.preferences
 
 import imgui.ImGui.*
-import imgui.ImInt
-import imgui.enums.ImGuiCond
-import imgui.enums.ImGuiMouseButton
-import imgui.enums.ImGuiMouseCursor
-import imgui.enums.ImGuiStyleVar
+import imgui.type.ImInt
+import imgui.flag.ImGuiCond
+import imgui.flag.ImGuiMouseButton
+import imgui.flag.ImGuiMouseCursor
+import imgui.flag.ImGuiStyleVar
 import strongdmm.service.preferences.prefs.PreferenceBoolean
 import strongdmm.service.preferences.prefs.PreferenceEnum
 import strongdmm.service.preferences.prefs.PreferenceInteger

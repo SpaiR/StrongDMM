@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.preferences
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 import strongdmm.service.preferences.prefs.Preference
 import strongdmm.service.preferences.prefs.enums.MapSaveMode
 import strongdmm.service.preferences.prefs.enums.NudgeMode
@@ -10,7 +10,7 @@ class State {
     lateinit var providedPreferences: Preferences
 
     var isDoOpen: Boolean = false
-    val isOpened: ImBool = ImBool(false)
+    val isOpened: ImBoolean = ImBoolean(false)
 
     var checkOpenStatus: Boolean = false
 

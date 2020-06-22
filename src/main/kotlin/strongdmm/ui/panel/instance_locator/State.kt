@@ -1,11 +1,11 @@
 package strongdmm.ui.panel.instance_locator
 
-import imgui.ImBool
-import imgui.ImInt
-import imgui.ImString
+import imgui.type.ImBoolean
+import imgui.type.ImInt
+import imgui.type.ImString
 
 class State {
-    val showInstanceLocator: ImBool = ImBool(false)
+    val showInstanceLocator: ImBoolean = ImBoolean(false)
 
     var isFirstOpen: Boolean = true
 

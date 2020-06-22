@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.level_switch
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT

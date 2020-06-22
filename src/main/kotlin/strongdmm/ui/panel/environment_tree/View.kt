@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.environment_tree
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiTreeNodeFlags
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiTreeNodeFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ

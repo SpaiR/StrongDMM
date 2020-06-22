@@ -3,9 +3,9 @@ package strongdmm.window
 import imgui.ImFontConfig
 import imgui.ImGui
 import imgui.ImGuiFreeType
-import imgui.callbacks.ImStrConsumer
-import imgui.callbacks.ImStrSupplier
-import imgui.enums.*
+import imgui.callback.ImStrConsumer
+import imgui.callback.ImStrSupplier
+import imgui.flag.*
 import imgui.gl3.ImGuiImplGl3
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.Callbacks

@@ -1,6 +1,6 @@
 package strongdmm.window
 
-import imgui.enums.ImGuiCond
+import imgui.flag.ImGuiCond
 
 object Window {
     var ptr: Long = 0

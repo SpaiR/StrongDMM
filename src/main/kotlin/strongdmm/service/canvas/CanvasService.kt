@@ -1,11 +1,11 @@
 package strongdmm.service.canvas
 
 import gnu.trove.map.hash.TIntObjectHashMap
-import imgui.ImBool
+import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.ImVec2
-import imgui.enums.ImGuiHoveredFlags
-import imgui.enums.ImGuiMouseButton
+import imgui.flag.ImGuiHoveredFlags
+import imgui.flag.ImGuiMouseButton
 import org.lwjgl.glfw.GLFW
 import strongdmm.PostInitialize
 import strongdmm.Processable
@@ -52,7 +52,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private var maxX: Int = OUT_OF_BOUNDS
     private var maxY: Int = OUT_OF_BOUNDS
 
-    private val frameAreas: ImBool = ImBool(true)
+    private val frameAreas: ImBoolean = ImBoolean(true)
 
     // Tile of the map covered with mouse
     private var xMapMousePos: Int = OUT_OF_BOUNDS

@@ -29,7 +29,7 @@ class ShortcutController(
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_D, action = viewController::doDeselectAll)
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_F, action = viewController::doFindInstance)
 
-        // "Manual" methods since toggle through the buttons switches ImBool status vars automatically.
+        // "Manual" methods since toggle through the buttons switches ImBoolean status vars automatically.
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_1, action = viewController::toggleAreaLayerManual)
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_2, action = viewController::toggleTurfLayerManual)
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_3, action = viewController::toggleObjLayerManual)

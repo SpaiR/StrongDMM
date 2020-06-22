@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.confirmation
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button

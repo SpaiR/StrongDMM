@@ -1,8 +1,8 @@
 package strongdmm.util.imgui
 
 import imgui.ImGui
-import imgui.ImInt
-import imgui.ImString
+import imgui.type.ImInt
+import imgui.type.ImString
 
 fun setItemHoveredTooltip(text: String) {
     if (ImGui.isItemHovered()) {

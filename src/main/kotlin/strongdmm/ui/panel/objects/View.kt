@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.objects
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiMouseButton
+import imgui.flag.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.*
 import strongdmm.window.Window

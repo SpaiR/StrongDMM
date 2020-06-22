@@ -2,7 +2,7 @@ package strongdmm.ui.panel.coords
 
 import imgui.ImGui.*
 import imgui.ImVec2
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
 import strongdmm.window.Window

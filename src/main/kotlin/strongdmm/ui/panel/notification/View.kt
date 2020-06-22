@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.notification
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiStyleVar
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiStyleVar
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.imgui.window
 import strongdmm.window.Window

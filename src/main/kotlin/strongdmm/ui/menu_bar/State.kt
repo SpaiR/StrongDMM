@@ -1,11 +1,11 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 import strongdmm.byond.dmm.MapPath
 
 class State {
-    lateinit var providedShowInstanceLocator: ImBool
-    lateinit var providedFrameAreas: ImBool
+    lateinit var providedShowInstanceLocator: ImBoolean
+    lateinit var providedFrameAreas: ImBoolean
     lateinit var providedRecentEnvironments: List<String>
     lateinit var providedRecentMaps: List<MapPath>
 
@@ -16,8 +16,8 @@ class State {
     var isUndoEnabled: Boolean = false
     var isRedoEnabled: Boolean = false
 
-    val isAreaLayerActive: ImBool = ImBool(true)
-    val isTurfLayerActive: ImBool = ImBool(true)
-    val isObjLayerActive: ImBool = ImBool(true)
-    val isMobLayerActive: ImBool = ImBool(true)
+    val isAreaLayerActive: ImBoolean = ImBoolean(true)
+    val isTurfLayerActive: ImBoolean = ImBoolean(true)
+    val isObjLayerActive: ImBoolean = ImBoolean(true)
+    val isMobLayerActive: ImBoolean = ImBoolean(true)
 }

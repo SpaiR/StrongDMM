@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.environment_tree
 
-import imgui.enums.ImGuiTreeNodeFlags
+import imgui.flag.ImGuiTreeNodeFlags
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath

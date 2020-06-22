@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.screenshot
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
+import imgui.flag.ImGuiCol
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
 

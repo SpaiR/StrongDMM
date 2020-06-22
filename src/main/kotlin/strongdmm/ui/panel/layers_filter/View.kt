@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.layers_filter
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiStyleVar
-import imgui.enums.ImGuiTreeNodeFlags
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiStyleVar
+import imgui.flag.ImGuiTreeNodeFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ

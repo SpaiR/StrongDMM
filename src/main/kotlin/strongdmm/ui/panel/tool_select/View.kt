@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.tool_select
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.imgui.button

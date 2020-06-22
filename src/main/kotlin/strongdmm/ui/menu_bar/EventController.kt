@@ -1,6 +1,6 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
@@ -67,11 +67,11 @@ class EventController(
         state.isMobLayerActive.set(!event.body.contains(TYPE_MOB))
     }
 
-    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
+    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBoolean, Unit>) {
         state.providedShowInstanceLocator = event.body
     }
 
-    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBool, Unit>) {
+    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBoolean, Unit>) {
         state.providedFrameAreas = event.body
     }
 

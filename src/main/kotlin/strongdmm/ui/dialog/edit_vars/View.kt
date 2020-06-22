@@ -1,9 +1,9 @@
 package strongdmm.ui.dialog.edit_vars
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiMouseCursor
-import imgui.enums.ImGuiStyleVar
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiMouseCursor
+import imgui.flag.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
 import strongdmm.util.imgui.*

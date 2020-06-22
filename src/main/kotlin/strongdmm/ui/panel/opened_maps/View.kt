@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.opened_maps
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
+import imgui.flag.ImGuiCol
 import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
 import strongdmm.util.icons.ICON_FA_TIMES

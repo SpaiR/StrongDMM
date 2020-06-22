@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.search_result
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiMouseButton
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiMouseButton
 import strongdmm.ui.panel.search_result.model.SearchResult
 import strongdmm.util.imgui.*
 import strongdmm.window.Window

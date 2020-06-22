@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.available_maps
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
