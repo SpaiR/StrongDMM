@@ -1,6 +1,7 @@
 package strongdmm.ui.dialog.available_maps
 
 import imgui.ImGui.*
+import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.util.imgui.*
@@ -16,6 +17,11 @@ class View(
             get() = 285f * Window.pointSize
 
         private const val TITLE: String = "Available Maps"
+
+        private val mapListWidthIndent: Float
+            get() = 20 * Window.pointSize
+        private val mapListHeightIndent: Float
+            get() = 110 * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -26,7 +32,7 @@ class View(
             state.isDoOpen = false
         }
 
-        ImGuiUtil.setNextWindowCentered(width, height)
+        ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
         popupModal(TITLE) {
             text("Selected: ${state.selectedMapPath?.readable ?: ""}")
@@ -40,7 +46,10 @@ class View(
 
             inputText("##maps_path_filter", state.mapFilter, "Paths Filter")
 
-            child("available_maps_list", getWindowWidth() - 20, getWindowHeight() - 110, true, ImGuiWindowFlags.HorizontalScrollbar) {
+            val width = getWindowWidth() - mapListWidthIndent
+            val height = getWindowHeight() - mapListHeightIndent
+
+            child("available_maps_list", width, height, true, ImGuiWindowFlags.HorizontalScrollbar) {
                 for (mapPath in state.providedAvailableMapPaths) {
                     if (viewController.isFilteredOutVisibleFilePath(mapPath.readable)) {
                         continue
