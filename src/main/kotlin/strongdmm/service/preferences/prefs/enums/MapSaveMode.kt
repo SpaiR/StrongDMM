@@ -4,12 +4,9 @@ import strongdmm.service.preferences.prefs.PreferenceEnum
 
 class MapSaveMode private constructor(value: String) : PreferenceEnum(value) {
     companion object {
-        val PROVIDED: MapSaveMode =
-            MapSaveMode("PROVIDED")
-        val BYOND: MapSaveMode =
-            MapSaveMode("BYOND")
-        val TGM: MapSaveMode =
-            MapSaveMode("TGM")
+        val PROVIDED: MapSaveMode = MapSaveMode("PROVIDED")
+        val BYOND: MapSaveMode = MapSaveMode("BYOND")
+        val TGM: MapSaveMode = MapSaveMode("TGM")
 
         val enums: Array<PreferenceEnum> = arrayOf(
             PROVIDED,

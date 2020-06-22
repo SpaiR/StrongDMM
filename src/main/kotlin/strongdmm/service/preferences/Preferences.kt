@@ -6,6 +6,7 @@ import strongdmm.service.preferences.prefs.bools.CleanUnusedKeys
 import strongdmm.service.preferences.prefs.bools.SanitizeInitialVariables
 import strongdmm.service.preferences.prefs.enums.MapSaveMode
 import strongdmm.service.preferences.prefs.enums.NudgeMode
+import strongdmm.service.preferences.prefs.enums.StyleMode
 import strongdmm.service.preferences.prefs.ints.InterfaceScalePercent
 
 class Preferences {
@@ -14,6 +15,7 @@ class Preferences {
 
     // Interface Options
     val interfaceScalePercent: InterfaceScalePercent = InterfaceScalePercent()
+    val styleMode: StyleMode = StyleMode()
 
     // Save Options
     val mapSaveMode: MapSaveMode = MapSaveMode()

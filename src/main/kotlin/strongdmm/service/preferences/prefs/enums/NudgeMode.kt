@@ -4,10 +4,8 @@ import strongdmm.service.preferences.prefs.PreferenceEnum
 
 class NudgeMode private constructor(value: String) : PreferenceEnum(value) {
     companion object {
-        val PIXEL: NudgeMode =
-            NudgeMode("PIXEL")
-        val STEP: NudgeMode =
-            NudgeMode("STEP")
+        val PIXEL: NudgeMode = NudgeMode("PIXEL")
+        val STEP: NudgeMode = NudgeMode("STEP")
 
         val enums: Array<PreferenceEnum> = arrayOf(
             PIXEL,
