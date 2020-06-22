@@ -1,6 +1,6 @@
 package strongdmm.service.recent
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
 import strongdmm.StrongDMM
@@ -21,6 +21,8 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
     }
 
     private lateinit var recentFiles: RecentFiles
+
+    private val objectMapper: ObjectMapper = ObjectMapper()
 
     private val recentEnvironments: MutableList<String> = mutableListOf()
     private val recentMaps: MutableList<MapPath> = mutableListOf()
@@ -44,20 +46,23 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
 
     private fun ensureRecentFilesConfigExists() {
         if (recentFilesConfig.createNewFile()) {
-            recentFilesConfig.writeText(Gson().toJson(RecentFiles()))
+            writeRecentJsonFile(RecentFiles())
         }
     }
 
     private fun readRecentFilesConfig() {
-        recentFilesConfig.reader().use {
-            recentFiles = Gson().fromJson(it, RecentFiles::class.java)
+        try {
+            recentFiles = objectMapper.readValue(recentFilesConfig, RecentFiles::class.java)
             validateRecentFiles()
             updateRecentEnvironmentsList()
+        } catch (e: Exception) {
+            writeRecentJsonFile(RecentFiles())
+            readRecentFilesConfig()
         }
     }
 
-    private fun writeRecentJsonFile() {
-        recentFilesConfig.writeText(Gson().toJson(recentFiles))
+    private fun writeRecentJsonFile(recentFiles: RecentFiles) {
+        objectMapper.writeValue(recentFilesConfig, recentFiles)
     }
 
     private fun validateRecentFiles() {
@@ -82,7 +87,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
     private fun addEnvironment(environmentPath: String) {
         recentFiles.environments.remove(environmentPath)
         recentFiles.environments.add(0, environmentPath)
-        writeRecentJsonFile()
+        writeRecentJsonFile(recentFiles)
         updateRecentEnvironmentsList()
     }
 
@@ -90,7 +95,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
         val maps = recentFiles.maps.getOrPut(environmentPath) { mutableListOf() }
         maps.remove(mapPath)
         maps.add(0, mapPath)
-        writeRecentJsonFile()
+        writeRecentJsonFile(recentFiles)
         updateRecentMapsList(environmentPath)
     }
 
@@ -122,7 +127,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
     private fun handleClearRecentEnvironments() {
         sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             recentFiles.environments.clear()
-            writeRecentJsonFile()
+            writeRecentJsonFile(recentFiles)
             updateRecentMapsList(environment.absEnvPath)
         })
     }
@@ -130,7 +135,7 @@ class RecentFilesService : Service, EventHandler, PostInitialize {
     private fun handleClearRecentMaps() {
         sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             recentFiles.maps[environment.absEnvPath]?.clear()
-            writeRecentJsonFile()
+            writeRecentJsonFile(recentFiles)
             updateRecentMapsList(environment.absEnvPath)
         })
     }

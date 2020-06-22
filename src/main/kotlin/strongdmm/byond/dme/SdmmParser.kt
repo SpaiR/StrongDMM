@@ -1,9 +1,7 @@
 package strongdmm.byond.dme
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.byond.VAR_NAME
 import java.io.File
 import java.nio.file.Files
@@ -44,9 +42,10 @@ class SdmmParser {
 
         val dmeItems = mutableMapOf<String, DmeItem>()
         val dme = Dme(dmeFile.nameWithoutExtension, dmeFile.parent, dmeFile.absolutePath, dmeItems)
+        val objectMapper = ObjectMapper()
 
         tmpFile.reader(Charsets.UTF_8).use {
-            traverseTreeRecurs(JsonParser.parseReader(it).asJsonObject, dme, dmeItems)
+            traverseTreeRecurs(objectMapper.readTree(it), dme, dmeItems)
         }
 
         dme.postInit()
@@ -55,7 +54,7 @@ class SdmmParser {
         return dme
     }
 
-    private fun traverseTreeRecurs(root: JsonObject, dme: Dme, dmeItems: MutableMap<String, DmeItem>) {
+    private fun traverseTreeRecurs(root: JsonNode, dme: Dme, dmeItems: MutableMap<String, DmeItem>) {
         val type = root.getPath()
         val localVars = mutableMapOf<String, String?>()
 
@@ -79,7 +78,7 @@ class SdmmParser {
 
         root.getChildren().forEach { child ->
             childrenList.add(child.getPath())
-            traverseTreeRecurs(child.asJsonObject, dme, dmeItems)
+            traverseTreeRecurs(child, dme, dmeItems)
         }
 
         // Sort names by natural order
@@ -98,10 +97,9 @@ class SdmmParser {
         }
     }
 
-    private fun JsonObject.getVars(): JsonArray = get("vars").asJsonArray
-    private fun JsonObject.getPath(): String = get("path").asString
-    private fun JsonObject.getChildren(): JsonArray = get("children").asJsonArray
-    private fun JsonElement.getPath(): String = asJsonObject.get("path").asString
-    private fun JsonElement.getName(): String = asJsonObject.get("name").asString
-    private fun JsonElement.getValue(): String = asJsonObject.get("value").asString
+    private fun JsonNode.getVars(): JsonNode = get("vars")
+    private fun JsonNode.getPath(): String = get("path").asText()
+    private fun JsonNode.getChildren(): JsonNode = get("children")
+    private fun JsonNode.getName(): String = get("name").asText()
+    private fun JsonNode.getValue(): String = get("value").asText()
 }
