@@ -83,6 +83,19 @@ class ViewController(
         applyTmpTileChanges()
     }
 
+    fun resetVariableToDefault(variable: Variable) {
+        val defaultValue = getDefaultVariableValue(variable)
+        if (defaultValue != variable.value.get()) {
+            variable.value.set(defaultValue)
+            variable.stopEdit()
+            applyTmpTileChanges()
+        }
+    }
+
+    fun getDefaultVariableValue(variable: Variable): String {
+        return getTileItem()?.dmeItem?.getVar(variable.name) ?: "null"
+    }
+
     fun open() {
         state.isFistOpen = true
         sendEvent(Reaction.ApplicationBlockChanged(true))

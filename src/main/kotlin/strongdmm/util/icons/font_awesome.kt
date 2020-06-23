@@ -13,3 +13,4 @@ const val ICON_FA_CHEVRON_LEFT: String = "\uf053"
 const val ICON_FA_CHEVRON_RIGHT: String = "\uf054"
 
 const val ICON_FA_TIMES: String = "\uf00d"
+const val ICON_FA_UNDO_ALT: String = "\uf2ea"

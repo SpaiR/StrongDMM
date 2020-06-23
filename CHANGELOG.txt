@@ -1,8 +1,9 @@
 Features:
- * Added scaling support! You can now scale the interface in the "Preferences" panel.
- * Added customizable color schemas. Could be found in the "Preferences".
- * Added "Synchronize Maps View" option. When enabled and you switch between the maps,
-   the location of the camera will be shared. Helpful for multi-z maps with levels per-file.
+ * Added support for UI scaling! Interface could be scaled from "Preferences" window.
+ * Added switchable interface themes.
+ * Added "Synchronize Maps View" option. When enabled all maps will share the same "camera" location.
+   Helpful for multi-z maps with levels per-file.
+ * "Edit Variables" window now has a "Reset Variable To Default" button for modified variables.
 
 Fixes:
  * Inability to switch between maps with the same name.

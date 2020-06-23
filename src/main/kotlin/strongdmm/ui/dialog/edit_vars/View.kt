@@ -6,6 +6,7 @@ import imgui.flag.ImGuiMouseCursor
 import imgui.flag.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
+import strongdmm.util.icons.ICON_FA_UNDO_ALT
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
 
@@ -14,7 +15,7 @@ class View(
 ) {
     companion object {
         private val width: Float
-            get() = 500f * Window.pointSize
+            get() = 600f * Window.pointSize
         private val height: Float
             get() = 550f * Window.pointSize
 
@@ -128,6 +129,10 @@ class View(
 
         nextColumn()
 
+        showResetToDefaultButton(variable)
+
+        sameLine()
+
         if (variable === state.currentEditVar) {
             showVariableEditField(variable)
         } else {
@@ -140,9 +145,31 @@ class View(
 
     private fun showVariablePinOption(variable: Variable) {
         withStyleVar(ImGuiStyleVar.FramePadding, .25f, .25f) {
-            if (radioButton("##variable_pin__${variable.hash}", variable.isPinned)) {
+            if (radioButton("##variable_pin_${variable.hash}", variable.isPinned)) {
                 viewController.doPinVariable(variable)
             }
+        }
+    }
+
+    private fun showResetToDefaultButton(variable: Variable) {
+        val defaultValue = viewController.getDefaultVariableValue(variable)
+        val isAlreadyDefault = variable.value.get() == defaultValue
+
+        if (isAlreadyDefault) {
+            pushStyleColor(ImGuiCol.Button, 0)
+            pushStyleColor(ImGuiCol.ButtonActive, 0)
+            pushStyleColor(ImGuiCol.ButtonHovered, 0)
+            pushStyleColor(ImGuiCol.Text, 1f, 1f, 1f, .25f)
+        }
+
+        button("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
+            viewController.resetVariableToDefault(variable)
+        }
+
+        if (isAlreadyDefault) {
+            popStyleColor(4)
+        } else {
+            setItemHoveredTooltip(viewController.getDefaultVariableValue(variable))
         }
     }
 
