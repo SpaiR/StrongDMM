@@ -54,9 +54,9 @@ class View(
             button("Delete All##delete_all_${searchResult.searchObject}", block = viewController::doDeleteAll)
         } else {
             if (!state.isReplaceEnabled) {
-                pushStyleColor(ImGuiCol.Button, GREY32)
-                pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
-                pushStyleColor(ImGuiCol.ButtonActive, GREY32)
+                pushStyleColor(ImGuiCol.Button, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
             }
 
             button("Replace All##replace_all_${searchResult.searchObject}", block = viewController::doReplaceAll)
@@ -71,7 +71,7 @@ class View(
         helpMark("Provide type to Replace, keep empty to Delete\nLMB - jump to instance\nRMB - replace/delete instance")
 
         if (!state.isReplaceEnabled && state.replaceType.length > 0) {
-            textColored(1f, 0f, 0f, 1f, "Replace type doesn't exist")
+            textColored(COLOR_RED, "Replace type doesn't exist")
         }
     }
 

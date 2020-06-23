@@ -5,6 +5,7 @@ import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
+import strongdmm.util.imgui.COLOR_GREEN
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -31,9 +32,9 @@ class View(
                 val isToolSelected = tool == state.selectedTool
 
                 if (isToolSelected) {
-                    pushStyleColor(ImGuiCol.Button, 0f, .5f, 0f, 1f)
-                    pushStyleColor(ImGuiCol.ButtonHovered, 0f, .8f, 0f, 1f)
-                    pushStyleColor(ImGuiCol.ButtonActive, 0f, .5f, 0f, 1f)
+                    pushStyleColor(ImGuiCol.Button, COLOR_GREEN)
+                    pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREEN)
+                    pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREEN)
                 }
 
                 button(tool.toolName) {

@@ -38,9 +38,9 @@ class View(
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 
             if (isScreenshotDisabled) {
-                pushStyleColor(ImGuiCol.Button, GREY32)
-                pushStyleColor(ImGuiCol.ButtonActive, GREY32)
-                pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
+                pushStyleColor(ImGuiCol.Button, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
             }
 
             button("Create", block = viewController::doCreate)

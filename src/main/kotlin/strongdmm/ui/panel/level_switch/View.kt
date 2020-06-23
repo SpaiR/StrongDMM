@@ -7,7 +7,7 @@ import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
-import strongdmm.util.imgui.GREY32
+import strongdmm.util.imgui.COLOR_GREY
 import strongdmm.util.imgui.setItemHoveredTooltip
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -69,9 +69,9 @@ class View(
     }
 
     private fun showDisabledSwitch(switchSymbol: String) {
-        pushStyleColor(ImGuiCol.Button, GREY32)
-        pushStyleColor(ImGuiCol.ButtonActive, GREY32)
-        pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
+        pushStyleColor(ImGuiCol.Button, COLOR_GREY)
+        pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
+        pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
         smallButton(switchSymbol)
         popStyleColor(3)
     }

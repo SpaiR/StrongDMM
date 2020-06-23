@@ -10,7 +10,6 @@ import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerScreenshotService
 import strongdmm.service.frame.FrameMesh
 import strongdmm.util.DEFAULT_ICON_SIZE
-import strongdmm.util.imgui.col32argb
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
@@ -84,4 +83,6 @@ class ScreenshotService : Service, EventHandler {
     private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {
         screenshotRenderer.providedFrameMeshes = event.body
     }
+
+    private fun col32argb(r: Int, g: Int, b: Int, a: Int): Int = (a shl 24) or (r shl 16) or (g shl 8) or (b shl 0)
 }

@@ -3,6 +3,7 @@ package strongdmm.service.canvas
 import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.ImVec2
+import imgui.ImVec4
 import imgui.flag.ImGuiHoveredFlags
 import imgui.flag.ImGuiMouseButton
 import org.lwjgl.glfw.GLFW
@@ -25,9 +26,6 @@ import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.extension.getOrPut
-import strongdmm.util.imgui.GREEN_RGBA
-import strongdmm.util.imgui.RED_RGBA
 import strongdmm.window.Window
 import java.util.*
 
@@ -36,6 +34,9 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         private const val ZOOM_FACTOR: Double = 1.5
         private const val MIN_SCALE: Int = 0
         private const val MAX_SCALE: Int = 12
+
+        private val colorRgbaGreen: ImVec4 = ImVec4(0f, 1f, 0f, 1f)
+        private val colorRgbaRed: ImVec4 = ImVec4(1f, 0f, 0f, 1f)
     }
 
     private val renderDataStorageByMapId: MutableMap<Int, RenderData> = mutableMapOf()
@@ -200,7 +201,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private fun processTileItemSelectMode() {
         if (ImGui.getIO().keyShift) {
             canvasRenderer.isTileItemSelectMode = true
-            canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) RED_RGBA else GREEN_RGBA
+            canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) colorRgbaRed else colorRgbaGreen
         }
     }
 

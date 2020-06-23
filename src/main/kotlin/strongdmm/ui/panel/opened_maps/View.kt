@@ -36,7 +36,7 @@ class View(
         val isSelectedMapModified = viewController.isModifiedMap(state.selectedMap!!)
 
         if (isSelectedMapModified) {
-            pushStyleColor(ImGuiCol.Text, 1f, .84f, 0f, 1f)
+            pushStyleColor(ImGuiCol.Text, COLOR_GOLD)
         }
 
         if (begin("${state.selectedMap!!.mapName}###opened_maps")) {
@@ -45,7 +45,7 @@ class View(
             }
 
             state.providedOpenedMaps.toTypedArray().forEach { map ->
-                withStyleColor(ImGuiCol.ButtonHovered, RED32) {
+                withStyleColor(ImGuiCol.ButtonHovered, COLOR_RED) {
                     smallButton("$ICON_FA_TIMES##close_map_${map.mapPath.readable}") {
                         viewController.doCloseMap(map)
                     }
@@ -56,7 +56,7 @@ class View(
                 val isMapModified = viewController.isModifiedMap(map)
 
                 if (isMapModified) {
-                    pushStyleColor(ImGuiCol.Text, 1f, .84f, 0f, 1f)
+                    pushStyleColor(ImGuiCol.Text, COLOR_GOLD)
                 }
 
                 if (selectable("${map.mapName}##open_${map.mapPath.absolute}", viewController.isSelectedMap(map))) {

@@ -87,7 +87,7 @@ class View(
 
     private fun showAllVariables() {
         if (state.pinnedVariables.isNotEmpty()) {
-            textColored(1f, .84f, 0f, 1f, "Pinned")
+            textColored(COLOR_GOLD, "Pinned")
             columns(2, "pinned_edit_vars_columns", true)
             showPinnedVariables()
             columns(1)
@@ -122,7 +122,7 @@ class View(
         alignTextToFramePadding()
 
         if (variable.isModified || variable.isChanged) {
-            textColored(0f, 1f, 0f, 1f, variable.name)
+            textColored(COLOR_LIME, variable.name)
         } else {
             text(variable.name)
         }
@@ -159,7 +159,7 @@ class View(
             pushStyleColor(ImGuiCol.Button, 0)
             pushStyleColor(ImGuiCol.ButtonActive, 0)
             pushStyleColor(ImGuiCol.ButtonHovered, 0)
-            pushStyleColor(ImGuiCol.Text, 1f, 1f, 1f, .25f)
+            pushStyleColor(ImGuiCol.Text, COLOR_DIMGREY)
         }
 
         button("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
@@ -190,7 +190,7 @@ class View(
 
     private fun showVariableValue(variable: Variable) {
         pushStyleColor(ImGuiCol.Button, 0)
-        pushStyleColor(ImGuiCol.ButtonHovered, .25f, .58f, .98f, .5f)
+        pushStyleColor(ImGuiCol.ButtonHovered, getColorU32(ImGuiCol.ButtonHovered))
         pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
 
         button("${variable.value}##variable_value_${variable.hash}", getColumnWidth(-1)) {

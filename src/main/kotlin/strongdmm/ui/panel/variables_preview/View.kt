@@ -3,6 +3,7 @@ package strongdmm.ui.panel.variables_preview
 import imgui.ImGui.*
 import strongdmm.ui.UiConstant
 import strongdmm.ui.panel.objects.ObjectsPanelUi
+import strongdmm.util.imgui.COLOR_LIME
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -49,7 +50,7 @@ class View(
                 columns(2)
 
                 state.selectedTileItem!!.customVars!!.forEach { (name, value) ->
-                    textColored(0f, 1f, 0f, 1f, name)
+                    textColored(COLOR_LIME, name)
                     nextColumn()
                     text(value)
                     nextColumn()

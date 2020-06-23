@@ -47,7 +47,7 @@ class View(
 
         popupModal(TITLE, state.isOpened) {
             state.preferencesByGroups.forEach { (groupName, preferences) ->
-                textColored(1f, .84f, 0f, .75f, groupName)
+                textColored(COLOR_GOLD, groupName)
                 separator()
 
                 withIndent(optionsIndent) {
