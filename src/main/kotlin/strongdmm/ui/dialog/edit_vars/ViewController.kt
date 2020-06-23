@@ -211,7 +211,6 @@ class ViewController(
         state.initialTileItemsId = null
         state.currentEditVar = null
         state.varsFilter.set("")
-        state.isShowModifiedVars.set(false)
         state.variables.clear()
         state.variablesByType.clear()
         state.pinnedVariables.clear()
