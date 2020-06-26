@@ -7,14 +7,15 @@ class TileObject(
         private set
 
     fun setVars(vars: Map<String, String>?) {
-        this.vars = vars?.toMutableMap()
+        this.vars = vars?.toSortedMap()
     }
 
     fun putVar(name: String, value: String) {
         if (vars == null) {
-            vars = mutableMapOf()
+            vars = sortedMapOf(name to value)
+        } else {
+            vars!![name] = value
         }
-        vars!![name] = value
     }
 
     override fun equals(other: Any?): Boolean {
@@ -33,5 +34,9 @@ class TileObject(
         var result = type.hashCode()
         result = 31 * result + (vars?.hashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "TileObject(type='$type', vars=$vars)"
     }
 }

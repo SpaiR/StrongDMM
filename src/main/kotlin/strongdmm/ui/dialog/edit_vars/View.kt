@@ -156,10 +156,7 @@ class View(
         val isAlreadyDefault = variable.value.get() == defaultValue
 
         if (isAlreadyDefault) {
-            pushStyleColor(ImGuiCol.Button, 0)
-            pushStyleColor(ImGuiCol.ButtonActive, 0)
-            pushStyleColor(ImGuiCol.ButtonHovered, 0)
-            pushStyleColor(ImGuiCol.Text, COLOR_DIMGREY)
+            ImGuiUtil.pushDisabledButtonStyle()
         }
 
         button("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
@@ -167,7 +164,7 @@ class View(
         }
 
         if (isAlreadyDefault) {
-            popStyleColor(4)
+            ImGuiUtil.popDisabledButtonStyle()
         } else {
             setItemHoveredTooltip(viewController.getDefaultVariableValue(variable))
         }

@@ -45,6 +45,24 @@ class DmmData {
         keysByTileContent[tileContent] = key
     }
 
+    fun replaceTileContentByKey(key: String, tileContent: TileContent) {
+        val oldTileContent = tileContentsByKey.remove(key)
+
+        keysByTileContent.remove(oldTileContent)
+
+        addKeyAndTileContent(key, tileContent)
+
+        for (z in 1..maxZ) {
+            for (y in 1..maxY) {
+                for (x in 1..maxX) {
+                    if (tiles[z - 1][y - 1][x - 1] == oldTileContent) {
+                        tiles[z - 1][y - 1][x - 1] = tileContent
+                    }
+                }
+            }
+        }
+    }
+
     fun getTileContentByLocation(x: Int, y: Int, z: Int): TileContent? = tiles[z - 1][y - 1][x - 1]
 
     fun getTileContentByKey(key: String?): TileContent? = tileContentsByKey[key]

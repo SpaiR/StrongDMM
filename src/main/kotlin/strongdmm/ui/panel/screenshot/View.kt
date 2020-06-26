@@ -1,7 +1,6 @@
 package strongdmm.ui.panel.screenshot
 
 import imgui.ImGui.*
-import imgui.flag.ImGuiCol
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
 
@@ -38,15 +37,13 @@ class View(
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 
             if (isScreenshotDisabled) {
-                pushStyleColor(ImGuiCol.Button, COLOR_GREY)
-                pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
-                pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
+                ImGuiUtil.pushDisabledButtonStyle()
             }
 
             button("Create", block = viewController::doCreate)
 
             if (isScreenshotDisabled) {
-                popStyleColor(3)
+                ImGuiUtil.popDisabledButtonStyle()
             }
         }
     }

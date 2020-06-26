@@ -3,6 +3,7 @@ package strongdmm.util.imgui
 import imgui.ImGui
 import imgui.type.ImInt
 import imgui.type.ImString
+import strongdmm.util.icons.ICON_FA_QUESTION_CIRCLE
 
 fun setItemHoveredTooltip(text: String) {
     if (ImGui.isItemHovered()) {
@@ -62,6 +63,6 @@ fun inputIntClamp(label: String, v: ImInt, min: Int, max: Int, step: Int = 1, st
 }
 
 fun helpMark(helpText: String) {
-    ImGui.textDisabled("(?)")
+    ImGui.textDisabled(ICON_FA_QUESTION_CIRCLE)
     setItemHoveredTooltip(helpText)
 }

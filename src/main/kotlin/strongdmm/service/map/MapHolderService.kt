@@ -16,10 +16,10 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.type.service.TriggerMapPreprocessService
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
 import strongdmm.event.type.ui.TriggerNotificationPanelUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
-import strongdmm.event.type.ui.TriggerUnknownTypesPanelUi
 import strongdmm.service.preferences.Preferences
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
@@ -168,18 +168,17 @@ class MapHolderService : Service, EventHandler, PostInitialize {
 
             sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
                 val dmmData = DmmParser.parse(mapFile)
-                val map = Dmm(mapFile, dmmData, environment)
 
-                createBackupFile(mapFile, id)
+                sendEvent(TriggerMapPreprocessService.Preprocess(dmmData) {
+                    val map = Dmm(mapFile, dmmData, environment)
 
-                openedMaps.add(map)
-                selectedMap = map
+                    createBackupFile(mapFile, id)
 
-                sendEvent(Reaction.SelectedMapChanged(map))
+                    openedMaps.add(map)
+                    selectedMap = map
 
-                if (map.unknownTypes.isNotEmpty()) {
-                    sendEvent(TriggerUnknownTypesPanelUi.Open(map.unknownTypes))
-                }
+                    sendEvent(Reaction.SelectedMapChanged(map))
+                })
             })
         }
     }
