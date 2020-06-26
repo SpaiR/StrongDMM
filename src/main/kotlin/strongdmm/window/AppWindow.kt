@@ -208,12 +208,12 @@ abstract class AppWindow(title: String) {
         // Fonts configuration
 
         // Read font
-        javaClass.classLoader.getResourceAsStream("Ruda-Bold.ttf")!!.use {
+        javaClass.classLoader.getResourceAsStream("fonts/Ruda-Bold.ttf")!!.use {
             fontData = it.readAllBytes()
         }
 
         // Read Font Awesome icons
-        javaClass.classLoader.getResourceAsStream("fa-solid-900.ttf")!!.use {
+        javaClass.classLoader.getResourceAsStream("fonts/font-awesome-solid-900.ttf")!!.use {
             iconData = it.readAllBytes()
         }
 
@@ -337,7 +337,7 @@ abstract class AppWindow(title: String) {
     }
 
     private fun loadWindowIcon(stack: MemoryStack) {
-        val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("icon.png"))
+        val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("img/icon.png"))
 
         val iconBuffer = ByteArrayOutputStream().use {
             ImageIO.write(icon, "png", it)

@@ -138,7 +138,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
             newMapFile = File(event.body.parent, "${event.body.name}.dmm")
         }
 
-        this::class.java.classLoader.getResourceAsStream("new_map_data.txt").use {
+        this::class.java.classLoader.getResourceAsStream("txt/new_map_data.txt").use {
             newMapFile.writeBytes(it!!.readAllBytes())
         }
 
