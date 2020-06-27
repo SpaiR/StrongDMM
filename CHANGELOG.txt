@@ -1,4 +1,24 @@
 --------------------------------------
+ v1.6.0 (2020-06-27)
+--------------------------------------
+
+Features:
+ * Added support for UI scaling! Interface could be scaled from "Preferences" window.
+ * Added switchable interface themes.
+ * Added "Synchronize Maps View" option. When enabled all maps will share the same "camera" location.
+   Helpful for multi-z maps with levels per-file.
+ * "Edit Variables" window now has a "Reset Variable To Default" button for modified variables.
+ * Added advanced "Unknown Types Replacer" tool. Works in the same way DM does.
+   You open a map with unknown type - you are able to replace those types with something else.
+   Tool also has a feature to modify objects variables as well.
+
+Fixes:
+ * Inability to switch between maps with the same name.
+
+Tweaks:
+ * "Show Modified Variables" toggle state won't be reset between "Edit Variables" windows.
+
+--------------------------------------
  v1.5.0 (2020-05-26)
 --------------------------------------
 

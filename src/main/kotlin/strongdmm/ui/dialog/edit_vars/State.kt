@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.edit_vars
 
-import imgui.ImBool
-import imgui.ImString
+import imgui.type.ImBoolean
+import imgui.type.ImString
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.ui.dialog.edit_vars.model.Variable
@@ -32,7 +32,7 @@ class State {
     val varsFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }
     val typesFilter: ImString = ImString(FILTER_BUFFER).apply { inputData.isResizable = true }
 
-    val isShowModifiedVars: ImBool = ImBool(false)
-    val isShowVarsByType: ImBool = ImBool(false)
+    val isShowModifiedVars: ImBoolean = ImBoolean(false)
+    val isShowVarsByType: ImBoolean = ImBoolean(false)
     var variableInputFocused: Boolean = false // On first var select we will focus its input. Var is to check if we've already did it
 }

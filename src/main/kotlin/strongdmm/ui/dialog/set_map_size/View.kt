@@ -1,20 +1,26 @@
 package strongdmm.ui.dialog.set_map_size
 
 import imgui.ImGui.*
-import imgui.ImInt
-import imgui.enums.ImGuiWindowFlags
-import strongdmm.util.imgui.WindowUtil
+import imgui.type.ImInt
+import imgui.flag.ImGuiWindowFlags
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 300f
-        private const val HEIGHT: Float = 100f
+        private val width: Float
+            get() = 370f * Window.pointSize
+        private val height: Float
+            get() = 100f * Window.pointSize
 
         private const val TITLE: String = "Set Map Size"
+
+        private val sizeInputWidth: Float
+            get() = 100f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -26,7 +32,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         popupModal(TITLE, ImGuiWindowFlags.NoResize) {
             showInput("X", state.newX)
@@ -42,7 +48,7 @@ class View(
     }
 
     private fun showInput(label: String, data: ImInt) {
-        setNextItemWidth(75f)
+        setNextItemWidth(sizeInputWidth)
         if (inputInt(label, data)) {
             if (data.get() <= 0) {
                 data.set(1)

@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.environment_tree
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiTreeNodeFlags
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiTreeNodeFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
@@ -12,26 +12,26 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.icons.ICON_FA_MINUS
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_X: Float = 10f
-        private const val POS_Y: Float = 30f
-
-        private const val WIDTH: Float = 330f
-        private const val HEIGHT_PERCENT: Int = 56
-
         private const val TITLE: String = "Environment Tree"
 
-        private const val ICON_SIZE: Float = 13f
+        private val treeIndent: Float
+            get() = 20f * Window.pointSize
+
+        private val iconSize: Float
+            get() = 16f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
 
     fun process() {
-        WindowUtil.setNextPosAndSize(POS_X, POS_Y, WIDTH, WindowUtil.getHeightPercent(HEIGHT_PERCENT))
+        setNextWindowPos(EnvironmentTreePanelUi.posX, EnvironmentTreePanelUi.posY, Window.windowCond)
+        setNextWindowSize(EnvironmentTreePanelUi.width, EnvironmentTreePanelUi.height, Window.windowCond)
 
         window(TITLE) {
             if (state.currentEnvironment == null) {
@@ -73,7 +73,7 @@ class View(
                 setItemHoveredTooltip(environmentPath)
 
                 maps.forEach { mapPath ->
-                    withIndent(20f) {
+                    withIndent(treeIndent) {
                         alignTextToFramePadding()
                         text("-")
                         sameLine()
@@ -177,7 +177,7 @@ class View(
     }
 
     private fun showTreeNodeImage(treeNode: TreeNode) {
-        treeNode.sprite.run { image(textureId, ICON_SIZE, ICON_SIZE, u1, v1, u2, v2) }
+        treeNode.sprite.run { image(textureId, iconSize, iconSize, u1, v1, u2, v2) }
         sameLine()
     }
 }

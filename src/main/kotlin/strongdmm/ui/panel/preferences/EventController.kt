@@ -16,6 +16,10 @@ class EventController(
 
     private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
         state.providedPreferences = event.body
+
+        state.providedPreferences.rawValues.forEach { preference ->
+            state.preferencesByGroups.getOrPut(preference.getGroup()) { mutableListOf() }.add(preference)
+        }
     }
 
     private fun handleOpen() {

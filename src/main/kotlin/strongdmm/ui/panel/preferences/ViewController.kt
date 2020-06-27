@@ -1,21 +1,21 @@
 package strongdmm.ui.panel.preferences
 
-import imgui.ImBool
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerPreferencesService
-import strongdmm.service.preferences.Selectable
+import strongdmm.service.preferences.prefs.PreferenceBoolean
+import strongdmm.service.preferences.prefs.PreferenceEnum
 
 class ViewController(
     private val state: State
 ) : EventHandler {
-    inline fun doSelectOption(mode: Selectable, action: (Selectable) -> Unit) {
-        action(mode)
+    fun doSelectOption(mode: PreferenceEnum, pref: PreferenceEnum) {
+        pref.getValue().data = mode.getValue().data
         savePreferences()
     }
 
-    fun doToggleOption(option: ImBool) {
-        option.set(!option.get())
+    fun doToggleOption(pref: PreferenceBoolean) {
+        pref.getValue().data = !pref.getValue().data
         savePreferences()
     }
 

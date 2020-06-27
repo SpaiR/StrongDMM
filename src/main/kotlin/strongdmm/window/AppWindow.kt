@@ -3,9 +3,9 @@ package strongdmm.window
 import imgui.ImFontConfig
 import imgui.ImGui
 import imgui.ImGuiFreeType
-import imgui.callbacks.ImStrConsumer
-import imgui.callbacks.ImStrSupplier
-import imgui.enums.*
+import imgui.callback.ImStrConsumer
+import imgui.callback.ImStrSupplier
+import imgui.flag.*
 import imgui.gl3.ImGuiImplGl3
 import org.lwjgl.BufferUtils
 import org.lwjgl.glfw.Callbacks
@@ -28,37 +28,13 @@ import kotlin.math.min
 
 abstract class AppWindow(title: String) {
     companion object {
-        private const val DEFAULT_WIDTH = 1280
-        private const val DEFAULT_HEIGHT = 768
-
-        var windowPtr: Long = 0
-        var isRunning: Boolean = true
-        var isFullscreen: Boolean = false
-
-        // Those are used to track window size properties
-        private val winWidth: IntArray = IntArray(1)
-        private val winHeight: IntArray = IntArray(1)
-        private val fbWidth: IntArray = IntArray(1)
-        private val fbHeight: IntArray = IntArray(1)
-
-        val windowWidth: Int
-            get() = winWidth[0]
-        val windowHeight: Int
-            get() = winHeight[0]
-
-        var defaultWindowCond: Int = ImGuiCond.Once
-            private set
-
-        private var resetWindows: Boolean = false
-        private var toggleFullscreen: Boolean = false
-
         // We will restore 'Once' condition after the first passed render cycle
         fun resetWindows() {
-            resetWindows = true
+            Window._resetWindows = true
         }
 
         fun toggleFullscreen() {
-            toggleFullscreen = true
+            Window._toggleFullscreen = true
         }
     }
 
@@ -71,6 +47,9 @@ abstract class AppWindow(title: String) {
 
     private val sync: Sync = Sync()
     private val imGuiGl3: ImGuiImplGl3 = ImGuiImplGl3()
+
+    private lateinit var fontData: ByteArray
+    private lateinit var iconData: ByteArray
 
     init {
         initGlfw(title)
@@ -97,9 +76,9 @@ abstract class AppWindow(title: String) {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE) // the window will be resizable
 
         // Create the window
-        windowPtr = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, MemoryUtil.NULL, MemoryUtil.NULL)
+        Window.ptr = glfwCreateWindow(1280, 768, title, MemoryUtil.NULL, MemoryUtil.NULL)
 
-        if (windowPtr == MemoryUtil.NULL) {
+        if (Window.ptr == MemoryUtil.NULL) {
             throw RuntimeException("Failed to create the GLFW window")
         }
 
@@ -108,20 +87,20 @@ abstract class AppWindow(title: String) {
             val pHeight = stack.mallocInt(1) // int*
 
             // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(windowPtr, pWidth, pHeight)
+            glfwGetWindowSize(Window.ptr, pWidth, pHeight)
 
             // Get the resolution of the primary monitor
             val vidmode: GLFWVidMode = glfwGetVideoMode(glfwGetPrimaryMonitor())!!
 
             // Center the window
-            glfwSetWindowPos(windowPtr, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
+            glfwSetWindowPos(Window.ptr, (vidmode.width() - pWidth[0]) / 2, (vidmode.height() - pHeight[0]) / 2)
             loadWindowIcon(stack)
         }
 
-        glfwMakeContextCurrent(windowPtr) // Make the OpenGL context current
+        glfwMakeContextCurrent(Window.ptr) // Make the OpenGL context current
         glfwSwapInterval(GLFW_TRUE) // Enable v-sync
-        glfwShowWindow(windowPtr) // Make the window visible
-        glfwMaximizeWindow(windowPtr)
+        glfwShowWindow(Window.ptr) // Make the window visible
+        glfwMaximizeWindow(Window.ptr)
 
         GL.createCapabilities()
     }
@@ -174,7 +153,7 @@ abstract class AppWindow(title: String) {
         mouseCursors[ImGuiMouseCursor.NotAllowed] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR)
 
         // Here goes GLFW callbacks to update user input stuff in ImGui
-        glfwSetKeyCallback(windowPtr) { _, key: Int, _, action: Int, _ ->
+        glfwSetKeyCallback(Window.ptr) { _, key: Int, _, action: Int, _ ->
             if (action == GLFW_PRESS) {
                 io.setKeysDown(key, true)
             } else if (action == GLFW_RELEASE) {
@@ -187,13 +166,13 @@ abstract class AppWindow(title: String) {
             io.keySuper = io.getKeysDown(GLFW_KEY_LEFT_SUPER) || io.getKeysDown(GLFW_KEY_RIGHT_SUPER)
         }
 
-        glfwSetCharCallback(windowPtr) { _, c: Int ->
+        glfwSetCharCallback(Window.ptr) { _, c: Int ->
             if (c != GLFW_KEY_DELETE) {
                 io.addInputCharacter(c)
             }
         }
 
-        glfwSetMouseButtonCallback(windowPtr) { _, button: Int, action: Int, _ ->
+        glfwSetMouseButtonCallback(Window.ptr) { _, button: Int, action: Int, _ ->
             val mouseDown = BooleanArray(5)
 
             mouseDown[0] = button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE
@@ -209,96 +188,36 @@ abstract class AppWindow(title: String) {
             }
         }
 
-        glfwSetScrollCallback(windowPtr) { _, xOffset: Double, yOffset: Double ->
+        glfwSetScrollCallback(Window.ptr) { _, xOffset: Double, yOffset: Double ->
             io.mouseWheelH = io.mouseWheelH + xOffset.toFloat()
             io.mouseWheel = io.mouseWheel + yOffset.toFloat()
         }
 
         io.setSetClipboardTextFn(object : ImStrConsumer() {
             override fun accept(s: String) {
-                glfwSetClipboardString(windowPtr, s)
+                glfwSetClipboardString(Window.ptr, s)
             }
         })
 
         io.setGetClipboardTextFn(object : ImStrSupplier() {
             override fun get(): String? {
-                return glfwGetClipboardString(windowPtr).let { it ?: "" }
+                return glfwGetClipboardString(Window.ptr).let { it ?: "" }
             }
         })
 
         // Fonts configuration
-        val fontAtlas = io.fonts
-        val fontConfig = ImFontConfig()
 
-        javaClass.classLoader.getResourceAsStream("Ruda-Bold.ttf")!!.use {
-            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 15f, fontConfig, fontAtlas.glyphRangesCyrillic)
+        // Read font
+        javaClass.classLoader.getResourceAsStream("fonts/Ruda-Bold.ttf")!!.use {
+            fontData = it.readAllBytes()
         }
 
-        // Add Font Awesome icons
-        javaClass.classLoader.getResourceAsStream("fa-solid-900.ttf")!!.use {
-            fontConfig.mergeMode = true
-            fontConfig.glyphMaxAdvanceX = 13f
-            val iconRange = shortArrayOf(ICON_MIN_FA, ICON_MAX_FA)
-            fontAtlas.addFontFromMemoryTTF(it.readAllBytes(), 13f, fontConfig, iconRange)
+        // Read Font Awesome icons
+        javaClass.classLoader.getResourceAsStream("fonts/font-awesome-solid-900.ttf")!!.use {
+            iconData = it.readAllBytes()
         }
 
-        ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)
-        fontConfig.destroy()
-
-        // Custom Styling
-        ImGui.getStyle().apply {
-            frameRounding = 2f
-            grabRounding = 2f
-
-            setColor(ImGuiCol.Text, 0.95f, 0.96f, 0.98f, 1.00f)
-            setColor(ImGuiCol.TextDisabled, 0.36f, 0.42f, 0.47f, 1.00f)
-            setColor(ImGuiCol.WindowBg, 0.11f, 0.15f, 0.17f, 1.00f)
-            setColor(ImGuiCol.ChildBg, 0.11f, 0.15f, 0.17f, 1.00f)
-            setColor(ImGuiCol.PopupBg, 0.08f, 0.08f, 0.08f, 0.94f)
-            setColor(ImGuiCol.Border, 0.08f, 0.10f, 0.12f, 1.00f)
-            setColor(ImGuiCol.BorderShadow, 0.00f, 0.00f, 0.00f, 0.00f)
-            setColor(ImGuiCol.FrameBg, 0.20f, 0.25f, 0.29f, 1.00f)
-            setColor(ImGuiCol.FrameBgHovered, 0.12f, 0.20f, 0.28f, 1.00f)
-            setColor(ImGuiCol.FrameBgActive, 0.09f, 0.12f, 0.14f, 1.00f)
-            setColor(ImGuiCol.TitleBg, 0.09f, 0.12f, 0.14f, 0.65f)
-            setColor(ImGuiCol.TitleBgActive, 0.08f, 0.10f, 0.12f, 1.00f)
-            setColor(ImGuiCol.TitleBgCollapsed, 0.00f, 0.00f, 0.00f, 0.51f)
-            setColor(ImGuiCol.MenuBarBg, 0.15f, 0.18f, 0.22f, 1.00f)
-            setColor(ImGuiCol.ScrollbarBg, 0.02f, 0.02f, 0.02f, 0.39f)
-            setColor(ImGuiCol.ScrollbarGrab, 0.20f, 0.25f, 0.29f, 1.00f)
-            setColor(ImGuiCol.ScrollbarGrabHovered, 0.18f, 0.22f, 0.25f, 1.00f)
-            setColor(ImGuiCol.ScrollbarGrabActive, 0.09f, 0.21f, 0.31f, 1.00f)
-            setColor(ImGuiCol.CheckMark, 0.28f, 0.56f, 1.00f, 1.00f)
-            setColor(ImGuiCol.SliderGrab, 0.28f, 0.56f, 1.00f, 1.00f)
-            setColor(ImGuiCol.SliderGrabActive, 0.37f, 0.61f, 1.00f, 1.00f)
-            setColor(ImGuiCol.Button, 0.20f, 0.25f, 0.29f, 1.00f)
-            setColor(ImGuiCol.ButtonHovered, 0.28f, 0.56f, 1.00f, 1.00f)
-            setColor(ImGuiCol.ButtonActive, 0.06f, 0.53f, 0.98f, 1.00f)
-            setColor(ImGuiCol.Header, 0.20f, 0.25f, 0.29f, 0.55f)
-            setColor(ImGuiCol.HeaderHovered, 0.26f, 0.59f, 0.98f, 0.80f)
-            setColor(ImGuiCol.HeaderActive, 0.26f, 0.59f, 0.98f, 1.00f)
-            setColor(ImGuiCol.Separator, 0.20f, 0.25f, 0.29f, 1.00f)
-            setColor(ImGuiCol.SeparatorHovered, 0.10f, 0.40f, 0.75f, 0.78f)
-            setColor(ImGuiCol.SeparatorActive, 0.10f, 0.40f, 0.75f, 1.00f)
-            setColor(ImGuiCol.ResizeGrip, 0.26f, 0.59f, 0.98f, 0.25f)
-            setColor(ImGuiCol.ResizeGripHovered, 0.26f, 0.59f, 0.98f, 0.67f)
-            setColor(ImGuiCol.ResizeGripActive, 0.26f, 0.59f, 0.98f, 0.95f)
-            setColor(ImGuiCol.Tab, 0.11f, 0.15f, 0.17f, 1.00f)
-            setColor(ImGuiCol.TabHovered, 0.26f, 0.59f, 0.98f, 0.80f)
-            setColor(ImGuiCol.TabActive, 0.20f, 0.25f, 0.29f, 1.00f)
-            setColor(ImGuiCol.TabUnfocused, 0.11f, 0.15f, 0.17f, 1.00f)
-            setColor(ImGuiCol.TabUnfocusedActive, 0.11f, 0.15f, 0.17f, 1.00f)
-            setColor(ImGuiCol.PlotLines, 0.61f, 0.61f, 0.61f, 1.00f)
-            setColor(ImGuiCol.PlotLinesHovered, 1.00f, 0.43f, 0.35f, 1.00f)
-            setColor(ImGuiCol.PlotHistogram, 0.90f, 0.70f, 0.00f, 1.00f)
-            setColor(ImGuiCol.PlotHistogramHovered, 1.00f, 0.60f, 0.00f, 1.00f)
-            setColor(ImGuiCol.TextSelectedBg, 0.26f, 0.59f, 0.98f, 0.35f)
-            setColor(ImGuiCol.DragDropTarget, 1.00f, 1.00f, 0.00f, 0.90f)
-            setColor(ImGuiCol.NavHighlight, 0.26f, 0.59f, 0.98f, 1.00f)
-            setColor(ImGuiCol.NavWindowingHighlight, 1.00f, 1.00f, 1.00f, 0.70f)
-            setColor(ImGuiCol.NavWindowingDimBg, 0.80f, 0.80f, 0.80f, 0.20f)
-            setColor(ImGuiCol.ModalWindowDimBg, 0.80f, 0.80f, 0.80f, 0.35f)
-        }
+        configureFonts()
 
         imGuiGl3.init()
     }
@@ -311,7 +230,7 @@ abstract class AppWindow(title: String) {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         // Run the rendering loop until the user has attempted to close the window
-        while (isRunning) { // Count frame delta value
+        while (Window.isRunning) { // Count frame delta value
             val currentTime = glfwGetTime()
             val deltaTime = if (time > 0) currentTime - time else (1f / 60f).toDouble()
             time = currentTime
@@ -330,23 +249,28 @@ abstract class AppWindow(title: String) {
     }
 
     private fun updateWindowProperties() {
-        glfwGetWindowSize(windowPtr, winWidth, winHeight)
-        glfwGetFramebufferSize(windowPtr, fbWidth, fbHeight)
-        glfwGetCursorPos(windowPtr, mousePosX, mousePosY)
+        glfwGetWindowSize(Window.ptr, Window._width, Window._height)
+        glfwGetFramebufferSize(Window.ptr, Window._fbWidth, Window._fbHeight)
+        glfwGetCursorPos(Window.ptr, mousePosX, mousePosY)
     }
 
     private fun updateImGuiIO(deltaTime: Float) {
         val io = ImGui.getIO()
-        io.setDisplaySize(winWidth[0].toFloat(), winHeight[0].toFloat())
-        io.setDisplayFramebufferScale(fbWidth[0].toFloat() / winWidth[0], fbHeight[0].toFloat() / winHeight[0])
-        io.setMousePos(mousePosX[0].toFloat(), mousePosY[0].toFloat())
+
+        val scaleX = Window._fbWidth[0].toFloat() / Window._width[0]
+        val scaleY = Window._fbHeight[0].toFloat() / Window._height[0]
+
+        io.setDisplaySize(Window._fbWidth[0].toFloat(), Window._fbHeight[0].toFloat())
+        io.setDisplayFramebufferScale(scaleX, scaleY)
+        io.setMousePos(mousePosX[0].toFloat() * scaleX, mousePosY[0].toFloat() * scaleY)
+
         io.deltaTime = deltaTime
     }
 
     private fun updateMouseCursor() {
         val imguiCursor = ImGui.getMouseCursor()
-        glfwSetCursor(windowPtr, mouseCursors[imguiCursor])
-        glfwSetInputMode(windowPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
+        glfwSetCursor(Window.ptr, mouseCursors[imguiCursor])
+        glfwSetInputMode(Window.ptr, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
     }
 
     private fun startFrame() {
@@ -359,30 +283,61 @@ abstract class AppWindow(title: String) {
         ImGui.render()
 
         imGuiGl3.render(ImGui.getDrawData())
-        checkWindowsState()
 
-        glfwSwapBuffers(windowPtr) // swap the color buffers
+        glfwSwapBuffers(Window.ptr) // swap the color buffers
         glfwPollEvents()
+
+        checkWindowStateChanged()
     }
 
-    private fun checkWindowsState() {
-        defaultWindowCond = ImGuiCond.Once // reset windows condition
+    private fun checkWindowStateChanged() {
+        Window.windowCond = ImGuiCond.Once // reset windows condition
 
-        if (resetWindows) {
-            resetWindows = false
-            defaultWindowCond = ImGuiCond.Always
+        if (Window._resetWindows) {
+            Window._resetWindows = false
+            Window.windowCond = ImGuiCond.Always
         }
 
-        if (toggleFullscreen) {
-            toggleFullscreen = false
+        if (Window._toggleFullscreen) {
+            Window._toggleFullscreen = false
             toggleFullscreen()
+        }
+
+        if (Window.pointSize != Window.newPointSize) {
+            Window.pointSize = Window.newPointSize
+
+            configureFonts()
+            imGuiGl3.updateFontsTexture()
+
+            Window.windowCond = ImGuiCond.Always
         }
     }
 
     abstract fun appLoop()
 
+    private fun configureFonts() {
+        val fontAtlas = ImGui.getIO().fonts
+        val fontConfig = ImFontConfig()
+
+        fontAtlas.clear()
+
+        // Add default font
+        fontAtlas.addFontFromMemoryTTF(fontData, 15f * Window.pointSize, fontConfig, fontAtlas.glyphRangesCyrillic)
+
+        // Add Font Awesome icons
+        val iconSize = 13f * Window.pointSize
+
+        fontConfig.mergeMode = true
+        fontConfig.glyphMaxAdvanceX = iconSize
+
+        fontAtlas.addFontFromMemoryTTF(iconData, iconSize, fontConfig, shortArrayOf(ICON_MIN_FA, ICON_MAX_FA))
+
+        ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)
+        fontConfig.destroy()
+    }
+
     private fun loadWindowIcon(stack: MemoryStack) {
-        val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("icon.png"))
+        val icon = ImageIO.read(AppWindow::class.java.classLoader.getResource("img/icon.png"))
 
         val iconBuffer = ByteArrayOutputStream().use {
             ImageIO.write(icon, "png", it)
@@ -408,7 +363,7 @@ abstract class AppWindow(title: String) {
             image.set(icon.width, icon.height, imageBuffer)
             imagePtr.put(0, image)
 
-            glfwSetWindowIcon(windowPtr, imagePtr)
+            glfwSetWindowIcon(Window.ptr, imagePtr)
             STBImage.stbi_image_free(imageBuffer)
 
             imagePtr.free()
@@ -426,22 +381,22 @@ abstract class AppWindow(title: String) {
         for (mouseCursor in mouseCursors) {
             glfwDestroyCursor(mouseCursor)
         }
-        Callbacks.glfwFreeCallbacks(windowPtr)
-        glfwDestroyWindow(windowPtr)
+        Callbacks.glfwFreeCallbacks(Window.ptr)
+        glfwDestroyWindow(Window.ptr)
         glfwTerminate()
         Objects.requireNonNull(glfwSetErrorCallback(null))!!.free()
     }
 
     private fun toggleFullscreen() {
-        isFullscreen = !isFullscreen
+        Window.isFullscreen = !Window.isFullscreen
 
         val currentMonitor = getCurrentMonitor()
         val mode = glfwGetVideoMode(currentMonitor)!!
 
-        glfwSetWindowMonitor(windowPtr, if (isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
+        glfwSetWindowMonitor(Window.ptr, if (Window.isFullscreen) currentMonitor else MemoryUtil.NULL, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
 
-        if (!isFullscreen) {
-            glfwMaximizeWindow(windowPtr)
+        if (!Window.isFullscreen) {
+            glfwMaximizeWindow(Window.ptr)
         }
     }
 
@@ -454,8 +409,8 @@ abstract class AppWindow(title: String) {
         val mx = IntArray(1)
         val my = IntArray(1)
 
-        glfwGetWindowPos(windowPtr, wx, wy)
-        glfwGetWindowSize(windowPtr, ww, wh)
+        glfwGetWindowPos(Window.ptr, wx, wy)
+        glfwGetWindowSize(Window.ptr, ww, wh)
 
         val monitors = glfwGetMonitors()!!
 

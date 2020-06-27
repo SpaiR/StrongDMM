@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.environment_tree
 
 import gnu.trove.map.hash.TLongObjectHashMap
-import imgui.ImString
+import imgui.type.ImString
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.MapPath
 import strongdmm.ui.panel.environment_tree.model.TreeNode

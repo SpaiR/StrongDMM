@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.objects
 
-import imgui.ImInt
+import imgui.type.ImInt
 import strongdmm.byond.dmm.TileItem
 
 class State {

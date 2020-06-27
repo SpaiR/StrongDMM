@@ -1,7 +1,11 @@
 package strongdmm.byond.dmm.parser
 
-class TileContent {
+class TileContent : Iterable<TileObject> {
     val content: MutableList<TileObject> = ArrayList(2)
+
+    override fun iterator(): Iterator<TileObject> {
+        return content.iterator()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -16,5 +20,9 @@ class TileContent {
 
     override fun hashCode(): Int {
         return content.hashCode()
+    }
+
+    override fun toString(): String {
+        return "TileContent(content=$content)"
     }
 }

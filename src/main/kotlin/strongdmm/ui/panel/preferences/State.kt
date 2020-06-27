@@ -1,19 +1,21 @@
 package strongdmm.ui.panel.preferences
 
-import imgui.ImBool
-import strongdmm.service.preferences.MapSaveMode
-import strongdmm.service.preferences.NudgeMode
+import imgui.type.ImBoolean
+import strongdmm.service.preferences.prefs.Preference
+import strongdmm.service.preferences.prefs.enums.MapSaveMode
+import strongdmm.service.preferences.prefs.enums.NudgeMode
 import strongdmm.service.preferences.Preferences
-import strongdmm.service.preferences.Selectable
 
 class State {
     lateinit var providedPreferences: Preferences
 
     var isDoOpen: Boolean = false
-    val isOpened: ImBool = ImBool(false)
+    val isOpened: ImBoolean = ImBoolean(false)
 
     var checkOpenStatus: Boolean = false
 
-    val mapSaveModes: List<Selectable> = MapSaveMode.values().toList()
-    val nudgeModes: List<NudgeMode> = NudgeMode.values().toList()
+    val mapSaveModes: List<MapSaveMode> = MapSaveMode.enums.map { it as MapSaveMode }
+    val nudgeModes: List<NudgeMode> = NudgeMode.enums.map { it as NudgeMode }
+
+    val preferencesByGroups: MutableMap<String, MutableList<Preference<Any>>> = mutableMapOf()
 }

@@ -1,11 +1,11 @@
 package strongdmm.service.canvas
 
-import gnu.trove.map.hash.TIntObjectHashMap
-import imgui.ImBool
+import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.ImVec2
-import imgui.enums.ImGuiHoveredFlags
-import imgui.enums.ImGuiMouseButton
+import imgui.ImVec4
+import imgui.flag.ImGuiHoveredFlags
+import imgui.flag.ImGuiMouseButton
 import org.lwjgl.glfw.GLFW
 import strongdmm.PostInitialize
 import strongdmm.Processable
@@ -26,10 +26,7 @@ import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.extension.getOrPut
-import strongdmm.util.imgui.GREEN_RGBA
-import strongdmm.util.imgui.RED_RGBA
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 import java.util.*
 
 class CanvasService : Service, EventHandler, PostInitialize, Processable {
@@ -37,9 +34,12 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         private const val ZOOM_FACTOR: Double = 1.5
         private const val MIN_SCALE: Int = 0
         private const val MAX_SCALE: Int = 12
+
+        private val colorRgbaGreen: ImVec4 = ImVec4(0f, 1f, 0f, 1f)
+        private val colorRgbaRed: ImVec4 = ImVec4(1f, 0f, 0f, 1f)
     }
 
-    private val renderDataStorageByMapId: TIntObjectHashMap<RenderData> = TIntObjectHashMap()
+    private val renderDataStorageByMapId: MutableMap<Int, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
 
     private var selectedTileItem: TileItem? = null
@@ -52,7 +52,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private var maxX: Int = OUT_OF_BOUNDS
     private var maxY: Int = OUT_OF_BOUNDS
 
-    private val frameAreas: ImBool = ImBool(true)
+    private val frameAreas: ImBoolean = ImBoolean(true)
+    private val synchronizeMapsView: ImBoolean = ImBoolean(false)
 
     // Tile of the map covered with mouse
     private var xMapMousePos: Int = OUT_OF_BOUNDS
@@ -101,6 +102,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     override fun postInit() {
         sendEvent(Provider.CanvasServiceFrameAreas(frameAreas))
+        sendEvent(Provider.CanvasServiceSynchronizeMapsView(synchronizeMapsView))
     }
 
     override fun process() {
@@ -124,6 +126,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
         postProcessTileItemSelectMode()
         postProcessCanvasMovingChecks()
+        postProcessSynchronizeMapsView()
     }
 
     private fun processViewTranslate() {
@@ -183,7 +186,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val y = mousePos.y
 
         val xMap = (x * renderData.viewScale - renderData.viewTranslateX) / iconSize
-        val yMap = ((AppWindow.windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
+        val yMap = ((Window.windowHeight - y) * renderData.viewScale - renderData.viewTranslateY) / iconSize
 
         val xMapMousePosNew = if (xMap > 0 && xMap <= maxX) xMap.toInt() + 1 else OUT_OF_BOUNDS
         val yMapMousePosNew = if (yMap > 0 && yMap <= maxY) yMap.toInt() + 1 else OUT_OF_BOUNDS
@@ -198,7 +201,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private fun processTileItemSelectMode() {
         if (ImGui.getIO().keyShift) {
             canvasRenderer.isTileItemSelectMode = true
-            canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) RED_RGBA else GREEN_RGBA
+            canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) colorRgbaRed else colorRgbaGreen
         }
     }
 
@@ -209,7 +212,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         canvasRenderer.iconSize = iconSize
         canvasRenderer.realIconSize = (iconSize / renderData.viewScale).toInt()
         canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
-        canvasRenderer.mousePosY = (AppWindow.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
+        canvasRenderer.mousePosY = (Window.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
         canvasRenderer.frameAreas = frameAreas.get()
     }
 
@@ -371,6 +374,17 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         }
     }
 
+    private fun postProcessSynchronizeMapsView() {
+        if (synchronizeMapsView.get()) {
+            renderDataStorageByMapId.filterNot { it.value === renderData }.forEach { (_, data) ->
+                data.viewScale = renderData.viewScale
+                data.scaleCount = renderData.scaleCount
+                data.viewTranslateX = renderData.viewTranslateX
+                data.viewTranslateY = renderData.viewTranslateY
+            }
+        }
+    }
+
     private fun isImGuiInUse(): Boolean {
         return ImGui.isWindowHovered(ImGuiHoveredFlags.AnyWindow or ImGuiHoveredFlags.AllowWhenBlockedByPopup or ImGuiHoveredFlags.AllowWhenBlockedByActiveItem) ||
             ImGui.isAnyItemHovered() || ImGui.isAnyItemActive()
@@ -442,8 +456,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun handleCenterCanvasByPosition(event: Event<MapPos, Unit>) {
-        renderData.viewTranslateX = AppWindow.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
-        renderData.viewTranslateY = AppWindow.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
+        renderData.viewTranslateX = Window.windowWidth / 2 * renderData.viewScale + (event.body.x - 1) * iconSize * -1.0
+        renderData.viewTranslateY = Window.windowHeight / 2 * renderData.viewScale + (event.body.y - 1) * iconSize * -1.0
         canvasRenderer.redraw = true
     }
 

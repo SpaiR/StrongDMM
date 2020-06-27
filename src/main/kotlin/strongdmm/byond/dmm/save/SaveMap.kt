@@ -4,7 +4,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.parser.DmmData
 import strongdmm.byond.dmm.parser.saveAsByond
 import strongdmm.byond.dmm.parser.saveAsTGM
-import strongdmm.service.preferences.MapSaveMode
+import strongdmm.service.preferences.prefs.enums.MapSaveMode
 import strongdmm.service.preferences.Preferences
 import java.io.File
 
@@ -38,14 +38,14 @@ class SaveMap(
     }
 
     private fun save() {
-        if (prefs.sanitizeInitialVariables.get()) {
+        if (prefs.sanitizeInitialVariables.getValue().data) {
             sanitizeMap()
         }
 
         fillWithReusedKeys()
         loopThroughRemainingTiles()
 
-        if (prefs.cleanUnusedKeys.get()) {
+        if (prefs.cleanUnusedKeys.getValue().data) {
             removeUnusedKeys()
         }
 

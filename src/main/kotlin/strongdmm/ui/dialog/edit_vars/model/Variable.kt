@@ -1,6 +1,6 @@
 package strongdmm.ui.dialog.edit_vars.model
 
-import imgui.ImString
+import imgui.type.ImString
 
 class Variable(
     val type: String,

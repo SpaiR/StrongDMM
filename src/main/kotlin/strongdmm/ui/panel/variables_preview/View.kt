@@ -1,21 +1,29 @@
 package strongdmm.ui.panel.variables_preview
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.ui.UiConstant
+import strongdmm.ui.panel.objects.ObjectsPanelUi
+import strongdmm.util.imgui.COLOR_LIME
 import strongdmm.util.imgui.window
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val POS_X: Float = 350f
-        private const val RELATIVE_POS_Y: Float = 210f
-        private const val RELATIVE_POS_Y_COLLAPSED: Float = 80f
+        private val posX: Float
+            get() = ObjectsPanelUi.posX + ObjectsPanelUi.width + UiConstant.ELEMENT_MARGIN
+        private val posY: Float
+            get() = Window.windowHeight - height - UiConstant.ELEMENT_MARGIN
+        private val posYcollapsed: Float
+            get() = Window.windowHeight - heightCollapsed - UiConstant.ELEMENT_MARGIN
 
-        private const val WIDTH: Float = 300f
-        private const val HEIGHT: Float = 195f
-        private const val HEIGHT_COLLAPSED: Float = 65f
+        private val width: Float
+            get() = 300f * Window.pointSize
+        private val height: Float
+            get() = 195f * Window.pointSize
+        private val heightCollapsed: Float
+            get() = 65f * Window.pointSize
 
         private const val TITLE: String = "Variables Preview"
     }
@@ -28,9 +36,11 @@ class View(
         val isEmpty = state.selectedTileItem?.customVars == null
 
         if (isEmpty) {
-            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y_COLLAPSED, WIDTH, HEIGHT_COLLAPSED)
+            setNextWindowPos(posX, posYcollapsed, Window.windowCond)
+            setNextWindowSize(width, heightCollapsed, Window.windowCond)
         } else {
-            WindowUtil.setNextPosAndSize(POS_X, AppWindow.windowHeight - RELATIVE_POS_Y, WIDTH, HEIGHT)
+            setNextWindowPos(posX, posY, Window.windowCond)
+            setNextWindowSize(width, height, Window.windowCond)
         }
 
         window("$TITLE##variables_preview_$isEmpty") {
@@ -40,7 +50,7 @@ class View(
                 columns(2)
 
                 state.selectedTileItem!!.customVars!!.forEach { (name, value) ->
-                    textColored(0f, 1f, 0f, 1f, name)
+                    textColored(COLOR_LIME, name)
                     nextColumn()
                     text(value)
                     nextColumn()

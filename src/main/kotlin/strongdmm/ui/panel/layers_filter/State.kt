@@ -1,12 +1,12 @@
 package strongdmm.ui.panel.layers_filter
 
 import gnu.trove.set.hash.TLongHashSet
-import imgui.ImBool
-import imgui.ImString
+import imgui.type.ImBoolean
+import imgui.type.ImString
 import strongdmm.byond.dme.Dme
 
 class State {
-    val isOpened: ImBool = ImBool(false)
+    val isOpened: ImBoolean = ImBoolean(false)
 
     var currentEnvironment: Dme? = null
     val filteredTypesId: TLongHashSet = TLongHashSet()

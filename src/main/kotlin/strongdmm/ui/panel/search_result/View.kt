@@ -1,19 +1,23 @@
 package strongdmm.ui.panel.search_result
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiMouseButton
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiMouseButton
 import strongdmm.ui.panel.search_result.model.SearchResult
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 375f
-        private const val HEIGHT: Float = 390f
+        private val width: Float
+            get() = 375f * Window.pointSize
+        private val height: Float
+            get() = 390f * Window.pointSize
 
-        private const val COLUMN_WIDTH: Int = 125
+        private val columnWidth: Float
+            get() = 125f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -25,7 +29,7 @@ class View(
                 return
             }
 
-            WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+            ImGuiUtil.setNextWindowCentered(width, height)
 
             window("Search Result: ${searchResult.searchObject} (${searchResult.positions.size})###search_result", state.isOpen) {
                 showControls(searchResult)
@@ -50,9 +54,9 @@ class View(
             button("Delete All##delete_all_${searchResult.searchObject}", block = viewController::doDeleteAll)
         } else {
             if (!state.isReplaceEnabled) {
-                pushStyleColor(ImGuiCol.Button, GREY32)
-                pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
-                pushStyleColor(ImGuiCol.ButtonActive, GREY32)
+                pushStyleColor(ImGuiCol.Button, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
+                pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
             }
 
             button("Replace All##replace_all_${searchResult.searchObject}", block = viewController::doReplaceAll)
@@ -67,13 +71,13 @@ class View(
         helpMark("Provide type to Replace, keep empty to Delete\nLMB - jump to instance\nRMB - replace/delete instance")
 
         if (!state.isReplaceEnabled && state.replaceType.length > 0) {
-            textColored(1f, 0f, 0f, 1f, "Replace type doesn't exist")
+            textColored(COLOR_RED, "Replace type doesn't exist")
         }
     }
 
     private fun showSearchPositions(searchResult: SearchResult) {
         child("search_result_positions") {
-            columns(Math.max(1, getWindowWidth().toInt() / COLUMN_WIDTH), "search_result_columns", false)
+            columns(Math.max(1, getWindowWidth().toInt() / columnWidth.toInt()), "search_result_columns", false)
 
             searchResult.positions.forEachIndexed { index, searchPosition ->
                 button("x:%03d y:%03d z:%02d##jump_btn_$index".format(searchPosition.pos.x, searchPosition.pos.y, searchPosition.pos.z)) {

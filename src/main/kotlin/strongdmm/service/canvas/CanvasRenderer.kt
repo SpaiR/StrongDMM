@@ -14,8 +14,7 @@ import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.util.imgui.GREEN_RGBA
-import strongdmm.window.AppWindow
+import strongdmm.window.Window
 import java.nio.ByteBuffer
 
 class CanvasRenderer {
@@ -50,7 +49,7 @@ class CanvasRenderer {
 
     // Used to handle tile item selection mode
     var isTileItemSelectMode: Boolean = false
-    var tileItemSelectColor: ImVec4 = GREEN_RGBA
+    var tileItemSelectColor: ImVec4 = ImVec4()
     var tileItemIdMouseOver: Long = 0
     var xForTileItemMouseOver: Int = 0
     var yForTileItemMouseOver: Int = 0
@@ -58,8 +57,8 @@ class CanvasRenderer {
     private var markedTileItemLvl: Int = -1 // level of the marker item; marked means that the pixel under the mouse for this item is opaque
 
     fun render() {
-        val windowWidth = AppWindow.windowWidth
-        val windowHeight = AppWindow.windowHeight
+        val windowWidth = Window.windowWidth
+        val windowHeight = Window.windowHeight
 
         if (windowWidth == 0 && windowHeight == 0) {
             return

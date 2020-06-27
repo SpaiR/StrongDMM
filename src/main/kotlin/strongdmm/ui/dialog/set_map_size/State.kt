@@ -1,6 +1,6 @@
 package strongdmm.ui.dialog.set_map_size
 
-import imgui.ImInt
+import imgui.type.ImInt
 
 class State {
     var isDoOpen: Boolean = false

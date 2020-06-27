@@ -1,26 +1,33 @@
 package strongdmm.ui.dialog.edit_vars
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
-import imgui.enums.ImGuiMouseCursor
-import imgui.enums.ImGuiStyleVar
+import imgui.flag.ImGuiCol
+import imgui.flag.ImGuiMouseCursor
+import imgui.flag.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
+import strongdmm.util.icons.ICON_FA_UNDO_ALT
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 500f
-        private const val HEIGHT: Float = 550f
+        private val width: Float
+            get() = 600f * Window.pointSize
+        private val height: Float
+            get() = 550f * Window.pointSize
+
+        private val controlsFilterWidth: Float
+            get() = getWindowWidth() - (105f * Window.pointSize)
     }
 
     lateinit var viewController: ViewController
 
     fun process() {
         viewController.getTileItem()?.let { tileItem ->
-            WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+            ImGuiUtil.setNextWindowCentered(width, height)
 
             window("Edit Variables: ${tileItem.type}##edit_variables_${state.windowId}") {
                 showControls()
@@ -46,7 +53,7 @@ class View(
             state.isFistOpen = false
         }
 
-        setNextItemWidth(getWindowWidth() - 105f)
+        setNextItemWidth(controlsFilterWidth)
         inputText("##vars_filter", state.varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = viewController::doOk)
@@ -80,7 +87,7 @@ class View(
 
     private fun showAllVariables() {
         if (state.pinnedVariables.isNotEmpty()) {
-            textColored(1f, .84f, 0f, 1f, "Pinned")
+            textColored(COLOR_GOLD, "Pinned")
             columns(2, "pinned_edit_vars_columns", true)
             showPinnedVariables()
             columns(1)
@@ -115,12 +122,16 @@ class View(
         alignTextToFramePadding()
 
         if (variable.isModified || variable.isChanged) {
-            textColored(0f, 1f, 0f, 1f, variable.name)
+            textColored(COLOR_LIME, variable.name)
         } else {
             text(variable.name)
         }
 
         nextColumn()
+
+        showResetToDefaultButton(variable)
+
+        sameLine()
 
         if (variable === state.currentEditVar) {
             showVariableEditField(variable)
@@ -134,9 +145,28 @@ class View(
 
     private fun showVariablePinOption(variable: Variable) {
         withStyleVar(ImGuiStyleVar.FramePadding, .25f, .25f) {
-            if (radioButton("##variable_pin__${variable.hash}", variable.isPinned)) {
+            if (radioButton("##variable_pin_${variable.hash}", variable.isPinned)) {
                 viewController.doPinVariable(variable)
             }
+        }
+    }
+
+    private fun showResetToDefaultButton(variable: Variable) {
+        val defaultValue = viewController.getDefaultVariableValue(variable)
+        val isAlreadyDefault = variable.value.get() == defaultValue
+
+        if (isAlreadyDefault) {
+            ImGuiUtil.pushDisabledButtonStyle()
+        }
+
+        button("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
+            viewController.resetVariableToDefault(variable)
+        }
+
+        if (isAlreadyDefault) {
+            ImGuiUtil.popDisabledButtonStyle()
+        } else {
+            setItemHoveredTooltip(viewController.getDefaultVariableValue(variable))
         }
     }
 
@@ -157,7 +187,7 @@ class View(
 
     private fun showVariableValue(variable: Variable) {
         pushStyleColor(ImGuiCol.Button, 0)
-        pushStyleColor(ImGuiCol.ButtonHovered, .25f, .58f, .98f, .5f)
+        pushStyleColor(ImGuiCol.ButtonHovered, getColorU32(ImGuiCol.ButtonHovered))
         pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
 
         button("${variable.value}##variable_value_${variable.hash}", getColumnWidth(-1)) {

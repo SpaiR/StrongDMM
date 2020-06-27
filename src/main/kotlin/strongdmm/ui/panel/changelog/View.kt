@@ -1,15 +1,18 @@
 package strongdmm.ui.panel.changelog
 
 import imgui.ImGui
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 800f
-        private const val HEIGHT: Float = 500f
+        private val width: Float
+            get() = 800f * Window.pointSize
+        private val height: Float
+            get() = 500f * Window.pointSize
 
         private const val TITLE: String = "Changelog"
     }
@@ -19,7 +22,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         window(TITLE, state.isOpened) {
             ImGui.textWrapped(state.providedChangelogText)

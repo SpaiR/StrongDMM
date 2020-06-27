@@ -1,18 +1,21 @@
 package strongdmm.ui.dialog.confirmation
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiWindowFlags
+import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
-import strongdmm.util.imgui.WindowUtil
+import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 400f
-        private const val HEIGHT: Float = 100f
+        private val width: Float
+            get() = 400f * Window.pointSize
+        private val height: Float
+            get() = 100f * Window.pointSize
     }
 
     lateinit var viewController: ViewController
@@ -26,7 +29,7 @@ class View(
             state.isDoOpen = false
         }
 
-        WindowUtil.setNextSize(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         popupModal(title, ImGuiWindowFlags.NoResize) {
             textWrapped(state.data.question)

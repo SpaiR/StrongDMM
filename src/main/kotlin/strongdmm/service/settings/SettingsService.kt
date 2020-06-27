@@ -1,13 +1,12 @@
 package strongdmm.service.settings
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
 import strongdmm.StrongDMM
 import strongdmm.event.EventHandler
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerSettingsService
-import strongdmm.service.preferences.Preferences
 import java.io.File
 
 class SettingsService : Service, PostInitialize, EventHandler {
@@ -16,6 +15,8 @@ class SettingsService : Service, PostInitialize, EventHandler {
     }
 
     private lateinit var settings: Settings
+
+    private val objectMapper: ObjectMapper = ObjectMapper()
 
     init {
         consumeEvent(TriggerSettingsService.SaveSettings::class.java, ::handleSaveSettings)
@@ -30,21 +31,24 @@ class SettingsService : Service, PostInitialize, EventHandler {
 
     private fun ensureSettingsConfigExists() {
         if (settingsConfig.createNewFile()) {
-            settingsConfig.writeText(Gson().toJson(Preferences()))
+            writeSettingsConfig(Settings())
         }
     }
 
     private fun readSettingsConfig() {
-        settingsConfig.reader().use {
-            settings = Gson().fromJson(it, Settings::class.java)
+        try {
+            settings = objectMapper.readValue(settingsConfig, Settings::class.java)
+        } catch (e: Exception) {
+            writeSettingsConfig(Settings())
+            readSettingsConfig()
         }
     }
 
-    private fun writeSettingsConfig() {
-        settingsConfig.writeText(Gson().toJson(settings))
+    private fun writeSettingsConfig(settings: Settings) {
+        objectMapper.writeValue(settingsConfig, settings)
     }
 
     private fun handleSaveSettings() {
-        writeSettingsConfig()
+        writeSettingsConfig(settings)
     }
 }

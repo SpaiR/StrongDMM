@@ -1,7 +1,7 @@
 package strongdmm.event.type
 
 import gnu.trove.map.hash.TObjectIntHashMap
-import imgui.ImBool
+import imgui.type.ImBoolean
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
@@ -11,9 +11,10 @@ import strongdmm.service.preferences.Preferences
 import strongdmm.service.settings.Settings
 
 abstract class Provider {
-    class InstanceLocatorPanelUiOpen(body: ImBool) : Event<ImBool, Unit>(body, null)
+    class InstanceLocatorPanelUiOpen(body: ImBoolean) : Event<ImBoolean, Unit>(body, null)
     class ActionServiceActionBalanceStorage(body: TObjectIntHashMap<Dmm>) : Event<TObjectIntHashMap<Dmm>, Unit>(body, null)
-    class CanvasServiceFrameAreas(body: ImBool) : Event<ImBool, Unit>(body, null)
+    class CanvasServiceFrameAreas(body: ImBoolean) : Event<ImBoolean, Unit>(body, null)
+    class CanvasServiceSynchronizeMapsView(body: ImBoolean) : Event<ImBoolean, Unit>(body, null)
     class PreferencesServicePreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
     class SettingsServiceSettings(body: Settings) : Event<Settings, Unit>(body, null)
     class ChangelogServiceChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)

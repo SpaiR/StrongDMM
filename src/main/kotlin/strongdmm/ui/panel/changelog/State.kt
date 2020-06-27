@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.changelog
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 
 class State {
     lateinit var providedChangelogText: String
 
-    val isOpened: ImBool = ImBool(false)
+    val isOpened: ImBoolean = ImBoolean(false)
 }

@@ -1,5 +1,6 @@
 package strongdmm.byond.dmm
 
+import org.slf4j.LoggerFactory
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.parser.DmmData
 import strongdmm.byond.dmm.parser.TileContent
@@ -18,7 +19,6 @@ class Dmm(
     val mapName: String = mapFile.nameWithoutExtension
 
     val mapPath: MapPath = MapPath(Paths.get(dme.absRootDirPath).relativize(mapFile.toPath()).toString(), mapFile.absolutePath)
-    val unknownTypes: List<Pair<MapPos, String>>
 
     var maxX: Int = initialDmmData.maxX
         private set
@@ -32,19 +32,17 @@ class Dmm(
     private var tiles: Array<Array<Array<LongArray>>> = Array(maxZ) { Array(maxY) { Array(maxX) { LongArray(0) } } }
 
     init {
-        val unknownTypes = mutableListOf<Pair<MapPos, String>>()
-
         for (z in 1..maxZ) {
             for (y in 1..maxY) {
                 for (x in 1..maxX) {
                     var tileItems = LongArray(0)
 
                     initialDmmData.getTileContentByLocation(x, y, z)?.let { tileContent ->
-                        for (tileObject in tileContent.content) {
+                        tileContent.forEach { tileObject ->
                             if (dme.getItem(tileObject.type) != null) {
                                 tileItems += GlobalTileItemHolder.getOrCreate(tileObject.type, tileObject.vars).id
                             } else {
-                                unknownTypes.add(Pair(MapPos(x, y, z), tileObject.type))
+                                LoggerFactory.getLogger(Dmm::class.java).warn("Unprocessed unknown type {}", tileObject)
                             }
                         }
                     }
@@ -53,8 +51,6 @@ class Dmm(
                 }
             }
         }
-
-        this.unknownTypes = unknownTypes
     }
 
     fun setMapSize(maxZ: Int, maxY: Int, maxX: Int) {

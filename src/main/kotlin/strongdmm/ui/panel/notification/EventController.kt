@@ -22,10 +22,12 @@ class EventController(
     }
 
     private fun handleNotify(event: Event<String, Unit>) {
-        val dst = ImVec2()
-        ImGui.calcTextSize(dst, TEXT_WRAP + event.body + TEXT_WRAP)
+        val textSize = ImVec2()
+
+        ImGui.calcTextSize(textSize, TEXT_WRAP + event.body + TEXT_WRAP)
+
         state.notificationText = event.body
-        state.notificationTextWidth = dst.x
+        state.notificationTextWidth = textSize.x
 
         state.clearTask?.cancel()
         state.clearTask = Timer().schedule(Duration.ofSeconds(NOTIFY_SECONDS).toMillis()) {

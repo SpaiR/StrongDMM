@@ -26,7 +26,7 @@ object GlobalDmiHolder {
     private val PARAM_PATTERN: Regex = "(\\w+)\\s=\\s(.+)".toRegex()
 
     init { // Initialize placeholder texture
-        val placeholderImage = ImageIO.read(javaClass.classLoader.getResource("placeholder.png"))
+        val placeholderImage = ImageIO.read(javaClass.classLoader.getResource("img/placeholder.png"))
         val placeholderTextureId = loadTexture(placeholderImage)
         val placeholderIconStates = mutableMapOf<String, IconState>()
 

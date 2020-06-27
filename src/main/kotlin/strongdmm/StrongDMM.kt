@@ -8,6 +8,7 @@ import strongdmm.service.changelog.ChangelogService
 import strongdmm.service.frame.FrameService
 import strongdmm.service.map.MapHolderService
 import strongdmm.service.map.MapModifierService
+import strongdmm.service.map.MapPreprocessService
 import strongdmm.service.pinned_variables.PinnedVariablesService
 import strongdmm.service.preferences.PreferencesService
 import strongdmm.service.recent.RecentFilesService
@@ -19,6 +20,7 @@ import strongdmm.ui.dialog.available_maps.AvailableMapsDialogUi
 import strongdmm.ui.dialog.confirmation.ConfirmationDialogUi
 import strongdmm.ui.dialog.edit_vars.EditVarsDialogUi
 import strongdmm.ui.dialog.set_map_size.SetMapSizeDialogUi
+import strongdmm.ui.dialog.unknown_types.UnknownTypesDialogUi
 import strongdmm.ui.menu_bar.MenuBarUi
 import strongdmm.ui.panel.about.AboutPanelUi
 import strongdmm.ui.panel.changelog.ChangelogPanelUi
@@ -35,7 +37,6 @@ import strongdmm.ui.panel.progress.ProgressPanelUi
 import strongdmm.ui.panel.screenshot.ScreenshotPanelUi
 import strongdmm.ui.panel.search_result.SearchResultPanelUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
-import strongdmm.ui.panel.unknown_types.UnknownTypesPanelUi
 import strongdmm.ui.panel.variables_preview.VariablesPreviewPanelUi
 import strongdmm.ui.tile_popup.TilePopupUi
 import strongdmm.window.AppWindow
@@ -61,13 +62,13 @@ class StrongDMM(title: String) : AppWindow(title) {
         LevelSwitchPanelUi(),
         PreferencesPanelUi(),
         SetMapSizeDialogUi(),
-        UnknownTypesPanelUi(),
         AboutPanelUi(),
         ChangelogPanelUi(),
         ScreenshotPanelUi(),
         ConfirmationDialogUi(),
         NotificationPanelUi(),
-        ProgressPanelUi()
+        ProgressPanelUi(),
+        UnknownTypesDialogUi()
     )
 
     private val serviceList: List<Service> = listOf(
@@ -75,6 +76,7 @@ class StrongDMM(title: String) : AppWindow(title) {
         EnvironmentService(),
         MapHolderService(),
         MapModifierService(),
+        MapPreprocessService(),
         CanvasService(),
         FrameService(),
         ActionService(),

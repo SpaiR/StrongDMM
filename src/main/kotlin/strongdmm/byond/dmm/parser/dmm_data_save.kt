@@ -56,7 +56,7 @@ fun DmmData.saveAsTGM(fileToSave: File) {
 
 private fun toByondString(key: String, tileContent: TileContent): String {
     val sb = StringBuilder("\"$key\" = (")
-    val objIter = tileContent.content.iterator()
+    val objIter = tileContent.iterator()
 
     while (objIter.hasNext()) {
         val tileObject = objIter.next()
@@ -95,7 +95,7 @@ private fun toByondString(key: String, tileContent: TileContent): String {
 
 private fun toTGMString(key: String, tileContent: TileContent): String {
     val sb = StringBuilder("\"$key\" = (").append(NEW_LINE)
-    val objIter = tileContent.content.iterator()
+    val objIter = tileContent.iterator()
 
     while (objIter.hasNext()) {
         val tileObject = objIter.next()

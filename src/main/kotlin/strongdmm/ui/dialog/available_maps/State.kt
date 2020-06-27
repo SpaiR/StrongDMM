@@ -1,6 +1,6 @@
 package strongdmm.ui.dialog.available_maps
 
-import imgui.ImString
+import imgui.type.ImString
 import strongdmm.byond.dmm.MapPath
 
 class State {

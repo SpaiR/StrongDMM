@@ -1,15 +1,17 @@
 package strongdmm.ui.panel.screenshot
 
 import imgui.ImGui.*
-import imgui.enums.ImGuiCol
 import strongdmm.util.imgui.*
+import strongdmm.window.Window
 
 class View(
     private val state: State
 ) {
     companion object {
-        private const val WIDTH: Float = 500f
-        private const val HEIGHT: Float = 125f
+        private val width: Float
+            get() = 500f * Window.pointSize
+        private val height: Float
+            get() = 125f * Window.pointSize
 
         private const val TITLE: String = "Screenshot"
     }
@@ -21,7 +23,7 @@ class View(
             return
         }
 
-        WindowUtil.setNextPosAndSizeCentered(WIDTH, HEIGHT)
+        ImGuiUtil.setNextWindowCentered(width, height)
 
         window(TITLE, state.isOpened) {
             button("Select File...", block = viewController::doSelectFile)
@@ -35,15 +37,13 @@ class View(
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 
             if (isScreenshotDisabled) {
-                pushStyleColor(ImGuiCol.Button, GREY32)
-                pushStyleColor(ImGuiCol.ButtonActive, GREY32)
-                pushStyleColor(ImGuiCol.ButtonHovered, GREY32)
+                ImGuiUtil.pushDisabledButtonStyle()
             }
 
             button("Create", block = viewController::doCreate)
 
             if (isScreenshotDisabled) {
-                popStyleColor(3)
+                ImGuiUtil.popDisabledButtonStyle()
             }
         }
     }

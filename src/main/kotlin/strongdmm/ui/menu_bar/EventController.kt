@@ -1,6 +1,6 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImBool
+import imgui.type.ImBoolean
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
@@ -27,6 +27,7 @@ class EventController(
 
         consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
         consumeEvent(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
+        consumeEvent(Provider.CanvasServiceSynchronizeMapsView::class.java, ::handleProviderCanvasServiceSynchronizeMapsView)
         consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
         consumeEvent(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
     }
@@ -67,12 +68,16 @@ class EventController(
         state.isMobLayerActive.set(!event.body.contains(TYPE_MOB))
     }
 
-    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBool, Unit>) {
+    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBoolean, Unit>) {
         state.providedShowInstanceLocator = event.body
     }
 
-    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBool, Unit>) {
+    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBoolean, Unit>) {
         state.providedFrameAreas = event.body
+    }
+
+    private fun handleProviderCanvasServiceSynchronizeMapsView(event: Event<ImBoolean, Unit>) {
+        state.providedSynchronizeMapsView = event.body
     }
 
     private fun handleProviderRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
