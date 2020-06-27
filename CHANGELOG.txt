@@ -1,3 +1,7 @@
+--------------------------------------
+ v1.6.0 (2020-06-27)
+--------------------------------------
+
 Features:
  * Added support for UI scaling! Interface could be scaled from "Preferences" window.
  * Added switchable interface themes.
