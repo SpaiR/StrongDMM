@@ -31,7 +31,7 @@ ext {
     lwjglVersion = '3.2.3'
     trove4jVersion = '3.0.3'
     pngjVersion = '2.1.0'
-    imguiVersion = '1.76-0.13'
+    imguiVersion = '1.76-0.15'
     logabackVersion = '1.2.3'
     slf4jVersion = '1.7.30'
     jacksonVersion = '2.11.0'
