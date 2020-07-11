@@ -1,5 +1,6 @@
 package strongdmm.service.preferences
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
@@ -17,7 +18,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
     }
 
     private lateinit var preferences: Preferences
-    private val objectMapper: ObjectMapper = ObjectMapper()
+    private val objectMapper: ObjectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     init {
         consumeEvent(TriggerPreferencesService.SavePreferences::class.java, ::handleSavePreferences)

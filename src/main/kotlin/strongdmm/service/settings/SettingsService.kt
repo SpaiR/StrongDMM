@@ -1,5 +1,6 @@
 package strongdmm.service.settings
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import strongdmm.PostInitialize
 import strongdmm.Service
@@ -16,7 +17,7 @@ class SettingsService : Service, PostInitialize, EventHandler {
 
     private lateinit var settings: Settings
 
-    private val objectMapper: ObjectMapper = ObjectMapper()
+    private val objectMapper: ObjectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     init {
         consumeEvent(TriggerSettingsService.SaveSettings::class.java, ::handleSaveSettings)
