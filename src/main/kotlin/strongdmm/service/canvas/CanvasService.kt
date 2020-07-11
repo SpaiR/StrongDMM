@@ -308,20 +308,28 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         sendEvent(TriggerTilePopupUi.Close())
     }
 
+    private fun getManualTranslateValue(): Float {
+        return if (ImGui.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT) || ImGui.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+            iconSize.toFloat() * 5f
+        } else {
+            iconSize.toFloat()
+        }
+    }
+
     private fun translateCanvasUp() {
-        translateCanvas(0f, iconSize.toFloat())
+        translateCanvas(0f, getManualTranslateValue())
     }
 
     private fun translateCanvasDown() {
-        translateCanvas(0f, -iconSize.toFloat())
+        translateCanvas(0f, -getManualTranslateValue())
     }
 
     private fun translateCanvasLeft() {
-        translateCanvas(-iconSize.toFloat(), 0f)
+        translateCanvas(-getManualTranslateValue(), 0f)
     }
 
     private fun translateCanvasRight() {
-        translateCanvas(iconSize.toFloat(), 0f)
+        translateCanvas(getManualTranslateValue(), 0f)
     }
 
     private fun zoom(isZoomIn: Boolean) {

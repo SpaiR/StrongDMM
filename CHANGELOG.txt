@@ -1,8 +1,9 @@
+Features:
+ * Added a small "cog" button to the objects window. Opens up a configuration popup.
+ * Holding "shift" button will increase a camera speed when moving with arrow keys.
+
 Fixes:
  * Subtypes without a different name from it's parent had the wrong name.
-
-Tweaks:
- * Added a small "cog" button to the objects window. Opens up a configuration popup.
 
 --------------------------------------
  v1.6.0 (2020-06-27)
