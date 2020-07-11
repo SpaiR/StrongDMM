@@ -45,7 +45,7 @@ class SdmmParser {
         val objectMapper = ObjectMapper()
 
         tmpFile.reader(Charsets.UTF_8).use {
-            traverseTreeRecurs(objectMapper.readTree(it), dme, dmeItems)
+            traverseTreeRecurs(objectMapper.readTree(it), null, dme, dmeItems)
         }
 
         dme.postInit()
@@ -54,16 +54,21 @@ class SdmmParser {
         return dme
     }
 
-    private fun traverseTreeRecurs(root: JsonNode, dme: Dme, dmeItems: MutableMap<String, DmeItem>) {
+    private fun traverseTreeRecurs(root: JsonNode, parentName: String?, dme: Dme, dmeItems: MutableMap<String, DmeItem>) {
         val type = root.getPath()
         val localVars = mutableMapOf<String, String?>()
+        var name: String? = null
 
         root.getVars().forEach { def ->
             var value = sanitizeVar(def.getValue())
 
             // Exceptional case for the 'name' variable
-            if (def.getName() == VAR_NAME && value == null) {
-                value = '"' + type.substringAfterLast('/') + '"'
+            if (def.getName() == VAR_NAME) {
+                name = value
+
+                if (value == null) {
+                    value = parentName ?: '"' + type.substringAfterLast('/') + '"'
+                }
             }
 
             localVars[def.getName()] = value
@@ -71,14 +76,14 @@ class SdmmParser {
 
         // Exceptional case for the 'name' variable
         if (!localVars.containsKey(VAR_NAME)) {
-            localVars[VAR_NAME] = '"' + type.substringAfterLast('/') + '"'
+            localVars[VAR_NAME] = parentName ?: '"' + type.substringAfterLast('/') + '"'
         }
 
         val childrenList = mutableListOf<String>()
 
         root.getChildren().forEach { child ->
             childrenList.add(child.getPath())
-            traverseTreeRecurs(child, dme, dmeItems)
+            traverseTreeRecurs(child, name, dme, dmeItems)
         }
 
         // Sort names by natural order
