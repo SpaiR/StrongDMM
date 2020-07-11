@@ -5,6 +5,7 @@ import imgui.ImVec2
 import imgui.ImVec4
 import imgui.flag.ImGuiHoveredFlags
 import imgui.flag.ImGuiMouseButton
+import imgui.flag.ImGuiMouseCursor
 import imgui.type.ImBoolean
 import org.lwjgl.glfw.GLFW
 import strongdmm.PostInitialize
@@ -113,6 +114,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         ImGui.getMousePos(mousePos)
 
         if (!isCanvasBlocked && !isImGuiInUse()) {
+            processMouseCursor()
             processViewTranslate()
             processViewScale()
             processTilePopupClick()
@@ -127,6 +129,12 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         postProcessTileItemSelectMode()
         postProcessCanvasMovingChecks()
         postProcessSynchronizeMapsView()
+    }
+
+    private fun processMouseCursor() {
+        if (ImGui.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+            ImGui.setMouseCursor(ImGuiMouseCursor.ResizeAll)
+        }
     }
 
     private fun processViewTranslate() {
