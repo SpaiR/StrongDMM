@@ -3,6 +3,7 @@ package strongdmm.ui.panel.objects
 import imgui.ImGui.*
 import imgui.flag.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
+import strongdmm.util.icons.ICON_FA_COG
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
 
@@ -20,6 +21,8 @@ class View(
 
         private val columnsCountInputWidth: Float
             get() = 75f * Window.pointSize
+
+        private const val CONFIG_POPUP_TITLE = "object_panel_config"
     }
 
     lateinit var viewController: ViewController
@@ -65,7 +68,11 @@ class View(
     }
 
     private fun showConfigContextMenu() {
-        popupContextItem("object_panel_config", ImGuiMouseButton.Right) {
+        ImGuiExt.windowButton(ICON_FA_COG) {
+            openPopup(CONFIG_POPUP_TITLE)
+        }
+
+        popup(CONFIG_POPUP_TITLE) {
             if (state.selectedTileItemType.isNotEmpty()) {
                 button("Copy Type To Clipboard") {
                     setClipboardText(state.selectedTileItemType)
@@ -74,7 +81,7 @@ class View(
 
             setNextItemWidth(columnsCountInputWidth)
 
-            if (inputInt("Columns count", state.columnsCount)) {
+            if (inputInt("Columns", state.columnsCount)) {
                 if (state.columnsCount.get() <= 0) {
                     state.columnsCount.set(1)
                 } else if (state.columnsCount.get() > 16) {

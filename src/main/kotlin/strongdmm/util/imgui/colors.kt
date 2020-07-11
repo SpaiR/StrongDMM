@@ -2,6 +2,7 @@ package strongdmm.util.imgui
 
 import imgui.ImColor
 
+val COLOR_WHITE: Int = ImColor.intToColor(255, 255, 255)
 val COLOR_GREY: Int = ImColor.intToColor(128, 128, 128)
 val COLOR_DIMGREY: Int = ImColor.intToColor(105, 105, 105)
 val COLOR_RED: Int = ImColor.intToColor(255, 0, 0)
