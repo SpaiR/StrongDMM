@@ -10,7 +10,6 @@ import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerPreferencesService
 import strongdmm.service.preferences.prefs.Preference
 import java.io.File
-import java.lang.Exception
 
 class PreferencesService : Service, EventHandler, PostInitialize {
     companion object {

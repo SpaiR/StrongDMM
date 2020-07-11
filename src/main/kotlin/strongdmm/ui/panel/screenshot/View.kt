@@ -1,7 +1,11 @@
 package strongdmm.ui.panel.screenshot
 
-import imgui.ImGui.*
-import strongdmm.util.imgui.*
+import imgui.ImGui.inputText
+import imgui.ImGui.sameLine
+import strongdmm.util.imgui.ImGuiUtil
+import strongdmm.util.imgui.button
+import strongdmm.util.imgui.radioButton
+import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
 class View(

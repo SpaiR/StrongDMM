@@ -1,6 +1,6 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImGui.*
+import imgui.ImGui.separator
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem

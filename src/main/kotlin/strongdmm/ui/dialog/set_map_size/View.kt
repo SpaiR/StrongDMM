@@ -1,8 +1,8 @@
 package strongdmm.ui.dialog.set_map_size
 
 import imgui.ImGui.*
-import imgui.type.ImInt
 import imgui.flag.ImGuiWindowFlags
+import imgui.type.ImInt
 import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal

@@ -3,7 +3,7 @@ package strongdmm.window
 import imgui.ImFontConfig
 import imgui.ImGui
 import imgui.ImGuiFreeType
-import imgui.flag.*
+import imgui.flag.ImGuiCond
 import imgui.gl3.ImGuiImplGl3
 import imgui.glfw.ImGuiImplGlfw
 import org.lwjgl.BufferUtils

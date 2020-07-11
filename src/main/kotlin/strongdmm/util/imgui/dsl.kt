@@ -1,8 +1,8 @@
 package strongdmm.util.imgui
 
-import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.flag.ImGuiMouseButton
+import imgui.type.ImBoolean
 
 inline fun popupModal(name: String, imGuiWindowFlags: Int = 0, block: () -> Unit) {
     if (ImGui.beginPopupModal(name, imGuiWindowFlags)) {

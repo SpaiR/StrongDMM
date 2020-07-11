@@ -1,7 +1,10 @@
 package strongdmm.ui.panel.instance_locator
 
 import imgui.ImGui.*
-import strongdmm.util.imgui.*
+import strongdmm.util.imgui.ImGuiExt
+import strongdmm.util.imgui.ImGuiUtil
+import strongdmm.util.imgui.button
+import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
 class View(

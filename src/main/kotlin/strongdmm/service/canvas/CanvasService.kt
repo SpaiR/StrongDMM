@@ -1,11 +1,11 @@
 package strongdmm.service.canvas
 
-import imgui.type.ImBoolean
 import imgui.ImGui
 import imgui.ImVec2
 import imgui.ImVec4
 import imgui.flag.ImGuiHoveredFlags
 import imgui.flag.ImGuiMouseButton
+import imgui.type.ImBoolean
 import org.lwjgl.glfw.GLFW
 import strongdmm.PostInitialize
 import strongdmm.Processable
