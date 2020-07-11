@@ -2,7 +2,6 @@ package strongdmm.ui.panel.instance_locator
 
 import imgui.ImGui.*
 import strongdmm.util.imgui.*
-import strongdmm.util.imgui.inputIntClamp
 import strongdmm.window.Window
 
 class View(
@@ -39,7 +38,7 @@ class View(
             }
 
             setNextItemWidth(searchTypeInputWidth)
-            inputText("##search_type", state.searchType, "Search Type")
+            ImGuiExt.inputTextPlaceholder("##search_type", state.searchType, "Search Type")
             sameLine()
 
             button("Search", block = viewController::doSearch)
@@ -47,15 +46,15 @@ class View(
             newLine()
             text("Search Rect:")
             setNextItemWidth(searchCoordInputWidth)
-            inputIntClamp("x1", state.searchX1, 1, state.mapMaxX)
+            ImGuiExt.inputIntClamp("x1", state.searchX1, 1, state.mapMaxX)
             sameLine()
             setNextItemWidth(searchCoordInputWidth)
-            inputIntClamp("y1", state.searchY1, 1, state.mapMaxY)
+            ImGuiExt.inputIntClamp("y1", state.searchY1, 1, state.mapMaxY)
             setNextItemWidth(searchCoordInputWidth)
-            inputIntClamp("x2", state.searchX2, 1, state.mapMaxX)
+            ImGuiExt.inputIntClamp("x2", state.searchX2, 1, state.mapMaxX)
             sameLine()
             setNextItemWidth(searchCoordInputWidth)
-            inputIntClamp("y2", state.searchY2, 1, state.mapMaxY)
+            ImGuiExt.inputIntClamp("y2", state.searchY2, 1, state.mapMaxY)
 
             button("Selection", block = viewController::doSelection)
             sameLine()

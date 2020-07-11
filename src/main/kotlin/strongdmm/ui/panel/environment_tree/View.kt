@@ -70,7 +70,7 @@ class View(
                 button(viewController.getEnvironmentNameFromPath(environmentPath) + "##$environmentPath") {
                     viewController.doOpenEnvironment(environmentPath)
                 }
-                setItemHoveredTooltip(environmentPath)
+                ImGuiExt.setItemHoveredTooltip(environmentPath)
 
                 maps.forEach { mapPath ->
                     withIndent(treeIndent) {
@@ -80,7 +80,7 @@ class View(
                         smallButton(mapPath.fileName + "##${mapPath.absolute}") {
                             viewController.doOpenEnvironmentWithMap(environmentPath, mapPath)
                         }
-                        setItemHoveredTooltip(mapPath.readable)
+                        ImGuiExt.setItemHoveredTooltip(mapPath.readable)
                     }
                 }
             }
@@ -89,10 +89,10 @@ class View(
 
     private fun showControls() {
         button("$ICON_FA_MINUS##collapse_all", block = viewController::doCollapseAll)
-        setItemHoveredTooltip("Collapse All")
+        ImGuiExt.setItemHoveredTooltip("Collapse All")
         sameLine()
         setNextItemWidth(-1f)
-        inputText("##types_filter", state.typeFilter, "Types Filter")
+        ImGuiExt.inputTextPlaceholder("##types_filter", state.typeFilter, "Types Filter")
     }
 
     private fun showNodes(environment: Dme) {

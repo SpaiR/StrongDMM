@@ -45,7 +45,7 @@ class View(
 
             sameLine()
 
-            helpMark("""
+            ImGuiExt.helpMark("""
                 |You are trying to open a map with types unknown for your environment.
                 |Please provide new types to use instead.
                 |Keep a "New Type" field clear to delete unknown type completely.

@@ -8,7 +8,7 @@ import strongdmm.ui.panel.coords.CoordsPanelUi
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.COLOR_GREY
-import strongdmm.util.imgui.setItemHoveredTooltip
+import strongdmm.util.imgui.ImGuiExt
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -48,7 +48,7 @@ class View(
                         viewController.doDecreaseSelectedZ()
                     }
 
-                    setItemHoveredTooltip("Prev Z level (Ctrl+Left Arrow)")
+                    ImGuiExt.setItemHoveredTooltip("Prev Z level (Ctrl+Left Arrow)")
                 }
 
                 sameLine()
@@ -62,7 +62,7 @@ class View(
                         viewController.doIncreaseSelectedZ()
                     }
 
-                    setItemHoveredTooltip("Next Z level (Ctrl+Right Arrow)")
+                    ImGuiExt.setItemHoveredTooltip("Next Z level (Ctrl+Right Arrow)")
                 }
             }
         }

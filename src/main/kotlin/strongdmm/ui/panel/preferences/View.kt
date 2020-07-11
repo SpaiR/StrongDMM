@@ -10,7 +10,6 @@ import strongdmm.service.preferences.prefs.PreferenceBoolean
 import strongdmm.service.preferences.prefs.PreferenceEnum
 import strongdmm.service.preferences.prefs.PreferenceInteger
 import strongdmm.util.imgui.*
-import strongdmm.util.imgui.inputIntClamp
 import strongdmm.window.Window
 
 class View(
@@ -75,7 +74,7 @@ class View(
         popTextWrapPos()
 
         imInt.set(pref.getValue().data)
-        if (inputIntClamp(pref.getLabel(), imInt, pref.getMin(), pref.getMax(), pref.getStep(), pref.getStepFast())) {
+        if (ImGuiExt.inputIntClamp(pref.getLabel(), imInt, pref.getMin(), pref.getMax(), pref.getStep(), pref.getStepFast())) {
             pref.getValue().data = imInt.get()
             viewController.savePreferences()
         }

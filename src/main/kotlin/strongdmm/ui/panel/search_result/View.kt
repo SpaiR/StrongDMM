@@ -42,7 +42,7 @@ class View(
     }
 
     private fun showControls(searchResult: SearchResult) {
-        if (inputText("##replace_type", state.replaceType, "Replace Type")) {
+        if (ImGuiExt.inputTextPlaceholder("##replace_type", state.replaceType, "Replace Type")) {
             if (state.replaceType.length > 0) {
                 viewController.checkReplaceModeEnabled()
             }
@@ -68,7 +68,7 @@ class View(
 
         sameLine()
 
-        helpMark("Provide type to Replace, keep empty to Delete\nLMB - jump to instance\nRMB - replace/delete instance")
+        ImGuiExt.helpMark("Provide type to Replace, keep empty to Delete\nLMB - jump to instance\nRMB - replace/delete instance")
 
         if (!state.isReplaceEnabled && state.replaceType.length > 0) {
             textColored(COLOR_RED, "Replace type doesn't exist")

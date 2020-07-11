@@ -67,7 +67,7 @@ class View(
                     popStyleColor()
                 }
 
-                setItemHoveredTooltip(map.mapPath.readable)
+                ImGuiExt.setItemHoveredTooltip(map.mapPath.readable)
             }
         } else if (isSelectedMapModified) {
             popStyleColor()

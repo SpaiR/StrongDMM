@@ -54,7 +54,7 @@ class View(
         }
 
         setNextItemWidth(controlsFilterWidth)
-        inputText("##vars_filter", state.varsFilter, "Variables Filter")
+        ImGuiExt.inputTextPlaceholder("##vars_filter", state.varsFilter, "Variables Filter")
         sameLine()
         button("OK", block = viewController::doOk)
         sameLine()
@@ -66,7 +66,7 @@ class View(
 
         if (state.isShowVarsByType.get()) {
             setNextItemWidth(-1f)
-            inputText("##types_filter", state.typesFilter, "Types Filter")
+            ImGuiExt.inputTextPlaceholder("##types_filter", state.typesFilter, "Types Filter")
         }
     }
 
@@ -166,7 +166,7 @@ class View(
         if (isAlreadyDefault) {
             ImGuiUtil.popDisabledButtonStyle()
         } else {
-            setItemHoveredTooltip(viewController.getDefaultVariableValue(variable))
+            ImGuiExt.setItemHoveredTooltip(viewController.getDefaultVariableValue(variable))
         }
     }
 

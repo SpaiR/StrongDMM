@@ -44,7 +44,7 @@ class View(
             }
 
             setNextItemWidth(-1f)
-            inputText("##types_filter", state.typesFilter, "Types Filter")
+            ImGuiExt.inputTextPlaceholder("##types_filter", state.typesFilter, "Types Filter")
 
             separator()
 

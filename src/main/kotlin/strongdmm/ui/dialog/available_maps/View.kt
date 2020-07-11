@@ -44,7 +44,7 @@ class View(
                 state.isFirstOpen = false
             }
 
-            inputText("##maps_path_filter", state.mapFilter, "Paths Filter")
+            ImGuiExt.inputTextPlaceholder("##maps_path_filter", state.mapFilter, "Paths Filter")
 
             val width = getWindowWidth() - mapListWidthIndent
             val height = getWindowHeight() - mapListHeightIndent
