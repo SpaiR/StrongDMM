@@ -3,6 +3,7 @@ Features:
  * Holding the Shift key will increase a panning speed when moving with arrow keys.
  * Added a preference to enable an alternative, "DM-like", scroll behavior.
  * Environment tree will display the number of currently filtered objects.
+ * Added "Crimson Moon" color schema.
 
 Fixes:
  * Subtypes without a different name from it's parent had the wrong name.

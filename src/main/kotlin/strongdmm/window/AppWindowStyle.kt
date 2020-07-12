@@ -2,16 +2,29 @@ package strongdmm.window
 
 import imgui.ImGui
 import imgui.ImGui.styleColorsDark
+import imgui.ImVec2
 import imgui.flag.ImGuiCol
 
 object AppWindowStyle {
     private val defaultFrameRounding: Float
     private val defaultGrabRounding: Float
+    private val defaultWindowRounding: Float
+    private val defaultChildRounding: Float
+    private val defaultScrollbarRounding: Float
+    private val defaultWindowBorderSize: Float
+    private val defaultPopupBorderSize: Float
+    private val defaultWindowTitleAlign: ImVec2 = ImVec2()
 
     init {
         ImGui.getStyle().apply {
             defaultFrameRounding = frameRounding
             defaultGrabRounding = grabRounding
+            defaultWindowRounding = windowRounding
+            defaultChildRounding = childRounding
+            defaultScrollbarRounding = scrollbarRounding
+            defaultWindowBorderSize = windowBorderSize
+            defaultPopupBorderSize = popupBorderSize
+            getWindowTitleAlign(defaultWindowTitleAlign)
         }
     }
 
@@ -121,6 +134,64 @@ object AppWindowStyle {
         }
     }
 
+    fun setCrimsonMoon() {
+        ImGui.getStyle().apply {
+            frameRounding = 4.0f
+            grabRounding = 4.0f
+            windowBorderSize = 0.0f
+            popupBorderSize = 0.0f
+
+            setColor(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f)
+            setColor(ImGuiCol.TextDisabled, 0.73f, 0.75f, 0.74f, 1.00f)
+            setColor(ImGuiCol.WindowBg, 0.09f, 0.09f, 0.09f, 0.94f)
+            setColor(ImGuiCol.ChildBg, 0.00f, 0.00f, 0.00f, 0.00f)
+            setColor(ImGuiCol.PopupBg, 0.08f, 0.08f, 0.08f, 0.94f)
+            setColor(ImGuiCol.Border, 0.20f, 0.20f, 0.20f, 0.50f)
+            setColor(ImGuiCol.BorderShadow, 0.00f, 0.00f, 0.00f, 0.00f)
+            setColor(ImGuiCol.FrameBg, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.FrameBgHovered, 0.84f, 0.66f, 0.66f, 0.40f)
+            setColor(ImGuiCol.FrameBgActive, 0.84f, 0.66f, 0.66f, 0.67f)
+            setColor(ImGuiCol.TitleBg, 0.47f, 0.22f, 0.22f, 0.67f)
+            setColor(ImGuiCol.TitleBgActive, 0.47f, 0.22f, 0.22f, 1.00f)
+            setColor(ImGuiCol.TitleBgCollapsed, 0.47f, 0.22f, 0.22f, 0.67f)
+            setColor(ImGuiCol.MenuBarBg, 0.34f, 0.16f, 0.16f, 1.00f)
+            setColor(ImGuiCol.ScrollbarBg, 0.02f, 0.02f, 0.02f, 0.53f)
+            setColor(ImGuiCol.ScrollbarGrab, 0.31f, 0.31f, 0.31f, 1.00f)
+            setColor(ImGuiCol.ScrollbarGrabHovered, 0.41f, 0.41f, 0.41f, 1.00f)
+            setColor(ImGuiCol.ScrollbarGrabActive, 0.51f, 0.51f, 0.51f, 1.00f)
+            setColor(ImGuiCol.CheckMark, 1.00f, 1.00f, 1.00f, 1.00f)
+            setColor(ImGuiCol.SliderGrab, 0.71f, 0.39f, 0.39f, 1.00f)
+            setColor(ImGuiCol.SliderGrabActive, 0.84f, 0.66f, 0.66f, 1.00f)
+            setColor(ImGuiCol.Button, 0.47f, 0.22f, 0.22f, 0.65f)
+            setColor(ImGuiCol.ButtonHovered, 0.71f, 0.39f, 0.39f, 0.65f)
+            setColor(ImGuiCol.ButtonActive, 0.20f, 0.20f, 0.20f, 0.50f)
+            setColor(ImGuiCol.Header, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.HeaderHovered, 0.84f, 0.66f, 0.66f, 0.65f)
+            setColor(ImGuiCol.HeaderActive, 0.84f, 0.66f, 0.66f, 0.00f)
+            setColor(ImGuiCol.Separator, 0.43f, 0.43f, 0.50f, 0.50f)
+            setColor(ImGuiCol.SeparatorHovered, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.SeparatorActive, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.ResizeGrip, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.ResizeGripHovered, 0.84f, 0.66f, 0.66f, 0.66f)
+            setColor(ImGuiCol.ResizeGripActive, 0.84f, 0.66f, 0.66f, 0.66f)
+            setColor(ImGuiCol.Tab, 0.71f, 0.39f, 0.39f, 0.54f)
+            setColor(ImGuiCol.TabHovered, 0.84f, 0.66f, 0.66f, 0.66f)
+            setColor(ImGuiCol.TabActive, 0.84f, 0.66f, 0.66f, 0.66f)
+            setColor(ImGuiCol.TabUnfocused, 0.07f, 0.10f, 0.15f, 0.97f)
+            setColor(ImGuiCol.TabUnfocusedActive, 0.14f, 0.26f, 0.42f, 1.00f)
+            setColor(ImGuiCol.PlotLines, 0.61f, 0.61f, 0.61f, 1.00f)
+            setColor(ImGuiCol.PlotLinesHovered, 1.00f, 0.43f, 0.35f, 1.00f)
+            setColor(ImGuiCol.PlotHistogram, 0.90f, 0.70f, 0.00f, 1.00f)
+            setColor(ImGuiCol.PlotHistogramHovered, 1.00f, 0.60f, 0.00f, 1.00f)
+            setColor(ImGuiCol.TextSelectedBg, 0.26f, 0.59f, 0.98f, 0.35f)
+            setColor(ImGuiCol.DragDropTarget, 1.00f, 1.00f, 0.00f, 0.90f)
+            setColor(ImGuiCol.NavHighlight, 0.41f, 0.41f, 0.41f, 1.00f)
+            setColor(ImGuiCol.NavWindowingHighlight, 1.00f, 1.00f, 1.00f, 0.70f)
+            setColor(ImGuiCol.NavWindowingDimBg, 0.80f, 0.80f, 0.80f, 0.20f)
+            setColor(ImGuiCol.ModalWindowDimBg, 0.80f, 0.80f, 0.80f, 0.35f)
+        }
+    }
+
     fun setDarkCoast() {
         ImGui.getStyle().apply {
             restoreDefault()
@@ -132,6 +203,12 @@ object AppWindowStyle {
         ImGui.getStyle().apply {
             frameRounding = defaultFrameRounding
             grabRounding = defaultGrabRounding
+            windowRounding = defaultWindowRounding
+            childRounding = defaultChildRounding
+            scrollbarRounding = defaultScrollbarRounding
+            windowBorderSize = defaultWindowBorderSize
+            popupBorderSize = defaultPopupBorderSize
+            setWindowTitleAlign(defaultWindowTitleAlign.x, defaultWindowTitleAlign.y)
         }
     }
 }

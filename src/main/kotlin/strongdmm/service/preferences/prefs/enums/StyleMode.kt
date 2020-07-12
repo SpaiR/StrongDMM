@@ -8,11 +8,13 @@ class StyleMode private constructor(value: String) : PreferenceEnum(value) {
         val PEACEFUL_SPACE: StyleMode = StyleMode("PEACEFUL_SPACE")
         val DARK_COAST: StyleMode = StyleMode("DARK_COAST")
         val MONOCHROME_DARKNESS: StyleMode = StyleMode("MONOCHROME_DARKNESS")
+        val CRIMSON_MOON: StyleMode = StyleMode("CRIMSON_MOON")
 
         val enums: Array<PreferenceEnum> = arrayOf(
             PEACEFUL_SPACE,
             DARK_COAST,
-            MONOCHROME_DARKNESS
+            MONOCHROME_DARKNESS,
+            CRIMSON_MOON
         )
     }
 
@@ -32,6 +34,7 @@ class StyleMode private constructor(value: String) : PreferenceEnum(value) {
             PEACEFUL_SPACE -> "Peaceful Space"
             DARK_COAST -> "Dark Coast"
             MONOCHROME_DARKNESS -> "Monochrome Darkness"
+            CRIMSON_MOON -> "Crimson Moon"
             else -> "Unknown Style"
         }
     }
@@ -41,6 +44,7 @@ class StyleMode private constructor(value: String) : PreferenceEnum(value) {
             PEACEFUL_SPACE -> AppWindowStyle.setPeacefulSpace()
             DARK_COAST -> AppWindowStyle.setDarkCoast()
             MONOCHROME_DARKNESS -> AppWindowStyle.setUnrealDarkness()
+            CRIMSON_MOON -> AppWindowStyle.setCrimsonMoon()
         }
     }
 }
