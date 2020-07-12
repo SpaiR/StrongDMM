@@ -1,6 +1,7 @@
 Features:
- * Added a small "cog" button to the "Object Panel". Opens up a configuration popup.
+ * Added a configuration button (looks like a cog) to the "Object Panel". Opens up a configuration popup.
  * Holding the Shift key will increase a panning speed when moving with arrow keys.
+ * Added a preference to enable an alternative, "DM-like", scroll behavior.
 
 Fixes:
  * Subtypes without a different name from it's parent had the wrong name.

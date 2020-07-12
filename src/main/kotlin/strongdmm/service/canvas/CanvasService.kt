@@ -23,6 +23,7 @@ import strongdmm.event.type.ui.TriggerTilePopupUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
+import strongdmm.service.preferences.Preferences
 import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
@@ -39,6 +40,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         private val colorRgbaGreen: ImVec4 = ImVec4(0f, 1f, 0f, 1f)
         private val colorRgbaRed: ImVec4 = ImVec4(1f, 0f, 0f, 1f)
     }
+
+    private lateinit var providedPreferences: Preferences
 
     private val renderDataStorageByMapId: MutableMap<Int, RenderData> = mutableMapOf()
     private lateinit var renderData: RenderData
@@ -85,6 +88,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
         consumeEvent(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
         consumeEvent(Provider.FrameServiceFramedTiles::class.java, ::handleProviderFrameServiceFramedTiles)
+        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
         consumeEvent(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         consumeEvent(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
         consumeEvent(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
@@ -115,8 +119,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
         if (!isCanvasBlocked && !isImGuiInUse()) {
             processMouseCursor()
-            processViewTranslate()
-            processViewScale()
+            processViewDrag()
+            processViewScroll()
             processTilePopupClick()
             processMapMouseDrag()
             processMapMousePosition()
@@ -137,7 +141,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         }
     }
 
-    private fun processViewTranslate() {
+    private fun processViewDrag() {
         if (!(ImGui.isMouseDown(ImGuiMouseButton.Middle) || (ImGui.isKeyDown(GLFW.GLFW_KEY_SPACE) && ImGui.isMouseDown(ImGuiMouseButton.Left)))) {
             return
         }
@@ -153,14 +157,30 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         }
     }
 
-    private fun processViewScale() {
+    private fun processViewScroll() {
         val mouseWheel = ImGui.getIO().mouseWheel
 
         if (mouseWheel == 0f) {
             return
         }
 
-        zoom(mouseWheel > 0)
+        fun translate() {
+            if (ImGui.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL) || ImGui.isKeyDown(GLFW.GLFW_KEY_RIGHT_CONTROL)) {
+                translateCanvas(getManualTranslateValue(mouseWheel), 0f)
+            } else {
+                translateCanvas(0f, getManualTranslateValue(mouseWheel))
+            }
+        }
+
+        fun zoom() {
+            zoom(mouseWheel > 0)
+        }
+
+        if (providedPreferences.alternativeScrollBehavior.getValue().data && !ImGui.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+            translate()
+        } else {
+            zoom()
+        }
     }
 
     private fun processTilePopupClick() {
@@ -207,7 +227,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun processTileItemSelectMode() {
-        if (ImGui.getIO().keyShift) {
+        if (ImGui.getIO().keyShift && !ImGui.isMouseDown(ImGuiMouseButton.Left)) {
             canvasRenderer.isTileItemSelectMode = true
             canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) colorRgbaRed else colorRgbaGreen
         }
@@ -316,11 +336,11 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         sendEvent(TriggerTilePopupUi.Close())
     }
 
-    private fun getManualTranslateValue(): Float {
+    private fun getManualTranslateValue(modifier: Float = 1f): Float {
         return if (ImGui.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT) || ImGui.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
-            iconSize.toFloat() * 5f
+            modifier * iconSize.toFloat() * 5f
         } else {
-            iconSize.toFloat()
+            modifier * iconSize.toFloat()
         }
     }
 
@@ -469,6 +489,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     private fun handleProviderFrameServiceFramedTiles(event: Event<List<FramedTile>, Unit>) {
         canvasRenderer.providedFramedTiles = event.body
+    }
+
+    private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
+        providedPreferences = event.body
     }
 
     private fun handleCenterCanvasByPosition(event: Event<MapPos, Unit>) {
