@@ -227,7 +227,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun processTileItemSelectMode() {
-        if (ImGui.getIO().keyShift && !ImGui.isMouseDown(ImGuiMouseButton.Left)) {
+        if (ImGui.getIO().keyShift) {
             canvasRenderer.isTileItemSelectMode = true
             canvasRenderer.tileItemSelectColor = if (ImGui.getIO().keyCtrl) colorRgbaRed else colorRgbaGreen
         }
