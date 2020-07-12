@@ -12,6 +12,7 @@ Tweaks:
  * In "Select" mode, when nothing is selected, tile under the mouse will be copied.
  * SpacemanDMM parser updated to version 1.5.0.
  * Reduced CPU usage for environment tree filtering.
+ * Preferences window is enlarged.
 
 --------------------------------------
  v1.6.0 (2020-06-27)

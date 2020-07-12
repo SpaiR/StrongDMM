@@ -17,9 +17,9 @@ class View(
 ) {
     companion object {
         private val width: Float
-            get() = 450f * Window.pointSize
+            get() = 600 * Window.pointSize
         private val height: Float
-            get() = 500f * Window.pointSize
+            get() = 800 * Window.pointSize
 
         private const val TITLE: String = "Preferences"
 
