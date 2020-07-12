@@ -8,9 +8,10 @@ import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerSettingsService
 import strongdmm.event.type.ui.TriggerChangelogPanelUi
 import strongdmm.service.settings.Settings
+import strongdmm.util.imgui.markdown.ImGuiMarkdown
 
 class ChangelogService : Service, EventHandler, PostInitialize {
-    private val changelogText: String = this::class.java.classLoader.getResourceAsStream("CHANGELOG.txt")!!.use {
+    private val rawChangelogText: String = this::class.java.classLoader.getResourceAsStream("CHANGELOG.txt")!!.use {
         it.readAllBytes().toString(Charsets.UTF_8)
     }
 
@@ -19,12 +20,12 @@ class ChangelogService : Service, EventHandler, PostInitialize {
     }
 
     override fun postInit() {
-        sendEvent(Provider.ChangelogServiceChangelogText(changelogText))
+        sendEvent(Provider.ChangelogServiceChangelogMarkdown(ImGuiMarkdown.parse(rawChangelogText)))
     }
 
     private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {
         val changelogServiceSettings = event.body.changelogServiceSettings
-        val currentHash = changelogText.hashCode()
+        val currentHash = rawChangelogText.hashCode()
 
         if (changelogServiceSettings.lastOpenChangelogHash != currentHash) {
             sendEvent(TriggerChangelogPanelUi.Open())

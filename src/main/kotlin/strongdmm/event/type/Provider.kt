@@ -9,6 +9,7 @@ import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.service.preferences.Preferences
 import strongdmm.service.settings.Settings
+import strongdmm.util.imgui.markdown.ImMarkdown
 
 abstract class Provider {
     class InstanceLocatorPanelUiOpen(body: ImBoolean) : Event<ImBoolean, Unit>(body, null)
@@ -17,7 +18,7 @@ abstract class Provider {
     class CanvasServiceSynchronizeMapsView(body: ImBoolean) : Event<ImBoolean, Unit>(body, null)
     class PreferencesServicePreferences(body: Preferences) : Event<Preferences, Unit>(body, null)
     class SettingsServiceSettings(body: Settings) : Event<Settings, Unit>(body, null)
-    class ChangelogServiceChangelogText(changelogText: String) : Event<String, Unit>(changelogText, null)
+    class ChangelogServiceChangelogMarkdown(changelogMarkdown: ImMarkdown) : Event<ImMarkdown, Unit>(changelogMarkdown, null)
 
     class MapHolderServiceOpenedMaps(body: Set<Dmm>) : Event<Set<Dmm>, Unit>(body, null)
     class MapHolderServiceAvailableMaps(body: Set<MapPath>) : Event<Set<MapPath>, Unit>(body, null)

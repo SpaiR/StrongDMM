@@ -10,6 +10,7 @@ import strongdmm.service.preferences.prefs.PreferenceBoolean
 import strongdmm.service.preferences.prefs.PreferenceEnum
 import strongdmm.service.preferences.prefs.PreferenceInteger
 import strongdmm.util.imgui.*
+import strongdmm.util.imgui.markdown.ImGuiMarkdown
 import strongdmm.window.Window
 
 class View(
@@ -46,8 +47,7 @@ class View(
 
         popupModal(TITLE, state.isOpened) {
             state.preferencesByGroups.forEach { (groupName, preferences) ->
-                textColored(COLOR_GOLD, groupName)
-                separator()
+                ImGuiMarkdown.renderHeader(groupName)
 
                 withIndent(optionsIndent) {
                     preferences.forEach { pref ->

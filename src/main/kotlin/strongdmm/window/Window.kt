@@ -1,5 +1,6 @@
 package strongdmm.window
 
+import imgui.ImFont
 import imgui.flag.ImGuiCond
 
 object Window {
@@ -24,4 +25,7 @@ object Window {
 
     var pointSize: Float = 1f
     var newPointSize: Float = pointSize
+
+    lateinit var defaultFont: ImFont
+    lateinit var headerFont: ImFont
 }

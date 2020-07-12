@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.changelog
 
-import imgui.ImGui
 import strongdmm.util.imgui.ImGuiUtil
+import strongdmm.util.imgui.markdown.ImGuiMarkdown
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -25,7 +25,7 @@ class View(
         ImGuiUtil.setNextWindowCentered(width, height)
 
         window(TITLE, state.isOpened) {
-            ImGui.textWrapped(state.providedChangelogText)
+            ImGuiMarkdown.render(state.providedChangelogMarkdown)
         }
     }
 }
