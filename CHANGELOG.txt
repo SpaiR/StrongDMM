@@ -1,3 +1,4 @@
+# v1.7.0 (2020-07-12)
 Features:
  * Added a configuration button (looks like a cog) to the "Object Panel". Opens up a configuration popup.
  * Holding the Shift key will increase a panning speed when moving with arrow keys.

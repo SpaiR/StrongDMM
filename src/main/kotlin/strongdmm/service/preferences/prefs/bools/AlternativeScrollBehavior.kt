@@ -7,6 +7,6 @@ class AlternativeScrollBehavior(value: Boolean) : PreferenceBoolean(value) {
 
     override fun getGroup(): String = "Controls Options"
     override fun getHeader(): String = "Alternative Scroll Behavior"
-    override fun getDesc(): String = "When enabled, scrolling will do panning. Zoom will be available with the pressed Space button."
+    override fun getDesc(): String = "When enabled, scrolling will do panning. Zoom will be available with the pressed Space key."
     override fun getLabel(): String = "##alternative_scroll_behavior"
 }
