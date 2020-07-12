@@ -20,8 +20,6 @@ class View(
     private val state: State
 ) {
     companion object {
-        private const val TITLE: String = "Environment Tree"
-
         private val treeIndent: Float
             get() = 20f * Window.pointSize
 
@@ -50,7 +48,7 @@ class View(
         setNextWindowPos(EnvironmentTreePanelUi.posX, EnvironmentTreePanelUi.posY, Window.windowCond)
         setNextWindowSize(EnvironmentTreePanelUi.width, EnvironmentTreePanelUi.height, Window.windowCond)
 
-        window(TITLE) {
+        window(viewController.getTitle()) {
             if (state.currentEnvironment == null) {
                 if (state.isEnvironmentLoading) {
                     textDisabled("Loading Environment...")

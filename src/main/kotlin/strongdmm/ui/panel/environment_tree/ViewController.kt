@@ -86,6 +86,12 @@ class ViewController(
         }
     }
 
+    fun getTitle(): String {
+        val treeNodesCount = if (state.filteredTreeNodes.isNotEmpty()) state.filteredTreeNodes.size else 0
+        val suffix = if (treeNodesCount != 0) " ($treeNodesCount)" else ""
+        return "Environment Tree$suffix###environment_tree"
+    }
+
     fun getTreeNodeSelectedFlag(dmeItem: DmeItem): Int {
         return if (dmeItem.type == state.selectedTileItemType) ImGuiTreeNodeFlags.Selected else 0
     }
