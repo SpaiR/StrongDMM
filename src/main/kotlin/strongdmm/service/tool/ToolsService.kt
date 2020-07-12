@@ -90,7 +90,7 @@ class ToolsService : Service, EventHandler {
     }
 
     private fun handleFetchSelectedArea(event: Event<Unit, MapArea>) {
-        val selectedArea = if (currentTool is SelectComplexTool) {
+        val selectedArea = if ((currentTool is SelectComplexTool) && currentTool.getSelectedArea().isNotOutOfBounds()) {
             currentTool.getSelectedArea()
         } else {
             MapArea(currentMapPos.x, currentMapPos.y, currentMapPos.x, currentMapPos.y)
