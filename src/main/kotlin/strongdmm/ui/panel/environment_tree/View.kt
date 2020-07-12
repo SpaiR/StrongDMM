@@ -11,6 +11,7 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
+import strongdmm.ui.LayoutManager
 import strongdmm.ui.panel.environment_tree.model.TreeNode
 import strongdmm.util.icons.ICON_FA_MINUS
 import strongdmm.util.imgui.*
@@ -45,8 +46,8 @@ class View(
     }
 
     fun process() {
-        setNextWindowPos(EnvironmentTreePanelUi.posX, EnvironmentTreePanelUi.posY, Window.windowCond)
-        setNextWindowSize(EnvironmentTreePanelUi.width, EnvironmentTreePanelUi.height, Window.windowCond)
+        setNextWindowPos(LayoutManager.Top.Left.posX, LayoutManager.Top.Left.posY, Window.windowCond)
+        setNextWindowSize(LayoutManager.Top.Left.width, LayoutManager.Top.Left.height, Window.windowCond)
 
         window(viewController.getTitle()) {
             if (state.currentEnvironment == null) {

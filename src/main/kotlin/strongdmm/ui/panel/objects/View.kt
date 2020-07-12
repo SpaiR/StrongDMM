@@ -3,6 +3,7 @@ package strongdmm.ui.panel.objects
 import imgui.ImGui.*
 import imgui.flag.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
+import strongdmm.ui.LayoutManager
 import strongdmm.util.icons.ICON_FA_COG
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
@@ -28,8 +29,8 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        setNextWindowPos(ObjectsPanelUi.posX, ObjectsPanelUi.posY, Window.windowCond)
-        setNextWindowSize(ObjectsPanelUi.width, ObjectsPanelUi.height, Window.windowCond)
+        setNextWindowPos(LayoutManager.Bottom.Left.posX, LayoutManager.Bottom.Left.posY, Window.windowCond)
+        setNextWindowSize(LayoutManager.Bottom.Left.width, LayoutManager.Bottom.Left.height, Window.windowCond)
 
         window(viewController.getTitle()) {
             showConfigContextMenu()

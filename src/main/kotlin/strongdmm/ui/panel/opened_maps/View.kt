@@ -2,8 +2,7 @@ package strongdmm.ui.panel.opened_maps
 
 import imgui.ImGui.*
 import imgui.flag.ImGuiCol
-import strongdmm.ui.UiConstant
-import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
+import strongdmm.ui.LayoutManager
 import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
 import strongdmm.window.Window
@@ -13,9 +12,9 @@ class View(
 ) {
     companion object {
         private val posX: Float
-            get() = Window.windowWidth - width - UiConstant.ELEMENT_MARGIN
+            get() = Window.windowWidth - width - LayoutManager.ELEMENT_MARGIN
         private val posY: Float
-            get() = EnvironmentTreePanelUi.posY
+            get() = LayoutManager.Top.Left.posY
 
         private val width: Float
             get() = 150f * Window.pointSize

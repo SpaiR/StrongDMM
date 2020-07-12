@@ -3,8 +3,7 @@ package strongdmm.ui.panel.tool_select
 import imgui.ImGui.*
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
-import strongdmm.ui.UiConstant
-import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
+import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_GREEN
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
@@ -15,9 +14,9 @@ class View(
 ) {
     companion object {
         private val posX: Float
-            get() = EnvironmentTreePanelUi.posX + EnvironmentTreePanelUi.width + UiConstant.ELEMENT_MARGIN
+            get() = LayoutManager.Top.Left.posX + LayoutManager.Top.Left.width + LayoutManager.ELEMENT_MARGIN
         private val posY: Float
-            get() = EnvironmentTreePanelUi.posY
+            get() = LayoutManager.Top.Left.posY
 
         private const val TITLE: String = "Tool"
     }

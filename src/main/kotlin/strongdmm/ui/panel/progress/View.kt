@@ -4,7 +4,7 @@ import imgui.ImGui.*
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiStyleVar
 import imgui.flag.ImGuiWindowFlags
-import strongdmm.ui.panel.environment_tree.EnvironmentTreePanelUi
+import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
 
@@ -13,7 +13,7 @@ class View(
 ) {
     companion object {
         private val posY: Float
-            get() = EnvironmentTreePanelUi.posY
+            get() = LayoutManager.Top.Left.posY
 
         private val height: Float
             get() = 30f * Window.pointSize

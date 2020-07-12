@@ -3,6 +3,7 @@ package strongdmm.ui.panel.coords
 import imgui.ImGui.*
 import imgui.ImVec2
 import imgui.flag.ImGuiWindowFlags
+import strongdmm.ui.LayoutManager
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -21,8 +22,8 @@ class View(
             return
         }
 
-        setNextWindowPos(CoordsPanelUi.posX, CoordsPanelUi.posY, Window.windowCond)
-        setNextWindowSize(CoordsPanelUi.width, CoordsPanelUi.height, Window.windowCond)
+        setNextWindowPos(LayoutManager.Bottom.Right.posX, LayoutManager.Bottom.Right.posY, Window.windowCond)
+        setNextWindowSize(LayoutManager.Bottom.Right.width, LayoutManager.Bottom.Right.height, Window.windowCond)
 
         window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             val text = if (state.xMapMousePos == OUT_OF_BOUNDS || state.yMapMousePos == OUT_OF_BOUNDS) {
@@ -32,7 +33,7 @@ class View(
             }
 
             calcTextSize(textSize, text)
-            setCursorPos((CoordsPanelUi.width - textSize.x) / 2, (CoordsPanelUi.height - textSize.y) / 2)
+            setCursorPos((LayoutManager.Bottom.Right.width - textSize.x) / 2, (LayoutManager.Bottom.Right.height - textSize.y) / 2)
             text(text)
         }
     }

@@ -3,8 +3,7 @@ package strongdmm.ui.panel.level_switch
 import imgui.ImGui.*
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
-import strongdmm.ui.UiConstant
-import strongdmm.ui.panel.coords.CoordsPanelUi
+import strongdmm.ui.LayoutManager
 import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.COLOR_GREY
@@ -17,14 +16,14 @@ class View(
 ) {
     companion object {
         private val posX: Float
-            get() = CoordsPanelUi.posX
+            get() = LayoutManager.Bottom.Right.posX
         private val posY: Float
-            get() = CoordsPanelUi.posY - height - UiConstant.ELEMENT_MARGIN
+            get() = LayoutManager.Bottom.Right.posY - height - LayoutManager.ELEMENT_MARGIN
 
         private val width: Float
-            get() = CoordsPanelUi.width
+            get() = LayoutManager.Bottom.Right.width
         private val height: Float
-            get() = CoordsPanelUi.height
+            get() = LayoutManager.Bottom.Right.height
 
         private const val TITLE: String = "lavel_switch_panel"
     }

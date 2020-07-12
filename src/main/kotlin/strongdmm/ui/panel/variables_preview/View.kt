@@ -1,8 +1,7 @@
 package strongdmm.ui.panel.variables_preview
 
 import imgui.ImGui.*
-import strongdmm.ui.UiConstant
-import strongdmm.ui.panel.objects.ObjectsPanelUi
+import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_LIME
 import strongdmm.util.imgui.window
 import strongdmm.window.Window
@@ -12,11 +11,11 @@ class View(
 ) {
     companion object {
         private val posX: Float
-            get() = ObjectsPanelUi.posX + ObjectsPanelUi.width + UiConstant.ELEMENT_MARGIN
+            get() = LayoutManager.Bottom.Left.posX + LayoutManager.Bottom.Left.width + LayoutManager.ELEMENT_MARGIN
         private val posY: Float
-            get() = Window.windowHeight - height - UiConstant.ELEMENT_MARGIN
+            get() = Window.windowHeight - height - LayoutManager.ELEMENT_MARGIN
         private val posYcollapsed: Float
-            get() = Window.windowHeight - heightCollapsed - UiConstant.ELEMENT_MARGIN
+            get() = Window.windowHeight - heightCollapsed - LayoutManager.ELEMENT_MARGIN
 
         private val width: Float
             get() = 300f * Window.pointSize
