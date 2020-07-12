@@ -1,6 +1,8 @@
 package strongdmm.ui.panel.environment_tree
 
 import imgui.ImGui.*
+import imgui.ImGuiListClipper
+import imgui.callback.ImListClipperCallback
 import imgui.flag.ImGuiTreeNodeFlags
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.byond.TYPE_AREA
@@ -28,6 +30,21 @@ class View(
     }
 
     lateinit var viewController: ViewController
+
+    private val filteredNodeClipCallback: ImListClipperCallback = object : ImListClipperCallback() {
+        override fun accept(index: Int) {
+            val treeNode = state.filteredTreeNodes[index]
+            val dmeItem = treeNode.dmeItem
+            val selectedFlag = viewController.getTreeNodeSelectedFlag(dmeItem)
+
+            showTreeNodeImage(treeNode)
+            treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
+
+            if (isItemClicked()) {
+                viewController.selectType(dmeItem.type)
+            }
+        }
+    }
 
     fun process() {
         setNextWindowPos(EnvironmentTreePanelUi.posX, EnvironmentTreePanelUi.posY, Window.windowCond)
@@ -92,43 +109,26 @@ class View(
         ImGuiExt.setItemHoveredTooltip("Collapse All")
         sameLine()
         setNextItemWidth(-1f)
-        ImGuiExt.inputTextPlaceholder("##types_filter", state.typeFilter, "Types Filter")
+        if (ImGuiExt.inputTextPlaceholder("##types_filter", state.typeFilter, "Types Filter")) {
+            viewController.doCollectFilteredTreeNodes()
+        }
     }
 
     private fun showNodes(environment: Dme) {
         child("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
-            showTreeNodes(environment, environment.getItem(TYPE_AREA)!!)
-            showTreeNodes(environment, environment.getItem(TYPE_TURF)!!)
-            showTreeNodes(environment, environment.getItem(TYPE_OBJ)!!)
-            showTreeNodes(environment, environment.getItem(TYPE_MOB)!!)
-        }
-    }
-
-    private fun showTreeNodes(environment: Dme, dmeItem: DmeItem) {
-        if (state.typeFilter.length > 0) {
-            showFilteredTreeNodes(environment, dmeItem)
-        } else {
-            showAllNodes(environment, dmeItem)
-        }
-    }
-
-    private fun showFilteredTreeNodes(environment: Dme, dmeItem: DmeItem) {
-        val selectedFlag = viewController.getTreeNodeSelectedFlag(dmeItem)
-
-        if (viewController.isFilteredNode(dmeItem)) {
-            val treeNode = viewController.getOrCreateTreeNode(dmeItem) ?: return
-
-            showTreeNodeImage(treeNode)
-            treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
-
-            if (isItemClicked()) {
-                viewController.selectType(dmeItem.type)
+            if (state.filteredTreeNodes.isEmpty()) {
+                showAllNodes(environment, environment.getItem(TYPE_AREA)!!)
+                showAllNodes(environment, environment.getItem(TYPE_TURF)!!)
+                showAllNodes(environment, environment.getItem(TYPE_OBJ)!!)
+                showAllNodes(environment, environment.getItem(TYPE_MOB)!!)
+            } else {
+                showFilteredNodes()
             }
         }
+    }
 
-        dmeItem.children.forEach { child ->
-            showFilteredTreeNodes(environment, environment.getItem(child)!!)
-        }
+    private fun showFilteredNodes() {
+        ImGuiListClipper.forEach(state.filteredTreeNodes.size, filteredNodeClipCallback)
     }
 
     private fun showAllNodes(environment: Dme, dmeItem: DmeItem) {

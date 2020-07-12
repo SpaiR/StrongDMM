@@ -6,7 +6,9 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
 
-class TreeNode(dmeItem: DmeItem) {
+class TreeNode(
+    val dmeItem: DmeItem
+) {
     val name: String = dmeItem.type.substringAfterLast('/')
     val sprite: IconSprite
 

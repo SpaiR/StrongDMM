@@ -1,6 +1,10 @@
 package strongdmm.ui.panel.environment_tree
 
 import imgui.flag.ImGuiTreeNodeFlags
+import strongdmm.byond.TYPE_AREA
+import strongdmm.byond.TYPE_MOB
+import strongdmm.byond.TYPE_OBJ
+import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath
@@ -19,6 +23,9 @@ class ViewController(
     companion object {
         private const val TREE_NODES_CREATION_LIMIT_PER_CYCLE: Int = 25
     }
+
+    private var createdTeeNodesInCycle: Int = 0
+    private var isRepeatFilteredTreeNodesCollection: Boolean = false
 
     fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
@@ -40,13 +47,34 @@ class ViewController(
         state.isDoCollapseAll = true
     }
 
+    fun doCollectFilteredTreeNodes() {
+        state.filteredTreeNodes.clear()
+
+        if (state.typeFilter.length == 0) {
+            return
+        }
+
+        val initialCreatedNodesIntCycle = createdTeeNodesInCycle
+
+        collectFilteredTreeNodes(state.currentEnvironment!!.getItem(TYPE_AREA)!!)
+        collectFilteredTreeNodes(state.currentEnvironment!!.getItem(TYPE_TURF)!!)
+        collectFilteredTreeNodes(state.currentEnvironment!!.getItem(TYPE_OBJ)!!)
+        collectFilteredTreeNodes(state.currentEnvironment!!.getItem(TYPE_MOB)!!)
+
+        isRepeatFilteredTreeNodesCollection = initialCreatedNodesIntCycle != createdTeeNodesInCycle
+    }
+
     fun getEnvironmentNameFromPath(environmentPath: String): String {
         return environmentPath.replace('\\', '/').substringAfterLast('/')
     }
 
     fun startCycle() {
         state.isSelectedInCycle = false
-        state.createdTeeNodesInCycle = 0
+        createdTeeNodesInCycle = 0
+
+        if (isRepeatFilteredTreeNodesCollection) {
+            doCollectFilteredTreeNodes()
+        }
     }
 
     fun stopCycle() {
@@ -62,17 +90,13 @@ class ViewController(
         return if (dmeItem.type == state.selectedTileItemType) ImGuiTreeNodeFlags.Selected else 0
     }
 
-    fun isFilteredNode(dmeItem: DmeItem): Boolean {
-        return dmeItem.type.contains(state.typeFilter.get())
-    }
-
     fun getOrCreateTreeNode(dmeItem: DmeItem): TreeNode? {
         return when {
             state.treeNodes.containsKey(dmeItem.id) -> {
                 state.treeNodes.get(dmeItem.id)
             }
-            state.createdTeeNodesInCycle < TREE_NODES_CREATION_LIMIT_PER_CYCLE -> {
-                state.createdTeeNodesInCycle++
+            createdTeeNodesInCycle < TREE_NODES_CREATION_LIMIT_PER_CYCLE -> {
+                createdTeeNodesInCycle++
                 state.treeNodes.getOrPut(dmeItem.id) { TreeNode(dmeItem) }
             }
             else -> null
@@ -95,5 +119,20 @@ class ViewController(
         }
 
         return false
+    }
+
+    private fun isFilteredNode(dmeItem: DmeItem): Boolean {
+        return dmeItem.type.contains(state.typeFilter.get())
+    }
+
+    private fun collectFilteredTreeNodes(dmeItem: DmeItem) {
+        if (isFilteredNode(dmeItem)) {
+            val treeNode = getOrCreateTreeNode(dmeItem) ?: return
+            state.filteredTreeNodes.add(treeNode)
+        }
+
+        dmeItem.children.forEach { child ->
+            collectFilteredTreeNodes(state.currentEnvironment!!.getItem(child)!!)
+        }
     }
 }

@@ -14,6 +14,7 @@ class State {
 
     var currentEnvironment: Dme? = null
     val treeNodes: TLongObjectHashMap<TreeNode> = TLongObjectHashMap()
+    val filteredTreeNodes: MutableList<TreeNode> = mutableListOf()
 
     var selectedTileItemType: String = ""
     var isSelectedInCycle: Boolean = false
@@ -21,6 +22,4 @@ class State {
 
     var isDoCollapseAll: Boolean = false
     val typeFilter: ImString = ImString(50)
-
-    var createdTeeNodesInCycle: Int = 0
 }

@@ -10,6 +10,7 @@ Tweaks:
  * Added a changing of the mouse cursor while holding the Space key to show the panning mode is changed.
  * In "Select" mode, when nothing is selected, tile under the mouse will be copied.
  * SpacemanDMM parser updated to version 1.5.0.
+ * Reduced CPU usage for environment tree filtering.
 
 --------------------------------------
  v1.6.0 (2020-06-27)
