@@ -49,6 +49,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     private var selectedTileItem: TileItem? = null
 
     private var isCanvasBlocked: Boolean = false
+    private var isTilePopupOpened: Boolean = false
 
     private var isHasMap: Boolean = false
     private var iconSize: Int = DEFAULT_ICON_SIZE
@@ -65,7 +66,6 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     private var isMapMouseDragged: Boolean = false
     private var isMovingCanvasWithLmb: Boolean = false
-    private var isBlockCanvasInteraction: Boolean = false
 
     // To handle user input
     private val mousePos: ImVec2 = ImVec2()
@@ -184,6 +184,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun processTilePopupClick() {
+        if (isTilePopupOpened && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
+            sendEvent(TriggerTilePopupUi.Close())
+        }
+
         if (!ImGui.isMouseClicked(ImGuiMouseButton.Right) || ImGui.getIO().keyShift) {
             return
         }
@@ -196,7 +200,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun processMapMouseDrag() {
-        if (isMovingCanvasWithLmb || isBlockCanvasInteraction || ImGui.getIO().keyShift) {
+        if (isMovingCanvasWithLmb || isTilePopupOpened || ImGui.getIO().keyShift) {
             return
         }
 
@@ -472,15 +476,15 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     private fun handleTilePopupOpened() {
-        isBlockCanvasInteraction = true
+        isTilePopupOpened = true
     }
 
     private fun handleTilePopupClosed() {
         Timer().schedule(object : TimerTask() {
             override fun run() {
-                isBlockCanvasInteraction = false
+                isTilePopupOpened = false
             }
-        }, 500)
+        }, 150)
     }
 
     private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {

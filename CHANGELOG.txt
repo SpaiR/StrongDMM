@@ -1,3 +1,6 @@
+Fixes:
+ * Context menu no longer closes when clicking somewhere outside of it.
+
 # v1.7.0 (2020-07-12)
 Features:
  * Added a configuration button (looks like a cog) to the "Object Panel". Opens up a configuration popup.
