@@ -1,3 +1,4 @@
+# v1.7.1 (2020-07-13)
 Fixes:
  * Context menu no longer closes when clicking somewhere outside of it.
 
