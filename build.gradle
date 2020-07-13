@@ -72,7 +72,7 @@ runShadow {
 }
 
 processResources {
-    from "CHANGELOG.txt"
+    from "CHANGELOG.md"
 
     filesMatching('about.txt') {
         def gitCommitHash = 'git rev-parse --verify --short HEAD'.execute().text.trim()

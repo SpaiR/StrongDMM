@@ -11,7 +11,7 @@ import strongdmm.service.settings.Settings
 import strongdmm.util.imgui.markdown.ImGuiMarkdown
 
 class ChangelogService : Service, EventHandler, PostInitialize {
-    private val rawChangelogText: String = this::class.java.classLoader.getResourceAsStream("CHANGELOG.txt")!!.use {
+    private val rawChangelogText: String = this::class.java.classLoader.getResourceAsStream("CHANGELOG.md")!!.use {
         it.readAllBytes().toString(Charsets.UTF_8)
     }
 
