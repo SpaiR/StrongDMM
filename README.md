@@ -45,19 +45,18 @@ You are also able to download the editor manually. Go to the [release](https://g
 page and download zip for your OS.
 
 ## Usage FAQ
+**Q.** Launcher downloaded the latest version and nothing happens.
+**A.** Start the launcher as an administrator, check your username doesn't contains any non-latin chars.
+
 **Q.** I'm experiencing an eternal environment parsing. What to do?<br>
-**A.** Start the editor (launcher or proper script file) **as an administrator**.
+**A.** Start the editor (launcher or a proper script file) **as an administrator**.
 
 **Q.** How to move the map?<br>
 **A.** ~~Use zoom-in/zoom-out.~~ Drag and drop while holding down the **middle mouse button**. 
-Or by holding the **space bar** in combination with the **left mouse button**.
+Or by holding the **space bar** in combination with the **left mouse button**. Or **arrows keys**.
 
 **Q.** How to change a save format?<br>
-**A.** In the menu bar: `Options->Preferences...` and change the format you would like to use.
-
-**Q.** How to copy a type of the currently selected object to the clipboard?<br>
-**A.** Click on the title (blue line at the top) of the **objects window** with the right mouse button. 
-You'll find a button named "Copy Type to Clipboard".
+**A.** In the menu bar: `File->Preferences...` and change the format you would like to use.
 
 **Q.** The editor went crush. Where I can find the error logs?<br>
 **A.** In your user home dir: `.strongdmm/logs`.
