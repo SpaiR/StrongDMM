@@ -53,7 +53,7 @@ page and download zip for your OS.
 
 **Q.** How to move the map?<br>
 **A.** ~~Use zoom-in/zoom-out.~~ Drag and drop while holding down the **middle mouse button**. 
-Or by holding the **space bar** in combination with the **left mouse button**. Or **arrows keys**.
+Or by holding the **space bar** in combination with the **left mouse button**. Or **arrow keys**.
 
 **Q.** How to change a save format?<br>
 **A.** In the menu bar: `File->Preferences...` and change the format you would like to use.
