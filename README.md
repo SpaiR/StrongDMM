@@ -45,7 +45,7 @@ You are also able to download the editor manually. Go to the [release](https://g
 page and download zip for your OS.
 
 ## Usage FAQ
-**Q.** Launcher downloaded the latest version and nothing happens.
+**Q.** Launcher downloaded the latest version and nothing happens.<br>
 **A.** Start the launcher as an administrator, check your username doesn't contains any non-latin chars.
 
 **Q.** I'm experiencing an eternal environment parsing. What to do?<br>
