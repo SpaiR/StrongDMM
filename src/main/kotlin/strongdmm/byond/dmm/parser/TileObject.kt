@@ -1,9 +1,11 @@
 package strongdmm.byond.dmm.parser
 
+import java.util.SortedMap
+
 class TileObject(
     val type: String
 ) {
-    var vars: MutableMap<String, String>? = null
+    var vars: SortedMap<String, String>? = null
         private set
 
     fun setVars(vars: Map<String, String>?) {

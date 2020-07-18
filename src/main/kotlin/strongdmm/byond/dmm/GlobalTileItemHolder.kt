@@ -27,9 +27,24 @@ object GlobalTileItemHolder {
     }
 
     fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
+        val typeVarsConcat = getTypeVarsConcat(type, vars)
+        val hash = djb2hash(typeVarsConcat)
+        return getTileItemIfExists(hash) ?: createTileItem(hash, type, vars)
+    }
+
+    fun getById(id: Long): TileItem = tileItems[id] ?: tmpTileItems[id]
+
+    fun getTileItemsByType(type: String): List<TileItem> {
+        val tileItems = mutableListOf<TileItem>()
+        getOrCreate(type) // Ensure that default tile item exists
+        tileItemsIdByType[type]?.forEach { tileItems.add(getById(it)) }
+        return tileItems
+    }
+
+    // Concatenate type with available variables to get unique representation of the tile item
+    private fun getTypeVarsConcat(type: String, vars: Map<String, String>? = null): String {
         var typeVarsConcat = type
 
-        // Concatenate type with available variables to get unique representation of the tile item
         if (vars != null && vars.isNotEmpty()) {
             typeVarsConcat += buildString {
                 vars.toSortedMap().forEach { (value, key) ->
@@ -38,20 +53,29 @@ object GlobalTileItemHolder {
             }
         }
 
-        // djb2 algorithm http://www.cse.yorku.ca/~oz/hash.html
+        return typeVarsConcat
+    }
+
+    // djb2 algorithm http://www.cse.yorku.ca/~oz/hash.html
+    private fun djb2hash(str: String): Long {
         var hash = 5381L
-        typeVarsConcat.forEach { c ->
-            hash = ((hash shl 5) + hash) + c.toInt()
+
+        str.forEach { char ->
+            hash = ((hash shl 5) + hash) + char.toInt()
         }
 
-        if (isTmpMode) {
-            if (tmpTileItems.contains(hash)) {
-                return tmpTileItems.get(hash)
-            }
-        } else if (tileItems.contains(hash)) {
-            return tileItems.get(hash)
-        }
+        return hash
+    }
 
+    private fun getTileItemIfExists(hash: Long): TileItem? {
+        return if (isTmpMode) {
+            tmpTileItems.get(hash)
+        } else {
+            tileItems.get(hash)
+        }
+    }
+
+    private fun createTileItem(hash: Long, type: String, vars: Map<String, String>?): TileItem {
         val tileItem = TileItem(hash, environment.getItem(type)!!, vars)
 
         if (!isTmpMode) {
@@ -62,14 +86,5 @@ object GlobalTileItemHolder {
         }
 
         return tileItem
-    }
-
-    fun getById(id: Long): TileItem = tileItems[id] ?: tmpTileItems[id]
-
-    fun getTileItemsByType(type: String): List<TileItem> {
-        val tileItems = mutableListOf<TileItem>()
-        getOrCreate(type) // Ensure that default tile item exists
-        tileItemsIdByType[type]?.forEach { tileItems.add(getById(it)) }
-        return tileItems
     }
 }
