@@ -132,10 +132,16 @@ class ViewController(
     }
 
     fun dispose() {
+        if (state.isDisposed) {
+            return
+        }
+
         state.currentTile = null
         state.pixelXNudgeArrays.clear()
         state.pixelYNudgeArrays.clear()
         state.dirArrays.clear()
         sendEvent(Reaction.TilePopupClosed())
+
+        state.isDisposed = true
     }
 }

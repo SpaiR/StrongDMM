@@ -26,8 +26,12 @@ class EventController(
     lateinit var viewController: ViewController
 
     private fun handleOpen(event: Event<Tile, Unit>) {
+        viewController.dispose()
+
         state.currentTile = event.body
         state.isDoOpen = true
+        state.isDisposed = false
+
         sendEvent(Reaction.TilePopupOpened())
     }
 

@@ -9,6 +9,8 @@ class State {
     lateinit var providedPreferences: Preferences
 
     var isDoOpen: Boolean = false
+    var isDisposed: Boolean = true
+
     var currentTile: Tile? = null
 
     var selectedTileItem: TileItem? = null
