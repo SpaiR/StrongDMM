@@ -9,9 +9,12 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventHandler
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerInstanceService
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.type.service.*
+import strongdmm.event.type.ui.TriggerConfirmationDialogUi
+import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.service.action.undoable.TileItemAddAction
+import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
+import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
 class InstanceService : Service, EventHandler {
     init {
@@ -19,6 +22,7 @@ class InstanceService : Service, EventHandler {
         consumeEvent(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
         consumeEvent(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
         consumeEvent(TriggerInstanceService.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
+        consumeEvent(TriggerInstanceService.DeleteInstance::class.java, ::handleDeleteInstance)
     }
 
     private fun handleGenerateInstancesFromIconStates(event: Event<TileItem, Unit>) {
@@ -33,7 +37,8 @@ class InstanceService : Service, EventHandler {
                         iconStates.forEach { iconStateName ->
                             GlobalTileItemHolder.getOrCreate(itemType, mutableMapOf(VAR_ICON_STATE to "\"$iconStateName\""))
                         }
-                        event.reply(Unit)
+
+                        sendEvent(TriggerObjectPanelUi.Update())
                     }
                 }
             })
@@ -52,15 +57,15 @@ class InstanceService : Service, EventHandler {
                         arrayOf(NORTH, SOUTH, EAST, WEST).filter { it != initialDir }.forEach { dir ->
                             GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
                         }
-                        event.reply(Unit)
                     }
                     8 -> {
                         arrayOf(NORTH, SOUTH, EAST, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST).filter { it != initialDir }.forEach { dir ->
                             GlobalTileItemHolder.getOrCreate(tileItem.type, mutableMapOf(VAR_DIR to dir.toString()))
                         }
-                        event.reply(Unit)
                     }
                 }
+
+                sendEvent(TriggerObjectPanelUi.Update())
             })
         }
     }
@@ -111,5 +116,32 @@ class InstanceService : Service, EventHandler {
         })
 
         event.reply(positions)
+    }
+
+    private fun handleDeleteInstance(event: Event<TileItem, Unit>) {
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
+            sendEvent(TriggerActionService.BatchActions { batchCompleteCallback ->
+                sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
+                    val question = "Do you really want to delete an instance? (found in ${instancePositions.size} places)"
+                    val confirmationDialogData = ConfirmationDialogData(question = question)
+
+                    sendEvent(TriggerConfirmationDialogUi.Open(confirmationDialogData) {
+                        if (it == ConfirmationDialogStatus.YES) {
+                            sendEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(instancePositions))
+
+                            if (!event.body.isDefaultInstance()) {
+                                GlobalTileItemHolder.remove(event.body)
+
+                                sendEvent(TriggerActionService.AddAction(TileItemAddAction(event.body) {
+                                    sendEvent(TriggerObjectPanelUi.Update())
+                                }))
+                            }
+                        }
+
+                        batchCompleteCallback()
+                    })
+                })
+            })
+        })
     }
 }

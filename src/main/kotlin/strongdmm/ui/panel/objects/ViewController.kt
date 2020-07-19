@@ -30,16 +30,16 @@ class ViewController(
         sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(tileItem))
     }
 
+    fun doDeleteInstance(tileItem: TileItem) {
+        sendEvent(TriggerInstanceService.DeleteInstance(tileItem))
+    }
+
     fun doGenerateInstancesFromIconStates(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.GenerateInstancesFromIconStates(tileItem) {
-            updateTileItems()
-        })
+        sendEvent(TriggerInstanceService.GenerateInstancesFromIconStates(tileItem))
     }
 
     fun doGenerateInstancesFromDirections(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.GenerateInstancesFromDirections(tileItem) {
-            updateTileItems()
-        })
+        sendEvent(TriggerInstanceService.GenerateInstancesFromDirections(tileItem))
     }
 
     fun updateTileItems() {

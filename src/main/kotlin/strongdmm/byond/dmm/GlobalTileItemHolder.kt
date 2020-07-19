@@ -12,12 +12,14 @@ object GlobalTileItemHolder {
 
     private val tileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
     private val tmpTileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
+    private val removedTileItems: TLongObjectHashMap<TileItem> = TLongObjectHashMap()
     private val tileItemsIdByType: MutableMap<String, TLongList> = mutableMapOf()
 
     fun resetEnvironment() {
         tileItems.clear()
         tileItemsIdByType.clear()
         tmpTileItems.clear()
+        removedTileItems.clear()
     }
 
     inline fun tmpOperation(action: () -> Unit) {
@@ -26,13 +28,21 @@ object GlobalTileItemHolder {
         isTmpMode = false
     }
 
-    fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
-        val typeVarsConcat = getTypeVarsConcat(type, vars)
-        val hash = djb2hash(typeVarsConcat)
-        return getTileItemIfExists(hash) ?: createTileItem(hash, type, vars)
+    fun remove(tileItem: TileItem) {
+        tileItemsIdByType[tileItem.type]?.remove(tileItem.id)
+        removedTileItems.put(tileItem.id, tileItems.remove(tileItem.id))
     }
 
-    fun getById(id: Long): TileItem = tileItems[id] ?: tmpTileItems[id]
+    fun getOrCreate(type: String, vars: Map<String, String>? = null): TileItem {
+        val typeVarsConcat = getTypeVarsConcat(type, vars)
+        val id = djb2hash(typeVarsConcat)
+        return getTileItemIfExists(id) ?: createTileItem(id, type, vars)
+    }
+
+    fun getById(id: Long): TileItem {
+        tryRestoreTileItem(id)
+        return tileItems[id] ?: tmpTileItems[id]
+    }
 
     fun getTileItemsByType(type: String): List<TileItem> {
         val tileItems = mutableListOf<TileItem>()
@@ -67,24 +77,34 @@ object GlobalTileItemHolder {
         return hash
     }
 
-    private fun getTileItemIfExists(hash: Long): TileItem? {
-        return if (isTmpMode) {
-            tmpTileItems.get(hash)
-        } else {
-            tileItems.get(hash)
+    fun tryRestoreTileItem(id: Long) {
+        if (removedTileItems.contains(id)) {
+            storeTileItem(removedTileItems.remove(id))
         }
     }
 
-    private fun createTileItem(hash: Long, type: String, vars: Map<String, String>?): TileItem {
-        val tileItem = TileItem(hash, environment.getItem(type)!!, vars)
+    private fun getTileItemIfExists(id: Long): TileItem? {
+        tryRestoreTileItem(id)
 
-        if (!isTmpMode) {
-            tileItems.put(hash, tileItem)
-            tileItemsIdByType.getOrPut(type) { TLongArrayList() }.add(hash)
+        return if (isTmpMode) {
+            tmpTileItems.get(id)
         } else {
-            tmpTileItems.put(hash, tileItem)
+            tileItems.get(id)
         }
+    }
 
+    private fun createTileItem(id: Long, type: String, vars: Map<String, String>?): TileItem {
+        val tileItem = TileItem(id, environment.getItem(type)!!, vars)
+        storeTileItem(tileItem)
         return tileItem
+    }
+
+    private fun storeTileItem(tileItem: TileItem) {
+        if (!isTmpMode) {
+            tileItems.put(tileItem.id, tileItem)
+            tileItemsIdByType.getOrPut(tileItem.type) { TLongArrayList() }.add(tileItem.id)
+        } else {
+            tmpTileItems.put(tileItem.id, tileItem)
+        }
     }
 }

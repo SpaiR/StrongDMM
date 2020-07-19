@@ -46,6 +46,8 @@ class TileItem(
             isType(TYPE_MOB) && tileItem.isType(TYPE_MOB)
     }
 
+    fun isDefaultInstance(): Boolean = customVars.isNullOrEmpty()
+
     fun getVarText(name: String): String? {
         return customVars?.get(name)?.takeIf { it.isNotEmpty() }?.run {
             if (length > 1) {

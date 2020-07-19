@@ -86,6 +86,8 @@ class Dmm(
         tiles[z - 1][y - 1][x - 1] = tileItemsId
     }
 
+    fun getMapArea(): MapArea = MapArea(1, 1, maxX, maxY)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

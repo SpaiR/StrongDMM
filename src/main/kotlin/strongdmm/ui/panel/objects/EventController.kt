@@ -12,7 +12,7 @@ class EventController(
     init {
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        consumeEvent(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
         consumeEvent(TriggerObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 
@@ -35,7 +35,7 @@ class EventController(
         state.selectedTileItemId = state.tileItems!!.find { it.customVars == event.body.customVars }?.id ?: 0
     }
 
-    private fun handleSelectedMapChanged() {
+    private fun handleFrameRefreshed() {
         viewController.updateTileItems()
     }
 

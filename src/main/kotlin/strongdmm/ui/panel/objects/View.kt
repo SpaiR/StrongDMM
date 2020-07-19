@@ -98,7 +98,7 @@ class View(
                 viewController.doFindInstanceOnMap(tileItem)
             }
 
-            menuItem("Fine Object on Map") {
+            menuItem("Find Object on Map") {
                 viewController.doFindObjectOnMap(tileItem)
             }
 
@@ -107,6 +107,12 @@ class View(
             menuItem("New Instance...") {
                 viewController.doNewInstance(tileItem)
             }
+
+            menuItem("Delete Instance...") {
+                viewController.doDeleteInstance(tileItem)
+            }
+
+            separator()
 
             menuItem("Generate Instances from Icon-states") {
                 viewController.doGenerateInstancesFromIconStates(tileItem)

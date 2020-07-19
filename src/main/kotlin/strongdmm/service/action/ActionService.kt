@@ -11,15 +11,20 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
 class ActionService : Service, EventHandler, PostInitialize {
+    private var isBatchingActions: Boolean = false
+    private val actionBatchList: MutableList<Undoable> = mutableListOf()
+
     private val actionStacks: MutableMap<Dmm, ActionStack> = mutableMapOf()
     private val actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
 
     init {
+        consumeEvent(TriggerActionService.BatchActions::class.java, ::handleBatchActions)
         consumeEvent(TriggerActionService.AddAction::class.java, ::handleAddAction)
         consumeEvent(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
         consumeEvent(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
@@ -50,7 +55,25 @@ class ActionService : Service, EventHandler, PostInitialize {
         }
     }
 
+    private fun handleBatchActions(event: Event<(() -> Unit) -> Unit, Unit>) {
+        isBatchingActions = true
+
+        event.body {
+            isBatchingActions = false
+
+            if (actionBatchList.isNotEmpty()) {
+                sendEvent(TriggerActionService.AddAction(MultiAction(actionBatchList.toList())))
+                actionBatchList.clear()
+            }
+        }
+    }
+
     private fun handleAddAction(event: Event<Undoable, Unit>) {
+        if (isBatchingActions) {
+            actionBatchList.add(event.body)
+            return
+        }
+
         sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.clear()
