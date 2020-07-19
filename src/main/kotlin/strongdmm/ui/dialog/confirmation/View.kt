@@ -1,6 +1,7 @@
 package strongdmm.ui.dialog.confirmation
 
 import imgui.ImGui.*
+import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import strongdmm.util.imgui.ImGuiUtil
@@ -21,7 +22,7 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        val title = state.data.title + "##confirmation_dialog_${state.windowId}"
+        val title = state.data.title + "##confirmation_dialog"
 
         if (state.isDoOpen) {
             openPopup(title)
@@ -29,7 +30,7 @@ class View(
             state.isDoOpen = false
         }
 
-        ImGuiUtil.setNextWindowCentered(width, height)
+        ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
         popupModal(title, ImGuiWindowFlags.NoResize) {
             textWrapped(state.data.question)

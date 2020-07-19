@@ -14,7 +14,6 @@ class EventController(
     }
 
     private fun handleOpen(event: Event<ConfirmationDialogData, ConfirmationDialogStatus>) {
-        state.windowId++
         state.isDoOpen = true
         state.data = event.body
         state.eventToReply = event
