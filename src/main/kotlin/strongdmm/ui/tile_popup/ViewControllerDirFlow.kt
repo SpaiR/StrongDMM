@@ -33,7 +33,7 @@ class ViewControllerDirFlow(
         }
 
         sendEvent(
-            TriggerActionService.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.setDir(tileItem, tileItemIdx, relToDir(relativeDir[0]))
             })
         )

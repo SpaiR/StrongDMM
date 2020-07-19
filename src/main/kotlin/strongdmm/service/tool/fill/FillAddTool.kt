@@ -54,7 +54,7 @@ class FillAddTool : Tool(), EventHandler {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions)))
             sendEvent(TriggerFrameService.RefreshFrame())
         }
 

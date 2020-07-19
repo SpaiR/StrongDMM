@@ -45,7 +45,7 @@ class ViewController(
 
     fun doMoveToTop(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionService.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.moveToTop(tileItem, tileItemIdx)
             })
         )
@@ -55,7 +55,7 @@ class ViewController(
 
     fun doMoveToBottom(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionService.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.moveToBottom(tileItem, tileItemIdx)
             })
         )
@@ -73,7 +73,7 @@ class ViewController(
 
     fun doDeleteObject(tile: Tile, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionService.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.deleteTileItem(tileItemIdx)
             })
         )
@@ -84,7 +84,7 @@ class ViewController(
     fun doReplaceWithSelectedTileItem(tile: Tile, tileItemIdx: Int) {
         state.selectedTileItem?.let { selectedTileItem ->
             sendEvent(
-                TriggerActionService.AddAction(ReplaceTileAction(tile) {
+                TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItemIdx, selectedTileItem)
                 })
             )
@@ -95,7 +95,7 @@ class ViewController(
 
     fun doResetToDefault(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         sendEvent(
-            TriggerActionService.AddAction(ReplaceTileAction(tile) {
+            TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.replaceTileItem(tileItemIdx, GlobalTileItemHolder.getOrCreate(tileItem.type))
             })
         )

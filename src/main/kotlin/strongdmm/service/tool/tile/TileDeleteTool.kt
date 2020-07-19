@@ -83,6 +83,6 @@ class TileDeleteTool : Tool(), EventHandler {
             return
         }
 
-        sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions.toList())))
+        sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
     }
 }

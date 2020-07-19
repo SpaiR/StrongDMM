@@ -97,7 +97,7 @@ class SelectMoveAreaTool : Tool(), EventHandler {
         }
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions.toList())))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
             sendEvent(TriggerFrameService.RefreshFrame())
         }
 

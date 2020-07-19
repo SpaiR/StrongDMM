@@ -55,7 +55,7 @@ class MapModifierService : Service, EventHandler {
                     }
 
                     if (reverseActions.isNotEmpty()) {
-                        sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+                        sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions)))
                         sendEvent(TriggerFrameService.RefreshFrame())
                     }
                 })
@@ -98,7 +98,7 @@ class MapModifierService : Service, EventHandler {
                 }
 
                 if (reverseActions.isNotEmpty()) {
-                    sendEvent(TriggerActionService.AddAction(MultiAction(reverseActions)))
+                    sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions)))
                     sendEvent(TriggerToolsService.SelectArea(MapArea(currentMapPos.x, currentMapPos.y, x2, y2)))
                     sendEvent(TriggerFrameService.RefreshFrame())
                 }
@@ -118,7 +118,7 @@ class MapModifierService : Service, EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionService.AddAction(MultiAction(replaceActions)))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(replaceActions)))
             sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
@@ -135,7 +135,7 @@ class MapModifierService : Service, EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionService.AddAction(MultiAction(replaceActions)))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(replaceActions)))
             sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
@@ -151,7 +151,7 @@ class MapModifierService : Service, EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionService.AddAction(MultiAction(deleteActions)))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(deleteActions)))
             sendEvent(TriggerFrameService.RefreshFrame())
         })
     }
@@ -167,7 +167,7 @@ class MapModifierService : Service, EventHandler {
                 })
             }
 
-            sendEvent(TriggerActionService.AddAction(MultiAction(deleteActions)))
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(deleteActions)))
             sendEvent(TriggerFrameService.RefreshFrame())
         })
     }

@@ -132,7 +132,7 @@ class InstanceService : Service, EventHandler {
                             if (!event.body.isDefaultInstance()) {
                                 GlobalTileItemHolder.remove(event.body)
 
-                                sendEvent(TriggerActionService.AddAction(TileItemAddAction(event.body) {
+                                sendEvent(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
                                     sendEvent(TriggerObjectPanelUi.Update())
                                 }))
                             }

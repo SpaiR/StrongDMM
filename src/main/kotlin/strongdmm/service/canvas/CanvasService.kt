@@ -289,7 +289,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
-            TriggerActionService.AddAction(
+            TriggerActionService.QueueUndoable(
                 ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem, selectedTileItem!!)
                 }
@@ -306,7 +306,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val tile = map.getTile(x, y, map.zSelected)
 
         sendEvent(
-            TriggerActionService.AddAction(
+            TriggerActionService.QueueUndoable(
                 ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem)
                 }

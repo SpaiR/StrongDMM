@@ -25,7 +25,7 @@ class ActionService : Service, EventHandler, PostInitialize {
 
     init {
         consumeEvent(TriggerActionService.BatchActions::class.java, ::handleBatchActions)
-        consumeEvent(TriggerActionService.AddAction::class.java, ::handleAddAction)
+        consumeEvent(TriggerActionService.QueueUndoable::class.java, ::handleQueueUndoable)
         consumeEvent(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
         consumeEvent(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
         consumeEvent(TriggerActionService.ResetActionBalance::class.java, ::handleResetActionBalance)
@@ -62,13 +62,13 @@ class ActionService : Service, EventHandler, PostInitialize {
             isBatchingActions = false
 
             if (actionBatchList.isNotEmpty()) {
-                sendEvent(TriggerActionService.AddAction(MultiAction(actionBatchList.toList())))
+                sendEvent(TriggerActionService.QueueUndoable(MultiAction(actionBatchList.toList())))
                 actionBatchList.clear()
             }
         }
     }
 
-    private fun handleAddAction(event: Event<Undoable, Unit>) {
+    private fun handleQueueUndoable(event: Event<Undoable, Unit>) {
         if (isBatchingActions) {
             actionBatchList.add(event.body)
             return

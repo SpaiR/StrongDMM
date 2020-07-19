@@ -31,7 +31,7 @@ class ViewController(
         getNewItemVars()?.let { newItemVars ->
             if (state.currentTile != null) { // in case if we have a tile to apply changes
                 sendEvent(
-                    TriggerActionService.AddAction(
+                    TriggerActionService.QueueUndoable(
                         ReplaceTileAction(state.currentTile!!) {
                             state.currentTile!!.modifyItemVars(state.currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                         }

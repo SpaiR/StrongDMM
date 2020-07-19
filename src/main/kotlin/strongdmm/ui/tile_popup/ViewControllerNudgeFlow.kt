@@ -44,7 +44,7 @@ class ViewControllerNudgeFlow(
         }
 
         sendEvent(
-            TriggerActionService.AddAction(
+            TriggerActionService.QueueUndoable(
                 ReplaceTileAction(tile) {
                     tile.nudge(isXAxis, tileItem, tileItemIdx, pixelNudge[0], state.providedPreferences.nudgeMode)
                 }
