@@ -15,6 +15,9 @@ abstract class TriggerMapModifierService {
     class ReplaceTileItemsWithIdInPositions(body: Pair<String, List<Pair<TileItem, MapPos>>>) :
         Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>(body, null)
 
+    class ReplaceTileItemsByIdWithIdInPositions(body: Pair<Long, List<Pair<TileItem, MapPos>>>) :
+        Event<Pair<Long, List<Pair<TileItem, MapPos>>>, Unit>(body, null)
+
     class DeleteTileItemsWithTypeInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
     class DeleteTileItemsWithIdInPositions(body: List<Pair<TileItem, MapPos>>) : Event<List<Pair<TileItem, MapPos>>, Unit>(body, null)
 

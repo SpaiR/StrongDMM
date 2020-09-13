@@ -30,6 +30,10 @@ class ViewController(
         sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(tileItem))
     }
 
+    fun doEditInstance(tileItem: TileItem) {
+        sendEvent(TriggerInstanceService.EditInstance(tileItem))
+    }
+
     fun doDeleteInstance(tileItem: TileItem) {
         sendEvent(TriggerInstanceService.DeleteInstance(tileItem))
     }

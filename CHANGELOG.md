@@ -1,5 +1,5 @@
 Features:
- * Added an option to delete instances in the "Object Panel".
+ * Added an option to edit/delete instances in the "Object Panel".
 
 Fixes:
  * Incorrect nudge/dir value in the tile popup after another one was opened.

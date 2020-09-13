@@ -42,9 +42,10 @@ class EventController(
         viewController.collectPinnedVariables()
     }
 
-    private fun handleOpenWithTileItem(event: Event<TileItem, Unit>) {
+    private fun handleOpenWithTileItem(event: Event<TileItem, TileItem>) {
         viewController.open()
         state.currentTileItem = event.body
+        state.newTileItemEvent = event
         viewController.collectDisplayVariables()
         viewController.collectVariablesByType()
         viewController.collectPinnedVariables()

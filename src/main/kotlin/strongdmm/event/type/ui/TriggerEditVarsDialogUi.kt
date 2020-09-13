@@ -6,5 +6,5 @@ import strongdmm.event.Event
 
 abstract class TriggerEditVarsDialogUi {
     class OpenWithTile(tileAndTileItemIdx: Pair<Tile, Int>) : Event<Pair<Tile, Int>, Unit>(tileAndTileItemIdx, null)
-    class OpenWithTileItem(body: TileItem) : Event<TileItem, Unit>(body, null)
+    class OpenWithTileItem(body: TileItem, callback: ((TileItem) -> Unit)? = null) : Event<TileItem, TileItem>(body, callback)
 }

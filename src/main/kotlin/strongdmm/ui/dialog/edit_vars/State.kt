@@ -4,6 +4,7 @@ import imgui.type.ImBoolean
 import imgui.type.ImString
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.event.Event
 import strongdmm.ui.dialog.edit_vars.model.Variable
 import java.util.*
 
@@ -16,9 +17,11 @@ class State {
     var isFistOpen: Boolean = true
     var isDoUpdatePinnedVariables: Boolean = false
 
-    var currentTileItem: TileItem? = null // We can open edit menu with a tile item...
+    var currentTileItem: TileItem? = null // We can open edit menu with a tile item.
+    var newTileItem: TileItem? = null // Stores a new instance of the modified tile item.
+    var newTileItemEvent: Event<TileItem, TileItem>? = null // Stores an event to reply if we've opened the window with the tile item.
 
-    var currentTile: Tile? = null // ...or with a tile. If opened with the tile, then changes will be applied to a map.
+    var currentTile: Tile? = null // We can open edit menu with with a tile. If opened with the tile, then changes will be applied to a map.
     var initialTileItemsId: LongArray? = null // Used to restore tile state if we didn't save our modified vars
     var currentTileItemIndex: Int = 0 // This index is an item index inside of a Tile objects list
 

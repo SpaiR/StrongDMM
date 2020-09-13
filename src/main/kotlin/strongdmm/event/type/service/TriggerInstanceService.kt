@@ -15,5 +15,6 @@ abstract class TriggerInstanceService {
     class FindInstancePositionsById(body: Pair<MapArea, Long>, callback: (List<Pair<TileItem, MapPos>>) -> Unit) :
         Event<Pair<MapArea, Long>, List<Pair<TileItem, MapPos>>>(body, callback)
 
+    class EditInstance(body: TileItem) : Event<TileItem, Unit>(body, null)
     class DeleteInstance(body: TileItem) : Event<TileItem, Unit>(body, null)
 }

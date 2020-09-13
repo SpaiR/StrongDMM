@@ -11,8 +11,10 @@ import strongdmm.event.Event
 import strongdmm.event.EventHandler
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
+import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.TileItemAddAction
+import strongdmm.service.action.undoable.TileItemRemoveAction
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
@@ -22,6 +24,7 @@ class InstanceService : Service, EventHandler {
         consumeEvent(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
         consumeEvent(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
         consumeEvent(TriggerInstanceService.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
+        consumeEvent(TriggerInstanceService.EditInstance::class.java, ::handleEditInstance)
         consumeEvent(TriggerInstanceService.DeleteInstance::class.java, ::handleDeleteInstance)
     }
 
@@ -116,6 +119,32 @@ class InstanceService : Service, EventHandler {
         })
 
         event.reply(positions)
+    }
+
+    private fun handleEditInstance(event: Event<TileItem, Unit>) {
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
+            sendEvent(TriggerActionService.BatchActions { batchCompleteCallback ->
+                sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(event.body) { newTileItem ->
+                    sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
+                        sendEvent(TriggerMapModifierService.ReplaceTileItemsByIdWithIdInPositions(Pair(newTileItem.id, instancePositions)))
+
+                        if (!event.body.isDefaultInstance()) {
+                            GlobalTileItemHolder.remove(event.body)
+
+                            sendEvent(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
+                                sendEvent(TriggerObjectPanelUi.Update())
+                            }))
+                        }
+
+                        sendEvent(TriggerActionService.QueueUndoable(TileItemRemoveAction(newTileItem) {
+                            sendEvent(TriggerObjectPanelUi.Update())
+                        }))
+                    })
+
+                    batchCompleteCallback()
+                })
+            })
+        })
     }
 
     private fun handleDeleteInstance(event: Event<TileItem, Unit>) {

@@ -40,7 +40,7 @@ class ViewController(
 
                 sendEvent(TriggerFrameService.RefreshFrame())
             } else if (state.currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
-                GlobalTileItemHolder.getOrCreate(state.currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
+                state.newTileItem = GlobalTileItemHolder.getOrCreate(state.currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 
             sendEvent(TriggerObjectPanelUi.Update())
@@ -207,6 +207,9 @@ class ViewController(
 
     private fun dispose() {
         state.currentTileItem = null
+        state.newTileItem?.let { it -> state.newTileItemEvent?.reply(it) }
+        state.newTileItem = null
+        state.newTileItemEvent = null
         state.currentTile = null
         state.initialTileItemsId = null
         state.currentEditVar = null

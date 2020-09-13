@@ -12,12 +12,18 @@ class TileItemService : Service, EventHandler {
 
     init {
         consumeEvent(TriggerTileItemService.ChangeSelectedTileItem::class.java, ::handleChangeSelectedTileItem)
+        consumeEvent(TriggerTileItemService.ResetSelectedTileItem::class.java, ::handleResetSelectedTileItem)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleChangeSelectedTileItem(event: Event<TileItem, Unit>) {
         selectedTileItem = event.body
         sendEvent(Reaction.SelectedTileItemChanged(event.body))
+    }
+
+    private fun handleResetSelectedTileItem() {
+        selectedTileItem = null
+        sendEvent(Reaction.SelectedTileItemChanged(null))
     }
 
     private fun handleEnvironmentReset() {

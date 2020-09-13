@@ -108,6 +108,10 @@ class View(
                 viewController.doNewInstance(tileItem)
             }
 
+            menuItem("Edit Instance...") {
+                viewController.doEditInstance(tileItem)
+            }
+
             menuItem("Delete Instance...") {
                 viewController.doDeleteInstance(tileItem)
             }

@@ -20,6 +20,7 @@ class MapModifierService : Service, EventHandler {
         consumeEvent(TriggerMapModifierService.FillSelectedMapPositionWithTileItems::class.java, ::handleFillSelectedMapPositionWithTileItems)
         consumeEvent(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions::class.java, ::handleReplaceTileItemsWithTypeInPositions)
         consumeEvent(TriggerMapModifierService.ReplaceTileItemsWithIdInPositions::class.java, ::handleReplaceTileItemsWithIdInPositions)
+        consumeEvent(TriggerMapModifierService.ReplaceTileItemsByIdWithIdInPositions::class.java, ::handleReplaceTileItemsByIdWithIdInPositions)
         consumeEvent(TriggerMapModifierService.DeleteTileItemsWithTypeInPositions::class.java, ::handleDeleteTileItemsWithTypeInPositions)
         consumeEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions::class.java, ::handleDeleteTileItemsWithIdInPositions)
         consumeEvent(TriggerMapModifierService.ChangeMapSize::class.java, ::handleChangeMapSize)
@@ -109,6 +110,23 @@ class MapModifierService : Service, EventHandler {
     private fun handleReplaceTileItemsWithTypeInPositions(event: Event<Pair<String, List<Pair<TileItem, MapPos>>>, Unit>) {
         sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
             val replaceWithTileItem = GlobalTileItemHolder.getOrCreate(event.body.first)
+            val replaceActions = mutableListOf<Undoable>()
+
+            event.body.second.forEach { (tileItem, pos) ->
+                val tile = dmm.getTile(pos.x, pos.y, pos.z)
+                replaceActions.add(ReplaceTileAction(tile) {
+                    tile.replaceTileItem(tileItem.type, replaceWithTileItem)
+                })
+            }
+
+            sendEvent(TriggerActionService.QueueUndoable(MultiAction(replaceActions)))
+            sendEvent(TriggerFrameService.RefreshFrame())
+        })
+    }
+
+    private fun handleReplaceTileItemsByIdWithIdInPositions(event: Event<Pair<Long, List<Pair<TileItem, MapPos>>>, Unit>) {
+        sendEvent(TriggerMapHolderService.FetchSelectedMap { dmm ->
+            val replaceWithTileItem = GlobalTileItemHolder.getById(event.body.first)
             val replaceActions = mutableListOf<Undoable>()
 
             event.body.second.forEach { (tileItem, pos) ->
