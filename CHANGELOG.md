@@ -3,6 +3,7 @@ Features:
 
 Fixes:
  * Incorrect nudge/dir value in the tile popup after another one was opened.
+ * Objects with '/area' later in their path was being displayed in the area layer.
 
 # v1.7.1 (2020-07-13)
 Fixes:

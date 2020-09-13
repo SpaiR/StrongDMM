@@ -12,8 +12,8 @@ class LayersFilterService : Service, EventHandler {
 
     init {
         consumeEvent(TriggerLayersFilterService.FilterLayersById::class.java, ::handleFilterLayersById)
-        consumeEvent(TriggerLayersFilterService.ShowLayersByType::class.java, ::handleShowLayersByType)
-        consumeEvent(TriggerLayersFilterService.HideLayersByType::class.java, ::handleHideLayersByType)
+        consumeEvent(TriggerLayersFilterService.ShowLayersByTypeExact::class.java, ::handleShowLayersByTypeExact)
+        consumeEvent(TriggerLayersFilterService.HideLayersByTypeExact::class.java, ::handleHideLayersByTypeExact)
         consumeEvent(TriggerLayersFilterService.FetchFilteredLayers::class.java, ::handleFetchFilteredLayers)
         consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
@@ -25,14 +25,14 @@ class LayersFilterService : Service, EventHandler {
         })
     }
 
-    private fun handleShowLayersByType(event: Event<String, Unit>) {
-        filteredTypes.removeIf { it.contains(event.body) }
+    private fun handleShowLayersByTypeExact(event: Event<String, Unit>) {
+        filteredTypes.removeIf { it.startsWith(event.body) }
         sendEvent(Reaction.LayersFilterRefreshed(filteredTypes))
     }
 
-    private fun handleHideLayersByType(event: Event<String, Unit>) {
+    private fun handleHideLayersByTypeExact(event: Event<String, Unit>) {
         sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
-            filteredTypes.addAll(dme.items.values.filter { it.type.contains(event.body) }.map { it.type })
+            filteredTypes.addAll(dme.items.values.filter { it.type.startsWith(event.body) }.map { it.type })
             sendEvent(Reaction.LayersFilterRefreshed(filteredTypes))
         })
     }

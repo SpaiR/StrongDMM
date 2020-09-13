@@ -215,9 +215,9 @@ class ViewController(
 
     fun toggleLayer(layerStatus: ImBoolean, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(TriggerLayersFilterService.ShowLayersByType(layerType))
+            sendEvent(TriggerLayersFilterService.ShowLayersByTypeExact(layerType))
         } else {
-            sendEvent(TriggerLayersFilterService.HideLayersByType(layerType))
+            sendEvent(TriggerLayersFilterService.HideLayersByTypeExact(layerType))
         }
     }
 }
