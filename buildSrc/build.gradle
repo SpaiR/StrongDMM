@@ -1,0 +1,13 @@
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+}
