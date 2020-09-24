@@ -1,3 +1,6 @@
+Fixes:
+ * Hex colours with transparency caused crashes.
+
 # v1.8.0 (2020-09-13)
 Features:
  * Added an option to globally edit/delete instances in the "Object Panel".
