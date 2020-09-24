@@ -43,6 +43,8 @@ class ColorExtractor {
             var awtColor: AWTColor? = null
 
             if (colorValue.startsWith("#")) {
+                if (colorValue.length > 7)
+                    colorValue = colorValue.substring(0, 6)
                 awtColor = AWTColor.decode(colorValue)
             } else if (colorValue.isNotEmpty()) {
                 val hex = hexFromColorName(colorValue)
