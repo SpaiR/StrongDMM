@@ -155,7 +155,7 @@ abstract class AppWindow(title: String) {
     private fun endFrame() {
         ImGui.render()
 
-        imGuiGl3.render(ImGui.getDrawData())
+        imGuiGl3.renderDrawData(ImGui.getDrawData())
 
         glfwSwapBuffers(Window.ptr) // swap the color buffers
         glfwPollEvents()
