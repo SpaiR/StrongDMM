@@ -98,18 +98,18 @@ class StrongDMM(title: String) : AppWindow(title) {
     private val processableList: List<Processable> = uiList.filterIsInstance(Processable::class.java) + serviceList.filterIsInstance(Processable::class.java)
 
     init {
+        ensureHomeDirExists()
+        ensureLogsDirExists()
+
         check(serviceList.last() is ApplicationCloseService) {
             "ApplicationCloseService SHOULD be always the LAST in the services list"
         }
-
-        ensureHomeDirExists()
-        ensureLogsDirExists()
 
         uiList.filterIsInstance(PostInitialize::class.java).forEach(PostInitialize::postInit)
         serviceList.filterIsInstance(PostInitialize::class.java).forEach(PostInitialize::postInit)
     }
 
-    override fun appLoop() {
+    override fun applicationLoop() {
         processableList.forEach(Processable::process)
     }
 

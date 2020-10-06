@@ -46,12 +46,10 @@ abstract class AppWindow(title: String) {
     private lateinit var iconData: ByteArray
 
     init {
-        ImGui.createContext()
-
         setupGlfw(title)
-        imGuiGlfw.init(Window.ptr, true)
-
         setupImGui()
+
+        imGuiGlfw.init(Window.ptr, true)
         imGuiGl3.init()
     }
 
@@ -61,9 +59,7 @@ abstract class AppWindow(title: String) {
         imGuiGl3.dispose()
         imGuiGlfw.dispose()
 
-        ImGui.destroyContext()
-
-        disposeWindow()
+        dispose()
     }
 
     // Method initializes GLFW window
@@ -111,6 +107,8 @@ abstract class AppWindow(title: String) {
 
     // Here we will initialize ImGui stuff.
     private fun setupImGui() {
+        ImGui.createContext()
+
         ImGui.getIO().iniFilename = null
 
         // Read font
@@ -136,7 +134,7 @@ abstract class AppWindow(title: String) {
             glfwGetWindowSize(Window.ptr, Window._width, Window._height)
 
             startFrame()
-            appLoop()
+            applicationLoop()
             endFrame()
 
             // 60 fps lock
@@ -186,7 +184,7 @@ abstract class AppWindow(title: String) {
         }
     }
 
-    abstract fun appLoop()
+    abstract fun applicationLoop()
 
     private fun configureFonts() {
         val fontAtlas = ImGui.getIO().fonts
@@ -266,7 +264,8 @@ abstract class AppWindow(title: String) {
         }
     }
 
-    private fun disposeWindow() {
+    private fun dispose() {
+        ImGui.destroyContext()
         Callbacks.glfwFreeCallbacks(Window.ptr)
         glfwDestroyWindow(Window.ptr)
         glfwTerminate()
