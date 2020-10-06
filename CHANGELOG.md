@@ -3,6 +3,7 @@ Features:
 
 Fixes:
  * Hex colours with transparency caused crashes.
+ * Possible fix for endless environment loading for some users.
 
 # v1.8.0 (2020-09-13)
 Features:
