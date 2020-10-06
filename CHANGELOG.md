@@ -1,3 +1,6 @@
+Features:
+ * Multiple instances of the editor are now can be opened.
+
 Fixes:
  * Hex colours with transparency caused crashes.
 
