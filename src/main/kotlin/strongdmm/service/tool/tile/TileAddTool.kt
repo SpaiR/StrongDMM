@@ -2,7 +2,7 @@ package strongdmm.service.tool.tile
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.event.type.service.TriggerFrameService
@@ -12,7 +12,7 @@ import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
 
-class TileAddTool : Tool(), EventHandler {
+class TileAddTool : Tool() {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
@@ -45,7 +45,7 @@ class TileAddTool : Tool(), EventHandler {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(TriggerCanvasService.ResetSelectedTiles())
+        EventBus.post(TriggerCanvasService.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -54,15 +54,15 @@ class TileAddTool : Tool(), EventHandler {
     }
 
     private fun addTileItem(pos: MapPos) {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
             reverseActions.add(ReplaceTileAction(tile) {
                 tile.addTileItem(selectedTileItem!!)
             })
 
-            sendEvent(TriggerCanvasService.SelectTiles(dirtyTiles))
-            sendEvent(TriggerFrameService.RefreshFrame())
+            EventBus.post(TriggerCanvasService.SelectTiles(dirtyTiles))
+            EventBus.post(TriggerFrameService.RefreshFrame())
         })
     }
 
@@ -71,6 +71,6 @@ class TileAddTool : Tool(), EventHandler {
             return
         }
 
-        sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
+        EventBus.post(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
     }
 }

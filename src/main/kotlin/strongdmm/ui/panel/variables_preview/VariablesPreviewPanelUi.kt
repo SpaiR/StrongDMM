@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.variables_preview
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class VariablesPreviewPanelUi : Ui, Processable {
     private val state = State()

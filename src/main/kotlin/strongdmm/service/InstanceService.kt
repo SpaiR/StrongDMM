@@ -1,6 +1,6 @@
 package strongdmm.service
 
-import strongdmm.Service
+import strongdmm.application.Service
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
@@ -8,7 +8,7 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
@@ -18,19 +18,19 @@ import strongdmm.service.action.undoable.TileItemRemoveAction
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
-class InstanceService : Service, EventHandler {
+class InstanceService : Service {
     init {
-        consumeEvent(TriggerInstanceService.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
-        consumeEvent(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
-        consumeEvent(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
-        consumeEvent(TriggerInstanceService.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
-        consumeEvent(TriggerInstanceService.EditInstance::class.java, ::handleEditInstance)
-        consumeEvent(TriggerInstanceService.DeleteInstance::class.java, ::handleDeleteInstance)
+        EventBus.sign(TriggerInstanceService.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
+        EventBus.sign(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
+        EventBus.sign(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
+        EventBus.sign(TriggerInstanceService.FindInstancePositionsById::class.java, ::handleFindInstancePositionsById)
+        EventBus.sign(TriggerInstanceService.EditInstance::class.java, ::handleEditInstance)
+        EventBus.sign(TriggerInstanceService.DeleteInstance::class.java, ::handleDeleteInstance)
     }
 
     private fun handleGenerateInstancesFromIconStates(event: Event<TileItem, Unit>) {
         GlobalDmiHolder.getDmi(event.body.icon)?.let { dmi ->
-            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
+            EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val itemType = event.body.type
                 val dmeItem = dme.getItem(itemType)!!
                 val initialIconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
@@ -41,7 +41,7 @@ class InstanceService : Service, EventHandler {
                             GlobalTileItemHolder.getOrCreate(itemType, mutableMapOf(VAR_ICON_STATE to "\"$iconStateName\""))
                         }
 
-                        sendEvent(TriggerObjectPanelUi.Update())
+                        EventBus.post(TriggerObjectPanelUi.Update())
                     }
                 }
             })
@@ -51,7 +51,7 @@ class InstanceService : Service, EventHandler {
     private fun handleGenerateInstancesFromDirections(event: Event<TileItem, Unit>) {
         val tileItem = event.body
         GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
-            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
+            EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val dmeItem = dme.getItem(tileItem.type)!!
                 val initialDir = dmeItem.getVarInt(VAR_DIR) ?: DEFAULT_DIR
 
@@ -68,7 +68,7 @@ class InstanceService : Service, EventHandler {
                     }
                 }
 
-                sendEvent(TriggerObjectPanelUi.Update())
+                EventBus.post(TriggerObjectPanelUi.Update())
             })
         }
     }
@@ -76,7 +76,7 @@ class InstanceService : Service, EventHandler {
     private fun handleFindInstancePositionsByType(event: Event<Pair<MapArea, String>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { map ->
             if (event.body.second.isNotEmpty()) {
                 val (x1, y1, x2, y2) = event.body.first
 
@@ -101,7 +101,7 @@ class InstanceService : Service, EventHandler {
     private fun handleFindInstancePositionsById(event: Event<Pair<MapArea, Long>, List<Pair<TileItem, MapPos>>>) {
         val positions = mutableListOf<Pair<TileItem, MapPos>>()
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { map ->
             val (x1, y1, x2, y2) = event.body.first
 
             for (z in (1..map.maxZ)) {
@@ -122,22 +122,22 @@ class InstanceService : Service, EventHandler {
     }
 
     private fun handleEditInstance(event: Event<TileItem, Unit>) {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
-            sendEvent(TriggerActionService.BatchActions { batchCompleteCallback ->
-                sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(event.body) { newTileItem ->
-                    sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
-                        sendEvent(TriggerMapModifierService.ReplaceTileItemsByIdWithIdInPositions(Pair(newTileItem.id, instancePositions)))
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { map ->
+            EventBus.post(TriggerActionService.BatchActions { batchCompleteCallback ->
+                EventBus.post(TriggerEditVarsDialogUi.OpenWithTileItem(event.body) { newTileItem ->
+                    EventBus.post(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
+                        EventBus.post(TriggerMapModifierService.ReplaceTileItemsByIdWithIdInPositions(Pair(newTileItem.id, instancePositions)))
 
                         if (!event.body.isDefaultInstance()) {
                             GlobalTileItemHolder.remove(event.body)
 
-                            sendEvent(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
-                                sendEvent(TriggerObjectPanelUi.Update())
+                            EventBus.post(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
+                                EventBus.post(TriggerObjectPanelUi.Update())
                             }))
                         }
 
-                        sendEvent(TriggerActionService.QueueUndoable(TileItemRemoveAction(newTileItem) {
-                            sendEvent(TriggerObjectPanelUi.Update())
+                        EventBus.post(TriggerActionService.QueueUndoable(TileItemRemoveAction(newTileItem) {
+                            EventBus.post(TriggerObjectPanelUi.Update())
                         }))
                     })
 
@@ -148,21 +148,21 @@ class InstanceService : Service, EventHandler {
     }
 
     private fun handleDeleteInstance(event: Event<TileItem, Unit>) {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
-            sendEvent(TriggerActionService.BatchActions { batchCompleteCallback ->
-                sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { map ->
+            EventBus.post(TriggerActionService.BatchActions { batchCompleteCallback ->
+                EventBus.post(TriggerInstanceService.FindInstancePositionsById(Pair(map.getMapArea(), event.body.id)) { instancePositions ->
                     val question = "Do you really want to delete an instance? (found in ${instancePositions.size} places)"
                     val confirmationDialogData = ConfirmationDialogData(question = question)
 
-                    sendEvent(TriggerConfirmationDialogUi.Open(confirmationDialogData) {
+                    EventBus.post(TriggerConfirmationDialogUi.Open(confirmationDialogData) {
                         if (it == ConfirmationDialogStatus.YES) {
-                            sendEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(instancePositions))
+                            EventBus.post(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(instancePositions))
 
                             if (!event.body.isDefaultInstance()) {
                                 GlobalTileItemHolder.remove(event.body)
 
-                                sendEvent(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
-                                    sendEvent(TriggerObjectPanelUi.Update())
+                                EventBus.post(TriggerActionService.QueueUndoable(TileItemAddAction(event.body) {
+                                    EventBus.post(TriggerObjectPanelUi.Update())
                                 }))
                             }
                         }

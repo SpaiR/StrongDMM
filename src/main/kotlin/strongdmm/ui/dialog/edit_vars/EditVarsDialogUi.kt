@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.edit_vars
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class EditVarsDialogUi : Ui, Processable {
     private val state = State()

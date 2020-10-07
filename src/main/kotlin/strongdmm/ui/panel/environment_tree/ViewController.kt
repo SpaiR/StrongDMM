@@ -8,7 +8,7 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.service.TriggerTileItemService
@@ -19,7 +19,7 @@ import java.io.File
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     companion object {
         private const val TREE_NODES_CREATION_LIMIT_PER_CYCLE: Int = 25
     }
@@ -29,16 +29,16 @@ class ViewController(
 
     fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(TriggerEnvironmentService.OpenEnvironment(file))
+            EventBus.post(TriggerEnvironmentService.OpenEnvironment(file))
         }
     }
 
     fun doOpenEnvironment(environmentPath: String) {
-        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
+        EventBus.post(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
     fun doOpenEnvironmentWithMap(environmentPath: String, mapPath: MapPath) {
-        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)) {
+        EventBus.post(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)) {
             state.mapToOpen = mapPath
         })
     }
@@ -81,7 +81,7 @@ class ViewController(
         state.isDoCollapseAll = false
 
         state.mapToOpen?.let {
-            sendEvent(TriggerMapHolderService.OpenMap(File(it.absolute)))
+            EventBus.post(TriggerMapHolderService.OpenMap(File(it.absolute)))
             state.mapToOpen = null
         }
     }
@@ -112,7 +112,7 @@ class ViewController(
     fun selectType(type: String) {
         if (!state.isSelectedInCycle) {
             state.isSelectedInCycle = true
-            sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
+            EventBus.post(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getOrCreate(type)))
         }
     }
 

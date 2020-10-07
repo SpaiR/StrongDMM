@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.coords
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class CoordsPanelUi : Ui, Processable {
     private val state = State()

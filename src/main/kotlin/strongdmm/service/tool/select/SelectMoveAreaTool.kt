@@ -4,7 +4,7 @@ import gnu.trove.map.hash.TIntObjectHashMap
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
@@ -12,7 +12,7 @@ import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
 import strongdmm.util.extension.getOrPut
 
-class SelectMoveAreaTool : Tool(), EventHandler {
+class SelectMoveAreaTool : Tool() {
     private var prevMapPosX: Int = 0
     private var prevMapPosY: Int = 0
 
@@ -38,11 +38,11 @@ class SelectMoveAreaTool : Tool(), EventHandler {
 
             initialArea = currentSelectedArea
 
-            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
+            EventBus.post(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
                 this.filteredTypes = filteredTypes // We need to know, which layers were filtered at the beginning
 
                 // Save initial tile items
-                sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+                EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
                     for (x in currentSelectedArea.x1..currentSelectedArea.x2) {
                         for (y in currentSelectedArea.y1..currentSelectedArea.y2) {
                             val filteredTileItems = selectedMap.getTile(x, y, selectedMap.zSelected).getFilteredTileItems(filteredTypes)
@@ -59,7 +59,7 @@ class SelectMoveAreaTool : Tool(), EventHandler {
         isActive = false
 
         if (!tilesItemsToMove.isEmpty) {
-            sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
                 // Restore initial tiles state and create a reverse action
                 for (x in initialArea.x1..initialArea.x2) {
                     for (y in initialArea.y1..initialArea.y2) {
@@ -97,8 +97,8 @@ class SelectMoveAreaTool : Tool(), EventHandler {
         }
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
-            sendEvent(TriggerFrameService.RefreshFrame())
+            EventBus.post(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
+            EventBus.post(TriggerFrameService.RefreshFrame())
         }
 
         tilesItemsToMove.clear()
@@ -120,7 +120,7 @@ class SelectMoveAreaTool : Tool(), EventHandler {
         prevMapPosX = mapPos.x
         prevMapPosY = mapPos.y
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             if (x1 !in 1..selectedMap.maxX || y1 !in 1..selectedMap.maxY || x2 !in 1..selectedMap.maxX || y2 !in 1..selectedMap.maxY) {
                 return@FetchSelectedMap
             }
@@ -178,8 +178,8 @@ class SelectMoveAreaTool : Tool(), EventHandler {
                 }
             }
 
-            sendEvent(TriggerFrameService.RefreshFrame())
-            sendEvent(TriggerCanvasService.SelectArea(currentSelectedArea))
+            EventBus.post(TriggerFrameService.RefreshFrame())
+            EventBus.post(TriggerCanvasService.SelectArea(currentSelectedArea))
         })
     }
 
@@ -192,7 +192,7 @@ class SelectMoveAreaTool : Tool(), EventHandler {
     override fun reset() {
         onStop()
         currentSelectedArea = MapArea.OUT_OF_BOUNDS_AREA
-        sendEvent(TriggerCanvasService.ResetSelectedArea())
+        EventBus.post(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun destroy() {

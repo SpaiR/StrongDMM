@@ -2,19 +2,19 @@ package strongdmm.ui.panel.layers_filter
 
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(TriggerLayersFilterPanelUi.Open::class.java, ::handleOpen)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(TriggerLayersFilterPanelUi.Open::class.java, ::handleOpen)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
     }
 
     private fun handleOpen() {
@@ -31,7 +31,7 @@ class EventController(
     }
 
     private fun handleLayersFilterRefreshed(event: Event<Set<String>, Unit>) {
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment {
             state.filteredTypesId.clear()
             it.items.values.forEach { dmeItem ->
                 if (event.body.contains(dmeItem.type)) {

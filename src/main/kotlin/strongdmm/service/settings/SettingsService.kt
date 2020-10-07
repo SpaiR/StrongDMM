@@ -2,15 +2,15 @@ package strongdmm.service.settings
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import strongdmm.PostInitialize
-import strongdmm.Service
 import strongdmm.StrongDMM
-import strongdmm.event.EventHandler
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerSettingsService
 import java.io.File
 
-class SettingsService : Service, PostInitialize, EventHandler {
+class SettingsService : Service, PostInitialize {
     companion object {
         private val settingsConfig: File = File(StrongDMM.homeDir.toFile(), "settings.json")
     }
@@ -20,14 +20,14 @@ class SettingsService : Service, PostInitialize, EventHandler {
     private val objectMapper: ObjectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     init {
-        consumeEvent(TriggerSettingsService.SaveSettings::class.java, ::handleSaveSettings)
+        EventBus.sign(TriggerSettingsService.SaveSettings::class.java, ::handleSaveSettings)
     }
 
     override fun postInit() {
         ensureSettingsConfigExists()
         readSettingsConfig()
 
-        sendEvent(Provider.SettingsServiceSettings(settings))
+        EventBus.post(Provider.SettingsServiceSettings(settings))
     }
 
     private fun ensureSettingsConfigExists() {

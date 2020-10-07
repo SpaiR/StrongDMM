@@ -1,13 +1,13 @@
 package strongdmm.ui.dialog.confirmation
 
 import imgui.ImGui
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doYes() {
         val event = state.eventToReply
         dispose()
@@ -28,11 +28,11 @@ class ViewController(
 
     private fun dispose() {
         ImGui.closeCurrentPopup()
-        sendEvent(Reaction.ApplicationBlockChanged(false))
+        EventBus.post(Reaction.ApplicationBlockChanged(false))
         state.eventToReply = null
     }
 
     fun blockApplication() {
-        sendEvent(Reaction.ApplicationBlockChanged(true))
+        EventBus.post(Reaction.ApplicationBlockChanged(true))
     }
 }

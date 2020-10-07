@@ -1,11 +1,11 @@
 package strongdmm.service.action
 
 import gnu.trove.map.hash.TObjectIntHashMap
-import strongdmm.PostInitialize
-import strongdmm.Service
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
@@ -16,7 +16,7 @@ import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
 import java.util.*
 
-class ActionService : Service, EventHandler, PostInitialize {
+class ActionService : Service, PostInitialize {
     private var isBatchingActions: Boolean = false
     private val actionBatchList: MutableList<Undoable> = mutableListOf()
 
@@ -24,24 +24,24 @@ class ActionService : Service, EventHandler, PostInitialize {
     private val actionBalanceStorage: TObjectIntHashMap<Dmm> = TObjectIntHashMap()
 
     init {
-        consumeEvent(TriggerActionService.BatchActions::class.java, ::handleBatchActions)
-        consumeEvent(TriggerActionService.QueueUndoable::class.java, ::handleQueueUndoable)
-        consumeEvent(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
-        consumeEvent(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
-        consumeEvent(TriggerActionService.ResetActionBalance::class.java, ::handleResetActionBalance)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(TriggerActionService.BatchActions::class.java, ::handleBatchActions)
+        EventBus.sign(TriggerActionService.QueueUndoable::class.java, ::handleQueueUndoable)
+        EventBus.sign(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
+        EventBus.sign(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
+        EventBus.sign(TriggerActionService.ResetActionBalance::class.java, ::handleResetActionBalance)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     override fun postInit() {
-        sendEvent(Provider.ActionServiceActionBalanceStorage(actionBalanceStorage))
+        EventBus.post(Provider.ActionServiceActionBalanceStorage(actionBalanceStorage))
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }
 
     private fun updateActionBalance(isPositive: Boolean) {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             val currentBalance = actionBalanceStorage.getOrPut(currentMap) { 0 }
             val newBalance = if (isPositive) currentBalance + 1 else currentBalance - 1
             actionBalanceStorage.put(currentMap, newBalance)
@@ -51,7 +51,7 @@ class ActionService : Service, EventHandler, PostInitialize {
 
     private fun notifyActionBalanceChanged(map: Dmm) {
         getMapActionStack(map).let { (undo, redo) ->
-            sendEvent(Reaction.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
+            EventBus.post(Reaction.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
         }
     }
 
@@ -62,7 +62,7 @@ class ActionService : Service, EventHandler, PostInitialize {
             isBatchingActions = false
 
             if (actionBatchList.isNotEmpty()) {
-                sendEvent(TriggerActionService.QueueUndoable(MultiAction(actionBatchList.toList())))
+                EventBus.post(TriggerActionService.QueueUndoable(MultiAction(actionBatchList.toList())))
                 actionBatchList.clear()
             }
         }
@@ -74,7 +74,7 @@ class ActionService : Service, EventHandler, PostInitialize {
             return
         }
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 redo.clear()
                 undo.push(event.body)
@@ -84,7 +84,7 @@ class ActionService : Service, EventHandler, PostInitialize {
     }
 
     private fun handleUndoAction() {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 if (undo.isEmpty()) {
                     return@FetchSelectedMap
@@ -92,13 +92,13 @@ class ActionService : Service, EventHandler, PostInitialize {
 
                 redo.push(undo.pop().doAction())
                 updateActionBalance(false)
-                sendEvent(TriggerFrameService.RefreshFrame())
+                EventBus.post(TriggerFrameService.RefreshFrame())
             }
         })
     }
 
     private fun handleRedoAction() {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
             getMapActionStack(currentMap).let { (undo, redo) ->
                 if (redo.isEmpty()) {
                     return@FetchSelectedMap
@@ -106,7 +106,7 @@ class ActionService : Service, EventHandler, PostInitialize {
 
                 undo.push(redo.pop().doAction())
                 updateActionBalance(true)
-                sendEvent(TriggerFrameService.RefreshFrame())
+                EventBus.post(TriggerFrameService.RefreshFrame())
             }
         })
     }
@@ -127,7 +127,7 @@ class ActionService : Service, EventHandler, PostInitialize {
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
         actionStacks.remove(event.body)
         actionBalanceStorage.remove(event.body)
-        sendEvent(Reaction.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
+        EventBus.post(Reaction.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
     }
 
     private data class ActionStack(

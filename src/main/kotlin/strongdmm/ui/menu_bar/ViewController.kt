@@ -6,7 +6,7 @@ import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
@@ -16,19 +16,19 @@ import java.io.File
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doOpenEnvironment() {
         NfdUtil.selectFile("dme")?.let { file ->
-            sendEvent(TriggerEnvironmentService.OpenEnvironment(file))
+            EventBus.post(TriggerEnvironmentService.OpenEnvironment(file))
         }
     }
 
     fun doOpenRecentEnvironment(environmentPath: String) {
-        sendEvent(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
+        EventBus.post(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
     fun doClearRecentEnvironments() {
-        sendEvent(TriggerRecentFilesService.ClearRecentEnvironments())
+        EventBus.post(TriggerRecentFilesService.ClearRecentEnvironments())
     }
 
     fun doNewMap() {
@@ -36,9 +36,9 @@ class ViewController(
             return
         }
 
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment {
             NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
-                sendEvent(TriggerMapHolderService.CreateNewMap(file))
+                EventBus.post(TriggerMapHolderService.CreateNewMap(file))
             }
         })
     }
@@ -48,55 +48,55 @@ class ViewController(
             return
         }
 
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
             NfdUtil.selectFile("dmm", environment.absRootDirPath)?.let { path ->
-                sendEvent(TriggerMapHolderService.OpenMap(path))
+                EventBus.post(TriggerMapHolderService.OpenMap(path))
             }
         })
     }
 
     fun doOpenAvailableMap() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerAvailableMapsDialogUi.Open())
+            EventBus.post(TriggerAvailableMapsDialogUi.Open())
         }
     }
 
     fun doOpenRecentMap(mapPath: String) {
-        sendEvent(TriggerMapHolderService.OpenMap(File(mapPath)))
+        EventBus.post(TriggerMapHolderService.OpenMap(File(mapPath)))
     }
 
     fun doClearRecentMaps() {
-        sendEvent(TriggerRecentFilesService.ClearRecentMaps())
+        EventBus.post(TriggerRecentFilesService.ClearRecentMaps())
     }
 
     fun doCloseMap() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderService.CloseSelectedMap())
+            EventBus.post(TriggerMapHolderService.CloseSelectedMap())
         }
     }
 
     fun doCloseAllMaps() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderService.CloseAllMaps())
+            EventBus.post(TriggerMapHolderService.CloseAllMaps())
         }
     }
 
     fun doSave() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderService.SaveSelectedMap())
+            EventBus.post(TriggerMapHolderService.SaveSelectedMap())
         }
     }
 
     fun doSaveAll() {
         if (state.isEnvironmentOpened) {
-            sendEvent(TriggerMapHolderService.SaveAllMaps())
+            EventBus.post(TriggerMapHolderService.SaveAllMaps())
         }
     }
 
     fun doSaveAs() {
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment {
             NfdUtil.saveFile("dmm", it.absRootDirPath)?.let { file ->
-                sendEvent(TriggerMapHolderService.SaveSelectedMapToFile(file))
+                EventBus.post(TriggerMapHolderService.SaveSelectedMapToFile(file))
             }
         })
     }
@@ -106,35 +106,35 @@ class ViewController(
     }
 
     fun doUndo() {
-        sendEvent(TriggerActionService.UndoAction())
+        EventBus.post(TriggerActionService.UndoAction())
     }
 
     fun doRedo() {
-        sendEvent(TriggerActionService.RedoAction())
+        EventBus.post(TriggerActionService.RedoAction())
     }
 
     fun doCut() {
-        sendEvent(TriggerClipboardService.Cut())
+        EventBus.post(TriggerClipboardService.Cut())
     }
 
     fun doCopy() {
-        sendEvent(TriggerClipboardService.Copy())
+        EventBus.post(TriggerClipboardService.Copy())
     }
 
     fun doPaste() {
-        sendEvent(TriggerClipboardService.Paste())
+        EventBus.post(TriggerClipboardService.Paste())
     }
 
     fun doDelete() {
-        sendEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
+        EventBus.post(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
     }
 
     fun doDeselectAll() {
-        sendEvent(TriggerToolsService.ResetTool())
+        EventBus.post(TriggerToolsService.ResetTool())
     }
 
     fun doSetMapSize() {
-        sendEvent(TriggerSetMapSizeDialogUi.Open())
+        EventBus.post(TriggerSetMapSizeDialogUi.Open())
     }
 
     fun doFindInstance() {
@@ -142,15 +142,15 @@ class ViewController(
     }
 
     fun doScreenshot() {
-        sendEvent(TriggerScreenshotPanelUi.Open())
+        EventBus.post(TriggerScreenshotPanelUi.Open())
     }
 
     fun doOpenPreferences() {
-        sendEvent(TriggerPreferencesPanelUi.Open())
+        EventBus.post(TriggerPreferencesPanelUi.Open())
     }
 
     fun doOpenLayersFilter() {
-        sendEvent(TriggerLayersFilterPanelUi.Open())
+        EventBus.post(TriggerLayersFilterPanelUi.Open())
     }
 
     fun doResetWindows() {
@@ -162,11 +162,11 @@ class ViewController(
     }
 
     fun doChangelog() {
-        sendEvent(TriggerChangelogPanelUi.Open())
+        EventBus.post(TriggerChangelogPanelUi.Open())
     }
 
     fun doAbout() {
-        sendEvent(TriggerAboutPanelUi.Open())
+        EventBus.post(TriggerAboutPanelUi.Open())
     }
 
     fun toggleAreaLayer() {
@@ -215,9 +215,9 @@ class ViewController(
 
     fun toggleLayer(layerStatus: ImBoolean, layerType: String) {
         if (layerStatus.get()) {
-            sendEvent(TriggerLayersFilterService.ShowLayersByTypeExact(layerType))
+            EventBus.post(TriggerLayersFilterService.ShowLayersByTypeExact(layerType))
         } else {
-            sendEvent(TriggerLayersFilterService.HideLayersByTypeExact(layerType))
+            EventBus.post(TriggerLayersFilterService.HideLayersByTypeExact(layerType))
         }
     }
 }

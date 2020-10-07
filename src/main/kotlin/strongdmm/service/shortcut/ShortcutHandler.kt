@@ -1,13 +1,11 @@
 package strongdmm.service.shortcut
 
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 
 @Suppress("LeakingThis")
-class ShortcutHandler(
-    eventHandler: EventHandler
-) {
+class ShortcutHandler {
     companion object {
         val globalShortcuts: MutableSet<Shortcut> = mutableSetOf() // used to iterate through all registered shortcuts
     }
@@ -15,8 +13,8 @@ class ShortcutHandler(
     private var isShortcutsBlocked: Boolean = false
 
     init {
-        eventHandler.consumeEvent(Reaction.ShortcutTriggered::class.java, ::handleShortcutTriggered)
-        eventHandler.consumeEvent(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
+        EventBus.sign(Reaction.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+        EventBus.sign(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
     }
 
     private val shortcuts: MutableMap<Shortcut, (() -> Unit)?> = mutableMapOf()

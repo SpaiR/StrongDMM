@@ -3,18 +3,18 @@ package strongdmm.ui.panel.progress
 import imgui.ImGui
 import imgui.ImVec2
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import java.io.File
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
-        consumeEvent(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
-        consumeEvent(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
-        consumeEvent(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
+        EventBus.sign(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        EventBus.sign(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
+        EventBus.sign(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
+        EventBus.sign(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
     }
 
     private fun handleEnvironmentLoadStarted(event: Event<File, Unit>) {

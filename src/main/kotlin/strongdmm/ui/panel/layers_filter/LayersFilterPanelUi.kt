@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.layers_filter
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class LayersFilterPanelUi : Ui, Processable {
     private val state = State()

@@ -3,7 +3,7 @@ package strongdmm.service.tool.fill
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.event.type.service.TriggerFrameService
@@ -15,7 +15,7 @@ import strongdmm.service.tool.Tool
 import kotlin.math.max
 import kotlin.math.min
 
-class FillAddTool : Tool(), EventHandler {
+class FillAddTool : Tool() {
     private var xStart: Int = 0
     private var yStart: Int = 0
 
@@ -41,7 +41,7 @@ class FillAddTool : Tool(), EventHandler {
 
         val reverseActions = mutableListOf<Undoable>()
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             for (x in x1..x2) {
                 for (y in y1..y2) {
                     val tile = selectedMap.getTile(x, y, selectedMap.zSelected)
@@ -54,11 +54,11 @@ class FillAddTool : Tool(), EventHandler {
         })
 
         if (reverseActions.isNotEmpty()) {
-            sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions)))
-            sendEvent(TriggerFrameService.RefreshFrame())
+            EventBus.post(TriggerActionService.QueueUndoable(MultiAction(reverseActions)))
+            EventBus.post(TriggerFrameService.RefreshFrame())
         }
 
-        sendEvent(TriggerCanvasService.ResetSelectedArea())
+        EventBus.post(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun onMapPosChanged(mapPos: MapPos) {
@@ -71,7 +71,7 @@ class FillAddTool : Tool(), EventHandler {
 
     override fun reset() {
         isActive = false
-        sendEvent(TriggerCanvasService.ResetSelectedArea())
+        EventBus.post(TriggerCanvasService.ResetSelectedArea())
     }
 
     override fun destroy() {
@@ -84,6 +84,6 @@ class FillAddTool : Tool(), EventHandler {
         y1 = min(yStart, y)
         x2 = max(xStart, x)
         y2 = max(yStart, y)
-        sendEvent(TriggerCanvasService.SelectArea(MapArea(x1, y1, x2, y2)))
+        EventBus.post(TriggerCanvasService.SelectArea(MapArea(x1, y1, x2, y2)))
     }
 }

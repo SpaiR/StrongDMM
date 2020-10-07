@@ -1,13 +1,12 @@
 package strongdmm.ui.panel.tool_select
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.event.EventHandler
 import strongdmm.service.shortcut.ShortcutHandler
 
 class ShortcutController(
     private val state: State
-) : EventHandler {
-    private val shortcutHandler = ShortcutHandler(this)
+) {
+    private val shortcutHandler = ShortcutHandler()
 
     lateinit var viewController: ViewController
 

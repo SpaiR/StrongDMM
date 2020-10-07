@@ -4,7 +4,7 @@ import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
@@ -15,7 +15,7 @@ import strongdmm.ui.dialog.edit_vars.model.Variable
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     companion object {
         private val hiddenVars: Set<String> = setOf(
             VAR_TYPE, VAR_PARENT_TYPE, VAR_VARS, VAR_X, VAR_Y, VAR_Z, VAR_CONTENTS, VAR_FILTERS, VAR_LOC, VAR_MAPTEXT,
@@ -30,7 +30,7 @@ class ViewController(
 
         getNewItemVars()?.let { newItemVars ->
             if (state.currentTile != null) { // in case if we have a tile to apply changes
-                sendEvent(
+                EventBus.post(
                     TriggerActionService.QueueUndoable(
                         ReplaceTileAction(state.currentTile!!) {
                             state.currentTile!!.modifyItemVars(state.currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
@@ -38,12 +38,12 @@ class ViewController(
                     )
                 )
 
-                sendEvent(TriggerFrameService.RefreshFrame())
+                EventBus.post(TriggerFrameService.RefreshFrame())
             } else if (state.currentTileItem != null) { // if there is no tile, then we will ensure that new instance is created
                 state.newTileItem = GlobalTileItemHolder.getOrCreate(state.currentTileItem!!.type, if (newItemVars.isEmpty()) null else newItemVars)
             }
 
-            sendEvent(TriggerObjectPanelUi.Update())
+            EventBus.post(TriggerObjectPanelUi.Update())
         }
 
         dispose()
@@ -58,9 +58,9 @@ class ViewController(
         variable.isPinned = !variable.isPinned
 
         if (variable.isPinned) {
-            sendEvent(TriggerPinnedVariablesService.PinVariable(variable.name))
+            EventBus.post(TriggerPinnedVariablesService.PinVariable(variable.name))
         } else {
-            sendEvent(TriggerPinnedVariablesService.UnpinVariable(variable.name))
+            EventBus.post(TriggerPinnedVariablesService.UnpinVariable(variable.name))
         }
 
         state.isDoUpdatePinnedVariables = true
@@ -98,7 +98,7 @@ class ViewController(
 
     fun open() {
         state.isFistOpen = true
-        sendEvent(Reaction.ApplicationBlockChanged(true))
+        EventBus.post(Reaction.ApplicationBlockChanged(true))
         state.windowId++
     }
 
@@ -151,7 +151,7 @@ class ViewController(
     }
 
     fun collectPinnedVariables() {
-        sendEvent(TriggerPinnedVariablesService.FetchPinnedVariables { pinnedVariables ->
+        EventBus.post(TriggerPinnedVariablesService.FetchPinnedVariables { pinnedVariables ->
             state.variables.forEach { variable ->
                 if (pinnedVariables.contains(variable.name)) {
                     variable.isPinned = true
@@ -193,7 +193,7 @@ class ViewController(
                 GlobalTileItemHolder.tmpOperation {
                     it.modifyItemVars(state.currentTileItemIndex, if (newItemVars.isEmpty()) null else newItemVars)
                 }
-                sendEvent(TriggerFrameService.RefreshFrame())
+                EventBus.post(TriggerFrameService.RefreshFrame())
             }
         }
     }
@@ -201,7 +201,7 @@ class ViewController(
     private fun discardTmpTileChanges() {
         if (state.currentTile != null && state.initialTileItemsId != null) {
             state.currentTile!!.replaceTileItemsId(state.initialTileItemsId!!)
-            sendEvent(TriggerFrameService.RefreshFrame())
+            EventBus.post(TriggerFrameService.RefreshFrame())
         }
     }
 
@@ -218,7 +218,7 @@ class ViewController(
         state.variablesByType.clear()
         state.pinnedVariables.clear()
 
-        sendEvent(Reaction.ApplicationBlockChanged(false))
+        EventBus.post(Reaction.ApplicationBlockChanged(false))
     }
 
     fun getTileItem(): TileItem? {

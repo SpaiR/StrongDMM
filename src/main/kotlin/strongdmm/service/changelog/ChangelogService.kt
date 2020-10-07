@@ -1,26 +1,26 @@
 package strongdmm.service.changelog
 
-import strongdmm.PostInitialize
-import strongdmm.Service
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerSettingsService
 import strongdmm.event.type.ui.TriggerChangelogPanelUi
 import strongdmm.service.settings.Settings
 import strongdmm.util.imgui.markdown.ImGuiMarkdown
 
-class ChangelogService : Service, EventHandler, PostInitialize {
+class ChangelogService : Service, PostInitialize {
     private val rawChangelogText: String = this::class.java.classLoader.getResourceAsStream("CHANGELOG.md")!!.use {
         it.readAllBytes().toString(Charsets.UTF_8)
     }
 
     init {
-        consumeEvent(Provider.SettingsServiceSettings::class.java, ::handleProviderSettingsServiceSettings)
+        EventBus.sign(Provider.SettingsServiceSettings::class.java, ::handleProviderSettingsServiceSettings)
     }
 
     override fun postInit() {
-        sendEvent(Provider.ChangelogServiceChangelogMarkdown(ImGuiMarkdown.parse(rawChangelogText)))
+        EventBus.post(Provider.ChangelogServiceChangelogMarkdown(ImGuiMarkdown.parse(rawChangelogText)))
     }
 
     private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {
@@ -28,9 +28,9 @@ class ChangelogService : Service, EventHandler, PostInitialize {
         val currentHash = rawChangelogText.hashCode()
 
         if (changelogServiceSettings.lastOpenChangelogHash != currentHash) {
-            sendEvent(TriggerChangelogPanelUi.Open())
+            EventBus.post(TriggerChangelogPanelUi.Open())
             changelogServiceSettings.lastOpenChangelogHash = currentHash
-            sendEvent(TriggerSettingsService.SaveSettings())
+            EventBus.post(TriggerSettingsService.SaveSettings())
         }
     }
 }

@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.about
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class AboutPanelUi : Ui, Processable {
     private val state = State()

@@ -7,29 +7,29 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.service.action.ActionStatus
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
-        consumeEvent(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        EventBus.sign(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
 
-        consumeEvent(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
-        consumeEvent(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
-        consumeEvent(Provider.CanvasServiceSynchronizeMapsView::class.java, ::handleProviderCanvasServiceSynchronizeMapsView)
-        consumeEvent(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
-        consumeEvent(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
+        EventBus.sign(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
+        EventBus.sign(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
+        EventBus.sign(Provider.CanvasServiceSynchronizeMapsView::class.java, ::handleProviderCanvasServiceSynchronizeMapsView)
+        EventBus.sign(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
+        EventBus.sign(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
     }
 
     private fun handleEnvironmentLoadStarted() {

@@ -1,6 +1,6 @@
 package strongdmm.service.map
 
-import strongdmm.Service
+import strongdmm.application.Service
 import strongdmm.byond.TYPE_AREA
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.Dme
@@ -8,14 +8,14 @@ import strongdmm.byond.dmm.parser.DmmData
 import strongdmm.byond.dmm.parser.TileContent
 import strongdmm.byond.dmm.parser.TileObject
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapPreprocessService
 import strongdmm.event.type.ui.TriggerUnknownTypesDialogUi
 
-class MapPreprocessService : Service, EventHandler {
+class MapPreprocessService : Service {
     init {
-        consumeEvent(TriggerMapPreprocessService.Preprocess::class.java, ::handlePreprocess)
+        EventBus.sign(TriggerMapPreprocessService.Preprocess::class.java, ::handlePreprocess)
     }
 
     private fun findUnknownTypes(dmmData: DmmData, dme: Dme): Set<UnknownType> {
@@ -117,11 +117,11 @@ class MapPreprocessService : Service, EventHandler {
     }
 
     private fun handlePreprocess(event: Event<DmmData, Unit>) {
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
             val unknownTypes = findUnknownTypes(event.body, dme)
 
             if (unknownTypes.isNotEmpty()) {
-                sendEvent(TriggerUnknownTypesDialogUi.Open(unknownTypes) {
+                EventBus.post(TriggerUnknownTypesDialogUi.Open(unknownTypes) {
                     processUnknownTypes(dme, event.body, unknownTypes)
                     event.reply(Unit)
                 })

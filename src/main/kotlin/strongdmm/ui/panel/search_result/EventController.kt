@@ -1,19 +1,19 @@
 package strongdmm.ui.panel.search_result
 
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.panel.search_result.model.SearchResult
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        consumeEvent(TriggerSearchResultPanelUi.Open::class.java, ::handleOpen)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(TriggerSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
 
     lateinit var viewController: ViewController

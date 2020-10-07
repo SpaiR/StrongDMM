@@ -1,6 +1,10 @@
 package strongdmm
 
 import org.slf4j.LoggerFactory
+import strongdmm.application.PostInitialize
+import strongdmm.application.Processable
+import strongdmm.application.Service
+import strongdmm.application.Ui
 import strongdmm.service.*
 import strongdmm.service.action.ActionService
 import strongdmm.service.canvas.CanvasService

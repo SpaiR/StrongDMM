@@ -5,7 +5,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.relToDir
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
@@ -14,13 +14,13 @@ import strongdmm.util.extension.getOrPut
 
 class ViewControllerDirFlow(
     private val state: State
-) : EventHandler {
+) {
     fun doDir(tile: Tile, tileItem: TileItem, tileItemIdx: Int, relativeDir: IntArray) {
         GlobalTileItemHolder.tmpOperation {
             tile.setDir(tileItem, tileItemIdx, relToDir(relativeDir[0]))
         }
 
-        sendEvent(TriggerFrameService.RefreshFrame())
+        EventBus.post(TriggerFrameService.RefreshFrame())
     }
 
     fun getDirValueToShow(tileItem: TileItem, tileItemIdx: Int): Pair<Int, IntArray> {
@@ -32,14 +32,14 @@ class ViewControllerDirFlow(
             tile.setDir(tileItem, tileItemIdx, initialValue)
         }
 
-        sendEvent(
+        EventBus.post(
             TriggerActionService.QueueUndoable(ReplaceTileAction(tile) {
                 tile.setDir(tileItem, tileItemIdx, relToDir(relativeDir[0]))
             })
         )
 
-        sendEvent(TriggerFrameService.RefreshFrame())
-        sendEvent(TriggerObjectPanelUi.Update())
+        EventBus.post(TriggerFrameService.RefreshFrame())
+        EventBus.post(TriggerObjectPanelUi.Update())
 
         state.dirArrays.clear() // to properly create a reverse action
     }

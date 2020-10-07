@@ -1,11 +1,11 @@
 package strongdmm.ui.panel.tool_select
 
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerToolsService
 import strongdmm.service.tool.ToolType
 
-class ViewController : EventHandler {
+class ViewController {
     fun doSelectTool(tool: ToolType) {
-        sendEvent(TriggerToolsService.ChangeTool(tool))
+        EventBus.post(TriggerToolsService.ChangeTool(tool))
     }
 }

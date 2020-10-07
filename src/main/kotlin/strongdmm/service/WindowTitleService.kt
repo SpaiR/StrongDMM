@@ -1,23 +1,23 @@
 package strongdmm.service
 
 import org.lwjgl.glfw.GLFW.glfwSetWindowTitle
-import strongdmm.Service
 import strongdmm.StrongDMM
+import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.window.Window
 
-class WindowTitleService : Service, EventHandler {
+class WindowTitleService : Service {
     private var environmentName: String = ""
 
     init {
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleSelectedMapChanged(event: Event<Dmm, Unit>) {

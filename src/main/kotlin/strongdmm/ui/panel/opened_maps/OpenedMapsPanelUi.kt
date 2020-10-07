@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.opened_maps
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class OpenedMapsPanelUi : Ui, Processable {
     private val state = State()

@@ -2,17 +2,17 @@ package strongdmm.ui.panel.coords
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
     }
 
     private fun handleSelectedMapChanged() {

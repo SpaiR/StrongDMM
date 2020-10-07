@@ -1,15 +1,15 @@
 package strongdmm.ui.panel.layers_filter
 
 import strongdmm.byond.dme.DmeItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerLayersFilterService
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doToggleTypeFilter(dmeItem: DmeItem, isFilteredType: Boolean) {
         toggleTypeFilter(dmeItem, isFilteredType)
-        sendEvent(TriggerLayersFilterService.FilterLayersById(state.filteredTypesId.toArray()))
+        EventBus.post(TriggerLayersFilterService.FilterLayersById(state.filteredTypesId.toArray()))
     }
 
     fun isFilteredNode(dmeItem: DmeItem): Boolean = dmeItem.type.contains(state.typesFilter.get())

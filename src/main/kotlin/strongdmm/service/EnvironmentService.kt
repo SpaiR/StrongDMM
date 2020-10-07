@@ -1,34 +1,34 @@
 package strongdmm.service
 
-import strongdmm.Service
+import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
 import java.io.File
 import kotlin.concurrent.thread
 
-class EnvironmentService : Service, EventHandler {
+class EnvironmentService : Service {
     private lateinit var environment: Dme
 
     init {
-        consumeEvent(TriggerEnvironmentService.OpenEnvironment::class.java, ::handleOpenEnvironment)
-        consumeEvent(TriggerEnvironmentService.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
+        EventBus.sign(TriggerEnvironmentService.OpenEnvironment::class.java, ::handleOpenEnvironment)
+        EventBus.sign(TriggerEnvironmentService.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
     }
 
     private fun openEnvironment(event: Event<File, Unit>) {
-        sendEvent(Reaction.EnvironmentReset())
+        EventBus.post(Reaction.EnvironmentReset())
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            sendEvent(Reaction.EnvironmentLoadStarted(event.body))
+            EventBus.post(Reaction.EnvironmentLoadStarted(event.body))
 
             environment = SdmmParser().parseDme(event.body)
 
@@ -37,8 +37,8 @@ class EnvironmentService : Service, EventHandler {
 
             System.gc()
 
-            sendEvent(Reaction.EnvironmentChanged(environment))
-            sendEvent(Reaction.EnvironmentLoadStopped(true))
+            EventBus.post(Reaction.EnvironmentChanged(environment))
+            EventBus.post(Reaction.EnvironmentLoadStopped(true))
 
             event.reply(Unit)
         }
@@ -46,7 +46,7 @@ class EnvironmentService : Service, EventHandler {
 
     private fun handleOpenEnvironment(event: Event<File, Unit>) {
         if (this::environment.isInitialized) {
-            sendEvent(TriggerMapHolderService.CloseAllMaps {
+            EventBus.post(TriggerMapHolderService.CloseAllMaps {
                 if (it) {
                     openEnvironment(event)
                 }

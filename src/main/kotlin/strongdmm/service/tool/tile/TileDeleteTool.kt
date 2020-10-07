@@ -6,14 +6,14 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.service.tool.Tool
 
-class TileDeleteTool : Tool(), EventHandler {
+class TileDeleteTool : Tool() {
     private val dirtyTiles: MutableSet<MapPos> = mutableSetOf()
     private val reverseActions: MutableList<Undoable> = mutableListOf()
 
@@ -53,7 +53,7 @@ class TileDeleteTool : Tool(), EventHandler {
         isActive = false
         dirtyTiles.clear()
         reverseActions.clear()
-        sendEvent(TriggerCanvasService.ResetSelectedTiles())
+        EventBus.post(TriggerCanvasService.ResetSelectedTiles())
     }
 
     override fun destroy() {
@@ -62,17 +62,17 @@ class TileDeleteTool : Tool(), EventHandler {
     }
 
     private fun deleteTopmostTileItem(pos: MapPos) {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
             val tile = selectedMap.getTile(pos.x, pos.y, selectedMap.zSelected)
 
-            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
+            EventBus.post(TriggerLayersFilterService.FetchFilteredLayers { filteredTypes ->
                 tile.getFilteredTileItems(filteredTypes).findLast { it.isType(tileItemTypeToDelete!!) }?.let { tileItem ->
                     reverseActions.add(ReplaceTileAction(tile) {
                         tile.deleteTileItem(tileItem)
                     })
 
-                    sendEvent(TriggerCanvasService.SelectTiles(dirtyTiles))
-                    sendEvent(TriggerFrameService.RefreshFrame())
+                    EventBus.post(TriggerCanvasService.SelectTiles(dirtyTiles))
+                    EventBus.post(TriggerFrameService.RefreshFrame())
                 }
             })
         })
@@ -83,6 +83,6 @@ class TileDeleteTool : Tool(), EventHandler {
             return
         }
 
-        sendEvent(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
+        EventBus.post(TriggerActionService.QueueUndoable(MultiAction(reverseActions.toList())))
     }
 }

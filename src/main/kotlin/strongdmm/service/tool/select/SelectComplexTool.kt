@@ -3,12 +3,12 @@ package strongdmm.service.tool.select
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.service.tool.ComplexTool
 import strongdmm.service.tool.Tool
 
-class SelectComplexTool : ComplexTool(), EventHandler {
+class SelectComplexTool : ComplexTool() {
     private val add = SelectAddAreaTool()
     private val move = SelectMoveAreaTool()
 
@@ -58,6 +58,6 @@ class SelectComplexTool : ComplexTool(), EventHandler {
         reset()
         add.currentSelectedArea = area
         onStop()
-        sendEvent(TriggerCanvasService.SelectArea(area))
+        EventBus.post(TriggerCanvasService.SelectArea(area))
     }
 }

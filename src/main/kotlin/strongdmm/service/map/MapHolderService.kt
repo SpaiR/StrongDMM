@@ -2,15 +2,15 @@ package strongdmm.service.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
 import gnu.trove.map.hash.TObjectIntHashMap
-import strongdmm.PostInitialize
-import strongdmm.Service
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerActionService
@@ -27,7 +27,7 @@ import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import java.io.File
 import java.nio.file.Files
 
-class MapHolderService : Service, EventHandler, PostInitialize {
+class MapHolderService : Service, PostInitialize {
     private lateinit var providedPreferences: Preferences
     private lateinit var providedActionBalanceStorage: TObjectIntHashMap<Dmm>
 
@@ -38,26 +38,26 @@ class MapHolderService : Service, EventHandler, PostInitialize {
     private var selectedMap: Dmm? = null
 
     init {
-        consumeEvent(TriggerMapHolderService.CreateNewMap::class.java, ::handleCreateNewMap)
-        consumeEvent(TriggerMapHolderService.OpenMap::class.java, ::handleOpenMap)
-        consumeEvent(TriggerMapHolderService.CloseMap::class.java, ::handleCloseMap)
-        consumeEvent(TriggerMapHolderService.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
-        consumeEvent(TriggerMapHolderService.CloseAllMaps::class.java, ::handleCloseAllMaps)
-        consumeEvent(TriggerMapHolderService.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
-        consumeEvent(TriggerMapHolderService.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
-        consumeEvent(TriggerMapHolderService.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
-        consumeEvent(TriggerMapHolderService.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
-        consumeEvent(TriggerMapHolderService.SaveAllMaps::class.java, ::handleSaveAllMaps)
-        consumeEvent(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesControllerPreferences)
-        consumeEvent(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
+        EventBus.sign(TriggerMapHolderService.CreateNewMap::class.java, ::handleCreateNewMap)
+        EventBus.sign(TriggerMapHolderService.OpenMap::class.java, ::handleOpenMap)
+        EventBus.sign(TriggerMapHolderService.CloseMap::class.java, ::handleCloseMap)
+        EventBus.sign(TriggerMapHolderService.CloseSelectedMap::class.java, ::handleCloseSelectedMap)
+        EventBus.sign(TriggerMapHolderService.CloseAllMaps::class.java, ::handleCloseAllMaps)
+        EventBus.sign(TriggerMapHolderService.FetchSelectedMap::class.java, ::handleFetchSelectedMap)
+        EventBus.sign(TriggerMapHolderService.ChangeSelectedMap::class.java, ::handleChangeSelectedMap)
+        EventBus.sign(TriggerMapHolderService.SaveSelectedMap::class.java, ::handleSaveSelectedMap)
+        EventBus.sign(TriggerMapHolderService.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
+        EventBus.sign(TriggerMapHolderService.SaveAllMaps::class.java, ::handleSaveAllMaps)
+        EventBus.sign(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesControllerPreferences)
+        EventBus.sign(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
     }
 
     override fun postInit() {
-        sendEvent(Provider.MapHolderServiceOpenedMaps(openedMaps))
-        sendEvent(Provider.MapHolderServiceAvailableMaps(availableMapsPaths))
+        EventBus.post(Provider.MapHolderServiceOpenedMaps(openedMaps))
+        EventBus.post(Provider.MapHolderServiceAvailableMaps(availableMapsPaths))
     }
 
     private fun createBackupFile(mapFile: File, id: Int) {
@@ -76,8 +76,8 @@ class MapHolderService : Service, EventHandler, PostInitialize {
     private fun saveMap(map: Dmm, fileToSave: File? = null) {
         val initialDmmData = DmmParser.parse(File(mapsBackupPathsById.get(map.id)))
         SaveMap(map, initialDmmData, fileToSave, providedPreferences)
-        sendEvent(TriggerActionService.ResetActionBalance(map))
-        sendEvent(TriggerNotificationPanelUi.Notify("${map.mapName} saved!"))
+        EventBus.post(TriggerActionService.ResetActionBalance(map))
+        EventBus.post(TriggerNotificationPanelUi.Notify("${map.mapName} saved!"))
     }
 
     private fun closeMap(map: Dmm) {
@@ -85,10 +85,10 @@ class MapHolderService : Service, EventHandler, PostInitialize {
 
         mapsBackupPathsById.remove(map.id)
         openedMaps.remove(map)
-        sendEvent(Reaction.OpenedMapClosed(map))
+        EventBus.post(Reaction.OpenedMapClosed(map))
 
         if (selectedMap === map) {
-            sendEvent(Reaction.SelectedMapClosed())
+            EventBus.post(Reaction.SelectedMapClosed())
 
             if (openedMaps.isEmpty()) {
                 selectedMap = null
@@ -96,7 +96,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
                 val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
                 val nextMap = openedMaps.toList()[index]
                 selectedMap = nextMap
-                sendEvent(Reaction.SelectedMapChanged(nextMap))
+                EventBus.post(Reaction.SelectedMapChanged(nextMap))
             }
         }
     }
@@ -107,7 +107,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
             val confirmQuestion = "Map \"${map.mapName}\" has been modified. Save changes?"
             val confirmData = ConfirmationDialogData(ConfirmationDialogType.YES_NO_CANCEL, confirmTitle, confirmQuestion)
 
-            sendEvent(TriggerConfirmationDialogUi.Open(confirmData) { confirmationStatus ->
+            EventBus.post(TriggerConfirmationDialogUi.Open(confirmData) { confirmationStatus ->
                 var mapClosed = true
 
                 when (confirmationStatus) {
@@ -142,9 +142,9 @@ class MapHolderService : Service, EventHandler, PostInitialize {
             newMapFile.writeBytes(it!!.readAllBytes())
         }
 
-        sendEvent(TriggerMapHolderService.OpenMap(newMapFile))
+        EventBus.post(TriggerMapHolderService.OpenMap(newMapFile))
         selectedMap?.setMapSize(0, 0, 0) // -_-
-        sendEvent(TriggerSetMapSizeDialogUi.Open())
+        EventBus.post(TriggerSetMapSizeDialogUi.Open())
     }
 
     private fun handleOpenMap(event: Event<File, Unit>) {
@@ -158,7 +158,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
 
         if (dmm != null) {
             selectedMap = dmm
-            sendEvent(Reaction.SelectedMapChanged(dmm))
+            EventBus.post(Reaction.SelectedMapChanged(dmm))
         } else {
             val mapFile = event.body
 
@@ -166,10 +166,10 @@ class MapHolderService : Service, EventHandler, PostInitialize {
                 return
             }
 
-            sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
+            EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { environment ->
                 val dmmData = DmmParser.parse(mapFile)
 
-                sendEvent(TriggerMapPreprocessService.Preprocess(dmmData) {
+                EventBus.post(TriggerMapPreprocessService.Preprocess(dmmData) {
                     val map = Dmm(mapFile, dmmData, environment)
 
                     createBackupFile(mapFile, id)
@@ -177,7 +177,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
                     openedMaps.add(map)
                     selectedMap = map
 
-                    sendEvent(Reaction.SelectedMapChanged(map))
+                    EventBus.post(Reaction.SelectedMapChanged(map))
                 })
             })
         }
@@ -216,7 +216,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
-                sendEvent(Reaction.SelectedMapChanged(it))
+                EventBus.post(Reaction.SelectedMapChanged(it))
             }
         }
     }
@@ -240,7 +240,7 @@ class MapHolderService : Service, EventHandler, PostInitialize {
             }
 
             map.zSelected = event.body
-            sendEvent(Reaction.SelectedMapZSelectedChanged(map.zSelected))
+            EventBus.post(Reaction.SelectedMapZSelectedChanged(map.zSelected))
         }
     }
 

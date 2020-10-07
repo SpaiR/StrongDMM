@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.unknown_types
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class UnknownTypesDialogUi : Ui, Processable {
     private val state = State()

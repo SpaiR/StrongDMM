@@ -3,7 +3,7 @@ package strongdmm.ui.tile_popup
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.ui.TriggerTilePopupUi
@@ -12,15 +12,15 @@ import strongdmm.service.preferences.Preferences
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(TriggerTilePopupUi.Open::class.java, ::handleOpen)
-        consumeEvent(TriggerTilePopupUi.Close::class.java, ::handleClose)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        consumeEvent(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
+        EventBus.sign(TriggerTilePopupUi.Open::class.java, ::handleOpen)
+        EventBus.sign(TriggerTilePopupUi.Close::class.java, ::handleClose)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
     }
 
     lateinit var viewController: ViewController
@@ -32,7 +32,7 @@ class EventController(
         state.isDoOpen = true
         state.isDisposed = false
 
-        sendEvent(Reaction.TilePopupOpened())
+        EventBus.post(Reaction.TilePopupOpened())
     }
 
     private fun handleClose() {

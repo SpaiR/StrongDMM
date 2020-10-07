@@ -2,7 +2,7 @@ package strongdmm.ui.panel.search_result
 
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerCanvasService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
@@ -11,7 +11,7 @@ import strongdmm.ui.panel.search_result.model.SearchPosition
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doDelete(searchPosition: SearchPosition) {
         delete(listOf(Pair(searchPosition.tileItem, searchPosition.pos)))
         state.positionsToRemove.add(searchPosition)
@@ -35,25 +35,25 @@ class ViewController(
     }
 
     fun doJump(searchPosition: SearchPosition) {
-        sendEvent(TriggerMapHolderService.ChangeSelectedZ(searchPosition.pos.z))
-        sendEvent(TriggerCanvasService.CenterCanvasByPosition(searchPosition.pos))
-        sendEvent(TriggerCanvasService.MarkPosition(searchPosition.pos))
+        EventBus.post(TriggerMapHolderService.ChangeSelectedZ(searchPosition.pos.z))
+        EventBus.post(TriggerCanvasService.CenterCanvasByPosition(searchPosition.pos))
+        EventBus.post(TriggerCanvasService.MarkPosition(searchPosition.pos))
     }
 
     fun dispose() {
-        sendEvent(TriggerCanvasService.ResetMarkedPosition())
+        EventBus.post(TriggerCanvasService.ResetMarkedPosition())
         state.isOpen.set(false)
         state.searchResult = null
     }
 
     private fun delete(deletionList: List<Pair<TileItem, MapPos>>) {
         if (state.searchResult!!.isSearchById) {
-            sendEvent(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(deletionList))
+            EventBus.post(TriggerMapModifierService.DeleteTileItemsWithIdInPositions(deletionList))
         } else {
-            sendEvent(TriggerMapModifierService.DeleteTileItemsWithTypeInPositions(deletionList))
+            EventBus.post(TriggerMapModifierService.DeleteTileItemsWithTypeInPositions(deletionList))
         }
 
-        sendEvent(TriggerCanvasService.ResetMarkedPosition())
+        EventBus.post(TriggerCanvasService.ResetMarkedPosition())
     }
 
     private fun replace(replaceList: List<Pair<TileItem, MapPos>>): Boolean {
@@ -62,17 +62,17 @@ class ViewController(
         }
 
         if (state.searchResult!!.isSearchById) {
-            sendEvent(TriggerMapModifierService.ReplaceTileItemsWithIdInPositions(Pair(state.replaceType.get(), replaceList)))
+            EventBus.post(TriggerMapModifierService.ReplaceTileItemsWithIdInPositions(Pair(state.replaceType.get(), replaceList)))
         } else {
-            sendEvent(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions(Pair(state.replaceType.get(), replaceList)))
+            EventBus.post(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions(Pair(state.replaceType.get(), replaceList)))
         }
 
-        sendEvent(TriggerCanvasService.ResetMarkedPosition())
+        EventBus.post(TriggerCanvasService.ResetMarkedPosition())
         return true
     }
 
     fun checkReplaceModeEnabled() {
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment {
             state.isReplaceEnabled = it.getItem(state.replaceType.get()) != null
         })
     }

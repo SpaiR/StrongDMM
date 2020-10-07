@@ -1,24 +1,24 @@
 package strongdmm.service
 
-import strongdmm.Service
+import strongdmm.application.Service
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.util.OUT_OF_BOUNDS
 
-class ClipboardService : Service, EventHandler {
+class ClipboardService : Service {
     private var tileItems: Array<Array<List<TileItem>>>? = null
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        consumeEvent(TriggerClipboardService.Cut::class.java, ::handleCut)
-        consumeEvent(TriggerClipboardService.Copy::class.java, ::handleCopy)
-        consumeEvent(TriggerClipboardService.Paste::class.java, ::handlePaste)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(TriggerClipboardService.Cut::class.java, ::handleCut)
+        EventBus.sign(TriggerClipboardService.Copy::class.java, ::handleCopy)
+        EventBus.sign(TriggerClipboardService.Paste::class.java, ::handlePaste)
     }
 
     private fun handleEnvironmentReset() {
@@ -30,14 +30,14 @@ class ClipboardService : Service, EventHandler {
     }
 
     private fun handleCut() {
-        sendEvent(TriggerClipboardService.Copy())
-        sendEvent(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
+        EventBus.post(TriggerClipboardService.Copy())
+        EventBus.post(TriggerMapModifierService.DeleteTileItemsInSelectedArea())
     }
 
     private fun handleCopy() {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
-            sendEvent(TriggerLayersFilterService.FetchFilteredLayers { filteredLayers ->
-                sendEvent(TriggerToolsService.FetchSelectedArea { selectedArea ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { selectedMap ->
+            EventBus.post(TriggerLayersFilterService.FetchFilteredLayers { filteredLayers ->
+                EventBus.post(TriggerToolsService.FetchSelectedArea { selectedArea ->
                     val width = selectedArea.x2 - selectedArea.x1 + 1
                     val height = selectedArea.y2 - selectedArea.y1 + 1
                     val tileItems = Array(width) { Array(height) { emptyList<TileItem>() } }
@@ -57,7 +57,7 @@ class ClipboardService : Service, EventHandler {
 
     private fun handlePaste() {
         if (!currentMapPos.isOutOfBounds() && tileItems != null) {
-            sendEvent(TriggerMapModifierService.FillSelectedMapPositionWithTileItems(tileItems!!))
+            EventBus.post(TriggerMapModifierService.FillSelectedMapPositionWithTileItems(tileItems!!))
         }
     }
 }

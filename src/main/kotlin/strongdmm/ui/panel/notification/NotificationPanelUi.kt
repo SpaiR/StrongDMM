@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.notification
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class NotificationPanelUi : Ui, Processable {
     private val state = State()

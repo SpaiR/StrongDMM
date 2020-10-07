@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.instance_locator
 
-import strongdmm.PostInitialize
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.PostInitialize
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class InstanceLocatorPanelUi : Ui, Processable, PostInitialize {
     private val state = State()

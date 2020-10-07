@@ -8,13 +8,13 @@ import imgui.flag.ImGuiMouseButton
 import imgui.flag.ImGuiMouseCursor
 import imgui.type.ImBoolean
 import org.lwjgl.glfw.GLFW
-import strongdmm.PostInitialize
-import strongdmm.Processable
-import strongdmm.Service
+import strongdmm.application.PostInitialize
+import strongdmm.application.Processable
+import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
@@ -31,7 +31,7 @@ import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.window.Window
 import java.util.*
 
-class CanvasService : Service, EventHandler, PostInitialize, Processable {
+class CanvasService : Service, PostInitialize, Processable {
     companion object {
         private const val ZOOM_FACTOR: Double = 1.5
         private const val MIN_SCALE: Int = 0
@@ -73,29 +73,29 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     private val canvasRenderer = CanvasRenderer()
 
-    private val shortcutHandler = ShortcutHandler(this)
+    private val shortcutHandler = ShortcutHandler()
 
     init {
-        consumeEvent(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        consumeEvent(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
-        consumeEvent(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        consumeEvent(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
-        consumeEvent(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
-        consumeEvent(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
-        consumeEvent(Provider.FrameServiceFramedTiles::class.java, ::handleProviderFrameServiceFramedTiles)
-        consumeEvent(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
-        consumeEvent(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
-        consumeEvent(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
-        consumeEvent(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
-        consumeEvent(TriggerCanvasService.SelectTiles::class.java, ::handleSelectTiles)
-        consumeEvent(TriggerCanvasService.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
-        consumeEvent(TriggerCanvasService.SelectArea::class.java, ::handleSelectArea)
-        consumeEvent(TriggerCanvasService.ResetSelectedArea::class.java, ::handleResetSelectedArea)
+        EventBus.sign(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
+        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
+        EventBus.sign(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
+        EventBus.sign(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
+        EventBus.sign(Provider.FrameServiceFramedTiles::class.java, ::handleProviderFrameServiceFramedTiles)
+        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
+        EventBus.sign(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
+        EventBus.sign(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
+        EventBus.sign(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
+        EventBus.sign(TriggerCanvasService.SelectTiles::class.java, ::handleSelectTiles)
+        EventBus.sign(TriggerCanvasService.ResetSelectedTiles::class.java, ::handleResetSelectedTiles)
+        EventBus.sign(TriggerCanvasService.SelectArea::class.java, ::handleSelectArea)
+        EventBus.sign(TriggerCanvasService.ResetSelectedArea::class.java, ::handleResetSelectedArea)
 
         shortcutHandler.addShortcut(Shortcut.PLUS_PAIR, action = ::zoomIn)
         shortcutHandler.addShortcut(Shortcut.MINUS_PAIR, action = ::zoomOut)
@@ -106,8 +106,8 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
     }
 
     override fun postInit() {
-        sendEvent(Provider.CanvasServiceFrameAreas(frameAreas))
-        sendEvent(Provider.CanvasServiceSynchronizeMapsView(synchronizeMapsView))
+        EventBus.post(Provider.CanvasServiceFrameAreas(frameAreas))
+        EventBus.post(Provider.CanvasServiceSynchronizeMapsView(synchronizeMapsView))
     }
 
     override fun process() {
@@ -185,16 +185,16 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
     private fun processTilePopupClick() {
         if (isTilePopupOpened && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
-            sendEvent(TriggerTilePopupUi.Close())
+            EventBus.post(TriggerTilePopupUi.Close())
         }
 
         if (!ImGui.isMouseClicked(ImGuiMouseButton.Right) || ImGui.getIO().keyShift) {
             return
         }
 
-        sendEvent(TriggerMapHolderService.FetchSelectedMap {
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap {
             if (xMapMousePos != OUT_OF_BOUNDS && yMapMousePos != OUT_OF_BOUNDS) {
-                sendEvent(TriggerTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos, it.zSelected)))
+                EventBus.post(TriggerTilePopupUi.Open(it.getTile(xMapMousePos, yMapMousePos, it.zSelected)))
             }
         })
     }
@@ -206,10 +206,10 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
 
         if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
             isMapMouseDragged = true
-            sendEvent(Reaction.MapMouseDragStarted())
+            EventBus.post(Reaction.MapMouseDragStarted())
         } else if (!ImGui.isMouseDown(ImGuiMouseButton.Left) && isMapMouseDragged) {
             isMapMouseDragged = false
-            sendEvent(Reaction.MapMouseDragStopped())
+            EventBus.post(Reaction.MapMouseDragStopped())
         }
     }
 
@@ -226,7 +226,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            sendEvent(Reaction.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
+            EventBus.post(Reaction.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
         }
     }
 
@@ -256,14 +256,14 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         if (canvasRenderer.tileItemIdMouseOver != 0L) {
             if (ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
                 if (ImGui.getIO().keyCtrl) { // Delete tile item
-                    sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+                    EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
                         deleteTileItemUnderMouse(currentMap)
                     })
                 } else { // Select tile item
-                    sendEvent(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
+                    EventBus.post(TriggerTileItemService.ChangeSelectedTileItem(GlobalTileItemHolder.getById(canvasRenderer.tileItemIdMouseOver)))
                 }
             } else if (ImGui.isMouseClicked(ImGuiMouseButton.Right)) {
-                sendEvent(TriggerMapHolderService.FetchSelectedMap { currentMap ->
+                EventBus.post(TriggerMapHolderService.FetchSelectedMap { currentMap ->
                     if (ImGui.getIO().keyCtrl) { // Replace tile item
                         replaceTileItemUnderMouseWithSelected(currentMap)
                     } else { // Open for edit
@@ -288,7 +288,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val y = canvasRenderer.yForTileItemMouseOver
         val tile = map.getTile(x, y, map.zSelected)
 
-        sendEvent(
+        EventBus.post(
             TriggerActionService.QueueUndoable(
                 ReplaceTileAction(tile) {
                     tile.replaceTileItem(tileItem, selectedTileItem!!)
@@ -296,7 +296,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
             )
         )
 
-        sendEvent(TriggerFrameService.RefreshFrame())
+        EventBus.post(TriggerFrameService.RefreshFrame())
     }
 
     private fun deleteTileItemUnderMouse(map: Dmm) {
@@ -305,7 +305,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val y = canvasRenderer.yForTileItemMouseOver
         val tile = map.getTile(x, y, map.zSelected)
 
-        sendEvent(
+        EventBus.post(
             TriggerActionService.QueueUndoable(
                 ReplaceTileAction(tile) {
                     tile.deleteTileItem(tileItem)
@@ -313,7 +313,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
             )
         )
 
-        sendEvent(TriggerFrameService.RefreshFrame())
+        EventBus.post(TriggerFrameService.RefreshFrame())
     }
 
     private fun openTileItemUnderMouseForEdit(map: Dmm) {
@@ -323,7 +323,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
         val tile = map.getTile(x, y, map.zSelected)
         val tileItemIdx = tile.getTileItemIdx(tileItem)
 
-        sendEvent(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
+        EventBus.post(TriggerEditVarsDialogUi.OpenWithTile(Pair(tile, tileItemIdx)))
     }
 
     private fun translateCanvas(xShift: Float, yShift: Float) {
@@ -337,7 +337,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
             redraw = true
         }
 
-        sendEvent(TriggerTilePopupUi.Close())
+        EventBus.post(TriggerTilePopupUi.Close())
     }
 
     private fun getManualTranslateValue(modifier: Float = 1f): Float {
@@ -397,7 +397,7 @@ class CanvasService : Service, EventHandler, PostInitialize, Processable {
             redraw = true
         }
 
-        sendEvent(TriggerTilePopupUi.Close())
+        EventBus.post(TriggerTilePopupUi.Close())
     }
 
     private fun zoomIn() {

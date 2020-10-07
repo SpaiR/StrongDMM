@@ -1,7 +1,7 @@
 package strongdmm.service.frame
 
-import strongdmm.PostInitialize
-import strongdmm.Service
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmi.GlobalDmiHolder
@@ -9,7 +9,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerFrameService
@@ -17,7 +17,7 @@ import strongdmm.event.type.service.TriggerLayersFilterService
 import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.util.DEFAULT_ICON_SIZE
 
-class FrameService : Service, EventHandler, PostInitialize {
+class FrameService : Service, PostInitialize {
     companion object {
         private const val PLANE_DEPTH: Short = 10000
         private const val LAYER_DEPTH: Short = 1000
@@ -31,26 +31,26 @@ class FrameService : Service, EventHandler, PostInitialize {
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
-        consumeEvent(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
-        consumeEvent(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        consumeEvent(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        consumeEvent(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
-        consumeEvent(TriggerFrameService.RefreshFrame::class.java, ::handleRefreshFrame)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
+        EventBus.sign(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
+        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(TriggerFrameService.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
     override fun postInit() {
-        sendEvent(Provider.FrameServiceComposedFrame(cache))
-        sendEvent(Provider.FrameServiceFramedTiles(framedTiles))
+        EventBus.post(Provider.FrameServiceComposedFrame(cache))
+        EventBus.post(Provider.FrameServiceFramedTiles(framedTiles))
     }
 
     private fun updateFrameCache() {
-        sendEvent(TriggerMapHolderService.FetchSelectedMap { map ->
+        EventBus.post(TriggerMapHolderService.FetchSelectedMap { map ->
             var filteredTypes: Set<String>? = null
 
-            sendEvent(TriggerLayersFilterService.FetchFilteredLayers {
+            EventBus.post(TriggerLayersFilterService.FetchFilteredLayers {
                 filteredTypes = it
             })
 
@@ -119,7 +119,7 @@ class FrameService : Service, EventHandler, PostInitialize {
         cache.clear()
         framedTiles.clear()
         updateFrameCache()
-        sendEvent(Reaction.FrameRefreshed())
+        EventBus.post(Reaction.FrameRefreshed())
     }
 
     private fun handleSelectedMapChanged() {

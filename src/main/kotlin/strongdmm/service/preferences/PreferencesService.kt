@@ -2,16 +2,16 @@ package strongdmm.service.preferences
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import strongdmm.PostInitialize
-import strongdmm.Service
 import strongdmm.StrongDMM
-import strongdmm.event.EventHandler
+import strongdmm.application.PostInitialize
+import strongdmm.application.Service
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.service.TriggerPreferencesService
 import strongdmm.service.preferences.prefs.Preference
 import java.io.File
 
-class PreferencesService : Service, EventHandler, PostInitialize {
+class PreferencesService : Service, PostInitialize {
     companion object {
         private val preferencesConfig: File = File(StrongDMM.homeDir.toFile(), "preferences.json")
     }
@@ -20,7 +20,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
     private val objectMapper: ObjectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     init {
-        consumeEvent(TriggerPreferencesService.SavePreferences::class.java, ::handleSavePreferences)
+        EventBus.sign(TriggerPreferencesService.SavePreferences::class.java, ::handleSavePreferences)
     }
 
     override fun postInit() {
@@ -28,7 +28,7 @@ class PreferencesService : Service, EventHandler, PostInitialize {
         readPreferencesConfig()
         applyModifiedPreferences()
 
-        sendEvent(Provider.PreferencesServicePreferences(preferences))
+        EventBus.post(Provider.PreferencesServicePreferences(preferences))
     }
 
     private fun ensurePreferencesConfigExists() {

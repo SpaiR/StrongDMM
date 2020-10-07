@@ -1,12 +1,12 @@
 package strongdmm.service.shortcut
 
 import imgui.ImGui
-import strongdmm.Processable
-import strongdmm.Service
-import strongdmm.event.EventHandler
+import strongdmm.application.Processable
+import strongdmm.application.Service
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 
-class ShortcutService : Service, EventHandler, Processable {
+class ShortcutService : Service, Processable {
     override fun process() {
         var shortcutToTrigger: Shortcut? = null
 
@@ -35,7 +35,7 @@ class ShortcutService : Service, EventHandler, Processable {
 
         shortcutToTrigger?.let {
             if (!ImGui.isAnyItemActive()) {
-                sendEvent(Reaction.ShortcutTriggered(it))
+                EventBus.post(Reaction.ShortcutTriggered(it))
             }
         }
     }

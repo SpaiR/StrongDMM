@@ -3,7 +3,7 @@ package strongdmm.ui.panel.notification
 import imgui.ImGui
 import imgui.ImVec2
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.ui.TriggerNotificationPanelUi
 import java.time.Duration
 import java.util.*
@@ -11,14 +11,14 @@ import kotlin.concurrent.schedule
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     companion object {
         private const val TEXT_WRAP: String = "    "
         private const val NOTIFY_SECONDS: Long = 2
     }
 
     init {
-        consumeEvent(TriggerNotificationPanelUi.Notify::class.java, ::handleNotify)
+        EventBus.sign(TriggerNotificationPanelUi.Notify::class.java, ::handleNotify)
     }
 
     private fun handleNotify(event: Event<String, Unit>) {

@@ -1,14 +1,14 @@
 package strongdmm.ui.dialog.unknown_types
 
 import imgui.ImGui
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.service.map.UnknownType
 import strongdmm.window.Window
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doSetNewType(unknownType: UnknownType) {
         unknownType.type = state.inputStr.get()
     }
@@ -45,7 +45,7 @@ class ViewController(
     }
 
     fun blockApplication() {
-        sendEvent(Reaction.ApplicationBlockChanged(true))
+        EventBus.post(Reaction.ApplicationBlockChanged(true))
     }
 
     fun checkVariableToRemove() {
@@ -71,7 +71,7 @@ class ViewController(
 
     private fun dispose() {
         ImGui.closeCurrentPopup()
-        sendEvent(Reaction.ApplicationBlockChanged(false))
+        EventBus.post(Reaction.ApplicationBlockChanged(false))
         state.unknownTypes = emptySet()
         state.eventToReply = null
     }

@@ -1,4 +1,4 @@
-package strongdmm
+package strongdmm.application
 
 interface PostInitialize {
     fun postInit()

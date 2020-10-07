@@ -3,7 +3,7 @@ package strongdmm.ui.panel.instance_locator
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerInstanceService
 import strongdmm.event.type.service.TriggerToolsService
 import strongdmm.event.type.ui.TriggerSearchResultPanelUi
@@ -11,7 +11,7 @@ import strongdmm.ui.panel.search_result.model.SearchResult
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doSearch() {
         val type = state.searchType.get().trim()
 
@@ -24,19 +24,19 @@ class ViewController(
 
         val openSearchResult = { it: List<Pair<TileItem, MapPos>> ->
             if (it.isNotEmpty()) {
-                sendEvent(TriggerSearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
+                EventBus.post(TriggerSearchResultPanelUi.Open(SearchResult(type, tileItemId != null, it)))
             }
         }
 
         if (tileItemId != null) {
-            sendEvent(TriggerInstanceService.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
+            EventBus.post(TriggerInstanceService.FindInstancePositionsById(Pair(searchRect, tileItemId), openSearchResult))
         } else {
-            sendEvent(TriggerInstanceService.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
+            EventBus.post(TriggerInstanceService.FindInstancePositionsByType(Pair(searchRect, type), openSearchResult))
         }
     }
 
     fun doSelection() {
-        sendEvent(TriggerToolsService.FetchSelectedArea { selectedArea ->
+        EventBus.post(TriggerToolsService.FetchSelectedArea { selectedArea ->
             state.searchX1.set(selectedArea.x1)
             state.searchY1.set(selectedArea.y1)
             state.searchX2.set(selectedArea.x2)

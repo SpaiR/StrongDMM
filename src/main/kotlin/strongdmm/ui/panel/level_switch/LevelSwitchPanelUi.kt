@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.level_switch
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class LevelSwitchPanelUi : Ui, Processable {
     private val state = State()

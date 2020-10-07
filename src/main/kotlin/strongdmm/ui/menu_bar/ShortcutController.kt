@@ -1,14 +1,13 @@
 package strongdmm.ui.menu_bar
 
 import org.lwjgl.glfw.GLFW
-import strongdmm.event.EventHandler
 import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
 
 class ShortcutController(
     viewController: ViewController
-) : EventHandler {
-    private val shortcutHandler = ShortcutHandler(this)
+) {
+    private val shortcutHandler = ShortcutHandler()
 
     init {
         shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_N, action = viewController::doNewMap)

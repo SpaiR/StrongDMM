@@ -1,9 +1,9 @@
 package strongdmm.service.screenshot
 
-import strongdmm.Service
+import strongdmm.application.Service
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.TriggerEnvironmentService
@@ -17,12 +17,12 @@ import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 import kotlin.concurrent.thread
 
-class ScreenshotService : Service, EventHandler {
+class ScreenshotService : Service {
     private val screenshotRenderer = ScreenshotRenderer()
 
     init {
-        consumeEvent(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
-        consumeEvent(TriggerScreenshotService.TakeScreenshot::class.java, ::handleTakeScreenshot)
+        EventBus.sign(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
+        EventBus.sign(TriggerScreenshotService.TakeScreenshot::class.java, ::handleTakeScreenshot)
     }
 
     private fun saveImageBytesToPng(imageBytes: ByteBuffer, width: Int, height: Int, pngFile: File) {
@@ -45,7 +45,7 @@ class ScreenshotService : Service, EventHandler {
             ImageIO.write(image, "png", pngFile)
             System.gc()
 
-            sendEvent(Reaction.ScreenshotTakeStopped())
+            EventBus.post(Reaction.ScreenshotTakeStopped())
         }
     }
 
@@ -58,11 +58,11 @@ class ScreenshotService : Service, EventHandler {
             return
         }
 
-        sendEvent(Reaction.ScreenshotTakeStarted())
+        EventBus.post(Reaction.ScreenshotTakeStarted())
 
         var iconSize = DEFAULT_ICON_SIZE
 
-        sendEvent(TriggerEnvironmentService.FetchOpenedEnvironment {
+        EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment {
             iconSize = it.getWorldIconSize()
         })
 

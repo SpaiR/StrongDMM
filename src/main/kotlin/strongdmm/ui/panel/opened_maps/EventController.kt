@@ -3,18 +3,18 @@ package strongdmm.ui.panel.opened_maps
 import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 
 class EventController(
     private val state: State
-) : EventHandler {
+) {
     init {
-        consumeEvent(Provider.MapHolderServiceOpenedMaps::class.java, ::handleProviderMapHolderServiceOpenedMaps)
-        consumeEvent(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
-        consumeEvent(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        consumeEvent(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(Provider.MapHolderServiceOpenedMaps::class.java, ::handleProviderMapHolderServiceOpenedMaps)
+        EventBus.sign(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
+        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
     }
 
     private fun handleProviderMapHolderServiceOpenedMaps(event: Event<Set<Dmm>, Unit>) {

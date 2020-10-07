@@ -4,7 +4,7 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
-import strongdmm.event.EventHandler
+import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerInstanceService
 import strongdmm.event.type.service.TriggerTileItemService
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
@@ -12,38 +12,38 @@ import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
 
 class ViewController(
     private val state: State
-) : EventHandler {
+) {
     fun doSelectItem(tileItem: TileItem) {
-        sendEvent(TriggerTileItemService.ChangeSelectedTileItem(tileItem))
+        EventBus.post(TriggerTileItemService.ChangeSelectedTileItem(tileItem))
         state.scrolledToItem = true // do not scroll panel in the next cycle
     }
 
     fun doFindInstanceOnMap(tileItem: TileItem) {
-        sendEvent(TriggerInstanceLocatorPanelUi.SearchById(tileItem.id))
+        EventBus.post(TriggerInstanceLocatorPanelUi.SearchById(tileItem.id))
     }
 
     fun doFindObjectOnMap(tileItem: TileItem) {
-        sendEvent(TriggerInstanceLocatorPanelUi.SearchByType(tileItem.type))
+        EventBus.post(TriggerInstanceLocatorPanelUi.SearchByType(tileItem.type))
     }
 
     fun doNewInstance(tileItem: TileItem) {
-        sendEvent(TriggerEditVarsDialogUi.OpenWithTileItem(tileItem))
+        EventBus.post(TriggerEditVarsDialogUi.OpenWithTileItem(tileItem))
     }
 
     fun doEditInstance(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.EditInstance(tileItem))
+        EventBus.post(TriggerInstanceService.EditInstance(tileItem))
     }
 
     fun doDeleteInstance(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.DeleteInstance(tileItem))
+        EventBus.post(TriggerInstanceService.DeleteInstance(tileItem))
     }
 
     fun doGenerateInstancesFromIconStates(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.GenerateInstancesFromIconStates(tileItem))
+        EventBus.post(TriggerInstanceService.GenerateInstancesFromIconStates(tileItem))
     }
 
     fun doGenerateInstancesFromDirections(tileItem: TileItem) {
-        sendEvent(TriggerInstanceService.GenerateInstancesFromDirections(tileItem))
+        EventBus.post(TriggerInstanceService.GenerateInstancesFromDirections(tileItem))
     }
 
     fun updateTileItems() {

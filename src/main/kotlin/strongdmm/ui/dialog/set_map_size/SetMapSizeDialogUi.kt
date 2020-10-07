@@ -1,7 +1,7 @@
 package strongdmm.ui.dialog.set_map_size
 
-import strongdmm.Processable
-import strongdmm.Ui
+import strongdmm.application.Processable
+import strongdmm.application.Ui
 
 class SetMapSizeDialogUi : Ui, Processable {
     private val state = State()
