@@ -143,13 +143,13 @@ class View(
 
     private fun showControlButtons() {
         if (state.hasUnknownTypes) {
-            ImGuiUtil.pushDisabledButtonStyle()
+            ImGuiUtil.pushDisabledItem()
         }
 
         button("Continue", block = viewController::doContinue)
 
         if (state.hasUnknownTypes) {
-            ImGuiUtil.popDisabledButtonStyle()
+            ImGuiUtil.popDisabledItem()
         }
 
         sameLine()

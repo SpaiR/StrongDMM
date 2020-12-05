@@ -41,13 +41,13 @@ class View(
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 
             if (isScreenshotDisabled) {
-                ImGuiUtil.pushDisabledButtonStyle()
+                ImGuiUtil.pushDisabledItem()
             }
 
             button("Create", block = viewController::doCreate)
 
             if (isScreenshotDisabled) {
-                ImGuiUtil.popDisabledButtonStyle()
+                ImGuiUtil.popDisabledItem()
             }
         }
     }

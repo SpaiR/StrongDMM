@@ -63,7 +63,18 @@ class View(
                 }
             }
 
+            val isMapNotSelected = state.selectedMapPath == null
+
+            if (isMapNotSelected) {
+                ImGuiUtil.pushDisabledItem()
+            }
+
             button("Open", block = viewController::doOpenSelectedMapAndDispose)
+
+            if (isMapNotSelected) {
+                ImGuiUtil.popDisabledItem()
+            }
+
             sameLine()
             button("Cancel", block = viewController::dispose)
 
