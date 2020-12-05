@@ -3,20 +3,20 @@ Features:
  * Multiple instances of the editor are now can be opened.
 
 Fixes:
- * Hex colours with transparency caused crashes.
- * Possible fix for endless environment loading for some users.
+ * Hex colours with the transparency caused crashes.
+ * A possible fix for endless environment loading for some users.
 
 # v1.8.0 (2020-09-13)
 Features:
  * Added an option to globally edit/delete instances in the "Object Panel".
 
 Fixes:
- * Incorrect nudge/dir value in the tile popup after another one was opened.
+ * An incorrect nudge/dir value in the tile popup after another one was opened.
  * Objects with '/area' later in their path was being displayed in the area layer.
 
 # v1.7.1 (2020-07-13)
 Fixes:
- * Context menu no longer closes when clicking somewhere outside of it.
+ * Context menu no longer closes when clicking somewhere outside it.
 
 # v1.7.0 (2020-07-12)
 Features:
@@ -27,7 +27,7 @@ Features:
  * Added "Crimson Moon" color schema.
 
 Fixes:
- * Subtypes without a different name from it's parent had the wrong name.
+ * Subtypes without a different name from its parent had the wrong name.
 
 Tweaks:
  * Added a changing of the mouse cursor while holding the Space key to show the panning mode is changed.

@@ -18,20 +18,20 @@ It was built with idea to create a more flexible, fast and extensible tool, than
 ## Features
 
 The editor provides a bunch of new features:
- * TGM support with built in map merger (no need to use external scripts and pre-commit hooks)
- * Almost instant environment open
- * Custom layers filter
- * Built-in screenshot tool
- * Smooth zoom-in/zoom-out
- * Robust "Search&Replace"
- * Improved shortcuts
- * Robust variables editor and variables preview
- * Optional variables sanitizing
+ * TGM support with built in map merger (no need to use external scripts and pre-commit hooks);
+ * Almost instant environment open;
+ * Custom layers filter;
+ * Built-in screenshot tool;
+ * Smooth zoom-in/zoom-out;
+ * Robust "Search&Replace";
+ * Improved shortcuts;
+ * Robust variables editor and variables preview;
+ * Optional variables sanitizing;
 
 ...and a lot more...
 
 <p align="center">
-  <img width="450"src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-example.png">
+  <img width="450" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-example.png">
 </p>
 
 ## How to Use
