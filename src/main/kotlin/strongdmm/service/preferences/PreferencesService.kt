@@ -33,7 +33,7 @@ class PreferencesService : Service, PostInitialize {
 
     private fun ensurePreferencesConfigExists() {
         if (preferencesConfig.createNewFile()) {
-            writePreferencesConfig(preferences)
+            writePreferencesConfig(Preferences())
         }
     }
 
