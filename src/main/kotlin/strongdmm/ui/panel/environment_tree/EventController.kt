@@ -5,18 +5,19 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.ProviderRecentFilesService
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionTileItemService
 
 class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
-        EventBus.sign(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         EventBus.sign(ProviderRecentFilesService.RecentEnvironmentsWithMaps::class.java, ::handleProviderRecentEnvironmentsWithMaps)
     }
 

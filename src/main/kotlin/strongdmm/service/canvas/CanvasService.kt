@@ -28,6 +28,7 @@ import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.application.window.Window
+import strongdmm.event.type.ui.ReactionTilePopupUi
 import java.util.*
 
 class CanvasService : Service, PostInitialize, Processable {
@@ -76,15 +77,15 @@ class CanvasService : Service, PostInitialize, Processable {
 
     init {
         EventBus.sign(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
-        EventBus.sign(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
-        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        EventBus.sign(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
-        EventBus.sign(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapSizeChanged::class.java, ::handleSelectedMapSizeChanged)
+        EventBus.sign(ReactionMapHolderService.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionCanvasService.FrameRefreshed::class.java, ::handleFrameRefreshed)
+        EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(ReactionTilePopupUi.TilePopupOpened::class.java, ::handleTilePopupOpened)
+        EventBus.sign(ReactionTilePopupUi.TilePopupClosed::class.java, ::handleTilePopupClosed)
         EventBus.sign(ProviderFrameService.ComposedFrame::class.java, ::handleProviderComposedFrame)
         EventBus.sign(ProviderFrameService.FramedTiles::class.java, ::handleProviderFramedTiles)
         EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
@@ -205,10 +206,10 @@ class CanvasService : Service, PostInitialize, Processable {
 
         if (ImGui.isMouseDown(ImGuiMouseButton.Left) && !isMapMouseDragged) {
             isMapMouseDragged = true
-            EventBus.post(Reaction.MapMouseDragStarted())
+            EventBus.post(ReactionCanvasService.MapMouseDragStarted.SIGNAL)
         } else if (!ImGui.isMouseDown(ImGuiMouseButton.Left) && isMapMouseDragged) {
             isMapMouseDragged = false
-            EventBus.post(Reaction.MapMouseDragStopped())
+            EventBus.post(ReactionCanvasService.MapMouseDragStopped.SIGNAL)
         }
     }
 
@@ -225,7 +226,7 @@ class CanvasService : Service, PostInitialize, Processable {
         if (xMapMousePos != xMapMousePosNew || yMapMousePos != yMapMousePosNew) {
             xMapMousePos = xMapMousePosNew
             yMapMousePos = yMapMousePosNew
-            EventBus.post(Reaction.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
+            EventBus.post(ReactionCanvasService.MapMousePosChanged(MapPos(xMapMousePos, yMapMousePos)))
         }
     }
 
@@ -442,7 +443,7 @@ class CanvasService : Service, PostInitialize, Processable {
         isHasMap = true
     }
 
-    private fun handleSelectedMapMapSizeChanged(event: Event<MapSize, Unit>) {
+    private fun handleSelectedMapSizeChanged(event: Event<MapSize, Unit>) {
         maxX = event.body.maxX
         maxY = event.body.maxY
     }

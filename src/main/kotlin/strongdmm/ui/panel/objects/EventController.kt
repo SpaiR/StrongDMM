@@ -3,16 +3,18 @@ package strongdmm.ui.panel.objects
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionCanvasService
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionTileItemService
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 
 class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        EventBus.sign(Reaction.FrameRefreshed::class.java, ::handleFrameRefreshed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(ReactionCanvasService.FrameRefreshed::class.java, ::handleFrameRefreshed)
         EventBus.sign(TriggerObjectPanelUi.Update::class.java, ::handleUpdate)
     }
 

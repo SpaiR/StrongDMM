@@ -7,7 +7,7 @@ import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerMapHolderService
 import java.io.File
@@ -22,13 +22,13 @@ class EnvironmentService : Service {
     }
 
     private fun openEnvironment(event: Event<File, Unit>) {
-        EventBus.post(Reaction.EnvironmentReset())
+        EventBus.post(ReactionEnvironmentService.EnvironmentReset.SIGNAL)
 
         GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
-            EventBus.post(Reaction.EnvironmentLoadStarted(event.body))
+            EventBus.post(ReactionEnvironmentService.EnvironmentLoadStarted(event.body))
 
             environment = SdmmParser().parseDme(event.body)
 
@@ -37,8 +37,8 @@ class EnvironmentService : Service {
 
             System.gc()
 
-            EventBus.post(Reaction.EnvironmentChanged(environment))
-            EventBus.post(Reaction.EnvironmentLoadStopped(true))
+            EventBus.post(ReactionEnvironmentService.EnvironmentChanged(environment))
+            EventBus.post(ReactionEnvironmentService.EnvironmentLoadStopped(true))
 
             event.reply(Unit)
         }

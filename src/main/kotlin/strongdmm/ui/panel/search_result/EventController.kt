@@ -2,7 +2,8 @@ package strongdmm.ui.panel.search_result
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionMapHolderService
 import strongdmm.event.type.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.panel.search_result.model.SearchResult
 
@@ -10,9 +11,9 @@ class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
         EventBus.sign(TriggerSearchResultPanelUi.Open::class.java, ::handleOpen)
     }
 

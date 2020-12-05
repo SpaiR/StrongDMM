@@ -10,10 +10,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ProviderRecentFilesService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerRecentFilesService
+import strongdmm.event.type.service.*
 import java.io.File
 
 class RecentFilesService : Service, PostInitialize {
@@ -29,9 +26,9 @@ class RecentFilesService : Service, PostInitialize {
     private val recentMaps: MutableList<MapPath> = mutableListOf()
 
     init {
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         EventBus.sign(TriggerRecentFilesService.ClearRecentEnvironments::class.java, ::handleClearRecentEnvironments)
         EventBus.sign(TriggerRecentFilesService.ClearRecentMaps::class.java, ::handleClearRecentMaps)
     }

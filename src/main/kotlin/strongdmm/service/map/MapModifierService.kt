@@ -4,7 +4,6 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
@@ -15,7 +14,7 @@ class MapModifierService : Service {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
-        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(ReactionCanvasService.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         EventBus.sign(TriggerMapModifierService.DeleteTileItemsInSelectedArea::class.java, ::handleDeleteTileItemsInSelectedArea)
         EventBus.sign(TriggerMapModifierService.FillSelectedMapPositionWithTileItems::class.java, ::handleFillSelectedMapPositionWithTileItems)
         EventBus.sign(TriggerMapModifierService.ReplaceTileItemsWithTypeInPositions::class.java, ::handleReplaceTileItemsWithTypeInPositions)
@@ -193,7 +192,7 @@ class MapModifierService : Service {
     private fun handleChangeMapSize(event: Event<MapSize, Unit>) {
         EventBus.post(TriggerMapHolderService.FetchSelectedMap { dmm ->
             dmm.setMapSize(event.body.maxZ, event.body.maxY, event.body.maxX)
-            EventBus.post(Reaction.SelectedMapMapSizeChanged(event.body))
+            EventBus.post(ReactionMapHolderService.SelectedMapSizeChanged(event.body))
         })
     }
 }

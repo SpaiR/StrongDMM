@@ -6,11 +6,7 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ProviderActionService
-import strongdmm.event.type.service.TriggerActionService
-import strongdmm.event.type.service.TriggerFrameService
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
@@ -29,9 +25,9 @@ class ActionService : Service, PostInitialize {
         EventBus.sign(TriggerActionService.UndoAction::class.java, ::handleUndoAction)
         EventBus.sign(TriggerActionService.RedoAction::class.java, ::handleRedoAction)
         EventBus.sign(TriggerActionService.ResetActionBalance::class.java, ::handleResetActionBalance)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
     }
 
     override fun postInit() {
@@ -51,7 +47,7 @@ class ActionService : Service, PostInitialize {
 
     private fun notifyActionBalanceChanged(map: Dmm) {
         getMapActionStack(map).let { (undo, redo) ->
-            EventBus.post(Reaction.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
+            EventBus.post(ReactionActionService.ActionStatusChanged(ActionStatus(undo.isNotEmpty(), redo.isNotEmpty())))
         }
     }
 
@@ -127,7 +123,7 @@ class ActionService : Service, PostInitialize {
     private fun handleOpenedMapClosed(event: Event<Dmm, Unit>) {
         actionStacks.remove(event.body)
         actionBalanceStorage.remove(event.body)
-        EventBus.post(Reaction.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
+        EventBus.post(ReactionActionService.ActionStatusChanged(ActionStatus(hasUndoAction = false, hasRedoAction = false)))
     }
 
     private data class ActionStack(

@@ -10,11 +10,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ProviderFrameService
-import strongdmm.event.type.service.TriggerFrameService
-import strongdmm.event.type.service.TriggerLayersFilterService
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.type.service.*
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameService : Service, PostInitialize {
@@ -31,13 +27,13 @@ class FrameService : Service, PostInitialize {
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
-        EventBus.sign(Reaction.SelectedMapMapSizeChanged::class.java, ::handleSelectedMapMapSizeChanged)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapSizeChanged::class.java, ::handleSelectedMapSizeChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionLayersFilterService.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
         EventBus.sign(TriggerFrameService.RefreshFrame::class.java, ::handleRefreshFrame)
     }
 
@@ -119,7 +115,7 @@ class FrameService : Service, PostInitialize {
         composedFrame.clear()
         framedTiles.clear()
         updateFrameCache()
-        EventBus.post(Reaction.FrameRefreshed())
+        EventBus.post(ReactionCanvasService.FrameRefreshed.SIGNAL)
     }
 
     private fun handleSelectedMapChanged() {
@@ -130,7 +126,7 @@ class FrameService : Service, PostInitialize {
         refreshFrame()
     }
 
-    private fun handleSelectedMapMapSizeChanged() {
+    private fun handleSelectedMapSizeChanged() {
         refreshFrame()
     }
 

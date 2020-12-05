@@ -4,8 +4,8 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.ProviderFrameService
+import strongdmm.event.type.service.ReactionScreenshotService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerScreenshotService
 import strongdmm.service.frame.FrameMesh
@@ -45,7 +45,7 @@ class ScreenshotService : Service {
             ImageIO.write(image, "png", pngFile)
             System.gc()
 
-            EventBus.post(Reaction.ScreenshotTakeStopped())
+            EventBus.post(ReactionScreenshotService.ScreenshotTakeStopped.SIGNAL)
         }
     }
 
@@ -58,7 +58,7 @@ class ScreenshotService : Service {
             return
         }
 
-        EventBus.post(Reaction.ScreenshotTakeStarted())
+        EventBus.post(ReactionScreenshotService.ScreenshotTakeStarted.SIGNAL)
 
         var iconSize = DEFAULT_ICON_SIZE
 

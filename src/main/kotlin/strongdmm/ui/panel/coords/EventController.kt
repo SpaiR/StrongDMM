@@ -3,16 +3,18 @@ package strongdmm.ui.panel.coords
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionCanvasService
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionMapHolderService
 
 class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionCanvasService.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
     }
 
     private fun handleSelectedMapChanged() {

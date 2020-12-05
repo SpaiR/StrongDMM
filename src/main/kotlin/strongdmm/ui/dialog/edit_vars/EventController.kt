@@ -4,16 +4,17 @@ import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionMapHolderService
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 
 class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         EventBus.sign(TriggerEditVarsDialogUi.OpenWithTile::class.java, ::handleOpenWithTile)
         EventBus.sign(TriggerEditVarsDialogUi.OpenWithTileItem::class.java, ::handleOpenWithTileItem)
     }

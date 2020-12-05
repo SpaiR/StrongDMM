@@ -5,7 +5,6 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.util.OUT_OF_BOUNDS
 
@@ -14,8 +13,8 @@ class ClipboardService : Service {
     private var currentMapPos: MapPos = MapPos(OUT_OF_BOUNDS, OUT_OF_BOUNDS)
 
     init {
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionCanvasService.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
         EventBus.sign(TriggerClipboardService.Cut::class.java, ::handleCut)
         EventBus.sign(TriggerClipboardService.Copy::class.java, ::handleCopy)
         EventBus.sign(TriggerClipboardService.Paste::class.java, ::handlePaste)

@@ -3,7 +3,7 @@ package strongdmm.ui.dialog.unknown_types
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
 import strongdmm.event.type.ui.TriggerUnknownTypesDialogUi
 import strongdmm.service.map.UnknownType
 
@@ -12,7 +12,7 @@ class EventController(
 ) {
     init {
         EventBus.sign(TriggerUnknownTypesDialogUi.Open::class.java, ::handleOpen)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
     }
 
     private fun handleOpen(event: Event<Set<UnknownType>, Unit>) {

@@ -10,7 +10,6 @@ import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
 import strongdmm.event.type.ui.TriggerNotificationPanelUi
@@ -45,8 +44,8 @@ class MapHolderService : Service, PostInitialize {
         EventBus.sign(TriggerMapHolderService.SaveSelectedMapToFile::class.java, ::handleSaveSelectedMapToFile)
         EventBus.sign(TriggerMapHolderService.SaveAllMaps::class.java, ::handleSaveAllMaps)
         EventBus.sign(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
         EventBus.sign(ProviderActionService.ActionBalanceStorage::class.java, ::handleProviderActionBalanceStorage)
     }
@@ -81,10 +80,10 @@ class MapHolderService : Service, PostInitialize {
 
         mapsBackupPathsById.remove(map.id)
         openedMaps.remove(map)
-        EventBus.post(Reaction.OpenedMapClosed(map))
+        EventBus.post(ReactionMapHolderService.OpenedMapClosed(map))
 
         if (selectedMap === map) {
-            EventBus.post(Reaction.SelectedMapClosed())
+            EventBus.post(ReactionMapHolderService.SelectedMapClosed.SIGNAL)
 
             if (openedMaps.isEmpty()) {
                 selectedMap = null
@@ -92,7 +91,7 @@ class MapHolderService : Service, PostInitialize {
                 val index = if (mapIndex == openedMaps.size) mapIndex - 1 else mapIndex
                 val nextMap = openedMaps.toList()[index]
                 selectedMap = nextMap
-                EventBus.post(Reaction.SelectedMapChanged(nextMap))
+                EventBus.post(ReactionMapHolderService.SelectedMapChanged(nextMap))
             }
         }
     }
@@ -154,7 +153,7 @@ class MapHolderService : Service, PostInitialize {
 
         if (dmm != null) {
             selectedMap = dmm
-            EventBus.post(Reaction.SelectedMapChanged(dmm))
+            EventBus.post(ReactionMapHolderService.SelectedMapChanged(dmm))
         } else {
             val mapFile = event.body
 
@@ -173,7 +172,7 @@ class MapHolderService : Service, PostInitialize {
                     openedMaps.add(map)
                     selectedMap = map
 
-                    EventBus.post(Reaction.SelectedMapChanged(map))
+                    EventBus.post(ReactionMapHolderService.SelectedMapChanged(map))
                 })
             })
         }
@@ -212,7 +211,7 @@ class MapHolderService : Service, PostInitialize {
         openedMaps.find { it.id == event.body }?.let {
             if (selectedMap !== it) {
                 selectedMap = it
-                EventBus.post(Reaction.SelectedMapChanged(it))
+                EventBus.post(ReactionMapHolderService.SelectedMapChanged(it))
             }
         }
     }
@@ -236,7 +235,7 @@ class MapHolderService : Service, PostInitialize {
             }
 
             map.zSelected = event.body
-            EventBus.post(Reaction.SelectedMapZSelectedChanged(map.zSelected))
+            EventBus.post(ReactionMapHolderService.SelectedMapZSelectedChanged(map.zSelected))
         }
     }
 

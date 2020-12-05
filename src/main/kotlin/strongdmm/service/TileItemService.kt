@@ -4,7 +4,8 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionTileItemService
 import strongdmm.event.type.service.TriggerTileItemService
 
 class TileItemService : Service {
@@ -13,21 +14,21 @@ class TileItemService : Service {
     init {
         EventBus.sign(TriggerTileItemService.ChangeSelectedTileItem::class.java, ::handleChangeSelectedTileItem)
         EventBus.sign(TriggerTileItemService.ResetSelectedTileItem::class.java, ::handleResetSelectedTileItem)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
     }
 
     private fun handleChangeSelectedTileItem(event: Event<TileItem, Unit>) {
         selectedTileItem = event.body
-        EventBus.post(Reaction.SelectedTileItemChanged(event.body))
+        EventBus.post(ReactionTileItemService.SelectedTileItemChanged(event.body))
     }
 
     private fun handleResetSelectedTileItem() {
         selectedTileItem = null
-        EventBus.post(Reaction.SelectedTileItemChanged(null))
+        EventBus.post(ReactionTileItemService.SelectedTileItemChanged(null))
     }
 
     private fun handleEnvironmentReset() {
         selectedTileItem = null
-        EventBus.post(Reaction.SelectedTileItemChanged(null))
+        EventBus.post(ReactionTileItemService.SelectedTileItemChanged(null))
     }
 }

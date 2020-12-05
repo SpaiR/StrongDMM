@@ -3,6 +3,7 @@ package strongdmm.service.shortcut
 import strongdmm.event.Event
 import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionShortcutService
 
 @Suppress("LeakingThis")
 class ShortcutHandler {
@@ -13,7 +14,7 @@ class ShortcutHandler {
     private var isShortcutsBlocked: Boolean = false
 
     init {
-        EventBus.sign(Reaction.ShortcutTriggered::class.java, ::handleShortcutTriggered)
+        EventBus.sign(ReactionShortcutService.ShortcutTriggered::class.java, ::handleShortcutTriggered)
         EventBus.sign(Reaction.ApplicationBlockChanged::class.java, ::handleApplicationBlockChanged)
     }
 

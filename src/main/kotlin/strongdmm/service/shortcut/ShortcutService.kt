@@ -4,7 +4,7 @@ import imgui.ImGui
 import strongdmm.application.Processable
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionShortcutService
 
 class ShortcutService : Service, Processable {
     override fun process() {
@@ -35,7 +35,7 @@ class ShortcutService : Service, Processable {
 
         shortcutToTrigger?.let {
             if (!ImGui.isAnyItemActive()) {
-                EventBus.post(Reaction.ShortcutTriggered(it))
+                EventBus.post(ReactionShortcutService.ShortcutTriggered(it))
             }
         }
     }

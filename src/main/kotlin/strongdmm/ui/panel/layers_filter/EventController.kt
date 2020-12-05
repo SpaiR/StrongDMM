@@ -3,7 +3,8 @@ package strongdmm.ui.panel.layers_filter
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.type.service.ReactionLayersFilterService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
 
@@ -12,9 +13,9 @@ class EventController(
 ) {
     init {
         EventBus.sign(TriggerLayersFilterPanelUi.Open::class.java, ::handleOpen)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionLayersFilterService.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
     }
 
     private fun handleOpen() {

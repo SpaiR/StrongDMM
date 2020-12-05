@@ -6,8 +6,7 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerToolsService
+import strongdmm.event.type.service.*
 import strongdmm.service.tool.select.SelectComplexTool
 import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.util.OUT_OF_BOUNDS
@@ -20,14 +19,14 @@ class ToolsService : Service {
     private var selectedTileItem: TileItem? = null
 
     init {
-        EventBus.sign(Reaction.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
-        EventBus.sign(Reaction.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
-        EventBus.sign(Reaction.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
-        EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionCanvasService.MapMousePosChanged::class.java, ::handleMapMousePosChanged)
+        EventBus.sign(ReactionCanvasService.MapMouseDragStarted::class.java, ::handleMapMouseDragStarted)
+        EventBus.sign(ReactionCanvasService.MapMouseDragStopped::class.java, ::handleMapMouseDragStopped)
+        EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
         EventBus.sign(TriggerToolsService.ChangeTool::class.java, ::handleChangeTool)
         EventBus.sign(TriggerToolsService.ResetTool::class.java, ::handleResetTool)
         EventBus.sign(TriggerToolsService.FetchSelectedArea::class.java, ::handleFetchSelectedArea)
@@ -82,7 +81,7 @@ class ToolsService : Service {
         currentTool.destroy()
         currentTool = event.body.createTool()
         currentTool.onTileItemSwitch(selectedTileItem)
-        EventBus.post(Reaction.SelectedToolChanged(event.body))
+        EventBus.post(ReactionToolsService.SelectedToolChanged(event.body))
     }
 
     private fun handleResetTool() {

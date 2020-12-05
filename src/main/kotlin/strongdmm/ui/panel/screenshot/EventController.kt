@@ -2,8 +2,9 @@ package strongdmm.ui.panel.screenshot
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.ProviderSettingsService
+import strongdmm.event.type.service.ReactionMapHolderService
+import strongdmm.event.type.service.ReactionScreenshotService
 import strongdmm.event.type.ui.TriggerScreenshotPanelUi
 import strongdmm.service.settings.Settings
 
@@ -13,10 +14,10 @@ class EventController(
     init {
         EventBus.sign(ProviderSettingsService.Settings::class.java, ::handleProviderSettings)
         EventBus.sign(TriggerScreenshotPanelUi.Open::class.java, ::handleOpen)
-        EventBus.sign(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
-        EventBus.sign(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionScreenshotService.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
+        EventBus.sign(ReactionScreenshotService.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
     }
 
     private fun handleProviderSettings(event: Event<Settings, Unit>) {

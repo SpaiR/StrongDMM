@@ -8,9 +8,7 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ProviderCanvasService
-import strongdmm.event.type.service.ProviderRecentFilesService
+import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.ProviderInstanceLocatorPanelUi
 import strongdmm.service.action.ActionStatus
 
@@ -18,14 +16,14 @@ class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Reaction.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
-        EventBus.sign(Reaction.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
-        EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
-        EventBus.sign(Reaction.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
-        EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
-        EventBus.sign(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
+        EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
+        EventBus.sign(ReactionMapHolderService.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
+        EventBus.sign(ReactionActionService.ActionStatusChanged::class.java, ::handleActionStatusChanged)
+        EventBus.sign(ReactionLayersFilterService.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
 
         EventBus.sign(ProviderInstanceLocatorPanelUi.DoInstanceLocatorOpen::class.java, ::handleProviderDoInstanceLocatorOpen)
         EventBus.sign(ProviderCanvasService.DoFrameAreas::class.java, ::handleProviderDoFrameAreas)

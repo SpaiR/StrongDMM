@@ -4,8 +4,8 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
+import strongdmm.event.type.ui.ReactionTilePopupUi
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 
@@ -140,7 +140,7 @@ class ViewController(
         state.pixelXNudgeArrays.clear()
         state.pixelYNudgeArrays.clear()
         state.dirArrays.clear()
-        EventBus.post(Reaction.TilePopupClosed())
+        EventBus.post(ReactionTilePopupUi.TilePopupClosed.SIGNAL)
 
         state.isDisposed = true
     }
