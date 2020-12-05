@@ -1,12 +1,12 @@
 package strongdmm.ui.panel.tool_select
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_GREEN
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiButton
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -24,31 +24,31 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        setNextWindowPos(posX, posY, Window.windowCond)
+        ImGui.setNextWindowPos(posX, posY, Window.windowCond)
 
-        window(TITLE, ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysAutoResize) {
+        imGuiBegin(TITLE, ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysAutoResize) {
             state.tools.forEach { tool ->
                 val isToolSelected = tool == state.selectedTool
 
                 if (isToolSelected) {
-                    pushStyleColor(ImGuiCol.Button, COLOR_GREEN)
-                    pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREEN)
-                    pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREEN)
+                    ImGui.pushStyleColor(ImGuiCol.Button, COLOR_GREEN)
+                    ImGui.pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREEN)
+                    ImGui.pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREEN)
                 }
 
-                button(tool.toolName) {
+                imGuiButton(tool.toolName) {
                     viewController.doSelectTool(tool)
                 }
 
-                if (isItemHovered()) {
-                    setTooltip(tool.toolDesc)
+                if (ImGui.isItemHovered()) {
+                    ImGui.setTooltip(tool.toolDesc)
                 }
 
                 if (isToolSelected) {
-                    popStyleColor(3)
+                    ImGui.popStyleColor(3)
                 }
 
-                sameLine()
+                ImGui.sameLine()
             }
         }
     }

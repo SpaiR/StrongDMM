@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.environment_tree
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.ImGuiListClipper
 import imgui.callback.ImListClipperCallback
 import imgui.flag.ImGuiTreeNodeFlags
@@ -37,63 +37,63 @@ class View(
             val selectedFlag = viewController.getTreeNodeSelectedFlag(dmeItem)
 
             showTreeNodeImage(treeNode)
-            treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
+            ImGui.treeNodeEx(dmeItem.type, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
 
-            if (isItemClicked()) {
+            if (ImGui.isItemClicked()) {
                 viewController.selectType(dmeItem.type)
             }
         }
     }
 
     fun process() {
-        setNextWindowPos(LayoutManager.Top.Left.posX, LayoutManager.Top.Left.posY, Window.windowCond)
-        setNextWindowSize(LayoutManager.Top.Left.width, LayoutManager.Top.Left.height, Window.windowCond)
+        ImGui.setNextWindowPos(LayoutManager.Top.Left.posX, LayoutManager.Top.Left.posY, Window.windowCond)
+        ImGui.setNextWindowSize(LayoutManager.Top.Left.width, LayoutManager.Top.Left.height, Window.windowCond)
 
-        window(viewController.getTitle()) {
+        imGuiBegin(viewController.getTitle()) {
             if (state.currentEnvironment == null) {
                 if (state.isEnvironmentLoading) {
-                    textDisabled("Loading Environment...")
+                    ImGui.textDisabled("Loading Environment...")
                 } else {
                     showEnvironmentOpenControls()
                 }
 
-                return@window
+                return@imGuiBegin
             }
 
             viewController.startCycle()
 
-            pushID(state.currentEnvironment!!.absRootDirPath)
+            ImGui.pushID(state.currentEnvironment!!.absRootDirPath)
             showControls()
-            separator()
+            ImGui.separator()
             showNodes(state.currentEnvironment!!)
-            popID()
+            ImGui.popID()
 
             viewController.stopCycle()
         }
     }
 
     private fun showEnvironmentOpenControls() {
-        button("Open Environment...", block = viewController::doOpenEnvironment)
+        imGuiButton("Open Environment...", block = viewController::doOpenEnvironment)
 
-        separator()
+        ImGui.separator()
 
         if (state.providedRecentEnvironmentsWithMaps.isNotEmpty()) {
-            text("Recent Environments:")
+            ImGui.text("Recent Environments:")
             state.providedRecentEnvironmentsWithMaps.forEach { (environmentPath, maps) ->
-                alignTextToFramePadding()
-                bullet()
-                sameLine()
-                button(viewController.getEnvironmentNameFromPath(environmentPath) + "##$environmentPath") {
+                ImGui.alignTextToFramePadding()
+                ImGui.bullet()
+                ImGui.sameLine()
+                imGuiButton(viewController.getEnvironmentNameFromPath(environmentPath) + "##$environmentPath") {
                     viewController.doOpenEnvironment(environmentPath)
                 }
                 ImGuiExt.setItemHoveredTooltip(environmentPath)
 
                 maps.forEach { mapPath ->
-                    withIndent(treeIndent) {
-                        alignTextToFramePadding()
-                        text("-")
-                        sameLine()
-                        smallButton(mapPath.fileName + "##${mapPath.absolute}") {
+                    imGuiWithIndent(treeIndent) {
+                        ImGui.alignTextToFramePadding()
+                        ImGui.text("-")
+                        ImGui.sameLine()
+                        imGuiSmallButton(mapPath.fileName + "##${mapPath.absolute}") {
                             viewController.doOpenEnvironmentWithMap(environmentPath, mapPath)
                         }
                         ImGuiExt.setItemHoveredTooltip(mapPath.readable)
@@ -104,17 +104,17 @@ class View(
     }
 
     private fun showControls() {
-        button("$ICON_FA_MINUS##collapse_all", block = viewController::doCollapseAll)
+        imGuiButton("$ICON_FA_MINUS##collapse_all", block = viewController::doCollapseAll)
         ImGuiExt.setItemHoveredTooltip("Collapse All")
-        sameLine()
-        setNextItemWidth(-1f)
+        ImGui.sameLine()
+        ImGui.setNextItemWidth(-1f)
         if (ImGuiExt.inputTextPlaceholder("##types_filter", state.typeFilter, "Types Filter")) {
             viewController.doCollectFilteredTreeNodes()
         }
     }
 
     private fun showNodes(environment: Dme) {
-        child("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
+        imGuiChild("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
             if (state.filteredTreeNodes.isEmpty()) {
                 showAllNodes(environment, environment.getItem(TYPE_AREA)!!)
                 showAllNodes(environment, environment.getItem(TYPE_TURF)!!)
@@ -137,46 +137,46 @@ class View(
         showTreeNodeImage(treeNode)
 
         if (dmeItem.children.isEmpty()) {
-            treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
+            ImGui.treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.Leaf or ImGuiTreeNodeFlags.NoTreePushOnOpen or selectedFlag)
 
             if (viewController.isSelectedTypeOpened(dmeItem.type)) {
-                setScrollHereY()
+                ImGui.setScrollHereY()
             }
         } else {
             if (state.isDoCollapseAll) {
-                setNextItemOpen(false)
+                ImGui.setNextItemOpen(false)
             } else if (viewController.isPartOfOpenedSelectedType(dmeItem.type)) {
-                setNextItemOpen(true)
+                ImGui.setNextItemOpen(true)
             }
 
-            if (treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag) || state.isDoCollapseAll) {
+            if (ImGui.treeNodeEx(treeNode.name, ImGuiTreeNodeFlags.OpenOnArrow or ImGuiTreeNodeFlags.OpenOnDoubleClick or selectedFlag) || state.isDoCollapseAll) {
                 if (viewController.isSelectedTypeOpened(dmeItem.type)) {
-                    setScrollHereY()
+                    ImGui.setScrollHereY()
                 }
 
-                if (isItemClicked()) {
+                if (ImGui.isItemClicked()) {
                     viewController.selectType(dmeItem.type)
                 }
 
                 if (state.isDoCollapseAll) {
-                    treePush(treeNode.name)
+                    ImGui.treePush(treeNode.name)
                 }
 
                 dmeItem.children.forEach { child ->
                     showAllNodes(environment, environment.getItem(child)!!)
                 }
 
-                treePop()
+                ImGui.treePop()
             }
         }
 
-        if (isItemClicked()) {
+        if (ImGui.isItemClicked()) {
             viewController.selectType(dmeItem.type)
         }
     }
 
     private fun showTreeNodeImage(treeNode: TreeNode) {
-        treeNode.sprite.run { image(textureId, iconSize, iconSize, u1, v1, u2, v2) }
-        sameLine()
+        treeNode.sprite.run { ImGui.image(textureId, iconSize, iconSize, u1, v1, u2, v2) }
+        ImGui.sameLine()
     }
 }

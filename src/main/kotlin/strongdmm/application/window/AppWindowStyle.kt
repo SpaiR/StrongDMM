@@ -1,7 +1,6 @@
 package strongdmm.application.window
 
 import imgui.ImGui
-import imgui.ImGui.styleColorsDark
 import imgui.ImVec2
 import imgui.flag.ImGuiCol
 
@@ -195,7 +194,7 @@ object AppWindowStyle {
     fun setDarkCoast() {
         ImGui.getStyle().apply {
             restoreDefault()
-            styleColorsDark()
+            ImGui.styleColorsDark()
         }
     }
 

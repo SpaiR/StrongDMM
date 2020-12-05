@@ -1,10 +1,10 @@
 package strongdmm.ui.panel.instance_locator
 
-import imgui.ImGui.*
+import imgui.ImGui
 import strongdmm.util.imgui.ImGuiExt
 import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiButton
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -19,7 +19,7 @@ class View(
         private const val TITLE: String = "Instance Locator"
 
         private val searchTypeInputWidth: Float
-            get() = getWindowWidth() - (75f * Window.pointSize)
+            get() = ImGui.getWindowWidth() - (75f * Window.pointSize)
         private val searchCoordInputWidth: Float
             get() = 100f * Window.pointSize
     }
@@ -34,34 +34,34 @@ class View(
 
         ImGuiUtil.setNextWindowCentered(width, height, Window.windowCond)
 
-        window(TITLE, state.doInstanceLocatorOpen) {
+        imGuiBegin(TITLE, state.doInstanceLocatorOpen) {
             if (state.isFirstOpen) {
-                setKeyboardFocusHere()
+                ImGui.setKeyboardFocusHere()
                 state.isFirstOpen = false
             }
 
-            setNextItemWidth(searchTypeInputWidth)
+            ImGui.setNextItemWidth(searchTypeInputWidth)
             ImGuiExt.inputTextPlaceholder("##search_type", state.searchType, "Search Type")
-            sameLine()
+            ImGui.sameLine()
 
-            button("Search", block = viewController::doSearch)
+            imGuiButton("Search", block = viewController::doSearch)
 
-            newLine()
-            text("Search Rect:")
-            setNextItemWidth(searchCoordInputWidth)
+            ImGui.newLine()
+            ImGui.text("Search Rect:")
+            ImGui.setNextItemWidth(searchCoordInputWidth)
             ImGuiExt.inputIntClamp("x1", state.searchX1, 1, state.mapMaxX)
-            sameLine()
-            setNextItemWidth(searchCoordInputWidth)
+            ImGui.sameLine()
+            ImGui.setNextItemWidth(searchCoordInputWidth)
             ImGuiExt.inputIntClamp("y1", state.searchY1, 1, state.mapMaxY)
-            setNextItemWidth(searchCoordInputWidth)
+            ImGui.setNextItemWidth(searchCoordInputWidth)
             ImGuiExt.inputIntClamp("x2", state.searchX2, 1, state.mapMaxX)
-            sameLine()
-            setNextItemWidth(searchCoordInputWidth)
+            ImGui.sameLine()
+            ImGui.setNextItemWidth(searchCoordInputWidth)
             ImGuiExt.inputIntClamp("y2", state.searchY2, 1, state.mapMaxY)
 
-            button("Selection", block = viewController::doSelection)
-            sameLine()
-            button("Reset", block = viewController::doReset)
+            imGuiButton("Selection", block = viewController::doSelection)
+            ImGui.sameLine()
+            imGuiButton("Reset", block = viewController::doReset)
         }
     }
 }

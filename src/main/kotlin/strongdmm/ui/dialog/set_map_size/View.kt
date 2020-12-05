@@ -1,11 +1,11 @@
 package strongdmm.ui.dialog.set_map_size
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiWindowFlags
 import imgui.type.ImInt
 import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.popupModal
+import strongdmm.util.imgui.imGuiButton
+import strongdmm.util.imgui.imGuiPopupModal
 import strongdmm.application.window.Window
 
 class View(
@@ -27,29 +27,29 @@ class View(
 
     fun process() {
         if (state.isDoOpen) {
-            openPopup(TITLE)
+            ImGui.openPopup(TITLE)
             viewController.blockApplication()
             state.isDoOpen = false
         }
 
         ImGuiUtil.setNextWindowCentered(width, height)
 
-        popupModal(TITLE, ImGuiWindowFlags.NoResize) {
+        imGuiPopupModal(TITLE, ImGuiWindowFlags.NoResize) {
             showInput("X", state.newX)
-            sameLine()
+            ImGui.sameLine()
             showInput("Y", state.newY)
-            sameLine()
+            ImGui.sameLine()
             showInput("Z", state.newZ)
 
-            button("OK", block = viewController::doOk)
-            sameLine()
-            button("Cancel", block = viewController::doCancel)
+            imGuiButton("OK", block = viewController::doOk)
+            ImGui.sameLine()
+            imGuiButton("Cancel", block = viewController::doCancel)
         }
     }
 
     private fun showInput(label: String, data: ImInt) {
-        setNextItemWidth(sizeInputWidth)
-        if (inputInt(label, data)) {
+        ImGui.setNextItemWidth(sizeInputWidth)
+        if (ImGui.inputInt(label, data)) {
             if (data.get() <= 0) {
                 data.set(1)
             }

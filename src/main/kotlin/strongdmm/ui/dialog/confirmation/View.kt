@@ -1,12 +1,12 @@
 package strongdmm.ui.dialog.confirmation
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.popupModal
+import strongdmm.util.imgui.imGuiButton
+import strongdmm.util.imgui.imGuiPopupModal
 import strongdmm.application.window.Window
 
 class View(
@@ -25,23 +25,23 @@ class View(
         val title = state.data.title + "##confirmation_dialog"
 
         if (state.isDoOpen) {
-            openPopup(title)
+            ImGui.openPopup(title)
             viewController.blockApplication()
             state.isDoOpen = false
         }
 
         ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
-        popupModal(title, ImGuiWindowFlags.NoResize) {
-            textWrapped(state.data.question)
-            newLine()
-            button("Yes", block = viewController::doYes)
-            sameLine()
-            button("No", block = viewController::doNo)
+        imGuiPopupModal(title, ImGuiWindowFlags.NoResize) {
+            ImGui.textWrapped(state.data.question)
+            ImGui.newLine()
+            imGuiButton("Yes", block = viewController::doYes)
+            ImGui.sameLine()
+            imGuiButton("No", block = viewController::doNo)
 
             if (state.data.type == ConfirmationDialogType.YES_NO_CANCEL) {
-                sameLine()
-                button("Cancel", block = viewController::doCancel)
+                ImGui.sameLine()
+                imGuiButton("Cancel", block = viewController::doCancel)
             }
         }
     }

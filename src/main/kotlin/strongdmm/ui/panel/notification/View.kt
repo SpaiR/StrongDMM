@@ -1,11 +1,11 @@
 package strongdmm.ui.panel.notification
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiStyleVar
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -24,23 +24,23 @@ class View(
 
     fun process() {
         if (viewController.isOpening() || viewController.isClosing()) {
-            setNextWindowSize(state.notificationTextWidth, state.windowHeight)
+            ImGui.setNextWindowSize(state.notificationTextWidth, state.windowHeight)
         }
 
         if (state.notificationText == null && state.windowHeight <= 0) {
             return
         }
 
-        setNextWindowPos((Window.windowWidth - state.notificationTextWidth) / 2, posY)
+        ImGui.setNextWindowPos((Window.windowWidth - state.notificationTextWidth) / 2, posY)
 
-        pushStyleColor(ImGuiCol.WindowBg, getColorU32(ImGuiCol.MenuBarBg))
-        pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)
+        ImGui.pushStyleColor(ImGuiCol.WindowBg, ImGui.getColorU32(ImGuiCol.MenuBarBg))
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)
 
-        window(TITLE, FLAGS) {
-            text(state.notificationText ?: "")
+        imGuiBegin(TITLE, FLAGS) {
+            ImGui.text(state.notificationText ?: "")
         }
 
-        popStyleVar()
-        popStyleColor()
+        ImGui.popStyleVar()
+        ImGui.popStyleColor()
     }
 }

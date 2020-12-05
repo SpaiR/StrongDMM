@@ -1,9 +1,9 @@
 package strongdmm.ui.panel.variables_preview
 
-import imgui.ImGui.*
+import imgui.ImGui
 import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_LIME
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -35,24 +35,24 @@ class View(
         val isEmpty = state.selectedTileItem?.customVars == null
 
         if (isEmpty) {
-            setNextWindowPos(posX, posYcollapsed, Window.windowCond)
-            setNextWindowSize(width, heightCollapsed, Window.windowCond)
+            ImGui.setNextWindowPos(posX, posYcollapsed, Window.windowCond)
+            ImGui.setNextWindowSize(width, heightCollapsed, Window.windowCond)
         } else {
-            setNextWindowPos(posX, posY, Window.windowCond)
-            setNextWindowSize(width, height, Window.windowCond)
+            ImGui.setNextWindowPos(posX, posY, Window.windowCond)
+            ImGui.setNextWindowSize(width, height, Window.windowCond)
         }
 
-        window("$TITLE##variables_preview_$isEmpty") {
+        imGuiBegin("$TITLE##variables_preview_$isEmpty") {
             if (isEmpty) {
-                text("Empty (instance with initial vars)")
+                ImGui.text("Empty (instance with initial vars)")
             } else {
-                columns(2)
+                ImGui.columns(2)
 
                 state.selectedTileItem!!.customVars!!.forEach { (name, value) ->
-                    textColored(COLOR_LIME, name)
-                    nextColumn()
-                    text(value)
-                    nextColumn()
+                    ImGui.textColored(COLOR_LIME, name)
+                    ImGui.nextColumn()
+                    ImGui.text(value)
+                    ImGui.nextColumn()
                 }
             }
         }

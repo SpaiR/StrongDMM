@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.level_switch
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
@@ -8,7 +8,7 @@ import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
 import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.COLOR_GREY
 import strongdmm.util.imgui.ImGuiExt
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -35,29 +35,29 @@ class View(
             return
         }
 
-        setNextWindowPos(posX, posY, Window.windowCond)
-        setNextWindowSize(width, height, Window.windowCond)
+        ImGui.setNextWindowPos(posX, posY, Window.windowCond)
+        ImGui.setNextWindowSize(width, height, Window.windowCond)
 
-        window(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
+        imGuiBegin(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->
                 if (map.zSelected == 1) {
                     showDisabledSwitch(ICON_FA_CHEVRON_LEFT)
                 } else {
-                    if (smallButton(ICON_FA_CHEVRON_LEFT)) {
+                    if (ImGui.smallButton(ICON_FA_CHEVRON_LEFT)) {
                         viewController.doDecreaseSelectedZ()
                     }
 
                     ImGuiExt.setItemHoveredTooltip("Prev Z level (Ctrl+Left Arrow)")
                 }
 
-                sameLine()
-                text("Z:${map.zSelected}")
-                sameLine()
+                ImGui.sameLine()
+                ImGui.text("Z:${map.zSelected}")
+                ImGui.sameLine()
 
                 if (map.zSelected == map.maxZ) {
                     showDisabledSwitch(ICON_FA_CHEVRON_RIGHT)
                 } else {
-                    if (smallButton(ICON_FA_CHEVRON_RIGHT)) {
+                    if (ImGui.smallButton(ICON_FA_CHEVRON_RIGHT)) {
                         viewController.doIncreaseSelectedZ()
                     }
 
@@ -68,10 +68,10 @@ class View(
     }
 
     private fun showDisabledSwitch(switchSymbol: String) {
-        pushStyleColor(ImGuiCol.Button, COLOR_GREY)
-        pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
-        pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
-        smallButton(switchSymbol)
-        popStyleColor(3)
+        ImGui.pushStyleColor(ImGuiCol.Button, COLOR_GREY)
+        ImGui.pushStyleColor(ImGuiCol.ButtonActive, COLOR_GREY)
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, COLOR_GREY)
+        ImGui.smallButton(switchSymbol)
+        ImGui.popStyleColor(3)
     }
 }

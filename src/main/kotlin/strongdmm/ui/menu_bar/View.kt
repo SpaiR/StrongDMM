@@ -1,9 +1,9 @@
 package strongdmm.ui.menu_bar
 
-import imgui.ImGui.separator
-import strongdmm.util.imgui.mainMenuBar
-import strongdmm.util.imgui.menu
-import strongdmm.util.imgui.menuItem
+import imgui.ImGui
+import strongdmm.util.imgui.imGuiMainMenuBar
+import strongdmm.util.imgui.imGuiMenu
+import strongdmm.util.imgui.imGuiMenuItem
 import strongdmm.application.window.Window
 
 class View(
@@ -12,64 +12,64 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        mainMenuBar {
-            menu("File") {
-                menuItem("Open Environment...", enabled = !state.isLoadingEnvironment, block = viewController::doOpenEnvironment)
-                menu("Recent Environments", enabled = !state.isLoadingEnvironment) {
+        imGuiMainMenuBar {
+            imGuiMenu("File") {
+                imGuiMenuItem("Open Environment...", enabled = !state.isLoadingEnvironment, block = viewController::doOpenEnvironment)
+                imGuiMenu("Recent Environments", enabled = !state.isLoadingEnvironment) {
                     showRecentEnvironments()
                 }
 
-                separator()
+                ImGui.separator()
 
-                menuItem("New Map...", shortcut = "Ctrl+N", enabled = state.isEnvironmentOpened, block = viewController::doNewMap)
-                menuItem("Open Map...", shortcut = "Ctrl+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenMap)
-                menuItem("Open Available Map...", shortcut = "Ctrl+Shift+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenAvailableMap)
-                menu("Recent Maps", enabled = state.isEnvironmentOpened) {
+                imGuiMenuItem("New Map...", shortcut = "Ctrl+N", enabled = state.isEnvironmentOpened, block = viewController::doNewMap)
+                imGuiMenuItem("Open Map...", shortcut = "Ctrl+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenMap)
+                imGuiMenuItem("Open Available Map...", shortcut = "Ctrl+Shift+O", enabled = state.isEnvironmentOpened, block = viewController::doOpenAvailableMap)
+                imGuiMenu("Recent Maps", enabled = state.isEnvironmentOpened) {
                     showRecentMaps()
                 }
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Close Map", shortcut = "Ctrl+W", enabled = state.isMapOpened, block = viewController::doCloseMap)
-                menuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = state.isMapOpened, block = viewController::doCloseAllMaps)
+                imGuiMenuItem("Close Map", shortcut = "Ctrl+W", enabled = state.isMapOpened, block = viewController::doCloseMap)
+                imGuiMenuItem("Close All Maps", shortcut = "Ctrl+Shift+W", enabled = state.isMapOpened, block = viewController::doCloseAllMaps)
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Save", shortcut = "Ctrl+S", enabled = state.isMapOpened, block = viewController::doSave)
-                menuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = state.isMapOpened, block = viewController::doSaveAll)
-                menuItem("Save As...", enabled = state.isMapOpened, block = viewController::doSaveAs)
+                imGuiMenuItem("Save", shortcut = "Ctrl+S", enabled = state.isMapOpened, block = viewController::doSave)
+                imGuiMenuItem("Save All", shortcut = "Ctrl+Shift+S", enabled = state.isMapOpened, block = viewController::doSaveAll)
+                imGuiMenuItem("Save As...", enabled = state.isMapOpened, block = viewController::doSaveAs)
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Preferences...", block = viewController::doOpenPreferences)
+                imGuiMenuItem("Preferences...", block = viewController::doOpenPreferences)
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Exit", shortcut = "Ctrl+Q", block = viewController::doExit)
+                imGuiMenuItem("Exit", shortcut = "Ctrl+Q", block = viewController::doExit)
             }
 
-            menu("Edit") {
-                menuItem("Undo", shortcut = "Ctrl+Z", enabled = state.isUndoEnabled, block = viewController::doUndo)
-                menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = state.isRedoEnabled, block = viewController::doRedo)
+            imGuiMenu("Edit") {
+                imGuiMenuItem("Undo", shortcut = "Ctrl+Z", enabled = state.isUndoEnabled, block = viewController::doUndo)
+                imGuiMenuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = state.isRedoEnabled, block = viewController::doRedo)
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Cut", shortcut = "Ctrl+X", enabled = state.isMapOpened, block = viewController::doCut)
-                menuItem("Copy", shortcut = "Ctrl+C", enabled = state.isMapOpened, block = viewController::doCopy)
-                menuItem("Paste", shortcut = "Ctrl+V", enabled = state.isMapOpened, block = viewController::doPaste)
-                menuItem("Delete", shortcut = "Delete", enabled = state.isMapOpened, block = viewController::doDelete)
-                menuItem("Deselect All", shortcut = "Ctrl+D", block = viewController::doDeselectAll)
+                imGuiMenuItem("Cut", shortcut = "Ctrl+X", enabled = state.isMapOpened, block = viewController::doCut)
+                imGuiMenuItem("Copy", shortcut = "Ctrl+C", enabled = state.isMapOpened, block = viewController::doCopy)
+                imGuiMenuItem("Paste", shortcut = "Ctrl+V", enabled = state.isMapOpened, block = viewController::doPaste)
+                imGuiMenuItem("Delete", shortcut = "Delete", enabled = state.isMapOpened, block = viewController::doDelete)
+                imGuiMenuItem("Deselect All", shortcut = "Ctrl+D", block = viewController::doDeselectAll)
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Set Map Size...", enabled = state.isMapOpened, block = viewController::doSetMapSize)
-                menuItem("Find Instance...", shortcut = "Ctrl+F", block = viewController::doFindInstance)
+                imGuiMenuItem("Set Map Size...", enabled = state.isMapOpened, block = viewController::doSetMapSize)
+                imGuiMenuItem("Find Instance...", shortcut = "Ctrl+F", block = viewController::doFindInstance)
             }
 
-            menu("Options") {
-                menuItem("Layers Filter...", enabled = state.isEnvironmentOpened, block = viewController::doOpenLayersFilter)
+            imGuiMenu("Options") {
+                imGuiMenuItem("Layers Filter...", enabled = state.isEnvironmentOpened, block = viewController::doOpenLayersFilter)
 
-                menuItem(
+                imGuiMenuItem(
                     "Toggle Area",
                     shortcut = "Ctrl+1",
                     enabled = state.isEnvironmentOpened,
@@ -77,7 +77,7 @@ class View(
                     block = viewController::toggleAreaLayer
                 )
 
-                menuItem(
+                imGuiMenuItem(
                     "Toggle Turf",
                     shortcut = "Ctrl+2",
                     enabled = state.isEnvironmentOpened,
@@ -85,7 +85,7 @@ class View(
                     block = viewController::toggleTurfLayer
                 )
 
-                menuItem(
+                imGuiMenuItem(
                     "Toggle Object",
                     shortcut = "Ctrl+3",
                     enabled = state.isEnvironmentOpened,
@@ -93,7 +93,7 @@ class View(
                     block = viewController::toggleObjLayer
                 )
 
-                menuItem(
+                imGuiMenuItem(
                     "Toggle Mob",
                     shortcut = "Ctrl+4",
                     enabled = state.isEnvironmentOpened,
@@ -101,24 +101,24 @@ class View(
                     block = viewController::toggleMobLayer
                 )
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Frame Areas", selected = state.providedDoFrameAreas, block = {})
-                menuItem("Synchronize Maps View", selected = state.providedDoSynchronizeMapsView, block = {})
+                imGuiMenuItem("Frame Areas", selected = state.providedDoFrameAreas, block = {})
+                imGuiMenuItem("Synchronize Maps View", selected = state.providedDoSynchronizeMapsView, block = {})
 
-                separator()
+                ImGui.separator()
 
-                menuItem("Screenshot...", block = viewController::doScreenshot)
+                imGuiMenuItem("Screenshot...", block = viewController::doScreenshot)
             }
 
-            menu("Window") {
-                menuItem("Reset Windows", shortcut = "F5", block = viewController::doResetWindows)
-                menuItem("Fullscreen", shortcut = "F11", selected = Window.isFullscreen, block = viewController::doFullscreen)
+            imGuiMenu("Window") {
+                imGuiMenuItem("Reset Windows", shortcut = "F5", block = viewController::doResetWindows)
+                imGuiMenuItem("Fullscreen", shortcut = "F11", selected = Window.isFullscreen, block = viewController::doFullscreen)
             }
 
-            menu("Help") {
-                menuItem("Changelog...", block = viewController::doChangelog)
-                menuItem("About...", block = viewController::doAbout)
+            imGuiMenu("Help") {
+                imGuiMenuItem("Changelog...", block = viewController::doChangelog)
+                imGuiMenuItem("About...", block = viewController::doAbout)
             }
         }
     }
@@ -129,14 +129,14 @@ class View(
         }
 
         state.providedRecentEnvironments.toTypedArray().forEach { recentEnvironmentPath ->
-            menuItem(recentEnvironmentPath) {
+            imGuiMenuItem(recentEnvironmentPath) {
                 viewController.doOpenRecentEnvironment(recentEnvironmentPath)
             }
         }
 
-        separator()
+        ImGui.separator()
 
-        menuItem("Clear Recent Environments", block = viewController::doClearRecentEnvironments)
+        imGuiMenuItem("Clear Recent Environments", block = viewController::doClearRecentEnvironments)
     }
 
     private fun showRecentMaps() {
@@ -145,13 +145,13 @@ class View(
         }
 
         state.providedRecentMaps.toTypedArray().forEach { (readable, absolute) ->
-            menuItem(readable) {
+            imGuiMenuItem(readable) {
                 viewController.doOpenRecentMap(absolute)
             }
         }
 
-        separator()
+        ImGui.separator()
 
-        menuItem("Clear Recent Maps", block = viewController::doClearRecentMaps)
+        imGuiMenuItem("Clear Recent Maps", block = viewController::doClearRecentMaps)
     }
 }

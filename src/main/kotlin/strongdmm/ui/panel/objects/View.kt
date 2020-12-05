@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.objects
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
 import strongdmm.ui.LayoutManager
@@ -29,60 +29,60 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        setNextWindowPos(LayoutManager.Bottom.Left.posX, LayoutManager.Bottom.Left.posY, Window.windowCond)
-        setNextWindowSize(LayoutManager.Bottom.Left.width, LayoutManager.Bottom.Left.height, Window.windowCond)
+        ImGui.setNextWindowPos(LayoutManager.Bottom.Left.posX, LayoutManager.Bottom.Left.posY, Window.windowCond)
+        ImGui.setNextWindowSize(LayoutManager.Bottom.Left.width, LayoutManager.Bottom.Left.height, Window.windowCond)
 
-        window(viewController.getTitle()) {
+        imGuiBegin(viewController.getTitle()) {
             showConfigContextMenu()
 
-            columns(state.columnsCount.get())
+            ImGui.columns(state.columnsCount.get())
 
             state.tileItems?.forEach { tileItem ->
                 val isSelected = tileItem.id == state.selectedTileItemId
 
-                selectable("##tile_item_${tileItem.id}", selected = isSelected, sizeX = getColumnWidth() - iconIndent, sizeY = iconSize) {
+                imGuiSelectable("##tile_item_${tileItem.id}", selected = isSelected, sizeX = ImGui.getColumnWidth() - iconIndent, sizeY = iconSize) {
                     viewController.doSelectItem(tileItem)
                 }
 
                 if (isSelected && !state.scrolledToItem) {
-                    setScrollHereY()
+                    ImGui.setScrollHereY()
                     state.scrolledToItem = true
                 }
 
                 showItemContextMenu(tileItem)
 
-                sameLine()
-                withIndent(textIndent) {
-                    text(tileItem.name)
+                ImGui.sameLine()
+                imGuiWithIndent(textIndent) {
+                    ImGui.text(tileItem.name)
                 }
 
-                sameLine()
-                withIndent(iconIndent) {
+                ImGui.sameLine()
+                imGuiWithIndent(iconIndent) {
                     viewController.getIconSprite(tileItem).run {
-                        image(textureId, iconSize, iconSize, u1, v1, u2, v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
+                        ImGui.image(textureId, iconSize, iconSize, u1, v1, u2, v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
                     }
                 }
 
-                nextColumn()
+                ImGui.nextColumn()
             }
         }
     }
 
     private fun showConfigContextMenu() {
         ImGuiExt.windowButton(ICON_FA_COG) {
-            openPopup(CONFIG_POPUP_TITLE)
+            ImGui.openPopup(CONFIG_POPUP_TITLE)
         }
 
-        popup(CONFIG_POPUP_TITLE) {
+        imGuiPopup(CONFIG_POPUP_TITLE) {
             if (state.selectedTileItemType.isNotEmpty()) {
-                button("Copy Type To Clipboard") {
-                    setClipboardText(state.selectedTileItemType)
+                imGuiButton("Copy Type To Clipboard") {
+                    ImGui.setClipboardText(state.selectedTileItemType)
                 }
             }
 
-            setNextItemWidth(columnsCountInputWidth)
+            ImGui.setNextItemWidth(columnsCountInputWidth)
 
-            if (inputInt("Columns", state.columnsCount)) {
+            if (ImGui.inputInt("Columns", state.columnsCount)) {
                 if (state.columnsCount.get() <= 0) {
                     state.columnsCount.set(1)
                 } else if (state.columnsCount.get() > 16) {
@@ -93,36 +93,36 @@ class View(
     }
 
     private fun showItemContextMenu(tileItem: TileItem) {
-        popupContextItem("object_options_${tileItem.id}", ImGuiMouseButton.Right) {
-            menuItem("Find Instance on Map") {
+        imGuiPopupContextItem("object_options_${tileItem.id}", ImGuiMouseButton.Right) {
+            imGuiMenuItem("Find Instance on Map") {
                 viewController.doFindInstanceOnMap(tileItem)
             }
 
-            menuItem("Find Object on Map") {
+            imGuiMenuItem("Find Object on Map") {
                 viewController.doFindObjectOnMap(tileItem)
             }
 
-            separator()
+            ImGui.separator()
 
-            menuItem("New Instance...") {
+            imGuiMenuItem("New Instance...") {
                 viewController.doNewInstance(tileItem)
             }
 
-            menuItem("Edit Instance...") {
+            imGuiMenuItem("Edit Instance...") {
                 viewController.doEditInstance(tileItem)
             }
 
-            menuItem("Delete Instance...") {
+            imGuiMenuItem("Delete Instance...") {
                 viewController.doDeleteInstance(tileItem)
             }
 
-            separator()
+            ImGui.separator()
 
-            menuItem("Generate Instances from Icon-states") {
+            imGuiMenuItem("Generate Instances from Icon-states") {
                 viewController.doGenerateInstancesFromIconStates(tileItem)
             }
 
-            menuItem("Generate Instances from Directions") {
+            imGuiMenuItem("Generate Instances from Directions") {
                 viewController.doGenerateInstancesFromDirections(tileItem)
             }
         }

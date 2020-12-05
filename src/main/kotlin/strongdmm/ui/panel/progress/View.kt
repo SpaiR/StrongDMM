@@ -1,11 +1,11 @@
 package strongdmm.ui.panel.progress
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiStyleVar
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -27,26 +27,26 @@ class View(
 
     fun process() {
         if (viewController.isOpening() || viewController.isClosing()) {
-            setNextWindowSize(state.windowWidth, height)
+            ImGui.setNextWindowSize(state.windowWidth, height)
         }
 
         if (state.progressText == null && state.windowWidth <= 0) {
             return
         }
 
-        setNextWindowPos((Window.windowWidth - state.progressTextWidth) / 2, posY)
+        ImGui.setNextWindowPos((Window.windowWidth - state.progressTextWidth) / 2, posY)
 
-        pushStyleColor(ImGuiCol.WindowBg, getColorU32(ImGuiCol.MenuBarBg))
-        pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)
+        ImGui.pushStyleColor(ImGuiCol.WindowBg, ImGui.getColorU32(ImGuiCol.MenuBarBg))
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f)
 
-        window(TITLE, ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoScrollbar) {
+        imGuiBegin(TITLE, ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoTitleBar or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoScrollbar) {
             if (state.progressText != null) {
-                val count = (getTime() / 0.125).toInt() and 7
-                text("${progressBarVisual[count]} ${state.progressText} ${progressBarVisual[count]}")
+                val count = (ImGui.getTime() / 0.125).toInt() and 7
+                ImGui.text("${progressBarVisual[count]} ${state.progressText} ${progressBarVisual[count]}")
             }
         }
 
-        popStyleVar()
-        popStyleColor()
+        ImGui.popStyleVar()
+        ImGui.popStyleColor()
     }
 }

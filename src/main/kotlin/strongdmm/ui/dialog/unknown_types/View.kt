@@ -1,6 +1,6 @@
 package strongdmm.ui.dialog.unknown_types
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiTreeNodeFlags
@@ -26,7 +26,7 @@ class View(
 
     fun process() {
         if (state.isDoOpen) {
-            openPopup(TITLE)
+            ImGui.openPopup(TITLE)
             viewController.blockApplication()
             state.isDoOpen = false
         }
@@ -40,10 +40,10 @@ class View(
     private fun showWindow() {
         ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
-        popupModal(TITLE) {
-            text("Resolve all unknown types.")
+        imGuiPopupModal(TITLE) {
+            ImGui.text("Resolve all unknown types.")
 
-            sameLine()
+            ImGui.sameLine()
 
             ImGuiExt.helpMark("""
                 |You are trying to open a map with types unknown for your environment.
@@ -53,51 +53,51 @@ class View(
                 """.trimMargin()
             )
 
-            newLine()
+            ImGui.newLine()
 
             for ((index, unknownType) in state.unknownTypes.withIndex()) {
-                separator()
+                ImGui.separator()
 
-                if (collapsingHeader(unknownType.originalTileObject.type, ImGuiTreeNodeFlags.DefaultOpen)) {
-                    pushID(index)
+                if (ImGui.collapsingHeader(unknownType.originalTileObject.type, ImGuiTreeNodeFlags.DefaultOpen)) {
+                    ImGui.pushID(index)
 
                     showNewTypeInput(unknownType)
 
-                    alignTextToFramePadding()
-                    text("Variables")
+                    ImGui.alignTextToFramePadding()
+                    ImGui.text("Variables")
 
-                    sameLine()
+                    ImGui.sameLine()
 
-                    button(ICON_FA_PLUS) {
+                    imGuiButton(ICON_FA_PLUS) {
                         viewController.doAddVariable(unknownType)
                     }
 
                     showVariables(unknownType)
 
-                    popID()
+                    ImGui.popID()
                 }
 
-                separator()
-                newLine()
+                ImGui.separator()
+                ImGui.newLine()
             }
 
-            newLine()
+            ImGui.newLine()
 
             showControlButtons()
         }
     }
 
     private fun showNewTypeInput(unknownType: UnknownType) {
-        val textColor = if (viewController.isUnknownType(unknownType.type)) COLOR_RED else getColorU32(ImGuiCol.Text)
+        val textColor = if (viewController.isUnknownType(unknownType.type)) COLOR_RED else ImGui.getColorU32(ImGuiCol.Text)
 
-        alignTextToFramePadding()
-        textColored(textColor, "New Type")
+        ImGui.alignTextToFramePadding()
+        ImGui.textColored(textColor, "New Type")
 
-        sameLine()
+        ImGui.sameLine()
 
         state.inputStr.set(unknownType.type)
-        setNextItemWidth(-1f)
-        if (inputText("##input_unknown_type", state.inputStr)) {
+        ImGui.setNextItemWidth(-1f)
+        if (ImGui.inputText("##input_unknown_type", state.inputStr)) {
             viewController.doSetNewType(unknownType)
         }
     }
@@ -107,36 +107,36 @@ class View(
             return
         }
 
-        child("##variables", getWindowWidth(), viewController.getVariablesHeight(unknownType), true) {
-            columns(2)
+        imGuiChild("##variables", ImGui.getWindowWidth(), viewController.getVariablesHeight(unknownType), true) {
+            ImGui.columns(2)
 
             unknownType.variables.forEachIndexed { index, variable ->
-                pushID(index)
+                ImGui.pushID(index)
 
-                button(ICON_FA_TIMES) {
+                imGuiButton(ICON_FA_TIMES) {
                     viewController.doRemoveVariable(unknownType, variable)
                 }
 
-                sameLine()
+                ImGui.sameLine()
 
                 state.inputStr.set(variable.name)
-                setNextItemWidth(getColumnWidth())
-                if (inputText("##variable_name", state.inputStr)) {
+                ImGui.setNextItemWidth(ImGui.getColumnWidth())
+                if (ImGui.inputText("##variable_name", state.inputStr)) {
                     viewController.doSetVariableName(variable)
                 }
 
-                nextColumn()
+                ImGui.nextColumn()
 
                 state.inputStr.set(variable.value)
-                setNextItemWidth(getColumnWidth())
-                if (inputText("##variable_value", state.inputStr)) {
+                ImGui.setNextItemWidth(ImGui.getColumnWidth())
+                if (ImGui.inputText("##variable_value", state.inputStr)) {
                     viewController.doSetVariableValue(variable)
                 }
 
-                separator()
-                nextColumn()
+                ImGui.separator()
+                ImGui.nextColumn()
 
-                popID()
+                ImGui.popID()
             }
         }
     }
@@ -146,14 +146,14 @@ class View(
             ImGuiUtil.pushDisabledItem()
         }
 
-        button("Continue", block = viewController::doContinue)
+        imGuiButton("Continue", block = viewController::doContinue)
 
         if (state.hasUnknownTypes) {
             ImGuiUtil.popDisabledItem()
         }
 
-        sameLine()
+        ImGui.sameLine()
 
-        button("Cancel", block = viewController::doCancel)
+        imGuiButton("Cancel", block = viewController::doCancel)
     }
 }

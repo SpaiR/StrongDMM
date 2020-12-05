@@ -1,6 +1,6 @@
 package strongdmm.ui.dialog.edit_vars
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiMouseCursor
 import imgui.flag.ImGuiStyleVar
@@ -20,7 +20,7 @@ class View(
             get() = 550f * Window.pointSize
 
         private val controlsFilterWidth: Float
-            get() = getWindowWidth() - (105f * Window.pointSize)
+            get() = ImGui.getWindowWidth() - (105f * Window.pointSize)
     }
 
     lateinit var viewController: ViewController
@@ -29,12 +29,12 @@ class View(
         viewController.getTileItem()?.let { tileItem ->
             ImGuiUtil.setNextWindowCentered(width, height)
 
-            window("Edit Variables: ${tileItem.type}##edit_variables_${state.windowId}") {
+            imGuiBegin("Edit Variables: ${tileItem.type}##edit_variables_${state.windowId}") {
                 showControls()
 
-                separator()
+                ImGui.separator()
 
-                child("vars_table") {
+                imGuiChild("vars_table") {
                     if (state.isShowVarsByType.get()) {
                         showVariablesByType()
                     } else {
@@ -49,23 +49,23 @@ class View(
 
     private fun showControls() {
         if (state.isFistOpen) {
-            setKeyboardFocusHere()
+            ImGui.setKeyboardFocusHere()
             state.isFistOpen = false
         }
 
-        setNextItemWidth(controlsFilterWidth)
+        ImGui.setNextItemWidth(controlsFilterWidth)
         ImGuiExt.inputTextPlaceholder("##vars_filter", state.varsFilter, "Variables Filter")
-        sameLine()
-        button("OK", block = viewController::doOk)
-        sameLine()
-        button("Cancel", block = viewController::doCancel)
+        ImGui.sameLine()
+        imGuiButton("OK", block = viewController::doOk)
+        ImGui.sameLine()
+        imGuiButton("Cancel", block = viewController::doCancel)
 
-        checkbox("Modified##is_show_modified_vars", state.isShowModifiedVars)
-        sameLine()
-        checkbox("By Type##is_show_vars_by_type", state.isShowVarsByType)
+        ImGui.checkbox("Modified##is_show_modified_vars", state.isShowModifiedVars)
+        ImGui.sameLine()
+        ImGui.checkbox("By Type##is_show_vars_by_type", state.isShowVarsByType)
 
         if (state.isShowVarsByType.get()) {
-            setNextItemWidth(-1f)
+            ImGui.setNextItemWidth(-1f)
             ImGuiExt.inputTextPlaceholder("##types_filter", state.typesFilter, "Types Filter")
         }
     }
@@ -76,26 +76,26 @@ class View(
                 continue
             }
 
-            text(type)
-            sameLine()
-            textDisabled("(${variables.size})")
-            columns(2, "variables_by_$type", true)
+            ImGui.text(type)
+            ImGui.sameLine()
+            ImGui.textDisabled("(${variables.size})")
+            ImGui.columns(2, "variables_by_$type", true)
             variables.forEach(::showVariable)
-            columns(1)
+            ImGui.columns(1)
         }
     }
 
     private fun showAllVariables() {
         if (state.pinnedVariables.isNotEmpty()) {
-            textColored(COLOR_GOLD, "Pinned")
-            columns(2, "pinned_edit_vars_columns", true)
+            ImGui.textColored(COLOR_GOLD, "Pinned")
+            ImGui.columns(2, "pinned_edit_vars_columns", true)
             showPinnedVariables()
-            columns(1)
-            newLine()
-            textDisabled("Other")
+            ImGui.columns(1)
+            ImGui.newLine()
+            ImGui.textDisabled("Other")
         }
 
-        columns(2, "edit_vars_columns", true)
+        ImGui.columns(2, "edit_vars_columns", true)
         showOtherVariables()
     }
 
@@ -118,20 +118,20 @@ class View(
 
         showVariablePinOption(variable)
 
-        sameLine(0f, 15f)
-        alignTextToFramePadding()
+        ImGui.sameLine(0f, 15f)
+        ImGui.alignTextToFramePadding()
 
         if (variable.isModified || variable.isChanged) {
-            textColored(COLOR_LIME, variable.name)
+            ImGui.textColored(COLOR_LIME, variable.name)
         } else {
-            text(variable.name)
+            ImGui.text(variable.name)
         }
 
-        nextColumn()
+        ImGui.nextColumn()
 
         showResetToDefaultButton(variable)
 
-        sameLine()
+        ImGui.sameLine()
 
         if (variable === state.currentEditVar) {
             showVariableEditField(variable)
@@ -139,13 +139,13 @@ class View(
             showVariableValue(variable)
         }
 
-        nextColumn()
-        separator()
+        ImGui.nextColumn()
+        ImGui.separator()
     }
 
     private fun showVariablePinOption(variable: Variable) {
-        withStyleVar(ImGuiStyleVar.FramePadding, .25f, .25f) {
-            if (radioButton("##variable_pin_${variable.hash}", variable.isPinned)) {
+        imGuiWithStyleVar(ImGuiStyleVar.FramePadding, .25f, .25f) {
+            imGuiRadioButton("##variable_pin_${variable.hash}", variable.isPinned) {
                 viewController.doPinVariable(variable)
             }
         }
@@ -159,7 +159,7 @@ class View(
             ImGuiUtil.pushDisabledItem()
         }
 
-        button("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
+        imGuiButton("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
             viewController.resetVariableToDefault(variable)
         }
 
@@ -171,34 +171,34 @@ class View(
     }
 
     private fun showVariableEditField(variable: Variable) {
-        setNextItemWidth(getColumnWidth(-1))
+        ImGui.setNextItemWidth(ImGui.getColumnWidth(-1))
 
         if (!state.variableInputFocused) {
-            setKeyboardFocusHere()
+            ImGui.setKeyboardFocusHere()
             state.variableInputFocused = true
         }
 
-        inputText("##variable_edit_${variable.hash}", variable.value)
+        ImGui.inputText("##variable_edit_${variable.hash}", variable.value)
 
-        if (isKeyPressed(GLFW.GLFW_KEY_ENTER) || isKeyPressed(GLFW.GLFW_KEY_KP_ENTER) || isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+        if (ImGui.isKeyPressed(GLFW.GLFW_KEY_ENTER) || ImGui.isKeyPressed(GLFW.GLFW_KEY_KP_ENTER) || ImGui.isKeyPressed(GLFW.GLFW_KEY_ESCAPE)) {
             viewController.doStopEdit()
         }
     }
 
     private fun showVariableValue(variable: Variable) {
-        pushStyleColor(ImGuiCol.Button, 0)
-        pushStyleColor(ImGuiCol.ButtonHovered, getColorU32(ImGuiCol.ButtonHovered))
-        pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
+        ImGui.pushStyleColor(ImGuiCol.Button, 0)
+        ImGui.pushStyleColor(ImGuiCol.ButtonHovered, ImGui.getColorU32(ImGuiCol.ButtonHovered))
+        ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0f, 0f)
 
-        button("${variable.value}##variable_value_${variable.hash}", getColumnWidth(-1)) {
+        imGuiButton("${variable.value}##variable_value_${variable.hash}", ImGui.getColumnWidth(-1)) {
             viewController.doStartEdit(variable)
         }
 
-        if (isItemHovered()) {
-            setMouseCursor(ImGuiMouseCursor.Hand)
+        if (ImGui.isItemHovered()) {
+            ImGui.setMouseCursor(ImGuiMouseCursor.Hand)
         }
 
-        popStyleVar()
-        popStyleColor(2)
+        ImGui.popStyleVar()
+        ImGui.popStyleColor(2)
     }
 }

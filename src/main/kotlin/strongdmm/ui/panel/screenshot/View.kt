@@ -1,11 +1,10 @@
 package strongdmm.ui.panel.screenshot
 
-import imgui.ImGui.inputText
-import imgui.ImGui.sameLine
+import imgui.ImGui
 import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.button
-import strongdmm.util.imgui.radioButton
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiButton
+import strongdmm.util.imgui.imGuiRadioButton
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -29,14 +28,14 @@ class View(
 
         ImGuiUtil.setNextWindowCentered(width, height)
 
-        window(TITLE, state.isOpened) {
-            button("Select File...", block = viewController::doSelectFile)
-            sameLine()
-            inputText("##screenshot_file_path", state.screenshotFilePath)
+        imGuiBegin(TITLE, state.isOpened) {
+            imGuiButton("Select File...", block = viewController::doSelectFile)
+            ImGui.sameLine()
+            ImGui.inputText("##screenshot_file_path", state.screenshotFilePath)
 
-            radioButton("Full", state.isFullMapImage, viewController::doFull)
-            sameLine()
-            radioButton("Selection", !state.isFullMapImage, viewController::doSelection)
+            imGuiRadioButton("Full", state.isFullMapImage, viewController::doFull)
+            ImGui.sameLine()
+            imGuiRadioButton("Selection", !state.isFullMapImage, viewController::doSelection)
 
             val isScreenshotDisabled = viewController.isScreenshotDisabled()
 
@@ -44,7 +43,7 @@ class View(
                 ImGuiUtil.pushDisabledItem()
             }
 
-            button("Create", block = viewController::doCreate)
+            imGuiButton("Create", block = viewController::doCreate)
 
             if (isScreenshotDisabled) {
                 ImGuiUtil.popDisabledItem()

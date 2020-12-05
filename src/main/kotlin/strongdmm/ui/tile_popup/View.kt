@@ -1,13 +1,13 @@
 package strongdmm.ui.tile_popup
 
-import imgui.ImGui.*
+import imgui.ImGui
 import strongdmm.byond.*
 import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
-import strongdmm.util.imgui.menu
-import strongdmm.util.imgui.menuItem
-import strongdmm.util.imgui.popup
+import strongdmm.util.imgui.imGuiMenu
+import strongdmm.util.imgui.imGuiMenuItem
+import strongdmm.util.imgui.imGuiPopup
 import strongdmm.application.window.Window
 
 class View(
@@ -24,23 +24,23 @@ class View(
     fun process() {
         state.currentTile?.let { tile ->
             if (state.isDoOpen) {
-                openPopup(POPUP_ID)
+                ImGui.openPopup(POPUP_ID)
                 state.isDoOpen = false
-            } else if (!isPopupOpen(POPUP_ID)) { // if it closed - it closed
+            } else if (!ImGui.isPopupOpen(POPUP_ID)) { // if it closed - it closed
                 viewController.dispose()
                 return
             }
 
-            popup(POPUP_ID) {
-                menuItem("Undo", shortcut = "Ctrl+Z", enabled = state.isUndoEnabled, block = viewController::doUndo)
-                menuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = state.isRedoEnabled, block = viewController::doRedo)
-                separator()
-                menuItem("Cut", shortcut = "Ctrl+X", block = viewController::doCut)
-                menuItem("Copy", shortcut = "Ctrl+C", block = viewController::doCopy)
-                menuItem("Paste", shortcut = "Ctrl+V", block = viewController::doPaste)
-                menuItem("Delete", shortcut = "Delete", block = viewController::doDelete)
-                menuItem("Deselect All", shortcut = "Ctrl+D", block = viewController::doDeselectAll)
-                separator()
+            imGuiPopup(POPUP_ID) {
+                imGuiMenuItem("Undo", shortcut = "Ctrl+Z", enabled = state.isUndoEnabled, block = viewController::doUndo)
+                imGuiMenuItem("Redo", shortcut = "Ctrl+Shift+Z", enabled = state.isRedoEnabled, block = viewController::doRedo)
+                ImGui.separator()
+                imGuiMenuItem("Cut", shortcut = "Ctrl+X", block = viewController::doCut)
+                imGuiMenuItem("Copy", shortcut = "Ctrl+C", block = viewController::doCopy)
+                imGuiMenuItem("Paste", shortcut = "Ctrl+V", block = viewController::doPaste)
+                imGuiMenuItem("Delete", shortcut = "Delete", block = viewController::doDelete)
+                imGuiMenuItem("Deselect All", shortcut = "Ctrl+D", block = viewController::doDeselectAll)
+                ImGui.separator()
                 showTileItems(tile)
             }
         }
@@ -56,13 +56,13 @@ class View(
     private fun showTileItem(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
         val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
 
-        image(sprite.textureId, iconSize, iconSize, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
-        sameLine()
-        menu("${tileItem.name}##tile_item_row_$tileItemIdx") {
+        ImGui.image(sprite.textureId, iconSize, iconSize, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
+        ImGui.sameLine()
+        imGuiMenu("${tileItem.name}##tile_item_row_$tileItemIdx") {
             showTileItemOptions(tile, tileItem, tileItemIdx)
         }
-        sameLine()
-        text("[${tileItem.type}]\t\t") // Tabs to make text not to overlap over the menu arrow.
+        ImGui.sameLine()
+        ImGui.text("[${tileItem.type}]\t\t") // Tabs to make text not to overlap over the menu arrow.
     }
 
     private fun showTileItemOptions(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
@@ -71,39 +71,39 @@ class View(
         if (isMovable) {
             showNudgeOption(true, tile, tileItem, tileItemIdx)
             showNudgeOption(false, tile, tileItem, tileItemIdx)
-            separator()
+            ImGui.separator()
         }
 
         if (!tileItem.isType(TYPE_AREA)) {
             showDirOption(tile, tileItem, tileItemIdx)
-            separator()
+            ImGui.separator()
         }
 
         if (isMovable) {
-            menuItem("Move To Top##move_to_top_$tileItemIdx") {
+            imGuiMenuItem("Move To Top##move_to_top_$tileItemIdx") {
                 viewController.doMoveToTop(tile, tileItem, tileItemIdx)
             }
 
-            menuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
+            imGuiMenuItem("Move To Bottom##move_to_bottom_$tileItemIdx") {
                 viewController.doMoveToBottom(tile, tileItem, tileItemIdx)
             }
 
-            separator()
+            ImGui.separator()
         }
 
-        menuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
+        imGuiMenuItem("Make Active Object##make_active_object_$tileItemIdx", shortcut = "Shift+LMB") {
             viewController.doMakeActiveObject(tileItem)
         }
 
-        menuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
+        imGuiMenuItem("Edit...##edit_variables_$tileItemIdx", shortcut = "Shift+RMB") {
             viewController.doEdit(tile, tileItemIdx)
         }
 
-        menuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB") {
+        imGuiMenuItem("Delete##delete_object_$tileItemIdx", shortcut = "Ctrl+Shift+LMB") {
             viewController.doDeleteObject(tile, tileItemIdx)
         }
 
-        menuItem(
+        imGuiMenuItem(
             "Replace With Selected Object##replace_with_selected_object_$tileItemIdx",
             shortcut = "Ctrl+Shift+RMB",
             enabled = viewController.isSameTypeAsSelectedObject(tileItem)
@@ -111,7 +111,7 @@ class View(
             viewController.doReplaceWithSelectedTileItem(tile, tileItemIdx)
         }
 
-        menuItem("Reset to Default##reset_to_default_$tileItemIdx") {
+        imGuiMenuItem("Reset to Default##reset_to_default_$tileItemIdx") {
             viewController.doResetToDefault(tile, tileItem, tileItemIdx)
         }
     }
@@ -120,13 +120,13 @@ class View(
         val (initialValue, pixelNudge) = viewController.getNudgeValueToShow(isXAxis, tileItem, tileItemIdx)
         val axisName = if (isXAxis) "X" else "Y"
 
-        setNextItemWidth(50f)
+        ImGui.setNextItemWidth(50f)
 
-        if (dragInt("Nudge $axisName-axis###nudge_${axisName}_option_$tileItemIdx", pixelNudge, .25f)) {
+        if (ImGui.dragInt("Nudge $axisName-axis###nudge_${axisName}_option_$tileItemIdx", pixelNudge, .25f)) {
             viewController.doNudge(isXAxis, tile, tileItem, tileItemIdx, pixelNudge)
         }
 
-        if (isItemDeactivatedAfterEdit()) {
+        if (ImGui.isItemDeactivatedAfterEdit()) {
             viewController.applyNudgeChanges(isXAxis, tile, tileItem, tileItemIdx, pixelNudge, initialValue)
         }
     }
@@ -135,20 +135,20 @@ class View(
         val maxDirs = GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.dirs ?: 1
 
         if (maxDirs == 1) {
-            textDisabled("No Dirs to Choose")
+            ImGui.textDisabled("No Dirs to Choose")
             return
         }
 
         val (initialValue, relativeDir) = viewController.getDirValueToShow(tileItem, tileItemIdx)
         val realDir = relToDir(relativeDir[0])
 
-        setNextItemWidth(100f)
+        ImGui.setNextItemWidth(100f)
 
-        if (sliderInt("Dir [${dirToStr(realDir)}]###dir_option_$tileItemIdx", relativeDir, 1, maxDirs, "$realDir")) {
+        if (ImGui.sliderInt("Dir [${dirToStr(realDir)}]###dir_option_$tileItemIdx", relativeDir, 1, maxDirs, "$realDir")) {
             viewController.doDir(tile, tileItem, tileItemIdx, relativeDir)
         }
 
-        if (isItemDeactivatedAfterEdit()) {
+        if (ImGui.isItemDeactivatedAfterEdit()) {
             viewController.applyDirChanges(tile, tileItem, tileItemIdx, initialValue, relativeDir)
         }
     }

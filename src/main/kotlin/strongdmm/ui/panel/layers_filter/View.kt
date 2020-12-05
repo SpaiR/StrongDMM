@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.layers_filter
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiStyleVar
 import imgui.flag.ImGuiTreeNodeFlags
 import imgui.flag.ImGuiWindowFlags
@@ -37,18 +37,18 @@ class View(
 
         ImGuiUtil.setNextWindowCentered(WIDTH, HEIGHT)
 
-        window(TITLE, state.isOpened) {
+        imGuiBegin(TITLE, state.isOpened) {
             if (state.currentEnvironment == null) {
-                text("No types to filter")
-                return@window
+                ImGui.text("No types to filter")
+                return@imGuiBegin
             }
 
-            setNextItemWidth(-1f)
+            ImGui.setNextItemWidth(-1f)
             ImGuiExt.inputTextPlaceholder("##types_filter", state.typesFilter, "Types Filter")
 
-            separator()
+            ImGui.separator()
 
-            child("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
+            imGuiChild("tree_nodes", imGuiWindowFlags = ImGuiWindowFlags.HorizontalScrollbar) {
                 showTreeNodes(state.currentEnvironment!!.getItem(TYPE_AREA)!!)
                 showTreeNodes(state.currentEnvironment!!.getItem(TYPE_TURF)!!)
                 showTreeNodes(state.currentEnvironment!!.getItem(TYPE_OBJ)!!)
@@ -68,8 +68,8 @@ class View(
     private fun showFilteredNodes(dmeItem: DmeItem) {
         if (viewController.isFilteredNode(dmeItem)) {
             showToggleButton(dmeItem)
-            sameLine()
-            treeNodeEx(dmeItem.type, LEAF_FLAGS)
+            ImGui.sameLine()
+            ImGui.treeNodeEx(dmeItem.type, LEAF_FLAGS)
         }
 
         dmeItem.children.forEach { child ->
@@ -79,24 +79,24 @@ class View(
 
     private fun showAllNodes(dmeItem: DmeItem) {
         showToggleButton(dmeItem)
-        sameLine()
+        ImGui.sameLine()
 
         if (dmeItem.children.isEmpty()) {
-            treeNodeEx(dmeItem.type, LEAF_FLAGS)
-        } else if (treeNode(dmeItem.type)) {
+            ImGui.treeNodeEx(dmeItem.type, LEAF_FLAGS)
+        } else if (ImGui.treeNode(dmeItem.type)) {
             dmeItem.children.forEach { child ->
                 showAllNodes(state.currentEnvironment!!.getItem(child)!!)
             }
 
-            treePop()
+            ImGui.treePop()
         }
     }
 
     private fun showToggleButton(dmeItem: DmeItem) {
         val isFilteredType = viewController.isFilteredType(dmeItem)
 
-        withStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
-            if (checkbox("##layer_filter_${dmeItem.id}", !isFilteredType)) {
+        imGuiWithStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
+            if (ImGui.checkbox("##layer_filter_${dmeItem.id}", !isFilteredType)) {
                 viewController.doToggleTypeFilter(dmeItem, isFilteredType)
             }
         }

@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.about
 
-import imgui.ImGui.textWrapped
+import imgui.ImGui
 import strongdmm.util.imgui.ImGuiUtil
-import strongdmm.util.imgui.window
+import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
 
 class View(
@@ -24,8 +24,8 @@ class View(
 
         ImGuiUtil.setNextWindowCentered(width, height)
 
-        window(TITLE, state.isOpened) {
-            textWrapped(state.aboutText)
+        imGuiBegin(TITLE, state.isOpened) {
+            ImGui.textWrapped(state.aboutText)
         }
     }
 }

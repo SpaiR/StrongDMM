@@ -1,6 +1,6 @@
 package strongdmm.ui.panel.preferences
 
-import imgui.ImGui.*
+import imgui.ImGui
 import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiMouseButton
 import imgui.flag.ImGuiMouseCursor
@@ -38,18 +38,18 @@ class View(
     fun process() {
         if (state.isDoOpen) {
             state.checkOpenStatus = true
-            openPopup(TITLE)
+            ImGui.openPopup(TITLE)
             viewController.blockApplication()
             state.isDoOpen = false
         }
 
         ImGuiUtil.setNextWindowCentered(width, height, ImGuiCond.Appearing)
 
-        popupModal(TITLE, state.isOpened) {
+        imGuiPopupModal(TITLE, state.isOpened) {
             state.preferencesByGroups.forEach { (groupName, preferences) ->
                 ImGuiMarkdown.renderHeader(groupName)
 
-                withIndent(optionsIndent) {
+                imGuiWithIndent(optionsIndent) {
                     preferences.forEach { pref ->
                         when (pref) {
                             is PreferenceInteger -> showInputIntOption(pref)
@@ -57,7 +57,7 @@ class View(
                             is PreferenceBoolean -> showToggleOption(pref)
                         }
 
-                        newLine()
+                        ImGui.newLine()
                     }
                 }
             }
@@ -67,11 +67,11 @@ class View(
     }
 
     private fun showInputIntOption(pref: PreferenceInteger) {
-        textWrapped(pref.getHeader())
+        ImGui.textWrapped(pref.getHeader())
 
-        pushTextWrapPos()
-        textDisabled(pref.getDesc())
-        popTextWrapPos()
+        ImGui.pushTextWrapPos()
+        ImGui.textDisabled(pref.getDesc())
+        ImGui.popTextWrapPos()
 
         imInt.set(pref.getValue().data)
         if (ImGuiExt.inputIntClamp(pref.getLabel(), imInt, pref.getMin(), pref.getMax(), pref.getStep(), pref.getStepFast())) {
@@ -81,15 +81,15 @@ class View(
     }
 
     private fun showSelectOption(pref: PreferenceEnum) {
-        textWrapped(pref.getHeader())
+        ImGui.textWrapped(pref.getHeader())
 
-        pushTextWrapPos()
-        textDisabled(pref.getDesc())
-        popTextWrapPos()
+        ImGui.pushTextWrapPos()
+        ImGui.textDisabled(pref.getDesc())
+        ImGui.popTextWrapPos()
 
-        combo(pref.getLabel(), pref.getReadableName()) {
+        imGuiCombo(pref.getLabel(), pref.getReadableName()) {
             pref.getEnums().forEach { mode ->
-                selectable(mode.getReadableName(), pref == mode) {
+                imGuiSelectable(mode.getReadableName(), pref == mode) {
                     viewController.doSelectOption(mode, pref)
                 }
             }
@@ -97,25 +97,25 @@ class View(
     }
 
     private fun showToggleOption(pref: PreferenceBoolean) {
-        textWrapped(pref.getHeader())
+        ImGui.textWrapped(pref.getHeader())
 
-        withStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
-            if (checkbox(pref.getLabel(), pref.getValue().data)) {
+        imGuiWithStyleVar(ImGuiStyleVar.FramePadding, toggleButtonPadding, toggleButtonPadding) {
+            if (ImGui.checkbox(pref.getLabel(), pref.getValue().data)) {
                 viewController.doToggleOption(pref)
             }
         }
 
-        sameLine()
+        ImGui.sameLine()
 
-        pushTextWrapPos()
-        textDisabled(pref.getDesc())
-        popTextWrapPos()
+        ImGui.pushTextWrapPos()
+        ImGui.textDisabled(pref.getDesc())
+        ImGui.popTextWrapPos()
 
-        if (isItemHovered()) {
-            setMouseCursor(ImGuiMouseCursor.Hand)
+        if (ImGui.isItemHovered()) {
+            ImGui.setMouseCursor(ImGuiMouseCursor.Hand)
         }
 
-        if (isItemClicked(ImGuiMouseButton.Left)) {
+        if (ImGui.isItemClicked(ImGuiMouseButton.Left)) {
             viewController.doToggleOption(pref)
         }
     }
