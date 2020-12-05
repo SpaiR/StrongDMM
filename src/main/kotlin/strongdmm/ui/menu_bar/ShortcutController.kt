@@ -6,35 +6,33 @@ import strongdmm.service.shortcut.ShortcutHandler
 
 class ShortcutController(
     viewController: ViewController
-) {
-    private val shortcutHandler = ShortcutHandler()
-
+) : ShortcutHandler() {
     init {
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_N, action = viewController::doNewMap)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = viewController::doOpenMap)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = viewController::doOpenAvailableMap)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = viewController::doCloseMap)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_W, action = viewController::doCloseAllMaps)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_S, action = viewController::doSave)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_S, action = viewController::doSaveAll)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Q, action = viewController::doExit)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_N, action = viewController::doNewMap)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_O, action = viewController::doOpenMap)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_O, action = viewController::doOpenAvailableMap)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_W, action = viewController::doCloseMap)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_W, action = viewController::doCloseAllMaps)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_S, action = viewController::doSave)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_S, action = viewController::doSaveAll)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Q, action = viewController::doExit)
 
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = viewController::doUndo)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = viewController::doRedo)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_X, action = viewController::doCut)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = viewController::doCopy)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = viewController::doPaste)
-        shortcutHandler.addShortcut(GLFW.GLFW_KEY_DELETE, action = viewController::doDelete)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_D, action = viewController::doDeselectAll)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_F, action = viewController::doFindInstance)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_Z, action = viewController::doUndo)
+        addShortcut(Shortcut.CONTROL_PAIR, Shortcut.SHIFT_PAIR, GLFW.GLFW_KEY_Z, action = viewController::doRedo)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_X, action = viewController::doCut)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_C, action = viewController::doCopy)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_V, action = viewController::doPaste)
+        addShortcut(GLFW.GLFW_KEY_DELETE, action = viewController::doDelete)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_D, action = viewController::doDeselectAll)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_F, action = viewController::doFindInstance)
 
         // "Manual" methods since toggle through the buttons switches ImBoolean status vars automatically.
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_1, action = viewController::toggleAreaLayerManual)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_2, action = viewController::toggleTurfLayerManual)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_3, action = viewController::toggleObjLayerManual)
-        shortcutHandler.addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_4, action = viewController::toggleMobLayerManual)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_1, action = viewController::toggleAreaLayerManual)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_2, action = viewController::toggleTurfLayerManual)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_3, action = viewController::toggleObjLayerManual)
+        addShortcut(Shortcut.CONTROL_PAIR, GLFW.GLFW_KEY_4, action = viewController::toggleMobLayerManual)
 
-        shortcutHandler.addShortcut(GLFW.GLFW_KEY_F5, action = viewController::doResetWindows)
-        shortcutHandler.addShortcut(GLFW.GLFW_KEY_F11, action = viewController::doFullscreen)
+        addShortcut(GLFW.GLFW_KEY_F5, action = viewController::doResetWindows)
+        addShortcut(GLFW.GLFW_KEY_F11, action = viewController::doFullscreen)
     }
 }

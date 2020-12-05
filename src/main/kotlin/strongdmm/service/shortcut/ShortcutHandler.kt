@@ -6,7 +6,7 @@ import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.ReactionShortcutService
 
 @Suppress("LeakingThis")
-class ShortcutHandler {
+open class ShortcutHandler {
     companion object {
         val globalShortcuts: MutableSet<Shortcut> = mutableSetOf() // used to iterate through all registered shortcuts
     }
