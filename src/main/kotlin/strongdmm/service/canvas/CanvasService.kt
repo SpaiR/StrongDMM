@@ -28,7 +28,7 @@ import strongdmm.service.shortcut.Shortcut
 import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 import java.util.*
 
 class CanvasService : Service, PostInitialize, Processable {

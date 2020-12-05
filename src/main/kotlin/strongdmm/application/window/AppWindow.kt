@@ -1,9 +1,6 @@
-package strongdmm.window
+package strongdmm.application.window
 
-import imgui.ImFontAtlas
-import imgui.ImFontConfig
-import imgui.ImGui
-import imgui.ImGuiFreeType
+import imgui.*
 import imgui.flag.ImGuiCond
 import imgui.gl3.ImGuiImplGl3
 import imgui.glfw.ImGuiImplGlfw
@@ -36,6 +33,9 @@ abstract class AppWindow(title: String) {
         fun toggleFullscreen() {
             Window._toggleFullscreen = true
         }
+
+        private const val FONT_DEFAULT_SIZE: Int = 15
+        private const val FONT_HEADER_SIZE: Int = 18
     }
 
     private val sync = Sync()
@@ -142,6 +142,8 @@ abstract class AppWindow(title: String) {
         }
     }
 
+    abstract fun applicationLoop()
+
     private fun startFrame() {
         imGuiGlfw.newFrame()
         ImGui.newFrame()
@@ -184,16 +186,14 @@ abstract class AppWindow(title: String) {
         }
     }
 
-    abstract fun applicationLoop()
-
     private fun configureFonts() {
         val fontAtlas = ImGui.getIO().fonts
         val fontConfig = ImFontConfig()
 
         fontAtlas.clear()
 
-        createDefaultFont(fontAtlas, fontConfig)
-        createHeaderFont(fontAtlas, fontConfig)
+        Window.defaultFont = createFont(fontAtlas, fontConfig, FONT_DEFAULT_SIZE)
+        Window.headerFont = createFont(fontAtlas, fontConfig, FONT_HEADER_SIZE)
 
         ImGuiFreeType.buildFontAtlas(fontAtlas, ImGuiFreeType.RasterizerFlags.LightHinting)
         fontConfig.destroy()
@@ -201,11 +201,11 @@ abstract class AppWindow(title: String) {
         ImGui.getIO().setFontDefault(Window.defaultFont)
     }
 
-    private fun createDefaultFont(fontAtlas: ImFontAtlas, fontConfig: ImFontConfig) {
-        Window.defaultFont = fontAtlas.addFontFromMemoryTTF(fontData, 15 * Window.pointSize, fontConfig, fontAtlas.glyphRangesCyrillic)
+    private fun createFont(fontAtlas: ImFontAtlas, fontConfig: ImFontConfig, fontSize: Int): ImFont {
+        val font = fontAtlas.addFontFromMemoryTTF(fontData, fontSize * Window.pointSize, fontConfig, fontAtlas.glyphRangesCyrillic)
 
         // Add Font Awesome icons
-        val iconSize = 13 * Window.pointSize
+        val iconSize = (fontSize - 2) * Window.pointSize
 
         fontConfig.mergeMode = true
         fontConfig.glyphMaxAdvanceX = iconSize
@@ -213,20 +213,8 @@ abstract class AppWindow(title: String) {
         fontAtlas.addFontFromMemoryTTF(iconData, iconSize, fontConfig, shortArrayOf(ICON_MIN_FA, ICON_MAX_FA))
 
         fontConfig.mergeMode = false
-    }
 
-    private fun createHeaderFont(fontAtlas: ImFontAtlas, fontConfig: ImFontConfig) {
-        Window.headerFont = fontAtlas.addFontFromMemoryTTF(fontData, 18 * Window.pointSize, fontConfig, fontAtlas.glyphRangesCyrillic)
-
-        // Add Font Awesome icons
-        val headerIconSize = 16 * Window.pointSize
-
-        fontConfig.mergeMode = true
-        fontConfig.glyphMaxAdvanceX = headerIconSize
-
-        fontAtlas.addFontFromMemoryTTF(iconData, headerIconSize, fontConfig, shortArrayOf(ICON_MIN_FA, ICON_MAX_FA))
-
-        fontConfig.mergeMode = false
+        return font
     }
 
     private fun loadWindowIcon(stack: MemoryStack) {

@@ -1,7 +1,7 @@
 package strongdmm.service.preferences.prefs.ints
 
 import strongdmm.service.preferences.prefs.PreferenceInteger
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class InterfaceScalePercent(value: Int) : PreferenceInteger(value) {
     constructor() : this(100)

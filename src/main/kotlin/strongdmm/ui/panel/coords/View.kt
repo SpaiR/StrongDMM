@@ -6,7 +6,7 @@ import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

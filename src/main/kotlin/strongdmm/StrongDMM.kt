@@ -43,7 +43,7 @@ import strongdmm.ui.panel.search_result.SearchResultPanelUi
 import strongdmm.ui.panel.tool_select.ToolSelectPanelUi
 import strongdmm.ui.panel.variables_preview.VariablesPreviewPanelUi
 import strongdmm.ui.tile_popup.TilePopupUi
-import strongdmm.window.AppWindow
+import strongdmm.application.window.AppWindow
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.system.exitProcess

@@ -7,7 +7,7 @@ import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_GREEN
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

@@ -3,7 +3,7 @@ package strongdmm.ui.panel.about
 import imgui.ImGui.textWrapped
 import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

@@ -4,7 +4,7 @@ import imgui.ImGui
 import imgui.ImVec2
 import strongdmm.util.imgui.COLOR_DIMGREY
 import strongdmm.util.imgui.COLOR_WHITE
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class WindowButton {
     companion object {

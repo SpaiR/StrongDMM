@@ -7,7 +7,7 @@ import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogType
 import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.popupModal
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

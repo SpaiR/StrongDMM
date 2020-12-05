@@ -6,7 +6,7 @@ import strongdmm.util.imgui.ImGuiUtil
 import strongdmm.util.imgui.button
 import strongdmm.util.imgui.radioButton
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

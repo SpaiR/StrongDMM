@@ -29,7 +29,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package strongdmm.window
+package strongdmm.application.window
 
 import org.lwjgl.glfw.GLFW
 
@@ -111,12 +111,12 @@ class Sync {
             // over 10ms making in unusable. However it can be forced to
             // be a bit more accurate by running a separate sleeping daemon
             // thread.
-            val timerAccuracyThread = Thread(Runnable {
+            val timerAccuracyThread = Thread {
                 try {
                     Thread.sleep(java.lang.Long.MAX_VALUE)
                 } catch (e: Exception) {
                 }
-            })
+            }
 
             timerAccuracyThread.name = "LWJGL3 Timer"
             timerAccuracyThread.isDaemon = true

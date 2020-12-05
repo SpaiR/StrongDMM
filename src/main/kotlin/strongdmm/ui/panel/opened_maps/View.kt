@@ -5,7 +5,7 @@ import imgui.flag.ImGuiCol
 import strongdmm.ui.LayoutManager
 import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

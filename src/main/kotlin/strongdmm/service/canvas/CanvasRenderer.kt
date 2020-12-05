@@ -14,7 +14,7 @@ import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 import java.nio.ByteBuffer
 
 class CanvasRenderer {

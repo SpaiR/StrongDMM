@@ -4,7 +4,7 @@ import imgui.ImGui
 import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
 import strongdmm.service.map.UnknownType
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class ViewController(
     private val state: State

@@ -4,7 +4,7 @@ import imgui.ImGui.*
 import strongdmm.ui.LayoutManager
 import strongdmm.util.imgui.COLOR_LIME
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

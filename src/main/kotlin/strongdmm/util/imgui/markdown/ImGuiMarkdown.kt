@@ -1,7 +1,7 @@
 package strongdmm.util.imgui.markdown
 
 import imgui.ImGui
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 object ImGuiMarkdown {
     private const val HEADER_PREFIX = "# "

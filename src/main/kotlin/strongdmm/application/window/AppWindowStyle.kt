@@ -1,4 +1,4 @@
-package strongdmm.window
+package strongdmm.application.window
 
 import imgui.ImGui
 import imgui.ImGui.styleColorsDark

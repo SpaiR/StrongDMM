@@ -5,7 +5,7 @@ import strongdmm.application.Processable
 import strongdmm.application.Service
 import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class ApplicationCloseService : Service, Processable {
     override fun process() {

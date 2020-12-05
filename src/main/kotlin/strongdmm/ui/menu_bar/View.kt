@@ -4,7 +4,7 @@ import imgui.ImGui.separator
 import strongdmm.util.imgui.mainMenuBar
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

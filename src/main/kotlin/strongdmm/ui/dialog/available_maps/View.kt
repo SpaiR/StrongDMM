@@ -5,7 +5,7 @@ import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiWindowFlags
 import org.lwjgl.glfw.GLFW
 import strongdmm.util.imgui.*
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

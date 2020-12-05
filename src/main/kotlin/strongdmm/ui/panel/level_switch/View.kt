@@ -9,7 +9,7 @@ import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.COLOR_GREY
 import strongdmm.util.imgui.ImGuiExt
 import strongdmm.util.imgui.window
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

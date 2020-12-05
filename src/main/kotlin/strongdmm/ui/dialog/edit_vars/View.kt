@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
 import strongdmm.util.icons.ICON_FA_UNDO_ALT
 import strongdmm.util.imgui.*
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

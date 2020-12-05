@@ -1,7 +1,7 @@
 package strongdmm.ui
 
 import imgui.ImGui
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 object LayoutManager {
     const val ELEMENT_MARGIN: Float = 10f

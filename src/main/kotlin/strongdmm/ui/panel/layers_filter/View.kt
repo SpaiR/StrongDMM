@@ -10,7 +10,7 @@ import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dme.DmeItem
 import strongdmm.util.imgui.*
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

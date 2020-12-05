@@ -1,4 +1,4 @@
-package strongdmm.window
+package strongdmm.application.window
 
 import imgui.ImFont
 import imgui.flag.ImGuiCond

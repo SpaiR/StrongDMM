@@ -1,7 +1,7 @@
 package strongdmm.service.preferences.prefs.enums
 
 import strongdmm.service.preferences.prefs.PreferenceEnum
-import strongdmm.window.AppWindowStyle
+import strongdmm.application.window.AppWindowStyle
 
 class StyleMode private constructor(value: String) : PreferenceEnum(value) {
     companion object {

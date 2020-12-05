@@ -10,8 +10,8 @@ import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
-import strongdmm.window.AppWindow
-import strongdmm.window.Window
+import strongdmm.application.window.AppWindow
+import strongdmm.application.window.Window
 import java.io.File
 
 class ViewController(

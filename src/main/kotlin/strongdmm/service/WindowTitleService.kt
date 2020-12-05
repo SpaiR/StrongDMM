@@ -8,7 +8,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
 import strongdmm.event.type.Reaction
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class WindowTitleService : Service {
     private var environmentName: String = ""

@@ -2,7 +2,7 @@ package strongdmm.util.imgui
 
 import imgui.ImGui
 import imgui.flag.ImGuiCol
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 object ImGuiUtil {
     fun setNextWindowCentered(windowWidth: Float, windowHeight: Float, imGuiCond: Int = Window.windowCond) {

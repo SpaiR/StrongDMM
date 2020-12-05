@@ -11,7 +11,7 @@ import strongdmm.service.preferences.prefs.PreferenceEnum
 import strongdmm.service.preferences.prefs.PreferenceInteger
 import strongdmm.util.imgui.*
 import strongdmm.util.imgui.markdown.ImGuiMarkdown
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State

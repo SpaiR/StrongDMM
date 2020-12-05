@@ -8,7 +8,7 @@ import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.menu
 import strongdmm.util.imgui.menuItem
 import strongdmm.util.imgui.popup
-import strongdmm.window.Window
+import strongdmm.application.window.Window
 
 class View(
     private val state: State
