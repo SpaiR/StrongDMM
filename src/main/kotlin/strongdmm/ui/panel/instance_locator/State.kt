@@ -5,7 +5,7 @@ import imgui.type.ImInt
 import imgui.type.ImString
 
 class State {
-    val showInstanceLocator: ImBoolean = ImBoolean(false)
+    val doInstanceLocatorOpen: ImBoolean = ImBoolean(false)
 
     var isFirstOpen: Boolean = true
 

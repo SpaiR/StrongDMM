@@ -7,7 +7,7 @@ import strongdmm.service.frame.FrameMesh
 import java.nio.ByteBuffer
 
 class ScreenshotRenderer {
-    lateinit var providedFrameMeshes: List<FrameMesh>
+    lateinit var providedComposedFrame: List<FrameMesh>
 
     fun render(width: Int, height: Int, mapArea: MapArea, xShift: Float, yShift: Float): ByteBuffer {
         val frameBuffer = glGenFramebuffers()
@@ -38,7 +38,7 @@ class ScreenshotRenderer {
 
         var currentTexture = -1
 
-        for (frameMesh in providedFrameMeshes) {
+        for (frameMesh in providedComposedFrame) {
             if (!mapArea.isInBounds(frameMesh.mapX, frameMesh.mapY)) {
                 continue
             }

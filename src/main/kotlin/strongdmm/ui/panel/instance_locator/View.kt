@@ -27,14 +27,14 @@ class View(
     lateinit var viewController: ViewController
 
     fun process() {
-        if (!state.showInstanceLocator.get()) {
+        if (!state.doInstanceLocatorOpen.get()) {
             state.isFirstOpen = true
             return
         }
 
         ImGuiUtil.setNextWindowCentered(width, height, Window.windowCond)
 
-        window(TITLE, state.showInstanceLocator) {
+        window(TITLE, state.doInstanceLocatorOpen) {
             if (state.isFirstOpen) {
                 setKeyboardFocusHere()
                 state.isFirstOpen = false

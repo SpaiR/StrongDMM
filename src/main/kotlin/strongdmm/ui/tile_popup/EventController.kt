@@ -4,8 +4,8 @@ import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderPreferencesService
 import strongdmm.event.type.ui.TriggerTilePopupUi
 import strongdmm.service.action.ActionStatus
 import strongdmm.service.preferences.Preferences
@@ -20,7 +20,7 @@ class EventController(
         EventBus.sign(Reaction.OpenedMapClosed::class.java, ::handleOpenedMapClosed)
         EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         EventBus.sign(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
-        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
+        EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
     }
 
     lateinit var viewController: ViewController
@@ -57,7 +57,7 @@ class EventController(
         state.isRedoEnabled = event.body.hasRedoAction
     }
 
-    private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
+    private fun handleProviderPreferences(event: Event<Preferences, Unit>) {
         state.providedPreferences = event.body
     }
 }

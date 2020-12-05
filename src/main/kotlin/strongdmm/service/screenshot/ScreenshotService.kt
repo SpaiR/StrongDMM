@@ -4,8 +4,8 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderFrameService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerScreenshotService
 import strongdmm.service.frame.FrameMesh
@@ -21,7 +21,7 @@ class ScreenshotService : Service {
     private val screenshotRenderer = ScreenshotRenderer()
 
     init {
-        EventBus.sign(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
+        EventBus.sign(ProviderFrameService.ComposedFrame::class.java, ::handleProviderComposedFrame)
         EventBus.sign(TriggerScreenshotService.TakeScreenshot::class.java, ::handleTakeScreenshot)
     }
 
@@ -80,8 +80,8 @@ class ScreenshotService : Service {
         saveImageBytesToPng(imageBytes, width, height, file)
     }
 
-    private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {
-        screenshotRenderer.providedFrameMeshes = event.body
+    private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+        screenshotRenderer.providedComposedFrame = event.body
     }
 
     private fun col32argb(r: Int, g: Int, b: Int, a: Int): Int = (a shl 24) or (r shl 16) or (g shl 8) or (b shl 0)

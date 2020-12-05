@@ -20,7 +20,7 @@ import java.nio.ByteBuffer
 class CanvasRenderer {
     var redraw: Boolean = false
 
-    lateinit var providedFrameMeshes: List<FrameMesh>
+    lateinit var providedComposedFrame: List<FrameMesh>
     lateinit var providedFramedTiles: List<FramedTile>
 
     private val frameBuffer: Int = glGenFramebuffers()
@@ -286,7 +286,7 @@ class CanvasRenderer {
         val currentMarkedTileItemLvl = markedTileItemLvl
         markedTileItemLvl = -1
 
-        for (frameMesh in providedFrameMeshes) {
+        for (frameMesh in providedComposedFrame) {
             val (tileItemId, sprite, mapX, mapY, x1, y1, x2, y2) = frameMesh
 
             var colorR = frameMesh.colorR

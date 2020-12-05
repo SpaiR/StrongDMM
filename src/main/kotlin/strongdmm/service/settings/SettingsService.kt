@@ -6,7 +6,7 @@ import strongdmm.StrongDMM
 import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
+import strongdmm.event.type.service.ProviderSettingsService
 import strongdmm.event.type.service.TriggerSettingsService
 import java.io.File
 
@@ -27,7 +27,7 @@ class SettingsService : Service, PostInitialize {
         ensureSettingsConfigExists()
         readSettingsConfig()
 
-        EventBus.post(Provider.SettingsServiceSettings(settings))
+        EventBus.post(ProviderSettingsService.Settings(settings))
     }
 
     private fun ensureSettingsConfigExists() {

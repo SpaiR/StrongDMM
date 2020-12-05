@@ -10,8 +10,8 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderFrameService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.service.TriggerLayersFilterService
 import strongdmm.event.type.service.TriggerMapHolderService
@@ -25,7 +25,7 @@ class FrameService : Service, PostInitialize {
         private const val MOB_DEPTH: Short = 10
     }
 
-    private val cache: MutableList<FrameMesh> = mutableListOf()
+    private val composedFrame: MutableList<FrameMesh> = mutableListOf()
     private val framedTiles: MutableList<FramedTile> = mutableListOf()
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
@@ -42,8 +42,8 @@ class FrameService : Service, PostInitialize {
     }
 
     override fun postInit() {
-        EventBus.post(Provider.FrameServiceComposedFrame(cache))
-        EventBus.post(Provider.FrameServiceFramedTiles(framedTiles))
+        EventBus.post(ProviderFrameService.ComposedFrame(composedFrame))
+        EventBus.post(ProviderFrameService.FramedTiles(framedTiles))
     }
 
     private fun updateFrameCache() {
@@ -82,12 +82,12 @@ class FrameService : Service, PostInitialize {
                             else -> 0
                         }
 
-                        cache.add(FrameMesh(tileItemId, sprite, x, y, x1, y1, x2, y2, colorR, colorG, colorB, colorA, depth + specificDepth))
+                        composedFrame.add(FrameMesh(tileItemId, sprite, x, y, x1, y1, x2, y2, colorR, colorG, colorB, colorA, depth + specificDepth))
                     }
                 }
             }
 
-            cache.sortBy { it.depth }
+            composedFrame.sortBy { it.depth }
         })
     }
 
@@ -116,7 +116,7 @@ class FrameService : Service, PostInitialize {
     }
 
     private fun refreshFrame() {
-        cache.clear()
+        composedFrame.clear()
         framedTiles.clear()
         updateFrameCache()
         EventBus.post(Reaction.FrameRefreshed())
@@ -140,12 +140,12 @@ class FrameService : Service, PostInitialize {
     }
 
     private fun handleEnvironmentReset() {
-        cache.clear()
+        composedFrame.clear()
         framedTiles.clear()
     }
 
     private fun handleSelectedMapClosed() {
-        cache.clear()
+        composedFrame.clear()
         framedTiles.clear()
     }
 

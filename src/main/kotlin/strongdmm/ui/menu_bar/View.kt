@@ -103,8 +103,8 @@ class View(
 
                 separator()
 
-                menuItem("Frame Areas", selected = state.providedFrameAreas, block = {})
-                menuItem("Synchronize Maps View", selected = state.providedSynchronizeMapsView, block = {})
+                menuItem("Frame Areas", selected = state.providedDoFrameAreas, block = {})
+                menuItem("Synchronize Maps View", selected = state.providedDoSynchronizeMapsView, block = {})
 
                 separator()
 

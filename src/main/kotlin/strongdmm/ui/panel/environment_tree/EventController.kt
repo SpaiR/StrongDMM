@@ -5,8 +5,8 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderRecentFilesService
 
 class EventController(
     private val state: State
@@ -17,7 +17,7 @@ class EventController(
         EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
-        EventBus.sign(Provider.RecentFilesServiceRecentEnvironmentsWithMaps::class.java, ::handleRecentFilesServiceRecentEnvironmentsWithMaps)
+        EventBus.sign(ProviderRecentFilesService.RecentEnvironmentsWithMaps::class.java, ::handleProviderRecentEnvironmentsWithMaps)
     }
 
     private fun handleEnvironmentLoadStarted() {
@@ -46,7 +46,7 @@ class EventController(
         }
     }
 
-    private fun handleRecentFilesServiceRecentEnvironmentsWithMaps(event: Event<Map<String, List<MapPath>>, Unit>) {
+    private fun handleProviderRecentEnvironmentsWithMaps(event: Event<Map<String, List<MapPath>>, Unit>) {
         state.providedRecentEnvironmentsWithMaps = event.body.toMap().mapValues { it.value.toList() }
     }
 }

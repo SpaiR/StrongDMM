@@ -8,8 +8,10 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderCanvasService
+import strongdmm.event.type.service.ProviderRecentFilesService
+import strongdmm.event.type.ui.ProviderInstanceLocatorPanelUi
 import strongdmm.service.action.ActionStatus
 
 class EventController(
@@ -25,11 +27,11 @@ class EventController(
         EventBus.sign(Reaction.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         EventBus.sign(Reaction.LayersFilterRefreshed::class.java, ::handleLayersFilterRefreshed)
 
-        EventBus.sign(Provider.InstanceLocatorPanelUiOpen::class.java, ::handleProviderInstanceLocatorPanelUiOpen)
-        EventBus.sign(Provider.CanvasServiceFrameAreas::class.java, ::handleProviderCanvasServiceFrameAreas)
-        EventBus.sign(Provider.CanvasServiceSynchronizeMapsView::class.java, ::handleProviderCanvasServiceSynchronizeMapsView)
-        EventBus.sign(Provider.RecentFilesServiceRecentEnvironments::class.java, ::handleProviderRecentFilesServiceRecentEnvironments)
-        EventBus.sign(Provider.RecentFilesServiceRecentMaps::class.java, ::handleProviderRecentFilesServiceRecentMaps)
+        EventBus.sign(ProviderInstanceLocatorPanelUi.DoInstanceLocatorOpen::class.java, ::handleProviderDoInstanceLocatorOpen)
+        EventBus.sign(ProviderCanvasService.DoFrameAreas::class.java, ::handleProviderDoFrameAreas)
+        EventBus.sign(ProviderCanvasService.DoSynchronizeMapsView::class.java, ::handleProviderDoSynchronizeMapsView)
+        EventBus.sign(ProviderRecentFilesService.RecentEnvironments::class.java, ::handleProviderRecentEnvironments)
+        EventBus.sign(ProviderRecentFilesService.RecentMaps::class.java, ::handleProviderRecentMaps)
     }
 
     private fun handleEnvironmentLoadStarted() {
@@ -68,23 +70,23 @@ class EventController(
         state.isMobLayerActive.set(!event.body.contains(TYPE_MOB))
     }
 
-    private fun handleProviderInstanceLocatorPanelUiOpen(event: Event<ImBoolean, Unit>) {
-        state.providedShowInstanceLocator = event.body
+    private fun handleProviderDoInstanceLocatorOpen(event: Event<ImBoolean, Unit>) {
+        state.providedDoInstanceLocatorOpen = event.body
     }
 
-    private fun handleProviderCanvasServiceFrameAreas(event: Event<ImBoolean, Unit>) {
-        state.providedFrameAreas = event.body
+    private fun handleProviderDoFrameAreas(event: Event<ImBoolean, Unit>) {
+        state.providedDoFrameAreas = event.body
     }
 
-    private fun handleProviderCanvasServiceSynchronizeMapsView(event: Event<ImBoolean, Unit>) {
-        state.providedSynchronizeMapsView = event.body
+    private fun handleProviderDoSynchronizeMapsView(event: Event<ImBoolean, Unit>) {
+        state.providedDoSynchronizeMapsView = event.body
     }
 
-    private fun handleProviderRecentFilesServiceRecentEnvironments(event: Event<List<String>, Unit>) {
+    private fun handleProviderRecentEnvironments(event: Event<List<String>, Unit>) {
         state.providedRecentEnvironments = event.body
     }
 
-    private fun handleProviderRecentFilesServiceRecentMaps(event: Event<List<MapPath>, Unit>) {
+    private fun handleProviderRecentMaps(event: Event<List<MapPath>, Unit>) {
         state.providedRecentMaps = event.body
     }
 }

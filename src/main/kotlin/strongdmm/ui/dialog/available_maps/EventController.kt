@@ -3,8 +3,8 @@ package strongdmm.ui.dialog.available_maps
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderMapHolderService
 import strongdmm.event.type.ui.TriggerAvailableMapsDialogUi
 
 class EventController(
@@ -12,7 +12,7 @@ class EventController(
 ) {
     init {
         EventBus.sign(TriggerAvailableMapsDialogUi.Open::class.java, ::handleOpen)
-        EventBus.sign(Provider.MapHolderServiceAvailableMaps::class.java, ::handleProviderMapHolderServiceAvailableMaps)
+        EventBus.sign(ProviderMapHolderService.AvailableMaps::class.java, ::handleProviderAvailableMaps)
     }
 
     private fun handleOpen() {
@@ -21,7 +21,7 @@ class EventController(
         EventBus.post(Reaction.ApplicationBlockChanged(true))
     }
 
-    private fun handleProviderMapHolderServiceAvailableMaps(event: Event<Set<MapPath>, Unit>) {
+    private fun handleProviderAvailableMaps(event: Event<Set<MapPath>, Unit>) {
         state.providedAvailableMapPaths = event.body
     }
 }

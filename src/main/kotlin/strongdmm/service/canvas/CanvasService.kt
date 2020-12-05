@@ -15,7 +15,6 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
 import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerEditVarsDialogUi
@@ -57,8 +56,8 @@ class CanvasService : Service, PostInitialize, Processable {
     private var maxX: Int = OUT_OF_BOUNDS
     private var maxY: Int = OUT_OF_BOUNDS
 
-    private val frameAreas: ImBoolean = ImBoolean(true)
-    private val synchronizeMapsView: ImBoolean = ImBoolean(false)
+    private val doFrameAreas: ImBoolean = ImBoolean(true)
+    private val doSynchronizeMapsView: ImBoolean = ImBoolean(false)
 
     // Tile of the map covered with mouse
     private var xMapMousePos: Int = OUT_OF_BOUNDS
@@ -86,9 +85,9 @@ class CanvasService : Service, PostInitialize, Processable {
         EventBus.sign(Reaction.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         EventBus.sign(Reaction.TilePopupOpened::class.java, ::handleTilePopupOpened)
         EventBus.sign(Reaction.TilePopupClosed::class.java, ::handleTilePopupClosed)
-        EventBus.sign(Provider.FrameServiceComposedFrame::class.java, ::handleProviderFrameServiceComposedFrame)
-        EventBus.sign(Provider.FrameServiceFramedTiles::class.java, ::handleProviderFrameServiceFramedTiles)
-        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesServicePreferences)
+        EventBus.sign(ProviderFrameService.ComposedFrame::class.java, ::handleProviderComposedFrame)
+        EventBus.sign(ProviderFrameService.FramedTiles::class.java, ::handleProviderFramedTiles)
+        EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
         EventBus.sign(TriggerCanvasService.CenterCanvasByPosition::class.java, ::handleCenterCanvasByPosition)
         EventBus.sign(TriggerCanvasService.MarkPosition::class.java, ::handleMarkPosition)
         EventBus.sign(TriggerCanvasService.ResetMarkedPosition::class.java, ::handleResetMarkedPosition)
@@ -106,8 +105,8 @@ class CanvasService : Service, PostInitialize, Processable {
     }
 
     override fun postInit() {
-        EventBus.post(Provider.CanvasServiceFrameAreas(frameAreas))
-        EventBus.post(Provider.CanvasServiceSynchronizeMapsView(synchronizeMapsView))
+        EventBus.post(ProviderCanvasService.DoFrameAreas(doFrameAreas))
+        EventBus.post(ProviderCanvasService.DoSynchronizeMapsView(doSynchronizeMapsView))
     }
 
     override fun process() {
@@ -245,7 +244,7 @@ class CanvasService : Service, PostInitialize, Processable {
         canvasRenderer.realIconSize = (iconSize / renderData.viewScale).toInt()
         canvasRenderer.mousePosX = mousePos.x * renderData.viewScale.toFloat()
         canvasRenderer.mousePosY = (Window.windowHeight - mousePos.y) * renderData.viewScale.toFloat()
-        canvasRenderer.frameAreas = frameAreas.get()
+        canvasRenderer.frameAreas = doFrameAreas.get()
     }
 
     private fun postProcessTileItemSelectMode() {
@@ -415,7 +414,7 @@ class CanvasService : Service, PostInitialize, Processable {
     }
 
     private fun postProcessSynchronizeMapsView() {
-        if (synchronizeMapsView.get()) {
+        if (doSynchronizeMapsView.get()) {
             renderDataStorageByMapId.filterNot { it.value === renderData }.forEach { (_, data) ->
                 data.viewScale = renderData.viewScale
                 data.scaleCount = renderData.scaleCount
@@ -487,15 +486,15 @@ class CanvasService : Service, PostInitialize, Processable {
         }, 150)
     }
 
-    private fun handleProviderFrameServiceComposedFrame(event: Event<List<FrameMesh>, Unit>) {
-        canvasRenderer.providedFrameMeshes = event.body
+    private fun handleProviderComposedFrame(event: Event<List<FrameMesh>, Unit>) {
+        canvasRenderer.providedComposedFrame = event.body
     }
 
-    private fun handleProviderFrameServiceFramedTiles(event: Event<List<FramedTile>, Unit>) {
+    private fun handleProviderFramedTiles(event: Event<List<FramedTile>, Unit>) {
         canvasRenderer.providedFramedTiles = event.body
     }
 
-    private fun handleProviderPreferencesServicePreferences(event: Event<Preferences, Unit>) {
+    private fun handleProviderPreferences(event: Event<Preferences, Unit>) {
         providedPreferences = event.body
     }
 

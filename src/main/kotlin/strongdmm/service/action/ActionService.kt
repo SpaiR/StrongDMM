@@ -6,8 +6,8 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderActionService
 import strongdmm.event.type.service.TriggerActionService
 import strongdmm.event.type.service.TriggerFrameService
 import strongdmm.event.type.service.TriggerMapHolderService
@@ -35,7 +35,7 @@ class ActionService : Service, PostInitialize {
     }
 
     override fun postInit() {
-        EventBus.post(Provider.ActionServiceActionBalanceStorage(actionBalanceStorage))
+        EventBus.post(ProviderActionService.ActionBalanceStorage(ActionBalanceStorage(actionBalanceStorage)))
     }
 
     private fun getMapActionStack(map: Dmm): ActionStack = actionStacks.getOrPut(map) { ActionStack() }

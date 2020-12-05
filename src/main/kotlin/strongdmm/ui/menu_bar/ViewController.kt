@@ -138,7 +138,7 @@ class ViewController(
     }
 
     fun doFindInstance() {
-        state.providedShowInstanceLocator.set(!state.providedShowInstanceLocator.get())
+        state.providedDoInstanceLocatorOpen.set(!state.providedDoInstanceLocatorOpen.get())
     }
 
     fun doScreenshot() {

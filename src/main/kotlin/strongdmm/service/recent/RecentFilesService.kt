@@ -10,8 +10,8 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderRecentFilesService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerRecentFilesService
 import java.io.File
@@ -40,9 +40,9 @@ class RecentFilesService : Service, PostInitialize {
         ensureRecentFilesConfigExists()
         readRecentFilesConfig()
 
-        EventBus.post(Provider.RecentFilesServiceRecentEnvironmentsWithMaps(recentFiles.maps))
-        EventBus.post(Provider.RecentFilesServiceRecentEnvironments(recentEnvironments))
-        EventBus.post(Provider.RecentFilesServiceRecentMaps(recentMaps))
+        EventBus.post(ProviderRecentFilesService.RecentEnvironmentsWithMaps(recentFiles.maps))
+        EventBus.post(ProviderRecentFilesService.RecentEnvironments(recentEnvironments))
+        EventBus.post(ProviderRecentFilesService.RecentMaps(recentMaps))
     }
 
     private fun ensureRecentFilesConfigExists() {

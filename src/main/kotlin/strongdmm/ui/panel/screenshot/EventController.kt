@@ -2,8 +2,8 @@ package strongdmm.ui.panel.screenshot
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.service.ProviderSettingsService
 import strongdmm.event.type.ui.TriggerScreenshotPanelUi
 import strongdmm.service.settings.Settings
 
@@ -11,7 +11,7 @@ class EventController(
     private val state: State
 ) {
     init {
-        EventBus.sign(Provider.SettingsServiceSettings::class.java, ::handleProviderSettingsServiceSettings)
+        EventBus.sign(ProviderSettingsService.Settings::class.java, ::handleProviderSettings)
         EventBus.sign(TriggerScreenshotPanelUi.Open::class.java, ::handleOpen)
         EventBus.sign(Reaction.ScreenshotTakeStarted::class.java, ::handleScreenshotTakeStarted)
         EventBus.sign(Reaction.ScreenshotTakeStopped::class.java, ::handleScreenshotTakeStopped)
@@ -19,7 +19,7 @@ class EventController(
         EventBus.sign(Reaction.SelectedMapClosed::class.java, ::handleSelectedMapClosed)
     }
 
-    private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {
+    private fun handleProviderSettings(event: Event<Settings, Unit>) {
         state.screenshotPanelUiSettings = event.body.screenshotPanelUiSettings
         state.screenshotFilePath.set(event.body.screenshotPanelUiSettings.path)
         state.isFullMapImage = event.body.screenshotPanelUiSettings.isFullMapImage

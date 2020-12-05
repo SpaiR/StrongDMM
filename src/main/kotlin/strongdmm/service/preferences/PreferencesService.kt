@@ -6,7 +6,7 @@ import strongdmm.StrongDMM
 import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
+import strongdmm.event.type.service.ProviderPreferencesService
 import strongdmm.event.type.service.TriggerPreferencesService
 import strongdmm.service.preferences.prefs.Preference
 import java.io.File
@@ -28,7 +28,7 @@ class PreferencesService : Service, PostInitialize {
         readPreferencesConfig()
         applyModifiedPreferences()
 
-        EventBus.post(Provider.PreferencesServicePreferences(preferences))
+        EventBus.post(ProviderPreferencesService.Preferences(preferences))
     }
 
     private fun ensurePreferencesConfigExists() {

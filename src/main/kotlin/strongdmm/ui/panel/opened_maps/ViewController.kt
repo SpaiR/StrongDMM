@@ -19,5 +19,5 @@ class ViewController(
 
     fun isSelectedMap(map: Dmm): Boolean = state.selectedMap === map
 
-    fun isModifiedMap(map: Dmm): Boolean = state.providedActionBalanceStorage[map] != 0
+    fun isModifiedMap(map: Dmm): Boolean = state.providedActionBalanceStorage.isMapModified(map)
 }

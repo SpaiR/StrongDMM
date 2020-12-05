@@ -3,8 +3,8 @@ package strongdmm.ui.panel.instance_locator
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
+import strongdmm.event.type.ui.ProviderInstanceLocatorPanelUi
 import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
 
 class EventController(
@@ -20,7 +20,7 @@ class EventController(
     lateinit var viewController: ViewController
 
     fun postInit() {
-        EventBus.post(Provider.InstanceLocatorPanelUiOpen(state.showInstanceLocator))
+        EventBus.post(ProviderInstanceLocatorPanelUi.DoInstanceLocatorOpen(state.doInstanceLocatorOpen))
     }
 
     private fun handleEnvironmentReset() {
@@ -49,13 +49,13 @@ class EventController(
     }
 
     private fun handleSearchByType(event: Event<String, Unit>) {
-        state.showInstanceLocator.set(true)
+        state.doInstanceLocatorOpen.set(true)
         state.searchType.set(event.body)
         viewController.doSearch()
     }
 
     private fun handleSearchById(event: Event<Long, Unit>) {
-        state.showInstanceLocator.set(true)
+        state.doInstanceLocatorOpen.set(true)
         state.searchType.set(event.body.toString())
         viewController.doSearch()
     }

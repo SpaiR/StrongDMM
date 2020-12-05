@@ -4,7 +4,8 @@ import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
+import strongdmm.event.type.service.ProviderChangelogService
+import strongdmm.event.type.service.ProviderSettingsService
 import strongdmm.event.type.service.TriggerSettingsService
 import strongdmm.event.type.ui.TriggerChangelogPanelUi
 import strongdmm.service.settings.Settings
@@ -16,14 +17,14 @@ class ChangelogService : Service, PostInitialize {
     }
 
     init {
-        EventBus.sign(Provider.SettingsServiceSettings::class.java, ::handleProviderSettingsServiceSettings)
+        EventBus.sign(ProviderSettingsService.Settings::class.java, ::handleProviderSettings)
     }
 
     override fun postInit() {
-        EventBus.post(Provider.ChangelogServiceChangelogMarkdown(ImGuiMarkdown.parse(rawChangelogText)))
+        EventBus.post(ProviderChangelogService.ChangelogMarkdown(ImGuiMarkdown.parse(rawChangelogText)))
     }
 
-    private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {
+    private fun handleProviderSettings(event: Event<Settings, Unit>) {
         val changelogServiceSettings = event.body.changelogServiceSettings
         val currentHash = rawChangelogText.hashCode()
 

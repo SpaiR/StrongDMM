@@ -1,7 +1,6 @@
 package strongdmm.service.map
 
 import gnu.trove.map.hash.TIntObjectHashMap
-import gnu.trove.map.hash.TObjectIntHashMap
 import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
@@ -11,15 +10,12 @@ import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
 import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerActionService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.event.type.service.TriggerMapPreprocessService
+import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.TriggerConfirmationDialogUi
 import strongdmm.event.type.ui.TriggerNotificationPanelUi
 import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
+import strongdmm.service.action.ActionBalanceStorage
 import strongdmm.service.preferences.Preferences
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
@@ -29,7 +25,7 @@ import java.nio.file.Files
 
 class MapHolderService : Service, PostInitialize {
     private lateinit var providedPreferences: Preferences
-    private lateinit var providedActionBalanceStorage: TObjectIntHashMap<Dmm>
+    private lateinit var providedActionBalanceStorage: ActionBalanceStorage
 
     private val mapsBackupPathsById: TIntObjectHashMap<String> = TIntObjectHashMap()
     private val openedMaps: MutableSet<Dmm> = mutableSetOf()
@@ -51,13 +47,13 @@ class MapHolderService : Service, PostInitialize {
         EventBus.sign(TriggerMapHolderService.ChangeSelectedZ::class.java, ::handleChangeSelectedZ)
         EventBus.sign(Reaction.EnvironmentReset::class.java, ::handleEnvironmentReset)
         EventBus.sign(Reaction.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
-        EventBus.sign(Provider.PreferencesServicePreferences::class.java, ::handleProviderPreferencesControllerPreferences)
-        EventBus.sign(Provider.ActionServiceActionBalanceStorage::class.java, ::handleProviderActionServiceActionBalanceStorage)
+        EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
+        EventBus.sign(ProviderActionService.ActionBalanceStorage::class.java, ::handleProviderActionBalanceStorage)
     }
 
     override fun postInit() {
-        EventBus.post(Provider.MapHolderServiceOpenedMaps(openedMaps))
-        EventBus.post(Provider.MapHolderServiceAvailableMaps(availableMapsPaths))
+        EventBus.post(ProviderMapHolderService.OpenedMaps(openedMaps))
+        EventBus.post(ProviderMapHolderService.AvailableMaps(availableMapsPaths))
     }
 
     private fun createBackupFile(mapFile: File, id: Int) {
@@ -70,7 +66,7 @@ class MapHolderService : Service, PostInitialize {
     }
 
     private fun isMapHasChanges(map: Dmm): Boolean {
-        return providedActionBalanceStorage.containsKey(map) && providedActionBalanceStorage[map] != 0
+        return providedActionBalanceStorage.isMapModified(map)
     }
 
     private fun saveMap(map: Dmm, fileToSave: File? = null) {
@@ -261,11 +257,11 @@ class MapHolderService : Service, PostInitialize {
         }
     }
 
-    private fun handleProviderPreferencesControllerPreferences(event: Event<Preferences, Unit>) {
+    private fun handleProviderPreferences(event: Event<Preferences, Unit>) {
         providedPreferences = event.body
     }
 
-    private fun handleProviderActionServiceActionBalanceStorage(event: Event<TObjectIntHashMap<Dmm>, Unit>) {
+    private fun handleProviderActionBalanceStorage(event: Event<ActionBalanceStorage, Unit>) {
         providedActionBalanceStorage = event.body
     }
 }

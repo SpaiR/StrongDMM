@@ -3,7 +3,7 @@ package strongdmm.service.pinned_variables
 import strongdmm.application.Service
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Provider
+import strongdmm.event.type.service.ProviderSettingsService
 import strongdmm.event.type.service.TriggerEnvironmentService
 import strongdmm.event.type.service.TriggerPinnedVariablesService
 import strongdmm.event.type.service.TriggerSettingsService
@@ -11,7 +11,7 @@ import strongdmm.service.settings.Settings
 
 class PinnedVariablesService : Service {
     init {
-        EventBus.sign(Provider.SettingsServiceSettings::class.java, ::handleProviderSettingsServiceSettings)
+        EventBus.sign(ProviderSettingsService.Settings::class.java, ::handleProviderSettings)
         EventBus.sign(TriggerPinnedVariablesService.FetchPinnedVariables::class.java, ::handleFetchPinnedVariables)
         EventBus.sign(TriggerPinnedVariablesService.PinVariable::class.java, ::handlePinVariables)
         EventBus.sign(TriggerPinnedVariablesService.UnpinVariable::class.java, ::handleUnpinVariable)
@@ -19,7 +19,7 @@ class PinnedVariablesService : Service {
 
     private lateinit var pinnedVariablesServiceSettings: PinnedVariablesServiceSettings
 
-    private fun handleProviderSettingsServiceSettings(event: Event<Settings, Unit>) {
+    private fun handleProviderSettings(event: Event<Settings, Unit>) {
         pinnedVariablesServiceSettings = event.body.pinnedVariablesServiceSettings
     }
 

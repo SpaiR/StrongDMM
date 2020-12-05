@@ -4,9 +4,9 @@ import imgui.type.ImBoolean
 import strongdmm.byond.dmm.MapPath
 
 class State {
-    lateinit var providedShowInstanceLocator: ImBoolean
-    lateinit var providedFrameAreas: ImBoolean
-    lateinit var providedSynchronizeMapsView: ImBoolean
+    lateinit var providedDoInstanceLocatorOpen: ImBoolean
+    lateinit var providedDoFrameAreas: ImBoolean
+    lateinit var providedDoSynchronizeMapsView: ImBoolean
     lateinit var providedRecentEnvironments: List<String>
     lateinit var providedRecentMaps: List<MapPath>
 
