@@ -13,7 +13,6 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.DmeItem
 import strongdmm.ui.LayoutManager
 import strongdmm.ui.panel.environment_tree.model.TreeNode
-import strongdmm.util.icons.ICON_FA_MINUS
 import strongdmm.util.imgui.*
 import strongdmm.application.window.Window
 
@@ -104,7 +103,7 @@ class View(
     }
 
     private fun showControls() {
-        imGuiButton("$ICON_FA_MINUS##collapse_all", block = viewController::doCollapseAll)
+        imGuiButton("${ImGuiIconFA.MINUS}##collapse_all", block = viewController::doCollapseAll)
         ImGuiExt.setItemHoveredTooltip("Collapse All")
         ImGui.sameLine()
         ImGui.setNextItemWidth(-1f)

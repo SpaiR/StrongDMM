@@ -4,12 +4,11 @@ import imgui.ImGui
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiWindowFlags
 import strongdmm.ui.LayoutManager
-import strongdmm.util.icons.ICON_FA_CHEVRON_LEFT
-import strongdmm.util.icons.ICON_FA_CHEVRON_RIGHT
 import strongdmm.util.imgui.COLOR_GREY
 import strongdmm.util.imgui.ImGuiExt
 import strongdmm.util.imgui.imGuiBegin
 import strongdmm.application.window.Window
+import strongdmm.util.imgui.ImGuiIconFA
 
 class View(
     private val state: State
@@ -41,9 +40,9 @@ class View(
         imGuiBegin(TITLE, ImGuiWindowFlags.NoResize or ImGuiWindowFlags.NoTitleBar) {
             state.selectedMap?.let { map ->
                 if (map.zSelected == 1) {
-                    showDisabledSwitch(ICON_FA_CHEVRON_LEFT)
+                    showDisabledSwitch(ImGuiIconFA.CHEVRON_LEFT)
                 } else {
-                    if (ImGui.smallButton(ICON_FA_CHEVRON_LEFT)) {
+                    if (ImGui.smallButton(ImGuiIconFA.CHEVRON_LEFT)) {
                         viewController.doDecreaseSelectedZ()
                     }
 
@@ -55,9 +54,9 @@ class View(
                 ImGui.sameLine()
 
                 if (map.zSelected == map.maxZ) {
-                    showDisabledSwitch(ICON_FA_CHEVRON_RIGHT)
+                    showDisabledSwitch(ImGuiIconFA.CHEVRON_RIGHT)
                 } else {
-                    if (ImGui.smallButton(ICON_FA_CHEVRON_RIGHT)) {
+                    if (ImGui.smallButton(ImGuiIconFA.CHEVRON_RIGHT)) {
                         viewController.doIncreaseSelectedZ()
                     }
 

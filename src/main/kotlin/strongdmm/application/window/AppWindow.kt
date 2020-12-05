@@ -15,8 +15,7 @@ import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
-import strongdmm.util.icons.ICON_MAX_FA
-import strongdmm.util.icons.ICON_MIN_FA
+import strongdmm.util.imgui.ImGuiIconFA
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
@@ -210,7 +209,7 @@ abstract class AppWindow(title: String) {
         fontConfig.mergeMode = true
         fontConfig.glyphMaxAdvanceX = iconSize
 
-        fontAtlas.addFontFromMemoryTTF(iconData, iconSize, fontConfig, shortArrayOf(ICON_MIN_FA, ICON_MAX_FA))
+        fontAtlas.addFontFromMemoryTTF(iconData, iconSize, fontConfig, shortArrayOf(ImGuiIconFA.ICON_MIN, ImGuiIconFA.ICON_MAX))
 
         fontConfig.mergeMode = false
 

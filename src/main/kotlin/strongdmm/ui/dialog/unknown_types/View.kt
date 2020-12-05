@@ -5,8 +5,6 @@ import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiCond
 import imgui.flag.ImGuiTreeNodeFlags
 import strongdmm.service.map.UnknownType
-import strongdmm.util.icons.ICON_FA_PLUS
-import strongdmm.util.icons.ICON_FA_TIMES
 import strongdmm.util.imgui.*
 import strongdmm.application.window.Window
 
@@ -68,7 +66,7 @@ class View(
 
                     ImGui.sameLine()
 
-                    imGuiButton(ICON_FA_PLUS) {
+                    imGuiButton(ImGuiIconFA.PLUS) {
                         viewController.doAddVariable(unknownType)
                     }
 
@@ -113,7 +111,7 @@ class View(
             unknownType.variables.forEachIndexed { index, variable ->
                 ImGui.pushID(index)
 
-                imGuiButton(ICON_FA_TIMES) {
+                imGuiButton(ImGuiIconFA.TIMES) {
                     viewController.doRemoveVariable(unknownType, variable)
                 }
 

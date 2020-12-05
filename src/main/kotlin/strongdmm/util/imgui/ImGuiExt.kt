@@ -4,7 +4,6 @@ import imgui.ImGui
 import imgui.flag.ImGuiMouseButton
 import imgui.type.ImInt
 import imgui.type.ImString
-import strongdmm.util.icons.ICON_FA_QUESTION_CIRCLE
 import strongdmm.util.imgui.ext.WindowButton
 
 object ImGuiExt {
@@ -48,7 +47,7 @@ object ImGuiExt {
     }
 
     fun helpMark(helpText: String) {
-        ImGui.textDisabled(ICON_FA_QUESTION_CIRCLE)
+        ImGui.textDisabled(ImGuiIconFA.QUESTION_CIRCLE)
         setItemHoveredTooltip(helpText)
     }
 }

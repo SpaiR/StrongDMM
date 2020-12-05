@@ -4,7 +4,6 @@ import imgui.ImGui
 import imgui.flag.ImGuiMouseButton
 import strongdmm.byond.dmm.TileItem
 import strongdmm.ui.LayoutManager
-import strongdmm.util.icons.ICON_FA_COG
 import strongdmm.util.imgui.*
 import strongdmm.application.window.Window
 
@@ -69,7 +68,7 @@ class View(
     }
 
     private fun showConfigContextMenu() {
-        ImGuiExt.windowButton(ICON_FA_COG) {
+        ImGuiExt.windowButton(ImGuiIconFA.COG) {
             ImGui.openPopup(CONFIG_POPUP_TITLE)
         }
 

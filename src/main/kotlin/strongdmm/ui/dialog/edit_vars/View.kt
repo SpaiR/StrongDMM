@@ -6,7 +6,6 @@ import imgui.flag.ImGuiMouseCursor
 import imgui.flag.ImGuiStyleVar
 import org.lwjgl.glfw.GLFW
 import strongdmm.ui.dialog.edit_vars.model.Variable
-import strongdmm.util.icons.ICON_FA_UNDO_ALT
 import strongdmm.util.imgui.*
 import strongdmm.application.window.Window
 
@@ -159,7 +158,7 @@ class View(
             ImGuiUtil.pushDisabledItem()
         }
 
-        imGuiButton("$ICON_FA_UNDO_ALT##_variable_reset_${variable.hash}") {
+        imGuiButton("${ImGuiIconFA.UNDO_ALT}##_variable_reset_${variable.hash}") {
             viewController.resetVariableToDefault(variable)
         }
 
