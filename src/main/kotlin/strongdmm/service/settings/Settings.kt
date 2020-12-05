@@ -1,7 +1,7 @@
 package strongdmm.service.settings
 
 import strongdmm.service.changelog.ChangelogServiceSettings
-import strongdmm.service.pinned_variables.PinnedVariablesServiceSettings
+import strongdmm.service.pinnedvariables.PinnedVariablesServiceSettings
 import strongdmm.ui.panel.screenshot.model.ScreenshotPanelUiSettings
 
 class Settings {
