@@ -93,7 +93,7 @@ class SdmmParser {
     }
 
     private fun sanitizeVar(value: String): String? {
-        return if (value.startsWith("{\"") && value.endsWith("\"}")) {
+        return if (value.length > 2 && value.startsWith("{\"") && value.endsWith("\"}")) {
             value.substring(1, value.length - 1)
         } else if (value == "null") {
             null

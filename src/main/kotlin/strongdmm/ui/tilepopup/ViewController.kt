@@ -1,5 +1,6 @@
 package strongdmm.ui.tilepopup
 
+import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
@@ -111,6 +112,10 @@ class ViewController(
         dirFlow.doDir(tile, tileItem, tileItemIdx, relativeDir)
     }
 
+    fun getIconSprite(tileItem: TileItem): IconSprite {
+        return state.providedDmiCache.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
+    }
+
     fun isSameTypeAsSelectedObject(tileItem: TileItem): Boolean {
         return state.selectedTileItem?.isSameType(tileItem) ?: false
     }
@@ -121,6 +126,10 @@ class ViewController(
 
     fun applyNudgeChanges(isXAxis: Boolean, tile: Tile, tileItem: TileItem, tileItemIdx: Int, pixelNudge: IntArray, initialValue: Int) {
         nudgeFlow.applyNudgeChanges(isXAxis, tile, tileItem, tileItemIdx, pixelNudge, initialValue)
+    }
+
+    fun getMaxDirs(tileItem: TileItem): Int {
+        return state.providedDmiCache.getIconState(tileItem.icon, tileItem.iconState)?.dirs ?: 1
     }
 
     fun getDirValueToShow(tileItem: TileItem, tileItemIdx: Int): Pair<Int, IntArray> {

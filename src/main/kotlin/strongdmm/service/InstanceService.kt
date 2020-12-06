@@ -2,7 +2,6 @@ package strongdmm.service
 
 import strongdmm.application.Service
 import strongdmm.byond.*
-import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
@@ -15,11 +14,15 @@ import strongdmm.event.type.ui.TriggerEditVarsDialogUi
 import strongdmm.event.type.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.TileItemAddAction
 import strongdmm.service.action.undoable.TileItemRemoveAction
+import strongdmm.service.dmi.DmiCache
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
 class InstanceService : Service {
+    private lateinit var providedDmiCache: DmiCache
+
     init {
+        EventBus.sign(ProviderDmiService.DmiCache::class.java, ::handleProviderDmiCache)
         EventBus.sign(TriggerInstanceService.GenerateInstancesFromIconStates::class.java, ::handleGenerateInstancesFromIconStates)
         EventBus.sign(TriggerInstanceService.GenerateInstancesFromDirections::class.java, ::handleGenerateInstancesFromDirections)
         EventBus.sign(TriggerInstanceService.FindInstancePositionsByType::class.java, ::handleFindInstancePositionsByType)
@@ -28,8 +31,12 @@ class InstanceService : Service {
         EventBus.sign(TriggerInstanceService.DeleteInstance::class.java, ::handleDeleteInstance)
     }
 
+    private fun handleProviderDmiCache(event: Event<DmiCache, Unit>) {
+        providedDmiCache = event.body
+    }
+
     private fun handleGenerateInstancesFromIconStates(event: Event<TileItem, Unit>) {
-        GlobalDmiHolder.getDmi(event.body.icon)?.let { dmi ->
+        providedDmiCache.getDmi(event.body.icon)?.let { dmi ->
             EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val itemType = event.body.type
                 val dmeItem = dme.getItem(itemType)!!
@@ -50,7 +57,7 @@ class InstanceService : Service {
 
     private fun handleGenerateInstancesFromDirections(event: Event<TileItem, Unit>) {
         val tileItem = event.body
-        GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
+        providedDmiCache.getIconState(tileItem.icon, tileItem.iconState)?.let { iconState ->
             EventBus.post(TriggerEnvironmentService.FetchOpenedEnvironment { dme ->
                 val dmeItem = dme.getItem(tileItem.type)!!
                 val initialDir = dmeItem.getVarInt(VAR_DIR) ?: DEFAULT_DIR

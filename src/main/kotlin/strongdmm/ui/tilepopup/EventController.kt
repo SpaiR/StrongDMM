@@ -8,6 +8,7 @@ import strongdmm.event.type.service.*
 import strongdmm.event.type.ui.ReactionTilePopupUi
 import strongdmm.event.type.ui.TriggerTilePopupUi
 import strongdmm.service.action.ActionStatus
+import strongdmm.service.dmi.DmiCache
 import strongdmm.service.preferences.Preferences
 
 class EventController(
@@ -21,6 +22,7 @@ class EventController(
         EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         EventBus.sign(ReactionActionService.ActionStatusChanged::class.java, ::handleActionStatusChanged)
         EventBus.sign(ProviderPreferencesService.Preferences::class.java, ::handleProviderPreferences)
+        EventBus.sign(ProviderDmiService.DmiCache::class.java, ::handleProviderDmiCache)
     }
 
     lateinit var viewController: ViewController
@@ -59,5 +61,9 @@ class EventController(
 
     private fun handleProviderPreferences(event: Event<Preferences, Unit>) {
         state.providedPreferences = event.body
+    }
+
+    private fun handleProviderDmiCache(event: Event<DmiCache, Unit>) {
+        state.providedDmiCache = event.body
     }
 }

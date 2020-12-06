@@ -3,7 +3,6 @@ package strongdmm.service
 import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
-import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventBus
@@ -24,7 +23,6 @@ class EnvironmentService : Service {
     private fun openEnvironment(event: Event<File, Unit>) {
         EventBus.post(ReactionEnvironmentService.EnvironmentReset.SIGNAL)
 
-        GlobalDmiHolder.resetEnvironment()
         GlobalTileItemHolder.resetEnvironment()
 
         thread(start = true) {
@@ -32,7 +30,6 @@ class EnvironmentService : Service {
 
             environment = SdmmParser().parseDme(event.body)
 
-            GlobalDmiHolder.environmentRootPath = environment.absRootDirPath
             GlobalTileItemHolder.environment = environment
 
             System.gc()

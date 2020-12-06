@@ -44,6 +44,7 @@ import strongdmm.ui.panel.toolselect.ToolSelectPanelUi
 import strongdmm.ui.panel.variablespreview.VariablesPreviewPanelUi
 import strongdmm.ui.tilepopup.TilePopupUi
 import strongdmm.application.window.AppWindow
+import strongdmm.service.dmi.DmiService
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.system.exitProcess
@@ -77,6 +78,7 @@ class StrongDMM(title: String) : AppWindow(title) {
 
     private val serviceList: List<Service> = listOf(
         WindowTitleService(),
+        DmiService(),
         EnvironmentService(),
         MapHolderService(),
         MapModifierService(),

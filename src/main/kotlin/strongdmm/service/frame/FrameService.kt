@@ -4,13 +4,13 @@ import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.byond.*
 import strongdmm.byond.dme.Dme
-import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
 import strongdmm.event.type.service.*
+import strongdmm.service.dmi.DmiCache
 import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameService : Service, PostInitialize {
@@ -21,12 +21,15 @@ class FrameService : Service, PostInitialize {
         private const val MOB_DEPTH: Short = 10
     }
 
+    private lateinit var providedDmiCache: DmiCache
+
     private val composedFrame: MutableList<FrameMesh> = mutableListOf()
     private val framedTiles: MutableList<FramedTile> = mutableListOf()
 
     private var currentIconSize: Int = DEFAULT_ICON_SIZE
 
     init {
+        EventBus.sign(ProviderDmiService.DmiCache::class.java, ::handleProviderDmiCache)
         EventBus.sign(ReactionMapHolderService.SelectedMapChanged::class.java, ::handleSelectedMapChanged)
         EventBus.sign(ReactionMapHolderService.SelectedMapZSelectedChanged::class.java, ::handleSelectedMapZSelectedChanged)
         EventBus.sign(ReactionMapHolderService.SelectedMapSizeChanged::class.java, ::handleSelectedMapSizeChanged)
@@ -61,7 +64,7 @@ class FrameService : Service, PostInitialize {
                             continue
                         }
 
-                        val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
+                        val sprite = providedDmiCache.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
                         val x1 = (x - 1) * currentIconSize + tileItem.pixelX + tileItem.stepX
                         val y1 = (y - 1) * currentIconSize + tileItem.pixelY + tileItem.stepY
                         val x2 = x1 + sprite.iconWidth
@@ -116,6 +119,10 @@ class FrameService : Service, PostInitialize {
         framedTiles.clear()
         updateFrameCache()
         EventBus.post(ReactionCanvasService.FrameRefreshed.SIGNAL)
+    }
+
+    private fun handleProviderDmiCache(event: Event<DmiCache, Unit>) {
+        providedDmiCache = event.body
     }
 
     private fun handleSelectedMapChanged() {

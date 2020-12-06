@@ -1,10 +1,7 @@
 package strongdmm.ui.panel.environmenttree
 
 import imgui.flag.ImGuiTreeNodeFlags
-import strongdmm.byond.TYPE_AREA
-import strongdmm.byond.TYPE_MOB
-import strongdmm.byond.TYPE_OBJ
-import strongdmm.byond.TYPE_TURF
+import strongdmm.byond.*
 import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath
@@ -103,7 +100,12 @@ class ViewController(
             }
             createdTeeNodesInCycle < TREE_NODES_CREATION_LIMIT_PER_CYCLE -> {
                 createdTeeNodesInCycle++
-                state.treeNodes.getOrPut(dmeItem.id) { TreeNode(dmeItem) }
+
+                val icon = dmeItem.getVarText(VAR_ICON) ?: ""
+                val iconState = dmeItem.getVarText(VAR_ICON_STATE) ?: ""
+                val iconSprite = state.providedDmiCache.getIconSpriteOrPlaceholder(icon, iconState)
+
+                state.treeNodes.getOrPut(dmeItem.id) { TreeNode(dmeItem, iconSprite) }
             }
             else -> null
         }

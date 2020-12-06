@@ -5,9 +5,11 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
+import strongdmm.event.type.service.ProviderDmiService
 import strongdmm.event.type.service.ProviderRecentFilesService
 import strongdmm.event.type.service.ReactionEnvironmentService
 import strongdmm.event.type.service.ReactionTileItemService
+import strongdmm.service.dmi.DmiCache
 
 class EventController(
     private val state: State
@@ -18,6 +20,7 @@ class EventController(
         EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
         EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
         EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
+        EventBus.sign(ProviderDmiService.DmiCache::class.java, ::handleProviderDmiCache)
         EventBus.sign(ProviderRecentFilesService.RecentEnvironmentsWithMaps::class.java, ::handleProviderRecentEnvironmentsWithMaps)
     }
 
@@ -45,6 +48,10 @@ class EventController(
         if (!state.isSelectedInCycle) {
             state.isDoOpenSelectedType = true
         }
+    }
+
+    private fun handleProviderDmiCache(event: Event<DmiCache, Unit>) {
+        state.providedDmiCache = event.body
     }
 
     private fun handleProviderRecentEnvironmentsWithMaps(event: Event<Map<String, List<MapPath>>, Unit>) {

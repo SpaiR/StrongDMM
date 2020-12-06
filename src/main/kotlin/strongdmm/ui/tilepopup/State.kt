@@ -3,10 +3,12 @@ package strongdmm.ui.tilepopup
 import gnu.trove.map.hash.TIntObjectHashMap
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
+import strongdmm.service.dmi.DmiCache
 import strongdmm.service.preferences.Preferences
 
 class State {
     lateinit var providedPreferences: Preferences
+    lateinit var providedDmiCache: DmiCache
 
     var isDoOpen: Boolean = false
     var isDisposed: Boolean = true

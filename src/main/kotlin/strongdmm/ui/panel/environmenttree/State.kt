@@ -4,10 +4,12 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import imgui.type.ImString
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.MapPath
+import strongdmm.service.dmi.DmiCache
 import strongdmm.ui.panel.environmenttree.model.TreeNode
 
 class State {
     lateinit var providedRecentEnvironmentsWithMaps: Map<String, List<MapPath>>
+    lateinit var providedDmiCache: DmiCache
 
     var isEnvironmentLoading: Boolean = false
     var mapToOpen: MapPath? = null

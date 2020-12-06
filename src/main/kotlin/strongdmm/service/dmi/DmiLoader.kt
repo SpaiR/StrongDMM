@@ -1,69 +1,46 @@
-package strongdmm.byond.dmi
+package strongdmm.service.dmi
 
 import ar.com.hjg.pngj.PngReader
 import ar.com.hjg.pngj.chunks.PngMetadata
 import org.lwjgl.BufferUtils
-import org.lwjgl.opengl.GL30.*
+import org.lwjgl.opengl.GL30
 import org.lwjgl.stb.STBImage
 import org.lwjgl.system.MemoryStack
-import strongdmm.byond.DEFAULT_DIR
+import strongdmm.byond.dmi.Dmi
+import strongdmm.byond.dmi.IconSprite
+import strongdmm.byond.dmi.IconState
 import strongdmm.util.DEFAULT_ICON_SIZE
 import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 
-object GlobalDmiHolder {
-    lateinit var environmentRootPath: String
+class DmiLoader {
+    companion object {
+        private val WIDTH_HEIGHT_PATTERN: Regex = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
+        private val STATE_PATTERN: Regex = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
+        private val PARAM_PATTERN: Regex = "(\\w+)\\s=\\s(.+)".toRegex()
+    }
 
-    private val dmiCache: MutableMap<String, Dmi?> = mutableMapOf()
-
-    private val placeholderDmi: Dmi
-    private val placeholderSprite: IconSprite
-
-    private val WIDTH_HEIGHT_PATTERN: Regex = "(?:width\\s=\\s(\\d+))\n\t(?:height\\s=\\s(\\d+))".toRegex()
-    private val STATE_PATTERN: Regex = "(?:state\\s=\\s\".*\"(?:\\n\\t.*)+)".toRegex()
-    private val PARAM_PATTERN: Regex = "(\\w+)\\s=\\s(.+)".toRegex()
-
-    init { // Initialize placeholder texture
+    val placeholderSprite: IconSprite by lazy { // Initialize placeholder texture
         val placeholderImage = ImageIO.read(javaClass.classLoader.getResource("img/placeholder.png"))
         val placeholderTextureId = loadTexture(placeholderImage)
         val placeholderIconStates = mutableMapOf<String, IconState>()
 
-        placeholderDmi = Dmi(32, 32, 1, 1, placeholderTextureId, placeholderIconStates)
+        val placeholderDmi = Dmi(32, 32, 1, 1, placeholderTextureId, placeholderIconStates)
 
         val placeholderIconSprite = IconSprite(placeholderDmi, 0)
         placeholderIconStates[""] = IconState(1, 1, mutableListOf(placeholderIconSprite))
 
-        placeholderSprite = placeholderDmi.getIconState("")!!.getIconSprite()
+        placeholderDmi.getIconState("")!!.getIconSprite()
     }
 
-    fun resetEnvironment() {
-        glBindTexture(GL_TEXTURE_2D, 0)
-
-        dmiCache.values.filterNotNull().forEach { dmi ->
-            glDeleteTextures(dmi.textureId)
-        }
-
-        dmiCache.clear()
+    fun free(dmi: Dmi) {
+        GL30.glBindTexture(GL30.GL_TEXTURE_2D, 0)
+        GL30.glDeleteTextures(dmi.textureId)
     }
 
-    fun getDmi(icon: String): Dmi? {
-        if (icon.isEmpty()) {
-            return null
-        }
-
-        if (dmiCache.containsKey(icon)) {
-            return dmiCache.getValue(icon)
-        }
-
-        val dmiFile = File(environmentRootPath + File.separator + icon)
-
-        if (!dmiFile.exists() || !dmiFile.isFile) {
-            dmiCache[icon] = null
-            return null
-        }
-
+    fun load(dmiFile: File): Dmi? {
         val imageMeta: Metadata
 
         // Read dmi metadata
@@ -71,7 +48,6 @@ object GlobalDmiHolder {
             try {
                 imageMeta = metadata.extractMetadata()
             } catch (e: Exception) {
-                dmiCache[icon] = null
                 return null
             } finally {
                 close()
@@ -100,7 +76,6 @@ object GlobalDmiHolder {
 
         // Unable to load provided icon
         if (texture == -1) {
-            dmiCache[icon] = null
             return null
         }
 
@@ -125,17 +100,7 @@ object GlobalDmiHolder {
             }
         }
 
-        dmiCache[icon] = dmi
-
         return dmi
-    }
-
-    fun getIconState(icon: String, iconState: String): IconState? {
-        return getDmi(icon)?.getIconState(iconState)
-    }
-
-    fun getIconSpriteOrPlaceholder(icon: String, iconState: String, dir: Int = DEFAULT_DIR): IconSprite {
-        return getIconState(icon, iconState)?.getIconSprite(dir) ?: placeholderSprite
     }
 
     private fun PngMetadata.extractMetadata(): Metadata {
@@ -194,18 +159,18 @@ object GlobalDmiHolder {
     }
 
     private fun createTexture(width: Int, height: Int, image: ByteBuffer): Int {
-        val textureId = glGenTextures()
-        glBindTexture(GL_TEXTURE_2D, textureId)
+        val textureId = GL30.glGenTextures()
+        GL30.glBindTexture(GL30.GL_TEXTURE_2D, textureId)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_S, GL30.GL_CLAMP_TO_EDGE)
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_WRAP_T, GL30.GL_CLAMP_TO_EDGE)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST_MIPMAP_LINEAR)
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE)
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_GENERATE_MIPMAP, GL30.GL_TRUE)
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, width, height, 0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, image)
 
         return textureId
     }

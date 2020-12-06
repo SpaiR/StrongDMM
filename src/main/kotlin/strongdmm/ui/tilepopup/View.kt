@@ -2,7 +2,6 @@ package strongdmm.ui.tilepopup
 
 import imgui.ImGui
 import strongdmm.byond.*
-import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.util.imgui.imGuiMenu
@@ -54,7 +53,7 @@ class View(
     }
 
     private fun showTileItem(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        val sprite = GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
+        val sprite = viewController.getIconSprite(tileItem)
 
         ImGui.image(sprite.textureId, iconSize, iconSize, sprite.u1, sprite.v1, sprite.u2, sprite.v2, tileItem.colorR, tileItem.colorG, tileItem.colorB, 1f)
         ImGui.sameLine()
@@ -132,7 +131,7 @@ class View(
     }
 
     private fun showDirOption(tile: Tile, tileItem: TileItem, tileItemIdx: Int) {
-        val maxDirs = GlobalDmiHolder.getIconState(tileItem.icon, tileItem.iconState)?.dirs ?: 1
+        val maxDirs = viewController.getMaxDirs(tileItem)
 
         if (maxDirs == 1) {
             ImGui.textDisabled("No Dirs to Choose")

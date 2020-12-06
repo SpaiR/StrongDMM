@@ -1,6 +1,5 @@
 package strongdmm.ui.panel.objects
 
-import strongdmm.byond.dmi.GlobalDmiHolder
 import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
@@ -57,7 +56,7 @@ class ViewController(
     }
 
     fun getIconSprite(tileItem: TileItem): IconSprite {
-        return GlobalDmiHolder.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
+        return state.providedDmiCache.getIconSpriteOrPlaceholder(tileItem.icon, tileItem.iconState, tileItem.dir)
     }
 
     fun getTileItemsByTypeSorted(type: String): List<TileItem> {
