@@ -1,5 +1,6 @@
 package strongdmm.service
 
+import strongdmm.application.Processable
 import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.byond.dme.SdmmParser
@@ -12,12 +13,23 @@ import strongdmm.event.type.service.TriggerMapHolderService
 import java.io.File
 import kotlin.concurrent.thread
 
-class EnvironmentService : Service {
+class EnvironmentService : Service, Processable {
     private lateinit var environment: Dme
+    private var isEnvironmentWasLoaded: Boolean = false
 
     init {
         EventBus.sign(TriggerEnvironmentService.OpenEnvironment::class.java, ::handleOpenEnvironment)
         EventBus.sign(TriggerEnvironmentService.FetchOpenedEnvironment::class.java, ::handleFetchOpenedEnvironment)
+    }
+
+    override fun process() {
+        if (isEnvironmentWasLoaded) {
+            isEnvironmentWasLoaded = false
+            System.gc()
+            GlobalTileItemHolder.environment = environment
+            EventBus.post(ReactionEnvironmentService.EnvironmentChanged(environment))
+            EventBus.post(ReactionEnvironmentService.EnvironmentOpened())
+        }
     }
 
     private fun openEnvironment(event: Event<File, Unit>) {
@@ -27,17 +39,9 @@ class EnvironmentService : Service {
 
         thread(start = true) {
             EventBus.post(ReactionEnvironmentService.EnvironmentLoadStarted(event.body))
-
             environment = SdmmParser().parseDme(event.body)
-
-            GlobalTileItemHolder.environment = environment
-
-            System.gc()
-
-            EventBus.post(ReactionEnvironmentService.EnvironmentChanged(environment))
             EventBus.post(ReactionEnvironmentService.EnvironmentLoadStopped(true))
-
-            event.reply(Unit)
+            isEnvironmentWasLoaded = true
         }
     }
 

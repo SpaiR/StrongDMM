@@ -5,11 +5,9 @@ import strongdmm.byond.dmm.MapPath
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderDmiService
-import strongdmm.event.type.service.ProviderRecentFilesService
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionTileItemService
+import strongdmm.event.type.service.*
 import strongdmm.service.dmi.DmiCache
+import java.io.File
 
 class EventController(
     private val state: State
@@ -18,6 +16,7 @@ class EventController(
         EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStarted::class.java, ::handleEnvironmentLoadStarted)
         EventBus.sign(ReactionEnvironmentService.EnvironmentLoadStopped::class.java, ::handleEnvironmentLoadStopped)
         EventBus.sign(ReactionEnvironmentService.EnvironmentChanged::class.java, ::handleEnvironmentChanged)
+        EventBus.sign(ReactionEnvironmentService.EnvironmentOpened::class.java, ::handleEnvironmentOpened)
         EventBus.sign(ReactionEnvironmentService.EnvironmentReset::class.java, ::handleEnvironmentReset)
         EventBus.sign(ReactionTileItemService.SelectedTileItemChanged::class.java, ::handleSelectedTileItemChanged)
         EventBus.sign(ProviderDmiService.DmiCache::class.java, ::handleProviderDmiCache)
@@ -34,6 +33,13 @@ class EventController(
 
     private fun handleEnvironmentChanged(event: Event<Dme, Unit>) {
         state.currentEnvironment = event.body
+    }
+
+    private fun handleEnvironmentOpened() {
+        state.mapToOpen?.let {
+            state.mapToOpen = null
+            EventBus.post(TriggerMapHolderService.OpenMap(File(it.absolute)))
+        }
     }
 
     private fun handleEnvironmentReset() {

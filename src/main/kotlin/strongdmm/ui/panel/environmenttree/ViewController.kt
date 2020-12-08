@@ -7,7 +7,6 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventBus
 import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapHolderService
 import strongdmm.event.type.service.TriggerTileItemService
 import strongdmm.ui.panel.environmenttree.model.TreeNode
 import strongdmm.util.NfdUtil
@@ -35,9 +34,8 @@ class ViewController(
     }
 
     fun doOpenEnvironmentWithMap(environmentPath: String, mapPath: MapPath) {
-        EventBus.post(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)) {
-            state.mapToOpen = mapPath
-        })
+        state.mapToOpen = mapPath
+        EventBus.post(TriggerEnvironmentService.OpenEnvironment(File(environmentPath)))
     }
 
     fun doCollapseAll() {
@@ -76,11 +74,6 @@ class ViewController(
 
     fun stopCycle() {
         state.isDoCollapseAll = false
-
-        state.mapToOpen?.let {
-            EventBus.post(TriggerMapHolderService.OpenMap(File(it.absolute)))
-            state.mapToOpen = null
-        }
     }
 
     fun getTitle(): String {
