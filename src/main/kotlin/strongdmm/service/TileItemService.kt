@@ -4,9 +4,9 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionTileItemService
-import strongdmm.event.type.service.TriggerTileItemService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionTileItemService
+import strongdmm.event.service.TriggerTileItemService
 
 class TileItemService : Service {
     private var selectedTileItem: TileItem? = null

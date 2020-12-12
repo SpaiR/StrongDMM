@@ -9,9 +9,9 @@ import strongdmm.byond.dmm.parser.TileContent
 import strongdmm.byond.dmm.parser.TileObject
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapPreprocessService
-import strongdmm.event.type.ui.TriggerUnknownTypesDialogUi
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerMapPreprocessService
+import strongdmm.event.ui.TriggerUnknownTypesDialogUi
 
 class MapPreprocessService : Service {
     init {

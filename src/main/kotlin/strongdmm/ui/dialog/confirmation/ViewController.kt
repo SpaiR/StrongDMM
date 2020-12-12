@@ -2,7 +2,7 @@ package strongdmm.ui.dialog.confirmation
 
 import imgui.ImGui
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.Reaction
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 
 class ViewController(

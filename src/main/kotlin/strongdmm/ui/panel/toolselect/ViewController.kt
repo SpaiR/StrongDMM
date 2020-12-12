@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.toolselect
 
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerToolsService
+import strongdmm.event.service.TriggerToolsService
 import strongdmm.service.tool.ToolType
 
 class ViewController {

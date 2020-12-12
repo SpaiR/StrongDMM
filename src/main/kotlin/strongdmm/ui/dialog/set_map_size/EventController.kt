@@ -1,8 +1,8 @@
 package strongdmm.ui.dialog.set_map_size
 
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
+import strongdmm.event.service.TriggerMapHolderService
+import strongdmm.event.ui.TriggerSetMapSizeDialogUi
 import kotlin.math.max
 
 class EventController(

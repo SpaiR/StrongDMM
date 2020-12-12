@@ -2,8 +2,8 @@ package strongdmm.service.shortcut
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ReactionShortcutService
+import strongdmm.event.Reaction
+import strongdmm.event.service.ReactionShortcutService
 
 @Suppress("LeakingThis")
 open class ShortcutHandler {

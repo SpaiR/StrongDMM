@@ -2,8 +2,8 @@ package strongdmm.ui.panel.preferences
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderPreferencesService
-import strongdmm.event.type.ui.TriggerPreferencesPanelUi
+import strongdmm.event.service.ProviderPreferencesService
+import strongdmm.event.ui.TriggerPreferencesPanelUi
 import strongdmm.service.preferences.Preferences
 
 class EventController(

@@ -2,7 +2,7 @@ package strongdmm.ui.panel.openedmaps
 
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.service.TriggerMapHolderService
 
 class ViewController(
     private val state: State

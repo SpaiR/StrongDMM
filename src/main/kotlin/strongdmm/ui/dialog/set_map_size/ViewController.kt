@@ -3,8 +3,8 @@ package strongdmm.ui.dialog.set_map_size
 import imgui.ImGui
 import strongdmm.byond.dmm.MapSize
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerMapModifierService
+import strongdmm.event.Reaction
+import strongdmm.event.service.TriggerMapModifierService
 
 class ViewController(
     private val state: State

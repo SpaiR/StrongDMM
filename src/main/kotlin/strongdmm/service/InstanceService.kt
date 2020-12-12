@@ -8,10 +8,10 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.TriggerConfirmationDialogUi
-import strongdmm.event.type.ui.TriggerEditVarsDialogUi
-import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.event.service.*
+import strongdmm.event.ui.TriggerConfirmationDialogUi
+import strongdmm.event.ui.TriggerEditVarsDialogUi
+import strongdmm.event.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.TileItemAddAction
 import strongdmm.service.action.undoable.TileItemRemoveAction
 import strongdmm.service.dmi.DmiCache

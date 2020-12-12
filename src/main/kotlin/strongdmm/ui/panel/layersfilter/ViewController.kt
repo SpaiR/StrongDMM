@@ -2,7 +2,7 @@ package strongdmm.ui.panel.layersfilter
 
 import strongdmm.byond.dme.DmeItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerLayersFilterService
+import strongdmm.event.service.TriggerLayersFilterService
 
 class ViewController(
     private val state: State

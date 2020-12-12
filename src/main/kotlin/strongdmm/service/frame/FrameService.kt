@@ -9,7 +9,7 @@ import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
+import strongdmm.event.service.*
 import strongdmm.service.dmi.DmiCache
 import strongdmm.util.DEFAULT_ICON_SIZE
 

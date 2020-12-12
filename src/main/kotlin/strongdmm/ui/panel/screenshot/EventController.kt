@@ -2,10 +2,10 @@ package strongdmm.ui.panel.screenshot
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderSettingsService
-import strongdmm.event.type.service.ReactionMapHolderService
-import strongdmm.event.type.service.ReactionScreenshotService
-import strongdmm.event.type.ui.TriggerScreenshotPanelUi
+import strongdmm.event.service.ProviderSettingsService
+import strongdmm.event.service.ReactionMapHolderService
+import strongdmm.event.service.ReactionScreenshotService
+import strongdmm.event.ui.TriggerScreenshotPanelUi
 import strongdmm.service.settings.Settings
 
 class EventController(

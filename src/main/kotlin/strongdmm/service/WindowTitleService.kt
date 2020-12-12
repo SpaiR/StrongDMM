@@ -8,8 +8,8 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
 import strongdmm.application.window.Window
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionMapHolderService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionMapHolderService
 
 class WindowTitleService : Service {
     private var environmentName: String = ""

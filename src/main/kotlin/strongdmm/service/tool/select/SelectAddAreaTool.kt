@@ -4,7 +4,7 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerCanvasService
+import strongdmm.event.service.TriggerCanvasService
 import strongdmm.service.tool.Tool
 import kotlin.math.max
 import kotlin.math.min

@@ -3,8 +3,8 @@ package strongdmm.ui.dialog.unknown_types
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.ui.TriggerUnknownTypesDialogUi
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.ui.TriggerUnknownTypesDialogUi
 import strongdmm.service.map.UnknownType
 
 class EventController(

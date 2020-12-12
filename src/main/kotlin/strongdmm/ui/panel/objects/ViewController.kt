@@ -4,10 +4,10 @@ import strongdmm.byond.dmi.IconSprite
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerInstanceService
-import strongdmm.event.type.service.TriggerTileItemService
-import strongdmm.event.type.ui.TriggerEditVarsDialogUi
-import strongdmm.event.type.ui.TriggerInstanceLocatorPanelUi
+import strongdmm.event.service.TriggerInstanceService
+import strongdmm.event.service.TriggerTileItemService
+import strongdmm.event.ui.TriggerEditVarsDialogUi
+import strongdmm.event.ui.TriggerInstanceLocatorPanelUi
 
 class ViewController(
     private val state: State

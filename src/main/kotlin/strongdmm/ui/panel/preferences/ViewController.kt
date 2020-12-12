@@ -1,8 +1,8 @@
 package strongdmm.ui.panel.preferences
 
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerPreferencesService
+import strongdmm.event.Reaction
+import strongdmm.event.service.TriggerPreferencesService
 import strongdmm.service.preferences.prefs.PreferenceBoolean
 import strongdmm.service.preferences.prefs.PreferenceEnum
 

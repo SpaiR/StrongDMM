@@ -4,10 +4,10 @@ import strongdmm.application.Service
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderFrameService
-import strongdmm.event.type.service.ReactionScreenshotService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerScreenshotService
+import strongdmm.event.service.ProviderFrameService
+import strongdmm.event.service.ReactionScreenshotService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerScreenshotService
 import strongdmm.service.frame.FrameMesh
 import strongdmm.util.DEFAULT_ICON_SIZE
 import java.awt.image.BufferedImage

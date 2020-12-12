@@ -3,10 +3,10 @@ package strongdmm.ui.panel.layersfilter
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionLayersFilterService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.ui.TriggerLayersFilterPanelUi
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionLayersFilterService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.ui.TriggerLayersFilterPanelUi
 
 class EventController(
     private val state: State

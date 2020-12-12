@@ -3,10 +3,10 @@ package strongdmm.ui.panel.searchresult
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerCanvasService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapHolderService
-import strongdmm.event.type.service.TriggerMapModifierService
+import strongdmm.event.service.TriggerCanvasService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerMapHolderService
+import strongdmm.event.service.TriggerMapModifierService
 import strongdmm.ui.panel.searchresult.model.SearchPosition
 
 class ViewController(

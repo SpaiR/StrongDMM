@@ -6,7 +6,7 @@ import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
+import strongdmm.event.service.*
 import strongdmm.service.tool.select.SelectComplexTool
 import strongdmm.service.tool.tile.TileComplexTool
 import strongdmm.util.OUT_OF_BOUNDS

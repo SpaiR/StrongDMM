@@ -15,10 +15,9 @@ import strongdmm.byond.dme.Dme
 import strongdmm.byond.dmm.*
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.TriggerEditVarsDialogUi
-import strongdmm.event.type.ui.TriggerTilePopupUi
+import strongdmm.event.Reaction
+import strongdmm.event.ui.TriggerEditVarsDialogUi
+import strongdmm.event.ui.TriggerTilePopupUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.frame.FrameMesh
 import strongdmm.service.frame.FramedTile
@@ -28,7 +27,8 @@ import strongdmm.service.shortcut.ShortcutHandler
 import strongdmm.util.DEFAULT_ICON_SIZE
 import strongdmm.util.OUT_OF_BOUNDS
 import strongdmm.application.window.Window
-import strongdmm.event.type.ui.ReactionTilePopupUi
+import strongdmm.event.service.*
+import strongdmm.event.ui.ReactionTilePopupUi
 import java.util.*
 
 class CanvasService : Service, PostInitialize, Processable {

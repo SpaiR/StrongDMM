@@ -3,9 +3,9 @@ package strongdmm.ui.panel.openedmaps
 import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderActionService
-import strongdmm.event.type.service.ProviderMapHolderService
-import strongdmm.event.type.service.ReactionMapHolderService
+import strongdmm.event.service.ProviderActionService
+import strongdmm.event.service.ProviderMapHolderService
+import strongdmm.event.service.ReactionMapHolderService
 import strongdmm.service.action.ActionBalanceStorage
 
 class EventController(

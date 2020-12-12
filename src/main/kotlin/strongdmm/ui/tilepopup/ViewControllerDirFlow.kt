@@ -6,9 +6,9 @@ import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.byond.relToDir
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerActionService
-import strongdmm.event.type.service.TriggerFrameService
-import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.event.service.TriggerActionService
+import strongdmm.event.service.TriggerFrameService
+import strongdmm.event.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.util.extension.getOrPut
 

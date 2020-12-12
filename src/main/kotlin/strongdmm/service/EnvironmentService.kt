@@ -7,9 +7,9 @@ import strongdmm.byond.dme.SdmmParser
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerMapHolderService
 import java.io.File
 import kotlin.concurrent.thread
 

@@ -6,8 +6,8 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerTileItemService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerTileItemService
 import strongdmm.ui.panel.environmenttree.model.TreeNode
 import strongdmm.util.NfdUtil
 import strongdmm.util.extension.getOrPut

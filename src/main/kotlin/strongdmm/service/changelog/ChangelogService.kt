@@ -4,10 +4,10 @@ import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderChangelogService
-import strongdmm.event.type.service.ProviderSettingsService
-import strongdmm.event.type.service.TriggerSettingsService
-import strongdmm.event.type.ui.TriggerChangelogPanelUi
+import strongdmm.event.service.ProviderChangelogService
+import strongdmm.event.service.ProviderSettingsService
+import strongdmm.event.service.TriggerSettingsService
+import strongdmm.event.ui.TriggerChangelogPanelUi
 import strongdmm.service.settings.Settings
 import strongdmm.util.imgui.markdown.ImGuiMarkdown
 

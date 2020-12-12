@@ -4,7 +4,7 @@ import imgui.ImGui
 import imgui.ImVec2
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.ui.TriggerNotificationPanelUi
+import strongdmm.event.ui.TriggerNotificationPanelUi
 import java.time.Duration
 import java.util.*
 import kotlin.concurrent.schedule

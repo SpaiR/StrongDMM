@@ -3,10 +3,10 @@ package strongdmm.service.pinnedvariables
 import strongdmm.application.Service
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderSettingsService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerPinnedVariablesService
-import strongdmm.event.type.service.TriggerSettingsService
+import strongdmm.event.service.ProviderSettingsService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerPinnedVariablesService
+import strongdmm.event.service.TriggerSettingsService
 import strongdmm.service.settings.Settings
 
 class PinnedVariablesService : Service {

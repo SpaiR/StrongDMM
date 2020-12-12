@@ -2,7 +2,7 @@ package strongdmm.ui.panel.toolselect
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionToolsService
+import strongdmm.event.service.ReactionToolsService
 import strongdmm.service.tool.ToolType
 
 class EventController(

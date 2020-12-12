@@ -6,8 +6,8 @@ import strongdmm.StrongDMM
 import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderPreferencesService
-import strongdmm.event.type.service.TriggerPreferencesService
+import strongdmm.event.service.ProviderPreferencesService
+import strongdmm.event.service.TriggerPreferencesService
 import strongdmm.service.preferences.prefs.Preference
 import java.io.File
 

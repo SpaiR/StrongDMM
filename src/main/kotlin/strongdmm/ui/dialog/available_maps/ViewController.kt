@@ -3,8 +3,8 @@ package strongdmm.ui.dialog.available_maps
 import imgui.ImGui
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.Reaction
+import strongdmm.event.service.TriggerMapHolderService
 import java.io.File
 
 class ViewController(

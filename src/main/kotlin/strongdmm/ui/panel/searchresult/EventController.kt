@@ -2,9 +2,9 @@ package strongdmm.ui.panel.searchresult
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionMapHolderService
-import strongdmm.event.type.ui.TriggerSearchResultPanelUi
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionMapHolderService
+import strongdmm.event.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.panel.searchresult.model.SearchResult
 
 class EventController(

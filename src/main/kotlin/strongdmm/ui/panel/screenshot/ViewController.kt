@@ -2,7 +2,7 @@ package strongdmm.ui.panel.screenshot
 
 import strongdmm.byond.dmm.MapArea
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
+import strongdmm.event.service.*
 import strongdmm.util.NfdUtil
 import java.io.File
 

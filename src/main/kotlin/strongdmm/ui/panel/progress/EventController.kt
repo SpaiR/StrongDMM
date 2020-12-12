@@ -4,8 +4,8 @@ import imgui.ImGui
 import imgui.ImVec2
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionScreenshotService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionScreenshotService
 import java.io.File
 
 class EventController(

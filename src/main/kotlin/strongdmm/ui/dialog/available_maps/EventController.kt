@@ -3,9 +3,9 @@ package strongdmm.ui.dialog.available_maps
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.ProviderMapHolderService
-import strongdmm.event.type.ui.TriggerAvailableMapsDialogUi
+import strongdmm.event.Reaction
+import strongdmm.event.service.ProviderMapHolderService
+import strongdmm.event.ui.TriggerAvailableMapsDialogUi
 
 class EventController(
     private val state: State

@@ -3,9 +3,9 @@ package strongdmm.ui.panel.coords
 import strongdmm.byond.dmm.MapPos
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionCanvasService
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionMapHolderService
+import strongdmm.event.service.ReactionCanvasService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionMapHolderService
 
 class EventController(
     private val state: State

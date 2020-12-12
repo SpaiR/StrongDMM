@@ -10,10 +10,10 @@ import strongdmm.byond.dmm.parser.DmmParser
 import strongdmm.byond.dmm.save.SaveMap
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.TriggerConfirmationDialogUi
-import strongdmm.event.type.ui.TriggerNotificationPanelUi
-import strongdmm.event.type.ui.TriggerSetMapSizeDialogUi
+import strongdmm.event.service.*
+import strongdmm.event.ui.TriggerConfirmationDialogUi
+import strongdmm.event.ui.TriggerNotificationPanelUi
+import strongdmm.event.ui.TriggerSetMapSizeDialogUi
 import strongdmm.service.action.ActionBalanceStorage
 import strongdmm.service.preferences.Preferences
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData

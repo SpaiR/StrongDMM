@@ -4,9 +4,9 @@ import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.ReactionTilePopupUi
-import strongdmm.event.type.ui.TriggerTilePopupUi
+import strongdmm.event.service.*
+import strongdmm.event.ui.ReactionTilePopupUi
+import strongdmm.event.ui.TriggerTilePopupUi
 import strongdmm.service.action.ActionStatus
 import strongdmm.service.dmi.DmiCache
 import strongdmm.service.preferences.Preferences

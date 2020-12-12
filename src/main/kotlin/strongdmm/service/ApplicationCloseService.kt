@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW
 import strongdmm.application.Processable
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.service.TriggerMapHolderService
 import strongdmm.application.window.Window
 
 class ApplicationCloseService : Service, Processable {

@@ -4,7 +4,7 @@ import imgui.ImGui
 import strongdmm.application.Processable
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionShortcutService
+import strongdmm.event.service.ReactionShortcutService
 
 class ShortcutService : Service, Processable {
     override fun process() {

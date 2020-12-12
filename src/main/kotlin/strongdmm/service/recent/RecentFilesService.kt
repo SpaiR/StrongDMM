@@ -10,7 +10,7 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
+import strongdmm.event.service.*
 import java.io.File
 
 class RecentFilesService : Service, PostInitialize {

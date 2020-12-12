@@ -4,9 +4,9 @@ import strongdmm.byond.dmm.MapArea
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerInstanceService
-import strongdmm.event.type.service.TriggerToolsService
-import strongdmm.event.type.ui.TriggerSearchResultPanelUi
+import strongdmm.event.service.TriggerInstanceService
+import strongdmm.event.service.TriggerToolsService
+import strongdmm.event.ui.TriggerSearchResultPanelUi
 import strongdmm.ui.panel.searchresult.model.SearchResult
 
 class ViewController(

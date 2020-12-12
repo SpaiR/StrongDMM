@@ -5,8 +5,8 @@ import strongdmm.application.Service
 import strongdmm.byond.dme.Dme
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderDmiService
-import strongdmm.event.type.service.ReactionEnvironmentService
+import strongdmm.event.service.ProviderDmiService
+import strongdmm.event.service.ReactionEnvironmentService
 
 class DmiService : Service, PostInitialize {
     private val dmiLoader = DmiLoader()

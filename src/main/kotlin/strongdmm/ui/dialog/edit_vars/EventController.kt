@@ -4,9 +4,9 @@ import strongdmm.byond.dmm.Tile
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionMapHolderService
-import strongdmm.event.type.ui.TriggerEditVarsDialogUi
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionMapHolderService
+import strongdmm.event.ui.TriggerEditVarsDialogUi
 
 class EventController(
     private val state: State

@@ -6,8 +6,8 @@ import strongdmm.StrongDMM
 import strongdmm.application.PostInitialize
 import strongdmm.application.Service
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderSettingsService
-import strongdmm.event.type.service.TriggerSettingsService
+import strongdmm.event.service.ProviderSettingsService
+import strongdmm.event.service.TriggerSettingsService
 import java.io.File
 
 class SettingsService : Service, PostInitialize {

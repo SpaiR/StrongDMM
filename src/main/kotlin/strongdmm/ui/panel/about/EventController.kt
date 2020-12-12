@@ -1,7 +1,7 @@
 package strongdmm.ui.panel.about
 
 import strongdmm.event.EventBus
-import strongdmm.event.type.ui.TriggerAboutPanelUi
+import strongdmm.event.ui.TriggerAboutPanelUi
 
 class EventController(
     private val state: State

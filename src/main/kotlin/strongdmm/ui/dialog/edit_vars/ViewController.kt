@@ -5,11 +5,11 @@ import strongdmm.byond.dme.DmeItem
 import strongdmm.byond.dmm.GlobalTileItemHolder
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
-import strongdmm.event.type.service.TriggerActionService
-import strongdmm.event.type.service.TriggerFrameService
-import strongdmm.event.type.service.TriggerPinnedVariablesService
-import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.event.Reaction
+import strongdmm.event.service.TriggerActionService
+import strongdmm.event.service.TriggerFrameService
+import strongdmm.event.service.TriggerPinnedVariablesService
+import strongdmm.event.ui.TriggerObjectPanelUi
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.ui.dialog.edit_vars.model.Variable
 

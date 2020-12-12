@@ -2,7 +2,7 @@ package strongdmm.ui.dialog.unknown_types
 
 import imgui.ImGui
 import strongdmm.event.EventBus
-import strongdmm.event.type.Reaction
+import strongdmm.event.Reaction
 import strongdmm.service.map.UnknownType
 import strongdmm.application.window.Window
 

@@ -2,7 +2,7 @@ package strongdmm.ui.dialog.confirmation
 
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.ui.TriggerConfirmationDialogUi
+import strongdmm.event.ui.TriggerConfirmationDialogUi
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogData
 import strongdmm.ui.dialog.confirmation.model.ConfirmationDialogStatus
 

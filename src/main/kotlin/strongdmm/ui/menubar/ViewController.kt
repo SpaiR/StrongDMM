@@ -7,11 +7,11 @@ import strongdmm.byond.TYPE_MOB
 import strongdmm.byond.TYPE_OBJ
 import strongdmm.byond.TYPE_TURF
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.*
 import strongdmm.util.NfdUtil
 import strongdmm.application.window.AppWindow
 import strongdmm.application.window.Window
+import strongdmm.event.service.*
+import strongdmm.event.ui.*
 import java.io.File
 
 class ViewController(

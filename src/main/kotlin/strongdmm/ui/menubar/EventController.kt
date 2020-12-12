@@ -8,8 +8,8 @@ import strongdmm.byond.TYPE_TURF
 import strongdmm.byond.dmm.MapPath
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.*
-import strongdmm.event.type.ui.ProviderInstanceLocatorPanelUi
+import strongdmm.event.service.*
+import strongdmm.event.ui.ProviderInstanceLocatorPanelUi
 import strongdmm.service.action.ActionStatus
 
 class EventController(

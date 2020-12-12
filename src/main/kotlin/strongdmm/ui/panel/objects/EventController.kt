@@ -3,11 +3,11 @@ package strongdmm.ui.panel.objects
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ProviderDmiService
-import strongdmm.event.type.service.ReactionCanvasService
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionTileItemService
-import strongdmm.event.type.ui.TriggerObjectPanelUi
+import strongdmm.event.service.ProviderDmiService
+import strongdmm.event.service.ReactionCanvasService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionTileItemService
+import strongdmm.event.ui.TriggerObjectPanelUi
 import strongdmm.service.dmi.DmiCache
 
 class EventController(

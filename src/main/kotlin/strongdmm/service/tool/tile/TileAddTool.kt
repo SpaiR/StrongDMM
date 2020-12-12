@@ -3,10 +3,10 @@ package strongdmm.service.tool.tile
 import strongdmm.byond.dmm.MapPos
 import strongdmm.byond.dmm.TileItem
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.TriggerActionService
-import strongdmm.event.type.service.TriggerCanvasService
-import strongdmm.event.type.service.TriggerFrameService
-import strongdmm.event.type.service.TriggerMapHolderService
+import strongdmm.event.service.TriggerActionService
+import strongdmm.event.service.TriggerCanvasService
+import strongdmm.event.service.TriggerFrameService
+import strongdmm.event.service.TriggerMapHolderService
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.ReplaceTileAction
 import strongdmm.service.action.undoable.Undoable

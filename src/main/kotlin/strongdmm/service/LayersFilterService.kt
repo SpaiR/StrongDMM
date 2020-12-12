@@ -3,10 +3,10 @@ package strongdmm.service
 import strongdmm.application.Service
 import strongdmm.event.Event
 import strongdmm.event.EventBus
-import strongdmm.event.type.service.ReactionEnvironmentService
-import strongdmm.event.type.service.ReactionLayersFilterService
-import strongdmm.event.type.service.TriggerEnvironmentService
-import strongdmm.event.type.service.TriggerLayersFilterService
+import strongdmm.event.service.ReactionEnvironmentService
+import strongdmm.event.service.ReactionLayersFilterService
+import strongdmm.event.service.TriggerEnvironmentService
+import strongdmm.event.service.TriggerLayersFilterService
 
 class LayersFilterService : Service {
     private var filteredTypes: MutableSet<String> = HashSet()
