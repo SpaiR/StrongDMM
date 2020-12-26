@@ -2,3 +2,6 @@
 end_of_line = lf
 indent_style = space
 insert_final_newline = true
+
+[*.go]
+indent_style = tab
