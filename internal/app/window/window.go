@@ -1,4 +1,4 @@
-package app
+package window
 
 import (
 	"os"
@@ -12,14 +12,16 @@ import (
 	"github.com/SpaiR/strongdmm/internal/platform"
 )
 
-func Start() {
-	setupGlfw()
+const fps int = 60
+
+func ShowAndRun(title string, run func()) {
+	setupGlfw(title)
 	setupImGui()
 
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 
-	loop()
+	loop(run)
 
 	platform.DisposeImGuiGL()
 	platform.DisposeImGuiGLFW()
@@ -30,7 +32,7 @@ func Start() {
 	os.Exit(0)
 }
 
-func setupGlfw() {
+func setupGlfw(title string) {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
@@ -44,7 +46,7 @@ func setupGlfw() {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(1280, 768, "Test", nil, nil)
+	window, err := glfw.CreateWindow(1280, 768, title, nil, nil)
 
 	if err != nil {
 		os.Exit(-2)
@@ -67,13 +69,13 @@ func setupImGui() {
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 }
 
-func loop() {
+func loop(run func()) {
 	window := glfw.GetCurrentContext()
-	ticker := time.NewTicker(time.Second / time.Duration(60))
+	ticker := time.NewTicker(time.Second / time.Duration(fps))
 
 	for !window.ShouldClose() {
 		startFrame()
-		imgui.ShowDemoWindow(nil)
+		run()
 		endFrame()
 		<-ticker.C
 	}
