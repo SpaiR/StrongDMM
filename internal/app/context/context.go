@@ -1,6 +1,7 @@
 package context
 
 import (
+	"github.com/SpaiR/strongdmm/internal/app/service"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 )
@@ -8,12 +9,14 @@ import (
 type Context struct {
 	tmpShouldClose bool
 
-	uiMenu *ui.Menu
+	uiMenu             *ui.Menu
+	serviceEnvironment *service.Environment
 }
 
 func NewContext() *Context {
 	ctx := Context{}
 	ctx.uiMenu = ui.NewMenu(&ctx)
+	ctx.serviceEnvironment = service.NewEnvironment(&ctx)
 	return &ctx
 }
 

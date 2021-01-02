@@ -7,3 +7,7 @@ func (c *Context) checkShouldClose() {
 		glfw.GetCurrentContext().SetShouldClose(true)
 	}
 }
+
+func (c *Context) openEnvironment(file string) {
+	c.serviceEnvironment.OpenEnvironment(file)
+}

@@ -7,16 +7,16 @@ import (
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
-type menuAction interface {
+type action interface {
 	DoOpenEnvironment()
 	DoExit()
 }
 
 type Menu struct {
-	action menuAction
+	action action
 }
 
-func NewMenu(action menuAction) *Menu {
+func NewMenu(action action) *Menu {
 	addShortcuts(action)
 
 	return &Menu{
@@ -34,7 +34,7 @@ func (m *Menu) Process() {
 	}).Build()
 }
 
-func addShortcuts(action menuAction) {
+func addShortcuts(action action) {
 	shortcut.Add(shortcut.Shortcut{
 		FirstKey:  glfw.KeyLeftControl,
 		SecondKey: glfw.KeyQ,
