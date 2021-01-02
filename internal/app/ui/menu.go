@@ -8,6 +8,7 @@ import (
 )
 
 type menuAction interface {
+	DoOpenEnvironment()
 	DoExit()
 }
 
@@ -26,7 +27,7 @@ func NewMenu(action menuAction) *Menu {
 func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
-			w.MenuItem("Open Environment...", nil),
+			w.MenuItem("Open Environment...", m.action.DoOpenEnvironment),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
 		}),
