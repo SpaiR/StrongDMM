@@ -1,18 +1,13 @@
 package service
 
-type action interface {
-}
+import "github.com/SpaiR/strongdmm/third_party/sdmmparser"
 
-type Environment struct {
-	action action
-}
+type Environment struct{}
 
-func NewEnvironment(action action) *Environment {
-	return &Environment{
-		action: action,
-	}
+func NewEnvironment() *Environment {
+	return &Environment{}
 }
 
 func (e *Environment) OpenEnvironment(file string) {
-
+	sdmmparser.ParseEnvironment(file)
 }

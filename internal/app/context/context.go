@@ -16,7 +16,7 @@ type Context struct {
 func NewContext() *Context {
 	ctx := Context{}
 	ctx.uiMenu = ui.NewMenu(&ctx)
-	ctx.serviceEnvironment = service.NewEnvironment(&ctx)
+	ctx.serviceEnvironment = service.NewEnvironment()
 	return &ctx
 }
 
