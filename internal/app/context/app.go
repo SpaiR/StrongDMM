@@ -1,6 +1,10 @@
 package context
 
-import "github.com/go-gl/glfw/v3.3/glfw"
+import (
+	"github.com/go-gl/glfw/v3.3/glfw"
+
+	"github.com/SpaiR/strongdmm/internal/app/byond"
+)
 
 func (c *Context) checkShouldClose() {
 	if c.tmpShouldClose {
@@ -9,5 +13,5 @@ func (c *Context) checkShouldClose() {
 }
 
 func (c *Context) openEnvironment(file string) {
-	c.serviceEnvironment.OpenEnvironment(file)
+	byond.NewDme(file)
 }

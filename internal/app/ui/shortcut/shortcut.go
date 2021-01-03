@@ -36,9 +36,7 @@ func Add(shortcut Shortcut) {
 func Process() {
 	var shortcutToTrigger Shortcut
 
-	for i := range shortcuts {
-		s := shortcuts[i]
-
+	for _, s := range shortcuts {
 		if s.SecondKey == 0 && s.ThirdKey == 0 && imgui.IsKeyPressed(int(s.FirstKey)) {
 			if shortcutToTrigger.isEmpty() || shortcutToTrigger.weight() < s.weight() {
 				shortcutToTrigger = s
