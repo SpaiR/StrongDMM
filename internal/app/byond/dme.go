@@ -35,7 +35,7 @@ func NewDme(file string) (*Dme, error) {
 
 func nameFromType(localType string, parentName *string) *string {
 	if parentName == nil && len(localType) > 1 {
-		s := localType[strings.LastIndex(localType, "/"):]
+		s := localType[strings.LastIndex(localType, "/") + 1:]
 		return &s
 	} else {
 		return parentName
