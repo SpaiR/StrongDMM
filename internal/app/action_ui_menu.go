@@ -8,6 +8,14 @@ func (a *app) DoOpenEnvironment() {
 	}
 }
 
+func (a *app) DoOpenEnvironmentByPath(path string) {
+	a.openEnvironment(path)
+}
+
 func (a *app) DoExit() {
 	a.tmpShouldClose = true
+}
+
+func (a *app) RecentEnvironments() []string {
+	return a.data.RecentEnvironments
 }

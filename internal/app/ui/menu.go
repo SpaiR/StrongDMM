@@ -9,7 +9,10 @@ import (
 
 type action interface {
 	DoOpenEnvironment()
+	DoOpenEnvironmentByPath(path string)
 	DoExit()
+
+	RecentEnvironments() []string
 }
 
 type Menu struct {
@@ -28,6 +31,15 @@ func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
 			w.MenuItem("Open Environment...", m.action.DoOpenEnvironment),
+			w.Menu("Recent Environments", w.Layout{
+				w.Custom(func() {
+					for _, recentEnvironment := range m.action.RecentEnvironments() {
+						w.MenuItem(recentEnvironment, func() {
+							m.action.DoOpenEnvironmentByPath(recentEnvironment)
+						}).Build()
+					}
+				}),
+			}).Enabled(len(m.action.RecentEnvironments()) != 0),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
 		}),

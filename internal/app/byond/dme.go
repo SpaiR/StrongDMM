@@ -64,8 +64,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 		localVars["name"] = nameFromType(root.Path, parentName)
 	}
 
-	children := make([]string, 0)
-
+	var children []string
 	for _, child := range root.Children {
 		children = append(children, child.Path)
 		traverseTree0(&child, name, dme)
