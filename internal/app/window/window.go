@@ -14,14 +14,22 @@ import (
 
 const fps int = 60
 
-func ShowAndRun(title string, run func()) {
-	setupGlfw(title)
+type windowApp interface {
+	Initialize()
+	Loop()
+	Dispose()
+}
+
+func ShowAndRun(app windowApp) {
+	setupGlfw()
 	setupImGui()
 
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 
-	loop(run)
+	app.Initialize()
+	loop(app)
+	app.Dispose()
 
 	platform.DisposeImGuiGL()
 	platform.DisposeImGuiGLFW()
@@ -32,7 +40,7 @@ func ShowAndRun(title string, run func()) {
 	os.Exit(0)
 }
 
-func setupGlfw(title string) {
+func setupGlfw() {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
@@ -46,7 +54,7 @@ func setupGlfw(title string) {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(1280, 768, title, nil, nil)
+	window, err := glfw.CreateWindow(1280, 768, "", nil, nil)
 
 	if err != nil {
 		os.Exit(-2)
@@ -69,13 +77,13 @@ func setupImGui() {
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 }
 
-func loop(run func()) {
+func loop(app windowApp) {
 	window := glfw.GetCurrentContext()
 	ticker := time.NewTicker(time.Second / time.Duration(fps))
 
 	for !window.ShouldClose() {
 		startFrame()
-		run()
+		app.Loop()
 		endFrame()
 		<-ticker.C
 	}

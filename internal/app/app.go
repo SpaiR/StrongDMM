@@ -15,9 +15,10 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/window"
 )
 
-var (
-	InternalDir string
-)
+func Start() {
+	app := app{}
+	window.ShowAndRun(&app)
+}
 
 const TITLE = "StrongDMM"
 
@@ -31,44 +32,44 @@ type app struct {
 	uiMenu *ui.Menu
 }
 
-func Start() {
-	app := create()
+func (a *app) Initialize() {
+	internalDir := getOrCreateInternalDir()
 
-	window.ShowAndRun(TITLE, func() {
-		app.process()
-	})
+	a.data = data.Load(internalDir)
+	a.uiMenu = ui.NewMenu(a)
+
+	a.updateTitle()
 }
 
-func create() *app {
-	findInternalDir()
-
-	app := app{}
-	app.data = data.Load(InternalDir)
-	app.uiMenu = ui.NewMenu(&app)
-
-	return &app
-}
-
-func findInternalDir() {
-	userHomeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal("unable to find user home dir")
-	}
-	if runtime.GOOS == "windows" {
-		InternalDir = userHomeDir + "/AppData/Roaming/StrongDMM"
-	} else {
-		InternalDir = userHomeDir + "/.strongdmm"
-	}
-	_ = os.MkdirAll(InternalDir, os.ModePerm)
-}
-
-func (a *app) process() {
+func (a *app) Loop() {
 	shortcut.Process()
 
 	a.uiMenu.Process()
 
 	a.checkShouldClose()
 	a.dropTmpState()
+}
+
+func (a *app) Dispose() {
+	a.data.Save()
+}
+
+func getOrCreateInternalDir() string {
+	var internalDir string
+
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("unable to find user home dir")
+	}
+
+	if runtime.GOOS == "windows" {
+		internalDir = userHomeDir + "/AppData/Roaming/StrongDMM"
+	} else {
+		internalDir = userHomeDir + "/.strongdmm"
+	}
+	_ = os.MkdirAll(internalDir, os.ModePerm)
+
+	return internalDir
 }
 
 func (a *app) dropTmpState() {

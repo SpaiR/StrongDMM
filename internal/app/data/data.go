@@ -2,6 +2,7 @@ package data
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/gob"
 	"io/ioutil"
 	"log"
@@ -33,10 +34,8 @@ func Load(internalDir string) *InternalData {
 		filepath: filepath,
 	}
 
-	if _, err := os.Stat(filepath); os.IsExist(err) {
-		if err := data.decode(); err != nil {
-			log.Println("unable to decode internal data: ", err)
-		}
+	if err := data.decode(); err != nil {
+		log.Println("unable to decode internal data: ", err)
 	}
 
 	return &data
@@ -46,11 +45,13 @@ func (i *InternalData) encode() {
 	buffer := bytes.Buffer{}
 	encoder := gob.NewEncoder(&buffer)
 	_ = encoder.Encode(i)
-	_ = ioutil.WriteFile(i.filepath, buffer.Bytes(), os.ModePerm)
+	content := base64.StdEncoding.EncodeToString(buffer.Bytes())
+	_ = ioutil.WriteFile(i.filepath, []byte(content), os.ModePerm)
 }
 
 func (i *InternalData) decode() error {
 	content, _ := ioutil.ReadFile(i.filepath)
+	content, _ = base64.StdEncoding.DecodeString(string(content))
 	buffer := bytes.Buffer{}
 	buffer.Write(content)
 	decoder := gob.NewDecoder(&buffer)

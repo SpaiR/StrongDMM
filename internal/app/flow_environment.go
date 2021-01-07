@@ -15,9 +15,6 @@ func (a *app) openEnvironment(file string) {
 	}
 
 	a.loadedEnvironment = env
-
 	a.data.AddRecentEnvironment(file)
-	a.data.Save()
-
 	a.updateTitle()
 }
