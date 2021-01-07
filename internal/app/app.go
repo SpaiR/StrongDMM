@@ -1,12 +1,14 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"runtime"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 
+	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/internal/app/data"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
@@ -21,6 +23,8 @@ const TITLE = "StrongDMM"
 
 type app struct {
 	tmpShouldClose bool
+
+	loadedEnvironment *byond.Dme
 
 	data *data.InternalData
 
@@ -75,4 +79,16 @@ func (a *app) checkShouldClose() {
 	if a.tmpShouldClose {
 		glfw.GetCurrentContext().SetShouldClose(true)
 	}
+}
+
+func (a *app) updateTitle() {
+	var title string
+
+	if a.loadedEnvironment != nil {
+		title = fmt.Sprintf("%s - %s", a.loadedEnvironment.Name, TITLE)
+	} else {
+		title = TITLE
+	}
+
+	glfw.GetCurrentContext().SetTitle(title)
 }
