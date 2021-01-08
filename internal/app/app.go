@@ -2,9 +2,11 @@ package app
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/SpaiR/imgui-go"
 
@@ -32,6 +34,8 @@ const TITLE = "StrongDMM"
 type app struct {
 	masterWindow *window.Window
 
+	logDir string
+
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
 
@@ -39,17 +43,17 @@ type app struct {
 
 	data *data.InternalData
 
-	uiMenu      *ui.Menu
-	uiLayout    *ui.Layout
-	uiPanelLogs *ui.Logs
+	uiMenu   *ui.Menu
+	uiLayout *ui.Layout
 }
 
 func (a *app) initialize(internalDir string) {
+	a.logDir = initializeLogger(internalDir)
+
 	a.data = data.Load(internalDir)
 
 	a.uiMenu = ui.NewMenu(a)
 	a.uiLayout = ui.NewLayout(a)
-	a.uiPanelLogs = ui.NewLogs(a)
 
 	a.updateTitle()
 	a.resetWindows()
@@ -64,7 +68,6 @@ func (a *app) loop() {
 
 	a.uiMenu.Process()
 	a.uiLayout.Process()
-	a.uiPanelLogs.Process()
 
 	a.checkShouldClose()
 	a.dropTmpState()
@@ -91,6 +94,23 @@ func getOrCreateInternalDir() string {
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 
 	return internalDir
+}
+
+func initializeLogger(internalDir string) string {
+	formattedDate := time.Now().Format("2006.01.02-15.04.05")
+	logDir := internalDir + "/Logs"
+	_ = os.MkdirAll(logDir, os.ModePerm)
+	logFile := logDir + "/" + formattedDate + ".log"
+
+	file, e := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+	if e != nil {
+		log.Fatal("unable to open log file")
+	}
+
+	multiOut := io.MultiWriter(file, os.Stdout)
+	log.SetOutput(multiOut)
+
+	return logDir
 }
 
 func (a *app) dropTmpState() {

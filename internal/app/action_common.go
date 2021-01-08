@@ -10,6 +10,10 @@ func (a *app) PointSize() float32 {
 	return a.masterWindow.PointSize
 }
 
+func (a *app) MasterWindowSize() (int, int) {
+	return a.masterWindow.Handle.GetSize()
+}
+
 func (a *app) CenterNodeId() int {
 	return int(a.uiLayout.CenterNodeId)
 }

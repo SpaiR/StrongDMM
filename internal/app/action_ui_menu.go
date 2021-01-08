@@ -1,6 +1,11 @@
 package app
 
-import "github.com/sqweek/dialog"
+import (
+	"log"
+
+	"github.com/skratchdot/open-golang/open"
+	"github.com/sqweek/dialog"
+)
 
 func (a *app) DoOpenEnvironment() {
 	if file, err := dialog.File().Title("Open Environment").Filter("*.dme", "dme").Load(); err == nil {
@@ -21,7 +26,9 @@ func (a *app) DoResetWindows() {
 }
 
 func (a *app) DoOpenLogs() {
-	a.uiPanelLogs.Open()
+	if err := open.Run(a.logDir); err != nil {
+		log.Fatal("unable to open log dir")
+	}
 }
 
 func (a *app) RecentEnvironments() []string {
