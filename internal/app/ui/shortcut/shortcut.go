@@ -12,8 +12,8 @@ type Shortcut struct {
 	Action    func()
 }
 
-func (s Shortcut) isEmpty() bool {
-	return s.FirstKey == 0 && s.SecondKey == 0 && s.ThirdKey == 0
+func (s Shortcut) isNil() bool {
+	return s.Action == nil
 }
 
 func (s Shortcut) weight() int {
@@ -38,7 +38,7 @@ func Process() {
 
 	for _, s := range shortcuts {
 		if s.SecondKey == 0 && s.ThirdKey == 0 && imgui.IsKeyPressed(int(s.FirstKey)) {
-			if shortcutToTrigger.isEmpty() || shortcutToTrigger.weight() < s.weight() {
+			if shortcutToTrigger.isNil() || shortcutToTrigger.weight() < s.weight() {
 				shortcutToTrigger = s
 			}
 		} else if imgui.IsKeyDown(int(s.FirstKey)) {
@@ -49,7 +49,7 @@ func Process() {
 				}
 			} else if s.SecondKey != 0 {
 				if imgui.IsKeyPressed(int(s.SecondKey)) {
-					if shortcutToTrigger.isEmpty() || shortcutToTrigger.weight() < s.weight() {
+					if shortcutToTrigger.isNil() || shortcutToTrigger.weight() < s.weight() {
 						shortcutToTrigger = s
 					}
 				}
@@ -57,7 +57,7 @@ func Process() {
 		}
 	}
 
-	if !shortcutToTrigger.isEmpty() {
+	if !shortcutToTrigger.isNil() {
 		shortcutToTrigger.Action()
 	}
 }

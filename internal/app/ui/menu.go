@@ -7,19 +7,23 @@ import (
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
-type action interface {
+type menuAction interface {
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
 	DoExit()
+
+	DoResetWindows()
+
+	DoOpenLogs()
 
 	RecentEnvironments() []string
 }
 
 type Menu struct {
-	action action
+	action menuAction
 }
 
-func NewMenu(action action) *Menu {
+func NewMenu(action menuAction) *Menu {
 	addShortcuts(action)
 
 	return &Menu{
@@ -43,10 +47,18 @@ func (m *Menu) Process() {
 			w.Separator(),
 			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
 		}),
+
+		w.Menu("Window", w.Layout{
+			w.MenuItem("Reset Windows", m.action.DoResetWindows).Shortcut("F5"),
+		}),
+
+		w.Menu("Help", w.Layout{
+			w.MenuItem("Logs...", m.action.DoOpenLogs),
+		}),
 	}).Build()
 }
 
-func addShortcuts(action action) {
+func addShortcuts(action menuAction) {
 	shortcut.Add(shortcut.Shortcut{
 		FirstKey:  glfw.KeyLeftControl,
 		SecondKey: glfw.KeyQ,
@@ -56,5 +68,10 @@ func addShortcuts(action action) {
 		FirstKey:  glfw.KeyRightControl,
 		SecondKey: glfw.KeyQ,
 		Action:    action.DoExit,
+	})
+
+	shortcut.Add(shortcut.Shortcut{
+		FirstKey: glfw.KeyF5,
+		Action:   action.DoResetWindows,
 	})
 }

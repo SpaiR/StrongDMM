@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
@@ -24,27 +25,36 @@ const TITLE = "StrongDMM"
 
 type app struct {
 	tmpShouldClose bool
+	tmpWindowCond  imgui.Condition
 
 	loadedEnvironment *byond.Dme
 
 	data *data.InternalData
 
-	uiMenu *ui.Menu
+	uiMenu      *ui.Menu
+	uiLayout    *ui.Layout
+	uiPanelLogs *ui.Logs
 }
 
 func (a *app) Initialize() {
 	internalDir := getOrCreateInternalDir()
 
 	a.data = data.Load(internalDir)
+
 	a.uiMenu = ui.NewMenu(a)
+	a.uiLayout = ui.NewLayout(a)
+	a.uiPanelLogs = ui.NewLogs(a)
 
 	a.updateTitle()
+	a.resetWindows()
 }
 
 func (a *app) Loop() {
 	shortcut.Process()
 
 	a.uiMenu.Process()
+	a.uiLayout.Process()
+	a.uiPanelLogs.Process()
 
 	a.checkShouldClose()
 	a.dropTmpState()
@@ -74,6 +84,7 @@ func getOrCreateInternalDir() string {
 
 func (a *app) dropTmpState() {
 	a.tmpShouldClose = false
+	a.tmpWindowCond = imgui.ConditionOnce
 }
 
 func (a *app) checkShouldClose() {
@@ -92,4 +103,8 @@ func (a *app) updateTitle() {
 	}
 
 	glfw.GetCurrentContext().SetTitle(title)
+}
+
+func (a *app) resetWindows() {
+	a.tmpWindowCond = imgui.ConditionAlways
 }
