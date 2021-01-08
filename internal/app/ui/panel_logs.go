@@ -3,7 +3,7 @@ package ui
 import (
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/pkg/util"
+	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
@@ -33,7 +33,7 @@ func (l *Logs) Process() {
 	}
 
 	size := imgui.Vec2{X: 300 * l.action.PointSize(), Y: 300 * l.action.PointSize()}
-	util.ImGuiSetNextWindowCentered(size, l.action.WindowCond())
+	imguiext.SetNextWindowCentered(size, l.action.WindowCond())
 	w.Window("Logs", w.Layout{
 
 	}).Open(&l.open).Build()
