@@ -1,7 +1,7 @@
 package window
 
 import (
-	"os"
+	"log"
 	"runtime"
 	"time"
 
@@ -61,7 +61,7 @@ func (w *Window) setupGlfw() {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
-		os.Exit(-1)
+		log.Fatal("unable to initialize gfw: ", err)
 	}
 
 	glfw.WindowHint(glfw.Visible, glfw.False)
@@ -74,7 +74,7 @@ func (w *Window) setupGlfw() {
 	window, err := glfw.CreateWindow(1280, 768, "", nil, nil)
 
 	if err != nil {
-		os.Exit(-2)
+		log.Fatal("unable to create window: ", err)
 	}
 
 	window.MakeContextCurrent()
@@ -82,7 +82,7 @@ func (w *Window) setupGlfw() {
 	window.Show()
 
 	if err := gl.Init(); err != nil {
-		os.Exit(-3)
+		log.Fatal("unable to initialize opengl: ", err)
 	}
 
 	w.Handle = window

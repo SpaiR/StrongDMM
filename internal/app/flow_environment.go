@@ -8,7 +8,6 @@ import (
 
 func (a *app) openEnvironment(file string) {
 	env, err := byond.NewDme(file)
-
 	if err != nil {
 		log.Println(err)
 		return

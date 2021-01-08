@@ -18,6 +18,9 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/window"
 )
 
+const Title = "StrongDMM"
+const LogsTtlDays = 3
+
 func Start() {
 	internalDir := getOrCreateInternalDir()
 
@@ -29,8 +32,6 @@ func Start() {
 	app.run()
 	app.dispose()
 }
-
-const TITLE = "StrongDMM"
 
 type app struct {
 	masterWindow *window.Window
@@ -102,6 +103,14 @@ func initializeLogger(internalDir string) string {
 	logDir := internalDir + "/Logs"
 	_ = os.MkdirAll(logDir, os.ModePerm)
 
+	// Clear old logs
+	_ = filepath.Walk(logDir, func(path string, info os.FileInfo, _ error) error {
+		if time.Now().Sub(info.ModTime()).Hours()/24 > LogsTtlDays {
+			_ = os.Remove(path)
+		}
+		return nil
+	})
+
 	logFile := logDir + "/" + formattedDate + ".log"
 	file, e := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
 	if e != nil {
@@ -110,14 +119,6 @@ func initializeLogger(internalDir string) string {
 
 	multiOut := io.MultiWriter(file, os.Stdout)
 	log.SetOutput(multiOut)
-
-	// Clear old logs
-	_ = filepath.Walk(logDir, func(path string, info os.FileInfo, err error) error {
-		if time.Now().Sub(info.ModTime()).Hours()/24 > 30 {
-			_ = os.Remove(path)
-		}
-		return nil
-	})
 
 	return logDir
 }
@@ -137,9 +138,9 @@ func (a *app) updateTitle() {
 	var title string
 
 	if a.loadedEnvironment != nil {
-		title = fmt.Sprintf("%s - %s", a.loadedEnvironment.Name, TITLE)
+		title = fmt.Sprintf("%s - %s", a.loadedEnvironment.Name, Title)
 	} else {
-		title = TITLE
+		title = Title
 	}
 
 	a.masterWindow.Handle.SetTitle(title)
