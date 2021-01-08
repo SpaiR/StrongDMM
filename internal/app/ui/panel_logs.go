@@ -9,6 +9,7 @@ import (
 
 type logsAction interface {
 	WindowCond() imgui.Condition
+	PointSize() float32
 }
 
 type Logs struct {
@@ -31,7 +32,8 @@ func (l *Logs) Process() {
 		return
 	}
 
-	util.ImGuiSetNextWindowCentered(imgui.Vec2{X: 300, Y: 300}, l.action.WindowCond())
+	size := imgui.Vec2{X: 300 * l.action.PointSize(), Y: 300 * l.action.PointSize()}
+	util.ImGuiSetNextWindowCentered(size, l.action.WindowCond())
 	w.Window("Logs", w.Layout{
 
 	}).Open(&l.open).Build()

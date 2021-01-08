@@ -16,6 +16,8 @@ const fps int = 60
 
 type Window struct {
 	Handle *glfw.Window
+
+	PointSize float32
 }
 
 type Config struct {
@@ -23,7 +25,9 @@ type Config struct {
 }
 
 func New(config Config) *Window {
-	w := Window{}
+	w := Window{
+		PointSize: 1.0,
+	}
 
 	w.setupGlfw()
 	w.setupImGui(config)
