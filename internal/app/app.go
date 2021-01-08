@@ -7,7 +7,6 @@ import (
 	"runtime"
 
 	"github.com/SpaiR/imgui-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/internal/app/data"
@@ -17,13 +16,22 @@ import (
 )
 
 func Start() {
-	app := app{}
-	window.ShowAndRun(&app)
+	internalDir := getOrCreateInternalDir()
+
+	app := app{
+		masterWindow: window.New(window.Config{IniFilename: internalDir + "/Layout.ini"}),
+	}
+
+	app.initialize(internalDir)
+	app.run()
+	app.dispose()
 }
 
 const TITLE = "StrongDMM"
 
 type app struct {
+	masterWindow *window.Window
+
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
 
@@ -36,9 +44,7 @@ type app struct {
 	uiPanelLogs *ui.Logs
 }
 
-func (a *app) Initialize() {
-	internalDir := getOrCreateInternalDir()
-
+func (a *app) initialize(internalDir string) {
 	a.data = data.Load(internalDir)
 
 	a.uiMenu = ui.NewMenu(a)
@@ -49,7 +55,11 @@ func (a *app) Initialize() {
 	a.resetWindows()
 }
 
-func (a *app) Loop() {
+func (a *app) run() {
+	a.masterWindow.Run(a.loop)
+}
+
+func (a *app) loop() {
 	shortcut.Process()
 
 	a.uiMenu.Process()
@@ -60,8 +70,9 @@ func (a *app) Loop() {
 	a.dropTmpState()
 }
 
-func (a *app) Dispose() {
+func (a *app) dispose() {
 	a.data.Save()
+	a.masterWindow.Dispose()
 }
 
 func getOrCreateInternalDir() string {
@@ -84,12 +95,12 @@ func getOrCreateInternalDir() string {
 
 func (a *app) dropTmpState() {
 	a.tmpShouldClose = false
-	a.tmpWindowCond = imgui.ConditionOnce
+	a.tmpWindowCond = imgui.ConditionFirstUseEver
 }
 
 func (a *app) checkShouldClose() {
 	if a.tmpShouldClose {
-		glfw.GetCurrentContext().SetShouldClose(true)
+		a.masterWindow.Handle.SetShouldClose(true)
 	}
 }
 
@@ -102,7 +113,7 @@ func (a *app) updateTitle() {
 		title = TITLE
 	}
 
-	glfw.GetCurrentContext().SetTitle(title)
+	a.masterWindow.Handle.SetTitle(title)
 }
 
 func (a *app) resetWindows() {

@@ -14,33 +14,46 @@ import (
 
 const fps int = 60
 
-type windowApp interface {
-	Initialize()
-	Loop()
-	Dispose()
+type Window struct {
+	Handle *glfw.Window
 }
 
-func ShowAndRun(app windowApp) {
-	setupGlfw()
-	setupImGui()
+type Config struct {
+	IniFilename string
+}
+
+func New(config Config) *Window {
+	w := Window{}
+
+	w.setupGlfw()
+	w.setupImGui(config)
 
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 
-	app.Initialize()
-	loop(app)
-	app.Dispose()
+	return &w
+}
 
+func (w *Window) Run(loop func()) {
+	ticker := time.NewTicker(time.Second / time.Duration(fps))
+
+	for !w.Handle.ShouldClose() {
+		w.startFrame()
+		loop()
+		w.endFrame()
+		<-ticker.C
+	}
+}
+
+func (w *Window) Dispose() {
 	platform.DisposeImGuiGL()
 	platform.DisposeImGuiGLFW()
 
-	disposeImGui()
-	disposeGlfw()
-
-	os.Exit(0)
+	w.disposeImGui()
+	w.disposeGlfw()
 }
 
-func setupGlfw() {
+func (w *Window) setupGlfw() {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
@@ -67,49 +80,39 @@ func setupGlfw() {
 	if err := gl.Init(); err != nil {
 		os.Exit(-3)
 	}
+
+	w.Handle = window
 }
 
-func setupImGui() {
+func (w *Window) setupImGui(config Config) {
 	imgui.CreateContext(nil)
 
 	io := imgui.CurrentIO()
-	io.SetIniFilename("")
+	io.SetIniFilename(config.IniFilename)
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 }
 
-func loop(app windowApp) {
-	window := glfw.GetCurrentContext()
-	ticker := time.NewTicker(time.Second / time.Duration(fps))
-
-	for !window.ShouldClose() {
-		startFrame()
-		app.Loop()
-		endFrame()
-		<-ticker.C
-	}
-}
-
-func startFrame() {
+func (*Window) startFrame() {
 	gl.ClearColor(.25, .25, .5, 1)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	platform.NewImGuiGLFWFrame()
 	imgui.NewFrame()
 }
 
-func endFrame() {
+func (w *Window) endFrame() {
 	imgui.Render()
 	platform.Render(imgui.RenderedDrawData())
-	glfw.GetCurrentContext().SwapBuffers()
+	w.Handle.SwapBuffers()
 	glfw.PollEvents()
 }
 
-func disposeImGui() {
+func (*Window) disposeImGui() {
 	if c, err := imgui.CurrentContext(); err == nil {
 		c.Destroy()
 	}
 }
 
-func disposeGlfw() {
-	glfw.GetCurrentContext().Destroy()
+func (w *Window) disposeGlfw() {
+	w.Handle.Destroy()
 	glfw.Terminate()
 }

@@ -1,7 +1,12 @@
 package main
 
-import "github.com/SpaiR/strongdmm/internal/app"
+import (
+	"os"
+
+	"github.com/SpaiR/strongdmm/internal/app"
+)
 
 func main() {
 	app.Start()
+	os.Exit(0)
 }
