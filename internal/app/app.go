@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"runtime"
 	"time"
 
@@ -100,8 +101,8 @@ func initializeLogger(internalDir string) string {
 	formattedDate := time.Now().Format("2006.01.02-15.04.05")
 	logDir := internalDir + "/Logs"
 	_ = os.MkdirAll(logDir, os.ModePerm)
-	logFile := logDir + "/" + formattedDate + ".log"
 
+	logFile := logDir + "/" + formattedDate + ".log"
 	file, e := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
 	if e != nil {
 		log.Fatal("unable to open log file")
@@ -109,6 +110,14 @@ func initializeLogger(internalDir string) string {
 
 	multiOut := io.MultiWriter(file, os.Stdout)
 	log.SetOutput(multiOut)
+
+	// Clear old logs
+	_ = filepath.Walk(logDir, func(path string, info os.FileInfo, err error) error {
+		if time.Now().Sub(info.ModTime()).Hours()/24 > 30 {
+			_ = os.Remove(path)
+		}
+		return nil
+	})
 
 	return logDir
 }
