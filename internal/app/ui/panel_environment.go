@@ -91,11 +91,11 @@ func (e *Environment) showTypeBranch(t string) {
 func (e *Environment) showBranch0(item *byond.DmeItem) {
 	node := e.treeNode(item)
 
-	if len(item.Children) == 0 {
+	if len(item.DirectChildren) == 0 {
 		imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
 	} else {
 		if imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsOpenOnArrow|imgui.TreeNodeFlagsOpenOnDoubleClick) {
-			for _, childType := range item.Children {
+			for _, childType := range item.DirectChildren {
 				e.showBranch0(e.action.LoadedEnvironment().Items[childType])
 			}
 			imgui.TreePop()
@@ -127,7 +127,7 @@ func (e *Environment) filterBranch0(item *byond.DmeItem) {
 		e.filteredTreeNodes = append(e.filteredTreeNodes, e.treeNode(item))
 	}
 
-	for _, childType := range item.Children {
+	for _, childType := range item.DirectChildren {
 		e.filterBranch0(e.action.LoadedEnvironment().Items[childType])
 	}
 }

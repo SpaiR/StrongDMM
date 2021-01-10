@@ -30,6 +30,13 @@ func NewDme(file string) (*Dme, error) {
 
 	traverseTree0(objectTreeType, nil, &dme)
 
+	linkTypeFamily(&dme, "/atom", "/datum")
+	linkTypeFamily(&dme, "/atom/movable", "/atom")
+	linkTypeFamily(&dme, "/area", "/atom")
+	linkTypeFamily(&dme, "/turf", "/atom")
+	linkTypeFamily(&dme, "/obj", "/atom/movable")
+	linkTypeFamily(&dme, "/mob", "/atom/movable")
+
 	return &dme, nil
 }
 
@@ -71,10 +78,23 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 	}
 
 	dme.Items[root.Path] = &DmeItem{
-		env:      dme,
-		Type:     root.Path,
-		Vars:     localVars,
-		Children: children,
+		env:            dme,
+		Type:           root.Path,
+		Vars:           localVars,
+		DirectChildren: children,
+	}
+}
+
+func linkTypeFamily(dme *Dme, t string, parentType string) {
+	if item := dme.Items[t]; item != nil {
+		linkFamily0(dme, item, parentType)
+	}
+}
+
+func linkFamily0(dme *Dme, item *DmeItem, parentType string) {
+	item.Parent = dme.Items[parentType]
+	for _, child := range item.DirectChildren {
+		linkFamily0(dme, dme.Items[child], item.Type)
 	}
 }
 
