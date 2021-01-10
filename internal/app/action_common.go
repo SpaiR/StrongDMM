@@ -6,6 +6,10 @@ func (a *app) WindowCond() imgui.Condition {
 	return a.tmpWindowCond
 }
 
+func (a *app) IsWindowReset() bool {
+	return a.tmpWindowCond == imgui.ConditionAlways
+}
+
 func (a *app) PointSize() float32 {
 	return a.masterWindow.PointSize
 }

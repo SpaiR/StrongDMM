@@ -32,7 +32,7 @@ func (l *Layout) Process() {
 	imgui.DockBuilderAddNodeV(dockSpaceId, imgui.DockNodeFlagsDockSpace)
 
 	imgui.DockBuilderSetNodeSize(dockSpaceId, imgui.GetMainViewport().GetSize())
-	imgui.DockBuilderSplitNode(dockSpaceId, imgui.DirLeft, .3, &l.LeftNodeId, &l.CenterNodeId)
+	imgui.DockBuilderSplitNode(dockSpaceId, imgui.DirLeft, .2, &l.LeftNodeId, &l.CenterNodeId)
 
 	imgui.DockBuilderFinish(dockSpaceId)
 }

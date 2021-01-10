@@ -45,8 +45,9 @@ type app struct {
 
 	data *data.InternalData
 
-	uiMenu   *ui.Menu
-	uiLayout *ui.Layout
+	uiMenu             *ui.Menu
+	uiLayout           *ui.Layout
+	uiPanelEnvironment *ui.Environment
 }
 
 func (a *app) initialize(internalDir string) {
@@ -56,6 +57,7 @@ func (a *app) initialize(internalDir string) {
 
 	a.uiMenu = ui.NewMenu(a)
 	a.uiLayout = ui.NewLayout(a)
+	a.uiPanelEnvironment = ui.NewEnvironment(a)
 
 	a.updateTitle()
 	a.resetWindows()
@@ -70,6 +72,7 @@ func (a *app) loop() {
 
 	a.uiMenu.Process()
 	a.uiLayout.Process()
+	a.uiPanelEnvironment.Process()
 
 	a.checkShouldClose()
 	a.dropTmpState()
