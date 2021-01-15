@@ -6,6 +6,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
+	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
@@ -29,6 +30,7 @@ type Environment struct {
 
 	tmpNewTreeNodesCount int
 	tmpDoRepeatFilter    bool
+	tmpDoCollapseAll     bool
 }
 
 func NewEnvironment(action environmentAction) *Environment {
@@ -52,6 +54,10 @@ func (e *Environment) process() {
 	}
 }
 
+func (e *Environment) postProcess() {
+	e.tmpDoCollapseAll = false
+}
+
 func (e *Environment) Process() {
 	imgui.DockBuilderDockWindow("Environment", e.action.LeftNodeId())
 
@@ -64,6 +70,7 @@ func (e *Environment) Process() {
 			e.process()
 			e.showControls()
 			e.showTree()
+			e.postProcess()
 		}
 	}
 	imgui.End()
@@ -71,8 +78,9 @@ func (e *Environment) Process() {
 
 func (e *Environment) showControls() {
 	if imgui.Button("-") {
-
+		e.tmpDoCollapseAll = true
 	}
+	imguiext.SetItemHoveredTooltip("Collapse All")
 	imgui.SameLine()
 	imgui.SetNextItemWidth(-1)
 	if imgui.InputTextWithHint("##filter", "Filter", &e.filter) {
@@ -125,6 +133,9 @@ func (e *Environment) showBranch0(item *byond.DmeItem) {
 		imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
 	} else {
 		if imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsOpenOnArrow|imgui.TreeNodeFlagsOpenOnDoubleClick) {
+			if e.tmpDoCollapseAll {
+				imgui.StateStorage().SetAllInt(0)
+			}
 			for _, childType := range item.DirectChildren {
 				e.showBranch0(e.action.LoadedEnvironment().Items[childType])
 			}
