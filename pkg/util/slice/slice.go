@@ -1,6 +1,8 @@
 package slice
 
-func PushUniqueString(slice []string, str string) []string {
+// StrPushUnique pushes string at the beginning of the slice.
+// If slice contains the string to push, the old one will be removed.
+func StrPushUnique(slice []string, str string) []string {
 	idx := -1
 
 	for i, s := range slice {
@@ -11,13 +13,19 @@ func PushUniqueString(slice []string, str string) []string {
 	}
 
 	if idx != -1 {
-		return append([]string{str}, RemoveString(slice, idx)...)
+		return append([]string{str}, StrRemoveIdxOrd(slice, idx)...)
 	} else {
 		return append([]string{str}, slice...)
 	}
 }
 
-func RemoveString(slice []string, idx int) []string {
+// StrRemoveIdx removes element from slice by index without order preserving.
+func StrRemoveIdx(slice []string, idx int) []string {
 	slice[idx] = slice[len(slice)-1]
 	return slice[:len(slice)-1]
+}
+
+// StrRemoveIdxOrd removes element from slice by index with order preserving.
+func StrRemoveIdxOrd(slice []string, idx int) []string {
+	return append(slice[:idx], slice[idx+1:]...)
 }

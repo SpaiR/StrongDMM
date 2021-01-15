@@ -20,7 +20,7 @@ type InternalData struct {
 }
 
 func (i *InternalData) AddRecentEnvironment(recentEnvironment string) {
-	i.RecentEnvironments = slice.PushUniqueString(i.RecentEnvironments, recentEnvironment)
+	i.RecentEnvironments = slice.StrPushUnique(i.RecentEnvironments, recentEnvironment)
 }
 
 func (i *InternalData) Save() {
