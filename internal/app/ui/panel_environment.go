@@ -6,12 +6,18 @@ import (
 	"github.com/SpaiR/imgui-go"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
+	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
 type environmentAction interface {
 	LeftNodeId() int
 	LoadedEnvironment() *byond.Dme
+	PointSize() float32
 }
+
+// Only 25 nodes can be loaded per one process tick.
+// This helps to distribute performance load between process calls.
+const newTreeNodesLimit = 25
 
 type Environment struct {
 	action environmentAction
@@ -20,6 +26,9 @@ type Environment struct {
 	filteredTreeNodes []*treeNode
 
 	filter string
+
+	tmpNewTreeNodesCount int
+	tmpDoRepeatFilter    bool
 }
 
 func NewEnvironment(action environmentAction) *Environment {
@@ -29,15 +38,30 @@ func NewEnvironment(action environmentAction) *Environment {
 	}
 }
 
+func (e *Environment) Free() {
+	e.treeNodes = make(map[string]*treeNode)
+	e.filteredTreeNodes = nil
+	e.filter = ""
+}
+
+func (e *Environment) process() {
+	e.tmpNewTreeNodesCount = 0
+
+	if e.tmpDoRepeatFilter {
+		e.doFilter()
+	}
+}
+
 func (e *Environment) Process() {
 	imgui.DockBuilderDockWindow("Environment", e.action.LeftNodeId())
 
 	if imgui.BeginV("Environment", nil, imgui.WindowFlagsNoMove) {
-		imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(imgui.DockNodeFlagsNoTabBar | imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
+		imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(imgui.DockNodeFlagsNoCloseButton | imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
 
 		if e.action.LoadedEnvironment() == nil {
 			imgui.Text("No Environment Loaded")
 		} else {
+			e.process()
 			e.showControls()
 			e.showTree()
 		}
@@ -77,6 +101,7 @@ func (e *Environment) showFilteredNodes() {
 	for clipper.Step() {
 		for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
 			node := e.filteredTreeNodes[i]
+			e.showIcon(node)
 			imgui.TreeNodeV(node.orig.Type, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
 		}
 	}
@@ -89,7 +114,12 @@ func (e *Environment) showTypeBranch(t string) {
 }
 
 func (e *Environment) showBranch0(item *byond.DmeItem) {
-	node := e.treeNode(item)
+	node, ok := e.treeNode(item)
+	if ok != true {
+		return
+	}
+
+	e.showIcon(node)
 
 	if len(item.DirectChildren) == 0 {
 		imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
@@ -103,6 +133,13 @@ func (e *Environment) showBranch0(item *byond.DmeItem) {
 	}
 }
 
+func (e *Environment) showIcon(node *treeNode) {
+	s := node.sprite
+	iconSize := 16 * e.action.PointSize()
+	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
+	imgui.SameLine()
+}
+
 func (e *Environment) doFilter() {
 	e.filteredTreeNodes = nil
 
@@ -110,10 +147,14 @@ func (e *Environment) doFilter() {
 		return
 	}
 
+	initialNewTreeNodesCount := e.tmpNewTreeNodesCount
+
 	e.filterTypeBranch("/area")
 	e.filterTypeBranch("/turf")
 	e.filterTypeBranch("/obj")
 	e.filterTypeBranch("/mob")
+
+	e.tmpDoRepeatFilter = initialNewTreeNodesCount != e.tmpNewTreeNodesCount
 }
 
 func (e *Environment) filterTypeBranch(t string) {
@@ -124,7 +165,9 @@ func (e *Environment) filterTypeBranch(t string) {
 
 func (e *Environment) filterBranch0(item *byond.DmeItem) {
 	if strings.Contains(item.Type, e.filter) {
-		e.filteredTreeNodes = append(e.filteredTreeNodes, e.treeNode(item))
+		if node, ok := e.treeNode(item); ok == true {
+			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
+		}
 	}
 
 	for _, childType := range item.DirectChildren {
@@ -133,20 +176,31 @@ func (e *Environment) filterBranch0(item *byond.DmeItem) {
 }
 
 type treeNode struct {
-	name string
-	orig *byond.DmeItem
+	name   string
+	orig   *byond.DmeItem
+	sprite *byond.DmiSprite
 }
 
-func (e *Environment) treeNode(item *byond.DmeItem) *treeNode {
-	if node := e.treeNodes[item.Type]; node != nil {
-		return node
+func (e *Environment) treeNode(item *byond.DmeItem) (*treeNode, bool) {
+	if node, ok := e.treeNodes[item.Type]; ok {
+		return node, true
 	}
 
+	if e.tmpNewTreeNodesCount >= newTreeNodesLimit {
+		return nil, false
+	}
+
+	e.tmpNewTreeNodesCount += 1
+
+	icon, _ := item.VarText("icon")
+	iconState, _ := item.VarText("icon_state")
+
 	node := &treeNode{
-		name: item.Type[strings.LastIndex(item.Type, "/")+1:],
-		orig: item,
+		name:   item.Type[strings.LastIndex(item.Type, "/")+1:],
+		orig:   item,
+		sprite: byond.GetDmiSpriteOrPlaceholder(icon, iconState),
 	}
 
 	e.treeNodes[item.Type] = node
-	return node
+	return node, true
 }

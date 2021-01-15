@@ -1,7 +1,6 @@
 package byond
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -13,51 +12,54 @@ type DmeItem struct {
 	Parent         *DmeItem
 }
 
-func (d *DmeItem) Var(name string) (string, error) {
+func (d *DmeItem) Var(name string) (string, bool) {
 	if value, ok := d.Vars[name]; ok {
-		return *value, nil
+		if value == nil {
+			return "", false
+		}
+		return *value, true
 	} else if d.Parent != nil {
 		return d.Parent.Var(name)
 	}
-	return "", fmt.Errorf("unable to get var [%s] value", name)
+	return "", false
 }
 
-func (d *DmeItem) VarText(name string) (string, error) {
-	value, err := d.Var(name)
-	if err != nil {
-		return "", err
+func (d *DmeItem) VarText(name string) (string, bool) {
+	value, ok := d.Var(name)
+	if ok != true {
+		return "", ok
 	}
 
 	if len(value) > 1 {
-		return value[1 : len(value)-1], nil
+		return value[1 : len(value)-1], true
 	}
-	return value, nil
+	return value, true
 }
 
-func (d *DmeItem) VarFloat(name string) (float32, error) {
-	value, err := d.Var(name)
-	if err != nil {
-		return 0, err
+func (d *DmeItem) VarFloat(name string) (float32, bool) {
+	value, ok := d.Var(name)
+	if ok != true {
+		return 0, ok
 	}
 
 	v, err := strconv.ParseFloat(value, 32)
 	if err != nil {
-		return 0, err
+		return 0, false
 	}
 
-	return float32(v), nil
+	return float32(v), true
 }
 
-func (d *DmeItem) VarInt(name string) (int, error) {
-	value, err := d.Var(name)
-	if err != nil {
-		return 0, err
+func (d *DmeItem) VarInt(name string) (int, bool) {
+	value, ok := d.Var(name)
+	if ok != true {
+		return 0, ok
 	}
 
 	v, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return 0, err
+		return 0, false
 	}
 
-	return int(v), nil
+	return int(v), true
 }

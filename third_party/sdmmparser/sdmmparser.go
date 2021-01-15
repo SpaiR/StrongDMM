@@ -38,3 +38,28 @@ func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {
 
 	return &data, nil
 }
+
+type IconMetadata struct {
+	Width, Height int
+	States        []*IconState
+}
+
+type IconState struct {
+	Name         string
+	Dirs, Frames int
+}
+
+func ParseIconMetadata(iconPath string) (*IconMetadata, error) {
+	nativePath := C.CString(iconPath)
+	defer C.free(unsafe.Pointer(nativePath))
+
+	nativeStr := C.SdmmParseIconMetadata(nativePath)
+	defer C.SdmmFreeStr(nativeStr)
+
+	var data IconMetadata
+	if err := json.Unmarshal([]byte(C.GoString(nativeStr)), &data); err != nil {
+		return nil, fmt.Errorf("unable to deserialize icon metadata")
+	}
+
+	return &data, nil
+}

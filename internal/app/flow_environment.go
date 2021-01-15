@@ -16,4 +16,9 @@ func (a *app) openEnvironment(file string) {
 	a.loadedEnvironment = env
 	a.data.AddRecentEnvironment(file)
 	a.updateTitle()
+
+	a.uiPanelEnvironment.Free()
+
+	byond.FreeDmiCache()
+	byond.DmiRootDirPath = env.RootDirPath
 }
