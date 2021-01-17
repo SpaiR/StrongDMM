@@ -3,8 +3,8 @@ package app
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmi"
 )
 
 func (a *app) openEnvironment(file string) {
@@ -20,6 +20,6 @@ func (a *app) openEnvironment(file string) {
 
 	a.uiPanelEnvironment.Free()
 
-	byond.FreeDmiCache()
-	byond.DmiRootDirPath = env.RootDirPath
+	dmi.FreeCache()
+	dmi.RootDirPath = env.RootDirPath
 }

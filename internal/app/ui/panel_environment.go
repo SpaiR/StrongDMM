@@ -5,8 +5,8 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmi"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
@@ -190,7 +190,7 @@ func (e *Environment) filterBranch0(object *dme.Object) {
 type treeNode struct {
 	name   string
 	orig   *dme.Object
-	sprite *byond.DmiSprite
+	sprite *dmi.Sprite
 }
 
 func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
@@ -210,7 +210,7 @@ func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
 	node := &treeNode{
 		name:   object.Type[strings.LastIndex(object.Type, "/")+1:],
 		orig:   object,
-		sprite: byond.GetDmiSpriteOrPlaceholder(icon, iconState),
+		sprite: dmi.GetSpriteOrPlaceholder(icon, iconState),
 	}
 
 	e.treeNodes[object.Type] = node

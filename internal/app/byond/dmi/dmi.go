@@ -1,4 +1,4 @@
-package byond
+package dmi
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
+	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 )
 
@@ -17,14 +18,14 @@ type Dmi struct {
 	TextureWidth, TextureHeight int
 	Cols, Rows                  int
 	Texture                     uint32
-	States                      map[string]*DmiState
+	States                      map[string]*State
 }
 
 func (d *Dmi) free() {
 	gl.DeleteTextures(1, &d.Texture)
 }
 
-func (d *Dmi) State(state string) (*DmiState, error) {
+func (d *Dmi) State(state string) (*State, error) {
 	if dmiState, ok := d.States[state]; ok {
 		return dmiState, nil
 	}
@@ -34,7 +35,7 @@ func (d *Dmi) State(state string) (*DmiState, error) {
 	return nil, fmt.Errorf("no dmi state by name [%s]", state)
 }
 
-func newDmi(path string) (*Dmi, error) {
+func New(path string) (*Dmi, error) {
 	iconMetadata, err := sdmmparser.ParseIconMetadata(path)
 	if err != nil {
 		return nil, err
@@ -52,13 +53,13 @@ func newDmi(path string) (*Dmi, error) {
 		Cols:          width / iconMetadata.Width,
 		Rows:          height / iconMetadata.Height,
 		Texture:       createTexture(img),
-		States:        make(map[string]*DmiState),
+		States:        make(map[string]*State),
 	}
 
 	spriteIdx := 0
 
 	for _, state := range iconMetadata.States {
-		dmiState := &DmiState{
+		dmiState := &State{
 			Dirs:   state.Dirs,
 			Frames: state.Frames,
 		}
@@ -118,45 +119,45 @@ func createTexture(img *image.RGBA) uint32 {
 	return handle
 }
 
-type DmiState struct {
+type State struct {
 	Dirs, Frames int
-	Sprites      []*DmiSprite
+	Sprites      []*Sprite
 }
 
-func (d *DmiState) Sprite() *DmiSprite {
-	return d.SpriteD(DirDefault)
+func (d *State) Sprite() *Sprite {
+	return d.SpriteD(byond.DirDefault)
 }
 
-func (d *DmiState) SpriteD(dir int) *DmiSprite {
+func (d *State) SpriteD(dir int) *Sprite {
 	return d.SpriteDF(dir, 0)
 }
 
-func (d *DmiState) SpriteDF(dir, frame int) *DmiSprite {
+func (d *State) SpriteDF(dir, frame int) *Sprite {
 	return d.Sprites[d.dir2idx(dir)+frame%d.Frames*d.Dirs]
 }
 
-func (d *DmiState) dir2idx(dir int) int {
-	if d.Dirs == 1 || dir < DirNorth || dir > DirSouthwest {
+func (d *State) dir2idx(dir int) int {
+	if d.Dirs == 1 || dir < byond.DirNorth || dir > byond.DirSouthwest {
 		return 0
 	}
 
 	idx := 0
 	switch dir {
-	case DirSouth:
+	case byond.DirSouth:
 		idx = 0
-	case DirNorth:
+	case byond.DirNorth:
 		idx = 1
-	case DirEast:
+	case byond.DirEast:
 		idx = 2
-	case DirWest:
+	case byond.DirWest:
 		idx = 3
-	case DirSoutheast:
+	case byond.DirSoutheast:
 		idx = 4
-	case DirSouthwest:
+	case byond.DirSouthwest:
 		idx = 5
-	case DirNortheast:
+	case byond.DirNortheast:
 		idx = 6
-	case DirNorthwest:
+	case byond.DirNorthwest:
 		idx = 7
 	}
 
@@ -166,37 +167,37 @@ func (d *DmiState) dir2idx(dir int) int {
 	return 0
 }
 
-type DmiSprite struct {
+type Sprite struct {
 	dmi            *Dmi
 	X1, Y1, X2, Y2 int
 	U1, V1, U2, V2 float32
 }
 
-func (d DmiSprite) Texture() uint32 {
+func (d Sprite) Texture() uint32 {
 	return d.dmi.Texture
 }
 
-func (d DmiSprite) TextureWidth() int {
+func (d Sprite) TextureWidth() int {
 	return d.dmi.TextureWidth
 }
 
-func (d DmiSprite) TextureHeight() int {
+func (d Sprite) TextureHeight() int {
 	return d.dmi.TextureHeight
 }
 
-func (d DmiSprite) IconWidth() int {
+func (d Sprite) IconWidth() int {
 	return d.dmi.IconWidth
 }
 
-func (d DmiSprite) IconHeight() int {
+func (d Sprite) IconHeight() int {
 	return d.dmi.IconHeight
 }
 
-func newDmiSprite(dmi *Dmi, idx int) *DmiSprite {
+func newDmiSprite(dmi *Dmi, idx int) *Sprite {
 	const uvMargin = .000001
 	x := idx % dmi.Cols
 	y := idx / dmi.Cols
-	return &DmiSprite{
+	return &Sprite{
 		dmi: dmi,
 		X1:  x * dmi.IconWidth,
 		Y1:  y * dmi.IconHeight,

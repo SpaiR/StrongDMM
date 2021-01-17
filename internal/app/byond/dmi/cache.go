@@ -1,65 +1,67 @@
-package byond
+package dmi
 
 import (
 	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+
+	"github.com/SpaiR/strongdmm/internal/app/byond"
 )
 
 var (
-	DmiRootDirPath string
-	dmiCache       map[string]*Dmi
+	RootDirPath string
+	cache       map[string]*Dmi
 )
 
-func FreeDmiCache() {
-	for _, dmi := range dmiCache {
+func FreeCache() {
+	for _, dmi := range cache {
 		dmi.free()
 	}
-	dmiCache = make(map[string]*Dmi)
+	cache = make(map[string]*Dmi)
 }
 
-func GetDmi(icon string) (*Dmi, error) {
+func Get(icon string) (*Dmi, error) {
 	if len(icon) == 0 {
 		return nil, fmt.Errorf("dmi icon is empty")
 	}
 
-	if dmi, ok := dmiCache[icon]; ok {
+	if dmi, ok := cache[icon]; ok {
 		if dmi == nil {
 			return nil, fmt.Errorf("dmi [%s] is nil", icon)
 		}
 		return dmi, nil
 	}
 
-	dmi, err := newDmi(DmiRootDirPath + "/" + icon)
-	dmiCache[icon] = dmi
+	dmi, err := New(RootDirPath + "/" + icon)
+	cache[icon] = dmi
 	return dmi, err
 }
 
-func GetDmiState(icon, state string) (*DmiState, error) {
-	dmi, err := GetDmi(icon)
+func GetState(icon, state string) (*State, error) {
+	dmi, err := Get(icon)
 	if err != nil {
 		return nil, err
 	}
 	return dmi.State(state)
 }
 
-func GetDmiSpriteD(icon, state string, dir int) (*DmiSprite, error) {
-	dmiState, err := GetDmiState(icon, state)
+func GetSpriteD(icon, state string, dir int) (*Sprite, error) {
+	dmiState, err := GetState(icon, state)
 	if err != nil {
 		return nil, err
 	}
 	return dmiState.SpriteD(dir), nil
 }
 
-func GetDmiSprite(icon, state string) (*DmiSprite, error) {
-	return GetDmiSpriteD(icon, state, DirDefault)
+func GetSprite(icon, state string) (*Sprite, error) {
+	return GetSpriteD(icon, state, byond.DirDefault)
 }
 
-var placeholder *DmiSprite
+var placeholder *Sprite
 
-func GetDmiSpriteOrPlaceholder(icon, state string) *DmiSprite {
-	if s, err := GetDmiSprite(icon, state); err == nil {
+func GetSpriteOrPlaceholder(icon, state string) *Sprite {
+	if s, err := GetSprite(icon, state); err == nil {
 		return s
 	}
 
@@ -70,7 +72,7 @@ func GetDmiSpriteOrPlaceholder(icon, state string) *DmiSprite {
 	return placeholder
 }
 
-func createPlaceholder() *DmiSprite {
+func createPlaceholder() *Sprite {
 	color1 := color.RGBA{R: 240, G: 214, B: 255, A: 200} // purple
 	color2 := color.RGBA{R: 210, G: 105, B: 255, A: 200} // pink
 
