@@ -6,13 +6,14 @@ import (
 	"github.com/SpaiR/imgui-go"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
 type environmentAction interface {
 	LeftNodeId() int
-	LoadedEnvironment() *byond.Dme
+	LoadedEnvironment() *dme.Dme
 	PointSize() float32
 }
 
@@ -116,28 +117,28 @@ func (e *Environment) showFilteredNodes() {
 }
 
 func (e *Environment) showTypeBranch(t string) {
-	if atom := e.action.LoadedEnvironment().Items[t]; atom != nil {
+	if atom := e.action.LoadedEnvironment().Objects[t]; atom != nil {
 		e.showBranch0(atom)
 	}
 }
 
-func (e *Environment) showBranch0(item *byond.DmeItem) {
-	node, ok := e.treeNode(item)
+func (e *Environment) showBranch0(object *dme.Object) {
+	node, ok := e.treeNode(object)
 	if ok != true {
 		return
 	}
 
 	e.showIcon(node)
 
-	if len(item.DirectChildren) == 0 {
+	if len(object.DirectChildren) == 0 {
 		imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
 	} else {
 		if imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsOpenOnArrow|imgui.TreeNodeFlagsOpenOnDoubleClick) {
 			if e.tmpDoCollapseAll {
 				imgui.StateStorage().SetAllInt(0)
 			}
-			for _, childType := range item.DirectChildren {
-				e.showBranch0(e.action.LoadedEnvironment().Items[childType])
+			for _, childType := range object.DirectChildren {
+				e.showBranch0(e.action.LoadedEnvironment().Objects[childType])
 			}
 			imgui.TreePop()
 		}
@@ -169,31 +170,31 @@ func (e *Environment) doFilter() {
 }
 
 func (e *Environment) filterTypeBranch(t string) {
-	if atom := e.action.LoadedEnvironment().Items[t]; atom != nil {
+	if atom := e.action.LoadedEnvironment().Objects[t]; atom != nil {
 		e.filterBranch0(atom)
 	}
 }
 
-func (e *Environment) filterBranch0(item *byond.DmeItem) {
-	if strings.Contains(item.Type, e.filter) {
-		if node, ok := e.treeNode(item); ok == true {
+func (e *Environment) filterBranch0(object *dme.Object) {
+	if strings.Contains(object.Type, e.filter) {
+		if node, ok := e.treeNode(object); ok == true {
 			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
 		}
 	}
 
-	for _, childType := range item.DirectChildren {
-		e.filterBranch0(e.action.LoadedEnvironment().Items[childType])
+	for _, childType := range object.DirectChildren {
+		e.filterBranch0(e.action.LoadedEnvironment().Objects[childType])
 	}
 }
 
 type treeNode struct {
 	name   string
-	orig   *byond.DmeItem
+	orig   *dme.Object
 	sprite *byond.DmiSprite
 }
 
-func (e *Environment) treeNode(item *byond.DmeItem) (*treeNode, bool) {
-	if node, ok := e.treeNodes[item.Type]; ok {
+func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
+	if node, ok := e.treeNodes[object.Type]; ok {
 		return node, true
 	}
 
@@ -203,15 +204,15 @@ func (e *Environment) treeNode(item *byond.DmeItem) (*treeNode, bool) {
 
 	e.tmpNewTreeNodesCount += 1
 
-	icon, _ := item.VarText("icon")
-	iconState, _ := item.VarText("icon_state")
+	icon, _ := object.VarText("icon")
+	iconState, _ := object.VarText("icon_state")
 
 	node := &treeNode{
-		name:   item.Type[strings.LastIndex(item.Type, "/")+1:],
-		orig:   item,
+		name:   object.Type[strings.LastIndex(object.Type, "/")+1:],
+		orig:   object,
 		sprite: byond.GetDmiSpriteOrPlaceholder(icon, iconState),
 	}
 
-	e.treeNodes[item.Type] = node
+	e.treeNodes[object.Type] = node
 	return node, true
 }

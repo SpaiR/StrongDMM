@@ -1,18 +1,18 @@
-package byond
+package dme
 
 import (
 	"strconv"
 )
 
-type DmeItem struct {
+type Object struct {
 	env            *Dme
 	Type           string
 	Vars           map[string]*string
 	DirectChildren []string
-	Parent         *DmeItem
+	Parent         *Object
 }
 
-func (d *DmeItem) Var(name string) (string, bool) {
+func (d *Object) Var(name string) (string, bool) {
 	if value, ok := d.Vars[name]; ok {
 		if value == nil {
 			return "", false
@@ -24,7 +24,7 @@ func (d *DmeItem) Var(name string) (string, bool) {
 	return "", false
 }
 
-func (d *DmeItem) VarText(name string) (string, bool) {
+func (d *Object) VarText(name string) (string, bool) {
 	value, ok := d.Var(name)
 	if ok != true {
 		return "", ok
@@ -36,7 +36,7 @@ func (d *DmeItem) VarText(name string) (string, bool) {
 	return value, true
 }
 
-func (d *DmeItem) VarFloat(name string) (float32, bool) {
+func (d *Object) VarFloat(name string) (float32, bool) {
 	value, ok := d.Var(name)
 	if ok != true {
 		return 0, ok
@@ -50,7 +50,7 @@ func (d *DmeItem) VarFloat(name string) (float32, bool) {
 	return float32(v), true
 }
 
-func (d *DmeItem) VarInt(name string) (int, bool) {
+func (d *Object) VarInt(name string) (int, bool) {
 	value, ok := d.Var(name)
 	if ok != true {
 		return 0, ok

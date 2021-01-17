@@ -1,4 +1,4 @@
-package byond
+package dme
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type Dme struct {
 	Name         string
 	RootDirPath  string
 	RootFilePath string
-	Items        map[string]*DmeItem
+	Objects      map[string]*Object
 }
 
 func NewDme(file string) (*Dme, error) {
@@ -20,7 +20,7 @@ func NewDme(file string) (*Dme, error) {
 		Name:         filepath.Base(file),
 		RootDirPath:  filepath.Dir(file),
 		RootFilePath: file,
-		Items:        make(map[string]*DmeItem),
+		Objects:      make(map[string]*Object),
 	}
 
 	objectTreeType, err := sdmmparser.ParseEnvironment(file)
@@ -77,7 +77,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 		traverseTree0(&child, name, dme)
 	}
 
-	dme.Items[root.Path] = &DmeItem{
+	dme.Objects[root.Path] = &Object{
 		env:            dme,
 		Type:           root.Path,
 		Vars:           localVars,
@@ -86,15 +86,15 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 }
 
 func linkTypeFamily(dme *Dme, t string, parentType string) {
-	if item := dme.Items[t]; item != nil {
-		linkFamily0(dme, item, parentType)
+	if object := dme.Objects[t]; object != nil {
+		linkFamily0(dme, object, parentType)
 	}
 }
 
-func linkFamily0(dme *Dme, item *DmeItem, parentType string) {
-	item.Parent = dme.Items[parentType]
-	for _, child := range item.DirectChildren {
-		linkFamily0(dme, dme.Items[child], item.Type)
+func linkFamily0(dme *Dme, object *Object, parentType string) {
+	object.Parent = dme.Objects[parentType]
+	for _, child := range object.DirectChildren {
+		linkFamily0(dme, dme.Objects[child], object.Type)
 	}
 }
 
