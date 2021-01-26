@@ -8,12 +8,16 @@ import (
 )
 
 type menuAction interface {
+	// File
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
+	DoOpenMap()
 	DoExit()
 
+	// Window
 	DoResetWindows()
 
+	// Help
 	DoOpenLogs()
 
 	RecentEnvironments() []string
@@ -44,6 +48,8 @@ func (m *Menu) Process() {
 					}
 				}),
 			}).Enabled(len(m.action.RecentEnvironments()) != 0),
+			w.Separator(),
+			w.MenuItem("Open Map...", m.action.DoOpenMap),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
 		}),

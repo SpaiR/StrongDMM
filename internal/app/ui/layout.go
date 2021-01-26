@@ -22,7 +22,7 @@ func NewLayout(action layoutAction) *Layout {
 }
 
 func (l *Layout) Process() {
-	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.GetMainViewport(), 0)
+	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.GetMainViewport(), imgui.DockNodeFlagsNone)
 
 	if l.action.WindowCond() != imgui.ConditionAlways {
 		return

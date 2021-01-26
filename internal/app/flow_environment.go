@@ -8,7 +8,7 @@ import (
 )
 
 func (a *app) openEnvironment(file string) {
-	env, err := dme.NewDme(file)
+	env, err := dme.New(file)
 	if err != nil {
 		log.Println(err)
 		return

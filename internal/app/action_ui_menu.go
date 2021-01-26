@@ -17,6 +17,12 @@ func (a *app) DoOpenEnvironmentByPath(path string) {
 	a.openEnvironment(path)
 }
 
+func (a *app) DoOpenMap() {
+	if file, err := dialog.File().Title("Open Map").Filter("*.dmm", "dmm").Load(); err == nil {
+		a.openMap(file)
+	}
+}
+
 func (a *app) DoExit() {
 	a.tmpShouldClose = true
 }

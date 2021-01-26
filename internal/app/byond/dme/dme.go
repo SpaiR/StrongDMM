@@ -15,7 +15,7 @@ type Dme struct {
 	Objects      map[string]*Object
 }
 
-func NewDme(file string) (*Dme, error) {
+func New(file string) (*Dme, error) {
 	dme := Dme{
 		Name:         filepath.Base(file),
 		RootDirPath:  filepath.Dir(file),
