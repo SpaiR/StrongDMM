@@ -5,7 +5,7 @@ import (
 )
 
 type layoutAction interface {
-	WindowCond() imgui.Condition
+	IsWindowReset() bool
 }
 
 type Layout struct {
@@ -24,7 +24,7 @@ func NewLayout(action layoutAction) *Layout {
 func (l *Layout) Process() {
 	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.GetMainViewport(), imgui.DockNodeFlagsNone)
 
-	if l.action.WindowCond() != imgui.ConditionAlways {
+	if !l.action.IsWindowReset() {
 		return
 	}
 

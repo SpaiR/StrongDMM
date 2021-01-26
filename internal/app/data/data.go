@@ -16,11 +16,26 @@ const fileName = "Internal.data"
 type InternalData struct {
 	filepath string
 
-	RecentEnvironments []string
+	RecentEnvironments      []string
+	RecentMapsByEnvironment map[string][]string
 }
 
 func (i *InternalData) AddRecentEnvironment(recentEnvironment string) {
 	i.RecentEnvironments = slice.StrPushUnique(i.RecentEnvironments, recentEnvironment)
+}
+
+func (i *InternalData) ClearRecentEnvironments() {
+	i.RecentEnvironments = nil
+}
+
+func (i *InternalData) AddRecentMap(currentEnvironment string, mapPath string) {
+	maps := i.RecentMapsByEnvironment[currentEnvironment]
+	maps = slice.StrPushUnique(maps, mapPath)
+	i.RecentMapsByEnvironment[currentEnvironment] = maps
+}
+
+func (i *InternalData) ClearRecentMaps(currentEnvironment string) {
+	i.RecentMapsByEnvironment[currentEnvironment] = nil
 }
 
 func (i *InternalData) Save() {
@@ -32,6 +47,8 @@ func Load(internalDir string) *InternalData {
 
 	data := InternalData{
 		filepath: filepath,
+
+		RecentMapsByEnvironment: make(map[string][]string, 0),
 	}
 
 	if err := data.decode(); err != nil {
