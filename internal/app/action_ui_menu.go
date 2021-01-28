@@ -18,7 +18,7 @@ func (a *app) DoOpenEnvironmentByPath(path string) {
 }
 
 func (a *app) DoClearRecentEnvironments() {
-	a.data.ClearRecentEnvironments()
+	a.internalData.ClearRecentEnvironments()
 }
 
 func (a *app) DoOpenMap() {
@@ -32,7 +32,7 @@ func (a *app) DoOpenMapByPath(path string) {
 }
 
 func (a *app) DoClearRecentMaps() {
-	a.data.ClearRecentMaps(a.loadedEnvironment.RootFilePath)
+	a.internalData.ClearRecentMaps(a.loadedEnvironment.RootFilePath)
 }
 
 func (a *app) DoExit() {
@@ -50,9 +50,9 @@ func (a *app) DoOpenLogs() {
 }
 
 func (a *app) RecentEnvironments() []string {
-	return a.data.RecentEnvironments
+	return a.internalData.RecentEnvironments
 }
 
 func (a *app) RecentMapsByEnvironment() map[string][]string {
-	return a.data.RecentMapsByEnvironment
+	return a.internalData.RecentMapsByEnvironment
 }

@@ -43,7 +43,7 @@ type app struct {
 
 	loadedEnvironment *dme.Dme
 
-	data *data.InternalData
+	internalData *data.Internal
 
 	uiMenu             *ui.Menu
 	uiLayout           *ui.Layout
@@ -53,7 +53,7 @@ type app struct {
 func (a *app) initialize(internalDir string) {
 	a.logDir = initializeLogger(internalDir)
 
-	a.data = data.Load(internalDir)
+	a.internalData = data.LoadInternal(internalDir)
 
 	a.uiMenu = ui.NewMenu(a)
 	a.uiLayout = ui.NewLayout(a)
@@ -79,7 +79,7 @@ func (a *app) loop() {
 }
 
 func (a *app) dispose() {
-	a.data.Save()
+	a.internalData.Save()
 	a.masterWindow.Dispose()
 }
 

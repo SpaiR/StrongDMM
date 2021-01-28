@@ -2,7 +2,6 @@ package data
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/gob"
 	"io/ioutil"
 	"log"
@@ -13,39 +12,39 @@ import (
 
 const fileName = "Internal.data"
 
-type InternalData struct {
+type Internal struct {
 	filepath string
 
 	RecentEnvironments      []string
 	RecentMapsByEnvironment map[string][]string
 }
 
-func (i *InternalData) AddRecentEnvironment(recentEnvironment string) {
+func (i *Internal) AddRecentEnvironment(recentEnvironment string) {
 	i.RecentEnvironments = slice.StrPushUnique(i.RecentEnvironments, recentEnvironment)
 }
 
-func (i *InternalData) ClearRecentEnvironments() {
+func (i *Internal) ClearRecentEnvironments() {
 	i.RecentEnvironments = nil
 }
 
-func (i *InternalData) AddRecentMap(currentEnvironment string, mapPath string) {
+func (i *Internal) AddRecentMap(currentEnvironment string, mapPath string) {
 	maps := i.RecentMapsByEnvironment[currentEnvironment]
 	maps = slice.StrPushUnique(maps, mapPath)
 	i.RecentMapsByEnvironment[currentEnvironment] = maps
 }
 
-func (i *InternalData) ClearRecentMaps(currentEnvironment string) {
+func (i *Internal) ClearRecentMaps(currentEnvironment string) {
 	i.RecentMapsByEnvironment[currentEnvironment] = nil
 }
 
-func (i *InternalData) Save() {
+func (i *Internal) Save() {
 	i.encode()
 }
 
-func Load(internalDir string) *InternalData {
+func LoadInternal(internalDir string) *Internal {
 	filepath := internalDir + "/" + fileName
 
-	data := InternalData{
+	data := Internal{
 		filepath: filepath,
 
 		RecentMapsByEnvironment: make(map[string][]string, 0),
@@ -58,17 +57,15 @@ func Load(internalDir string) *InternalData {
 	return &data
 }
 
-func (i *InternalData) encode() {
+func (i *Internal) encode() {
 	buffer := bytes.Buffer{}
 	encoder := gob.NewEncoder(&buffer)
 	_ = encoder.Encode(i)
-	content := base64.StdEncoding.EncodeToString(buffer.Bytes())
-	_ = ioutil.WriteFile(i.filepath, []byte(content), os.ModePerm)
+	_ = ioutil.WriteFile(i.filepath, buffer.Bytes(), os.ModePerm)
 }
 
-func (i *InternalData) decode() error {
+func (i *Internal) decode() error {
 	content, _ := ioutil.ReadFile(i.filepath)
-	content, _ = base64.StdEncoding.DecodeString(string(content))
 	buffer := bytes.Buffer{}
 	buffer.Write(content)
 	decoder := gob.NewDecoder(&buffer)
