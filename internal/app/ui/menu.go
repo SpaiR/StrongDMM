@@ -83,7 +83,7 @@ func (m *Menu) Process() {
 			w.MenuItem("Reset Windows", m.action.DoResetWindows).Shortcut("F5"),
 		}),
 		w.Menu("Help", w.Layout{
-			w.MenuItem("Logs...", m.action.DoOpenLogs),
+			w.MenuItem("Open Logs Folder", m.action.DoOpenLogs),
 		}),
 	}).Build()
 }
