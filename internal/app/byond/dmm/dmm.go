@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmm/instance"
 )
 
 type Dmm struct {
@@ -23,7 +22,7 @@ func New(dme *dme.Dme, dmmData *Data) *Dmm {
 				tile := Tile{}
 				for _, prefab := range dmmData.Dictionary[dmmData.Grid[coord]] {
 					if _, ok := dme.Objects[prefab.Path]; ok {
-						tile.Content = append(tile.Content, instance.Get(prefab.Path, prefab.Vars))
+						tile.Content = append(tile.Content, GetInstance(prefab.Path, prefab.Vars))
 					} else {
 						log.Println("unknown prefab: ", prefab.Path)
 					}

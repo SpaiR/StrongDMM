@@ -19,8 +19,7 @@ type Data struct {
 	Filepath              string
 	IsTgm, IsWinLineBreak bool
 
-	KeyLength int
-
+	KeyLength        int
 	MaxX, MaxY, MaxZ int
 
 	Dictionary map[Key][]Prefab

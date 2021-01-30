@@ -9,18 +9,18 @@ import (
 )
 
 type Dme struct {
-	Name         string
-	RootDirPath  string
-	RootFilePath string
-	Objects      map[string]*Object
+	Name     string
+	RootDir  string
+	RootFile string
+	Objects  map[string]*Object
 }
 
 func New(file string) (*Dme, error) {
 	dme := Dme{
-		Name:         filepath.Base(file),
-		RootDirPath:  filepath.Dir(file),
-		RootFilePath: file,
-		Objects:      make(map[string]*Object),
+		Name:     filepath.Base(file),
+		RootDir:  filepath.Dir(file),
+		RootFile: file,
+		Objects:  make(map[string]*Object),
 	}
 
 	objectTreeType, err := sdmmparser.ParseEnvironment(file)
@@ -30,19 +30,19 @@ func New(file string) (*Dme, error) {
 
 	traverseTree0(objectTreeType, nil, &dme)
 
-	linkTypeFamily(&dme, "/atom", "/datum")
-	linkTypeFamily(&dme, "/atom/movable", "/atom")
-	linkTypeFamily(&dme, "/area", "/atom")
-	linkTypeFamily(&dme, "/turf", "/atom")
-	linkTypeFamily(&dme, "/obj", "/atom/movable")
-	linkTypeFamily(&dme, "/mob", "/atom/movable")
+	linkPathFamily(&dme, "/atom", "/datum")
+	linkPathFamily(&dme, "/atom/movable", "/atom")
+	linkPathFamily(&dme, "/area", "/atom")
+	linkPathFamily(&dme, "/turf", "/atom")
+	linkPathFamily(&dme, "/obj", "/atom/movable")
+	linkPathFamily(&dme, "/mob", "/atom/movable")
 
 	return &dme, nil
 }
 
-func nameFromType(localType string, parentName *string) *string {
-	if parentName == nil && len(localType) > 1 {
-		s := localType[strings.LastIndex(localType, "/")+1:]
+func nameFromPath(path string, parentName *string) *string {
+	if parentName == nil && len(path) > 1 {
+		s := path[strings.LastIndex(path, "/")+1:]
 		return &s
 	} else {
 		return parentName
@@ -58,7 +58,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 
 		if treeVar.Name == "name" {
 			if value == nil {
-				value = nameFromType(root.Path, parentName)
+				value = nameFromPath(root.Path, parentName)
 			}
 
 			name = value
@@ -68,7 +68,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 	}
 
 	if _, ok := localVars["name"]; !ok {
-		localVars["name"] = nameFromType(root.Path, parentName)
+		localVars["name"] = nameFromPath(root.Path, parentName)
 	}
 
 	var children []string
@@ -83,22 +83,22 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 
 	dme.Objects[root.Path] = &Object{
 		env:            dme,
-		Type:           root.Path,
-		Vars:           localVars,
+		Path:           root.Path,
+		vars:           localVars,
 		DirectChildren: children,
 	}
 }
 
-func linkTypeFamily(dme *Dme, t string, parentType string) {
+func linkPathFamily(dme *Dme, t string, parentType string) {
 	if object := dme.Objects[t]; object != nil {
 		linkFamily0(dme, object, parentType)
 	}
 }
 
 func linkFamily0(dme *Dme, object *Object, parentType string) {
-	object.Parent = dme.Objects[parentType]
+	object.parent = dme.Objects[parentType]
 	for _, child := range object.DirectChildren {
-		linkFamily0(dme, dme.Objects[child], object.Type)
+		linkFamily0(dme, dme.Objects[child], object.Path)
 	}
 }
 

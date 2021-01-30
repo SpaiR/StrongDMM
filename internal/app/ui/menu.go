@@ -64,7 +64,7 @@ func (m *Menu) Process() {
 			w.MenuItem("Open Map...", m.action.DoOpenMap).Enabled(m.action.HasLoadedEnvironment()),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
-					for _, recentMap := range m.action.RecentMapsByEnvironment()[m.action.LoadedEnvironment().RootFilePath] {
+					for _, recentMap := range m.action.RecentMapsByEnvironment()[m.action.LoadedEnvironment().RootFile] {
 						w.MenuItem(recentMap, func() {
 							m.action.DoOpenMapByPath(recentMap)
 						}).Build()
@@ -74,7 +74,7 @@ func (m *Menu) Process() {
 						w.MenuItem("Clear Recent Maps", m.action.DoClearRecentMaps),
 					}.Build()
 				}),
-			}).Enabled(m.action.HasLoadedEnvironment() && len(m.action.RecentMapsByEnvironment()[m.action.LoadedEnvironment().RootFilePath]) != 0),
+			}).Enabled(m.action.HasLoadedEnvironment() && len(m.action.RecentMapsByEnvironment()[m.action.LoadedEnvironment().RootFile]) != 0),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
 		}),

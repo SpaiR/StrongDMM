@@ -32,7 +32,7 @@ func (a *app) DoOpenMapByPath(path string) {
 }
 
 func (a *app) DoClearRecentMaps() {
-	a.internalData.ClearRecentMaps(a.loadedEnvironment.RootFilePath)
+	a.internalData.ClearRecentMaps(a.loadedEnvironment.RootFile)
 }
 
 func (a *app) DoExit() {

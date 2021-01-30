@@ -1,4 +1,4 @@
-package instance
+package dmm
 
 type Instance struct {
 	Id   uint64
@@ -6,7 +6,7 @@ type Instance struct {
 	Vars map[string]string
 }
 
-func New(id uint64, path string, vars map[string]string) *Instance {
+func newInstance(id uint64, path string, vars map[string]string) *Instance {
 	instance := Instance{
 		Id:   id,
 		Path: path,

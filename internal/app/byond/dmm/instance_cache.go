@@ -1,4 +1,4 @@
-package instance
+package dmm
 
 var cache map[uint64]*Instance
 
@@ -6,12 +6,12 @@ func FreeCache() {
 	cache = make(map[uint64]*Instance)
 }
 
-func Get(path string, vars map[string]string) *Instance {
+func GetInstance(path string, vars map[string]string) *Instance {
 	id := computeInstanceId(path, vars)
 	if instance, ok := cache[id]; ok {
 		return instance
 	}
-	instance := New(id, path, vars)
+	instance := newInstance(id, path, vars)
 	cache[id] = instance
 	return instance
 }

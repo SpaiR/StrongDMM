@@ -5,7 +5,7 @@ import (
 
 	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
 	"github.com/SpaiR/strongdmm/internal/app/byond/dmi"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmm/instance"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmm"
 )
 
 func (a *app) openEnvironment(file string) {
@@ -20,8 +20,8 @@ func (a *app) openEnvironment(file string) {
 	a.uiPanelEnvironment.Free()
 
 	dmi.FreeCache()
-	dmi.RootDirPath = env.RootDirPath
-	instance.FreeCache()
+	dmi.RootDirPath = env.RootDir
+	dmm.FreeCache()
 
 	a.updateTitle()
 }

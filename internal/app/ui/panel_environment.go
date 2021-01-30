@@ -111,7 +111,7 @@ func (e *Environment) showFilteredNodes() {
 		for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
 			node := e.filteredTreeNodes[i]
 			e.showIcon(node)
-			imgui.TreeNodeV(node.orig.Type, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
+			imgui.TreeNodeV(node.orig.Path, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
 		}
 	}
 }
@@ -176,7 +176,7 @@ func (e *Environment) filterTypeBranch(t string) {
 }
 
 func (e *Environment) filterBranch0(object *dme.Object) {
-	if strings.Contains(object.Type, e.filter) {
+	if strings.Contains(object.Path, e.filter) {
 		if node, ok := e.treeNode(object); ok == true {
 			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
 		}
@@ -194,7 +194,7 @@ type treeNode struct {
 }
 
 func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
-	if node, ok := e.treeNodes[object.Type]; ok {
+	if node, ok := e.treeNodes[object.Path]; ok {
 		return node, true
 	}
 
@@ -208,11 +208,11 @@ func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
 	iconState, _ := object.VarText("icon_state")
 
 	node := &treeNode{
-		name:   object.Type[strings.LastIndex(object.Type, "/")+1:],
+		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],
 		orig:   object,
 		sprite: dmi.GetSpriteOrPlaceholder(icon, iconState),
 	}
 
-	e.treeNodes[object.Type] = node
+	e.treeNodes[object.Path] = node
 	return node, true
 }
