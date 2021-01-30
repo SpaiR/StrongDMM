@@ -13,7 +13,9 @@ type Object struct {
 }
 
 func (d *Object) Var(name string) (string, bool) {
-	if value, ok := d.Vars[name]; ok {
+	if d.Vars == nil && d.Parent != nil {
+		return d.Parent.Var(name)
+	} else if value, ok := d.Vars[name]; ok {
 		if value == nil {
 			return "", false
 		}

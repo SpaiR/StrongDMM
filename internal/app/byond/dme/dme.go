@@ -77,6 +77,10 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 		traverseTree0(&child, name, dme)
 	}
 
+	if len(localVars) == 0 {
+		localVars = nil
+	}
+
 	dme.Objects[root.Path] = &Object{
 		env:            dme,
 		Type:           root.Path,

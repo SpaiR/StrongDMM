@@ -16,6 +16,7 @@ func (c Coord) String() string {
 }
 
 type Data struct {
+	Filepath              string
 	IsTgm, IsWinLineBreak bool
 
 	KeyLength int

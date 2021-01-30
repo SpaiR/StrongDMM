@@ -19,6 +19,7 @@ func parseData(file *os.File) (*Data, error) {
 
 	var (
 		dmmData = Data{
+			Filepath:   file.Name(),
 			Dictionary: make(map[Key][]Prefab),
 			Grid:       make(map[Coord]Key),
 		}
@@ -138,12 +139,18 @@ func parseData(file *os.File) (*Data, error) {
 						currPrefab.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
+					if len(currPrefab.Vars) == 0 {
+						currPrefab.Vars = nil
+					}
 					currData = append(currData, currPrefab)
 					currPrefab = Prefab{Vars: make(map[string]string)}
 				} else if c == ')' {
 					if len(currPrefab.Path) == 0 && len(currDatum) > 0 {
 						currPrefab.Path = string(currDatum)
 						currDatum = currDatum[:0]
+					}
+					if len(currPrefab.Vars) == 0 {
+						currPrefab.Vars = nil
 					}
 					currData = append(currData, currPrefab)
 					currPrefab = Prefab{Vars: make(map[string]string)}
