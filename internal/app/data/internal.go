@@ -1,20 +1,18 @@
 package data
 
 import (
-	"bytes"
-	"encoding/gob"
-	"io/ioutil"
 	"log"
-	"os"
 
 	"github.com/SpaiR/strongdmm/pkg/util/slice"
 )
 
-const fileName = "Internal.data"
+const internalFileName = "Internal.data"
+const internalVersion = 1
 
 type Internal struct {
 	filepath string
 
+	Version                 int
 	RecentEnvironments      []string
 	RecentMapsByEnvironment map[string][]string
 }
@@ -38,36 +36,32 @@ func (i *Internal) ClearRecentMaps(currentEnvironment string) {
 }
 
 func (i *Internal) Save() {
-	i.encode()
+	storeToFile(i.filepath,
+		encode(i.Version),
+		encode(i.RecentEnvironments),
+		encode(i.RecentMapsByEnvironment),
+	)
 }
 
 func LoadInternal(internalDir string) *Internal {
-	filepath := internalDir + "/" + fileName
+	filepath := internalDir + "/" + internalFileName
 
-	data := Internal{
+	d := Internal{
 		filepath: filepath,
 
+		Version:                 internalVersion,
 		RecentMapsByEnvironment: make(map[string][]string, 0),
 	}
 
-	if err := data.decode(); err != nil {
-		log.Println("unable to decode internal data: ", err)
+	data, err := readFromFile(filepath)
+	if err != nil {
+		log.Println("unable to load internal data: ", err)
+		return &d
 	}
 
-	return &data
-}
+	data.getInt(0, &d.Version)
+	data.getStrSlice(1, &d.RecentEnvironments)
+	data.getStrMapStrSlice(2, &d.RecentMapsByEnvironment)
 
-func (i *Internal) encode() {
-	buffer := bytes.Buffer{}
-	encoder := gob.NewEncoder(&buffer)
-	_ = encoder.Encode(i)
-	_ = ioutil.WriteFile(i.filepath, buffer.Bytes(), os.ModePerm)
-}
-
-func (i *Internal) decode() error {
-	content, _ := ioutil.ReadFile(i.filepath)
-	buffer := bytes.Buffer{}
-	buffer.Write(content)
-	decoder := gob.NewDecoder(&buffer)
-	return decoder.Decode(i)
+	return &d
 }
