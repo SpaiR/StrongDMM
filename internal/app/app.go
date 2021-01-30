@@ -11,7 +11,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/data"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
@@ -41,7 +41,7 @@ type app struct {
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
 
-	loadedEnvironment *dme.Dme
+	loadedEnvironment *dmenv.Dme
 
 	internalData *data.Internal
 

@@ -1,11 +1,11 @@
-package dme
+package dmenv
 
 import (
 	"fmt"
 	"path/filepath"
 	"strings"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/vars"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 )
 
@@ -57,7 +57,7 @@ func nameFromPath(path string, parentName *string) *string {
 }
 
 func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme) {
-	variables := vars.Variables{}
+	variables := dmvars.Variables{}
 	var name *string
 
 	for _, treeVar := range root.Vars {

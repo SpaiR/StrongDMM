@@ -1,6 +1,6 @@
-package dmm
+package dmmap
 
-import "github.com/SpaiR/strongdmm/internal/app/byond/vars"
+import "github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
 
 var cache map[uint64]*Instance
 
@@ -8,7 +8,7 @@ func FreeCache() {
 	cache = make(map[uint64]*Instance)
 }
 
-func GetInstance(path string, vars *vars.Variables) *Instance {
+func GetInstance(path string, vars *dmvars.Variables) *Instance {
 	id := computeInstanceId(path, vars)
 	if instance, ok := cache[id]; ok {
 		return instance
@@ -18,7 +18,7 @@ func GetInstance(path string, vars *vars.Variables) *Instance {
 	return instance
 }
 
-func computeInstanceId(path string, vars *vars.Variables) uint64 {
+func computeInstanceId(path string, vars *dmvars.Variables) uint64 {
 	snap := path
 	for _, name := range vars.Iterate() {
 		if value, ok := vars.Value(name); ok {

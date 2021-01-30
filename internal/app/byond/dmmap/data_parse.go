@@ -1,4 +1,4 @@
-package dmm
+package dmmap
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/vars"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
 )
 
 /**
@@ -39,7 +39,7 @@ func parseData(file *os.File) (*Data, error) {
 		skipWhitespace bool
 
 		currData   []Prefab
-		currPrefab = Prefab{Vars: &vars.Variables{}}
+		currPrefab = Prefab{Vars: &dmvars.Variables{}}
 		currVar    = make([]rune, 0)
 		currDatum  = make([]rune, 0)
 
@@ -144,14 +144,14 @@ func parseData(file *os.File) (*Data, error) {
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: &vars.Variables{}}
+					currPrefab = Prefab{Vars: &dmvars.Variables{}}
 				} else if c == ')' {
 					if len(currPrefab.Path) == 0 && len(currDatum) > 0 {
 						currPrefab.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: &vars.Variables{}}
+					currPrefab = Prefab{Vars: &dmvars.Variables{}}
 					key := Key(currKey)
 					currKey = currKey[:0]
 					data := make([]Prefab, len(currData))

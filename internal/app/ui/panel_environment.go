@@ -5,15 +5,15 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmi"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
 type environmentAction interface {
 	LeftNodeId() int
-	LoadedEnvironment() *dme.Dme
+	LoadedEnvironment() *dmenv.Dme
 	PointSize() float32
 }
 
@@ -122,7 +122,7 @@ func (e *Environment) showTypeBranch(t string) {
 	}
 }
 
-func (e *Environment) showBranch0(object *dme.Object) {
+func (e *Environment) showBranch0(object *dmenv.Object) {
 	node, ok := e.treeNode(object)
 	if ok != true {
 		return
@@ -175,7 +175,7 @@ func (e *Environment) filterTypeBranch(t string) {
 	}
 }
 
-func (e *Environment) filterBranch0(object *dme.Object) {
+func (e *Environment) filterBranch0(object *dmenv.Object) {
 	if strings.Contains(object.Path, e.filter) {
 		if node, ok := e.treeNode(object); ok == true {
 			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
@@ -189,11 +189,11 @@ func (e *Environment) filterBranch0(object *dme.Object) {
 
 type treeNode struct {
 	name   string
-	orig   *dme.Object
-	sprite *dmi.Sprite
+	orig   *dmenv.Object
+	sprite *dmicon.Sprite
 }
 
-func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
+func (e *Environment) treeNode(object *dmenv.Object) (*treeNode, bool) {
 	if node, ok := e.treeNodes[object.Path]; ok {
 		return node, true
 	}
@@ -210,7 +210,7 @@ func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
 	node := &treeNode{
 		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],
 		orig:   object,
-		sprite: dmi.GetSpriteOrPlaceholder(icon, iconState),
+		sprite: dmicon.GetSpriteOrPlaceholder(icon, iconState),
 	}
 
 	e.treeNodes[object.Path] = node

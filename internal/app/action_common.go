@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
 )
 
 func (a *app) WindowCond() imgui.Condition {
@@ -14,7 +14,7 @@ func (a *app) IsWindowReset() bool {
 	return a.tmpWindowCond == imgui.ConditionAlways
 }
 
-func (a *app) LoadedEnvironment() *dme.Dme {
+func (a *app) LoadedEnvironment() *dmenv.Dme {
 	return a.loadedEnvironment
 }
 

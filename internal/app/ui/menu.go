@@ -3,7 +3,7 @@ package ui
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
@@ -27,7 +27,7 @@ type menuAction interface {
 	RecentEnvironments() []string
 	RecentMapsByEnvironment() map[string][]string
 
-	LoadedEnvironment() *dme.Dme
+	LoadedEnvironment() *dmenv.Dme
 	HasLoadedEnvironment() bool
 }
 

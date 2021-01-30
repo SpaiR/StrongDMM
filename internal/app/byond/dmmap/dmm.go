@@ -1,16 +1,16 @@
-package dmm
+package dmmap
 
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dme"
+	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
 )
 
 type Dmm struct {
 	Tiles map[Coord]*Tile
 }
 
-func New(dme *dme.Dme, dmmData *Data) *Dmm {
+func New(dme *dmenv.Dme, dmmData *Data) *Dmm {
 	dmm := Dmm{
 		Tiles: make(map[Coord]*Tile),
 	}
