@@ -3,6 +3,8 @@ package dmm
 import (
 	"fmt"
 	"os"
+
+	"github.com/SpaiR/strongdmm/internal/app/byond/vars"
 )
 
 type Key string
@@ -28,7 +30,7 @@ type Data struct {
 
 type Prefab struct {
 	Path string
-	Vars map[string]string
+	Vars *vars.Variables
 }
 
 func NewData(path string) (*Data, error) {

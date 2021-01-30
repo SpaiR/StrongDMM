@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/SpaiR/strongdmm/internal/app/byond/vars"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 )
 
@@ -37,6 +38,12 @@ func New(file string) (*Dme, error) {
 	linkPathFamily(&dme, "/obj", "/atom/movable")
 	linkPathFamily(&dme, "/mob", "/atom/movable")
 
+	for _, object := range dme.Objects {
+		if object.parent != nil {
+			object.Vars.SetParent(object.parent.Vars)
+		}
+	}
+
 	return &dme, nil
 }
 
@@ -50,7 +57,7 @@ func nameFromPath(path string, parentName *string) *string {
 }
 
 func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme) {
-	localVars := make(map[string]*string)
+	variables := vars.Variables{}
 	var name *string
 
 	for _, treeVar := range root.Vars {
@@ -64,11 +71,11 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 			name = value
 		}
 
-		localVars[treeVar.Name] = value
+		variables.Put(treeVar.Name, value)
 	}
 
-	if _, ok := localVars["name"]; !ok {
-		localVars["name"] = nameFromPath(root.Path, parentName)
+	if _, ok := variables.Value("name"); !ok {
+		variables.Put("name", nameFromPath(root.Path, parentName))
 	}
 
 	var children []string
@@ -77,14 +84,10 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 		traverseTree0(&child, name, dme)
 	}
 
-	if len(localVars) == 0 {
-		localVars = nil
-	}
-
 	dme.Objects[root.Path] = &Object{
 		env:            dme,
 		Path:           root.Path,
-		vars:           localVars,
+		Vars:           &variables,
 		DirectChildren: children,
 	}
 }

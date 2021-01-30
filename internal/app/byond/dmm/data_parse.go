@@ -7,6 +7,8 @@ import (
 	"math"
 	"os"
 	"strconv"
+
+	"github.com/SpaiR/strongdmm/internal/app/byond/vars"
 )
 
 /**
@@ -37,7 +39,7 @@ func parseData(file *os.File) (*Data, error) {
 		skipWhitespace bool
 
 		currData   []Prefab
-		currPrefab = Prefab{Vars: make(map[string]string)}
+		currPrefab = Prefab{Vars: &vars.Variables{}}
 		currVar    = make([]rune, 0)
 		currDatum  = make([]rune, 0)
 
@@ -115,13 +117,15 @@ func parseData(file *os.File) (*Data, error) {
 							currVar = currVar[:length]
 							skipWhitespace = true
 						} else if c == ';' {
-							currPrefab.Vars[string(currVar)] = string(currDatum)
+							value := string(currDatum)
+							currPrefab.Vars.Put(string(currVar), &value)
 							currVar = currVar[:0]
 							currDatum = currDatum[:0]
 							skipWhitespace = true
 						} else if c == '}' {
 							if len(currVar) > 0 {
-								currPrefab.Vars[string(currVar)] = string(currDatum)
+								value := string(currDatum)
+								currPrefab.Vars.Put(string(currVar), &value)
 								currVar = currVar[:0]
 								currDatum = currDatum[:0]
 							}
@@ -139,21 +143,15 @@ func parseData(file *os.File) (*Data, error) {
 						currPrefab.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
-					if len(currPrefab.Vars) == 0 {
-						currPrefab.Vars = nil
-					}
 					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: make(map[string]string)}
+					currPrefab = Prefab{Vars: &vars.Variables{}}
 				} else if c == ')' {
 					if len(currPrefab.Path) == 0 && len(currDatum) > 0 {
 						currPrefab.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
-					if len(currPrefab.Vars) == 0 {
-						currPrefab.Vars = nil
-					}
 					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: make(map[string]string)}
+					currPrefab = Prefab{Vars: &vars.Variables{}}
 					key := Key(currKey)
 					currKey = currKey[:0]
 					data := make([]Prefab, len(currData))

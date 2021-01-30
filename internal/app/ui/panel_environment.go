@@ -204,8 +204,8 @@ func (e *Environment) treeNode(object *dme.Object) (*treeNode, bool) {
 
 	e.tmpNewTreeNodesCount += 1
 
-	icon, _ := object.VarText("icon")
-	iconState, _ := object.VarText("icon_state")
+	icon, _ := object.Vars.Text("icon")
+	iconState, _ := object.Vars.Text("icon_state")
 
 	node := &treeNode{
 		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],

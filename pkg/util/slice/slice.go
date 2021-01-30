@@ -1,5 +1,14 @@
 package slice
 
+func StrContains(slice []string, str string) bool {
+	for _, s := range slice {
+		if s == str {
+			return true
+		}
+	}
+	return false
+}
+
 // StrPushUnique pushes string at the beginning of the slice.
 // If slice contains the string to push, the old one will be removed.
 func StrPushUnique(slice []string, str string) []string {

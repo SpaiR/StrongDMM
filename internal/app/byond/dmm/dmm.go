@@ -21,7 +21,8 @@ func New(dme *dme.Dme, dmmData *Data) *Dmm {
 				coord := Coord{X: uint16(x), Y: uint16(y), Z: uint16(z)}
 				tile := Tile{}
 				for _, prefab := range dmmData.Dictionary[dmmData.Grid[coord]] {
-					if _, ok := dme.Objects[prefab.Path]; ok {
+					if obj, ok := dme.Objects[prefab.Path]; ok {
+						prefab.Vars.SetParent(obj.Vars)
 						tile.Content = append(tile.Content, GetInstance(prefab.Path, prefab.Vars))
 					} else {
 						log.Println("unknown prefab: ", prefab.Path)
