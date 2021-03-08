@@ -3,14 +3,13 @@ package dmicon
 import (
 	"fmt"
 	"image"
-	"image/draw"
-	"image/png"
-	"os"
+	"log"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/internal/app/byond"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
+	"github.com/SpaiR/strongdmm/third_party/stbi"
 )
 
 type Dmi struct {
@@ -76,25 +75,11 @@ func New(path string) (*Dmi, error) {
 }
 
 func loadImage(path string) *image.RGBA {
-	imgFile, err := os.Open(path)
+	img, err := stbi.Load(path)
 	if err != nil {
-		return nil
+		log.Println("unable to read image by path: ", path, err)
 	}
-	defer imgFile.Close()
-
-	img, err := png.Decode(imgFile)
-	if err != nil {
-		return nil
-	}
-
-	switch trueImg := img.(type) {
-	case *image.RGBA:
-		return trueImg
-	default:
-		rgba := image.NewRGBA(trueImg.Bounds())
-		draw.Draw(rgba, trueImg.Bounds(), trueImg, image.Pt(0, 0), draw.Src)
-		return rgba
-	}
+	return img
 }
 
 func createTexture(img *image.RGBA) uint32 {

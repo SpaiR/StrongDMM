@@ -33,7 +33,7 @@ type Prefab struct {
 	Vars *dmvars.Variables
 }
 
-func NewData(path string) (*Data, error) {
+func ParseData(path string) (*Data, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err

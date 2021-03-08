@@ -61,7 +61,11 @@ func GetSprite(icon, state string) (*Sprite, error) {
 var placeholder *Sprite
 
 func GetSpriteOrPlaceholder(icon, state string) *Sprite {
-	if s, err := GetSprite(icon, state); err == nil {
+	return GetSpriteOrPlaceholderD(icon, state, byond.DirDefault)
+}
+
+func GetSpriteOrPlaceholderD(icon, state string, dir int) *Sprite {
+	if s, err := GetSpriteD(icon, state, dir); err == nil {
 		return s
 	}
 

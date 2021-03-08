@@ -279,5 +279,25 @@ func parseData(file *os.File) (*Data, error) {
 	}
 
 	dmmData.MaxY = int(math.Max(float64(dmmData.MaxY), float64(currY)))
+
+	// Make Y axis to go from bottom to top
+	reversedGrid := make(map[Coord]Key, len(dmmData.Grid))
+	for z := 1; z <= dmmData.MaxZ; z++ {
+		for y := 1; y <= dmmData.MaxY; y++ {
+			for x := 1; x <= dmmData.MaxX; x++ {
+				reversedGrid[Coord{
+					X: uint16(x),
+					Y: uint16(dmmData.MaxY + 1 - y),
+					Z: uint16(z),
+				}] = dmmData.Grid[Coord{
+					X: uint16(x),
+					Y: uint16(y),
+					Z: uint16(z),
+				}]
+			}
+		}
+	}
+	dmmData.Grid = reversedGrid
+
 	return &dmmData, nil
 }

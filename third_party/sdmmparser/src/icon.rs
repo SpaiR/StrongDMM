@@ -43,10 +43,7 @@ fn meta2json(metadata: Metadata) -> String {
                 Dirs::Four => 4,
                 Dirs::Eight => 8,
             },
-            frames: match state.frames {
-                Frames::One | Frames::Delays(_) => 1,
-                Frames::Count(count) => count as u32,
-            },
+            frames: state.frames.len() as u32,
         });
     }
 

@@ -1,6 +1,7 @@
 package platform
 
 import (
+	"log"
 	"unsafe"
 
 	"github.com/SpaiR/imgui-go"
@@ -8,8 +9,6 @@ import (
 )
 
 var (
-	gVertHandle   uint32
-	gFragHandle   uint32
 	gShaderHandle uint32
 
 	gUniformLocationTex        int32
@@ -121,8 +120,6 @@ func Render(drawData imgui.DrawData) {
 func DisposeImGuiGL() {
 	gl.DeleteBuffers(1, &gVboHandle)
 	gl.DeleteBuffers(1, &gElementsHandle)
-	gl.DetachShader(gShaderHandle, gVertHandle)
-	gl.DetachShader(gShaderHandle, gFragHandle)
 	gl.DeleteProgram(gShaderHandle)
 	gl.DeleteTextures(1, &gFontTexture)
 }
@@ -154,51 +151,43 @@ func createDeviceObjects() {
 }
 
 func createShaders() {
-	createAndCompileShader := func(t uint32, source string) uint32 {
-		id := gl.CreateShader(t)
-
-		cSource, free := gl.Strs(source + "\x00")
-		defer free()
-
-		gl.ShaderSource(id, 1, cSource, nil)
-		gl.CompileShader(id)
-
-		return id
-	}
-
 	vertShaderSource := `
-#version 150
+#version 330 core
+
 uniform mat4 ProjMtx;
+
 in vec2 Position;
 in vec2 UV;
 in vec4 Color;
+
 out vec2 Frag_UV;
 out vec4 Frag_Color;
-void main()
-{
+
+void main() {
 	Frag_UV = UV;
 	Frag_Color = Color;
 	gl_Position = ProjMtx * vec4(Position.xy,0,1);
 }
-`
+` + "\x00"
 	fragShaderSource := `
-#version 150
+#version 330 core
+
 uniform sampler2D Texture;
+
 in vec2 Frag_UV;
 in vec4 Frag_Color;
+
 out vec4 Out_Color;
-void main()
-{
+
+void main() {
 	Out_Color = Frag_Color * texture(Texture, Frag_UV.st);
 }
-`
-	gVertHandle = createAndCompileShader(gl.VERTEX_SHADER, vertShaderSource)
-	gFragHandle = createAndCompileShader(gl.FRAGMENT_SHADER, fragShaderSource)
+` + "\x00"
 
-	gShaderHandle = gl.CreateProgram()
-	gl.AttachShader(gShaderHandle, gVertHandle)
-	gl.AttachShader(gShaderHandle, gFragHandle)
-	gl.LinkProgram(gShaderHandle)
+	var err error
+	if gShaderHandle, err = NewShaderProgram(vertShaderSource, fragShaderSource); err != nil {
+		log.Fatal("unable to create shader: ", err)
+	}
 }
 
 func backupGlState() {
