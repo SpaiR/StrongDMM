@@ -95,10 +95,7 @@ func (w *Window) setupImGui(config Config) {
 	io.SetIniFilename(config.IniFilename)
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
-	io.Fonts().AddFontDefault()
-	if err := io.Fonts().BuildWithFreeType(); err != nil {
-		log.Fatal("unable to build freetype font: ", err)
-	}
+	// TODO: Fonts configuration
 }
 
 func (*Window) startFrame() {

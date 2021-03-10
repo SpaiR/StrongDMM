@@ -6,7 +6,7 @@ type inputTextMultilineWidget struct {
 	label         string
 	text          *string
 	width, height float32
-	flags         int
+	flags         imgui.InputTextFlags
 	cb            imgui.InputTextCallback
 	onChange      func()
 }
@@ -17,7 +17,7 @@ func (i *inputTextMultilineWidget) Size(width, height float32) *inputTextMultili
 	return i
 }
 
-func (i *inputTextMultilineWidget) Flags(flags int) *inputTextMultilineWidget {
+func (i *inputTextMultilineWidget) Flags(flags imgui.InputTextFlags) *inputTextMultilineWidget {
 	i.flags = flags
 	return i
 }

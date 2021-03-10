@@ -5,7 +5,7 @@ import "github.com/SpaiR/imgui-go"
 type windowWidget struct {
 	id     string
 	open   *bool
-	flags  int
+	flags  imgui.WindowFlags
 	layout Layout
 	push   func()
 	pop    func()
@@ -16,7 +16,7 @@ func (w *windowWidget) Open(open *bool) *windowWidget {
 	return w
 }
 
-func (w *windowWidget) Flags(flags int) *windowWidget {
+func (w *windowWidget) Flags(flags imgui.WindowFlags) *windowWidget {
 	w.flags = flags
 	return w
 }

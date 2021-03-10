@@ -22,7 +22,7 @@ func NewLayout(action layoutAction) *Layout {
 }
 
 func (l *Layout) Process() {
-	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.GetMainViewport(), imgui.DockNodeFlagsNone)
+	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
 
 	if !l.action.IsWindowReset() {
 		return
@@ -31,7 +31,7 @@ func (l *Layout) Process() {
 	imgui.DockBuilderRemoveNode(dockSpaceId)
 	imgui.DockBuilderAddNodeV(dockSpaceId, imgui.DockNodeFlagsDockSpace)
 
-	imgui.DockBuilderSetNodeSize(dockSpaceId, imgui.GetMainViewport().GetSize())
+	imgui.DockBuilderSetNodeSize(dockSpaceId, imgui.MainViewport().Size())
 	imgui.DockBuilderSplitNode(dockSpaceId, imgui.DirLeft, .2, &l.LeftNodeId, &l.CenterNodeId)
 
 	imgui.DockBuilderFinish(dockSpaceId)

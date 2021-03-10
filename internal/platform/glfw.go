@@ -42,7 +42,7 @@ func InitImGuiGLFW() {
 	io := imgui.CurrentIO()
 
 	io.SetClipboard(c)
-	io.SetBackendFlags(imgui.BackendFlagHasMouseCursors | imgui.BackendFlagHasSetMousePos)
+	io.SetBackendFlags(imgui.BackendFlagsHasMouseCursors | imgui.BackendFlagsHasSetMousePos)
 
 	io.KeyMap(imgui.KeyTab, int(glfw.KeyTab))
 	io.KeyMap(imgui.KeyLeftArrow, int(glfw.KeyLeft))
@@ -74,7 +74,7 @@ func InitImGuiGLFW() {
 	mouseCursors[imgui.MouseCursorResizeNESW] = glfw.CreateStandardCursor(glfw.ArrowCursor)
 	mouseCursors[imgui.MouseCursorResizeNWSE] = glfw.CreateStandardCursor(glfw.ArrowCursor)
 	mouseCursors[imgui.MouseCursorHand] = glfw.CreateStandardCursor(glfw.HandCursor)
-	mouseCursors[imgui.MouseCursorNotAllowed] = glfw.CreateStandardCursor(glfw.ArrowCursor)
+	//mouseCursors[imgui.MouseCursorNotAllowed] = glfw.CreateStandardCursor(glfw.ArrowCursor)
 
 	window.SetMouseButtonCallback(mouseButtonCallback)
 	window.SetScrollCallback(mouseScrollCallback)
@@ -92,7 +92,7 @@ func NewImGuiGLFWFrame() {
 	io.SetDisplaySize(imgui.Vec2{X: float32(winWidth), Y: float32(winHeight)})
 
 	if winWidth > 0 && winHeight > 0 {
-		io.SetDisplayFramebufferScale(imgui.Vec2{X: float32(fbWidth / winWidth), Y: float32(fbHeight / winHeight)})
+		io.SetDisplayFrameBufferScale(imgui.Vec2{X: float32(fbWidth / winWidth), Y: float32(fbHeight / winHeight)})
 	}
 
 	updateTime(&io)
