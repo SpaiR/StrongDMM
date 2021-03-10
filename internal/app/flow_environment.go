@@ -11,7 +11,7 @@ import (
 func (a *app) openEnvironment(file string) {
 	env, err := dmenv.New(file)
 	if err != nil {
-		log.Println(err)
+		log.Println("unable to open environment: ", err)
 		return
 	}
 

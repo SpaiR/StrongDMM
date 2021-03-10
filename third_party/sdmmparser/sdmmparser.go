@@ -33,7 +33,7 @@ func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {
 
 	var data ObjectTreeType
 	if err := json.Unmarshal([]byte(C.GoString(nativeStr)), &data); err != nil {
-		return nil, fmt.Errorf("unable to deserialize parsed environment")
+		return nil, fmt.Errorf("unable to deserialize environment: %w", err)
 	}
 
 	return &data, nil
@@ -58,7 +58,7 @@ func ParseIconMetadata(iconPath string) (*IconMetadata, error) {
 
 	var data IconMetadata
 	if err := json.Unmarshal([]byte(C.GoString(nativeStr)), &data); err != nil {
-		return nil, fmt.Errorf("unable to deserialize icon metadata")
+		return nil, fmt.Errorf("unable to deserialize icon metadata: %w", err)
 	}
 
 	return &data, nil

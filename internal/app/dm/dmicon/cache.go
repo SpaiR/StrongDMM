@@ -1,6 +1,7 @@
 package dmicon
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -29,7 +30,7 @@ func (i *IconsCache) SetRootDirPath(rootDirPath string) {
 
 func (i *IconsCache) Get(icon string) (*Dmi, error) {
 	if len(icon) == 0 {
-		return nil, fmt.Errorf("dmi icon is empty")
+		return nil, errors.New("dmi icon is empty")
 	}
 
 	if dmi, ok := i.icons[icon]; ok {
