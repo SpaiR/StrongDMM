@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 )
 
 func (a *app) WindowCond() imgui.Condition {

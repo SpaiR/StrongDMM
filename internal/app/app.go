@@ -11,8 +11,8 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/data"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 	"github.com/SpaiR/strongdmm/internal/app/window"
@@ -88,7 +88,7 @@ func getOrCreateInternalDir() string {
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal("unable to find user home dir")
+		log.Fatal("unable to find user home dir: ", err)
 	}
 
 	if runtime.GOOS == "windows" {

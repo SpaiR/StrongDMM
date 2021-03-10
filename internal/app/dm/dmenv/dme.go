@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 )
 

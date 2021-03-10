@@ -3,7 +3,7 @@ package ui
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
@@ -76,7 +76,7 @@ func (m *Menu) Process() {
 				}),
 			}).Enabled(m.action.HasLoadedEnvironment() && len(m.action.RecentMapsByEnvironment()[m.action.LoadedEnvironment().RootFile]) != 0),
 			w.Separator(),
-			w.MenuItem("Exit", m.action.DoExit).Shortcut("Ctrl+Q"),
+			w.MenuItem("Exit", m.action.DoExit),
 		}),
 
 		w.Menu("Window", w.Layout{
@@ -89,17 +89,6 @@ func (m *Menu) Process() {
 }
 
 func addShortcuts(action menuAction) {
-	shortcut.Add(shortcut.Shortcut{
-		FirstKey:  glfw.KeyLeftControl,
-		SecondKey: glfw.KeyQ,
-		Action:    action.DoExit,
-	})
-	shortcut.Add(shortcut.Shortcut{
-		FirstKey:  glfw.KeyRightControl,
-		SecondKey: glfw.KeyQ,
-		Action:    action.DoExit,
-	})
-
 	shortcut.Add(shortcut.Shortcut{
 		FirstKey: glfw.KeyF5,
 		Action:   action.DoResetWindows,

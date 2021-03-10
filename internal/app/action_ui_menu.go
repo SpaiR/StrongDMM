@@ -45,7 +45,7 @@ func (a *app) DoResetWindows() {
 
 func (a *app) DoOpenLogs() {
 	if err := open.Run(a.logDir); err != nil {
-		log.Fatal("unable to open log dir")
+		log.Println("unable to open log dir: ", err)
 	}
 }
 

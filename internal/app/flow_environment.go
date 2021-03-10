@@ -3,9 +3,9 @@ package app
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmicon"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmmap"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmicon"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
 )
 
 func (a *app) openEnvironment(file string) {
@@ -19,9 +19,9 @@ func (a *app) openEnvironment(file string) {
 	a.loadedEnvironment = env
 	a.uiPanelEnvironment.Free()
 
-	dmicon.FreeCache()
-	dmicon.RootDirPath = env.RootDir
-	dmmap.FreeCache()
+	dmicon.Cache.Free()
+	dmicon.Cache.SetRootDirPath(env.RootDir)
+	dmminstance.Cache.Free()
 
 	a.updateTitle()
 }

@@ -3,17 +3,18 @@ package canvas
 import (
 	"sort"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmicon"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmmap"
+	"github.com/SpaiR/strongdmm/internal/app/dm"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmicon"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
 )
 
-type Bucket struct {
-	Units []Unit
+type bucket struct {
+	Units []unit
 	Data  []float32
 }
 
-type Unit struct {
+type unit struct {
 	idx int
 
 	sp    *dmicon.Sprite
@@ -23,20 +24,20 @@ type Unit struct {
 	x2, y2 float32
 }
 
-func (u Unit) indices() []uint32 {
+func (u unit) indices() []uint32 {
 	idx := uint32(u.idx * 4)
 	return []uint32{idx + 0, idx + 1, idx + 2, idx + 1, idx + 3, idx + 2}
 }
 
-func createBucket(dmm *dmmap.Dmm) *Bucket {
-	var units []Unit
+func createBucket(dmm *dmmap.Dmm) *bucket {
+	var units []unit
 	var data []float32
 
 	idx := 0
 
 	for x := 1; x <= dmm.MaxX; x++ {
 		for y := 1; y <= dmm.MaxY; y++ {
-			for _, i := range dmm.GetTile(x, y, 1).Content {
+			for _, i := range dmm.GetTile(x, y, 1).Content { // TODO: respect z-levels
 				icon, _ := i.Vars.Text("icon")
 				iconState, _ := i.Vars.Text("icon_state")
 				dir, _ := i.Vars.Int("dir")
@@ -45,15 +46,15 @@ func createBucket(dmm *dmmap.Dmm) *Bucket {
 				stepX, _ := i.Vars.Int("step_x")
 				stepY, _ := i.Vars.Int("step_y")
 
-				sp := dmicon.GetSpriteOrPlaceholderD(icon, iconState, dir)
+				sp := dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir)
 				x1 := float32((x-1)*32 + pixelX + stepX)
 				y1 := float32((y-1)*32 + pixelY + stepY)
 				x2 := x1 + float32(sp.IconWidth())
 				y2 := y1 + float32(sp.IconHeight())
-				var r, g, b, a float32 = 1, 1, 1, 1 // TODO: Color extraction
+				var r, g, b, a float32 = 1, 1, 1, 1 // TODO: color extraction
 				depth := countDepth(i)
 
-				units = append(units, Unit{
+				units = append(units, unit{
 					idx, sp, depth,
 					x1, y1, x2, y2,
 				})
@@ -74,13 +75,13 @@ func createBucket(dmm *dmmap.Dmm) *Bucket {
 		return units[i].depth < units[j].depth
 	})
 
-	return &Bucket{
+	return &bucket{
 		Units: units,
 		Data:  data,
 	}
 }
 
-func (b *Bucket) indices() []uint32 {
+func (b *bucket) indices() []uint32 {
 	var indices []uint32
 
 	for _, unit := range b.Units {
@@ -94,15 +95,15 @@ func (b *Bucket) indices() []uint32 {
 	return indices
 }
 
-func countDepth(i *dmmap.Instance) float32 {
+func countDepth(i *dmminstance.Instance) float32 {
 	plane, _ := i.Vars.Float("plane")
 	layer, _ := i.Vars.Float("layer")
 
 	depth := plane*10_000 + layer*1000
 
-	if byond.IsPath(i.Path, "/obj") {
+	if dm.IsPath(i.Path, "/obj") {
 		depth += 100
-	} else if byond.IsPath(i.Path, "/mob") {
+	} else if dm.IsPath(i.Path, "/mob") {
 		depth += 10
 	}
 

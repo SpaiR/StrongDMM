@@ -1,4 +1,4 @@
-package byond
+package dm
 
 const (
 	DirNorth = 1

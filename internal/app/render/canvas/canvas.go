@@ -7,12 +7,12 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmmap"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
 	"github.com/SpaiR/strongdmm/internal/platform"
 )
 
 type Canvas struct {
-	bucket *Bucket
+	bucket *bucket
 
 	program uint32
 
@@ -80,7 +80,7 @@ void main() {
 }
 
 func (c *Canvas) initUniforms() {
-	c.mtxTransform = mgl32.Ortho(0, 1280/4, 0, 768/4, -1, 1) // TODO: Proper transform
+	c.mtxTransform = mgl32.Ortho(0, 1280/4, 0, 768/4, -1, 1) // TODO: proper transform
 	c.uniTransform = gl.GetUniformLocation(c.program, gl.Str("Transform\x00"))
 	gl.UniformMatrix4fv(c.uniTransform, 1, false, &c.mtxTransform[0])
 }

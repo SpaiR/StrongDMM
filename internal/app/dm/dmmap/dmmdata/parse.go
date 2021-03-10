@@ -1,4 +1,4 @@
-package dmmap
+package dmmdata
 
 import (
 	"bufio"
@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
 )
 
 /**
@@ -16,11 +16,11 @@ A slightly modified algorithm made on rust:
 https://raw.githubusercontent.com/SpaceManiac/SpacemanDMM/5e51421/src/tools/dmm/read.rs
 Unlike the original one, doesn't care about storing keys as base52 number and uses a simple string for that.
 */
-func parseData(file *os.File) (*Data, error) {
+func parse(file *os.File) (*DmmData, error) {
 	r := bufio.NewReader(file)
 
 	var (
-		dmmData = Data{
+		dmmData = DmmData{
 			Filepath:   file.Name(),
 			Dictionary: make(map[Key][]Prefab),
 			Grid:       make(map[Coord]Key),

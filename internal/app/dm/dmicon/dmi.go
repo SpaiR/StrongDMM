@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond"
+	"github.com/SpaiR/strongdmm/internal/app/dm"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 	"github.com/SpaiR/strongdmm/third_party/stbi"
 )
@@ -110,39 +110,39 @@ type State struct {
 }
 
 func (d *State) Sprite() *Sprite {
-	return d.SpriteD(byond.DirDefault)
+	return d.SpriteV(dm.DirDefault)
 }
 
-func (d *State) SpriteD(dir int) *Sprite {
-	return d.SpriteDF(dir, 0)
+func (d *State) SpriteV(dir int) *Sprite {
+	return d.SpriteByFrame(dir, 0)
 }
 
-func (d *State) SpriteDF(dir, frame int) *Sprite {
+func (d *State) SpriteByFrame(dir, frame int) *Sprite {
 	return d.Sprites[d.dir2idx(dir)+frame%d.Frames*d.Dirs]
 }
 
 func (d *State) dir2idx(dir int) int {
-	if d.Dirs == 1 || dir < byond.DirNorth || dir > byond.DirSouthwest {
+	if d.Dirs == 1 || dir < dm.DirNorth || dir > dm.DirSouthwest {
 		return 0
 	}
 
 	idx := 0
 	switch dir {
-	case byond.DirSouth:
+	case dm.DirSouth:
 		idx = 0
-	case byond.DirNorth:
+	case dm.DirNorth:
 		idx = 1
-	case byond.DirEast:
+	case dm.DirEast:
 		idx = 2
-	case byond.DirWest:
+	case dm.DirWest:
 		idx = 3
-	case byond.DirSoutheast:
+	case dm.DirSoutheast:
 		idx = 4
-	case byond.DirSouthwest:
+	case dm.DirSouthwest:
 		idx = 5
-	case byond.DirNortheast:
+	case dm.DirNortheast:
 		idx = 6
-	case byond.DirNorthwest:
+	case dm.DirNorthwest:
 		idx = 7
 	}
 

@@ -5,8 +5,8 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmenv"
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmicon"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
@@ -63,7 +63,9 @@ func (e *Environment) Process() {
 	imgui.DockBuilderDockWindow("Environment", e.action.LeftNodeId())
 
 	if imgui.BeginV("Environment", nil, imgui.WindowFlagsNoMove) {
-		imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(imgui.DockNodeFlagsNoCloseButton | imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
+		imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(
+			imgui.DockNodeFlagsNoTabBar | imgui.DockNodeFlagsNoCloseButton |
+				imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
 
 		if e.action.LoadedEnvironment() == nil {
 			imgui.Text("No Environment Loaded")
@@ -210,7 +212,7 @@ func (e *Environment) treeNode(object *dmenv.Object) (*treeNode, bool) {
 	node := &treeNode{
 		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],
 		orig:   object,
-		sprite: dmicon.GetSpriteOrPlaceholder(icon, iconState),
+		sprite: dmicon.Cache.GetSpriteOrPlaceholder(icon, iconState),
 	}
 
 	e.treeNodes[object.Path] = node

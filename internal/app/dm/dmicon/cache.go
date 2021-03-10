@@ -6,66 +6,72 @@ import (
 	"image/color"
 	"image/draw"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond"
+	"github.com/SpaiR/strongdmm/internal/app/dm"
 )
 
-var (
-	RootDirPath string
-	cache       map[string]*Dmi
-)
+var Cache = &IconsCache{icons: make(map[string]*Dmi)}
 
-func FreeCache() {
-	for _, dmi := range cache {
-		dmi.free()
-	}
-	cache = make(map[string]*Dmi)
+type IconsCache struct {
+	rootDirPath string
+	icons       map[string]*Dmi
 }
 
-func Get(icon string) (*Dmi, error) {
+func (i *IconsCache) Free() {
+	for _, dmi := range i.icons {
+		dmi.free()
+	}
+	i.icons = make(map[string]*Dmi)
+}
+
+func (i *IconsCache) SetRootDirPath(rootDirPath string) {
+	i.rootDirPath = rootDirPath
+}
+
+func (i *IconsCache) Get(icon string) (*Dmi, error) {
 	if len(icon) == 0 {
 		return nil, fmt.Errorf("dmi icon is empty")
 	}
 
-	if dmi, ok := cache[icon]; ok {
+	if dmi, ok := i.icons[icon]; ok {
 		if dmi == nil {
 			return nil, fmt.Errorf("dmi [%s] is nil", icon)
 		}
 		return dmi, nil
 	}
 
-	dmi, err := New(RootDirPath + "/" + icon)
-	cache[icon] = dmi
+	dmi, err := New(i.rootDirPath + "/" + icon)
+	i.icons[icon] = dmi
 	return dmi, err
 }
 
-func GetState(icon, state string) (*State, error) {
-	dmi, err := Get(icon)
+func (i *IconsCache) GetState(icon, state string) (*State, error) {
+	dmi, err := i.Get(icon)
 	if err != nil {
 		return nil, err
 	}
 	return dmi.State(state)
 }
 
-func GetSpriteD(icon, state string, dir int) (*Sprite, error) {
-	dmiState, err := GetState(icon, state)
+func (i *IconsCache) GetSpriteV(icon, state string, dir int) (*Sprite, error) {
+	dmiState, err := i.GetState(icon, state)
 	if err != nil {
 		return nil, err
 	}
-	return dmiState.SpriteD(dir), nil
+	return dmiState.SpriteV(dir), nil
 }
 
-func GetSprite(icon, state string) (*Sprite, error) {
-	return GetSpriteD(icon, state, byond.DirDefault)
+func (i *IconsCache) GetSprite(icon, state string) (*Sprite, error) {
+	return i.GetSpriteV(icon, state, dm.DirDefault)
 }
 
 var placeholder *Sprite
 
-func GetSpriteOrPlaceholder(icon, state string) *Sprite {
-	return GetSpriteOrPlaceholderD(icon, state, byond.DirDefault)
+func (i *IconsCache) GetSpriteOrPlaceholder(icon, state string) *Sprite {
+	return i.GetSpriteOrPlaceholderV(icon, state, dm.DirDefault)
 }
 
-func GetSpriteOrPlaceholderD(icon, state string, dir int) *Sprite {
-	if s, err := GetSpriteD(icon, state, dir); err == nil {
+func (i *IconsCache) GetSpriteOrPlaceholderV(icon, state string, dir int) *Sprite {
+	if s, err := i.GetSpriteV(icon, state, dir); err == nil {
 		return s
 	}
 

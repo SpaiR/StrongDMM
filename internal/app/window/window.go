@@ -102,7 +102,6 @@ func (w *Window) setupImGui(config Config) {
 }
 
 func (*Window) startFrame() {
-	gl.ClearColor(.25, .25, .5, 1)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	platform.NewImGuiGLFWFrame()
 	imgui.NewFrame()

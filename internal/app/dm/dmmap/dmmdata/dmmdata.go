@@ -1,10 +1,10 @@
-package dmmap
+package dmmdata
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/SpaiR/strongdmm/internal/app/byond/dmvars"
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
 )
 
 type Key string
@@ -17,7 +17,7 @@ func (c Coord) String() string {
 	return fmt.Sprintf("X:%d, Y:%d, Z:%d", c.X, c.Y, c.Z)
 }
 
-type Data struct {
+type DmmData struct {
 	Filepath              string
 	IsTgm, IsWinLineBreak bool
 
@@ -33,11 +33,11 @@ type Prefab struct {
 	Vars *dmvars.Variables
 }
 
-func ParseData(path string) (*Data, error) {
+func New(path string) (*DmmData, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
-	return parseData(file)
+	return parse(file)
 }
