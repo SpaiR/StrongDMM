@@ -22,6 +22,7 @@ func (a *app) DoOpenEnvironmentByPath(path string) {
 func (a *app) DoClearRecentEnvironments() {
 	log.Println("[app] clearing recent environments")
 	a.internalData.ClearRecentEnvironments()
+	a.internalData.Save()
 }
 
 func (a *app) DoOpenMap() {
@@ -39,6 +40,7 @@ func (a *app) DoOpenMapByPath(path string) {
 func (a *app) DoClearRecentMaps() {
 	log.Println("[app] clearing recent maps")
 	a.internalData.ClearRecentMaps(a.loadedEnvironment.RootFile)
+	a.internalData.Save()
 }
 
 func (a *app) DoExit() {

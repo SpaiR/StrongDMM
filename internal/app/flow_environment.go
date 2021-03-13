@@ -16,6 +16,8 @@ func (a *app) openEnvironment(path string) {
 	}
 
 	a.internalData.AddRecentEnvironment(path)
+	a.internalData.Save()
+
 	a.loadedEnvironment = env
 	a.uiPanelEnvironment.Free()
 
