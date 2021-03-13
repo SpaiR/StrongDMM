@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"log"
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
@@ -45,6 +46,7 @@ func (e *Environment) Free() {
 	e.treeNodes = make(map[string]*treeNode)
 	e.filteredTreeNodes = nil
 	e.filter = ""
+	log.Println("[ui] environment panel free")
 }
 
 func (e *Environment) process() {

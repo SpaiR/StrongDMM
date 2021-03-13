@@ -36,7 +36,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 						prefab.Vars.SetParent(obj.Vars)
 						tile.Content = append(tile.Content, dmminstance.Cache.Get(prefab.Path, prefab.Vars))
 					} else {
-						log.Println("unknown prefab: ", prefab.Path)
+						log.Println("[dmmap] unknown prefab:", prefab.Path)
 					}
 				}
 				dmm.Tiles[coord] = &tile

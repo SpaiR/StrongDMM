@@ -186,7 +186,7 @@ void main() {
 
 	var err error
 	if gShaderHandle, err = NewShaderProgram(vertShaderSource, fragShaderSource); err != nil {
-		log.Fatal("unable to create shader: ", err)
+		log.Fatal("[platform] unable to create shader:", err)
 	}
 }
 

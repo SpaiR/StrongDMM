@@ -36,7 +36,7 @@ func (d data) getStrMapStrSlice(idx int, to *map[string][]string) {
 func storeToFile(filepath string, data ...datum) {
 	f, err := os.Create(filepath)
 	if err != nil {
-		log.Println("unable to store data by path: ", filepath)
+		log.Println("[data] unable to store data by path:", filepath)
 		return
 	}
 	defer f.Close()

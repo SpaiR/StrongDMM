@@ -2,7 +2,9 @@ package dmmdata
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
 )
@@ -28,6 +30,12 @@ type DmmData struct {
 	Grid       map[Coord]Key
 }
 
+func (d DmmData) String() string {
+	return fmt.Sprintf(
+		"Filepath: %s, IsTgm: %t, IsWinLineBreak: %t, KeyLength: %d, MaxX: %d, MaxY: %d, MaxZ: %d",
+		d.Filepath, d.IsTgm, d.IsWinLineBreak, d.KeyLength, d.MaxX, d.MaxY, d.MaxZ)
+}
+
 type Prefab struct {
 	Path string
 	Vars *dmvars.Variables
@@ -39,5 +47,11 @@ func New(path string) (*DmmData, error) {
 		return nil, err
 	}
 	defer file.Close()
-	return parse(file)
+
+	start := time.Now()
+	data, err := parse(file)
+	elapsed := time.Since(start).Milliseconds()
+	log.Printf("[dmmdata] data [%s] parsed in [%d] ms", path, elapsed)
+
+	return data, err
 }

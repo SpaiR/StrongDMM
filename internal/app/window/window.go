@@ -25,13 +25,20 @@ type Config struct {
 }
 
 func New(config Config) *Window {
+	log.Println("[window] creating native window")
+	log.Println("[window] config:", config)
+
 	w := Window{
 		PointSize: 1.0,
 	}
 
+	log.Println("[window] setting up glfw")
 	w.setupGlfw()
+
+	log.Println("[window] setting up Dear ImGui")
 	w.setupImGui(config)
 
+	log.Println("[window] initializing platform")
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 
@@ -61,7 +68,7 @@ func (w *Window) setupGlfw() {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
-		log.Fatal("unable to initialize gfw: ", err)
+		log.Fatal("[window] unable to initialize gfw:", err)
 	}
 
 	glfw.WindowHint(glfw.Visible, glfw.False)
@@ -71,19 +78,26 @@ func (w *Window) setupGlfw() {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
+	log.Println("[window] glfw initialized")
+	log.Println("[window] using opengl 3.3, core profile")
+
 	window, err := glfw.CreateWindow(1280, 768, "", nil, nil)
 
 	if err != nil {
-		log.Fatal("unable to create window: ", err)
+		log.Fatal("[window] unable to create window:", err)
 	}
+
+	log.Println("[window] native window created")
 
 	window.MakeContextCurrent()
 	glfw.SwapInterval(glfw.True)
 	window.Show()
 
 	if err := gl.Init(); err != nil {
-		log.Fatal("unable to initialize opengl: ", err)
+		log.Fatal("[window] unable to initialize opengl:", err)
 	}
+
+	log.Println("[window] opengl initialized")
 
 	w.Handle = window
 }
@@ -94,6 +108,9 @@ func (w *Window) setupImGui(config Config) {
 	io := imgui.CurrentIO()
 	io.SetIniFilename(config.IniFilename)
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
+
+	log.Println("[window] ini file:", config.IniFilename)
+	log.Println("[window] docking enabled")
 
 	// TODO: Fonts configuration
 }

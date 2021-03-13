@@ -81,20 +81,6 @@ func createBucket(dmm *dmmap.Dmm) *bucket {
 	}
 }
 
-func (b *bucket) indices() []uint32 {
-	var indices []uint32
-
-	for _, unit := range b.Units {
-		idx := uint32(unit.idx * 4)
-		indices = append(indices,
-			idx+0, idx+1, idx+2,
-			idx+1, idx+3, idx+2,
-		)
-	}
-
-	return indices
-}
-
 func countDepth(i *dmminstance.Instance) float32 {
 	plane, _ := i.Vars.Float("plane")
 	layer, _ := i.Vars.Float("layer")

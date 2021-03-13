@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"log"
 
 	"github.com/SpaiR/strongdmm/internal/app/dm"
 )
@@ -21,11 +22,13 @@ func (i *IconsCache) Free() {
 	for _, dmi := range i.icons {
 		dmi.free()
 	}
+	log.Printf("[dmicon] cache free; [%d] icons disposed", len(i.icons))
 	i.icons = make(map[string]*Dmi)
 }
 
 func (i *IconsCache) SetRootDirPath(rootDirPath string) {
 	i.rootDirPath = rootDirPath
+	log.Println("[dmicon] cache root dir:", rootDirPath)
 }
 
 func (i *IconsCache) Get(icon string) (*Dmi, error) {

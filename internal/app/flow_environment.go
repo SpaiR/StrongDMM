@@ -8,14 +8,14 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
 )
 
-func (a *app) openEnvironment(file string) {
-	env, err := dmenv.New(file)
+func (a *app) openEnvironment(path string) {
+	env, err := dmenv.New(path)
 	if err != nil {
-		log.Println("unable to open environment: ", err)
+		log.Println("[app] unable to open environment:", err)
 		return
 	}
 
-	a.internalData.AddRecentEnvironment(file)
+	a.internalData.AddRecentEnvironment(path)
 	a.loadedEnvironment = env
 	a.uiPanelEnvironment.Free()
 
@@ -24,4 +24,6 @@ func (a *app) openEnvironment(file string) {
 	dmminstance.Cache.Free()
 
 	a.updateTitle()
+
+	log.Println("[app] environment opened:", path)
 }

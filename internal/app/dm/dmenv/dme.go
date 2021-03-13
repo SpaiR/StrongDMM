@@ -2,8 +2,10 @@ package dmenv
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
@@ -16,18 +18,23 @@ type Dme struct {
 	Objects  map[string]*Object
 }
 
-func New(file string) (*Dme, error) {
+func New(path string) (*Dme, error) {
 	dme := Dme{
-		Name:     filepath.Base(file),
-		RootDir:  filepath.Dir(file),
-		RootFile: file,
+		Name:     filepath.Base(path),
+		RootDir:  filepath.Dir(path),
+		RootFile: path,
 		Objects:  make(map[string]*Object),
 	}
 
-	objectTreeType, err := sdmmparser.ParseEnvironment(file)
+	start := time.Now()
+
+	objectTreeType, err := sdmmparser.ParseEnvironment(path)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create dme by path [%s]: %w", file, err)
+		return nil, fmt.Errorf("[dmenv] unable to create dme by path [%s]: %w", path, err)
 	}
+
+	elapsed := time.Since(start).Milliseconds()
+	log.Printf("[dmenv] environment [%s] parsed in [%d] ms", path, elapsed)
 
 	traverseTree0(objectTreeType, nil, &dme)
 

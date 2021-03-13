@@ -1,6 +1,10 @@
 package dmminstance
 
-import "github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
+import (
+	"log"
+
+	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
+)
 
 var Cache = &InstanceCache{instances: make(map[uint64]*Instance)}
 
@@ -9,6 +13,7 @@ type InstanceCache struct {
 }
 
 func (i *InstanceCache) Free() {
+	log.Printf("[dmminstance] cache free; [%d] instances disposed", len(i.instances))
 	i.instances = make(map[uint64]*Instance)
 }
 

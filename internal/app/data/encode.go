@@ -10,7 +10,7 @@ func encode(datum interface{}) datum {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 	if err := enc.Encode(datum); err != nil {
-		log.Println("unable to encode data: ", datum)
+		log.Println("[data] unable to encode data:", datum)
 		return nil
 	}
 	return buf.Bytes()

@@ -75,7 +75,7 @@ void main() {
 
 	var err error
 	if c.program, err = platform.NewShaderProgram(vertexShader, fragmentShader); err != nil {
-		log.Fatal("unable to create shader: ", err)
+		log.Fatal("[canvas] unable to create shader:", err)
 	}
 }
 

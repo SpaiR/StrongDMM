@@ -18,18 +18,33 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/window"
 )
 
-const Title = "StrongDMM"
-const LogsTtlDays = 3
+const (
+	Title       = "StrongDMM"
+	Version     = "2.0"
+	LogsTtlDays = 3
+)
 
 func Start() {
 	internalDir := getOrCreateInternalDir()
+	logDir := initializeLogger(internalDir)
+
+	log.Printf("%s, v%s", Title, Version)
+	log.Println("[app] starting")
+	log.Println("[app] internal dir:", internalDir)
+	log.Println("[app] log dir:", logDir)
 
 	app := app{
 		masterWindow: window.New(window.Config{IniFilename: internalDir + "/Layout.ini"}),
+		logDir:       logDir,
 	}
 
+	log.Println("[app] initializing")
 	app.initialize(internalDir)
+
+	log.Println("[app] running")
 	app.run()
+
+	log.Println("[app] disposing")
 	app.dispose()
 }
 
@@ -51,8 +66,6 @@ type app struct {
 }
 
 func (a *app) initialize(internalDir string) {
-	a.logDir = initializeLogger(internalDir)
-
 	a.internalData = data.LoadInternal(internalDir)
 
 	a.uiMenu = ui.NewMenu(a)
@@ -88,7 +101,7 @@ func getOrCreateInternalDir() string {
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal("unable to find user home dir: ", err)
+		log.Fatal("[app] unable to find user home dir:", err)
 	}
 
 	if runtime.GOOS == "windows" {
@@ -117,7 +130,7 @@ func initializeLogger(internalDir string) string {
 	logFile := logDir + "/" + formattedDate + ".log"
 	file, e := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
 	if e != nil {
-		log.Fatal("unable to open log file")
+		log.Fatal("[app] unable to open log file")
 	}
 
 	multiOut := io.MultiWriter(file, os.Stdout)
@@ -147,8 +160,10 @@ func (a *app) updateTitle() {
 	}
 
 	a.masterWindow.Handle.SetTitle(title)
+	log.Println("[app] title updated:", title)
 }
 
 func (a *app) resetWindows() {
 	a.tmpWindowCond = imgui.ConditionAlways
+	log.Println("[app] window reset")
 }

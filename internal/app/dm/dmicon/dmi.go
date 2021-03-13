@@ -77,7 +77,7 @@ func New(path string) (*Dmi, error) {
 func loadImage(path string) *image.RGBA {
 	img, err := stbi.Load(path)
 	if err != nil {
-		log.Println("unable to read image by path: ", path, err)
+		log.Println("[dmicon] unable to read image by path:", path, "error:", err)
 	}
 	return img
 }
