@@ -107,10 +107,8 @@ func (w *Window) setupImGui(config Config) {
 
 	io := imgui.CurrentIO()
 	io.SetIniFilename(config.IniFilename)
-	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	log.Println("[window] ini file:", config.IniFilename)
-	log.Println("[window] docking enabled")
 
 	// TODO: Fonts configuration
 }

@@ -2,37 +2,38 @@ package ui
 
 import (
 	"github.com/SpaiR/imgui-go"
+
+	"github.com/SpaiR/strongdmm/internal/app/ui/component"
+	"github.com/SpaiR/strongdmm/pkg/imguiext/splitter"
 )
 
-type layoutAction interface {
-	IsWindowReset() bool
+type action interface {
+	component.EnvironmentAction
+
+	PointSizePtr() *float32
 }
 
 type Layout struct {
-	action layoutAction
+	component.Environment
 
-	LeftNodeId   int32
-	CenterNodeId int32
+	spLeftCenter *splitter.Splitter
 }
 
-func NewLayout(action layoutAction) *Layout {
-	return &Layout{
-		action: action,
+func NewLayout(a action) *Layout {
+	l := &Layout{
+		spLeftCenter: splitter.New("left_center", a.PointSizePtr(), .15, true, false),
 	}
+	l.Environment.Init(a)
+	return l
 }
 
 func (l *Layout) Process() {
-	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
+	vp := imgui.MainViewport()
 
-	if !l.action.IsWindowReset() {
-		return
-	}
+	imgui.SetNextWindowPos(vp.WorkPos())
+	imgui.SetNextWindowSize(vp.WorkSize())
 
-	imgui.DockBuilderRemoveNode(dockSpaceId)
-	imgui.DockBuilderAddNodeV(dockSpaceId, imgui.DockNodeFlagsDockSpace)
-
-	imgui.DockBuilderSetNodeSize(dockSpaceId, imgui.MainViewport().Size())
-	imgui.DockBuilderSplitNode(dockSpaceId, imgui.DirLeft, .2, &l.LeftNodeId, &l.CenterNodeId)
-
-	imgui.DockBuilderFinish(dockSpaceId)
+	imgui.BeginV("layout", nil, imgui.WindowFlagsNoTitleBar|imgui.WindowFlagsNoMove|imgui.WindowFlagsNoResize|imgui.WindowFlagsNoBringToFrontOnFocus)
+	l.spLeftCenter.Draw(l.Environment.Process, nil)
+	imgui.End()
 }

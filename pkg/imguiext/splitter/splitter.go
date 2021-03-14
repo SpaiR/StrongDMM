@@ -9,8 +9,7 @@ import (
 const (
 	resetSize = -1
 	thickness = 2
-	minSize1  = 32
-	minSize2  = 64
+	minSize   = 32
 )
 
 type Splitter struct {
@@ -54,16 +53,16 @@ func (s *Splitter) Draw(side1, side2 func()) {
 
 	if s.sz1 == resetSize {
 		if s.splitVertically {
-			s.sz1 = windowSize.X * s.splitRatio
+			s.sz1 = windowSize.X*s.splitRatio - windowPadding().X
 		} else {
-			s.sz1 = windowSize.Y * s.splitRatio
+			s.sz1 = windowSize.Y*s.splitRatio - windowPadding().Y
 		}
 	}
 	if s.sz2 == resetSize {
 		if s.splitVertically {
-			s.sz2 = windowSize.X - s.sz1
+			s.sz2 = windowSize.X - s.sz1 - windowPadding().X
 		} else {
-			s.sz2 = windowSize.Y - s.sz1
+			s.sz2 = windowSize.Y - s.sz1 - windowPadding().Y
 		}
 	}
 
@@ -71,27 +70,28 @@ func (s *Splitter) Draw(side1, side2 func()) {
 
 	var x, y float32
 	if s.splitVertically {
-		x = s.sz1
+		x = s.sz1 - windowPadding().X
 	} else {
-		y = s.sz1
+		y = s.sz1 - windowPadding().Y/2
 	}
 
 	imgui.BeginChildV(fmt.Sprint(s.id, "_1"), imgui.Vec2{X: x, Y: y}, s.border, imgui.WindowFlagsNone)
-	side1()
+	if side1 != nil {
+		side1()
+	}
 	imgui.EndChild()
 
 	if s.splitVertically {
 		imgui.SameLine()
-	}
-
-	if s.splitVertically {
-		x = s.sz2
+		x = s.sz2 - windowPadding().X/2
 	} else {
 		x = 0
 	}
 
 	imgui.BeginChildV(fmt.Sprint(s.id, "_2"), imgui.Vec2{X: x, Y: 0}, s.border, imgui.WindowFlagsNone)
-	side2()
+	if side2 != nil {
+		side2()
+	}
 	imgui.EndChild()
 
 	var size float32
@@ -100,8 +100,6 @@ func (s *Splitter) Draw(side1, side2 func()) {
 	} else {
 		size = imgui.WindowHeight()
 	}
-
-	s.sz2 = size - s.sz1
 
 	if changed {
 		s.splitRatio = s.sz1 / size
@@ -112,18 +110,20 @@ func (s *Splitter) splitter() bool {
 	windowPos := imgui.WindowPos()
 	cursorPos := imgui.CursorPos()
 
+	thickness := thickness * (*s.pointSize)
+
 	var itemSize imgui.Vec2
 	if s.splitVertically {
-		itemSize = imgui.CalcItemSize(imgui.Vec2{X: thickness * (*s.pointSize), Y: -1}, 0, 0)
+		itemSize = imgui.CalcItemSize(imgui.Vec2{X: thickness, Y: -1}, 0, 0)
 	} else {
-		itemSize = imgui.CalcItemSize(imgui.Vec2{X: -1, Y: thickness * (*s.pointSize)}, 0, 0)
+		itemSize = imgui.CalcItemSize(imgui.Vec2{X: -1, Y: thickness}, 0, 0)
 	}
 
 	var x, y float32
 	if s.splitVertically {
-		x = s.sz1
+		x = s.sz1 - windowPadding().X/2
 	} else {
-		y = s.sz1
+		y = s.sz1 - windowPadding().Y/2
 	}
 
 	bbMin := imgui.Vec2{
@@ -142,5 +142,9 @@ func (s *Splitter) splitter() bool {
 		axis = imgui.AxisY
 	}
 
-	return imgui.SplitterBehavior(bbMin, bbMax, imgui.GetID(s.id), axis, &s.sz1, &s.sz2, minSize1, minSize2)
+	return imgui.SplitterBehavior(bbMin, bbMax, imgui.GetID(s.id), axis, &s.sz1, &s.sz2, minSize, minSize)
+}
+
+func windowPadding() imgui.Vec2 {
+	return imgui.CurrentStyle().WindowPadding()
 }

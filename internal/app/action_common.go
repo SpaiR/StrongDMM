@@ -33,11 +33,3 @@ func (a *app) PointSizePtr() *float32 {
 func (a *app) MasterWindowSize() (int, int) {
 	return a.masterWindow.Handle.GetSize()
 }
-
-func (a *app) CenterNodeId() int {
-	return int(a.uiLayout.CenterNodeId)
-}
-
-func (a *app) LeftNodeId() int {
-	return int(a.uiLayout.LeftNodeId)
-}

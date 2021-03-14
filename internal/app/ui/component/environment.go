@@ -1,4 +1,4 @@
-package ui
+package component
 
 import (
 	"log"
@@ -12,8 +12,7 @@ import (
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 
-type environmentAction interface {
-	LeftNodeId() int
+type EnvironmentAction interface {
 	LoadedEnvironment() *dmenv.Dme
 	PointSize() float32
 }
@@ -23,7 +22,7 @@ type environmentAction interface {
 const newTreeNodesLimit = 25
 
 type Environment struct {
-	action environmentAction
+	action EnvironmentAction
 
 	treeNodes         map[string]*treeNode
 	filteredTreeNodes []*treeNode
@@ -35,18 +34,16 @@ type Environment struct {
 	tmpDoCollapseAll     bool
 }
 
-func NewEnvironment(action environmentAction) *Environment {
-	return &Environment{
-		action:    action,
-		treeNodes: make(map[string]*treeNode),
-	}
+func (e *Environment) Init(action EnvironmentAction) {
+	e.action = action
+	e.treeNodes = make(map[string]*treeNode)
 }
 
 func (e *Environment) Free() {
 	e.treeNodes = make(map[string]*treeNode)
 	e.filteredTreeNodes = nil
 	e.filter = ""
-	log.Println("[ui] environment panel free")
+	log.Println("[component] environment panel free")
 }
 
 func (e *Environment) process() {
@@ -62,23 +59,14 @@ func (e *Environment) postProcess() {
 }
 
 func (e *Environment) Process() {
-	imgui.DockBuilderDockWindow("Environment", e.action.LeftNodeId())
-
-	if imgui.BeginV("Environment", nil, imgui.WindowFlagsNoMove) {
-		imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(
-			imgui.DockNodeFlagsNoTabBar | imgui.DockNodeFlagsNoCloseButton |
-				imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
-
-		if e.action.LoadedEnvironment() == nil {
-			imgui.Text("No Environment Loaded")
-		} else {
-			e.process()
-			e.showControls()
-			e.showTree()
-			e.postProcess()
-		}
+	if e.action.LoadedEnvironment() == nil {
+		imgui.Text("No Environment Loaded")
+	} else {
+		e.process()
+		e.showControls()
+		e.showTree()
+		e.postProcess()
 	}
-	imgui.End()
 }
 
 func (e *Environment) showControls() {

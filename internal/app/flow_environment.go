@@ -19,7 +19,7 @@ func (a *app) openEnvironment(path string) {
 	a.internalData.Save()
 
 	a.loadedEnvironment = env
-	a.uiPanelEnvironment.Free()
+	a.layout.Environment.Free()
 
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
