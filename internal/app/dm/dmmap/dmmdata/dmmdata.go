@@ -20,8 +20,10 @@ func (c Coord) String() string {
 }
 
 type DmmData struct {
-	Filepath              string
-	IsTgm, IsWinLineBreak bool
+	Filepath string
+
+	IsTgm          bool
+	IsWinLineBreak bool
 
 	KeyLength        int
 	MaxX, MaxY, MaxZ int

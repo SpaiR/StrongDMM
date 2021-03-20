@@ -18,6 +18,7 @@ type Window struct {
 	Handle *glfw.Window
 
 	PointSize float32
+	laterJobs []func()
 }
 
 type Config struct {
@@ -64,6 +65,10 @@ func (w *Window) Dispose() {
 	w.disposeGlfw()
 }
 
+func (w *Window) RunLater(job func()) {
+	w.laterJobs = append(w.laterJobs, job)
+}
+
 func (w *Window) setupGlfw() {
 	runtime.LockOSThread()
 
@@ -107,16 +112,23 @@ func (w *Window) setupImGui(config Config) {
 
 	io := imgui.CurrentIO()
 	io.SetIniFilename(config.IniFilename)
-
-	log.Println("[window] ini file:", config.IniFilename)
+	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	// TODO: Fonts configuration
 }
 
-func (*Window) startFrame() {
+func (w *Window) startFrame() {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	platform.NewImGuiGLFWFrame()
 	imgui.NewFrame()
+	w.runLaterJobs()
+}
+
+func (w *Window) runLaterJobs() {
+	for _, job := range w.laterJobs {
+		job()
+	}
+	w.laterJobs = nil
 }
 
 func (w *Window) endFrame() {

@@ -136,15 +136,15 @@ func initializeLogger(internalDir string) string {
 	return logDir
 }
 
-func (a *app) dropTmpState() {
-	a.tmpShouldClose = false
-	a.tmpWindowCond = imgui.ConditionFirstUseEver
-}
-
 func (a *app) checkShouldClose() {
 	if a.tmpShouldClose {
 		a.masterWindow.Handle.SetShouldClose(true)
 	}
+}
+
+func (a *app) dropTmpState() {
+	a.tmpShouldClose = false
+	a.tmpWindowCond = imgui.ConditionFirstUseEver
 }
 
 func (a *app) updateTitle() {

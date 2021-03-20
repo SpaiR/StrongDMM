@@ -92,8 +92,8 @@ func (e *Environment) showTree() {
 		} else {
 			e.showFilteredNodes()
 		}
-		imgui.EndChild()
 	}
+	imgui.EndChild()
 }
 
 func (e *Environment) showFilteredNodes() {

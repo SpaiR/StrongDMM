@@ -2,6 +2,7 @@ package dmmap
 
 import (
 	"log"
+	"path/filepath"
 
 	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmmdata"
@@ -9,6 +10,9 @@ import (
 )
 
 type Dmm struct {
+	Name string
+	Path DmmPath
+
 	Tiles map[dmmdata.Coord]*Tile
 
 	MaxX, MaxY, MaxZ int
@@ -20,6 +24,8 @@ func (d *Dmm) GetTile(x, y, z int) *Tile {
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 	dmm := Dmm{
+		Name:  filepath.Base(data.Filepath),
+		Path:  newDmmPath(dme, data),
 		Tiles: make(map[dmmdata.Coord]*Tile),
 		MaxX:  data.MaxX,
 		MaxY:  data.MaxY,
@@ -45,4 +51,22 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 	}
 
 	return &dmm
+}
+
+type DmmPath struct {
+	Readable string
+	Absolute string
+}
+
+func newDmmPath(dme *dmenv.Dme, data *dmmdata.DmmData) DmmPath {
+	readable, err := filepath.Rel(dme.RootDir, data.Filepath)
+	if err != nil {
+		log.Println("[dmmap] unable to get relative path of the map:", data.Filepath)
+		readable = data.Filepath
+	}
+
+	return DmmPath{
+		Readable: readable,
+		Absolute: data.Filepath,
+	}
 }

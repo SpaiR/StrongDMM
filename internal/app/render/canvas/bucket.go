@@ -24,9 +24,9 @@ type unit struct {
 	x2, y2 float32
 }
 
-func (u unit) indices() []uint32 {
+func (u unit) pushIndices(out *[]uint32) {
 	idx := uint32(u.idx * 4)
-	return []uint32{idx + 0, idx + 1, idx + 2, idx + 1, idx + 3, idx + 2}
+	*out = append(*out, idx+0, idx+1, idx+2, idx+1, idx+3, idx+2)
 }
 
 func createBucket(dmm *dmmap.Dmm) *bucket {

@@ -11,26 +11,37 @@ import (
 	"github.com/SpaiR/strongdmm/internal/platform"
 )
 
+var (
+	initialized  bool
+	program      uint32
+	uniTransform int32
+	indicesCache []uint32 // Reuse all the same buffer to avoid allocations.
+)
+
 type Canvas struct {
 	bucket *bucket
 
-	program uint32
-
 	vao, vbo, ebo uint32
+}
 
-	uniTransform int32
-	mtxTransform mgl32.Mat4
+func (c *Canvas) Dispose() {
+	gl.DeleteVertexArrays(1, &c.vao)
+	gl.DeleteBuffers(1, &c.vbo)
+	gl.DeleteBuffers(1, &c.ebo)
+	log.Println("[canvas] disposed")
 }
 
 func New(dmm *dmmap.Dmm) *Canvas {
+	if !initialized {
+		initShaderProgram()
+		initUniforms()
+	}
+
 	canvas := &Canvas{
 		bucket: createBucket(dmm),
 	}
 
-	canvas.initShaderProgram()
-
-	gl.UseProgram(canvas.program)
-	canvas.initUniforms()
+	gl.UseProgram(program)
 	canvas.initBuffers()
 	canvas.fillArrayBuffer()
 	gl.UseProgram(0)
@@ -38,7 +49,7 @@ func New(dmm *dmmap.Dmm) *Canvas {
 	return canvas
 }
 
-func (c *Canvas) initShaderProgram() {
+func initShaderProgram() {
 	vertexShader := `
 #version 330 core
 
@@ -74,15 +85,13 @@ void main() {
 ` + "\x00"
 
 	var err error
-	if c.program, err = platform.NewShaderProgram(vertexShader, fragmentShader); err != nil {
+	if program, err = platform.NewShaderProgram(vertexShader, fragmentShader); err != nil {
 		log.Fatal("[canvas] unable to create shader:", err)
 	}
 }
 
-func (c *Canvas) initUniforms() {
-	c.mtxTransform = mgl32.Ortho(0, 1280/4, 0, 768/4, -1, 1) // TODO: proper transform
-	c.uniTransform = gl.GetUniformLocation(c.program, gl.Str("Transform\x00"))
-	gl.UniformMatrix4fv(c.uniTransform, 1, false, &c.mtxTransform[0])
+func initUniforms() {
+	uniTransform = gl.GetUniformLocation(program, gl.Str("Transform\x00"))
 }
 
 func (c *Canvas) initBuffers() {
@@ -113,41 +122,54 @@ func (c *Canvas) initAttributes() {
 	gl.VertexAttribPointer(2, 2, gl.FLOAT, false, 8*4, gl.PtrOffset(6*4))
 }
 
-func (c *Canvas) Draw() {
+func (c *Canvas) Draw(width, height float32) {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.BlendEquation(gl.FUNC_ADD)
-	gl.UseProgram(c.program)
+	gl.UseProgram(program)
 	gl.BindVertexArray(c.vao)
 	gl.BindBuffer(gl.ARRAY_BUFFER, c.vbo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, c.ebo)
 
+	mtxTransform := mgl32.Ortho(0, width, 0, height, -1, 1)
+	gl.UniformMatrix4fv(uniTransform, 1, false, &mtxTransform[0])
+
 	gl.ActiveTexture(gl.TEXTURE0)
 
-	var activeTxt uint32
-	var indices []uint32
+	var activeTexture uint32
 
 	for _, unit := range c.bucket.Units {
-		txt := unit.sp.Texture()
+		rx1 := unit.x1
+		ry1 := unit.y1
+		rx2 := unit.x2
+		ry2 := unit.y2
 
-		if txt != activeTxt {
-			if activeTxt != 0 && len(indices) > 0 {
-				gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
-				gl.DrawElements(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
-				indices = indices[:0]
-			}
-
-			gl.BindTexture(gl.TEXTURE_2D, txt)
-			activeTxt = txt
+		if rx1 > width || ry1 > height || rx2 < 0 || ry2 < 0 {
+			continue
 		}
 
-		indices = append(indices, unit.indices()...)
+		texture := unit.sp.Texture()
+
+		if texture != activeTexture {
+			if activeTexture != 0 && len(indicesCache) > 0 {
+				gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indicesCache)*4, gl.Ptr(indicesCache), gl.STATIC_DRAW)
+				gl.DrawElements(gl.TRIANGLES, int32(len(indicesCache)), gl.UNSIGNED_INT, gl.PtrOffset(0))
+				indicesCache = indicesCache[:0]
+			}
+
+			gl.BindTexture(gl.TEXTURE_2D, texture)
+			activeTexture = texture
+		}
+
+		unit.pushIndices(&indicesCache)
 	}
 
-	if activeTxt != 0 && len(indices) > 0 {
-		gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
-		gl.DrawElements(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
+	if activeTexture != 0 && len(indicesCache) > 0 {
+		gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indicesCache)*4, gl.Ptr(indicesCache), gl.STATIC_DRAW)
+		gl.DrawElements(gl.TRIANGLES, int32(len(indicesCache)), gl.UNSIGNED_INT, gl.PtrOffset(0))
 	}
+
+	indicesCache = indicesCache[:0]
 
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 
