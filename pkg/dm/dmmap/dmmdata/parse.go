@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmvars"
 )
 
 /**

@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
 	"github.com/SpaiR/strongdmm/internal/app/render/canvas"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
 type CanvasAction interface {

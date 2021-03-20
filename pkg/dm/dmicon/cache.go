@@ -8,7 +8,7 @@ import (
 	"image/draw"
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm"
+	"github.com/SpaiR/strongdmm/pkg/dm"
 )
 
 var Cache = &IconsCache{icons: make(map[string]*Dmi)}

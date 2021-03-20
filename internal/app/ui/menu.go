@@ -3,8 +3,8 @@ package ui
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 	w "github.com/SpaiR/strongdmm/pkg/widget"
 )
 

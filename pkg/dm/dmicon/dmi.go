@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm"
+	"github.com/SpaiR/strongdmm/pkg/dm"
 	"github.com/SpaiR/strongdmm/third_party/sdmmparser"
 	"github.com/SpaiR/strongdmm/third_party/stbi"
 )

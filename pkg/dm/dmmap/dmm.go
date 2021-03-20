@@ -4,9 +4,9 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmmdata"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmmdata"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 )
 
 type Dmm struct {

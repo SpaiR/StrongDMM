@@ -5,7 +5,7 @@ import (
 
 	"github.com/sqweek/dialog"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 )
 
 func (a *app) LoadedEnvironment() *dmenv.Dme {

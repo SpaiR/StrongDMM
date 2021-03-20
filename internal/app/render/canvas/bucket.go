@@ -3,10 +3,10 @@ package canvas
 import (
 	"sort"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmicon"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/dm"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 )
 
 type bucket struct {

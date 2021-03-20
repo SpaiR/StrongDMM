@@ -3,8 +3,8 @@ package app
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmmdata"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmmdata"
 )
 
 func (a *app) openMap(path string) {

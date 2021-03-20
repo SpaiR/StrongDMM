@@ -3,9 +3,9 @@ package app
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmicon"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 )
 
 func (a *app) openEnvironment(path string) {

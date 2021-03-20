@@ -12,10 +12,10 @@ import (
 	"github.com/SpaiR/imgui-go"
 
 	"github.com/SpaiR/strongdmm/internal/app/data"
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 	"github.com/SpaiR/strongdmm/internal/app/window"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 )
 
 const (

@@ -1,6 +1,6 @@
 package dmminstance
 
-import "github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
+import "github.com/SpaiR/strongdmm/pkg/dm/dmvars"
 
 type Instance struct {
 	Id   uint64

@@ -6,8 +6,8 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmmap"
 	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 

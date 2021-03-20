@@ -1,6 +1,6 @@
 package dmmap
 
-import "github.com/SpaiR/strongdmm/internal/app/dm/dmmap/dmminstance"
+import "github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 
 type Tile struct {
 	Content []*dmminstance.Instance

@@ -3,7 +3,7 @@ package dmminstance
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmvars"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmvars"
 )
 
 var Cache = &InstanceCache{instances: make(map[uint64]*Instance)}

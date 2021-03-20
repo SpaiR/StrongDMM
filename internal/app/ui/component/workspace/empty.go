@@ -7,7 +7,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/dm/dmenv"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 
