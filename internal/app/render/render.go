@@ -1,4 +1,4 @@
-package canvas
+package render
 
 import (
 	"log"
@@ -18,26 +18,26 @@ var (
 	indicesCache []uint32 // Reuse all the same buffer to avoid allocations.
 )
 
-type Canvas struct {
+type Render struct {
 	bucket *bucket
 
 	vao, vbo, ebo uint32
 }
 
-func (c *Canvas) Dispose() {
-	gl.DeleteVertexArrays(1, &c.vao)
-	gl.DeleteBuffers(1, &c.vbo)
-	gl.DeleteBuffers(1, &c.ebo)
+func (r *Render) Dispose() {
+	gl.DeleteVertexArrays(1, &r.vao)
+	gl.DeleteBuffers(1, &r.vbo)
+	gl.DeleteBuffers(1, &r.ebo)
 	log.Println("[canvas] disposed")
 }
 
-func New(dmm *dmmap.Dmm) *Canvas {
+func New(dmm *dmmap.Dmm) *Render {
 	if !initialized {
 		initShaderProgram()
 		initUniforms()
 	}
 
-	canvas := &Canvas{
+	canvas := &Render{
 		bucket: createBucket(dmm),
 	}
 
@@ -94,24 +94,24 @@ func initUniforms() {
 	uniTransform = gl.GetUniformLocation(program, gl.Str("Transform\x00"))
 }
 
-func (c *Canvas) initBuffers() {
-	gl.GenVertexArrays(1, &c.vao)
-	gl.GenBuffers(1, &c.vbo)
-	gl.GenBuffers(1, &c.ebo)
+func (r *Render) initBuffers() {
+	gl.GenVertexArrays(1, &r.vao)
+	gl.GenBuffers(1, &r.vbo)
+	gl.GenBuffers(1, &r.ebo)
 }
 
-func (c *Canvas) fillArrayBuffer() {
-	gl.BindVertexArray(c.vao)
+func (r *Render) fillArrayBuffer() {
+	gl.BindVertexArray(r.vao)
 
-	gl.BindBuffer(gl.ARRAY_BUFFER, c.vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(c.bucket.Data)*4, gl.Ptr(c.bucket.Data), gl.STATIC_DRAW)
-	c.initAttributes()
+	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
+	gl.BufferData(gl.ARRAY_BUFFER, len(r.bucket.Data)*4, gl.Ptr(r.bucket.Data), gl.STATIC_DRAW)
+	r.initAttributes()
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 
 	gl.BindVertexArray(0)
 }
 
-func (c *Canvas) initAttributes() {
+func (*Render) initAttributes() {
 	gl.EnableVertexAttribArray(0)
 	gl.VertexAttribPointer(0, 2, gl.FLOAT, false, 8*4, gl.PtrOffset(0))
 
@@ -122,14 +122,14 @@ func (c *Canvas) initAttributes() {
 	gl.VertexAttribPointer(2, 2, gl.FLOAT, false, 8*4, gl.PtrOffset(6*4))
 }
 
-func (c *Canvas) Draw(width, height float32) {
+func (r *Render) Draw(width, height float32) {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 	gl.BlendEquation(gl.FUNC_ADD)
 	gl.UseProgram(program)
-	gl.BindVertexArray(c.vao)
-	gl.BindBuffer(gl.ARRAY_BUFFER, c.vbo)
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, c.ebo)
+	gl.BindVertexArray(r.vao)
+	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, r.ebo)
 
 	mtxTransform := mgl32.Ortho(0, width, 0, height, -1, 1)
 	gl.UniformMatrix4fv(uniTransform, 1, false, &mtxTransform[0])
@@ -138,7 +138,7 @@ func (c *Canvas) Draw(width, height float32) {
 
 	var activeTexture uint32
 
-	for _, unit := range c.bucket.Units {
+	for _, unit := range r.bucket.Units {
 		rx1 := unit.x1
 		ry1 := unit.y1
 		rx2 := unit.x2

@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/app/render/canvas"
+	"github.com/SpaiR/strongdmm/internal/app/render"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
@@ -16,7 +16,7 @@ type CanvasAction interface {
 type Canvas struct {
 	action CanvasAction
 
-	canvas *canvas.Canvas
+	render *render.Render
 
 	width, height float32
 
@@ -28,17 +28,17 @@ func (c *Canvas) Dispose() {
 	// Run later so it will be cleared in the next frame.
 	// Otherwise we will see a graphic artifact.
 	c.action.RunLater(func() {
-		c.canvas.Dispose()
+		c.render.Dispose()
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)
-		log.Println("[widget] canvas disposed")
+		log.Println("[widget] render disposed")
 	})
 }
 
 func NewCanvas(action CanvasAction, dmm *dmmap.Dmm) *Canvas {
 	c := &Canvas{
 		action: action,
-		canvas: canvas.New(dmm),
+		render: render.New(dmm),
 	}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
@@ -49,7 +49,7 @@ func (c *Canvas) Process(width, height float32) {
 	gl.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
 	gl.Viewport(0, 0, int32(width), int32(height))
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	c.canvas.Draw(width, height)
+	c.render.Draw(width, height)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 }
 

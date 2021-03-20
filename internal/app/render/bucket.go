@@ -1,4 +1,4 @@
-package canvas
+package render
 
 import (
 	"sort"
