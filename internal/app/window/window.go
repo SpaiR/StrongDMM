@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
-	"github.com/SpaiR/strongdmm/internal/platform"
+	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
 const fps int = 60

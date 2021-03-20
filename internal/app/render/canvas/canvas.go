@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 
-	"github.com/SpaiR/strongdmm/internal/platform"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
+	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
 var (
