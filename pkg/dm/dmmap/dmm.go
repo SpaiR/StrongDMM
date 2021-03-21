@@ -64,7 +64,6 @@ func newDmmPath(dme *dmenv.Dme, data *dmmdata.DmmData) DmmPath {
 		log.Println("[dmmap] unable to get relative path of the map:", data.Filepath)
 		readable = data.Filepath
 	}
-
 	return DmmPath{
 		Readable: readable,
 		Absolute: data.Filepath,

@@ -109,19 +109,19 @@ type State struct {
 	Sprites      []*Sprite
 }
 
-func (d *State) Sprite() *Sprite {
+func (d State) Sprite() *Sprite {
 	return d.SpriteV(dm.DirDefault)
 }
 
-func (d *State) SpriteV(dir int) *Sprite {
+func (d State) SpriteV(dir int) *Sprite {
 	return d.SpriteByFrame(dir, 0)
 }
 
-func (d *State) SpriteByFrame(dir, frame int) *Sprite {
+func (d State) SpriteByFrame(dir, frame int) *Sprite {
 	return d.Sprites[d.dir2idx(dir)+frame%d.Frames*d.Dirs]
 }
 
-func (d *State) dir2idx(dir int) int {
+func (d State) dir2idx(dir int) int {
 	if d.Dirs == 1 || dir < dm.DirNorth || dir > dm.DirSouthwest {
 		return 0
 	}

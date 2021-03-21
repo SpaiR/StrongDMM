@@ -8,7 +8,7 @@ type Instance struct {
 	Vars *dmvars.Variables
 }
 
-func new(id uint64, path string, vars *dmvars.Variables) *Instance {
+func newInstance(id uint64, path string, vars *dmvars.Variables) *Instance {
 	return &Instance{
 		Id:   id,
 		Path: path,

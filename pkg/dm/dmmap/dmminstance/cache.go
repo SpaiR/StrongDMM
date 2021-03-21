@@ -22,7 +22,7 @@ func (i *InstanceCache) Get(path string, vars *dmvars.Variables) *Instance {
 	if instance, ok := i.instances[id]; ok {
 		return instance
 	}
-	instance := new(id, path, vars)
+	instance := newInstance(id, path, vars)
 	i.instances[id] = instance
 	return instance
 }

@@ -3,9 +3,8 @@ package render
 import (
 	"log"
 
-	"github.com/go-gl/mathgl/mgl32"
-
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/go-gl/mathgl/mgl32"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/platform"
@@ -124,38 +123,34 @@ func (*Render) initAttributes() {
 }
 
 func (r *Render) Draw(width, height float32) {
-	gl.Enable(gl.BLEND)
-	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-	gl.BlendEquation(gl.FUNC_ADD)
-	gl.UseProgram(program)
-	gl.BindVertexArray(r.vao)
-	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, r.ebo)
+	// Initialize OpenGL state.
+	r.prepare()
+	r.configureTransform(width, height)
 
-	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.State.Scale, r.State.Scale).Mat4())
-	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.State.ShiftX, r.State.ShiftY).Mat4())
-	mtxTransform := view.Mul4(model)
-	gl.UniformMatrix4fv(uniTransform, 1, false, &mtxTransform[0])
-
+	// Here we will place our active texture.
 	gl.ActiveTexture(gl.TEXTURE0)
-
 	var activeTexture uint32
 
+	// Convert our width/height to scaled values.
 	width = width / r.State.Scale
 	height = height / r.State.Scale
 
+	// Draw all bucket units
 	for _, unit := range r.bucket.Units {
 		rx1 := unit.x1 + r.State.ShiftX
 		ry1 := unit.y1 + r.State.ShiftY
 		rx2 := unit.x2 + r.State.ShiftX
 		ry2 := unit.y2 + r.State.ShiftY
 
+		// Ignore out of bounds units.
 		if rx1 > width || ry1 > height || rx2 < 0 || ry2 < 0 {
 			continue
 		}
 
 		texture := unit.sp.Texture()
 
+		// Sort of texture batching.
+		// More effectively would be to merge all textures into one atlas and do not switch textures at all.
 		if texture != activeTexture {
 			if activeTexture != 0 && len(indicesCache) > 0 {
 				gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indicesCache)*4, gl.Ptr(indicesCache), gl.STATIC_DRAW)
@@ -167,18 +162,42 @@ func (r *Render) Draw(width, height float32) {
 			activeTexture = texture
 		}
 
+		// Push data into the same indices to avoid unnecessary allocations.
 		unit.pushIndices(&indicesCache)
 	}
 
+	// If we have something to draw - draw it.
 	if activeTexture != 0 && len(indicesCache) > 0 {
 		gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indicesCache)*4, gl.Ptr(indicesCache), gl.STATIC_DRAW)
 		gl.DrawElements(gl.TRIANGLES, int32(len(indicesCache)), gl.UNSIGNED_INT, gl.PtrOffset(0))
 	}
 
+	// Minor cleanup.
 	indicesCache = indicesCache[:0]
-
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 
+	// Major cleanup for OpenGL state.
+	r.cleanup()
+}
+
+func (r *Render) prepare() {
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+	gl.BlendEquation(gl.FUNC_ADD)
+	gl.UseProgram(program)
+	gl.BindVertexArray(r.vao)
+	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, r.ebo)
+}
+
+func (r *Render) configureTransform(width, height float32) {
+	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.State.Scale, r.State.Scale).Mat4())
+	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.State.ShiftX, r.State.ShiftY).Mat4())
+	mtxTransform := view.Mul4(model)
+	gl.UniformMatrix4fv(uniTransform, 1, false, &mtxTransform[0])
+}
+
+func (*Render) cleanup() {
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, 0)
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 	gl.BindVertexArray(0)
