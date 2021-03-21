@@ -20,14 +20,14 @@ type Map struct {
 
 	Dmm *dmmap.Dmm
 
-	canvas *widget.Canvas
+	canvas        *widget.Canvas
+	canvasControl *widget.CanvasControl
 }
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
-	ws := &Map{
-		Dmm:    dmm,
-		canvas: widget.NewCanvas(action, dmm),
-	}
+	ws := &Map{Dmm: dmm}
+	ws.canvas = widget.NewCanvas(action, dmm)
+	ws.canvasControl = widget.NewCanvasControl(ws.canvas.RenderState())
 	ws.Workspace = ws
 	return ws
 }
@@ -37,21 +37,7 @@ func (m *Map) Name() string {
 }
 
 func (m *Map) Process() {
-	size := imgui.WindowSize()
-	m.canvas.Process(size.X, size.Y)
-
-	cursor := imgui.CursorPos()
-	imgui.SetCursorPos(imgui.Vec2{})
-	imgui.Dummy(size)
-	imgui.SetCursorPos(cursor)
-
-	minPos := imgui.ItemRectMin()
-	maxPos := imgui.ItemRectMax()
-	texture := imgui.TextureID(m.canvas.Texture)
-	uvMin := imgui.Vec2{X: 0, Y: 1}
-	uvMax := imgui.Vec2{X: 1, Y: 0}
-
-	imgui.WindowDrawList().AddImageV(texture, minPos, maxPos, uvMin, uvMax, imguiext.ColorWhitePacked)
+	m.showCanvas()
 }
 
 func (m *Map) Tooltip() string {
@@ -61,4 +47,18 @@ func (m *Map) Tooltip() string {
 func (m *Map) Dispose() {
 	m.canvas.Dispose()
 	log.Println("[workspace] map workspace disposed:", m.Name())
+}
+
+func (m *Map) showCanvas() {
+	size := imgui.WindowSize()
+	pos := imgui.WindowPos()
+
+	m.canvasControl.Process(size, pos)
+	m.canvas.Process(size)
+
+	texture := imgui.TextureID(m.canvas.Texture)
+	uvMin := imgui.Vec2{X: 0, Y: 1}
+	uvMax := imgui.Vec2{X: 1, Y: 0}
+
+	imgui.WindowDrawList().AddImageV(texture, m.canvasControl.PosMin, m.canvasControl.PosMax, uvMin, uvMax, imguiext.ColorWhitePacked)
 }

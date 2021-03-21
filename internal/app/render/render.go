@@ -19,8 +19,8 @@ var (
 )
 
 type Render struct {
-	bucket *bucket
-
+	State         *State
+	bucket        *bucket
 	vao, vbo, ebo uint32
 }
 
@@ -38,6 +38,7 @@ func New(dmm *dmmap.Dmm) *Render {
 	}
 
 	canvas := &Render{
+		State:  newState(),
 		bucket: createBucket(dmm),
 	}
 
@@ -131,18 +132,23 @@ func (r *Render) Draw(width, height float32) {
 	gl.BindBuffer(gl.ARRAY_BUFFER, r.vbo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, r.ebo)
 
-	mtxTransform := mgl32.Ortho(0, width, 0, height, -1, 1)
+	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.State.Scale, r.State.Scale).Mat4())
+	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.State.ShiftX, r.State.ShiftY).Mat4())
+	mtxTransform := view.Mul4(model)
 	gl.UniformMatrix4fv(uniTransform, 1, false, &mtxTransform[0])
 
 	gl.ActiveTexture(gl.TEXTURE0)
 
 	var activeTexture uint32
 
+	width = width / r.State.Scale
+	height = height / r.State.Scale
+
 	for _, unit := range r.bucket.Units {
-		rx1 := unit.x1
-		ry1 := unit.y1
-		rx2 := unit.x2
-		ry2 := unit.y2
+		rx1 := unit.x1 + r.State.ShiftX
+		ry1 := unit.y1 + r.State.ShiftY
+		rx2 := unit.x2 + r.State.ShiftX
+		ry2 := unit.y2 + r.State.ShiftY
 
 		if rx1 > width || ry1 > height || rx2 < 0 || ry2 < 0 {
 			continue

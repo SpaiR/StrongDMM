@@ -3,6 +3,7 @@ package widget
 import (
 	"log"
 
+	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/internal/app/render"
@@ -22,6 +23,10 @@ type Canvas struct {
 
 	frameBuffer uint32
 	Texture     uint32
+}
+
+func (c Canvas) RenderState() *render.State {
+	return c.render.State
 }
 
 func (c *Canvas) Dispose() {
@@ -44,12 +49,12 @@ func NewCanvas(action CanvasAction, dmm *dmmap.Dmm) *Canvas {
 	return c
 }
 
-func (c *Canvas) Process(width, height float32) {
-	c.updateCanvasTexture(width, height)
+func (c *Canvas) Process(size imgui.Vec2) {
+	c.updateCanvasTexture(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
-	gl.Viewport(0, 0, int32(width), int32(height))
+	gl.Viewport(0, 0, int32(size.X), int32(size.Y))
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	c.render.Draw(width, height)
+	c.render.Draw(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 }
 
