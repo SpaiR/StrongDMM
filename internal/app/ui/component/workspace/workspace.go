@@ -42,5 +42,5 @@ func (*base) Tooltip() string {
 }
 
 func (*base) Border() bool {
-	return false
+	return true
 }

@@ -114,6 +114,11 @@ func (w *Window) setupImGui(config Config) {
 	io.SetIniFilename(config.IniFilename)
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
+	// TODO: Proper theming
+	imgui.StyleColorsLight()
+	imgui.CurrentStyle().SetWindowBorderSize(0)
+	imgui.CurrentStyle().SetChildBorderSize(0)
+
 	// TODO: Fonts configuration
 }
 

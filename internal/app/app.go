@@ -79,6 +79,9 @@ func (a *app) run() {
 }
 
 func (a *app) loop() {
+	// TODO: Remove
+	//imgui.ShowDemoWindow(nil)
+
 	shortcut.Process()
 
 	a.menu.Process()

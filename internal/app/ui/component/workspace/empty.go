@@ -69,10 +69,6 @@ func (e *Empty) Process() {
 	}
 }
 
-func (*Empty) Border() bool {
-	return true
-}
-
 func sanitizeMapPath(envRootDir, mapPath string) string {
 	return strings.Replace(mapPath, envRootDir, "", 1)[1:]
 }
