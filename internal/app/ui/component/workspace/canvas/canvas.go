@@ -1,4 +1,4 @@
-package widget
+package canvas
 
 import (
 	"log"
@@ -10,12 +10,12 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
-type CanvasAction interface {
+type Action interface {
 	RunLater(job func())
 }
 
 type Canvas struct {
-	action CanvasAction
+	action Action
 
 	render *render.Render
 
@@ -40,7 +40,7 @@ func (c *Canvas) Dispose() {
 	})
 }
 
-func NewCanvas(action CanvasAction, dmm *dmmap.Dmm) *Canvas {
+func New(action Action, dmm *dmmap.Dmm) *Canvas {
 	c := &Canvas{
 		action: action,
 		render: render.New(dmm),

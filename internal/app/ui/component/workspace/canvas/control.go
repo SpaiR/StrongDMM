@@ -1,4 +1,4 @@
-package widget
+package canvas
 
 import (
 	"github.com/SpaiR/imgui-go"
@@ -9,7 +9,7 @@ import (
 
 const scaleFactor float32 = 1.5
 
-type CanvasControl struct {
+type Control struct {
 	State *render.State
 
 	PosMin imgui.Vec2
@@ -20,19 +20,19 @@ type CanvasControl struct {
 	dragging  bool
 }
 
-func NewCanvasControl(state *render.State) *CanvasControl {
-	return &CanvasControl{
+func NewControl(state *render.State) *Control {
+	return &Control{
 		State: state,
 	}
 }
 
-func (c *CanvasControl) Process(size, pos imgui.Vec2) {
+func (c *Control) Process(size, pos imgui.Vec2) {
 	c.showControlArea(size)
 	c.processMouseMove()
 	c.processMouseScroll(size, pos)
 }
 
-func (c *CanvasControl) showControlArea(size imgui.Vec2) {
+func (c *Control) showControlArea(size imgui.Vec2) {
 	cursor := imgui.CursorPos()
 	imgui.SetCursorPos(imgui.Vec2{})
 	imgui.Dummy(size)
@@ -46,7 +46,7 @@ func (c *CanvasControl) showControlArea(size imgui.Vec2) {
 	c.PosMax = imgui.ItemRectMax()
 }
 
-func (c *CanvasControl) processMouseMove() {
+func (c *Control) processMouseMove() {
 	if !c.active && !c.dragging || c.activated {
 		return
 	}
@@ -60,7 +60,7 @@ func (c *CanvasControl) processMouseMove() {
 	}
 }
 
-func (c *CanvasControl) processMouseScroll(size, pos imgui.Vec2) {
+func (c *Control) processMouseScroll(size, pos imgui.Vec2) {
 	if !c.active {
 		return
 	}

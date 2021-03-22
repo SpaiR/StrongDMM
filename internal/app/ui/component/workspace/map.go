@@ -6,13 +6,13 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 
-	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace/widget"
+	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace/canvas"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 
 type MapAction interface {
-	widget.CanvasAction
+	canvas.Action
 	PointSize() float32
 }
 
@@ -22,10 +22,10 @@ type Map struct {
 
 	Dmm *dmmap.Dmm
 
-	canvasTools   *widget.CanvasTools
-	canvas        *widget.Canvas
-	canvasControl *widget.CanvasControl
-	canvasStatus  *widget.CanvasStatus
+	canvasTools   *canvas.Tools
+	canvas        *canvas.Canvas
+	canvasControl *canvas.Control
+	canvasStatus  *canvas.Status
 
 	canvasBarHeight float32
 }
@@ -33,10 +33,10 @@ type Map struct {
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws := &Map{Dmm: dmm}
 	ws.action = action
-	ws.canvasTools = widget.NewCanvasTools()
-	ws.canvas = widget.NewCanvas(action, dmm)
-	ws.canvasControl = widget.NewCanvasControl(ws.canvas.RenderState())
-	ws.canvasStatus = widget.NewCanvasStatus()
+	ws.canvasTools = canvas.NewTools()
+	ws.canvas = canvas.New(action, dmm)
+	ws.canvasControl = canvas.NewControl(ws.canvas.RenderState())
+	ws.canvasStatus = canvas.NewStatus()
 	ws.Workspace = ws
 	return ws
 }
