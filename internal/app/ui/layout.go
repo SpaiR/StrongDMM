@@ -50,7 +50,7 @@ func (l *Layout) showCenterNode() {
 
 func (l *Layout) showRightNode() {
 	wrapNode("rightNode", int(l.rightNodeId), func() {
-		imgui.Text("placeholder")
+		imgui.Text("Placeholder")
 	})
 }
 
