@@ -9,7 +9,7 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace/canvas"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
-	"github.com/SpaiR/strongdmm/pkg/imguiext/pane"
+	"github.com/SpaiR/strongdmm/pkg/imguiext/layout"
 )
 
 type MapAction interface {
@@ -28,7 +28,7 @@ type Map struct {
 	canvasControl *canvas.Control
 	canvas        *canvas.Canvas
 
-	bp *pane.Border
+	bp *layout.BorderPane
 }
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
@@ -38,7 +38,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.canvas = canvas.New(action, dmm)
 	ws.canvasControl = canvas.NewControl(ws.canvas.RenderState())
 	ws.canvasStatus = canvas.NewStatus()
-	ws.bp = pane.NewBorder(ws.createLayout())
+	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.Workspace = ws
 	return ws
 }
@@ -64,14 +64,14 @@ func (m *Map) Border() bool {
 	return false
 }
 
-func (m *Map) createLayout() pane.BorderLayout {
-	return pane.BorderLayout{
-		Top: pane.BorderPartLayout{Content: m.canvasTools.Process},
-		Center: pane.BorderPartLayout{
+func (m *Map) createLayout() layout.BorderPaneLayout {
+	return layout.BorderPaneLayout{
+		Top: layout.BorderPaneAreaLayout{Content: m.canvasTools.Process},
+		Center: layout.BorderPaneAreaLayout{
 			Content:        m.showCanvas,
 			PaddingDisable: true,
 		},
-		Bottom: pane.BorderPartLayout{Content: m.canvasStatus.Process},
+		Bottom: layout.BorderPaneAreaLayout{Content: m.canvasStatus.Process},
 	}
 }
 

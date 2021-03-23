@@ -1,4 +1,4 @@
-package pane
+package layout
 
 import (
 	"fmt"
@@ -10,21 +10,21 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 
-type BorderLayout struct {
-	Top    BorderPartLayout
-	Left   BorderPartLayout
-	Center BorderPartLayout
-	Right  BorderPartLayout
-	Bottom BorderPartLayout
+type BorderPaneLayout struct {
+	Top    BorderPaneAreaLayout
+	Left   BorderPaneAreaLayout
+	Center BorderPaneAreaLayout
+	Right  BorderPaneAreaLayout
+	Bottom BorderPaneAreaLayout
 }
 
-type BorderPartLayout struct {
+type BorderPaneAreaLayout struct {
 	Content        func()
 	PaddingDisable bool
 }
 
-type Border struct {
-	l BorderLayout
+type BorderPane struct {
+	l BorderPaneLayout
 
 	topId    string
 	leftId   string
@@ -38,9 +38,9 @@ type Border struct {
 	bottomSize imgui.Vec2
 }
 
-func NewBorder(l BorderLayout) *Border {
+func NewBorderPane(l BorderPaneLayout) *BorderPane {
 	id := rand.Int() ^ time.Now().Nanosecond()
-	return &Border{
+	return &BorderPane{
 		l: l,
 
 		topId:    fmt.Sprint("border_pane_top_", id),
@@ -51,7 +51,7 @@ func NewBorder(l BorderLayout) *Border {
 	}
 }
 
-func (b *Border) Draw() {
+func (b *BorderPane) Draw() {
 	if b.l.Top.Content != nil {
 		phantomWindow(b.topId, func() {
 			b.l.Top.Content()
@@ -135,29 +135,29 @@ func (b *Border) Draw() {
 	imgui.PopStyleVar()
 }
 
-func (b *Border) calcTopSize(windowSize imgui.Vec2) imgui.Vec2 {
+func (b *BorderPane) calcTopSize(windowSize imgui.Vec2) imgui.Vec2 {
 	if b.l.Center.Content == nil && b.l.Bottom.Content == nil {
 		return windowSize
 	}
 	return imgui.Vec2{X: windowSize.X, Y: b.topSize.Y}
 }
 
-func (b *Border) calcLeftSize(windowSize imgui.Vec2) imgui.Vec2 {
+func (b *BorderPane) calcLeftSize(windowSize imgui.Vec2) imgui.Vec2 {
 	return imgui.Vec2{X: b.leftSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 }
 
-func (b *Border) calcCenterSize(windowSize imgui.Vec2) imgui.Vec2 {
+func (b *BorderPane) calcCenterSize(windowSize imgui.Vec2) imgui.Vec2 {
 	return imgui.Vec2{X: windowSize.X - b.leftSize.X - b.rightSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 }
 
-func (b *Border) calcRightSize(windowSize imgui.Vec2) imgui.Vec2 {
+func (b *BorderPane) calcRightSize(windowSize imgui.Vec2) imgui.Vec2 {
 	if b.l.Center.Content == nil {
 		return imgui.Vec2{X: windowSize.X - b.leftSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 	}
 	return imgui.Vec2{X: b.rightSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 }
 
-func (b *Border) calcBottomSize(windowSize imgui.Vec2) imgui.Vec2 {
+func (b *BorderPane) calcBottomSize(windowSize imgui.Vec2) imgui.Vec2 {
 	if b.l.Center.Content == nil {
 		return imgui.Vec2{X: windowSize.X, Y: windowSize.Y - b.topSize.Y}
 	}
@@ -176,17 +176,4 @@ func drawContent(id string, size imgui.Vec2, border bool, content func()) {
 	}
 	content()
 	imgui.EndChild()
-}
-
-// phantomWindow is used to calculate content size.
-// The window itself is fully unavailable for user: it's transparent, hidden under the docking layout and its content is disabled.
-// Yes, it's the hack, but it's the only way to calculate content size to do a proper layout.
-func phantomWindow(id string, content func()) {
-	imgui.PushItemFlag(imgui.ItemFlagsDisabled, true)
-	imgui.PushStyleVarFloat(imgui.StyleVarAlpha, 0)
-	imgui.BeginV(fmt.Sprint("_phantom_", id), nil, imgui.WindowFlagsNoBringToFrontOnFocus|imgui.WindowFlagsNoMove|imgui.WindowFlagsNoDecoration)
-	content()
-	imgui.End()
-	imgui.PopStyleVar()
-	imgui.PopItemFlag()
 }

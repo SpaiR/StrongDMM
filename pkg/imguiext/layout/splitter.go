@@ -1,4 +1,4 @@
-package splitter
+package layout
 
 import (
 	"fmt"
@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	resetSize = -1
-	thickness = 2
-	minSize   = 32
+	splitterResetSize = -1
+	splitterThickness = 2
+	splitterMinSize   = 32
 )
 
 type Splitter struct {
@@ -26,14 +26,14 @@ type Splitter struct {
 	prevWindowSize imgui.Vec2
 }
 
-func New(id string, pointSize *float32, splitRatio float32, splitVertically, border bool) *Splitter {
+func NewSplitter(id string, pointSize *float32, splitRatio float32, splitVertically, border bool) *Splitter {
 	return &Splitter{
 		id: id,
 
 		pointSize: pointSize,
 
-		sz1: resetSize,
-		sz2: resetSize,
+		sz1: splitterResetSize,
+		sz2: splitterResetSize,
 
 		splitRatio:      splitRatio,
 		splitVertically: splitVertically,
@@ -46,19 +46,19 @@ func (s *Splitter) Draw(side1, side2 func()) {
 	windowSize := imgui.WindowSize()
 
 	if s.prevWindowSize != windowSize {
-		s.sz1 = resetSize
-		s.sz2 = resetSize
+		s.sz1 = splitterResetSize
+		s.sz2 = splitterResetSize
 		s.prevWindowSize = windowSize
 	}
 
-	if s.sz1 == resetSize {
+	if s.sz1 == splitterResetSize {
 		if s.splitVertically {
 			s.sz1 = windowSize.X*s.splitRatio - windowPadding().X
 		} else {
 			s.sz1 = windowSize.Y*s.splitRatio - windowPadding().Y
 		}
 	}
-	if s.sz2 == resetSize {
+	if s.sz2 == splitterResetSize {
 		if s.splitVertically {
 			s.sz2 = windowSize.X - s.sz1 - windowPadding().X
 		} else {
@@ -110,7 +110,7 @@ func (s *Splitter) splitter() bool {
 	windowPos := imgui.WindowPos()
 	cursorPos := imgui.CursorPos()
 
-	thickness := thickness * (*s.pointSize)
+	thickness := splitterThickness * (*s.pointSize)
 
 	var itemSize imgui.Vec2
 	if s.splitVertically {
@@ -142,9 +142,5 @@ func (s *Splitter) splitter() bool {
 		axis = imgui.AxisY
 	}
 
-	return imgui.SplitterBehavior(bbMin, bbMax, imgui.GetID(s.id), axis, &s.sz1, &s.sz2, minSize, minSize)
-}
-
-func windowPadding() imgui.Vec2 {
-	return imgui.CurrentStyle().WindowPadding()
+	return imgui.SplitterBehavior(bbMin, bbMax, imgui.GetID(s.id), axis, &s.sz1, &s.sz2, splitterMinSize, splitterMinSize)
 }
