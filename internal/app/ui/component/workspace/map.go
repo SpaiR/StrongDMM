@@ -66,11 +66,12 @@ func (m *Map) Border() bool {
 
 func (m *Map) createLayout() pane.BorderLayout {
 	return pane.BorderLayout{
-		Top:    m.canvasTools.Process,
-		Center: m.showCanvas,
-		Bottom: m.canvasStatus.Process,
-
-		CenterPaddingDisable: true,
+		Top: pane.BorderPartLayout{Content: m.canvasTools.Process},
+		Center: pane.BorderPartLayout{
+			Content:        m.showCanvas,
+			PaddingDisable: true,
+		},
+		Bottom: pane.BorderPartLayout{Content: m.canvasStatus.Process},
 	}
 }
 

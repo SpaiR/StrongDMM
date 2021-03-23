@@ -11,17 +11,16 @@ import (
 )
 
 type BorderLayout struct {
-	Top    func()
-	Left   func()
-	Center func()
-	Right  func()
-	Bottom func()
+	Top    BorderPartLayout
+	Left   BorderPartLayout
+	Center BorderPartLayout
+	Right  BorderPartLayout
+	Bottom BorderPartLayout
+}
 
-	TopPaddingDisable    bool
-	LeftPaddingDisable   bool
-	CenterPaddingDisable bool
-	RightPaddingDisable  bool
-	BottomPaddingDisable bool
+type BorderPartLayout struct {
+	Content        func()
+	PaddingDisable bool
 }
 
 type Border struct {
@@ -53,30 +52,30 @@ func NewBorder(l BorderLayout) *Border {
 }
 
 func (b *Border) Draw() {
-	if b.l.Top != nil {
-		fakeWindow(b.topId, func() {
-			b.l.Top()
+	if b.l.Top.Content != nil {
+		phantomWindow(b.topId, func() {
+			b.l.Top.Content()
 			b.topSize = imgui.WindowSize()
 		})
 	}
 
-	if b.l.Left != nil {
-		fakeWindow(b.leftId, func() {
-			b.l.Left()
+	if b.l.Left.Content != nil {
+		phantomWindow(b.leftId, func() {
+			b.l.Left.Content()
 			b.leftSize = imgui.WindowSize()
 		})
 	}
 
-	if b.l.Right != nil {
-		fakeWindow(b.rightId, func() {
-			b.l.Right()
+	if b.l.Right.Content != nil {
+		phantomWindow(b.rightId, func() {
+			b.l.Right.Content()
 			b.rightSize = imgui.WindowSize()
 		})
 	}
 
-	if b.l.Bottom != nil {
-		fakeWindow(b.bottomId, func() {
-			b.l.Bottom()
+	if b.l.Bottom.Content != nil {
+		phantomWindow(b.bottomId, func() {
+			b.l.Bottom.Content()
 			b.bottomSize = imgui.WindowSize()
 		})
 	}
@@ -85,50 +84,50 @@ func (b *Border) Draw() {
 	initialItemSpacing := imgui.CurrentStyle().ItemSpacing()
 	imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
 
-	if b.l.Top != nil {
-		window(fmt.Sprint(b.topId), b.calcTopSize(windowSize), !b.l.TopPaddingDisable, func() {
+	if b.l.Top.Content != nil {
+		drawContent(fmt.Sprint(b.topId), b.calcTopSize(windowSize), !b.l.Top.PaddingDisable, func() {
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, initialItemSpacing)
-			b.l.Top()
+			b.l.Top.Content()
 			imgui.PopStyleVar()
 		})
 	}
 
-	if b.l.Left != nil {
-		window(fmt.Sprint(b.leftId), b.calcLeftSize(windowSize), !b.l.LeftPaddingDisable, func() {
+	if b.l.Left.Content != nil {
+		drawContent(fmt.Sprint(b.leftId), b.calcLeftSize(windowSize), !b.l.Left.PaddingDisable, func() {
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, initialItemSpacing)
-			b.l.Left()
+			b.l.Left.Content()
 			imgui.PopStyleVar()
 		})
 
-		if b.l.Center != nil || b.l.Right != nil {
+		if b.l.Center.Content != nil || b.l.Right.Content != nil {
 			imgui.SameLine()
 		}
 	}
 
-	if b.l.Center != nil {
-		window(b.centerId, b.calcCenterSize(windowSize), !b.l.CenterPaddingDisable, func() {
+	if b.l.Center.Content != nil {
+		drawContent(b.centerId, b.calcCenterSize(windowSize), !b.l.Center.PaddingDisable, func() {
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, initialItemSpacing)
-			b.l.Center()
+			b.l.Center.Content()
 			imgui.PopStyleVar()
 		})
 	}
 
-	if b.l.Right != nil {
-		if b.l.Center != nil {
+	if b.l.Right.Content != nil {
+		if b.l.Center.Content != nil {
 			imgui.SameLine()
 		}
 
-		window(fmt.Sprint(b.rightId), b.calcRightSize(windowSize), !b.l.RightPaddingDisable, func() {
+		drawContent(fmt.Sprint(b.rightId), b.calcRightSize(windowSize), !b.l.Right.PaddingDisable, func() {
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, initialItemSpacing)
-			b.l.Right()
+			b.l.Right.Content()
 			imgui.PopStyleVar()
 		})
 	}
 
-	if b.l.Bottom != nil {
-		window(b.bottomId, b.calcBottomSize(windowSize), !b.l.BottomPaddingDisable, func() {
+	if b.l.Bottom.Content != nil {
+		drawContent(b.bottomId, b.calcBottomSize(windowSize), !b.l.Bottom.PaddingDisable, func() {
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, initialItemSpacing)
-			b.l.Bottom()
+			b.l.Bottom.Content()
 			imgui.PopStyleVar()
 		})
 	}
@@ -137,7 +136,7 @@ func (b *Border) Draw() {
 }
 
 func (b *Border) calcTopSize(windowSize imgui.Vec2) imgui.Vec2 {
-	if b.l.Center == nil && b.l.Bottom == nil {
+	if b.l.Center.Content == nil && b.l.Bottom.Content == nil {
 		return windowSize
 	}
 	return imgui.Vec2{X: windowSize.X, Y: b.topSize.Y}
@@ -152,20 +151,20 @@ func (b *Border) calcCenterSize(windowSize imgui.Vec2) imgui.Vec2 {
 }
 
 func (b *Border) calcRightSize(windowSize imgui.Vec2) imgui.Vec2 {
-	if b.l.Center == nil {
+	if b.l.Center.Content == nil {
 		return imgui.Vec2{X: windowSize.X - b.leftSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 	}
 	return imgui.Vec2{X: b.rightSize.X, Y: windowSize.Y - b.topSize.Y - b.bottomSize.Y}
 }
 
 func (b *Border) calcBottomSize(windowSize imgui.Vec2) imgui.Vec2 {
-	if b.l.Center == nil {
+	if b.l.Center.Content == nil {
 		return imgui.Vec2{X: windowSize.X, Y: windowSize.Y - b.topSize.Y}
 	}
 	return imgui.Vec2{X: windowSize.X, Y: b.bottomSize.Y}
 }
 
-func window(id string, size imgui.Vec2, border bool, content func()) {
+func drawContent(id string, size imgui.Vec2, border bool, content func()) {
 	if border {
 		imgui.PushStyleColor(imgui.StyleColorBorder, imguiext.ColorZero) // make the border invisible
 		imgui.PushStyleVarFloat(imgui.StyleVarChildBorderSize, 1)
@@ -179,13 +178,15 @@ func window(id string, size imgui.Vec2, border bool, content func()) {
 	imgui.EndChild()
 }
 
-// fakeWindow is used to calculate the content of parts size of which we don't know.
-// The window itself is hidden under the docking layout and its content is disabled.
-// Yes, it's a hack, but imgui is doesn't provide an option to calculate content size manually.
-func fakeWindow(id string, content func()) {
-	imgui.BeginV(fmt.Sprint("fake_", id), nil, imgui.WindowFlagsNoBringToFrontOnFocus|imgui.WindowFlagsNoMove|imgui.WindowFlagsNoTitleBar|imgui.WindowFlagsAlwaysAutoResize)
+// phantomWindow is used to calculate content size.
+// The window itself is fully unavailable for user: it's transparent, hidden under the docking layout and its content is disabled.
+// Yes, it's the hack, but it's the only way to calculate content size to do a proper layout.
+func phantomWindow(id string, content func()) {
 	imgui.PushItemFlag(imgui.ItemFlagsDisabled, true)
+	imgui.PushStyleVarFloat(imgui.StyleVarAlpha, 0)
+	imgui.BeginV(fmt.Sprint("_phantom_", id), nil, imgui.WindowFlagsNoBringToFrontOnFocus|imgui.WindowFlagsNoMove|imgui.WindowFlagsNoDecoration)
 	content()
-	imgui.PopItemFlag()
 	imgui.End()
+	imgui.PopStyleVar()
+	imgui.PopItemFlag()
 }
