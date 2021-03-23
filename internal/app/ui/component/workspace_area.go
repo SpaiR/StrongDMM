@@ -103,6 +103,9 @@ func (w *WorkspaceArea) closeAllMaps() {
 			w.closeWorkspace(ws)
 		}
 	}
+	if w.findEmptyWorkspaceIdx() == -1 {
+		w.addEmptyWorkspace()
+	}
 }
 
 func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Map, bool) {
