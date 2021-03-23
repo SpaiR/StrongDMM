@@ -8,7 +8,6 @@ import (
 	"github.com/SpaiR/imgui-go"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
-	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 
 type EmptyAction interface {
@@ -48,6 +47,7 @@ func (e *Empty) Process() {
 			e.action.DoOpenEnvironment()
 		}
 		imgui.Separator()
+		imgui.Text("Recent Environments:")
 		for _, envPath := range e.action.RecentEnvironments() {
 			if imgui.SmallButton(envPath) {
 				e.action.DoOpenEnvironmentByPath(envPath)
@@ -60,7 +60,7 @@ func (e *Empty) Process() {
 			e.action.DoOpenMap()
 		}
 		imgui.Separator()
-		imgui.TextColored(imguiext.ColorGold, "Recent Maps:")
+		imgui.Text("Recent Maps:")
 		for _, mapPath := range e.action.RecentMapsByLoadedEnvironment() {
 			if imgui.SmallButton(sanitizeMapPath(e.action.LoadedEnvironment().RootDir, mapPath)) {
 				e.action.DoOpenMapByPath(mapPath)

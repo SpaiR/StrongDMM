@@ -38,7 +38,9 @@ func (w *WorkspaceArea) Process() {
 				flags |= imgui.TabItemFlagsSetSelected
 			}
 
+			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
 			if imgui.BeginTabItemV(ws.Name(), &open, flags) {
+				imgui.PopStyleVar()
 				if ws.HasTooltip() {
 					imguiext.SetItemHoveredTooltip(ws.Tooltip())
 				}
@@ -53,6 +55,7 @@ func (w *WorkspaceArea) Process() {
 				imgui.EndChild()
 				imgui.EndTabItem()
 			} else {
+				imgui.PopStyleVar()
 				if ws.HasTooltip() {
 					imguiext.SetItemHoveredTooltip(ws.Tooltip())
 				}

@@ -53,6 +53,7 @@ func (c *Canvas) Process(size imgui.Vec2) {
 	c.updateCanvasTexture(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
 	gl.Viewport(0, 0, int32(size.X), int32(size.Y))
+	gl.ClearColor(.25, .25, .5, 1)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	c.render.Draw(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)

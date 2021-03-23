@@ -10,5 +10,8 @@ func NewTools() *Tools {
 }
 
 func (t *Tools) Process() {
+	imgui.AlignTextToFramePadding()
 	imgui.Text("Tools")
+	imgui.SameLine()
+	imgui.Button("Test")
 }

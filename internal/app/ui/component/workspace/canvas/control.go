@@ -26,10 +26,10 @@ func NewControl(state *render.State) *Control {
 	}
 }
 
-func (c *Control) Process(size, pos imgui.Vec2) {
+func (c *Control) Process(size imgui.Vec2) {
 	c.showControlArea(size)
 	c.processMouseMove()
-	c.processMouseScroll(size, pos)
+	c.processMouseScroll(size)
 }
 
 func (c *Control) showControlArea(size imgui.Vec2) {
@@ -60,7 +60,7 @@ func (c *Control) processMouseMove() {
 	}
 }
 
-func (c *Control) processMouseScroll(size, pos imgui.Vec2) {
+func (c *Control) processMouseScroll(size imgui.Vec2) {
 	if !c.active {
 		return
 	}
@@ -78,7 +78,7 @@ func (c *Control) processMouseScroll(size, pos imgui.Vec2) {
 	}
 
 	mousePos := imgui.MousePos()
-	localPos := mousePos.Minus(pos)
+	localPos := mousePos.Minus(c.PosMin)
 
 	offsetX := localPos.X / scale / 2
 	offsetY := (size.Y - localPos.Y) / scale / 2

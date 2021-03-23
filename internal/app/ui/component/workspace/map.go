@@ -9,6 +9,7 @@ import (
 	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace/canvas"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
+	"github.com/SpaiR/strongdmm/pkg/imguiext/pane"
 )
 
 type MapAction interface {
@@ -23,11 +24,11 @@ type Map struct {
 	Dmm *dmmap.Dmm
 
 	canvasTools   *canvas.Tools
-	canvas        *canvas.Canvas
-	canvasControl *canvas.Control
 	canvasStatus  *canvas.Status
+	canvasControl *canvas.Control
+	canvas        *canvas.Canvas
 
-	canvasBarHeight float32
+	bp *pane.Border
 }
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
@@ -37,6 +38,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.canvas = canvas.New(action, dmm)
 	ws.canvasControl = canvas.NewControl(ws.canvas.RenderState())
 	ws.canvasStatus = canvas.NewStatus()
+	ws.bp = pane.NewBorder(ws.createLayout())
 	ws.Workspace = ws
 	return ws
 }
@@ -46,12 +48,7 @@ func (m *Map) Name() string {
 }
 
 func (m *Map) Process() {
-	size := imgui.WindowSize()
-	pos := imgui.WindowPos()
-
-	m.showCanvasToolBar(m.calcCanvasToolBarSize(size), m.calcCanvasToolBarPos(pos))
-	m.showCanvas(m.calcCanvasSize(size), m.calcCanvasPos(pos))
-	m.showCanvasStatusBar(m.calcCanvasStatusBarSize(size), m.calcCanvasStatusBarPos(size))
+	m.bp.Draw()
 }
 
 func (m *Map) Tooltip() string {
@@ -67,18 +64,20 @@ func (m *Map) Border() bool {
 	return false
 }
 
-func (m *Map) showCanvasToolBar(size, pos imgui.Vec2) {
-	wrapBar("Tool Bar", pos, size, func() {
-		m.canvasTools.Process()
+func (m *Map) createLayout() pane.BorderLayout {
+	return pane.BorderLayout{
+		Top:    m.canvasTools.Process,
+		Center: m.showCanvas,
+		Bottom: m.canvasStatus.Process,
 
-		// Tools bar is always at the top and its content is auto-adjusted.
-		// Thus we can use it as a ref size.
-		m.canvasBarHeight = imgui.WindowHeight()
-	})
+		CenterPaddingDisable: true,
+	}
 }
 
-func (m *Map) showCanvas(size, pos imgui.Vec2) {
-	m.canvasControl.Process(size, pos)
+func (m *Map) showCanvas() {
+	size := imgui.WindowSize()
+
+	m.canvasControl.Process(size)
 	m.canvas.Process(size)
 
 	texture := imgui.TextureID(m.canvas.Texture)
@@ -86,40 +85,4 @@ func (m *Map) showCanvas(size, pos imgui.Vec2) {
 	uvMax := imgui.Vec2{X: 1, Y: 0}
 
 	imgui.WindowDrawList().AddImageV(texture, m.canvasControl.PosMin, m.canvasControl.PosMax, uvMin, uvMax, imguiext.ColorWhitePacked)
-}
-
-func (m *Map) showCanvasStatusBar(size, pos imgui.Vec2) {
-	wrapBar("Status Bar", pos, size, m.canvasStatus.Process)
-}
-
-func wrapBar(name string, pos, size imgui.Vec2, content func()) {
-	imgui.SetNextWindowPos(pos)
-	imgui.SetNextWindowSize(size)
-	imgui.BeginV(name, nil, imgui.WindowFlagsNoDecoration|imgui.WindowFlagsNoMove)
-	content()
-	imgui.End()
-}
-
-func (m *Map) calcCanvasToolBarSize(size imgui.Vec2) imgui.Vec2 {
-	return imgui.Vec2{X: size.X, Y: 0}
-}
-
-func (m *Map) calcCanvasToolBarPos(pos imgui.Vec2) imgui.Vec2 {
-	return imgui.Vec2{X: pos.X, Y: pos.Y - imgui.CurrentStyle().ItemSpacing().Y}
-}
-
-func (m *Map) calcCanvasSize(size imgui.Vec2) imgui.Vec2 {
-	return size.Minus(imgui.Vec2{Y: m.canvasBarHeight - imgui.CurrentStyle().ItemSpacing().Y})
-}
-
-func (m *Map) calcCanvasPos(pos imgui.Vec2) imgui.Vec2 {
-	return pos.Plus(imgui.Vec2{Y: m.canvasBarHeight})
-}
-
-func (m *Map) calcCanvasStatusBarSize(size imgui.Vec2) imgui.Vec2 {
-	return imgui.Vec2{X: size.X, Y: 0}
-}
-
-func (m *Map) calcCanvasStatusBarPos(size imgui.Vec2) imgui.Vec2 {
-	return m.canvasControl.PosMax.Minus(imgui.Vec2{X: size.X})
 }

@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	ColorZero = imgui.Vec4{}
 	ColorGold = intHsl2col(51, 100, 50)
 
 	ColorWhitePacked = imgui.Packed(color.RGBA{R: 255, G: 255, B: 255, A: 255})
