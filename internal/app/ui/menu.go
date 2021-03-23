@@ -5,7 +5,7 @@ import (
 
 	"github.com/SpaiR/strongdmm/internal/app/ui/shortcut"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
-	w "github.com/SpaiR/strongdmm/pkg/widget"
+	w "github.com/SpaiR/strongdmm/pkg/imguiext/widget"
 )
 
 type menuAction interface {

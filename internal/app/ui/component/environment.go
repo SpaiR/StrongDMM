@@ -9,7 +9,7 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
-	w "github.com/SpaiR/strongdmm/pkg/widget"
+	w "github.com/SpaiR/strongdmm/pkg/imguiext/widget"
 )
 
 type EnvironmentAction interface {
