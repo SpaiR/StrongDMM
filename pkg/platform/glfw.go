@@ -14,6 +14,8 @@ var (
 	mouseJustPressed [3]bool
 
 	deltaTime float64
+
+	MouseChangeCallback func(x, y uint)
 )
 
 type clipboard struct {
@@ -88,6 +90,7 @@ func InitImGuiGLFW() {
 	window.SetScrollCallback(mouseScrollCallback)
 	window.SetKeyCallback(keyCallback)
 	window.SetCharCallback(charCallback)
+	window.SetCursorPosCallback(cursorPosCallback)
 
 	log.Println("[platform] callbacks initialized")
 }
@@ -187,4 +190,10 @@ func keyCallback(_ *glfw.Window, key glfw.Key, _ int, action glfw.Action, _ glfw
 
 func charCallback(_ *glfw.Window, char rune) {
 	imgui.CurrentIO().AddInputCharacters(string(char))
+}
+
+func cursorPosCallback(_ *glfw.Window, posX, posY float64) {
+	if MouseChangeCallback != nil {
+		MouseChangeCallback(uint(posX), uint(posY))
+	}
 }

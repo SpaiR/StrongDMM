@@ -1,8 +1,13 @@
 package canvas
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"fmt"
+
+	"github.com/SpaiR/imgui-go"
+)
 
 type Status struct {
+	coordX, coordY int
 }
 
 func NewStatus() *Status {
@@ -10,5 +15,13 @@ func NewStatus() *Status {
 }
 
 func (s *Status) Process() {
-	imgui.Text("Status")
+	if s.coordX == -1 || s.coordY == -1 {
+		imgui.Text("[out of bounds]")
+	} else {
+		imgui.Text(fmt.Sprintf("[x:%03d y:%03d]", s.coordX, s.coordY))
+	}
+}
+
+func (s *Status) UpdateCoords(coordX, coordY int) {
+	s.coordX, s.coordY = coordX, coordY
 }

@@ -17,6 +17,9 @@ const fps int = 60
 type Window struct {
 	Handle *glfw.Window
 
+	mouseChangeCallbackId int
+	mouseChangeCallbacks  map[int]func(uint, uint)
+
 	PointSize float32
 	laterJobs []func()
 }
@@ -30,7 +33,8 @@ func New(config Config) *Window {
 	log.Println("[window] config:", config)
 
 	w := Window{
-		PointSize: 1.0,
+		PointSize:            1.0,
+		mouseChangeCallbacks: make(map[int]func(uint, uint)),
 	}
 
 	log.Println("[window] setting up glfw")
@@ -42,6 +46,7 @@ func New(config Config) *Window {
 	log.Println("[window] initializing platform")
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
+	platform.MouseChangeCallback = w.mouseChangeCallback
 
 	return &w
 }
@@ -63,6 +68,20 @@ func (w *Window) Dispose() {
 
 	w.disposeImGui()
 	w.disposeGlfw()
+}
+
+func (w *Window) AddMouseChangeCallback(cb func(uint, uint)) int {
+	id := w.mouseChangeCallbackId
+	w.mouseChangeCallbacks[id] = cb
+	w.mouseChangeCallbackId++
+	log.Println("[window] mouse change callback added: ", id)
+	return id
+}
+
+func (w *Window) RemoveMouseChangeCallback(id int) {
+	delete(w.mouseChangeCallbacks, id)
+	log.Println("[window] mouse change callback deleted: ", id)
+
 }
 
 func (w *Window) RunLater(job func()) {
@@ -152,4 +171,10 @@ func (*Window) disposeImGui() {
 func (w *Window) disposeGlfw() {
 	w.Handle.Destroy()
 	glfw.Terminate()
+}
+
+func (w *Window) mouseChangeCallback(x, y uint) {
+	for _, cb := range w.mouseChangeCallbacks {
+		cb(x, y)
+	}
 }

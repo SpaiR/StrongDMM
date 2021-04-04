@@ -14,7 +14,9 @@ import (
 
 type MapAction interface {
 	canvas.Action
-	PointSize() float32
+
+	AddMouseChangeCallback(cb func(uint, uint)) int
+	RemoveMouseChangeCallback(id int)
 }
 
 type Map struct {
@@ -29,17 +31,20 @@ type Map struct {
 	canvas        *canvas.Canvas
 
 	bp *layout.BorderPane
+
+	mouseChangeCbId int
 }
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws := &Map{Dmm: dmm}
+	ws.Workspace = ws
 	ws.action = action
 	ws.canvasTools = canvas.NewTools()
 	ws.canvas = canvas.New(action, dmm)
 	ws.canvasControl = canvas.NewControl(ws.canvas.RenderState())
 	ws.canvasStatus = canvas.NewStatus()
 	ws.bp = layout.NewBorderPane(ws.createLayout())
-	ws.Workspace = ws
+	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
 	return ws
 }
 
@@ -57,6 +62,7 @@ func (m *Map) Tooltip() string {
 
 func (m *Map) Dispose() {
 	m.canvas.Dispose()
+	m.action.RemoveMouseChangeCallback(m.mouseChangeCbId)
 	log.Println("[workspace] map workspace disposed:", m.Name())
 }
 
@@ -86,4 +92,38 @@ func (m *Map) showCanvas() {
 	uvMax := imgui.Vec2{X: 1, Y: 0}
 
 	imgui.WindowDrawList().AddImageV(texture, m.canvasControl.PosMin, m.canvasControl.PosMax, uvMin, uvMax, imguiext.ColorWhitePacked)
+}
+
+func (m *Map) mouseChangeCallback(x, y uint) {
+	m.updateMousePosition(int(x), int(y))
+}
+
+func (m *Map) updateMousePosition(mouseX, mouseY int) {
+	// Mouse position relative to canvas
+	relMouseX := mouseX - int(m.canvasControl.PosMin.X)
+	relMouseY := mouseY - int(m.canvasControl.PosMin.Y)
+
+	// Canvas height itself
+	canvasHeight := int(m.canvasControl.PosMax.Y - m.canvasControl.PosMin.Y)
+
+	// Mouse position by Y axis, but with bottom-up orientation
+	relMouseY = canvasHeight - relMouseY
+
+	var iconSize float32 = 32 // TODO world icon_size
+
+	relLocalX := float32(relMouseX)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftX)
+	relLocalY := float32(relMouseY)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftY)
+
+	// Mouse position coords, but converted to the local to map system
+	localMouseX := int(relLocalX/iconSize + 1)
+	localMouseY := int(relLocalY/iconSize + 1)
+
+	if localMouseX <= 0 || localMouseX > m.Dmm.MaxX {
+		localMouseX = -1
+	}
+	if localMouseY <= 0 || localMouseY > m.Dmm.MaxY {
+		localMouseY = -1
+	}
+
+	m.canvasStatus.UpdateCoords(localMouseX, localMouseY)
 }

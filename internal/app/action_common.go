@@ -27,3 +27,11 @@ func (a *app) MasterWindowSize() (int, int) {
 func (a *app) RunLater(job func()) {
 	a.masterWindow.RunLater(job)
 }
+
+func (a *app) AddMouseChangeCallback(cb func(uint, uint)) int {
+	return a.masterWindow.AddMouseChangeCallback(cb)
+}
+
+func (a *app) RemoveMouseChangeCallback(id int) {
+	a.masterWindow.RemoveMouseChangeCallback(id)
+}
