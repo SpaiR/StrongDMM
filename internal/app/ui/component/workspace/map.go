@@ -111,19 +111,25 @@ func (m *Map) updateMousePosition(mouseX, mouseY int) {
 
 	var iconSize float32 = 32 // TODO world icon_size
 
+	// Transformed coordinates with respect of camera scale and shift
 	relLocalX := float32(relMouseX)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftX)
 	relLocalY := float32(relMouseY)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftY)
 
 	// Mouse position coords, but converted to the local to map system
-	localMouseX := int(relLocalX/iconSize + 1)
-	localMouseY := int(relLocalY/iconSize + 1)
+	localMouseX := relLocalX / iconSize
+	localMouseY := relLocalY / iconSize
 
-	if localMouseX <= 0 || localMouseX > m.Dmm.MaxX {
-		localMouseX = -1
+	// Local coords, but adjusted to dmm coordinated system (count from 1)
+	mapMouseX := int(localMouseX + 1)
+	mapMouseY := int(localMouseY + 1)
+
+	// Consider out of bounds as an invalid value
+	if mapMouseX <= 0 || mapMouseX > m.Dmm.MaxX {
+		mapMouseX = -1
 	}
-	if localMouseY <= 0 || localMouseY > m.Dmm.MaxY {
-		localMouseY = -1
+	if mapMouseY <= 0 || mapMouseY > m.Dmm.MaxY {
+		mapMouseY = -1
 	}
 
-	m.canvasStatus.UpdateCoords(localMouseX, localMouseY)
+	m.canvasStatus.UpdateCoords(mapMouseX, mapMouseY)
 }

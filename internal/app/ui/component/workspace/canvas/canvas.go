@@ -17,6 +17,7 @@ type Action interface {
 type Canvas struct {
 	action Action
 
+	dmm    *dmmap.Dmm
 	render *render.Render
 
 	width, height float32
@@ -31,7 +32,7 @@ func (c Canvas) RenderState() *render.State {
 
 func (c *Canvas) Dispose() {
 	// Run later so it will be cleared in the next frame.
-	// Otherwise we will see a graphic artifact.
+	// Otherwise we will see graphics artifacts.
 	c.action.RunLater(func() {
 		c.render.Dispose()
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
@@ -43,8 +44,10 @@ func (c *Canvas) Dispose() {
 func New(action Action, dmm *dmmap.Dmm) *Canvas {
 	c := &Canvas{
 		action: action,
-		render: render.New(dmm),
+		dmm:    dmm,
+		render: render.New(),
 	}
+	c.render.UpdateBucket(dmm)
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
 }

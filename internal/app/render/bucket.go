@@ -10,8 +10,8 @@ import (
 )
 
 type bucket struct {
-	Units []unit
-	Data  []float32
+	units []unit
+	data  []float32
 }
 
 type unit struct {
@@ -29,12 +29,11 @@ func (u unit) pushIndices(out *[]uint32) {
 	*out = append(*out, idx+0, idx+1, idx+2, idx+1, idx+3, idx+2)
 }
 
-func createBucket(dmm *dmmap.Dmm) *bucket {
-	var units []unit
-	var data []float32
+func (bu *bucket) update(dmm *dmmap.Dmm) {
+	bu.units = make([]unit, len(bu.units))
+	bu.data = make([]float32, len(bu.data))
 
 	idx := 0
-
 	for x := 1; x <= dmm.MaxX; x++ {
 		for y := 1; y <= dmm.MaxY; y++ {
 			for _, i := range dmm.GetTile(x, y, 1).Content { // TODO: respect z-levels
@@ -54,12 +53,12 @@ func createBucket(dmm *dmmap.Dmm) *bucket {
 				var r, g, b, a float32 = 1, 1, 1, 1 // TODO: color extraction
 				depth := countDepth(i)
 
-				units = append(units, unit{
+				bu.units = append(bu.units, unit{
 					idx, sp, depth,
 					x1, y1, x2, y2,
 				})
 
-				data = append(data,
+				bu.data = append(bu.data,
 					x1, y1, r, g, b, a, sp.U1, sp.V2,
 					x2, y1, r, g, b, a, sp.U2, sp.V2,
 					x1, y2, r, g, b, a, sp.U1, sp.V1,
@@ -71,14 +70,9 @@ func createBucket(dmm *dmmap.Dmm) *bucket {
 		}
 	}
 
-	sort.SliceStable(units, func(i, j int) bool {
-		return units[i].depth < units[j].depth
+	sort.SliceStable(bu.units, func(i, j int) bool {
+		return bu.units[i].depth < bu.units[j].depth
 	})
-
-	return &bucket{
-		Units: units,
-		Data:  data,
-	}
 }
 
 func countDepth(i *dmminstance.Instance) float32 {
