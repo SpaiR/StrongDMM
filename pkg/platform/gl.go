@@ -8,6 +8,9 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
+// FloatSize shows the number of bytes in float32 value.
+const FloatSize = 4
+
 var (
 	gShaderHandle uint32
 

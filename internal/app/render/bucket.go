@@ -7,13 +7,16 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
+// bucket contains data needed to render the map.
 type bucket struct {
 	units []unit
 	data  []float32
 }
 
+// bucket unit to store data about separate item on the map.
 type unit struct {
 	idx int
 
@@ -24,12 +27,14 @@ type unit struct {
 	x2, y2 float32
 }
 
-func (u unit) pushIndices(out *[]uint32) {
-	idx := uint32(u.idx * 4)
-	*out = append(*out, idx+0, idx+1, idx+2, idx+1, idx+3, idx+2)
+// dataIndex will return the unit position in data array.
+// Index itself is used to provide GL indices data to render the map.
+func (u unit) dataIndex() uint32 {
+	return uint32(u.idx * platform.FloatSize)
 }
 
 func (bu *bucket) update(dmm *dmmap.Dmm) {
+	// Pre-allocated buffers with known capacity.
 	bu.units = make([]unit, len(bu.units))
 	bu.data = make([]float32, len(bu.data))
 
@@ -59,10 +64,10 @@ func (bu *bucket) update(dmm *dmmap.Dmm) {
 				})
 
 				bu.data = append(bu.data,
-					x1, y1, r, g, b, a, sp.U1, sp.V2,
-					x2, y1, r, g, b, a, sp.U2, sp.V2,
-					x1, y2, r, g, b, a, sp.U1, sp.V1,
-					x2, y2, r, g, b, a, sp.U2, sp.V1,
+					x1, y1, r, g, b, a, sp.U1, sp.V2, // bottom-left
+					x2, y1, r, g, b, a, sp.U2, sp.V2, // bottom-right
+					x1, y2, r, g, b, a, sp.U1, sp.V1, // top-left
+					x2, y2, r, g, b, a, sp.U2, sp.V1, // top-right
 				)
 
 				idx++
@@ -70,11 +75,13 @@ func (bu *bucket) update(dmm *dmmap.Dmm) {
 		}
 	}
 
+	// Sort items by their depth.
 	sort.SliceStable(bu.units, func(i, j int) bool {
 		return bu.units[i].depth < bu.units[j].depth
 	})
 }
 
+// countDepth will return instance depth, to provide a correct visual layering of the instance.
 func countDepth(i *dmminstance.Instance) float32 {
 	plane, _ := i.Vars.Float("plane")
 	layer, _ := i.Vars.Float("layer")

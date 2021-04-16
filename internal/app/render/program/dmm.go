@@ -3,8 +3,11 @@ package program
 import (
 	"log"
 
+	"github.com/SpaiR/strongdmm/pkg/platform"
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
+
+const itemLen = 6
 
 type Dmm struct {
 	program
@@ -16,19 +19,19 @@ func NewDmm() *Dmm {
 	dmm.attributes.addAttribute(attribute{
 		size:       2,
 		xtype:      gl.FLOAT,
-		xtypeSize:  4,
+		xtypeSize:  platform.FloatSize,
 		normalized: false,
 	})
 	dmm.attributes.addAttribute(attribute{
 		size:       4,
 		xtype:      gl.FLOAT,
-		xtypeSize:  4,
+		xtypeSize:  platform.FloatSize,
 		normalized: false,
 	})
 	dmm.attributes.addAttribute(attribute{
 		size:       2,
 		xtype:      gl.FLOAT,
-		xtypeSize:  4,
+		xtypeSize:  platform.FloatSize,
 		normalized: false,
 	})
 
@@ -39,6 +42,20 @@ func NewDmm() *Dmm {
 	log.Println("[program] dmm initialized")
 
 	return dmm
+}
+
+// BatchPush to push indices for the dmm item.
+// Every item represented as a textured rect, so we just push indices of this rect on the data buffer.
+func (*Dmm) BatchPush(itemIdx uint32, texture uint32) {
+	if texture != batchTexture {
+		batchPersist()
+		batchTexture = texture
+	}
+	// With these indices we create two triangles with vertices:
+	// 2 3
+	// 0 1
+	batchIndices = append(batchIndices, itemIdx+0, itemIdx+1, itemIdx+2, itemIdx+1, itemIdx+3, itemIdx+2)
+	batchLen += itemLen
 }
 
 func dmmVertexShader() string {
