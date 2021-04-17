@@ -7,7 +7,6 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/internal/app/render"
-	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
 type Action interface {
@@ -17,8 +16,7 @@ type Action interface {
 type Canvas struct {
 	action Action
 
-	dmm    *dmmap.Dmm
-	render *render.Render
+	Render *render.Render
 
 	width, height float32
 
@@ -26,28 +24,22 @@ type Canvas struct {
 	Texture     uint32
 }
 
-func (c Canvas) Camera() *render.Camera {
-	return c.render.Camera
-}
-
 func (c *Canvas) Dispose() {
 	// Run later so it will be cleared in the next frame.
 	// Otherwise we will see graphics artifacts.
 	c.action.RunLater(func() {
-		c.render.Dispose()
+		c.Render.Dispose()
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)
 		log.Println("[widget] render disposed")
 	})
 }
 
-func New(action Action, dmm *dmmap.Dmm) *Canvas {
+func New(action Action) *Canvas {
 	c := &Canvas{
 		action: action,
-		dmm:    dmm,
-		render: render.New(),
+		Render: render.New(),
 	}
-	c.render.UpdateBucket(dmm)
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
 }
@@ -58,7 +50,7 @@ func (c *Canvas) Process(size imgui.Vec2) {
 	gl.Viewport(0, 0, int32(size.X), int32(size.Y))
 	gl.ClearColor(.25, .25, .5, 1)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	c.render.Draw(size.X, size.Y)
+	c.Render.Draw(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 }
 

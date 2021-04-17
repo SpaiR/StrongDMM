@@ -37,14 +37,20 @@ type Map struct {
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws := &Map{Dmm: dmm}
+
 	ws.Workspace = ws
 	ws.action = action
+
 	ws.canvasTools = canvas.NewTools()
-	ws.canvas = canvas.New(action, dmm)
-	ws.canvasControl = canvas.NewControl(ws.canvas.Camera())
+	ws.canvas = canvas.New(action)
+	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
 	ws.canvasStatus = canvas.NewStatus()
+
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
+
+	ws.canvas.Render.UpdateBucket(dmm)
+
 	return ws
 }
 
