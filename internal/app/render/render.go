@@ -11,7 +11,7 @@ import (
 )
 
 type Render struct {
-	State  *State
+	Camera *Camera
 	bucket *bucket
 
 	dmmProgram *program.Dmm
@@ -19,7 +19,7 @@ type Render struct {
 
 func New() *Render {
 	return &Render{
-		State:      newState(),
+		Camera:     &Camera{Scale: 1},
 		bucket:     &bucket{},
 		dmmProgram: program.NewDmm(),
 	}
@@ -53,8 +53,8 @@ func (r *Render) drawDmm(width, height float32, mtxTransform mgl32.Mat4) {
 	r.dmmProgram.UpdateTransform(mtxTransform)
 
 	// Convert our width/height to scaled values.
-	width = width / r.State.Scale
-	height = height / r.State.Scale
+	width = width / r.Camera.Scale
+	height = height / r.Camera.Scale
 
 	// Draw all bucket units
 	for _, unit := range r.bucket.units {
@@ -77,13 +77,13 @@ func (r *Render) prepare() {
 
 // createTransformMatrix will create a transformation matrix to apply it during the map rendering.
 func (r *Render) createTransformMatrix(width, height float32) mgl32.Mat4 {
-	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.State.Scale, r.State.Scale).Mat4())
-	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.State.ShiftX, r.State.ShiftY).Mat4())
+	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.Camera.Scale, r.Camera.Scale).Mat4())
+	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.Camera.ShiftX, r.Camera.ShiftY).Mat4())
 	return view.Mul4(model)
 }
 
 func (r *Render) isUnitInBounds(u unit, w, h float32) bool {
-	bx1, by1, bx2, by2 := u.x1+r.State.ShiftX, u.y1+r.State.ShiftY, u.x2+r.State.ShiftX, u.y2+r.State.ShiftY
+	bx1, by1, bx2, by2 := u.x1+r.Camera.ShiftX, u.y1+r.Camera.ShiftY, u.x2+r.Camera.ShiftX, u.y2+r.Camera.ShiftY
 	return bx1 >= 0 || by1 >= 0 || bx2 <= w || by2 <= h
 }
 

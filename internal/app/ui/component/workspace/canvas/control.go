@@ -10,7 +10,7 @@ import (
 const scaleFactor float32 = 1.5
 
 type Control struct {
-	State *render.State
+	Camera *render.Camera
 
 	PosMin imgui.Vec2
 	PosMax imgui.Vec2
@@ -20,9 +20,9 @@ type Control struct {
 	dragging  bool
 }
 
-func NewControl(state *render.State) *Control {
+func NewControl(camera *render.Camera) *Control {
 	return &Control{
-		State: state,
+		Camera: camera,
 	}
 }
 
@@ -55,7 +55,7 @@ func (c *Control) processMouseMove() {
 
 	if c.dragging {
 		if delta := imgui.CurrentIO().MouseDelta(); delta.X != 0 || delta.Y != 0 {
-			c.State.Translate(delta.X/c.State.Scale, -delta.Y/c.State.Scale)
+			c.Camera.Translate(delta.X/c.Camera.Scale, -delta.Y/c.Camera.Scale)
 		}
 	}
 }
@@ -71,7 +71,7 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 	}
 
 	zoomIn := mouseWheel > 0
-	scale := c.State.Scale
+	scale := c.Camera.Scale
 
 	if zoomIn {
 		scale *= -scaleFactor
@@ -83,6 +83,6 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 	offsetX := localPos.X / scale / 2
 	offsetY := (size.Y - localPos.Y) / scale / 2
 
-	c.State.Translate(offsetX, offsetY)
-	c.State.Zoom(zoomIn, scaleFactor)
+	c.Camera.Translate(offsetX, offsetY)
+	c.Camera.Zoom(zoomIn, scaleFactor)
 }

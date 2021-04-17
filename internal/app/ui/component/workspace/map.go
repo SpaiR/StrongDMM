@@ -41,7 +41,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.action = action
 	ws.canvasTools = canvas.NewTools()
 	ws.canvas = canvas.New(action, dmm)
-	ws.canvasControl = canvas.NewControl(ws.canvas.RenderState())
+	ws.canvasControl = canvas.NewControl(ws.canvas.Camera())
 	ws.canvasStatus = canvas.NewStatus()
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
@@ -112,8 +112,8 @@ func (m *Map) updateMousePosition(mouseX, mouseY int) {
 	var iconSize float32 = 32 // TODO world icon_size
 
 	// Transformed coordinates with respect of camera scale and shift
-	relLocalX := float32(relMouseX)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftX)
-	relLocalY := float32(relMouseY)/m.canvasControl.State.Scale - (m.canvasControl.State.ShiftY)
+	relLocalX := float32(relMouseX)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftX)
+	relLocalY := float32(relMouseY)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftY)
 
 	// Mouse position coords, but converted to the local to map system
 	localMouseX := relLocalX / iconSize

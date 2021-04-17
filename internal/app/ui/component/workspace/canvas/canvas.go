@@ -26,8 +26,8 @@ type Canvas struct {
 	Texture     uint32
 }
 
-func (c Canvas) RenderState() *render.State {
-	return c.render.State
+func (c Canvas) Camera() *render.Camera {
+	return c.render.Camera
 }
 
 func (c *Canvas) Dispose() {
