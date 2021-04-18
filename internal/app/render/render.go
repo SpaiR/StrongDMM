@@ -29,7 +29,7 @@ func New() *Render {
 func (r *Render) UpdateBucket(dmm *dmmap.Dmm) {
 	log.Printf("[render] updating bucket with [%s]...", dmm.Path.Readable)
 	r.bucket.update(dmm)
-	r.dmmProgram.UpdateData(r.bucket.data)
+	r.dmmProgram.SetData(r.bucket.data)
 	log.Println("[render] bucket updated")
 }
 
@@ -44,14 +44,14 @@ func (r *Render) Draw(width, height float32) {
 
 	// We will share the same transformation matrix for all renders.
 	mtxTransform := r.createTransformMatrix(width, height)
-	r.drawDmm(width, height, mtxTransform)
+	r.dmmProgram.SetTransform(mtxTransform)
+
+	r.drawDmm(width, height)
 
 	r.cleanup()
 }
 
-func (r *Render) drawDmm(width, height float32, mtxTransform mgl32.Mat4) {
-	r.dmmProgram.UpdateTransform(mtxTransform)
-
+func (r *Render) drawDmm(width, height float32) {
 	// Convert our width/height to scaled values.
 	width = width / r.Camera.Scale
 	height = height / r.Camera.Scale
@@ -60,7 +60,7 @@ func (r *Render) drawDmm(width, height float32, mtxTransform mgl32.Mat4) {
 	for _, unit := range r.bucket.units {
 		// Ignore out of bounds units.
 		if r.isUnitInBounds(unit, width, height) {
-			r.dmmProgram.BatchPush(unit.dataIndex(), unit.sp.Texture())
+			r.dmmProgram.BatchUnit(unit.idx, unit.sp.Texture())
 		}
 	}
 

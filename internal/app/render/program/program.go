@@ -8,6 +8,10 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
+const (
+	rectIndicesLen = 6
+)
+
 // These variables are used to batch our rendering pipeline.
 var (
 	batchIndices []uint32
@@ -24,8 +28,8 @@ type program struct {
 	program       uint32
 	vao, vbo, ebo uint32
 
-	data     []float32
-	dataBind bool
+	data      []float32
+	dataBound bool
 
 	mtxTransform mgl32.Mat4
 }
@@ -76,6 +80,17 @@ func batchPersist() {
 	}
 }
 
+// batchRect adds indices to vertices of the rect.
+func (p *program) batchRect(rectIdx int) {
+	// rectIdx is an order of the element in data buffer.
+	idx := uint32(rectIdx * platform.FloatSize)
+	// With these indices we create two triangles with vertices:
+	// 2 3
+	// 0 1
+	batchIndices = append(batchIndices, idx+0, idx+1, idx+2, idx+1, idx+3, idx+2)
+	batchLen += rectIndicesLen
+}
+
 // BatchFlush will render our batched state.
 func (p *program) BatchFlush() {
 	// Ensure that the latest batch state is persisted.
@@ -90,9 +105,9 @@ func (p *program) BatchFlush() {
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vbo)
 
 	// Data may not change, so no reason to update it.
-	if !p.dataBind {
+	if !p.dataBound {
 		gl.BufferData(gl.ARRAY_BUFFER, len(p.data)*platform.FloatSize, gl.Ptr(p.data), gl.STATIC_DRAW)
-		p.dataBind = true
+		p.dataBound = true
 	}
 
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.ebo)
@@ -126,12 +141,12 @@ func (p *program) Dispose() {
 	log.Println("[program] disposed")
 }
 
-func (p *program) UpdateData(data []float32) {
+func (p *program) SetData(data []float32) {
 	p.data = data
-	p.dataBind = false
+	p.dataBound = false
 }
 
-func (p *program) UpdateTransform(transform mgl32.Mat4) {
+func (p *program) SetTransform(transform mgl32.Mat4) {
 	p.mtxTransform = transform
 }
 

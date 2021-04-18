@@ -7,7 +7,6 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
-	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
 // bucket contains data needed to render the map.
@@ -25,12 +24,6 @@ type unit struct {
 
 	x1, y1 float32
 	x2, y2 float32
-}
-
-// dataIndex will return the unit position in data array.
-// Index itself is used to provide GL indices data to render the map.
-func (u unit) dataIndex() uint32 {
-	return uint32(u.idx * platform.FloatSize)
 }
 
 func (bu *bucket) update(dmm *dmmap.Dmm) {

@@ -7,8 +7,6 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
-const itemLen = 6
-
 type Dmm struct {
 	program
 }
@@ -44,18 +42,14 @@ func NewDmm() *Dmm {
 	return dmm
 }
 
-// BatchPush to push indices for the dmm item.
-// Every item represented as a textured rect, so we just push indices of this rect on the data buffer.
-func (*Dmm) BatchPush(itemIdx uint32, texture uint32) {
+// BatchUnit method adds a unit index to the indices batch.
+// Every unit in the bucket is a textured rect, so we persist the batch, if texture has changed and batch another rect.
+func (d *Dmm) BatchUnit(unitIdx int, texture uint32) {
 	if texture != batchTexture {
 		batchPersist()
 		batchTexture = texture
 	}
-	// With these indices we create two triangles with vertices:
-	// 2 3
-	// 0 1
-	batchIndices = append(batchIndices, itemIdx+0, itemIdx+1, itemIdx+2, itemIdx+1, itemIdx+3, itemIdx+2)
-	batchLen += itemLen
+	d.batchRect(unitIdx)
 }
 
 func dmmVertexShader() string {
