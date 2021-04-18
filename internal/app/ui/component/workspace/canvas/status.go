@@ -17,9 +17,9 @@ func NewStatus(state *State) *Status {
 }
 
 func (s *Status) Process() {
-	if s.state.MousePosMap.X == -1 || s.state.MousePosMap.Y == -1 {
+	if s.state.HoverOutOfBounds() {
 		imgui.Text("[out of bounds]")
 	} else {
-		imgui.Text(fmt.Sprintf("[x:%03d y:%03d]", int(s.state.MousePosMap.X), int(s.state.MousePosMap.X)))
+		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", s.state.hoveredTile.x, s.state.hoveredTile.y))
 	}
 }

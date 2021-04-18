@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/strongdmm/pkg/dm"
+	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
 var Cache = &IconsCache{icons: make(map[string]*Dmi)}
@@ -93,6 +94,8 @@ func createPlaceholder() *Sprite {
 	/*
 		|1|2|
 		|2|1|
+		1-pink
+		2-purple
 	*/
 
 	img := image.NewRGBA(image.Rect(0, 0, 2, 2))
@@ -108,7 +111,7 @@ func createPlaceholder() *Sprite {
 		TextureHeight: 32,
 		Cols:          1,
 		Rows:          1,
-		Texture:       createTexture(img),
+		Texture:       platform.CreateTexture(img),
 	}
 
 	return newDmiSprite(placeholderDmi, 0)

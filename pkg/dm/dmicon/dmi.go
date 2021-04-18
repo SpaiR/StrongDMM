@@ -5,6 +5,7 @@ import (
 	"image"
 	"log"
 
+	"github.com/SpaiR/strongdmm/pkg/platform"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/pkg/dm"
@@ -51,7 +52,7 @@ func New(path string) (*Dmi, error) {
 		TextureHeight: height,
 		Cols:          width / iconMetadata.Width,
 		Rows:          height / iconMetadata.Height,
-		Texture:       createTexture(img),
+		Texture:       platform.CreateTexture(img),
 		States:        make(map[string]*State),
 	}
 
@@ -80,28 +81,6 @@ func loadImage(path string) *image.RGBA {
 		log.Println("[dmicon] unable to read image by path:", path, "error:", err)
 	}
 	return img
-}
-
-func createTexture(img *image.RGBA) uint32 {
-	var lastTexture int32
-	var handle uint32
-
-	gl.GetIntegerv(gl.TEXTURE_BINDING_2D, &lastTexture)
-	gl.GenTextures(1, &handle)
-	gl.BindTexture(gl.TEXTURE_2D, handle)
-
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR)
-	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, int32(img.Bounds().Dx()), int32(img.Bounds().Dy()), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(img.Pix))
-	gl.GenerateMipmap(gl.TEXTURE_2D)
-
-	gl.BindTexture(gl.TEXTURE_2D, uint32(lastTexture))
-
-	return handle
 }
 
 type State struct {

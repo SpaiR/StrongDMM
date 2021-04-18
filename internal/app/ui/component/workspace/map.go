@@ -10,7 +10,6 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	"github.com/SpaiR/strongdmm/pkg/imguiext/layout"
-	"github.com/SpaiR/strongdmm/pkg/util"
 )
 
 type MapAction interface {
@@ -43,7 +42,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.Workspace = ws
 	ws.action = action
 
-	ws.canvasSate = canvas.NewState()
+	ws.canvasSate = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
 	ws.canvasTools = canvas.NewTools()
 	ws.canvas = canvas.New(action)
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
@@ -52,6 +51,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
 
+	ws.canvas.Render.SetOverlayState(ws.canvasSate)
 	ws.canvas.Render.UpdateBucket(dmm)
 
 	return ws
@@ -108,38 +108,19 @@ func (m *Map) mouseChangeCallback(x, y uint) {
 }
 
 func (m *Map) updateMousePosition(mouseX, mouseY int) {
-	// Mouse position relative to canvas
+	// Mouse position relative to canvas.
 	relMouseX := mouseX - int(m.canvasControl.PosMin.X)
 	relMouseY := mouseY - int(m.canvasControl.PosMin.Y)
 
-	// Canvas height itself
+	// Canvas height itself.
 	canvasHeight := int(m.canvasControl.PosMax.Y - m.canvasControl.PosMin.Y)
 
-	// Mouse position by Y axis, but with bottom-up orientation
+	// Mouse position by Y axis, but with bottom-up orientation.
 	relMouseY = canvasHeight - relMouseY
 
-	var iconSize float32 = 32 // TODO world icon_size
-
-	// Transformed coordinates with respect of camera scale and shift
+	// Transformed coordinates with respect of camera scale and shift.
 	relLocalX := float32(relMouseX)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftX)
 	relLocalY := float32(relMouseY)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftY)
 
-	// Mouse position coords, but converted to the local to map system
-	localMouseX := relLocalX / iconSize
-	localMouseY := relLocalY / iconSize
-
-	// Local coords, but adjusted to dmm coordinated system (count from 1)
-	mapMouseX := localMouseX + 1
-	mapMouseY := localMouseY + 1
-
-	// Consider out of bounds as an invalid value
-	if mapMouseX <= 0 || int(mapMouseX) > m.Dmm.MaxX {
-		mapMouseX = -1
-	}
-	if mapMouseY <= 0 || int(mapMouseY) > m.Dmm.MaxY {
-		mapMouseY = -1
-	}
-
-	m.canvasSate.MousePos = util.Point{X: localMouseX, Y: localMouseY}
-	m.canvasSate.MousePosMap = util.Point{X: mapMouseX, Y: mapMouseY}
+	m.canvasSate.SetHoveredTile(relLocalX, relLocalY)
 }

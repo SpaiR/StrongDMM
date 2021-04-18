@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	rectVerticesOffset = 4 // Every rect contains of 4 vertices.
-	rectIndicesLen     = 6 // Every rect contains of 6 indices.
+	rectVerticesBytes  = 8 * 4 // Rect made of 4 vertices, each has 8 attributes.
+	rectVerticesOffset = 4     // Rect contains of 4 vertices.
+	rectIndicesLen     = 6     // Rect contains of 6 indices.
 )
 
 // These variables are used to batch our rendering pipeline.
@@ -88,9 +89,9 @@ func (*program) BatchTexture(texture uint32) {
 	}
 }
 
-// BatchRect will add indices of the rect by its specific idx.
+// BatchRectIdx will add indices of the rect by its specific idx.
 // rectIdx is a natural order of the rect in data array. It is not the index of the rect vertices themself.
-func (*program) BatchRect(rectIdx int) {
+func (*program) BatchRectIdx(rectIdx int) {
 	// So we convert our "natural order" index to the vertices index by applying offset of rect vertices.
 	vtxIdx := uint32(rectIdx * rectVerticesOffset)
 	// With these indices we create two triangles of vertices:
@@ -98,6 +99,22 @@ func (*program) BatchRect(rectIdx int) {
 	// 0 1
 	batchIndices = append(batchIndices, vtxIdx+0, vtxIdx+1, vtxIdx+2, vtxIdx+1, vtxIdx+3, vtxIdx+2)
 	batchLen += rectIndicesLen
+}
+
+func (p *program) BatchRect(x, y, size, r, g, b, a, u1, v1, u2, v2 float32) {
+	x1 := x
+	y1 := y
+	x2 := x + size
+	y2 := y + size
+
+	idx := len(p.data) / rectVerticesBytes
+	p.data = append(p.data,
+		x1, y1, r, g, b, a, u1, v2,
+		x2, y1, r, g, b, a, u2, v2,
+		x1, y2, r, g, b, a, u1, v1,
+		x2, y2, r, g, b, a, u2, v1,
+	)
+	p.BatchRectIdx(idx)
 }
 
 // BatchFlush will render our batched state.
