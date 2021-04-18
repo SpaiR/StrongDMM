@@ -7,21 +7,19 @@ import (
 )
 
 type Status struct {
-	coordX, coordY int
+	state *State
 }
 
-func NewStatus() *Status {
-	return &Status{}
-}
-
-func (s *Status) Process() {
-	if s.coordX == -1 || s.coordY == -1 {
-		imgui.Text("[out of bounds]")
-	} else {
-		imgui.Text(fmt.Sprintf("[x:%03d y:%03d]", s.coordX, s.coordY))
+func NewStatus(state *State) *Status {
+	return &Status{
+		state: state,
 	}
 }
 
-func (s *Status) UpdateCoords(coordX, coordY int) {
-	s.coordX, s.coordY = coordX, coordY
+func (s *Status) Process() {
+	if s.state.MousePosMap.X == -1 || s.state.MousePosMap.Y == -1 {
+		imgui.Text("[out of bounds]")
+	} else {
+		imgui.Text(fmt.Sprintf("[x:%03d y:%03d]", int(s.state.MousePosMap.X), int(s.state.MousePosMap.X)))
+	}
 }

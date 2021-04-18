@@ -93,7 +93,7 @@ func (*program) BatchTexture(texture uint32) {
 func (*program) BatchRect(rectIdx int) {
 	// So we convert our "natural order" index to the vertices index by applying offset of rect vertices.
 	vtxIdx := uint32(rectIdx * rectVerticesOffset)
-	// With these indices we create two triangles with vertices:
+	// With these indices we create two triangles of vertices:
 	// 2 3
 	// 0 1
 	batchIndices = append(batchIndices, vtxIdx+0, vtxIdx+1, vtxIdx+2, vtxIdx+1, vtxIdx+3, vtxIdx+2)

@@ -10,6 +10,7 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	"github.com/SpaiR/strongdmm/pkg/imguiext/layout"
+	"github.com/SpaiR/strongdmm/pkg/util"
 )
 
 type MapAction interface {
@@ -25,6 +26,7 @@ type Map struct {
 
 	Dmm *dmmap.Dmm
 
+	canvasSate    *canvas.State
 	canvasTools   *canvas.Tools
 	canvasStatus  *canvas.Status
 	canvasControl *canvas.Control
@@ -41,10 +43,11 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.Workspace = ws
 	ws.action = action
 
+	ws.canvasSate = canvas.NewState()
 	ws.canvasTools = canvas.NewTools()
 	ws.canvas = canvas.New(action)
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
-	ws.canvasStatus = canvas.NewStatus()
+	ws.canvasStatus = canvas.NewStatus(ws.canvasSate)
 
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
@@ -126,16 +129,17 @@ func (m *Map) updateMousePosition(mouseX, mouseY int) {
 	localMouseY := relLocalY / iconSize
 
 	// Local coords, but adjusted to dmm coordinated system (count from 1)
-	mapMouseX := int(localMouseX + 1)
-	mapMouseY := int(localMouseY + 1)
+	mapMouseX := localMouseX + 1
+	mapMouseY := localMouseY + 1
 
 	// Consider out of bounds as an invalid value
-	if mapMouseX <= 0 || mapMouseX > m.Dmm.MaxX {
+	if mapMouseX <= 0 || int(mapMouseX) > m.Dmm.MaxX {
 		mapMouseX = -1
 	}
-	if mapMouseY <= 0 || mapMouseY > m.Dmm.MaxY {
+	if mapMouseY <= 0 || int(mapMouseY) > m.Dmm.MaxY {
 		mapMouseY = -1
 	}
 
-	m.canvasStatus.UpdateCoords(mapMouseX, mapMouseY)
+	m.canvasSate.MousePos = util.Point{X: localMouseX, Y: localMouseY}
+	m.canvasSate.MousePosMap = util.Point{X: mapMouseX, Y: mapMouseY}
 }
