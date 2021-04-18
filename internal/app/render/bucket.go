@@ -26,6 +26,10 @@ type unit struct {
 	x2, y2 float32
 }
 
+func (u unit) isInBounds(x1, y1, x2, y2 float32) bool {
+	return u.x2 >= x1 && u.y2 >= y1 && u.x1 <= x2 && u.y1 <= y2
+}
+
 func (bu *bucket) update(dmm *dmmap.Dmm) {
 	// Pre-allocated buffers with known capacity.
 	bu.units = make([]unit, len(bu.units))

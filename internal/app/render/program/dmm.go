@@ -42,16 +42,6 @@ func NewDmm() *Dmm {
 	return dmm
 }
 
-// BatchUnit method adds a unit index to the indices batch.
-// Every unit in the bucket is a textured rect, so we persist the batch, if texture has changed and batch another rect.
-func (d *Dmm) BatchUnit(unitIdx int, texture uint32) {
-	if texture != batchTexture {
-		batchPersist()
-		batchTexture = texture
-	}
-	d.batchRect(unitIdx)
-}
-
 func dmmVertexShader() string {
 	return `
 #version 330 core

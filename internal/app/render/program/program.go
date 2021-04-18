@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	rectIndicesLen = 6
+	rectVerticesOffset = 4 // Every rect contains of 4 vertices.
+	rectIndicesLen     = 6 // Every rect contains of 6 indices.
 )
 
 // These variables are used to batch our rendering pipeline.
@@ -28,8 +29,7 @@ type program struct {
 	program       uint32
 	vao, vbo, ebo uint32
 
-	data      []float32
-	dataBound bool
+	data []float32
 
 	mtxTransform mgl32.Mat4
 }
@@ -75,19 +75,28 @@ func batchPersist() {
 			offset:  batchOffset,
 		})
 
-		batchOffset += int(batchLen) * platform.FloatSize
+		batchOffset += int(batchLen) * rectVerticesOffset
 		batchLen = 0
 	}
 }
 
-// batchRect adds indices to vertices of the rect.
-func (p *program) batchRect(rectIdx int) {
-	// rectIdx is an order of the element in data buffer.
-	idx := uint32(rectIdx * platform.FloatSize)
+// BatchTexture will persist our batched data, if the texture is different from the currently batched.
+func (*program) BatchTexture(texture uint32) {
+	if texture != batchTexture {
+		batchPersist()
+		batchTexture = texture
+	}
+}
+
+// BatchRect will add indices of the rect by its specific idx.
+// rectIdx is a natural order of the rect in data array. It is not the index of the rect vertices themself.
+func (*program) BatchRect(rectIdx int) {
+	// So we convert our "natural order" index to the vertices index by applying offset of rect vertices.
+	vtxIdx := uint32(rectIdx * rectVerticesOffset)
 	// With these indices we create two triangles with vertices:
 	// 2 3
 	// 0 1
-	batchIndices = append(batchIndices, idx+0, idx+1, idx+2, idx+1, idx+3, idx+2)
+	batchIndices = append(batchIndices, vtxIdx+0, vtxIdx+1, vtxIdx+2, vtxIdx+1, vtxIdx+3, vtxIdx+2)
 	batchLen += rectIndicesLen
 }
 
@@ -103,20 +112,12 @@ func (p *program) BatchFlush() {
 	gl.UniformMatrix4fv(0, 1, false, &p.mtxTransform[0])
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, p.vbo)
-
-	// Data may not change, so no reason to update it.
-	if !p.dataBound {
-		gl.BufferData(gl.ARRAY_BUFFER, len(p.data)*platform.FloatSize, gl.Ptr(p.data), gl.STATIC_DRAW)
-		p.dataBound = true
-	}
-
+	gl.BufferData(gl.ARRAY_BUFFER, len(p.data)*platform.FloatSize, gl.Ptr(p.data), gl.STATIC_DRAW)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, p.ebo)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(batchIndices)*platform.FloatSize, gl.Ptr(batchIndices), gl.STATIC_DRAW)
 
 	for _, b := range batchCalls {
-		if b.texture != 0 {
-			gl.BindTexture(gl.TEXTURE_2D, b.texture)
-		}
+		gl.BindTexture(gl.TEXTURE_2D, b.texture)
 		gl.DrawElements(gl.TRIANGLES, b.len, gl.UNSIGNED_INT, gl.PtrOffset(b.offset))
 	}
 
@@ -143,11 +144,13 @@ func (p *program) Dispose() {
 
 func (p *program) SetData(data []float32) {
 	p.data = data
-	p.dataBound = false
 }
 
-func (p *program) SetTransform(transform mgl32.Mat4) {
-	p.mtxTransform = transform
+func (p *program) UpdateTransform(w, h, x, y, z float32) {
+	view := mgl32.Ortho(0, w, 0, h, -1, 1)
+	scale := mgl32.Scale2D(z, z).Mat4()
+	shift := mgl32.Translate2D(x, y).Mat4()
+	p.mtxTransform = view.Mul4(scale).Mul4(shift)
 }
 
 type attribute struct {

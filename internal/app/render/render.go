@@ -3,10 +3,9 @@ package render
 import (
 	"log"
 
-	"github.com/SpaiR/strongdmm/internal/app/render/program"
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"github.com/go-gl/mathgl/mgl32"
 
+	"github.com/SpaiR/strongdmm/internal/app/render/program"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
@@ -41,30 +40,8 @@ func (r *Render) Dispose() {
 
 func (r *Render) Draw(width, height float32) {
 	r.prepare()
-
-	// We will share the same transformation matrix for all renders.
-	mtxTransform := r.createTransformMatrix(width, height)
-	r.dmmProgram.SetTransform(mtxTransform)
-
 	r.drawDmm(width, height)
-
 	r.cleanup()
-}
-
-func (r *Render) drawDmm(width, height float32) {
-	// Convert our width/height to scaled values.
-	width = width / r.Camera.Scale
-	height = height / r.Camera.Scale
-
-	// Draw all bucket units
-	for _, unit := range r.bucket.units {
-		// Ignore out of bounds units.
-		if r.isUnitInBounds(unit, width, height) {
-			r.dmmProgram.BatchUnit(unit.idx, unit.sp.Texture())
-		}
-	}
-
-	r.dmmProgram.BatchFlush()
 }
 
 // prepare method to initialize OpenGL state.
@@ -75,16 +52,27 @@ func (r *Render) prepare() {
 	gl.ActiveTexture(gl.TEXTURE0)
 }
 
-// createTransformMatrix will create a transformation matrix to apply it during the map rendering.
-func (r *Render) createTransformMatrix(width, height float32) mgl32.Mat4 {
-	view := mgl32.Ortho(0, width, 0, height, -1, 1).Mul4(mgl32.Scale2D(r.Camera.Scale, r.Camera.Scale).Mat4())
-	model := mgl32.Ident4().Mul4(mgl32.Translate2D(r.Camera.ShiftX, r.Camera.ShiftY).Mat4())
-	return view.Mul4(model)
-}
+func (r *Render) drawDmm(width, height float32) {
+	r.dmmProgram.UpdateTransform(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 
-func (r *Render) isUnitInBounds(u unit, w, h float32) bool {
-	bx1, by1, bx2, by2 := u.x1+r.Camera.ShiftX, u.y1+r.Camera.ShiftY, u.x2+r.Camera.ShiftX, u.y2+r.Camera.ShiftY
-	return bx1 >= 0 || by1 >= 0 || bx2 <= w || by2 <= h
+	// Get transformed bounds of the map, so we can ignore out of bounds units.
+	w := width / r.Camera.Scale
+	h := height / r.Camera.Scale
+	x1 := -r.Camera.ShiftX
+	y1 := -r.Camera.ShiftY
+	x2 := x1 + w
+	y2 := y1 + h
+
+	// Batch all bucket units.
+	for _, unit := range r.bucket.units {
+		if unit.isInBounds(x1, y1, x2, y2) {
+			r.dmmProgram.BatchTexture(unit.sp.Texture())
+			r.dmmProgram.BatchRect(unit.idx)
+		}
+	}
+
+	// Draw all batched units.
+	r.dmmProgram.BatchFlush()
 }
 
 // cleanup method to cleanup OpenGL state after rendering.
