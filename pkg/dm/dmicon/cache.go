@@ -3,13 +3,9 @@ package dmicon
 import (
 	"errors"
 	"fmt"
-	"image"
-	"image/color"
-	"image/draw"
 	"log"
 
 	"github.com/SpaiR/strongdmm/pkg/dm"
-	"github.com/SpaiR/strongdmm/pkg/platform"
 )
 
 var Cache = &IconsCache{icons: make(map[string]*Dmi)}
@@ -69,8 +65,6 @@ func (i *IconsCache) GetSprite(icon, state string) (*Sprite, error) {
 	return i.GetSpriteV(icon, state, dm.DirDefault)
 }
 
-var placeholder *Sprite
-
 func (i *IconsCache) GetSpriteOrPlaceholder(icon, state string) *Sprite {
 	return i.GetSpriteOrPlaceholderV(icon, state, dm.DirDefault)
 }
@@ -79,40 +73,5 @@ func (i *IconsCache) GetSpriteOrPlaceholderV(icon, state string, dir int) *Sprit
 	if s, err := i.GetSpriteV(icon, state, dir); err == nil {
 		return s
 	}
-
-	if placeholder == nil {
-		placeholder = createPlaceholder()
-	}
-
-	return placeholder
-}
-
-func createPlaceholder() *Sprite {
-	color1 := color.RGBA{R: 240, G: 214, B: 255, A: 200} // purple
-	color2 := color.RGBA{R: 210, G: 105, B: 255, A: 200} // pink
-
-	/*
-		|1|2|
-		|2|1|
-		1-pink
-		2-purple
-	*/
-
-	img := image.NewRGBA(image.Rect(0, 0, 2, 2))
-	draw.Draw(img, image.Rect(0, 0, 1, 1), &image.Uniform{C: color1}, image.Point{}, draw.Src)
-	draw.Draw(img, image.Rect(1, 1, 2, 2), &image.Uniform{C: color1}, image.Point{}, draw.Src)
-	draw.Draw(img, image.Rect(1, 0, 2, 1), &image.Uniform{C: color2}, image.Point{}, draw.Src)
-	draw.Draw(img, image.Rect(0, 1, 1, 2), &image.Uniform{C: color2}, image.Point{}, draw.Src)
-
-	placeholderDmi := &Dmi{
-		IconWidth:     32,
-		IconHeight:    32,
-		TextureWidth:  32,
-		TextureHeight: 32,
-		Cols:          1,
-		Rows:          1,
-		Texture:       platform.CreateTexture(img),
-	}
-
-	return newDmiSprite(placeholderDmi, 0)
+	return SpritePlaceholder()
 }
