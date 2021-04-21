@@ -8,27 +8,29 @@ import (
 	_ "image/png"
 )
 
-//go:embed internal/placeholder.dmi
-var placeholder []byte
+var (
+	//go:embed png/editor.png
+	editor []byte
+)
 
 var (
-	// Placeholder is an icon used as a placeholder for sprites with no image.
-	Placeholder = Asset{
-		data:   placeholder,
-		width:  2,
-		height: 2,
+	// Editor is a png with all textures used by the editor.
+	Editor = Asset{
+		Width:  64,
+		Height: 32,
+		data:   editor,
 	}
 )
 
 type Asset struct {
+	Width  int
+	Height int
 	data   []byte
-	width  int
-	height int
 }
 
 func (a Asset) RGBA() *image.RGBA {
 	res, _, _ := image.Decode(bytes.NewReader(a.data))
-	img := image.NewRGBA(image.Rect(0, 0, a.width, a.height))
+	img := image.NewRGBA(image.Rect(0, 0, a.Width, a.Height))
 	draw.Draw(img, img.Bounds(), res, image.Point{}, draw.Src)
 	return img
 }

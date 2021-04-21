@@ -101,7 +101,11 @@ func (*program) BatchRectIdx(rectIdx int) {
 	batchLen += rectIndicesLen
 }
 
-func (p *program) BatchRect(x, y, size, r, g, b, a, u1, v1, u2, v2 float32) {
+type Color struct {
+	R, G, B, A float32
+}
+
+func (p *program) BatchRect(x, y, size float32, col Color, u1, v1, u2, v2 float32) {
 	x1 := x
 	y1 := y
 	x2 := x + size
@@ -109,10 +113,10 @@ func (p *program) BatchRect(x, y, size, r, g, b, a, u1, v1, u2, v2 float32) {
 
 	idx := len(p.data) / rectVerticesBytes
 	p.data = append(p.data,
-		x1, y1, r, g, b, a, u1, v2,
-		x2, y1, r, g, b, a, u2, v2,
-		x1, y2, r, g, b, a, u1, v1,
-		x2, y2, r, g, b, a, u2, v1,
+		x1, y1, col.R, col.G, col.B, col.A, u1, v2,
+		x2, y1, col.R, col.G, col.B, col.A, u2, v2,
+		x1, y2, col.R, col.G, col.B, col.A, u1, v1,
+		x2, y2, col.R, col.G, col.B, col.A, u2, v1,
 	)
 	p.BatchRectIdx(idx)
 }

@@ -3,6 +3,7 @@ package render
 import (
 	"log"
 
+	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/internal/app/render/program"
@@ -91,12 +92,17 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	}
 }
 
+var (
+	overlayActiveColor = program.Color{R: 1, G: 1, B: 1, A: .5}
+)
+
 func (r *Render) batchOverlay() {
 	if !r.overlayState.HoverOutOfBounds() {
 		x, y := r.overlayState.HoveredTilePoint()
-		s := float32(r.overlayState.IconSize())
-		r.dmmProgram.BatchTexture(program.OverlayTexture())
-		r.dmmProgram.BatchRect(x, y, s, 1, 1, 1, .45, 0, 0, 1, 1)
+		size := float32(r.overlayState.IconSize())
+		spr := dmicon.SpriteOverlayActive()
+		r.dmmProgram.BatchTexture(spr.Texture())
+		r.dmmProgram.BatchRect(x, y, size, overlayActiveColor, spr.U1, spr.V1, spr.U2, spr.V2)
 	}
 }
 
