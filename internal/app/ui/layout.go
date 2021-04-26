@@ -16,13 +16,16 @@ type layoutAction interface {
 
 type Layout struct {
 	component.Environment
+	component.Instances
 	component.WorkspaceArea
 
 	action layoutAction
 
-	leftNodeId   int32
-	centerNodeId int32
-	rightNodeId  int32
+	leftNodeId     int32
+	leftUpNodeId   int32
+	leftDownNodeId int32
+	centerNodeId   int32
+	rightNodeId    int32
 }
 
 func NewLayout(a layoutAction) *Layout {
@@ -35,13 +38,18 @@ func NewLayout(a layoutAction) *Layout {
 func (l *Layout) Process() {
 	l.updateNodes()
 
-	l.showLeftNode()
+	l.showLeftUpNode()
+	l.showLeftDownNode()
 	l.showCenterNode()
 	l.showRightNode()
 }
 
-func (l *Layout) showLeftNode() {
-	wrapNode("leftNode", int(l.leftNodeId), l.Environment.Process)
+func (l *Layout) showLeftUpNode() {
+	wrapNode("leftUpNode", int(l.leftUpNodeId), l.Environment.Process)
+}
+
+func (l *Layout) showLeftDownNode() {
+	wrapNode("leftDownNode", int(l.leftDownNodeId), l.Instances.Process)
 }
 
 func (l *Layout) showCenterNode() {
@@ -70,6 +78,7 @@ func (l *Layout) updateNodes() {
 
 	imgui.DockBuilderSetNodeSize(int(l.centerNodeId), size)
 	imgui.DockBuilderSplitNode(int(l.centerNodeId), imgui.DirLeft, .2, &l.leftNodeId, &l.centerNodeId)
+	imgui.DockBuilderSplitNode(int(l.leftNodeId), imgui.DirUp, .5, &l.leftUpNodeId, &l.leftDownNodeId)
 	imgui.DockBuilderSetNodeSize(int(l.centerNodeId), size)
 	imgui.DockBuilderSplitNode(int(l.centerNodeId), imgui.DirRight, .2, &l.rightNodeId, &l.centerNodeId)
 
