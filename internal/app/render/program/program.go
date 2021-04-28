@@ -83,10 +83,10 @@ func batchPersist() {
 
 // BatchTexture will persist our batched data, if the texture is different from the currently batched.
 func (*program) BatchTexture(texture uint32) {
-	if texture != batchTexture {
+	if texture != batchTexture && batchTexture != 0 {
 		batchPersist()
-		batchTexture = texture
 	}
+	batchTexture = texture
 }
 
 // BatchRectIdx will add indices of the rect by its specific idx.
