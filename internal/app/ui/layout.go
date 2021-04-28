@@ -8,6 +8,7 @@ import (
 
 type layoutAction interface {
 	component.EnvironmentAction
+	component.InstancesAction
 	component.WorkspaceAreaAction
 
 	IsWindowReset() bool
@@ -31,6 +32,7 @@ type Layout struct {
 func NewLayout(a layoutAction) *Layout {
 	l := &Layout{action: a}
 	l.Environment.Init(a)
+	l.Instances.Init(a)
 	l.WorkspaceArea.Init(a)
 	return l
 }

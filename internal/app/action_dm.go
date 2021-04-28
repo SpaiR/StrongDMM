@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 	"github.com/sqweek/dialog"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
@@ -65,4 +66,9 @@ func (a *app) RecentMapsByLoadedEnvironment() []string {
 		return a.RecentMapsByEnvironment()[a.loadedEnvironment.RootFile]
 	}
 	return nil
+}
+
+func (a *app) DoSelectInstance(instance *dmminstance.Instance) {
+	a.layout.Environment.SelectPath(instance.Path)
+	a.layout.Instances.Select(instance)
 }

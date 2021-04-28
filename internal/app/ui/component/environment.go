@@ -15,6 +15,7 @@ import (
 type EnvironmentAction interface {
 	LoadedEnvironment() *dmenv.Dme
 	PointSize() float32
+	DoSelectPath(string)
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -27,11 +28,13 @@ type Environment struct {
 	treeNodes         map[string]*treeNode
 	filteredTreeNodes []*treeNode
 
-	filter string
+	filter       string
+	selectedPath string
 
 	tmpNewTreeNodesCount int
 	tmpDoRepeatFilter    bool
 	tmpDoCollapseAll     bool
+	tmpDoSelectPath      bool
 }
 
 func (e *Environment) Init(action EnvironmentAction) {
@@ -43,6 +46,7 @@ func (e *Environment) Free() {
 	e.treeNodes = make(map[string]*treeNode)
 	e.filteredTreeNodes = nil
 	e.filter = ""
+	e.selectedPath = ""
 	log.Println("[component] environment panel free")
 }
 
@@ -56,6 +60,14 @@ func (e *Environment) process() {
 
 func (e *Environment) postProcess() {
 	e.tmpDoCollapseAll = false
+}
+
+func (e *Environment) SelectPath(path string) {
+	if path != e.selectedPath {
+		log.Printf("[component] environment path selected: [%s]", path)
+		e.selectedPath = path
+		e.tmpDoSelectPath = true
+	}
 }
 
 func (e *Environment) Process() {
@@ -85,10 +97,10 @@ func (e *Environment) showControls() {
 func (e *Environment) showTree() {
 	if imgui.BeginChild("tree") {
 		if len(e.filter) == 0 {
-			e.showTypeBranch("/area")
-			e.showTypeBranch("/turf")
-			e.showTypeBranch("/obj")
-			e.showTypeBranch("/mob")
+			e.showPathBranch("/area")
+			e.showPathBranch("/turf")
+			e.showPathBranch("/obj")
+			e.showPathBranch("/mob")
 		} else {
 			e.showFilteredNodes()
 		}
@@ -103,12 +115,13 @@ func (e *Environment) showFilteredNodes() {
 		for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
 			node := e.filteredTreeNodes[i]
 			e.showIcon(node)
-			imgui.TreeNodeV(node.orig.Path, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
+			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
+			e.doSelectOnClick(node)
 		}
 	}
 }
 
-func (e *Environment) showTypeBranch(t string) {
+func (e *Environment) showPathBranch(t string) {
 	if atom := e.action.LoadedEnvironment().Objects[t]; atom != nil {
 		e.showBranch0(atom)
 	}
@@ -123,17 +136,58 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 	e.showIcon(node)
 
 	if len(object.DirectChildren) == 0 {
-		imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsLeaf|imgui.TreeNodeFlagsNoTreePushOnOpen)
+		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
+		e.scrollToSelectedPath(node)
+		e.doSelectOnClick(node)
 	} else {
-		if imgui.TreeNodeV(node.name, imgui.TreeNodeFlagsOpenOnArrow|imgui.TreeNodeFlagsOpenOnDoubleClick) {
+		if e.isPartOfSelectedPath(node) {
+			imgui.SetNextItemOpen(true, imgui.ConditionAlways)
+		}
+		if imgui.TreeNodeV(node.name, e.nodeFlags(node, false)) {
+			e.scrollToSelectedPath(node)
+			e.doSelectOnClick(node)
+
 			if e.tmpDoCollapseAll {
 				imgui.StateStorage().SetAllInt(0)
 			}
-			for _, childType := range object.DirectChildren {
-				e.showBranch0(e.action.LoadedEnvironment().Objects[childType])
+			for _, childPath := range object.DirectChildren {
+				e.showBranch0(e.action.LoadedEnvironment().Objects[childPath])
 			}
 			imgui.TreePop()
+		} else {
+			e.doSelectOnClick(node)
 		}
+	}
+}
+
+func (e *Environment) doSelectOnClick(node *treeNode) {
+	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
+		e.action.DoSelectPath(node.orig.Path)
+		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from tree itself
+	}
+}
+
+func (e *Environment) nodeFlags(node *treeNode, leaf bool) imgui.TreeNodeFlags {
+	flags := 0
+	if node.orig.Path == e.selectedPath {
+		flags |= int(imgui.TreeNodeFlagsSelected)
+	}
+	if leaf {
+		flags |= int(imgui.TreeNodeFlagsLeaf | imgui.TreeNodeFlagsNoTreePushOnOpen)
+	} else {
+		flags |= int(imgui.TreeNodeFlagsOpenOnArrow | imgui.TreeNodeFlagsOpenOnDoubleClick)
+	}
+	return imgui.TreeNodeFlags(flags)
+}
+
+func (e *Environment) isPartOfSelectedPath(node *treeNode) bool {
+	return e.tmpDoSelectPath && strings.HasPrefix(e.selectedPath, node.orig.Path)
+}
+
+func (e *Environment) scrollToSelectedPath(node *treeNode) {
+	if e.tmpDoSelectPath && e.selectedPath == node.orig.Path {
+		e.tmpDoSelectPath = false
+		imgui.SetScrollHereY(.5)
 	}
 }
 
@@ -153,15 +207,15 @@ func (e *Environment) doFilter() {
 
 	initialNewTreeNodesCount := e.tmpNewTreeNodesCount
 
-	e.filterTypeBranch("/area")
-	e.filterTypeBranch("/turf")
-	e.filterTypeBranch("/obj")
-	e.filterTypeBranch("/mob")
+	e.filterPathBranch("/area")
+	e.filterPathBranch("/turf")
+	e.filterPathBranch("/obj")
+	e.filterPathBranch("/mob")
 
 	e.tmpDoRepeatFilter = initialNewTreeNodesCount != e.tmpNewTreeNodesCount
 }
 
-func (e *Environment) filterTypeBranch(t string) {
+func (e *Environment) filterPathBranch(t string) {
 	if atom := e.action.LoadedEnvironment().Objects[t]; atom != nil {
 		e.filterBranch0(atom)
 	}
@@ -174,8 +228,8 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 		}
 	}
 
-	for _, childType := range object.DirectChildren {
-		e.filterBranch0(e.action.LoadedEnvironment().Objects[childType])
+	for _, childPath := range object.DirectChildren {
+		e.filterBranch0(e.action.LoadedEnvironment().Objects[childPath])
 	}
 }
 

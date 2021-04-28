@@ -17,6 +17,7 @@ func (a *app) openMap(path string) {
 	a.internalData.AddRecentMap(a.loadedEnvironment.RootFile, path)
 	a.internalData.Save()
 	a.layout.WorkspaceArea.OpenMap(dmmap.New(a.loadedEnvironment, data))
+	a.layout.Instances.Update()
 
 	log.Println("[app] map opened:", path)
 }

@@ -19,6 +19,7 @@ func (a *app) openEnvironment(path string) {
 	a.internalData.Save()
 
 	a.loadedEnvironment = env
+	a.layout.Instances.Free()
 	a.layout.Environment.Free()
 	a.layout.WorkspaceArea.Free()
 
