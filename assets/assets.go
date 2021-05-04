@@ -16,7 +16,7 @@ var (
 var (
 	// Editor is a png with all textures used by the editor.
 	Editor = Asset{
-		Width:  64,
+		Width:  32,
 		Height: 32,
 		data:   editor,
 	}

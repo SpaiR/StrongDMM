@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/SpaiR/strongdmm/internal/app/render/brush"
 
 	"github.com/SpaiR/strongdmm/internal/app/data"
 	"github.com/SpaiR/strongdmm/internal/app/ui"
@@ -92,6 +93,7 @@ func (a *app) loop() {
 }
 
 func (a *app) dispose() {
+	brush.Dispose()
 	a.internalData.Save()
 	a.masterWindow.Dispose()
 }

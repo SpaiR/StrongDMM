@@ -12,18 +12,17 @@ import (
 // bucket contains data needed to render the map.
 type bucket struct {
 	units []unit
-	data  []float32
 }
 
 // bucket unit to store data about separate item on the map.
 type unit struct {
-	idx int
-
 	sp    *dmicon.Sprite
 	depth float32
 
 	x1, y1 float32
 	x2, y2 float32
+
+	r, g, b, a float32
 }
 
 func (u unit) isInBounds(x1, y1, x2, y2 float32) bool {
@@ -33,9 +32,7 @@ func (u unit) isInBounds(x1, y1, x2, y2 float32) bool {
 func (bu *bucket) update(dmm *dmmap.Dmm) {
 	// Pre-allocated buffers with known capacity.
 	bu.units = make([]unit, len(bu.units))
-	bu.data = make([]float32, len(bu.data))
 
-	idx := 0
 	for x := 1; x <= dmm.MaxX; x++ {
 		for y := 1; y <= dmm.MaxY; y++ {
 			for _, i := range dmm.GetTile(x, y, 1).Content { // TODO: respect z-levels
@@ -56,18 +53,10 @@ func (bu *bucket) update(dmm *dmmap.Dmm) {
 				depth := countDepth(i)
 
 				bu.units = append(bu.units, unit{
-					idx, sp, depth,
+					sp, depth,
 					x1, y1, x2, y2,
+					r, g, b, a,
 				})
-
-				bu.data = append(bu.data,
-					x1, y1, r, g, b, a, sp.U1, sp.V2, // bottom-left
-					x2, y1, r, g, b, a, sp.U2, sp.V2, // bottom-right
-					x1, y2, r, g, b, a, sp.U1, sp.V1, // top-left
-					x2, y2, r, g, b, a, sp.U2, sp.V1, // top-right
-				)
-
-				idx++
 			}
 		}
 	}

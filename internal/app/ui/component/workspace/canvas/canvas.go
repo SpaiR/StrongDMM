@@ -28,10 +28,10 @@ func (c *Canvas) Dispose() {
 	// Run later so it will be cleared in the next frame.
 	// Otherwise we will see graphics artifacts.
 	c.action.RunLater(func() {
-		c.Render.Dispose()
+		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)
-		log.Println("[widget] render disposed")
+		log.Println("[canvas] disposed")
 	})
 }
 

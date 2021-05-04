@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	overlayActive *Sprite
-	placeholder   *Sprite
+	placeholder *Sprite
 )
 
 func initEditorSprites() {
@@ -16,20 +15,12 @@ func initEditorSprites() {
 		IconHeight:    32,
 		TextureWidth:  assets.Editor.Width,
 		TextureHeight: assets.Editor.Height,
-		Cols:          2,
+		Cols:          1,
 		Rows:          1,
 		Texture:       platform.CreateTexture(assets.Editor.RGBA()),
 	}
 
-	overlayActive = newDmiSprite(dmi, 0)
-	placeholder = newDmiSprite(dmi, 1)
-}
-
-func SpriteOverlayActive() *Sprite {
-	if overlayActive == nil {
-		initEditorSprites()
-	}
-	return overlayActive
+	placeholder = newDmiSprite(dmi, 0)
 }
 
 func SpritePlaceholder() *Sprite {
