@@ -8,25 +8,25 @@ import (
 
 func Draw(w, h, x, y, z float32) {
 	// Ensure that the latest batch state is persisted.
-	batchFlush()
+	batching.flush()
 
 	gl.UseProgram(program)
 	gl.BindVertexArray(vao)
 
 	mtxTransform := transformationMatrix(w, h, x, y, z)
-	gl.UniformMatrix4fv(uniformTransformMtxLoc, 1, false, &mtxTransform[0])
+	gl.UniformMatrix4fv(uniformLocationTransform, 1, false, &mtxTransform[0])
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, len(batchData)*platform.FloatSize, gl.Ptr(batchData), gl.STATIC_DRAW)
+	gl.BufferData(gl.ARRAY_BUFFER, len(batching.data)*platform.FloatSize, gl.Ptr(batching.data), gl.STREAM_DRAW)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(batchIndices)*platform.FloatSize, gl.Ptr(batchIndices), gl.STATIC_DRAW)
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(batching.indices)*platform.FloatSize, gl.Ptr(batching.indices), gl.STREAM_DRAW)
 
-	for _, c := range batchCalls {
+	for _, c := range batching.calls {
 		if c.texture != 0 {
-			gl.Uniform1i(uniformHasTextureLoc, 1)
+			gl.Uniform1i(uniformLocationHasTexture, 1)
 			gl.BindTexture(gl.TEXTURE_2D, c.texture)
 		} else {
-			gl.Uniform1i(uniformHasTextureLoc, 0)
+			gl.Uniform1i(uniformLocationHasTexture, 0)
 		}
 
 		switch c.mode {
@@ -43,7 +43,7 @@ func Draw(w, h, x, y, z float32) {
 	gl.UseProgram(0)
 
 	// Clear batch state.
-	batchClear()
+	batching.clear()
 }
 
 func transformationMatrix(w, h, x, y, z float32) mgl32.Mat4 {

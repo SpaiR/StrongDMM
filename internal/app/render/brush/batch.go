@@ -7,32 +7,59 @@ const (
 	line modeType = 1
 )
 
+type Batching struct {
+	data  []float32
+	calls []batchCall
+
+	mode modeType
+
+	idx     uint32
+	indices []uint32
+
+	texture uint32
+	len     int32
+	offset  int
+}
+
+func (b *Batching) flush() {
+	if b.len != 0 && len(b.indices) > 0 {
+		b.calls = append(b.calls, batchCall{
+			texture: b.texture,
+			len:     b.len,
+			offset:  b.offset,
+			mode:    b.mode,
+		})
+
+		var offset int
+		if b.mode == rect {
+			offset = rectVerticesLen
+		}
+
+		b.offset += int(b.len) * offset
+		b.len = 0
+	}
+}
+
+func (b *Batching) clear() {
+	b.data = b.data[:0]
+	b.calls = b.calls[:0]
+
+	b.mode = 0
+
+	b.idx = 0
+	b.indices = b.indices[:0]
+
+	b.texture = 0
+	b.offset = 0
+	b.len = 0
+}
+
 var (
-	batchData  []float32
-	batchCalls []batchCall
-
-	batchMode modeType
-
-	batchIdx     uint32
-	batchIndices []uint32
-
-	batchTexture uint32
-	batchLen     int32
-	batchOffset  int
+	batching *Batching
 )
 
-func batchClear() {
-	batchData = batchData[:0]
-	batchCalls = batchCalls[:0]
-
-	batchMode = 0
-
-	batchIdx = 0
-	batchIndices = batchIndices[:0]
-
-	batchTexture = 0
-	batchOffset = 0
-	batchLen = 0
+func init() {
+	batching = &Batching{}
 }
 
 type batchCall struct {
@@ -51,23 +78,23 @@ const (
 )
 
 func RectTextured(x1, y1, x2, y2, r, g, b, a float32, texture uint32, u1, v1, u2, v2 float32) {
-	if batchMode != rect || batchTexture != texture {
-		batchFlush()
+	if batching.mode != rect || batching.texture != texture {
+		batching.flush()
 	}
 
-	batchTexture = texture
-	batchMode = rect
+	batching.texture = texture
+	batching.mode = rect
 
-	batchData = append(batchData,
+	batching.data = append(batching.data,
 		x1, y1, r, g, b, a, u1, v2, // bottom-left
 		x2, y1, r, g, b, a, u2, v2, // bottom-right
 		x1, y2, r, g, b, a, u1, v1, // top-left
 		x2, y2, r, g, b, a, u2, v1, // top-right
 	)
 
-	batchIndices = append(batchIndices, batchIdx+0, batchIdx+1, batchIdx+2, batchIdx+1, batchIdx+3, batchIdx+2)
-	batchIdx += rectVerticesLen
-	batchLen += rectIndicesLen
+	batching.indices = append(batching.indices, batching.idx+0, batching.idx+1, batching.idx+2, batching.idx+1, batching.idx+3, batching.idx+2)
+	batching.idx += rectVerticesLen
+	batching.len += rectIndicesLen
 }
 
 func RectFilled(x1, y1, x2, y2, r, g, b, a float32) {
@@ -82,38 +109,19 @@ func Rect(x1, y1, x2, y2, r, g, b, a float32) {
 }
 
 func Line(x1, y1, x2, y2, r, g, b, a float32) {
-	if batchMode != line {
-		batchFlush()
+	if batching.mode != line {
+		batching.flush()
 	}
 
-	batchTexture = 0
-	batchMode = line
+	batching.texture = 0
+	batching.mode = line
 
-	batchData = append(batchData,
+	batching.data = append(batching.data,
 		x1, y1, r, g, b, a, 0, 0, // first point
 		x2, y2, r, g, b, a, 0, 0, // second point
 	)
 
-	batchIndices = append(batchIndices, batchIdx+0, batchIdx+1)
-	batchIdx += lineVerticesLen
-	batchLen += lineIndicesLen
-}
-
-func batchFlush() {
-	if batchLen != 0 && len(batchIndices) > 0 {
-		batchCalls = append(batchCalls, batchCall{
-			texture: batchTexture,
-			len:     batchLen,
-			offset:  batchOffset,
-			mode:    batchMode,
-		})
-
-		var offset int
-		if batchMode == rect {
-			offset = rectVerticesLen
-		}
-
-		batchOffset += int(batchLen) * offset
-		batchLen = 0
-	}
+	batching.indices = append(batching.indices, batching.idx+0, batching.idx+1)
+	batching.idx += lineVerticesLen
+	batching.len += lineIndicesLen
 }

@@ -65,6 +65,7 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	// Get transformed bounds of the map, so we can ignore out of bounds units.
 	w := width / r.Camera.Scale
 	h := height / r.Camera.Scale
+
 	x1 := -r.Camera.ShiftX
 	y1 := -r.Camera.ShiftY
 	x2 := x1 + w

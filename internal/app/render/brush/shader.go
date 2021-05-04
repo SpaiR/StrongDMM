@@ -1,8 +1,8 @@
 package brush
 
 const (
-	uniformTransformMtxLoc = 0
-	uniformHasTextureLoc   = 1
+	uniformLocationTransform  = 0
+	uniformLocationHasTexture = 1
 )
 
 func vertexShader() string {
