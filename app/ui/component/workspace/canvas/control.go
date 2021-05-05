@@ -2,15 +2,14 @@ package canvas
 
 import (
 	"github.com/SpaiR/imgui-go"
+	render2 "github.com/SpaiR/strongdmm/app/render"
 	"github.com/go-gl/glfw/v3.3/glfw"
-
-	"github.com/SpaiR/strongdmm/internal/app/render"
 )
 
 const scaleFactor float32 = 1.5
 
 type Control struct {
-	Camera *render.Camera
+	Camera *render2.Camera
 
 	PosMin imgui.Vec2
 	PosMax imgui.Vec2
@@ -20,7 +19,7 @@ type Control struct {
 	dragging  bool
 }
 
-func NewControl(camera *render.Camera) *Control {
+func NewControl(camera *render2.Camera) *Control {
 	return &Control{
 		Camera: camera,
 	}

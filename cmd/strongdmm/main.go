@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/SpaiR/strongdmm/internal/app"
+	"github.com/SpaiR/strongdmm/app"
 )
 
 func main() {

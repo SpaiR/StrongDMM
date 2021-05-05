@@ -5,21 +5,21 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	workspace2 "github.com/SpaiR/strongdmm/app/ui/component/workspace"
 
-	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 )
 
 type WorkspaceAreaAction interface {
-	workspace.EmptyAction
-	workspace.MapAction
+	workspace2.EmptyAction
+	workspace2.MapAction
 }
 
 type WorkspaceArea struct {
 	action WorkspaceAreaAction
 
-	workspaces []workspace.Workspace
+	workspaces []workspace2.Workspace
 }
 
 func (w *WorkspaceArea) Init(action WorkspaceAreaAction) {
@@ -86,7 +86,7 @@ func (w *WorkspaceArea) OpenMap(dmm *dmmap.Dmm) {
 	}
 
 	idx := w.findEmptyWorkspaceIdx()
-	ws := workspace.NewMap(w.action, dmm)
+	ws := workspace2.NewMap(w.action, dmm)
 	if idx != -1 {
 		w.closeWorkspaceByIdx(idx)
 		w.addWorkspaceV(ws, idx)
@@ -96,10 +96,10 @@ func (w *WorkspaceArea) OpenMap(dmm *dmmap.Dmm) {
 }
 
 func (w *WorkspaceArea) closeAllMaps() {
-	workspaces := make([]workspace.Workspace, len(w.workspaces))
+	workspaces := make([]workspace2.Workspace, len(w.workspaces))
 	copy(workspaces, w.workspaces)
 	for _, ws := range workspaces {
-		if _, ok := ws.(*workspace.Map); ok {
+		if _, ok := ws.(*workspace2.Map); ok {
 			w.closeWorkspace(ws)
 		}
 	}
@@ -108,9 +108,9 @@ func (w *WorkspaceArea) closeAllMaps() {
 	}
 }
 
-func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Map, bool) {
+func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace2.Map, bool) {
 	for _, ws := range w.workspaces {
-		if ws, ok := ws.(*workspace.Map); ok {
+		if ws, ok := ws.(*workspace2.Map); ok {
 			if ws.Dmm.Path == path {
 				return ws, true
 			}
@@ -119,16 +119,16 @@ func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Map, bool) 
 	return nil, false
 }
 
-func (w *WorkspaceArea) addWorkspace(ws workspace.Workspace) {
+func (w *WorkspaceArea) addWorkspace(ws workspace2.Workspace) {
 	w.addWorkspaceV(ws, len(w.workspaces))
 }
 
-func (w *WorkspaceArea) addWorkspaceV(ws workspace.Workspace, idx int) {
-	w.workspaces = append(w.workspaces[:idx], append([]workspace.Workspace{ws}, w.workspaces[idx:]...)...)
+func (w *WorkspaceArea) addWorkspaceV(ws workspace2.Workspace, idx int) {
+	w.workspaces = append(w.workspaces[:idx], append([]workspace2.Workspace{ws}, w.workspaces[idx:]...)...)
 	log.Printf("[component] workspace opened in index [%d]: %s", idx, ws.Name())
 }
 
-func (w *WorkspaceArea) closeWorkspace(ws workspace.Workspace) {
+func (w *WorkspaceArea) closeWorkspace(ws workspace2.Workspace) {
 	if idx := w.findWorkspaceIdx(ws); idx != -1 {
 		w.closeWorkspaceByIdx(idx)
 	}
@@ -144,10 +144,10 @@ func (w *WorkspaceArea) closeWorkspaceByIdx(idx int) {
 }
 
 func (w *WorkspaceArea) addEmptyWorkspace() {
-	w.addWorkspace(workspace.NewEmpty(w.action))
+	w.addWorkspace(workspace2.NewEmpty(w.action))
 }
 
-func (w *WorkspaceArea) findWorkspaceIdx(ws workspace.Workspace) int {
+func (w *WorkspaceArea) findWorkspaceIdx(ws workspace2.Workspace) int {
 	for idx, lws := range w.workspaces {
 		if lws == ws {
 			return idx
@@ -158,7 +158,7 @@ func (w *WorkspaceArea) findWorkspaceIdx(ws workspace.Workspace) int {
 
 func (w *WorkspaceArea) findEmptyWorkspaceIdx() int {
 	for idx, ws := range w.workspaces {
-		if _, ok := ws.(*workspace.Empty); ok {
+		if _, ok := ws.(*workspace2.Empty); ok {
 			return idx
 		}
 	}

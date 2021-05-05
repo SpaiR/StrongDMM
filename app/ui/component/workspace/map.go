@@ -5,15 +5,15 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	canvas2 "github.com/SpaiR/strongdmm/app/ui/component/workspace/canvas"
 
-	"github.com/SpaiR/strongdmm/internal/app/ui/component/workspace/canvas"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
 	"github.com/SpaiR/strongdmm/pkg/imguiext/layout"
 )
 
 type MapAction interface {
-	canvas.Action
+	canvas2.Action
 
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)
@@ -25,11 +25,11 @@ type Map struct {
 
 	Dmm *dmmap.Dmm
 
-	canvasSate    *canvas.State
-	canvasTools   *canvas.Tools
-	canvasStatus  *canvas.Status
-	canvasControl *canvas.Control
-	canvas        *canvas.Canvas
+	canvasSate    *canvas2.State
+	canvasTools   *canvas2.Tools
+	canvasStatus  *canvas2.Status
+	canvasControl *canvas2.Control
+	canvas        *canvas2.Canvas
 
 	bp *layout.BorderPane
 
@@ -42,11 +42,11 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.Workspace = ws
 	ws.action = action
 
-	ws.canvasSate = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
-	ws.canvasTools = canvas.NewTools()
-	ws.canvas = canvas.New(action)
-	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
-	ws.canvasStatus = canvas.NewStatus(ws.canvasSate)
+	ws.canvasSate = canvas2.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
+	ws.canvasTools = canvas2.NewTools()
+	ws.canvas = canvas2.New(action)
+	ws.canvasControl = canvas2.NewControl(ws.canvas.Render.Camera)
+	ws.canvasStatus = canvas2.NewStatus(ws.canvasSate)
 
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
