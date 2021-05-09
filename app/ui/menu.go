@@ -1,7 +1,7 @@
 package ui
 
 import (
-	shortcut2 "github.com/SpaiR/strongdmm/app/ui/shortcut"
+	"github.com/SpaiR/strongdmm/app/ui/shortcut"
 	"github.com/go-gl/glfw/v3.3/glfw"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
@@ -89,7 +89,7 @@ func (m *Menu) Process() {
 }
 
 func addShortcuts(action menuAction) {
-	shortcut2.Add(shortcut2.Shortcut{
+	shortcut.Add(shortcut.Shortcut{
 		FirstKey: glfw.KeyF5,
 		Action:   action.DoResetWindows,
 	})

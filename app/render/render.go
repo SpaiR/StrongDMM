@@ -3,7 +3,7 @@ package render
 import (
 	"log"
 
-	brush2 "github.com/SpaiR/strongdmm/app/render/brush"
+	"github.com/SpaiR/strongdmm/app/render/brush"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
@@ -23,7 +23,7 @@ type Render struct {
 }
 
 func New() *Render {
-	brush2.TryInit()
+	brush.TryInit()
 	return &Render{
 		Camera: &Camera{Scale: 1},
 		bucket: &bucket{},
@@ -58,7 +58,7 @@ func (r *Render) prepare() {
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
 	r.batchOverlay()
-	brush2.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
 
 func (r *Render) batchBucketUnits(width, height float32) {
@@ -74,7 +74,7 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	// Batch all bucket units.
 	for _, u := range r.bucket.units {
 		if u.isInBounds(x1, y1, x2, y2) {
-			brush2.RectTextured(u.x1, u.y1, u.x2, u.y2, u.r, u.g, u.b, u.a, u.sp.Texture(), u.sp.U1, u.sp.V1, u.sp.U2, u.sp.V2)
+			brush.RectTextured(u.x1, u.y1, u.x2, u.y2, u.r, u.g, u.b, u.a, u.sp.Texture(), u.sp.U1, u.sp.V1, u.sp.U2, u.sp.V2)
 		}
 	}
 }
@@ -95,8 +95,8 @@ func (r *Render) batchOverlay() {
 		x1, y1 := r.overlayState.HoveredTilePoint()
 		x2, y2 := x1+size, y1+size
 
-		brush2.RectFilled(x1, y1, x2, y2, activeTileCol.r, activeTileCol.g, activeTileCol.b, activeTileCol.a)
-		brush2.Rect(x1, y1, x2, y2, activeTileBorderCol.r, activeTileBorderCol.g, activeTileBorderCol.b, activeTileBorderCol.a)
+		brush.RectFilled(x1, y1, x2, y2, activeTileCol.r, activeTileCol.g, activeTileCol.b, activeTileCol.a)
+		brush.Rect(x1, y1, x2, y2, activeTileBorderCol.r, activeTileBorderCol.g, activeTileBorderCol.b, activeTileBorderCol.a)
 	}
 }
 

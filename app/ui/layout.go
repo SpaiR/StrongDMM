@@ -2,22 +2,22 @@ package ui
 
 import (
 	"github.com/SpaiR/imgui-go"
-	component2 "github.com/SpaiR/strongdmm/app/ui/component"
+	"github.com/SpaiR/strongdmm/app/ui/component"
 )
 
 type layoutAction interface {
-	component2.EnvironmentAction
-	component2.InstancesAction
-	component2.WorkspaceAreaAction
+	component.EnvironmentAction
+	component.InstancesAction
+	component.WorkspaceAreaAction
 
 	IsWindowReset() bool
 	PointSizePtr() *float32
 }
 
 type Layout struct {
-	component2.Environment
-	component2.Instances
-	component2.WorkspaceArea
+	component.Environment
+	component.Instances
+	component.WorkspaceArea
 
 	action layoutAction
 

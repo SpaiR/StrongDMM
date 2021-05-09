@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
-	render2 "github.com/SpaiR/strongdmm/app/render"
+	"github.com/SpaiR/strongdmm/app/render"
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
@@ -15,7 +15,7 @@ type Action interface {
 type Canvas struct {
 	action Action
 
-	Render *render2.Render
+	Render *render.Render
 
 	width, height float32
 
@@ -37,7 +37,7 @@ func (c *Canvas) Dispose() {
 func New(action Action) *Canvas {
 	c := &Canvas{
 		action: action,
-		Render: render2.New(),
+		Render: render.New(),
 	}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c

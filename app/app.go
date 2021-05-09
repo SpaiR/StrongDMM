@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
-	data2 "github.com/SpaiR/strongdmm/app/data"
-	brush2 "github.com/SpaiR/strongdmm/app/render/brush"
-	ui2 "github.com/SpaiR/strongdmm/app/ui"
-	shortcut2 "github.com/SpaiR/strongdmm/app/ui/shortcut"
-	window2 "github.com/SpaiR/strongdmm/app/window"
+	"github.com/SpaiR/strongdmm/app/data"
+	"github.com/SpaiR/strongdmm/app/render/brush"
+	"github.com/SpaiR/strongdmm/app/ui"
+	"github.com/SpaiR/strongdmm/app/ui/shortcut"
+	"github.com/SpaiR/strongdmm/app/window"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 )
 
@@ -34,7 +34,7 @@ func Start() {
 	log.Println("[app] log dir:", logDir)
 
 	app := app{
-		masterWindow: window2.New(window2.Config{IniFilename: internalDir + "/Layout.ini"}),
+		masterWindow: window.New(window.Config{IniFilename: internalDir + "/Layout.ini"}),
 		logDir:       logDir,
 	}
 
@@ -49,7 +49,7 @@ func Start() {
 }
 
 type app struct {
-	masterWindow *window2.Window
+	masterWindow *window.Window
 
 	logDir string
 
@@ -58,17 +58,17 @@ type app struct {
 
 	loadedEnvironment *dmenv.Dme
 
-	internalData *data2.Internal
+	internalData *data.Internal
 
-	menu   *ui2.Menu
-	layout *ui2.Layout
+	menu   *ui.Menu
+	layout *ui.Layout
 }
 
 func (a *app) initialize(internalDir string) {
-	a.internalData = data2.LoadInternal(internalDir)
+	a.internalData = data.LoadInternal(internalDir)
 
-	a.menu = ui2.NewMenu(a)
-	a.layout = ui2.NewLayout(a)
+	a.menu = ui.NewMenu(a)
+	a.layout = ui.NewLayout(a)
 
 	a.updateTitle()
 	a.resetWindows()
@@ -82,7 +82,7 @@ func (a *app) loop() {
 	// TODO: Remove
 	//imgui.ShowDemoWindow(nil)
 
-	shortcut2.Process()
+	shortcut.Process()
 
 	a.menu.Process()
 	a.layout.Process()
@@ -92,7 +92,7 @@ func (a *app) loop() {
 }
 
 func (a *app) dispose() {
-	brush2.Dispose()
+	brush.Dispose()
 	a.internalData.Save()
 	a.masterWindow.Dispose()
 }

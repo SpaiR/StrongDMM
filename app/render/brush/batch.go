@@ -3,8 +3,8 @@ package brush
 type modeType int
 
 const (
-	rect modeType = 0
-	line modeType = 1
+	rect modeType = iota
+	line
 )
 
 type Batching struct {
