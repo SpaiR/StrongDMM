@@ -23,6 +23,9 @@ class ByondParser(
             if (line.isBlank()) {
                 posIdx += line.length + 1
                 continue
+            } else if (line.startsWith("//")) {
+                posIdx += line.length + 1
+                continue
             } else if (line.startsWith("(1,1,1)")) {
                 break
             }
