@@ -12,8 +12,8 @@ serde_derive = "1.0.106"
 serde_json = "1.0.51"
 
 [dependencies.dreammaker]
-git = "https://github.com/SpaiR/SpacemanDMM"
-rev = "ac037752c930030a46f4ddcb7e39b199246d19d1"
+git = "https://github.com/SpaceManiac/SpacemanDMM"
+rev = "4149da7c13ef9e70b76bda4857186a954d1f0838" #suite-1.7
 package = "dreammaker"
 
 [profile.release]
