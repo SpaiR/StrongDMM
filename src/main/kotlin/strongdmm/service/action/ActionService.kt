@@ -7,7 +7,6 @@ import strongdmm.byond.dmm.Dmm
 import strongdmm.event.Event
 import strongdmm.event.EventBus
 import strongdmm.event.service.*
-import strongdmm.event.type.service.*
 import strongdmm.service.action.undoable.MultiAction
 import strongdmm.service.action.undoable.Undoable
 import strongdmm.util.extension.getOrPut
