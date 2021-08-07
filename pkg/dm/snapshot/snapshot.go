@@ -1,8 +1,9 @@
-package dmmap
+package snapshot
 
 import (
 	"log"
 
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
 )
 
@@ -12,14 +13,14 @@ type dmmPatch []tilePatch
 // It stores patches between different map states, so UNDO/REDO operations simplified to the "apply patch operation".
 // TODO: provide local VCS
 type Snapshot struct {
-	initial, current *Dmm
+	initial, current *dmmap.Dmm
 
 	stateId int
 
 	patches []dmmPatch
 }
 
-func NewSnapshot(current *Dmm) *Snapshot {
+func NewSnapshot(current *dmmap.Dmm) *Snapshot {
 	s := &Snapshot{current: current}
 	s.sync()
 	return s
@@ -28,7 +29,7 @@ func NewSnapshot(current *Dmm) *Snapshot {
 // Commit creates a patch with the map changes between two snapshot states.
 // stateId is an integer value, which can be used in the future to iterate snapshot to the specific state.
 func (s *Snapshot) Commit() (stateId int) {
-	log.Println("[dmmap] committing snapshot state...")
+	log.Println("[snapshot] committing snapshot state...")
 
 	var tilePatches []tilePatch
 
@@ -72,30 +73,30 @@ func (s *Snapshot) Commit() (stateId int) {
 
 	// Add new patches and sync map states.
 	if len(tilePatches) != 0 {
-		log.Println("[dmmap] collected snapshot patches count:", len(tilePatches))
+		log.Println("[snapshot] collected snapshot patches count:", len(tilePatches))
 
 		oldPatchesLen := len(s.patches)
 		s.patches = append(s.patches[:s.stateId], tilePatches) // Drop all patches, if their stateId is more than the current one.
 		newPatchesLen := len(s.patches)
 
 		if oldPatchesLen > newPatchesLen {
-			log.Println("[dmmap] dropped patches count:", oldPatchesLen-newPatchesLen)
+			log.Println("[snapshot] dropped patches count:", oldPatchesLen-newPatchesLen)
 		} else {
-			log.Println("[dmmap] added patches count:", newPatchesLen-oldPatchesLen)
+			log.Println("[snapshot] added patches count:", newPatchesLen-oldPatchesLen)
 		}
 
 		s.stateId = len(s.patches)
 		s.sync()
 	}
 
-	log.Println("[dmmap] snapshot state committed")
+	log.Println("[snapshot] snapshot state committed")
 
 	return s.stateId
 }
 
 // GoTo used to change current map state, so it will be equal to a specific stateId value.
 func (s *Snapshot) GoTo(stateId int) {
-	log.Println("[dmmap] changing snapshot state to:", stateId)
+	log.Println("[snapshot] changing snapshot state to:", stateId)
 	s.goTo(stateId)
 	s.sync() // Call sync after we've reached the state we want.
 }
@@ -133,9 +134,9 @@ func (s *Snapshot) patchState(isForward bool) {
 // sync do a synchronization between Snapshot states.
 // Need to be called after any state update to ensure other patches will be created properly.
 func (s *Snapshot) sync() {
-	log.Println("[dmmap] syncing snapshot state...")
+	log.Println("[snapshot] syncing snapshot state...")
 
-	s.initial = &Dmm{
+	s.initial = &dmmap.Dmm{
 		Name: s.current.Name,
 		Path: s.current.Path,
 		MaxX: s.current.MaxX,
@@ -149,7 +150,7 @@ func (s *Snapshot) sync() {
 		s.initial.Tiles = append(s.initial.Tiles, &tileCopy)
 	}
 
-	log.Println("[dmmap] snapshot state synced")
+	log.Println("[snapshot] snapshot state synced")
 }
 
 type tilePatch struct {

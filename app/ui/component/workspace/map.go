@@ -8,6 +8,7 @@ import (
 	"github.com/SpaiR/strongdmm/app/command"
 	"github.com/SpaiR/strongdmm/app/ui/component/workspace/canvas"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/dm/snapshot"
 	"github.com/SpaiR/strongdmm/pkg/util"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
@@ -32,7 +33,7 @@ type Map struct {
 	action MapAction
 
 	Dmm      *dmmap.Dmm
-	Snapshot *dmmap.Snapshot
+	Snapshot *snapshot.Snapshot
 
 	canvasState   *canvas.State
 	canvasStatus  *canvas.Status
@@ -48,7 +49,7 @@ type Map struct {
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws := &Map{
 		Dmm:      dmm,
-		Snapshot: dmmap.NewSnapshot(dmm),
+		Snapshot: snapshot.NewSnapshot(dmm),
 	}
 
 	ws.Workspace = ws
