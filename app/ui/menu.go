@@ -8,6 +8,7 @@ import (
 	w "github.com/SpaiR/strongdmm/pkg/imguiext/widget"
 )
 
+//goland:noinspection GoCommentStart
 type menuAction interface {
 	// File
 	DoOpenEnvironment()
@@ -17,6 +18,10 @@ type menuAction interface {
 	DoOpenMapByPath(path string)
 	DoClearRecentMaps()
 	DoExit()
+
+	// Edit
+	DoUndo()
+	DoRedo()
 
 	// Window
 	DoResetWindows()
@@ -29,6 +34,9 @@ type menuAction interface {
 
 	LoadedEnvironment() *dmenv.Dme
 	HasLoadedEnvironment() bool
+
+	HasUndo() bool
+	HasRedo() bool
 }
 
 type Menu struct {
@@ -79,9 +87,15 @@ func (m *Menu) Process() {
 			w.MenuItem("Exit", m.action.DoExit),
 		}),
 
+		w.Menu("Edit", w.Layout{
+			w.MenuItem("Undo", m.action.DoUndo).Enabled(m.action.HasUndo()),
+			w.MenuItem("Redo", m.action.DoRedo).Enabled(m.action.HasRedo()),
+		}),
+
 		w.Menu("Window", w.Layout{
 			w.MenuItem("Reset Windows", m.action.DoResetWindows).Shortcut("F5"),
 		}),
+
 		w.Menu("Help", w.Layout{
 			w.MenuItem("Open Logs Folder", m.action.DoOpenLogs),
 		}),

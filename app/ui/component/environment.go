@@ -1,6 +1,7 @@
 package component
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -25,6 +26,8 @@ const newTreeNodesLimit = 25
 type Environment struct {
 	action EnvironmentAction
 
+	treeId uint
+
 	treeNodes         map[string]*treeNode
 	filteredTreeNodes []*treeNode
 
@@ -39,6 +42,7 @@ type Environment struct {
 
 func (e *Environment) Init(action EnvironmentAction) {
 	e.action = action
+	e.treeId++
 	e.treeNodes = make(map[string]*treeNode)
 }
 
@@ -95,7 +99,7 @@ func (e *Environment) showControls() {
 }
 
 func (e *Environment) showTree() {
-	if imgui.BeginChild("tree") {
+	if imgui.BeginChild(fmt.Sprintf("environment_tree_[%d]", e.treeId)) {
 		if len(e.filter) == 0 {
 			e.showPathBranch("/area")
 			e.showPathBranch("/turf")

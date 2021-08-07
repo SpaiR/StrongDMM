@@ -75,6 +75,11 @@ func (i *Instances) Update() {
 	}
 }
 
+// SelectedInstanceId returns the id of the instance currently selected in the Instances panel.
+func (i *Instances) SelectedInstanceId() uint64 {
+	return i.selectedId
+}
+
 func (i *Instances) doSelect(node *instanceNode) {
 	i.action.DoSelectInstance(node.orig)
 	i.tmpDoScrollToInstance = false // do not scroll panel when we're in panel itself

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmvars"
+	"github.com/SpaiR/strongdmm/pkg/util"
 )
 
 var Cache = &InstanceCache{instances: make(map[uint64]*Instance)}
@@ -58,14 +59,5 @@ func computeInstanceId(path string, vars *dmvars.Variables) uint64 {
 			}
 		}
 	}
-	return djb2(snap)
-}
-
-// http://www.cse.yorku.ca/~oz/hash.html
-func djb2(str string) uint64 {
-	var hash uint64 = 5381
-	for _, c := range str {
-		hash = ((hash << 5) + hash) + uint64(c)
-	}
-	return hash
+	return util.Djb2(snap)
 }

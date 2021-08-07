@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/SpaiR/strongdmm/app/command"
 	"github.com/SpaiR/strongdmm/app/data"
 	"github.com/SpaiR/strongdmm/app/render/brush"
 	"github.com/SpaiR/strongdmm/app/ui"
@@ -34,17 +35,17 @@ func Start() {
 	log.Println("[app] log dir:", logDir)
 
 	app := app{
-		masterWindow: window.New(window.Config{IniFilename: internalDir + "/Layout.ini"}),
+		masterWindow: window.New(),
 		logDir:       logDir,
 	}
 
-	log.Println("[app] initializing")
+	log.Println("[app] phase: initialization")
 	app.initialize(internalDir)
 
-	log.Println("[app] running")
+	log.Println("[app] phase: application loop")
 	app.run()
 
-	log.Println("[app] disposing")
+	log.Println("[app] phase: disposing")
 	app.dispose()
 }
 
@@ -58,7 +59,8 @@ type app struct {
 
 	loadedEnvironment *dmenv.Dme
 
-	internalData *data.Internal
+	internalData   *data.Internal
+	commandStorage *command.Storage
 
 	menu   *ui.Menu
 	layout *ui.Layout
@@ -66,6 +68,7 @@ type app struct {
 
 func (a *app) initialize(internalDir string) {
 	a.internalData = data.LoadInternal(internalDir)
+	a.commandStorage = command.NewStorage()
 
 	a.menu = ui.NewMenu(a)
 	a.layout = ui.NewLayout(a)

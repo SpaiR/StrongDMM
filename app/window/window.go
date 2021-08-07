@@ -24,13 +24,8 @@ type Window struct {
 	laterJobs []func()
 }
 
-type Config struct {
-	IniFilename string
-}
-
-func New(config Config) *Window {
+func New() *Window {
 	log.Println("[window] creating native window")
-	log.Println("[window] config:", config)
 
 	w := Window{
 		PointSize:            1.0,
@@ -41,7 +36,7 @@ func New(config Config) *Window {
 	w.setupGlfw()
 
 	log.Println("[window] setting up Dear ImGui")
-	w.setupImGui(config)
+	w.setupImGui()
 
 	log.Println("[window] initializing platform")
 	platform.InitImGuiGLFW()
@@ -126,11 +121,11 @@ func (w *Window) setupGlfw() {
 	w.Handle = window
 }
 
-func (w *Window) setupImGui(config Config) {
+func (w *Window) setupImGui() {
 	imgui.CreateContext(nil)
 
 	io := imgui.CurrentIO()
-	io.SetIniFilename(config.IniFilename)
+	io.SetIniFilename("")
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	// TODO: Proper theming

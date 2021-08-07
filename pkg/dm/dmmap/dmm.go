@@ -13,20 +13,29 @@ type Dmm struct {
 	Name string
 	Path DmmPath
 
-	Tiles map[dmmdata.Coord]*Tile
+	Tiles []*Tile
 
 	MaxX, MaxY, MaxZ int
 }
 
 func (d *Dmm) GetTile(x, y, z int) *Tile {
-	return d.Tiles[dmmdata.Coord{X: uint16(x), Y: uint16(y), Z: uint16(z)}]
+	return d.Tiles[d.tileIndex(x, y, z)]
+}
+
+func (d *Dmm) SetTile(x, y, z int, tile *Tile) {
+	d.Tiles[d.tileIndex(x, y, z)] = tile
+}
+
+// We store all tiles in the 1d-array, so we need to calculate tile position in it.
+func (d *Dmm) tileIndex(x, y, z int) int {
+	return d.MaxX*d.MaxY*(z-1) + d.MaxX*(y-1) + (x - 1)
 }
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 	dmm := Dmm{
 		Name:  filepath.Base(data.Filepath),
 		Path:  newDmmPath(dme, data),
-		Tiles: make(map[dmmdata.Coord]*Tile),
+		Tiles: make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
 		MaxX:  data.MaxX,
 		MaxY:  data.MaxY,
 		MaxZ:  data.MaxZ,
@@ -35,8 +44,8 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 	for z := 1; z <= data.MaxZ; z++ {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
+				tile := Tile{X: x, Y: y, Z: z}
 				coord := dmmdata.Coord{X: uint16(x), Y: uint16(y), Z: uint16(z)}
-				tile := Tile{}
 				for _, prefab := range data.Dictionary[data.Grid[coord]] {
 					if obj, ok := dme.Objects[prefab.Path]; ok {
 						prefab.Vars.SetParent(obj.Vars)
@@ -45,7 +54,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 						log.Println("[dmmap] unknown prefab:", prefab.Path)
 					}
 				}
-				dmm.Tiles[coord] = &tile
+				dmm.SetTile(x, y, z, &tile)
 			}
 		}
 	}

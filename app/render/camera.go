@@ -6,6 +6,10 @@ type Camera struct {
 	ShiftY float32
 }
 
+func newCamera() *Camera {
+	return &Camera{Scale: 1}
+}
+
 func (s *Camera) Translate(x, y float32) {
 	s.ShiftX += x
 	s.ShiftY += y

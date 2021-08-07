@@ -20,6 +20,6 @@ func (s *Status) Process() {
 	if s.state.HoverOutOfBounds() {
 		imgui.Text("[out of bounds]")
 	} else {
-		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", s.state.hoveredTile.x, s.state.hoveredTile.y))
+		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", s.state.hoveredTile.X, s.state.hoveredTile.Y))
 	}
 }

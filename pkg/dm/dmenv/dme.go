@@ -28,13 +28,12 @@ func New(path string) (*Dme, error) {
 
 	start := time.Now()
 
+	log.Printf("[dmenv] parsing environment: [%s]...", path)
 	objectTreeType, err := sdmmparser.ParseEnvironment(path)
 	if err != nil {
 		return nil, fmt.Errorf("[dmenv] unable to create dme by path [%s]: %w", path, err)
 	}
-
-	elapsed := time.Since(start).Milliseconds()
-	log.Printf("[dmenv] environment [%s] parsed in [%d] ms", path, elapsed)
+	log.Printf("[dmenv] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
 	traverseTree0(objectTreeType, nil, &dme)
 

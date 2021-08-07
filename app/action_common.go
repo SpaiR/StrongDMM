@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/SpaiR/imgui-go"
+	"github.com/SpaiR/strongdmm/app/command"
 )
 
 func (a *app) WindowCond() imgui.Condition {
@@ -34,4 +35,20 @@ func (a *app) AddMouseChangeCallback(cb func(uint, uint)) int {
 
 func (a *app) RemoveMouseChangeCallback(id int) {
 	a.masterWindow.RemoveMouseChangeCallback(id)
+}
+
+func (a *app) SetCommandStack(id string) {
+	a.commandStorage.SetStack(id)
+}
+
+func (a *app) PushCommand(command command.Command) {
+	a.commandStorage.Push(command)
+}
+
+func (a *app) HasUndo() bool {
+	return a.commandStorage.HasUndo()
+}
+
+func (a *app) HasRedo() bool {
+	return a.commandStorage.HasRedo()
 }

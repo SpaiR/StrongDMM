@@ -5,7 +5,10 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/SpaiR/strongdmm/app/command"
 	"github.com/SpaiR/strongdmm/app/ui/component/workspace/canvas"
+	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
+	"github.com/SpaiR/strongdmm/pkg/util"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 	"github.com/SpaiR/strongdmm/pkg/imguiext"
@@ -15,20 +18,26 @@ import (
 type MapAction interface {
 	canvas.Action
 
+	SelectedInstance() *dmminstance.Instance
+
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)
+
+	SetCommandStack(id string)
+	PushCommand(command command.Command)
 }
 
 type Map struct {
 	base
 	action MapAction
 
-	Dmm *dmmap.Dmm
+	Dmm      *dmmap.Dmm
+	Snapshot *dmmap.Snapshot
 
-	canvasSate    *canvas.State
-	canvasTools   *canvas.Tools
+	canvasState   *canvas.State
 	canvasStatus  *canvas.Status
 	canvasControl *canvas.Control
+	canvasTools   *canvas.Tools
 	canvas        *canvas.Canvas
 
 	bp *layout.BorderPane
@@ -37,22 +46,25 @@ type Map struct {
 }
 
 func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
-	ws := &Map{Dmm: dmm}
+	ws := &Map{
+		Dmm:      dmm,
+		Snapshot: dmmap.NewSnapshot(dmm),
+	}
 
 	ws.Workspace = ws
 	ws.action = action
 
-	ws.canvasSate = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
-	ws.canvasTools = canvas.NewTools()
+	ws.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
 	ws.canvas = canvas.New(action)
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
-	ws.canvasStatus = canvas.NewStatus(ws.canvasSate)
+	ws.canvasTools = canvas.NewTools(ws, ws.canvasControl, ws.canvasState)
+	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
 
 	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
 
-	ws.canvas.Render.SetOverlayState(ws.canvasSate)
-	ws.canvas.Render.UpdateBucket(dmm)
+	ws.canvas.Render.SetOverlayState(ws.canvasState)
+	ws.canvas.Render.UpdateBucket(ws.Dmm)
 
 	return ws
 }
@@ -62,6 +74,7 @@ func (m *Map) Name() string {
 }
 
 func (m *Map) Process() {
+	m.action.SetCommandStack(m.Name())
 	m.bp.Draw()
 }
 
@@ -77,6 +90,28 @@ func (m *Map) Dispose() {
 
 func (m *Map) Border() bool {
 	return false
+}
+
+// AddSelectedInstance adds currently selected instance on the map.
+// If there is no selected instance, then nothing will happen.
+func (m *Map) AddSelectedInstance(pos util.Point) {
+	if instance := m.action.SelectedInstance(); instance != nil {
+		tile := m.Dmm.GetTile(pos.X, pos.Y, 1) // TODO: respect Z-level
+		tile.Content = append(tile.Content, instance)
+		m.canvas.Render.UpdateBucket(m.Dmm)
+	}
+}
+
+// CommitChanges triggers snapshot to commit changes and create a patch between two map states.
+func (m *Map) CommitChanges(changesType string) {
+	stateId := m.Snapshot.Commit()
+	m.action.PushCommand(command.New(changesType, func() {
+		m.Snapshot.GoTo(stateId - 1)
+		m.canvas.Render.UpdateBucket(m.Dmm)
+	}, func() {
+		m.Snapshot.GoTo(stateId)
+		m.canvas.Render.UpdateBucket(m.Dmm)
+	}))
 }
 
 func (m *Map) createLayout() layout.BorderPaneLayout {
@@ -122,5 +157,5 @@ func (m *Map) updateMousePosition(mouseX, mouseY int) {
 	relLocalX := float32(relMouseX)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftX)
 	relLocalY := float32(relMouseY)/m.canvasControl.Camera.Scale - (m.canvasControl.Camera.ShiftY)
 
-	m.canvasSate.SetHoveredTile(relLocalX, relLocalY)
+	m.canvasState.SetHoveredTile(relLocalX, relLocalY)
 }

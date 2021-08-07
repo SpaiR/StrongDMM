@@ -16,6 +16,7 @@ type Control struct {
 
 	active    bool
 	activated bool
+	moving    bool
 	dragging  bool
 }
 
@@ -28,6 +29,7 @@ func NewControl(camera *render.Camera) *Control {
 func (c *Control) Process(size imgui.Vec2) {
 	c.showControlArea(size)
 	c.processMouseMove()
+	c.processMouseDrag()
 	c.processMouseScroll(size)
 }
 
@@ -46,16 +48,29 @@ func (c *Control) showControlArea(size imgui.Vec2) {
 }
 
 func (c *Control) processMouseMove() {
-	if !c.active && !c.dragging || c.activated {
+	if !c.active && !c.moving || c.activated {
 		return
 	}
 
-	c.dragging = imgui.IsMouseDown(imgui.MouseButtonMiddle) || imgui.IsKeyDown(int(glfw.KeySpace))
+	c.moving = imgui.IsMouseDown(imgui.MouseButtonMiddle) || imgui.IsKeyDown(int(glfw.KeySpace))
 
-	if c.dragging {
+	if c.moving {
 		if delta := imgui.CurrentIO().MouseDelta(); delta.X != 0 || delta.Y != 0 {
 			c.Camera.Translate(delta.X/c.Camera.Scale, -delta.Y/c.Camera.Scale)
 		}
+	}
+}
+
+func (c *Control) processMouseDrag() {
+	if c.moving {
+		return
+	}
+
+	isLmbDown := imgui.IsMouseDown(imgui.MouseButtonLeft)
+	if isLmbDown && !c.dragging {
+		c.dragging = true
+	} else if !isLmbDown && c.dragging {
+		c.dragging = false
 	}
 }
 

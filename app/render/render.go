@@ -20,13 +20,15 @@ type Render struct {
 	bucket *bucket
 
 	overlayState overlayState
+
+	tmpDmmToUpdateBucket *dmmap.Dmm
 }
 
 func New() *Render {
 	brush.TryInit()
 	return &Render{
-		Camera: &Camera{Scale: 1},
-		bucket: &bucket{},
+		Camera: newCamera(),
+		bucket: newBucket(),
 	}
 }
 
@@ -36,12 +38,20 @@ func (r *Render) SetOverlayState(state overlayState) {
 
 // UpdateBucket used to update internal data about the map.
 func (r *Render) UpdateBucket(dmm *dmmap.Dmm) {
-	log.Printf("[render] updating bucket with [%s]...", dmm.Path.Readable)
-	r.bucket.update(dmm)
-	log.Println("[render] bucket updated")
+	r.tmpDmmToUpdateBucket = dmm
+}
+
+func (r *Render) updateBucketState() {
+	if r.tmpDmmToUpdateBucket != nil && !r.bucket.updating {
+		log.Printf("[render] updating bucket with [%s]...", r.tmpDmmToUpdateBucket.Path.Readable)
+		r.bucket.update(r.tmpDmmToUpdateBucket)
+		log.Println("[render] bucket updated")
+		r.tmpDmmToUpdateBucket = nil
+	}
 }
 
 func (r *Render) Draw(width, height float32) {
+	r.updateBucketState()
 	r.prepare()
 	r.draw(width, height)
 	r.cleanup()
@@ -72,9 +82,11 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	y2 := y1 + h
 
 	// Batch all bucket units.
-	for _, u := range r.bucket.units {
-		if u.isInBounds(x1, y1, x2, y2) {
-			brush.RectTextured(u.x1, u.y1, u.x2, u.y2, u.r, u.g, u.b, u.a, u.sp.Texture(), u.sp.U1, u.sp.V1, u.sp.U2, u.sp.V2)
+	for _, layer := range r.bucket.layers {
+		for _, u := range r.bucket.unitsByLayers[layer] {
+			if u.isInBounds(x1, y1, x2, y2) {
+				brush.RectTextured(u.x1, u.y1, u.x2, u.y2, u.r, u.g, u.b, u.a, u.sp.Texture(), u.sp.U1, u.sp.V1, u.sp.U2, u.sp.V2)
+			}
 		}
 	}
 }

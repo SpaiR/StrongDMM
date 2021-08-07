@@ -11,6 +11,16 @@ func (a *app) DoExit() {
 	a.tmpShouldClose = true
 }
 
+func (a *app) DoUndo() {
+	log.Println("[app] undo")
+	a.commandStorage.Undo()
+}
+
+func (a *app) DoRedo() {
+	log.Println("[app] redo")
+	a.commandStorage.Redo()
+}
+
 func (a *app) DoResetWindows() {
 	log.Println("[app] resetting windows")
 	a.resetWindows()

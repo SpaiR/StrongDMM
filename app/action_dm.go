@@ -72,3 +72,9 @@ func (a *app) DoSelectInstance(instance *dmminstance.Instance) {
 	a.layout.Environment.SelectPath(instance.Path)
 	a.layout.Instances.Select(instance)
 }
+
+// SelectedInstance returns currently selected *dmminstance.Instance or nil.
+// Selected instance is taken from the component.Instances panel.
+func (a *app) SelectedInstance() *dmminstance.Instance {
+	return dmminstance.Cache.GetById(a.layout.Instances.SelectedInstanceId())
+}
