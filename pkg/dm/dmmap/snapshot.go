@@ -96,9 +96,14 @@ func (s *Snapshot) Commit() (stateId int) {
 // GoTo used to change current map state, so it will be equal to a specific stateId value.
 func (s *Snapshot) GoTo(stateId int) {
 	log.Println("[dmmap] changing snapshot state to:", stateId)
+	s.goTo(stateId)
+	s.sync() // Call sync after we've reached the state we want.
+}
+
+func (s *Snapshot) goTo(stateId int) {
 	if s.stateId != stateId {
 		s.patchState(s.stateId < stateId)
-		s.GoTo(stateId)
+		s.goTo(stateId)
 	}
 }
 
@@ -126,6 +131,7 @@ func (s *Snapshot) patchState(isForward bool) {
 }
 
 // sync do a synchronization between Snapshot states.
+// Need to be called after any state update to ensure other patches will be created properly.
 func (s *Snapshot) sync() {
 	log.Println("[dmmap] syncing snapshot state...")
 
