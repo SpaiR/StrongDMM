@@ -144,6 +144,12 @@ func (m *Map) mouseChangeCallback(x, y uint) {
 }
 
 func (m *Map) updateMousePosition(mouseX, mouseY int) {
+	// If canvas itself is not active, then no need to search for mouse position at all.
+	if !m.canvasControl.Active() {
+		m.canvasState.SetHoveredTile(-1, -1)
+		return
+	}
+
 	// Mouse position relative to canvas.
 	relMouseX := mouseX - int(m.canvasControl.PosMin.X)
 	relMouseY := mouseY - int(m.canvasControl.PosMin.Y)

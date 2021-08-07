@@ -26,6 +26,10 @@ func NewControl(camera *render.Camera) *Control {
 	}
 }
 
+func (c *Control) Active() bool {
+	return c.active
+}
+
 func (c *Control) Process(size imgui.Vec2) {
 	c.showControlArea(size)
 	c.processMouseMove()

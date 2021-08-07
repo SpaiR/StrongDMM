@@ -24,8 +24,8 @@ type Canvas struct {
 }
 
 func (c *Canvas) Dispose() {
-	// Run later so it will be cleared in the next frame.
-	// Otherwise we will see graphics artifacts.
+	// Run later, so it will be cleared in the next frame.
+	// Otherwise, we will see graphics artifacts.
 	c.action.RunLater(func() {
 		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)

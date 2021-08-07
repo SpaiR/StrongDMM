@@ -10,6 +10,11 @@ func Draw(w, h, x, y, z float32) {
 	// Ensure that the latest batch state is persisted.
 	batching.flush()
 
+	// No data to draw.
+	if len(batching.data) == 0 {
+		return
+	}
+
 	gl.UseProgram(program)
 	gl.BindVertexArray(vao)
 
