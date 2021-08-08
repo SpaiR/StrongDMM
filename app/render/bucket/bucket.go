@@ -88,7 +88,8 @@ func (b *Bucket) generateChunks(maxX, maxY int) {
 	generateYAxis := func(x, xRange int) {
 		for y := 1; y <= maxY; y++ {
 			chunkCreated = false
-			if y%chunkMaxTileCapacity == 0 {
+			// maxCapacity+1 since we iterate from 1.
+			if y%(chunkMaxTileCapacity+1) == 0 {
 				chunkCreated = true
 				b.Chunks = append(b.Chunks, newChunk(chunkBounds(x, y, xRange, chunkMaxTileCapacity)))
 			}
@@ -107,7 +108,8 @@ func (b *Bucket) generateChunks(maxX, maxY int) {
 
 	for x := 1; x <= maxX; x++ {
 		chunkCreated = false
-		if x%chunkMaxTileCapacity == 0 {
+		// maxCapacity+1 since we iterate from 1.
+		if x%(chunkMaxTileCapacity+1) == 0 {
 			generateYAxis(x, chunkMaxTileCapacity)
 		}
 	}

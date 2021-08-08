@@ -73,7 +73,7 @@ func (r *Render) prepare() {
 
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
-	r.batchChunksVisuals()
+	//r.batchChunksVisuals()
 	r.batchOverlay()
 	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
@@ -119,6 +119,8 @@ func (r *Render) batchBucketUnits(width, height float32) {
 var chunkColors map[bucket.Bounds]brush.Color
 
 func (r *Render) batchChunksVisuals() {
+	println("[debug] rendering chunks visuals...")
+
 	if chunkColors == nil {
 		chunkColors = make(map[bucket.Bounds]brush.Color)
 	}
