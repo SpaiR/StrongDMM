@@ -5,6 +5,7 @@ import (
 )
 
 type AddAction interface {
+	HasSelectedInstance() bool
 	AddSelectedInstance(util.Point)
 	CommitChanges(string)
 }
@@ -30,16 +31,20 @@ func (a *Add) OnStart(x, y int) {
 }
 
 func (a *Add) OnMove(x, y int) {
-	pos := util.Point{X: x, Y: y}
-	if !a.tiles[pos] {
-		a.tiles[pos] = true
-		a.action.AddSelectedInstance(pos)
+	if a.action.HasSelectedInstance() {
+		pos := util.Point{X: x, Y: y}
+		if !a.tiles[pos] {
+			a.tiles[pos] = true
+			a.action.AddSelectedInstance(pos)
+		}
 	}
 }
 
 func (a *Add) OnStop(x, y int) {
-	a.action.CommitChanges("Add Tiles")
-	for point := range a.tiles {
-		delete(a.tiles, point)
+	if len(a.tiles) != 0 {
+		a.action.CommitChanges("Add Tiles")
+		for point := range a.tiles {
+			delete(a.tiles, point)
+		}
 	}
 }

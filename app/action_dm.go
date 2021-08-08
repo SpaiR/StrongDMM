@@ -78,3 +78,7 @@ func (a *app) DoSelectInstance(instance *dmminstance.Instance) {
 func (a *app) SelectedInstance() *dmminstance.Instance {
 	return dmminstance.Cache.GetById(a.layout.Instances.SelectedInstanceId())
 }
+
+func (a *app) HasSelectedInstance() bool {
+	return a.SelectedInstance() != nil
+}

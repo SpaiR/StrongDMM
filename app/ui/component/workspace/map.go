@@ -20,6 +20,7 @@ type MapAction interface {
 	canvas.Action
 
 	SelectedInstance() *dmminstance.Instance
+	HasSelectedInstance() bool
 
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)
@@ -101,6 +102,10 @@ func (m *Map) AddSelectedInstance(pos util.Point) {
 		tile.Content = append(tile.Content, instance)
 		m.canvas.Render.UpdateBucket(m.Dmm)
 	}
+}
+
+func (m *Map) HasSelectedInstance() bool {
+	return m.action.HasSelectedInstance()
 }
 
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.

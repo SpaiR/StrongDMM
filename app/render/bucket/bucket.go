@@ -30,7 +30,7 @@ func (b *Bucket) Update(dmm *dmmap.Dmm) {
 		log.Printf("[bucket] generated chunks number for [%s]: [%d]", dmm.Name, len(b.Chunks))
 
 		start := time.Now()
-		log.Printf("[bucket] initial bucket update for [%s]", dmm.Name)
+		log.Printf("[bucket] initial bucket update for [%s]...", dmm.Name)
 		b.update(dmm)
 		log.Printf("[bucket] bucket updated in [%d] ms", time.Since(start).Milliseconds())
 	}
