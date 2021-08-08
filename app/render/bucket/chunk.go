@@ -1,8 +1,6 @@
 package bucket
 
 import (
-	"sort"
-
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
@@ -16,7 +14,6 @@ const chunkMaxTileCapacity = 25
 type Chunk struct {
 	ViewBounds, MapBounds Bounds
 
-	Layers        []float32
 	UnitsByLayers map[float32][]unit
 }
 
@@ -45,15 +42,5 @@ func (c *Chunk) update(dmm *dmmap.Dmm) {
 		}
 	}
 
-	// Sort units by Layers to represent instances layering properly.
-	layers := make([]float32, 0, len(unitsByLayers))
-	for layer := range unitsByLayers {
-		if len(unitsByLayers[layer]) > 0 {
-			layers = append(layers, layer)
-		}
-	}
-	sort.Slice(layers, func(i, j int) bool { return layers[i] < layers[j] })
-
-	c.Layers = layers
 	c.UnitsByLayers = unitsByLayers
 }

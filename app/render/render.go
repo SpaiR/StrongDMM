@@ -73,7 +73,7 @@ func (r *Render) prepare() {
 
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
-	//r.batchChunksVisuals()
+	r.batchChunksVisuals()
 	r.batchOverlay()
 	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
@@ -89,14 +89,16 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	x2 := x1 + w
 	y2 := y1 + h
 
-	// Batch all bucket units in chunks.
-	for _, chunk := range r.bucket.Chunks {
-		// Skip out of view chunks
-		if !chunk.ViewBounds.Contains(x1, y1, x2, y2) {
-			continue
-		}
+	// Iterate though every available layer which can be rendered.
+	for _, layer := range r.bucket.Layers {
+		// Get a chunk, which has units with currently rendered layer.
+		for _, chunk := range r.bucket.ChunksByLayers[layer] {
+			// Skip out of view chunks
+			if !chunk.ViewBounds.Contains(x1, y1, x2, y2) {
+				continue
+			}
 
-		for _, layer := range chunk.Layers {
+			// Get all units in the chunk for the specific layer.
 			for _, u := range chunk.UnitsByLayers[layer] {
 				// Skip out of view units
 				if !u.ViewBounds.Contains(x1, y1, x2, y2) {
@@ -152,7 +154,7 @@ func (r *Render) batchOverlay() {
 	}
 }
 
-// cleanup method to cleanup OpenGL state after rendering.
+// cleanup method to clean up OpenGL state after rendering.
 func (r *Render) cleanup() {
 	gl.Disable(gl.BLEND)
 }

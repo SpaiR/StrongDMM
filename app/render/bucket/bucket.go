@@ -3,16 +3,24 @@ package bucket
 import (
 	"log"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
-// Bucket Contains data needed to render the map.
+// Bucket contains data needed to render the map.
 // The Bucket itself is made of Chunks.
 type Bucket struct {
-	Updating bool // When true, then the Bucket updates its data at the moment.
-	Chunks   []*Chunk
+	// Updating stores the value, if the bucket is updating its chunks.
+	Updating bool
+
+	// Chunks is a slice of all chunks in the bucket.
+	Chunks []*Chunk
+	// Layers stores all available layers for the bucket.
+	Layers []float32
+	// ChunksByLayers is a map which helps to find chunks with units on the specific layer.
+	ChunksByLayers map[float32][]*Chunk
 }
 
 func New() *Bucket {
@@ -41,7 +49,30 @@ func (b *Bucket) update(dmm *dmmap.Dmm) {
 	for _, chunk := range b.Chunks {
 		chunk.update(dmm)
 	}
+	b.createChunksLayers()
 	b.Updating = false
+}
+
+// Method collects layers for every unit in every chunk.
+func (b *Bucket) createChunksLayers() {
+	chunksByLayers := make(map[float32][]*Chunk, len(b.ChunksByLayers))
+	for _, chunk := range b.Chunks {
+		for chunkLayer := range chunk.UnitsByLayers {
+			chunksByLayers[chunkLayer] = append(chunksByLayers[chunkLayer], chunk)
+		}
+	}
+
+	// Sort layers to do a proper rendering later.
+	layers := make([]float32, 0, len(chunksByLayers))
+	for layer := range chunksByLayers {
+		if len(chunksByLayers[layer]) > 0 {
+			layers = append(layers, layer)
+		}
+	}
+	sort.Slice(layers, func(i, j int) bool { return layers[i] < layers[j] })
+
+	b.Layers = layers
+	b.ChunksByLayers = chunksByLayers
 }
 
 // generateChunks will split the map into square areas.
