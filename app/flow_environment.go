@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"github.com/SpaiR/strongdmm/app/render"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmenv"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmicon"
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap/dmminstance"
@@ -26,6 +27,7 @@ func (a *app) openEnvironment(path string) {
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
 	dmminstance.Cache.Free()
+	render.Free()
 
 	a.updateTitle()
 

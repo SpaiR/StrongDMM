@@ -2,8 +2,10 @@ package render
 
 import (
 	"log"
+	"math/rand"
 
 	"github.com/SpaiR/strongdmm/app/render/brush"
+	"github.com/SpaiR/strongdmm/app/render/bucket"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
@@ -15,9 +17,13 @@ type overlayState interface {
 	HoverOutOfBounds() bool
 }
 
+func Free() {
+	bucket.UnitsCache.Free()
+}
+
 type Render struct {
 	Camera *Camera
-	bucket *bucket
+	bucket *bucket.Bucket
 
 	overlayState overlayState
 
@@ -28,7 +34,7 @@ func New() *Render {
 	brush.TryInit()
 	return &Render{
 		Camera: newCamera(),
-		bucket: newBucket(),
+		bucket: bucket.New(),
 	}
 }
 
@@ -42,11 +48,11 @@ func (r *Render) UpdateBucket(dmm *dmmap.Dmm) {
 }
 
 func (r *Render) updateBucketState() {
-	if r.tmpDmmToUpdateBucket != nil && !r.bucket.updating {
+	if r.tmpDmmToUpdateBucket != nil && !r.bucket.Updating {
 		log.Printf("[render] updating bucket with [%s]...", r.tmpDmmToUpdateBucket.Path.Readable)
-		r.bucket.update(r.tmpDmmToUpdateBucket)
-		log.Println("[render] bucket updated")
+		r.bucket.Update(r.tmpDmmToUpdateBucket)
 		r.tmpDmmToUpdateBucket = nil
+		log.Println("[render] bucket updated")
 	}
 }
 
@@ -67,6 +73,7 @@ func (r *Render) prepare() {
 
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
+	//r.batchChunksVisuals()
 	r.batchOverlay()
 	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
@@ -76,28 +83,61 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	w := width / r.Camera.Scale
 	h := height / r.Camera.Scale
 
+	// Get bounds of the current viewport.
 	x1 := -r.Camera.ShiftX
 	y1 := -r.Camera.ShiftY
 	x2 := x1 + w
 	y2 := y1 + h
 
-	// Batch all bucket units.
-	for _, layer := range r.bucket.layers {
-		for _, u := range r.bucket.unitsByLayers[layer] {
-			if u.isInBounds(x1, y1, x2, y2) {
-				brush.RectTextured(u.x1, u.y1, u.x2, u.y2, u.r, u.g, u.b, u.a, u.sp.Texture(), u.sp.U1, u.sp.V1, u.sp.U2, u.sp.V2)
+	// Batch all bucket units in chunks.
+	for _, chunk := range r.bucket.Chunks {
+		// Skip out of view chunks
+		if !chunk.ViewBounds.Contains(x1, y1, x2, y2) {
+			continue
+		}
+
+		for _, layer := range chunk.Layers {
+			for _, u := range chunk.UnitsByLayers[layer] {
+				// Skip out of view units
+				if !u.ViewBounds.Contains(x1, y1, x2, y2) {
+					continue
+				}
+
+				brush.RectTexturedV(
+					u.ViewBounds.X1, u.ViewBounds.Y1, u.ViewBounds.X2, u.ViewBounds.Y2,
+					u.R, u.G, u.B, u.A,
+					u.Sp.Texture(),
+					u.Sp.U1, u.Sp.V1, u.Sp.U2, u.Sp.V2,
+				)
 			}
 		}
 	}
 }
 
-type color struct {
-	r, g, b, a float32
+var chunkColors map[bucket.Bounds]brush.Color
+
+func (r *Render) batchChunksVisuals() {
+	if chunkColors == nil {
+		chunkColors = make(map[bucket.Bounds]brush.Color)
+	}
+
+	for _, c := range r.bucket.Chunks {
+		var chunkColor brush.Color
+		if color, ok := chunkColors[c.MapBounds]; ok {
+			chunkColor = color
+		} else {
+			chunkColor = brush.Color{R: rand.Float32(), G: rand.Float32(), B: rand.Float32(), A: .25}
+			chunkColors[c.MapBounds] = chunkColor
+		}
+
+		brush.RectFilled(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, chunkColor)
+		//brush.RectV(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, 1, 1, 1, .5)
+	}
 }
 
 var (
-	activeTileCol       = color{r: 1, g: 1, b: 1, a: 0.25}
-	activeTileBorderCol = color{r: 1, g: 1, b: 1, a: 1}
+	activeTileCol       = brush.Color{R: 1, G: 1, B: 1, A: 0.25}
+	activeTileBorderCol = brush.Color{R: 1, G: 1, B: 1, A: 1}
 )
 
 func (r *Render) batchOverlay() {
@@ -107,8 +147,8 @@ func (r *Render) batchOverlay() {
 		x1, y1 := r.overlayState.HoveredTilePoint()
 		x2, y2 := x1+size, y1+size
 
-		brush.RectFilled(x1, y1, x2, y2, activeTileCol.r, activeTileCol.g, activeTileCol.b, activeTileCol.a)
-		brush.Rect(x1, y1, x2, y2, activeTileBorderCol.r, activeTileBorderCol.g, activeTileBorderCol.b, activeTileBorderCol.a)
+		brush.RectFilled(x1, y1, x2, y2, activeTileCol)
+		brush.Rect(x1, y1, x2, y2, activeTileBorderCol)
 	}
 }
 
