@@ -1,6 +1,8 @@
 package bucket
 
 import (
+	"log"
+
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
 )
 
@@ -43,4 +45,5 @@ func (c *Chunk) update(dmm *dmmap.Dmm) {
 	}
 
 	c.UnitsByLayers = unitsByLayers
+	log.Println("[bucket] chunk updated:", c.MapBounds)
 }

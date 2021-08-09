@@ -100,7 +100,7 @@ func (m *Map) AddSelectedInstance(pos util.Point) {
 	if instance := m.action.SelectedInstance(); instance != nil {
 		tile := m.Dmm.GetTile(pos.X, pos.Y, 1) // TODO: respect Z-level
 		tile.Content = append(tile.Content, instance)
-		m.canvas.Render.UpdateBucket(m.Dmm)
+		m.canvas.Render.UpdateBucketV(m.Dmm, []util.Point{pos})
 	}
 }
 

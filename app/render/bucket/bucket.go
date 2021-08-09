@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
+	"github.com/SpaiR/strongdmm/pkg/util"
 )
 
 // Bucket contains data needed to render the map.
@@ -27,29 +28,50 @@ func New() *Bucket {
 	return &Bucket{}
 }
 
-// Update will update the current Bucket chunks.
+func (b *Bucket) Update(dmm *dmmap.Dmm) {
+	b.UpdateV(dmm, nil)
+}
+
+// UpdateV will update the current Bucket chunks.
 // During a very first call for update we will generate chunks to store data to render.
 // If Bucket already has Chunks to render, then we will do the update in the background.
-func (b *Bucket) Update(dmm *dmmap.Dmm) {
+// Method receives a slice with coordinates of tiles, which are needed to be updated.
+// If the slice is nil, then all chunks will be updated.
+func (b *Bucket) UpdateV(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	if b.Chunks != nil {
-		go b.update(dmm)
+		go b.update(dmm, tilesToUpdate)
 	} else {
 		b.generateChunks(dmm.MaxX, dmm.MaxY)
 		log.Printf("[bucket] generated chunks number for [%s]: [%d]", dmm.Name, len(b.Chunks))
 
 		start := time.Now()
 		log.Printf("[bucket] initial bucket update for [%s]...", dmm.Name)
-		b.update(dmm)
+		b.update(dmm, tilesToUpdate)
 		log.Printf("[bucket] bucket updated in [%d] ms", time.Since(start).Milliseconds())
 	}
 }
 
-func (b *Bucket) update(dmm *dmmap.Dmm) {
+func (b *Bucket) update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	b.Updating = true
-	for _, chunk := range b.Chunks {
-		chunk.update(dmm)
+
+	if tilesToUpdate != nil {
+		// Only update chunks, which area contains updated tiles.
+		for _, tile := range tilesToUpdate {
+			for _, chunk := range b.Chunks {
+				if chunk.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
+					chunk.update(dmm)
+				}
+			}
+		}
+	} else {
+		// Update all available chunks.
+		for _, chunk := range b.Chunks {
+			chunk.update(dmm)
+		}
 	}
+
 	b.createChunksLayers()
+
 	b.Updating = false
 }
 

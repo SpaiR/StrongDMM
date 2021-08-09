@@ -6,6 +6,7 @@ import (
 
 	"github.com/SpaiR/strongdmm/app/render/brush"
 	"github.com/SpaiR/strongdmm/app/render/bucket"
+	"github.com/SpaiR/strongdmm/pkg/util"
 	"github.com/go-gl/gl/v3.3-core/gl"
 
 	"github.com/SpaiR/strongdmm/pkg/dm/dmmap"
@@ -27,7 +28,8 @@ type Render struct {
 
 	overlayState overlayState
 
-	tmpDmmToUpdateBucket *dmmap.Dmm
+	tmpDmmToUpdateBucket   *dmmap.Dmm
+	tmpTilesToUpdateBucket []util.Point
 }
 
 func New() *Render {
@@ -44,14 +46,20 @@ func (r *Render) SetOverlayState(state overlayState) {
 
 // UpdateBucket used to update internal data about the map.
 func (r *Render) UpdateBucket(dmm *dmmap.Dmm) {
+	r.UpdateBucketV(dmm, nil)
+}
+
+func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	r.tmpDmmToUpdateBucket = dmm
+	r.tmpTilesToUpdateBucket = append(r.tmpTilesToUpdateBucket, tilesToUpdate...)
 }
 
 func (r *Render) updateBucketState() {
 	if r.tmpDmmToUpdateBucket != nil && !r.bucket.Updating {
 		log.Printf("[render] updating bucket with [%s]...", r.tmpDmmToUpdateBucket.Path.Readable)
-		r.bucket.Update(r.tmpDmmToUpdateBucket)
+		r.bucket.UpdateV(r.tmpDmmToUpdateBucket, r.tmpTilesToUpdateBucket)
 		r.tmpDmmToUpdateBucket = nil
+		r.tmpTilesToUpdateBucket = nil
 		log.Println("[render] bucket updated")
 	}
 }
@@ -94,14 +102,14 @@ func (r *Render) batchBucketUnits(width, height float32) {
 		// Get a chunk, which has units with currently rendered layer.
 		for _, chunk := range r.bucket.ChunksByLayers[layer] {
 			// Skip out of view chunks
-			if !chunk.ViewBounds.Contains(x1, y1, x2, y2) {
+			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
 				continue
 			}
 
 			// Get all units in the chunk for the specific layer.
 			for _, u := range chunk.UnitsByLayers[layer] {
 				// Skip out of view units
-				if !u.ViewBounds.Contains(x1, y1, x2, y2) {
+				if !u.ViewBounds.ContainsV(x1, y1, x2, y2) {
 					continue
 				}
 
