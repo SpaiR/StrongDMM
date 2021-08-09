@@ -13,6 +13,9 @@ type dmmPatch []tilePatch
 // It stores patches between different map states, so UNDO/REDO operations simplified to the "apply patch operation".
 // TODO: provide local VCS
 type Snapshot struct {
+	// Initial map is a state before changes. Basically, it's a copy of the current map, which is modified.
+	// When we commit changes with Commit method we compare and collect differences between unmodifiable and
+	// modifiable states. Those differences are collected into patches.
 	initial, current *dmmap.Dmm
 
 	stateId int
@@ -98,7 +101,6 @@ func (s *Snapshot) Commit() (stateId int) {
 func (s *Snapshot) GoTo(stateId int) {
 	log.Println("[snapshot] changing snapshot state to:", stateId)
 	s.goTo(stateId)
-	s.sync() // Call sync after we've reached the state we want.
 }
 
 func (s *Snapshot) goTo(stateId int) {
@@ -121,7 +123,13 @@ func (s *Snapshot) patchState(isForward bool) {
 			content = patch.backward
 		}
 
+		// Update current map.
 		tile := s.current.GetTile(patch.x, patch.y, patch.z)
+		tile.Content = make([]*dmminstance.Instance, len(content))
+		copy(tile.Content, content)
+
+		// Update initial map.
+		tile = s.initial.GetTile(patch.x, patch.y, patch.z)
 		tile.Content = make([]*dmminstance.Instance, len(content))
 		copy(tile.Content, content)
 	}
