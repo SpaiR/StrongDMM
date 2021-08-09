@@ -42,11 +42,11 @@ type Environment struct {
 
 func (e *Environment) Init(action EnvironmentAction) {
 	e.action = action
-	e.treeId++
 	e.treeNodes = make(map[string]*treeNode)
 }
 
 func (e *Environment) Free() {
+	e.treeId++
 	e.treeNodes = make(map[string]*treeNode)
 	e.filteredTreeNodes = nil
 	e.filter = ""
