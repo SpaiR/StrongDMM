@@ -2,11 +2,11 @@ package canvas
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"github.com/SpaiR/strongdmm/app/ui/component/workspace/canvas/tool"
+	tool2 "github.com/SpaiR/strongdmm/app/ui/component/workspace/pane_map/canvas/tool"
 )
 
 type ToolsAction interface {
-	tool.AddAction
+	tool2.AddAction
 }
 
 type Tools struct {
@@ -16,8 +16,8 @@ type Tools struct {
 	active     bool
 	oldX, oldY int
 
-	selected tool.Tool
-	add      tool.Tool
+	selected tool2.Tool
+	add      tool2.Tool
 }
 
 func NewTools(action ToolsAction, control *Control, state *State) *Tools {
@@ -25,7 +25,7 @@ func NewTools(action ToolsAction, control *Control, state *State) *Tools {
 		control: control,
 		state:   state,
 
-		add: tool.NewAdd(action),
+		add: tool2.NewAdd(action),
 	}
 
 	state.onHoverChangeListeners = append(state.onHoverChangeListeners, tools.processSelectedToolMove)
