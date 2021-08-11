@@ -96,7 +96,12 @@ func (p *PaneMap) showCanvas() {
 	uvMin := imgui.Vec2{X: 0, Y: 1}
 	uvMax := imgui.Vec2{X: 1, Y: 0}
 
-	imgui.WindowDrawList().AddImageV(texture, p.canvasControl.PosMin, p.canvasControl.PosMax, uvMin, uvMax, imguiext.ColorWhitePacked)
+	imgui.WindowDrawList().AddImageV(
+		texture,
+		p.canvasControl.PosMin, p.canvasControl.PosMax,
+		uvMin, uvMax,
+		imguiext.ColorWhitePacked,
+	)
 }
 
 func (p *PaneMap) mouseChangeCallback(x, y uint) {
