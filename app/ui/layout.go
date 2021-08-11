@@ -10,8 +10,8 @@ type layoutAction interface {
 	component.InstancesAction
 	component.WorkspaceAreaAction
 
-	IsWindowReset() bool
-	PointSizePtr() *float32
+	AppIsWindowReset() bool
+	AppPointSizePtr() *float32
 }
 
 type Layout struct {
@@ -66,7 +66,7 @@ func (l *Layout) showRightNode() {
 func (l *Layout) updateNodes() {
 	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
 
-	if !l.action.IsWindowReset() {
+	if !l.action.AppIsWindowReset() {
 		return
 	}
 

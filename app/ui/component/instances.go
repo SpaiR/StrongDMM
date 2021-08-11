@@ -13,8 +13,8 @@ import (
 )
 
 type InstancesAction interface {
-	PointSize() float32
-	DoSelectInstance(instance *dmminstance.Instance)
+	AppPointSize() float32
+	AppDoSelectInstance(instance *dmminstance.Instance)
 }
 
 type Instances struct {
@@ -81,7 +81,7 @@ func (i *Instances) SelectedInstanceId() uint64 {
 }
 
 func (i *Instances) doSelect(node *instanceNode) {
-	i.action.DoSelectInstance(node.orig)
+	i.action.AppDoSelectInstance(node.orig)
 	i.tmpDoScrollToInstance = false // do not scroll panel when we're in panel itself
 }
 
@@ -90,15 +90,15 @@ func (i *Instances) showContextMenu(node *instanceNode) {
 }
 
 func (i Instances) iconSize() float32 {
-	return 32 * i.action.PointSize()
+	return 32 * i.action.AppPointSize()
 }
 
 func (i *Instances) textIndent() float32 {
-	return 36 * i.action.PointSize()
+	return 36 * i.action.AppPointSize()
 }
 
 func (i *Instances) iconIndent() float32 {
-	return 1 * i.action.PointSize()
+	return 1 * i.action.AppPointSize()
 }
 
 func makeInstancesNodes(instances []*dmminstance.Instance) []*instanceNode {

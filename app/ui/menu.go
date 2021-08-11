@@ -11,32 +11,32 @@ import (
 //goland:noinspection GoCommentStart
 type menuAction interface {
 	// File
-	DoOpenEnvironment()
-	DoOpenEnvironmentByPath(path string)
-	DoClearRecentEnvironments()
-	DoOpenMap()
-	DoOpenMapByPath(path string)
-	DoClearRecentMaps()
-	DoExit()
+	AppDoOpenEnvironment()
+	AppDoOpenEnvironmentByPath(path string)
+	AppDoClearRecentEnvironments()
+	AppDoOpenMap()
+	AppDoOpenMapByPath(path string)
+	AppDoClearRecentMaps()
+	AppDoExit()
 
 	// Edit
-	DoUndo()
-	DoRedo()
+	AppDoUndo()
+	AppDoRedo()
 
 	// Window
-	DoResetWindows()
+	AppDoResetWindows()
 
 	// Help
-	DoOpenLogs()
+	AppDoOpenLogs()
 
-	RecentEnvironments() []string
-	RecentMapsByLoadedEnvironment() []string
+	AppRecentEnvironments() []string
+	AppRecentMapsByLoadedEnvironment() []string
 
-	LoadedEnvironment() *dmenv.Dme
-	HasLoadedEnvironment() bool
+	AppLoadedEnvironment() *dmenv.Dme
+	AppHasLoadedEnvironment() bool
 
-	HasUndo() bool
-	HasRedo() bool
+	AppHasUndo() bool
+	AppHasRedo() bool
 }
 
 type Menu struct {
@@ -54,50 +54,50 @@ func NewMenu(action menuAction) *Menu {
 func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
-			w.MenuItem("Open Environment...", m.action.DoOpenEnvironment),
+			w.MenuItem("Open Environment...", m.action.AppDoOpenEnvironment),
 			w.Menu("Recent Environments", w.Layout{
 				w.Custom(func() {
-					for _, recentEnvironment := range m.action.RecentEnvironments() {
+					for _, recentEnvironment := range m.action.AppRecentEnvironments() {
 						w.MenuItem(recentEnvironment, func() {
-							m.action.DoOpenEnvironmentByPath(recentEnvironment)
+							m.action.AppDoOpenEnvironmentByPath(recentEnvironment)
 						}).Build()
 					}
 					w.Layout{
 						w.Separator(),
-						w.MenuItem("Clear Recent Environments", m.action.DoClearRecentEnvironments),
+						w.MenuItem("Clear Recent Environments", m.action.AppDoClearRecentEnvironments),
 					}.Build()
 				}),
-			}).Enabled(len(m.action.RecentEnvironments()) != 0),
+			}).Enabled(len(m.action.AppRecentEnvironments()) != 0),
 			w.Separator(),
-			w.MenuItem("Open Map...", m.action.DoOpenMap).Enabled(m.action.HasLoadedEnvironment()),
+			w.MenuItem("Open Map...", m.action.AppDoOpenMap).Enabled(m.action.AppHasLoadedEnvironment()),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
-					for _, recentMap := range m.action.RecentMapsByLoadedEnvironment() {
+					for _, recentMap := range m.action.AppRecentMapsByLoadedEnvironment() {
 						w.MenuItem(recentMap, func() {
-							m.action.DoOpenMapByPath(recentMap)
+							m.action.AppDoOpenMapByPath(recentMap)
 						}).Build()
 					}
 					w.Layout{
 						w.Separator(),
-						w.MenuItem("Clear Recent Maps", m.action.DoClearRecentMaps),
+						w.MenuItem("Clear Recent Maps", m.action.AppDoClearRecentMaps),
 					}.Build()
 				}),
-			}).Enabled(m.action.HasLoadedEnvironment() && len(m.action.RecentMapsByLoadedEnvironment()) != 0),
+			}).Enabled(m.action.AppHasLoadedEnvironment() && len(m.action.AppRecentMapsByLoadedEnvironment()) != 0),
 			w.Separator(),
-			w.MenuItem("Exit", m.action.DoExit),
+			w.MenuItem("Exit", m.action.AppDoExit),
 		}),
 
 		w.Menu("Edit", w.Layout{
-			w.MenuItem("Undo", m.action.DoUndo).Enabled(m.action.HasUndo()),
-			w.MenuItem("Redo", m.action.DoRedo).Enabled(m.action.HasRedo()),
+			w.MenuItem("Undo", m.action.AppDoUndo).Enabled(m.action.AppHasUndo()),
+			w.MenuItem("Redo", m.action.AppDoRedo).Enabled(m.action.AppHasRedo()),
 		}),
 
 		w.Menu("Window", w.Layout{
-			w.MenuItem("Reset Windows", m.action.DoResetWindows).Shortcut("F5"),
+			w.MenuItem("Reset Windows", m.action.AppDoResetWindows).Shortcut("F5"),
 		}),
 
 		w.Menu("Help", w.Layout{
-			w.MenuItem("Open Logs Folder", m.action.DoOpenLogs),
+			w.MenuItem("Open Logs Folder", m.action.AppDoOpenLogs),
 		}),
 	}).Build()
 }
@@ -105,6 +105,6 @@ func (m *Menu) Process() {
 func addShortcuts(action menuAction) {
 	shortcut.Add(shortcut.Shortcut{
 		FirstKey: glfw.KeyF5,
-		Action:   action.DoResetWindows,
+		Action:   action.AppDoResetWindows,
 	})
 }

@@ -79,7 +79,7 @@ func (w *Window) RemoveMouseChangeCallback(id int) {
 
 }
 
-func (w *Window) RunLater(job func()) {
+func (w *Window) AppRunLater(job func()) {
 	w.laterJobs = append(w.laterJobs, job)
 }
 

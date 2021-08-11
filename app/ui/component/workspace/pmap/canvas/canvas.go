@@ -9,7 +9,7 @@ import (
 )
 
 type Action interface {
-	RunLater(job func())
+	AppRunLater(job func())
 }
 
 type Canvas struct {
@@ -26,7 +26,7 @@ type Canvas struct {
 func (c *Canvas) Dispose() {
 	// Run later, so it will be cleared in the next frame.
 	// Otherwise, we will see graphics artifacts.
-	c.action.RunLater(func() {
+	c.action.AppRunLater(func() {
 		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)

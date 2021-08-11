@@ -5,8 +5,8 @@ import (
 	"github.com/SpaiR/strongdmm/pkg/dm/dmvars"
 )
 
-func (a *app) DoSelectPath(path string) {
+func (a *app) AppDoSelectPath(path string) {
 	empty := &dmvars.Variables{}
 	empty.SetParent(a.loadedEnvironment.Objects[path].Vars)
-	a.DoSelectInstance(dmminstance.Cache.Get(path, empty))
+	a.AppDoSelectInstance(dmminstance.Cache.Get(path, empty))
 }

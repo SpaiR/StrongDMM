@@ -11,7 +11,7 @@ import (
 type MapAction interface {
 	pmap.Action
 
-	SetCommandStack(id string)
+	AppSetCommandStack(id string)
 }
 
 type Map struct {
@@ -38,7 +38,7 @@ func (m *Map) Name() string {
 }
 
 func (m *Map) Process() {
-	m.action.SetCommandStack(m.Name())
+	m.action.AppSetCommandStack(m.Name())
 	m.PaneMap.Process()
 }
 

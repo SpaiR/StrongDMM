@@ -11,14 +11,14 @@ import (
 )
 
 type EmptyAction interface {
-	DoOpenEnvironment()
-	DoOpenEnvironmentByPath(path string)
-	DoOpenMap()
-	DoOpenMapByPath(path string)
-	HasLoadedEnvironment() bool
-	RecentEnvironments() []string
-	RecentMapsByLoadedEnvironment() []string
-	LoadedEnvironment() *dmenv.Dme
+	AppDoOpenEnvironment()
+	AppDoOpenEnvironmentByPath(path string)
+	AppDoOpenMap()
+	AppDoOpenMapByPath(path string)
+	AppHasLoadedEnvironment() bool
+	AppRecentEnvironments() []string
+	AppRecentMapsByLoadedEnvironment() []string
+	AppLoadedEnvironment() *dmenv.Dme
 }
 
 type Empty struct {
@@ -42,28 +42,28 @@ func (e *Empty) Name() string {
 }
 
 func (e *Empty) Process() {
-	if !e.action.HasLoadedEnvironment() {
+	if !e.action.AppHasLoadedEnvironment() {
 		if imgui.Button("Open Environment...") {
-			e.action.DoOpenEnvironment()
+			e.action.AppDoOpenEnvironment()
 		}
 		imgui.Separator()
 		imgui.Text("Recent Environments:")
-		for _, envPath := range e.action.RecentEnvironments() {
+		for _, envPath := range e.action.AppRecentEnvironments() {
 			if imgui.SmallButton(envPath) {
-				e.action.DoOpenEnvironmentByPath(envPath)
+				e.action.AppDoOpenEnvironmentByPath(envPath)
 			}
 		}
 	} else {
-		imgui.Text(fmt.Sprint("Environment: ", e.action.LoadedEnvironment().RootFile))
+		imgui.Text(fmt.Sprint("Environment: ", e.action.AppLoadedEnvironment().RootFile))
 		imgui.Separator()
 		if imgui.Button("Open Map...") {
-			e.action.DoOpenMap()
+			e.action.AppDoOpenMap()
 		}
 		imgui.Separator()
 		imgui.Text("Recent Maps:")
-		for _, mapPath := range e.action.RecentMapsByLoadedEnvironment() {
-			if imgui.SmallButton(sanitizeMapPath(e.action.LoadedEnvironment().RootDir, mapPath)) {
-				e.action.DoOpenMapByPath(mapPath)
+		for _, mapPath := range e.action.AppRecentMapsByLoadedEnvironment() {
+			if imgui.SmallButton(sanitizeMapPath(e.action.AppLoadedEnvironment().RootDir, mapPath)) {
+				e.action.AppDoOpenMapByPath(mapPath)
 			}
 		}
 	}

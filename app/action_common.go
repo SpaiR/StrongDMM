@@ -5,50 +5,50 @@ import (
 	"github.com/SpaiR/strongdmm/app/command"
 )
 
-func (a *app) WindowCond() imgui.Condition {
+func (a *app) AppWindowCond() imgui.Condition {
 	return a.tmpWindowCond
 }
 
-func (a *app) IsWindowReset() bool {
+func (a *app) AppIsWindowReset() bool {
 	return a.tmpWindowCond == imgui.ConditionAlways
 }
 
-func (a *app) PointSize() float32 {
+func (a *app) AppPointSize() float32 {
 	return a.masterWindow.PointSize
 }
 
-func (a *app) PointSizePtr() *float32 {
+func (a *app) AppPointSizePtr() *float32 {
 	return &a.masterWindow.PointSize
 }
 
-func (a *app) MasterWindowSize() (int, int) {
+func (a *app) AppMasterWindowSize() (int, int) {
 	return a.masterWindow.Handle.GetSize()
 }
 
-func (a *app) RunLater(job func()) {
-	a.masterWindow.RunLater(job)
+func (a *app) AppRunLater(job func()) {
+	a.masterWindow.AppRunLater(job)
 }
 
-func (a *app) AddMouseChangeCallback(cb func(uint, uint)) int {
+func (a *app) AppAddMouseChangeCallback(cb func(uint, uint)) int {
 	return a.masterWindow.AddMouseChangeCallback(cb)
 }
 
-func (a *app) RemoveMouseChangeCallback(id int) {
+func (a *app) AppRemoveMouseChangeCallback(id int) {
 	a.masterWindow.RemoveMouseChangeCallback(id)
 }
 
-func (a *app) SetCommandStack(id string) {
+func (a *app) AppSetCommandStack(id string) {
 	a.commandStorage.SetStack(id)
 }
 
-func (a *app) PushCommand(command command.Command) {
+func (a *app) AppPushCommand(command command.Command) {
 	a.commandStorage.Push(command)
 }
 
-func (a *app) HasUndo() bool {
+func (a *app) AppHasUndo() bool {
 	return a.commandStorage.HasUndo()
 }
 
-func (a *app) HasRedo() bool {
+func (a *app) AppHasRedo() bool {
 	return a.commandStorage.HasRedo()
 }

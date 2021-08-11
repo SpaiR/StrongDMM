@@ -16,13 +16,13 @@ import (
 type Action interface {
 	canvas.Action
 
-	SelectedInstance() *dmminstance.Instance
-	HasSelectedInstance() bool
+	AppSelectedInstance() *dmminstance.Instance
+	AppHasSelectedInstance() bool
 
-	AddMouseChangeCallback(cb func(uint, uint)) int
-	RemoveMouseChangeCallback(id int)
+	AppAddMouseChangeCallback(cb func(uint, uint)) int
+	AppRemoveMouseChangeCallback(id int)
 
-	PushCommand(command command.Command)
+	AppPushCommand(command command.Command)
 }
 
 type PaneMap struct {
@@ -57,7 +57,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
 
 	ws.bp = layout.NewBorderPane(ws.createLayout())
-	ws.mouseChangeCbId = action.AddMouseChangeCallback(ws.mouseChangeCallback)
+	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
 	ws.canvas.Render.UpdateBucket(ws.Dmm)
@@ -71,7 +71,7 @@ func (p *PaneMap) Process() {
 
 func (p *PaneMap) Dispose() {
 	p.canvas.Dispose()
-	p.action.RemoveMouseChangeCallback(p.mouseChangeCbId)
+	p.action.AppRemoveMouseChangeCallback(p.mouseChangeCbId)
 	log.Println("[pane_map] disposed")
 }
 
