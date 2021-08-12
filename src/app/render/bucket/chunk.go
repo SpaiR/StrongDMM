@@ -3,7 +3,7 @@ package bucket
 import (
 	"log"
 
-	"strongdmm/dm/dmmap"
+	"sdmm/dm/dmmap"
 )
 
 // Maximum number of tiles by any axis which could be stored in the Chunk.

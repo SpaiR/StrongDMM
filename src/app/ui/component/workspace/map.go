@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"strongdmm/app/ui/component/workspace/pmap"
-	"strongdmm/dm/dmmap"
+	"sdmm/app/ui/component/workspace/pmap"
+	"sdmm/dm/dmmap"
 )
 
 type MapAction interface {

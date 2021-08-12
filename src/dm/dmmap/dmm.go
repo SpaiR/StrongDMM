@@ -4,9 +4,9 @@ import (
 	"log"
 	"path/filepath"
 
-	"strongdmm/dm/dmenv"
-	"strongdmm/dm/dmmap/dmmdata"
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmenv"
+	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 type Dmm struct {

@@ -6,8 +6,8 @@ import (
 	"sort"
 	"time"
 
-	"strongdmm/dm/dmmap"
-	"strongdmm/util"
+	"sdmm/dm/dmmap"
+	"sdmm/util"
 )
 
 // Bucket contains data needed to render the map.

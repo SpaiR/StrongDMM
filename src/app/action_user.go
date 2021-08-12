@@ -5,8 +5,8 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
-	"strongdmm/dm/dmmap/dmminstance"
-	"strongdmm/dm/dmvars"
+	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmvars"
 )
 
 /*

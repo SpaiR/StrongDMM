@@ -1,7 +1,7 @@
 package tool
 
 import (
-	"strongdmm/util"
+	"sdmm/util"
 )
 
 type AddAction interface {

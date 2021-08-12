@@ -3,7 +3,7 @@ package data
 import (
 	"log"
 
-	"strongdmm/util/slice"
+	"sdmm/util/slice"
 )
 
 const internalFileName = "Internal.data"

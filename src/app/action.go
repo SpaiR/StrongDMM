@@ -2,9 +2,9 @@ package app
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/command"
-	"strongdmm/dm/dmenv"
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/app/command"
+	"sdmm/dm/dmenv"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 /*

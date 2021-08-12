@@ -1,7 +1,7 @@
 package dmminstance
 
 import (
-	"strongdmm/dm/dmvars"
+	"sdmm/dm/dmvars"
 )
 
 type Instance struct {

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/dm/dmenv"
+	"sdmm/dm/dmenv"
 )
 
 type EmptyAction interface {

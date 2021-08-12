@@ -1,9 +1,9 @@
 package bucket
 
 import (
-	"strongdmm/dm"
-	"strongdmm/dm/dmicon"
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/dm"
+	"sdmm/dm/dmicon"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 // unit stores render information about specific object instance on the map.

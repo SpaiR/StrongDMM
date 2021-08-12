@@ -3,12 +3,12 @@ package app
 import (
 	"log"
 
-	"strongdmm/app/render"
-	"strongdmm/dm/dmenv"
-	"strongdmm/dm/dmicon"
-	"strongdmm/dm/dmmap"
-	"strongdmm/dm/dmmap/dmmdata"
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/app/render"
+	"sdmm/dm/dmenv"
+	"sdmm/dm/dmicon"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 func (a *app) openEnvironment(path string) {

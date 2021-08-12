@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/ui/component/workspace"
-	"strongdmm/dm/dmmap"
-	"strongdmm/imguiext"
+	"sdmm/app/ui/component/workspace"
+	"sdmm/dm/dmmap"
+	"sdmm/imguiext"
 )
 
 type WorkspaceAreaAction interface {

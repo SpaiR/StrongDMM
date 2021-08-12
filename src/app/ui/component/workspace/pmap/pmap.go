@@ -4,13 +4,13 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/command"
-	"strongdmm/app/ui/component/workspace/pmap/canvas"
-	"strongdmm/dm/dmmap"
-	"strongdmm/dm/dmmap/dmminstance"
-	"strongdmm/dm/snapshot"
-	"strongdmm/imguiext"
-	"strongdmm/imguiext/layout"
+	"sdmm/app/command"
+	"sdmm/app/ui/component/workspace/pmap/canvas"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/snapshot"
+	"sdmm/imguiext"
+	"sdmm/imguiext/layout"
 )
 
 type Action interface {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"strongdmm/app/render"
+	"sdmm/app/render"
 )
 
 type Action interface {

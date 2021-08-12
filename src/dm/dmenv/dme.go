@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"strongdmm/dm/dmvars"
-	"strongdmm/third_party/sdmmparser"
+	"sdmm/dm/dmvars"
+	"sdmm/third_party/sdmmparser"
 )
 
 type Dme struct {

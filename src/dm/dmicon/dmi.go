@@ -6,10 +6,10 @@ import (
 	"log"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"strongdmm/dm"
-	"strongdmm/platform"
-	"strongdmm/third_party/sdmmparser"
-	"strongdmm/third_party/stbi"
+	"sdmm/dm"
+	"sdmm/platform"
+	"sdmm/third_party/sdmmparser"
+	"sdmm/third_party/stbi"
 )
 
 type Dmi struct {

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"strongdmm/app"
+	"sdmm/app"
 )
 
 func main() {

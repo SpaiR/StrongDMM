@@ -2,9 +2,9 @@ package ui
 
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"strongdmm/app/ui/shortcut"
-	"strongdmm/dm/dmenv"
-	"strongdmm/imguiext/widget"
+	"sdmm/app/ui/shortcut"
+	"sdmm/dm/dmenv"
+	"sdmm/imguiext/widget"
 )
 
 //goland:noinspection GoCommentStart

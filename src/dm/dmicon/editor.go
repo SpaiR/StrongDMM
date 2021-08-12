@@ -1,8 +1,8 @@
 package dmicon
 
 import (
-	"strongdmm/assets"
-	"strongdmm/platform"
+	"sdmm/assets"
+	"sdmm/platform"
 )
 
 var (

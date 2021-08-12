@@ -3,7 +3,7 @@ package canvas
 import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"strongdmm/app/render"
+	"sdmm/app/render"
 )
 
 const scaleFactor float32 = 1.5

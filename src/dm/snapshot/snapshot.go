@@ -4,8 +4,8 @@ import (
 	"log"
 	"strings"
 
-	"strongdmm/dm/dmmap"
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 type dmmPatch []tilePatch

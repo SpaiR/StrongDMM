@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/dm/dmenv"
-	"strongdmm/dm/dmicon"
-	"strongdmm/imguiext"
-	w "strongdmm/imguiext/widget"
+	"sdmm/dm/dmenv"
+	"sdmm/dm/dmicon"
+	"sdmm/imguiext"
+	w "sdmm/imguiext/widget"
 )
 
 type EnvironmentAction interface {

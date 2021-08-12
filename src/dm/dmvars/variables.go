@@ -3,7 +3,7 @@ package dmvars
 import (
 	"strconv"
 
-	"strongdmm/util/slice"
+	"sdmm/util/slice"
 )
 
 // Variables is a structure to store instance (in the environment or on the map) variables.

@@ -2,7 +2,7 @@ package canvas
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/ui/component/workspace/pmap/canvas/tool"
+	"sdmm/app/ui/component/workspace/pmap/canvas/tool"
 )
 
 type ToolsAction interface {

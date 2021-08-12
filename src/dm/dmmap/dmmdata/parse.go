@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"strongdmm/dm/dmvars"
+	"sdmm/dm/dmvars"
 )
 
 /**

@@ -1,7 +1,7 @@
 package canvas
 
 import (
-	"strongdmm/util"
+	"sdmm/util"
 )
 
 type State struct {

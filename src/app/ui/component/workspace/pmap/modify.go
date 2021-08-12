@@ -1,8 +1,8 @@
 package pmap
 
 import (
-	"strongdmm/app/command"
-	"strongdmm/util"
+	"sdmm/app/command"
+	"sdmm/util"
 )
 
 // AddSelectedInstance adds currently selected instance on the map.

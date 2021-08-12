@@ -3,8 +3,8 @@ package dmminstance
 import (
 	"log"
 
-	"strongdmm/dm/dmvars"
-	"strongdmm/util"
+	"sdmm/dm/dmvars"
+	"sdmm/util"
 )
 
 var Cache = &InstanceCache{instances: make(map[uint64]*Instance)}

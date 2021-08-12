@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/imguiext"
+	"sdmm/imguiext"
 )
 
 type BorderPaneLayout struct {

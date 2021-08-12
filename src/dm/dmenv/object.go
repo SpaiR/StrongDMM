@@ -1,7 +1,7 @@
 package dmenv
 
 import (
-	"strongdmm/dm/dmvars"
+	"sdmm/dm/dmvars"
 )
 
 type Object struct {

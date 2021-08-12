@@ -5,10 +5,10 @@ import (
 	"math/rand"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"strongdmm/app/render/brush"
-	"strongdmm/app/render/bucket"
-	"strongdmm/dm/dmmap"
-	"strongdmm/util"
+	"sdmm/app/render/brush"
+	"sdmm/app/render/bucket"
+	"sdmm/dm/dmmap"
+	"sdmm/util"
 )
 
 type overlayState interface {

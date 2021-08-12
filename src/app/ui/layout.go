@@ -2,7 +2,7 @@ package ui
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/ui/component"
+	"sdmm/app/ui/component"
 )
 
 type layoutAction interface {

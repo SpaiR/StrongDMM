@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/dm/dmicon"
-	"strongdmm/dm/dmmap/dmminstance"
-	w "strongdmm/imguiext/widget"
+	"sdmm/dm/dmicon"
+	"sdmm/dm/dmmap/dmminstance"
+	w "sdmm/imguiext/widget"
 )
 
 type InstancesAction interface {

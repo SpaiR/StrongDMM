@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
-	"strongdmm/app/command"
-	"strongdmm/app/data"
-	"strongdmm/app/render/brush"
-	"strongdmm/app/ui"
-	"strongdmm/app/ui/shortcut"
-	"strongdmm/app/window"
-	"strongdmm/dm/dmenv"
+	"sdmm/app/command"
+	"sdmm/app/data"
+	"sdmm/app/render/brush"
+	"sdmm/app/ui"
+	"sdmm/app/ui/shortcut"
+	"sdmm/app/window"
+	"sdmm/dm/dmenv"
 )
 
 const (

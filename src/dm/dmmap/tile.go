@@ -1,7 +1,7 @@
 package dmmap
 
 import (
-	"strongdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap/dmminstance"
 )
 
 type Tile struct {

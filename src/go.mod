@@ -1,4 +1,4 @@
-module strongdmm
+module sdmm
 
 go 1.16
 

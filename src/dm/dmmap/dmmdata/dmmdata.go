@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"strongdmm/dm/dmvars"
+	"sdmm/dm/dmvars"
 )
 
 type Key string
