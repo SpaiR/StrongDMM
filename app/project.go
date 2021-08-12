@@ -12,6 +12,8 @@ import (
 )
 
 func (a *app) openEnvironment(path string) {
+	log.Printf("[app] opening environment [%s]...", path)
+
 	env, err := dmenv.New(path)
 	if err != nil {
 		log.Println("[app] unable to open environment:", err)
@@ -37,6 +39,8 @@ func (a *app) openEnvironment(path string) {
 }
 
 func (a *app) openMap(path string) {
+	log.Printf("[app] opening map [%s]...", path)
+
 	data, err := dmmdata.New(path)
 	if err != nil {
 		log.Printf("[app] unable to open map by path [%s]: %v", path, err)

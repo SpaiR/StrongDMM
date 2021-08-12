@@ -16,7 +16,7 @@ import (
 type EnvironmentAction interface {
 	AppLoadedEnvironment() *dmenv.Dme
 	AppPointSize() float32
-	AppDoSelectPath(string)
+	AppDoSelectInstanceByPath(string)
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -166,7 +166,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 
 func (e *Environment) doSelectOnClick(node *treeNode) {
 	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
-		e.action.AppDoSelectPath(node.orig.Path)
+		e.action.AppDoSelectInstanceByPath(node.orig.Path)
 		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from tree itself
 	}
 }

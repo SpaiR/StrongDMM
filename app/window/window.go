@@ -65,7 +65,7 @@ func (w *Window) Dispose() {
 	w.disposeGlfw()
 }
 
-func (w *Window) AddMouseChangeCallback(cb func(uint, uint)) int {
+func (w *Window) AddMouseChangeCallback(cb func(uint, uint)) (callbackId int) {
 	id := w.mouseChangeCallbackId
 	w.mouseChangeCallbacks[id] = cb
 	w.mouseChangeCallbackId++
