@@ -5,9 +5,9 @@ import (
 )
 
 type AddAction interface {
-	HasSelectedInstance() bool
-	AddSelectedInstance(util.Point)
-	CommitChanges(string)
+	PMapHasSelectedInstance() bool
+	PMapAddSelectedInstance(util.Point)
+	PMapCommitChanges(string)
 }
 
 // Add tool can be used to add instances to the map.
@@ -31,20 +31,18 @@ func (a *Add) OnStart(x, y int) {
 }
 
 func (a *Add) OnMove(x, y int) {
-	if a.action.HasSelectedInstance() {
+	if a.action.PMapHasSelectedInstance() {
 		pos := util.Point{X: x, Y: y}
 		if !a.tiles[pos] {
 			a.tiles[pos] = true
-			a.action.AddSelectedInstance(pos)
+			a.action.PMapAddSelectedInstance(pos)
 		}
 	}
 }
 
-func (a *Add) OnStop(x, y int) {
+func (a *Add) OnStop(_, _ int) {
 	if len(a.tiles) != 0 {
-		a.action.CommitChanges("Add Tiles")
-		for point := range a.tiles {
-			delete(a.tiles, point)
-		}
+		a.action.PMapCommitChanges("Add Tiles")
+		a.tiles = make(map[util.Point]bool)
 	}
 }

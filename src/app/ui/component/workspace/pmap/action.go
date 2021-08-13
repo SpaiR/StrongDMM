@@ -5,9 +5,9 @@ import (
 	"sdmm/util"
 )
 
-// AddSelectedInstance adds currently selected instance on the map.
+// PMapAddSelectedInstance adds currently selected instance on the map.
 // If there is no selected instance, then nothing will happen.
-func (p *PaneMap) AddSelectedInstance(pos util.Point) {
+func (p *PaneMap) PMapAddSelectedInstance(pos util.Point) {
 	if instance := p.action.AppSelectedInstance(); instance != nil {
 		tile := p.Dmm.GetTile(pos.X, pos.Y, 1) // TODO: respect Z-level
 		tile.Content = append(tile.Content, instance)
@@ -15,12 +15,12 @@ func (p *PaneMap) AddSelectedInstance(pos util.Point) {
 	}
 }
 
-func (p *PaneMap) HasSelectedInstance() bool {
+func (p *PaneMap) PMapHasSelectedInstance() bool {
 	return p.action.AppHasSelectedInstance()
 }
 
-// CommitChanges triggers snapshot to commit changes and create a patch between two map states.
-func (p *PaneMap) CommitChanges(changesType string) {
+// PMapCommitChanges triggers snapshot to commit changes and create a patch between two map states.
+func (p *PaneMap) PMapCommitChanges(changesType string) {
 	stateId := p.Snapshot.Commit()
 	p.action.AppPushCommand(command.New(changesType, func() {
 		p.Snapshot.GoTo(stateId - 1)
