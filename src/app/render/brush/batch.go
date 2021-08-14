@@ -30,13 +30,9 @@ func (b *Batching) flush() {
 			mode:    b.mode,
 		})
 
-		var offset int
-		if b.mode == rect {
-			offset = rectVerticesLen
-		}
-
-		b.offset += int(b.len) * offset
+		b.offset += int(b.len) * 4 // 32 bits = 4 bytes; Offset is number of bytes per buffer.
 		b.len = 0
+		b.texture = 0
 	}
 }
 
@@ -54,9 +50,7 @@ func (b *Batching) clear() {
 	b.len = 0
 }
 
-var (
-	batching *Batching
-)
+var batching *Batching
 
 func init() {
 	batching = &Batching{}
@@ -134,7 +128,6 @@ func LineV(x1, y1, x2, y2, r, g, b, a float32) {
 		batching.flush()
 	}
 
-	batching.texture = 0
 	batching.mode = line
 
 	batching.data = append(batching.data,

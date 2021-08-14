@@ -126,9 +126,8 @@ func (r *Render) batchBucketUnits(width, height float32) {
 var chunkColors map[bucket.Bounds]brush.Color
 
 func (r *Render) batchChunksVisuals() {
-	println("[debug] rendering chunks visuals...")
-
 	if chunkColors == nil {
+		println("[debug] CHUNKS VISUALISATION ENABLED!")
 		chunkColors = make(map[bucket.Bounds]brush.Color)
 	}
 
@@ -142,7 +141,7 @@ func (r *Render) batchChunksVisuals() {
 		}
 
 		brush.RectFilled(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, chunkColor)
-		//brush.RectV(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, 1, 1, 1, .5)
+		brush.RectV(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, 1, 1, 1, .5)
 	}
 }
 
