@@ -7,11 +7,11 @@ import (
 
 // PMapAddSelectedInstance adds currently selected instance on the map.
 // If there is no selected instance, then nothing will happen.
-func (p *PaneMap) PMapAddSelectedInstance(pos util.Point) {
+func (p *PaneMap) PMapAddSelectedInstance(coord util.Point) {
 	if instance := p.action.AppSelectedInstance(); instance != nil {
-		tile := p.Dmm.GetTile(pos) // TODO: respect Z-level
+		tile := p.Dmm.GetTile(coord)
 		tile.Content = append(tile.Content, instance)
-		p.canvas.Render.UpdateBucketV(p.Dmm, []util.Point{pos})
+		p.canvas.Render.UpdateBucketV(p.Dmm, []util.Point{coord})
 	}
 }
 
@@ -35,4 +35,9 @@ func (p *PaneMap) PMapCommitChanges(changesType string) {
 		p.Snapshot.GoTo(stateId)
 		p.canvas.Render.UpdateBucketV(p.Dmm, tilesToUpdate)
 	}))
+}
+
+// PMapActiveZLevel returns current active Z-level.
+func (p *PaneMap) PMapActiveZLevel() int {
+	return p.activeZLevel
 }

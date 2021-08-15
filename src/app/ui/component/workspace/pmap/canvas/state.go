@@ -22,24 +22,24 @@ func NewState(maxX, maxY, iconSize int) *State {
 	}
 }
 
-func (s *State) SetHoveredTile(relLocalX, relLocalY float32) {
+func (s *State) SetHoveredTile(relLocalX, relLocalY, zLevel int) {
 	// We are out of bounds for sure.
-	if relLocalX < 0 || relLocalY < 0 {
+	if relLocalX < 0 || relLocalY < 0 || zLevel < 0 {
 		s.hoveredTile = util.Point{}
 		s.hoveredTilePoint = util.Point{}
 		return
 	}
 
 	// Mouse position coords, but local to the tiles.
-	localMouseX := int(relLocalX) / s.IconSize()
-	localMouseY := int(relLocalY) / s.IconSize()
+	localMouseX := relLocalX / s.IconSize()
+	localMouseY := relLocalY / s.IconSize()
 
 	// Local coords, but adjusted to DMM coord system.
 	mapMouseX := localMouseX + 1
 	mapMouseY := localMouseY + 1
 
-	s.hoveredTile = util.Point{X: mapMouseX, Y: mapMouseY}
-	s.hoveredTilePoint = util.Point{X: localMouseX * s.IconSize(), Y: localMouseY * s.IconSize()}
+	s.hoveredTile = util.Point{X: mapMouseX, Y: mapMouseY, Z: zLevel}
+	s.hoveredTilePoint = util.Point{X: localMouseX * s.IconSize(), Y: localMouseY * s.IconSize(), Z: zLevel}
 
 	for _, listener := range s.onHoverChangeListeners {
 		listener()
@@ -50,8 +50,8 @@ func (s State) IconSize() int {
 	return s.iconSize
 }
 
-func (s State) HoveredTile() (x, y int) {
-	return s.hoveredTile.X, s.hoveredTile.Y
+func (s State) HoveredTile() util.Point {
+	return s.hoveredTile
 }
 
 func (s State) HoveredTilePoint() (x, y float32) {

@@ -3,6 +3,7 @@ package canvas
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/component/workspace/pmap/canvas/tool"
+	"sdmm/util"
 )
 
 type ToolsAction interface {
@@ -13,8 +14,8 @@ type Tools struct {
 	control *Control
 	state   *State
 
-	active     bool
-	oldX, oldY int
+	active   bool
+	oldCoord util.Point
 
 	selected tool.Tool
 	add      tool.Tool
@@ -56,16 +57,16 @@ func (t *Tools) processSelectedToolStart() {
 }
 
 func (t *Tools) processSelectedToolMove() {
-	x, y := t.state.HoveredTile()
-	if (x != t.oldX || y != t.oldY) && t.active {
-		t.selected.OnMove(x, y)
+	coord := t.state.HoveredTile()
+	if coord != t.oldCoord && t.active {
+		t.selected.OnMove(coord)
 	}
-	t.oldX, t.oldY = x, y
+	t.oldCoord = coord
 }
 
 func (t *Tools) processSelectedToolsStop() {
 	if !t.control.dragging && t.active {
-		t.selected.OnStop(t.oldX, t.oldY)
+		t.selected.OnStop(t.oldCoord)
 		t.active = false
 	}
 }

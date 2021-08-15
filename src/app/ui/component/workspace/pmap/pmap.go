@@ -31,6 +31,9 @@ type PaneMap struct {
 	Dmm      *dmmap.Dmm
 	Snapshot *snapshot.Snapshot
 
+	// The value of the Z-level with which the user is currently working.
+	activeZLevel int
+
 	canvasState   *canvas.State
 	canvasStatus  *canvas.Status
 	canvasControl *canvas.Control
@@ -44,8 +47,9 @@ type PaneMap struct {
 
 func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws := &PaneMap{
-		Dmm:      dmm,
-		Snapshot: snapshot.NewSnapshot(dmm),
+		Dmm:          dmm,
+		Snapshot:     snapshot.NewSnapshot(dmm),
+		activeZLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 
 	ws.action = action
@@ -72,7 +76,7 @@ func (p *PaneMap) Process() {
 func (p *PaneMap) Dispose() {
 	p.canvas.Dispose()
 	p.action.AppRemoveMouseChangeCallback(p.mouseChangeCbId)
-	log.Println("[pane_map] disposed")
+	log.Println("[pmap] disposed")
 }
 
 func (p *PaneMap) createLayout() layout.BorderPaneLayout {
@@ -111,7 +115,7 @@ func (p *PaneMap) mouseChangeCallback(x, y uint) {
 func (p *PaneMap) updateMousePosition(mouseX, mouseY int) {
 	// If canvas itself is not active, then no need to search for mouse position at all.
 	if !p.canvasControl.Active() {
-		p.canvasState.SetHoveredTile(-1, -1)
+		p.canvasState.SetHoveredTile(-1, -1, -1)
 		return
 	}
 
@@ -129,5 +133,5 @@ func (p *PaneMap) updateMousePosition(mouseX, mouseY int) {
 	relLocalX := float32(relMouseX)/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftX)
 	relLocalY := float32(relMouseY)/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftY)
 
-	p.canvasState.SetHoveredTile(relLocalX, relLocalY)
+	p.canvasState.SetHoveredTile(int(relLocalX), int(relLocalY), p.activeZLevel)
 }

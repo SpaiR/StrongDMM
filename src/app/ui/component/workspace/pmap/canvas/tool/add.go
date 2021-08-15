@@ -26,21 +26,18 @@ func NewAdd(action AddAction) *Add {
 	}
 }
 
-func (a *Add) OnStart(x, y int) {
-	a.OnMove(x, y)
+func (a *Add) OnStart(coord util.Point) {
+	a.OnMove(coord)
 }
 
-func (a *Add) OnMove(x, y int) {
-	if a.action.PMapHasSelectedInstance() {
-		pos := util.Point{X: x, Y: y, Z: 1} // TODO: respect Z-level
-		if !a.tiles[pos] {
-			a.tiles[pos] = true
-			a.action.PMapAddSelectedInstance(pos)
-		}
+func (a *Add) OnMove(coord util.Point) {
+	if a.action.PMapHasSelectedInstance() && !a.tiles[coord] {
+		a.tiles[coord] = true
+		a.action.PMapAddSelectedInstance(coord)
 	}
 }
 
-func (a *Add) OnStop(_, _ int) {
+func (a *Add) OnStop(_ util.Point) {
 	if len(a.tiles) != 0 {
 		a.action.PMapCommitChanges("Add Tiles")
 		a.tiles = make(map[util.Point]bool)
