@@ -3,7 +3,6 @@ package window
 import (
 	"log"
 	"runtime"
-	"time"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
@@ -45,14 +44,9 @@ func New() *Window {
 	return &w
 }
 
-func (w *Window) Run(loop func()) {
-	ticker := time.NewTicker(time.Second / time.Duration(fps))
-
-	for !w.Handle.ShouldClose() {
-		w.startFrame()
-		loop()
-		w.endFrame()
-		<-ticker.C
+func (w *Window) mouseChangeCallback(x, y uint) {
+	for _, cb := range w.mouseChangeCallbacks {
+		cb(x, y)
 	}
 }
 
@@ -62,24 +56,6 @@ func (w *Window) Dispose() {
 
 	w.disposeImGui()
 	w.disposeGlfw()
-}
-
-func (w *Window) AddMouseChangeCallback(cb func(uint, uint)) (callbackId int) {
-	id := w.mouseChangeCallbackId
-	w.mouseChangeCallbacks[id] = cb
-	w.mouseChangeCallbackId++
-	log.Println("[window] mouse change callback added: ", id)
-	return id
-}
-
-func (w *Window) RemoveMouseChangeCallback(id int) {
-	delete(w.mouseChangeCallbacks, id)
-	log.Println("[window] mouse change callback deleted: ", id)
-
-}
-
-func (w *Window) AppRunLater(job func()) {
-	w.laterJobs = append(w.laterJobs, job)
 }
 
 func (w *Window) setupGlfw() {
@@ -135,27 +111,6 @@ func (w *Window) setupImGui() {
 	w.configureFonts()
 }
 
-func (w *Window) startFrame() {
-	gl.Clear(gl.COLOR_BUFFER_BIT)
-	platform.NewImGuiGLFWFrame()
-	imgui.NewFrame()
-	w.runLaterJobs()
-}
-
-func (w *Window) runLaterJobs() {
-	for _, job := range w.laterJobs {
-		job()
-	}
-	w.laterJobs = nil
-}
-
-func (w *Window) endFrame() {
-	imgui.Render()
-	platform.Render(imgui.RenderedDrawData())
-	w.Handle.SwapBuffers()
-	glfw.PollEvents()
-}
-
 func (*Window) disposeImGui() {
 	if c, err := imgui.CurrentContext(); err == nil {
 		c.Destroy()
@@ -165,10 +120,4 @@ func (*Window) disposeImGui() {
 func (w *Window) disposeGlfw() {
 	w.Handle.Destroy()
 	glfw.Terminate()
-}
-
-func (w *Window) mouseChangeCallback(x, y uint) {
-	for _, cb := range w.mouseChangeCallbacks {
-		cb(x, y)
-	}
 }
