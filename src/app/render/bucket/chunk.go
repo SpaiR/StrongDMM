@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"sdmm/dm/dmmap"
+	"sdmm/util"
 )
 
 // Maximum number of tiles by any axis which could be stored in the Chunk.
@@ -37,7 +38,7 @@ func (c *Chunk) update(dmm *dmmap.Dmm) {
 	for x := c.MapBounds.X1; x <= c.MapBounds.X2; x++ {
 		for y := c.MapBounds.Y1; y <= c.MapBounds.Y2; y++ {
 			x, y := int(x), int(y)
-			for _, i := range dmm.GetTile(x, y, 1).Content { // TODO: respect z-levels
+			for _, i := range dmm.GetTile(util.Point{X: x, Y: y, Z: 1}).Content { // TODO: respect z-levels
 				u := getOrMakeUnit(x, y, i)
 				unitsByLayers[u.Layer] = append(unitsByLayers[u.Layer], u)
 			}

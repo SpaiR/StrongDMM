@@ -2,19 +2,18 @@ package dmmap
 
 import (
 	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/util"
 )
 
 type Tile struct {
-	X, Y, Z int
+	Coord util.Point
 
 	Content []*dmminstance.Instance
 }
 
 func (t Tile) Copy() Tile {
 	tileCopy := Tile{
-		X:       t.X,
-		Y:       t.Y,
-		Z:       t.Z,
+		Coord:   t.Coord,
 		Content: make([]*dmminstance.Instance, len(t.Content)),
 	}
 	copy(tileCopy.Content, t.Content)

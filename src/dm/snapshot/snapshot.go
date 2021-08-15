@@ -40,7 +40,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 
 	// Iterate through the current tiles state.
 	for _, currentTile := range s.current.Tiles {
-		initialTile := s.initial.GetTile(currentTile.X, currentTile.Y, currentTile.Z)
+		initialTile := s.initial.GetTile(currentTile.Coord)
 
 		// If tiles contents have different length, then they are different for sure.
 		tileModified := len(currentTile.Content) != len(initialTile.Content)
@@ -68,9 +68,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		copy(forward, currentTile.Content)
 
 		tilePatches = append(tilePatches, tilePatch{
-			x:        currentTile.X,
-			y:        currentTile.Y,
-			z:        currentTile.Z,
+			coord:    currentTile.Coord,
 			backward: backward,
 			forward:  forward,
 		})
@@ -92,7 +90,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		// Collect tiles to update from created tile patches
 		tilesToUpdate = make([]util.Point, 0, len(tilePatches))
 		for _, patch := range tilePatches {
-			tilesToUpdate = append(tilesToUpdate, util.Point{X: patch.x, Y: patch.y})
+			tilesToUpdate = append(tilesToUpdate, patch.coord)
 		}
 	}
 
@@ -154,14 +152,14 @@ func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) 
 
 		// Update current map.
 		if patchType&patchCurrent != 0 {
-			tile := s.current.GetTile(patch.x, patch.y, patch.z)
+			tile := s.current.GetTile(patch.coord)
 			tile.Content = make([]*dmminstance.Instance, len(content))
 			copy(tile.Content, content)
 		}
 
 		// Update initial map.
 		if patchType&patchInitial != 0 {
-			tile := s.initial.GetTile(patch.x, patch.y, patch.z)
+			tile := s.initial.GetTile(patch.coord)
 			tile.Content = make([]*dmminstance.Instance, len(content))
 			copy(tile.Content, content)
 		}
@@ -190,7 +188,7 @@ func (s *Snapshot) syncInitialWithCurrent() {
 }
 
 type tilePatch struct {
-	x, y, z int
+	coord util.Point
 
 	backward, forward []*dmminstance.Instance
 }

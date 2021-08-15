@@ -32,7 +32,7 @@ func (a *Add) OnStart(x, y int) {
 
 func (a *Add) OnMove(x, y int) {
 	if a.action.PMapHasSelectedInstance() {
-		pos := util.Point{X: x, Y: y}
+		pos := util.Point{X: x, Y: y, Z: 1} // TODO: respect Z-level
 		if !a.tiles[pos] {
 			a.tiles[pos] = true
 			a.action.PMapAddSelectedInstance(pos)

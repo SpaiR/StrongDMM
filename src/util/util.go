@@ -1,8 +1,8 @@
 package util
 
-// Point is a generic class to store two data value.
+// Point is a generic class to store a 3D point in space.
 type Point struct {
-	X, Y int
+	X, Y, Z int
 }
 
 // Djb2 is hashing method implemented by spec: http://www.cse.yorku.ca/~oz/hash.html

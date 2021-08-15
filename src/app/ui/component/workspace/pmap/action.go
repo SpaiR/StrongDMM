@@ -9,7 +9,7 @@ import (
 // If there is no selected instance, then nothing will happen.
 func (p *PaneMap) PMapAddSelectedInstance(pos util.Point) {
 	if instance := p.action.AppSelectedInstance(); instance != nil {
-		tile := p.Dmm.GetTile(pos.X, pos.Y, 1) // TODO: respect Z-level
+		tile := p.Dmm.GetTile(pos) // TODO: respect Z-level
 		tile.Content = append(tile.Content, instance)
 		p.canvas.Render.UpdateBucketV(p.Dmm, []util.Point{pos})
 	}
