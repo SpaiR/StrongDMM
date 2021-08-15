@@ -24,26 +24,26 @@ func FontIconsTTF() []byte {
 }
 
 var (
-	//go:embed png/editor_sprite_atlas.png
+	//go:embed png/editor_texture_atlas.png
 	editorSpriteAtlas []byte
 )
 
-// EditorSpriteAtlas returns a sprite atlas with all textures used by the editor.
-func EditorSpriteAtlas() SpriteAtlas {
-	return SpriteAtlas{
+// EditorTextureAtlas returns a sprite atlas with all textures used by the editor.
+func EditorTextureAtlas() TextureAtlas {
+	return TextureAtlas{
 		Width:  32,
 		Height: 32,
 		data:   editorSpriteAtlas,
 	}
 }
 
-type SpriteAtlas struct {
+type TextureAtlas struct {
 	Width  int
 	Height int
 	data   []byte
 }
 
-func (a SpriteAtlas) RGBA() *image.RGBA {
+func (a TextureAtlas) RGBA() *image.RGBA {
 	res, _, _ := image.Decode(bytes.NewReader(a.data))
 	img := image.NewRGBA(image.Rect(0, 0, a.Width, a.Height))
 	draw.Draw(img, img.Bounds(), res, image.Point{}, draw.Src)
