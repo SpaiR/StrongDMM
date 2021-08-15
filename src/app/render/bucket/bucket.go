@@ -55,11 +55,22 @@ func (b *Bucket) update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	b.Updating = true
 
 	if tilesToUpdate != nil {
+		// Store a slice of updated chunks to avoid multiple updates for the same chunk area.
+		var updatedChunks []*Chunk
+
 		// Only update chunks, which area contains updated tiles.
 		for _, tile := range tilesToUpdate {
 			for _, chunk := range b.Chunks {
-				if chunk.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
+				chunkAlreadyUpdated := false
+				for _, updatedChunk := range updatedChunks {
+					if chunkAlreadyUpdated = chunk == updatedChunk; chunkAlreadyUpdated {
+						break
+					}
+				}
+
+				if !chunkAlreadyUpdated && chunk.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
 					chunk.update(dmm)
+					updatedChunks = append(updatedChunks, chunk)
 				}
 			}
 		}

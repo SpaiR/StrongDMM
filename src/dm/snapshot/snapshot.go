@@ -6,6 +6,7 @@ import (
 
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/util"
 )
 
 type dmmPatch []tilePatch
@@ -32,7 +33,7 @@ func NewSnapshot(current *dmmap.Dmm) *Snapshot {
 
 // Commit creates a patch with the map changes between two snapshot states.
 // stateId is an integer value, which can be used in the future to iterate snapshot to the specific state.
-func (s *Snapshot) Commit() (stateId int) {
+func (s *Snapshot) Commit() (int, []util.Point) {
 	log.Println("[snapshot] committing snapshot state...")
 
 	var tilePatches []tilePatch
@@ -75,6 +76,8 @@ func (s *Snapshot) Commit() (stateId int) {
 		})
 	}
 
+	var tilesToUpdate []util.Point
+
 	// Add new patches and sync map states.
 	if len(tilePatches) != 0 {
 		log.Println("[snapshot] collected snapshot patches count:", len(tilePatches))
@@ -85,11 +88,17 @@ func (s *Snapshot) Commit() (stateId int) {
 		s.patchState(s.stateId, true, patchInitial)
 		// Update stateId to a new value.
 		s.stateId = len(s.patches)
+
+		// Collect tiles to update from created tile patches
+		tilesToUpdate = make([]util.Point, 0, len(tilePatches))
+		for _, patch := range tilePatches {
+			tilesToUpdate = append(tilesToUpdate, util.Point{X: patch.x, Y: patch.y})
+		}
 	}
 
 	log.Println("[snapshot] snapshot state committed")
 
-	return s.stateId
+	return s.stateId, tilesToUpdate
 }
 
 // GoTo used to change current map state, so it will be equal to a specific stateId value.

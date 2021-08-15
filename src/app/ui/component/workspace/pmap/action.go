@@ -21,12 +21,18 @@ func (p *PaneMap) PMapHasSelectedInstance() bool {
 
 // PMapCommitChanges triggers snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) PMapCommitChanges(changesType string) {
-	stateId := p.Snapshot.Commit()
+	stateId, tilesToUpdate := p.Snapshot.Commit()
+
+	// Do not push command if there is no tiles to update.
+	if len(tilesToUpdate) == 0 {
+		return
+	}
+
 	p.action.AppPushCommand(command.New(changesType, func() {
 		p.Snapshot.GoTo(stateId - 1)
-		p.canvas.Render.UpdateBucket(p.Dmm)
+		p.canvas.Render.UpdateBucketV(p.Dmm, tilesToUpdate)
 	}, func() {
 		p.Snapshot.GoTo(stateId)
-		p.canvas.Render.UpdateBucket(p.Dmm)
+		p.canvas.Render.UpdateBucketV(p.Dmm, tilesToUpdate)
 	}))
 }
