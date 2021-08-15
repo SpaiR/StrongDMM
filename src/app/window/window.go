@@ -27,7 +27,7 @@ func New() *Window {
 	log.Println("[window] creating native window")
 
 	w := Window{
-		PointSize:            1.0,
+		PointSize:            2.5, // TODO: make configurable and 1 by default
 		mouseChangeCallbacks: make(map[int]func(uint, uint)),
 	}
 
@@ -109,7 +109,7 @@ func (w *Window) setupGlfw() {
 
 	window.MakeContextCurrent()
 	glfw.SwapInterval(glfw.True)
-	window.Show()
+	window.Maximize()
 
 	if err := gl.Init(); err != nil {
 		log.Fatal("[window] unable to initialize opengl:", err)
@@ -132,7 +132,7 @@ func (w *Window) setupImGui() {
 	imgui.CurrentStyle().SetWindowBorderSize(0)
 	imgui.CurrentStyle().SetChildBorderSize(0)
 
-	// TODO: Fonts configuration
+	w.configureFonts()
 }
 
 func (w *Window) startFrame() {

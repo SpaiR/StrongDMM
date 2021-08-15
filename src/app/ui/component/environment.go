@@ -85,7 +85,7 @@ func (e *Environment) Process() {
 }
 
 func (e *Environment) showControls() {
-	if imgui.Button("-") {
+	if imgui.Button(imguiext.IconFaMinus) {
 		e.tmpDoCollapseAll = true
 	}
 	imguiext.SetItemHoveredTooltip("Collapse All")

@@ -9,6 +9,21 @@ import (
 )
 
 var (
+	//go:embed font/Ruda-Bold.ttf
+	fontTTF []byte
+	//go:embed font/font-awesome-solid-900.ttf
+	iconsTTF []byte
+)
+
+func FontTTF() []byte {
+	return fontTTF
+}
+
+func IconsTTF() []byte {
+	return iconsTTF
+}
+
+var (
 	//go:embed png/editor.png
 	editor []byte
 )
