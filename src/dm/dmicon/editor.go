@@ -10,14 +10,16 @@ var (
 )
 
 func initEditorSprites() {
+	editorSpriteAtlas := assets.EditorSpriteAtlas()
+
 	dmi := &Dmi{
 		IconWidth:     32,
 		IconHeight:    32,
-		TextureWidth:  assets.Editor.Width,
-		TextureHeight: assets.Editor.Height,
+		TextureWidth:  editorSpriteAtlas.Width,
+		TextureHeight: editorSpriteAtlas.Height,
 		Cols:          1,
 		Rows:          1,
-		Texture:       platform.CreateTexture(assets.Editor.RGBA()),
+		Texture:       platform.CreateTexture(editorSpriteAtlas.RGBA()),
 	}
 
 	placeholder = newDmiSprite(dmi, 0)

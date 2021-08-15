@@ -44,7 +44,7 @@ func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.Fo
 	defer glyphs.Free()
 
 	atlas.AddFontFromMemoryTTFV(
-		assets.IconsTTF(),
+		assets.FontIconsTTF(),
 		iconSize,
 		config,
 		glyphs.GlyphRanges,
