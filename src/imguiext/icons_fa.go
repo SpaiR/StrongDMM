@@ -6,8 +6,8 @@ https://raw.githubusercontent.com/juliettef/IconFontCppHeaders/8cac2b5d9cfc566d3
 */
 
 const (
-	IconFaMin rune = 0xf000
-	IconFaMax rune = 0xf976
+	IconFaMin rune = 0xe005
+	IconFaMax rune = 0xf8ff
 )
 
 const (

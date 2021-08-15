@@ -40,14 +40,11 @@ func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.Fo
 	glyphsBuilder := imgui.GlyphRangesBuilder{}
 	glyphsBuilder.Add(imguiext.IconFaMin, imguiext.IconFaMax)
 
-	glyphs := glyphsBuilder.Build()
-	defer glyphs.Free()
-
 	atlas.AddFontFromMemoryTTFV(
 		assets.FontIconsTTF(),
 		iconSize,
 		config,
-		glyphs.GlyphRanges,
+		glyphsBuilder.Build().GlyphRanges,
 	)
 
 	config.SetMergeMode(false)
