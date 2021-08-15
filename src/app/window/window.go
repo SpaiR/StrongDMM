@@ -1,12 +1,14 @@
 package window
 
 import (
+	"image"
 	"log"
 	"runtime"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"sdmm/assets"
 	"sdmm/platform"
 )
 
@@ -83,6 +85,7 @@ func (w *Window) setupGlfw() {
 
 	log.Println("[window] native window created")
 
+	window.SetIcon([]image.Image{assets.EditorIcon().RGBA()})
 	window.MakeContextCurrent()
 	glfw.SwapInterval(glfw.True)
 	window.Maximize()
