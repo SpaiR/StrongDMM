@@ -12,4 +12,5 @@ const (
 
 const (
 	IconFaMinus = "\uf068"
+	IconFaPlus  = "\uf067"
 )

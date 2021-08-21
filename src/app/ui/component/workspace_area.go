@@ -65,7 +65,7 @@ func (w *WorkspaceArea) Process() {
 			}
 		}
 
-		if imgui.TabItemButton("+") {
+		if imgui.TabItemButton(imguiext.IconFaPlus) {
 			w.addEmptyWorkspace()
 		}
 
