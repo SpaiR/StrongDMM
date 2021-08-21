@@ -46,8 +46,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
 				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
-				coord := dmmdata.Coord{X: uint16(x), Y: uint16(y), Z: uint16(z)}
-				for _, prefab := range data.Dictionary[data.Grid[coord]] {
+				for _, prefab := range data.Dictionary[data.Grid[tile.Coord]] {
 					if obj, ok := dme.Objects[prefab.Path]; ok {
 						prefab.Vars.SetParent(obj.Vars)
 						tile.Content = append(tile.Content, dmminstance.Cache.Get(prefab.Path, prefab.Vars))

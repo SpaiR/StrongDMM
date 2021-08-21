@@ -28,7 +28,7 @@ func newChunk(x1, y1, x2, y2 float32) *Chunk {
 }
 
 func (c *Chunk) update(dmm *dmmap.Dmm, zLevel int) {
-	// Create A storage for our units by Layers with initial capacity.
+	// Create a storage for our units by Layers with initial capacity.
 	// Inner slices are created with initial capacity as well.
 	unitsByLayers := make(map[float32][]unit, len(c.UnitsByLayers))
 	for layer := range c.UnitsByLayers {

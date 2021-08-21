@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"sdmm/dm/dmvars"
+	"sdmm/util"
 )
 
 /**
@@ -23,7 +24,7 @@ func parse(file *os.File) (*DmmData, error) {
 		dmmData = DmmData{
 			Filepath:   file.Name(),
 			Dictionary: make(map[Key][]Prefab),
-			Grid:       make(map[Coord]Key),
+			Grid:       make(map[util.Point]Key),
 		}
 
 		firstRune = true
@@ -199,9 +200,9 @@ func parse(file *os.File) (*DmmData, error) {
 	var (
 		readingAxis = X
 
-		currX, currY, currZ uint16 = 0, 0, 0
-		currNum             uint16 = 0
-		baseX               uint16 = 0
+		currX, currY, currZ = 0, 0, 0
+		currNum             = 0
+		baseX               = 0
 
 		inCoordBlock = true
 		inMapString  = false
@@ -243,7 +244,7 @@ func parse(file *os.File) (*DmmData, error) {
 					readingAxis = X
 				} else {
 					x, _ := strconv.ParseInt(string(c), 10, 16)
-					currNum = 10*currNum + uint16(x)
+					currNum = 10*currNum + int(x)
 				}
 			} else if inMapString {
 				if c == '"' {
@@ -264,7 +265,7 @@ func parse(file *os.File) (*DmmData, error) {
 					currKey = append(currKey, c)
 					if currKeyLength == dmmData.KeyLength {
 						currKeyLength = 0
-						dmmData.Grid[Coord{X: currX, Y: currY, Z: currZ}] = Key(currKey)
+						dmmData.Grid[util.Point{X: currX, Y: currY, Z: currZ}] = Key(currKey)
 						currKey = currKey[:0]
 						dmmData.MaxX = int(math.Max(float64(dmmData.MaxX), float64(currX)))
 						currX += 1
@@ -281,18 +282,18 @@ func parse(file *os.File) (*DmmData, error) {
 	dmmData.MaxY = int(math.Max(float64(dmmData.MaxY), float64(currY)))
 
 	// Make Y axis to go from bottom to top
-	reversedGrid := make(map[Coord]Key, len(dmmData.Grid))
+	reversedGrid := make(map[util.Point]Key, len(dmmData.Grid))
 	for z := 1; z <= dmmData.MaxZ; z++ {
 		for y := 1; y <= dmmData.MaxY; y++ {
 			for x := 1; x <= dmmData.MaxX; x++ {
-				reversedGrid[Coord{
-					X: uint16(x),
-					Y: uint16(dmmData.MaxY + 1 - y),
-					Z: uint16(z),
-				}] = dmmData.Grid[Coord{
-					X: uint16(x),
-					Y: uint16(y),
-					Z: uint16(z),
+				reversedGrid[util.Point{
+					X: x,
+					Y: dmmData.MaxY + 1 - y,
+					Z: z,
+				}] = dmmData.Grid[util.Point{
+					X: x,
+					Y: y,
+					Z: z,
 				}]
 			}
 		}

@@ -7,17 +7,10 @@ import (
 	"time"
 
 	"sdmm/dm/dmvars"
+	"sdmm/util"
 )
 
 type Key string
-
-type Coord struct {
-	X, Y, Z uint16
-}
-
-func (c Coord) String() string {
-	return fmt.Sprintf("X:%d, Y:%d, Z:%d", c.X, c.Y, c.Z)
-}
 
 type DmmData struct {
 	Filepath string
@@ -29,7 +22,7 @@ type DmmData struct {
 	MaxX, MaxY, MaxZ int
 
 	Dictionary map[Key][]Prefab
-	Grid       map[Coord]Key
+	Grid       map[util.Point]Key
 }
 
 func (d DmmData) String() string {
