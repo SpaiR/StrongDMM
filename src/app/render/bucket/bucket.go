@@ -28,8 +28,8 @@ func New() *Bucket {
 	return &Bucket{}
 }
 
-func (b *Bucket) Update(dmm *dmmap.Dmm, zLevel int) {
-	b.UpdateV(dmm, zLevel, nil)
+func (b *Bucket) Update(dmm *dmmap.Dmm, level int) {
+	b.UpdateV(dmm, level, nil)
 }
 
 // UpdateV will update the current Bucket chunks.
@@ -37,21 +37,21 @@ func (b *Bucket) Update(dmm *dmmap.Dmm, zLevel int) {
 // If Bucket already has Chunks to render, then we will do the update in the background.
 // Method receives a slice with coordinates of tiles, which are needed to be updated.
 // If the slice is nil, then all chunks will be updated.
-func (b *Bucket) UpdateV(dmm *dmmap.Dmm, zLevel int, tilesToUpdate []util.Point) {
+func (b *Bucket) UpdateV(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
 	if b.Chunks != nil {
-		go b.update(dmm, zLevel, tilesToUpdate)
+		go b.update(dmm, level, tilesToUpdate)
 	} else {
 		b.generateChunks(dmm.MaxX, dmm.MaxY)
 		log.Printf("[bucket] generated chunks number for [%s]: [%d]", dmm.Name, len(b.Chunks))
 
 		start := time.Now()
 		log.Printf("[bucket] initial bucket update for [%s]...", dmm.Name)
-		b.update(dmm, zLevel, tilesToUpdate)
+		b.update(dmm, level, tilesToUpdate)
 		log.Printf("[bucket] bucket updated in [%d] ms", time.Since(start).Milliseconds())
 	}
 }
 
-func (b *Bucket) update(dmm *dmmap.Dmm, zLevel int, tilesToUpdate []util.Point) {
+func (b *Bucket) update(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
 	b.Updating = true
 
 	if tilesToUpdate != nil {
@@ -69,7 +69,7 @@ func (b *Bucket) update(dmm *dmmap.Dmm, zLevel int, tilesToUpdate []util.Point) 
 				}
 
 				if !chunkAlreadyUpdated && chunk.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
-					chunk.update(dmm, zLevel)
+					chunk.update(dmm, level)
 					updatedChunks = append(updatedChunks, chunk)
 				}
 			}
@@ -77,7 +77,7 @@ func (b *Bucket) update(dmm *dmmap.Dmm, zLevel int, tilesToUpdate []util.Point) 
 	} else {
 		// Update all available chunks.
 		for _, chunk := range b.Chunks {
-			chunk.update(dmm, zLevel)
+			chunk.update(dmm, level)
 		}
 	}
 

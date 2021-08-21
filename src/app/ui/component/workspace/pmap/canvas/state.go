@@ -22,9 +22,9 @@ func NewState(maxX, maxY, iconSize int) *State {
 	}
 }
 
-func (s *State) SetHoveredTile(relLocalX, relLocalY, zLevel int) {
+func (s *State) SetHoveredTile(relLocalX, relLocalY, level int) {
 	// We are out of bounds for sure.
-	if relLocalX < 0 || relLocalY < 0 || zLevel < 0 {
+	if relLocalX < 0 || relLocalY < 0 || level < 0 {
 		s.hoveredTile = util.Point{}
 		s.hoveredTilePoint = util.Point{}
 		return
@@ -38,8 +38,8 @@ func (s *State) SetHoveredTile(relLocalX, relLocalY, zLevel int) {
 	mapMouseX := localMouseX + 1
 	mapMouseY := localMouseY + 1
 
-	s.hoveredTile = util.Point{X: mapMouseX, Y: mapMouseY, Z: zLevel}
-	s.hoveredTilePoint = util.Point{X: localMouseX * s.IconSize(), Y: localMouseY * s.IconSize(), Z: zLevel}
+	s.hoveredTile = util.Point{X: mapMouseX, Y: mapMouseY, Z: level}
+	s.hoveredTilePoint = util.Point{X: localMouseX * s.IconSize(), Y: localMouseY * s.IconSize(), Z: level}
 
 	for _, listener := range s.onHoverChangeListeners {
 		listener()

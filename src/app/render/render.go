@@ -27,9 +27,9 @@ type Render struct {
 
 	overlayState overlayState
 
-	tmpDmmToUpdateBucket    *dmmap.Dmm
-	tmpTilesToUpdateBucket  []util.Point
-	tmpZLevelToUpdateBucket int
+	tmpDmmToUpdateBucket   *dmmap.Dmm
+	tmpTilesToUpdateBucket []util.Point
+	tmpLevelToUpdateBucket int
 }
 
 func New() *Render {
@@ -45,23 +45,23 @@ func (r *Render) SetOverlayState(state overlayState) {
 }
 
 // UpdateBucket used to update internal data about the map.
-func (r *Render) UpdateBucket(dmm *dmmap.Dmm, zLevel int) {
-	r.UpdateBucketV(dmm, zLevel, nil)
+func (r *Render) UpdateBucket(dmm *dmmap.Dmm, level int) {
+	r.UpdateBucketV(dmm, level, nil)
 }
 
-func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, zLevel int, tilesToUpdate []util.Point) {
+func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
 	r.tmpDmmToUpdateBucket = dmm
 	r.tmpTilesToUpdateBucket = append(r.tmpTilesToUpdateBucket, tilesToUpdate...)
-	r.tmpZLevelToUpdateBucket = zLevel
+	r.tmpLevelToUpdateBucket = level
 }
 
 func (r *Render) updateBucketState() {
 	if r.tmpDmmToUpdateBucket != nil && !r.bucket.Updating {
 		log.Printf("[render] updating bucket with [%s]...", r.tmpDmmToUpdateBucket.Path.Readable)
-		r.bucket.UpdateV(r.tmpDmmToUpdateBucket, r.tmpZLevelToUpdateBucket, r.tmpTilesToUpdateBucket)
+		r.bucket.UpdateV(r.tmpDmmToUpdateBucket, r.tmpLevelToUpdateBucket, r.tmpTilesToUpdateBucket)
 		r.tmpDmmToUpdateBucket = nil
 		r.tmpTilesToUpdateBucket = nil
-		r.tmpZLevelToUpdateBucket = 1 // Reset to 1 just in case.
+		r.tmpLevelToUpdateBucket = 1 // Reset to 1 just in case.
 		log.Println("[render] bucket updated")
 	}
 }

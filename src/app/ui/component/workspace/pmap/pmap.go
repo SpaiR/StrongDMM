@@ -32,7 +32,7 @@ type PaneMap struct {
 	Snapshot *snapshot.Snapshot
 
 	// The value of the Z-level with which the user is currently working.
-	activeZLevel int
+	activeLevel int
 
 	canvasState   *canvas.State
 	canvasStatus  *canvas.Status
@@ -47,9 +47,9 @@ type PaneMap struct {
 
 func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws := &PaneMap{
-		Dmm:          dmm,
-		Snapshot:     snapshot.NewSnapshot(dmm),
-		activeZLevel: 1, // Every map has at least 1 z-level, so we point to it.
+		Dmm:         dmm,
+		Snapshot:    snapshot.NewSnapshot(dmm),
+		activeLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 
 	ws.action = action
@@ -64,7 +64,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
-	ws.canvas.Render.UpdateBucket(ws.Dmm, ws.activeZLevel)
+	ws.canvas.Render.UpdateBucket(ws.Dmm, ws.activeLevel)
 
 	return ws
 }
@@ -133,5 +133,5 @@ func (p *PaneMap) updateMousePosition(mouseX, mouseY int) {
 	relLocalX := float32(relMouseX)/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftX)
 	relLocalY := float32(relMouseY)/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftY)
 
-	p.canvasState.SetHoveredTile(int(relLocalX), int(relLocalY), p.activeZLevel)
+	p.canvasState.SetHoveredTile(int(relLocalX), int(relLocalY), p.activeLevel)
 }
