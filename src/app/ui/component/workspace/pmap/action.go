@@ -11,7 +11,7 @@ func (p *PaneMap) PMapAddSelectedInstance(coord util.Point) {
 	if instance := p.action.AppSelectedInstance(); instance != nil {
 		tile := p.Dmm.GetTile(coord)
 		tile.Content = append(tile.Content, instance)
-		p.canvas.Render.UpdateBucketV(p.Dmm, []util.Point{coord})
+		p.canvas.Render.UpdateBucketV(p.Dmm, p.activeZLevel, []util.Point{coord})
 	}
 }
 
@@ -28,12 +28,15 @@ func (p *PaneMap) PMapCommitChanges(changesType string) {
 		return
 	}
 
+	// Copy the value to pass it to the lambda.
+	activeZLevel := p.activeZLevel
+
 	p.action.AppPushCommand(command.New(changesType, func() {
 		p.Snapshot.GoTo(stateId - 1)
-		p.canvas.Render.UpdateBucketV(p.Dmm, tilesToUpdate)
+		p.canvas.Render.UpdateBucketV(p.Dmm, activeZLevel, tilesToUpdate)
 	}, func() {
 		p.Snapshot.GoTo(stateId)
-		p.canvas.Render.UpdateBucketV(p.Dmm, tilesToUpdate)
+		p.canvas.Render.UpdateBucketV(p.Dmm, activeZLevel, tilesToUpdate)
 	}))
 }
 

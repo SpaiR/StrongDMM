@@ -27,7 +27,7 @@ func newChunk(x1, y1, x2, y2 float32) *Chunk {
 	}
 }
 
-func (c *Chunk) update(dmm *dmmap.Dmm) {
+func (c *Chunk) update(dmm *dmmap.Dmm, zLevel int) {
 	// Create A storage for our units by Layers with initial capacity.
 	// Inner slices are created with initial capacity as well.
 	unitsByLayers := make(map[float32][]unit, len(c.UnitsByLayers))
@@ -38,7 +38,7 @@ func (c *Chunk) update(dmm *dmmap.Dmm) {
 	for x := c.MapBounds.X1; x <= c.MapBounds.X2; x++ {
 		for y := c.MapBounds.Y1; y <= c.MapBounds.Y2; y++ {
 			x, y := int(x), int(y)
-			for _, i := range dmm.GetTile(util.Point{X: x, Y: y, Z: 1}).Content { // TODO: respect z-levels
+			for _, i := range dmm.GetTile(util.Point{X: x, Y: y, Z: zLevel}).Content {
 				u := getOrMakeUnit(x, y, i)
 				unitsByLayers[u.Layer] = append(unitsByLayers[u.Layer], u)
 			}

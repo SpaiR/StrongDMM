@@ -64,7 +64,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
-	ws.canvas.Render.UpdateBucket(ws.Dmm)
+	ws.canvas.Render.UpdateBucket(ws.Dmm, ws.activeZLevel)
 
 	return ws
 }
