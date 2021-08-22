@@ -21,10 +21,11 @@ type Level struct {
 	ChunksByLayers map[float32][]*Chunk
 }
 
-func createLevel(dmm *dmmap.Dmm, level int) *Level {
-	l := &Level{value: level}
-	l.generateChunks(dmm.MaxX, dmm.MaxY)
-	return l
+func newLevel(dmm *dmmap.Dmm, level int) *Level {
+	return &Level{
+		value:  level,
+		Chunks: generateChunks(dmm.MaxX, dmm.MaxY),
+	}
 }
 
 func (l *Level) update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
@@ -83,9 +84,9 @@ func (l *Level) createChunksLayers() {
 // generateChunks will split the map into square areas.
 // Every area can store a (chunkMaxTileCapacity*chunkMaxTileCapacity) number of tiles.
 // During the generation process we don't fill chunks with actual data. So we only create storages to fill them later.
-func (l *Level) generateChunks(maxX, maxY int) {
-	// Preallocate chunks slice, if there is already some chunks.
-	l.Chunks = make([]*Chunk, 0, len(l.Chunks))
+func generateChunks(maxX, maxY int) []*Chunk {
+	// Chunks capacity.
+	chunks := make([]*Chunk, 0, chunksCount(maxX, maxY))
 
 	// Helps to track if there is tiles to create chunks.
 	var chunkCreated bool
@@ -96,16 +97,16 @@ func (l *Level) generateChunks(maxX, maxY int) {
 			// maxCapacity+1 since we iterate from 1.
 			if y%(chunkMaxTileCapacity+1) == 0 {
 				chunkCreated = true
-				l.Chunks = append(l.Chunks, newChunk(chunkBounds(x, y, xRange, chunkMaxTileCapacity)))
+				chunks = append(chunks, newChunk(chunkBounds(x, y, xRange, chunkMaxTileCapacity)))
 			}
 		}
 		if !chunkCreated {
 			chunkCreated = true
 			var nextY int
-			if len(l.Chunks) != 0 {
-				nextY = int(l.Chunks[len(l.Chunks)-1].MapBounds.Y2) + 1
+			if len(chunks) != 0 {
+				nextY = int(chunks[len(chunks)-1].MapBounds.Y2) + 1
 			}
-			l.Chunks = append(l.Chunks, newChunk(
+			chunks = append(chunks, newChunk(
 				chunkBounds(x, maxY, xRange, maxY-nextY)),
 			)
 		}
@@ -120,13 +121,21 @@ func (l *Level) generateChunks(maxX, maxY int) {
 	}
 	if !chunkCreated {
 		var nextX int
-		if len(l.Chunks) != 0 {
-			nextX = int(l.Chunks[len(l.Chunks)-1].MapBounds.X2) + 1
+		if len(chunks) != 0 {
+			nextX = int(chunks[len(chunks)-1].MapBounds.X2) + 1
 		}
 		generateYAxis(maxX, maxX-nextX)
 	}
 
-	log.Printf("[bucket] generated chunks number: [%d]", len(l.Chunks))
+	log.Printf("[bucket] generated chunks number: [%d]", len(chunks))
+
+	return chunks
+}
+
+func chunksCount(maxX, maxY int) int {
+	xAxisCount := math.Ceil(float64(maxX / chunkMaxTileCapacity))
+	yAxisCount := math.Ceil(float64(maxY / chunkMaxTileCapacity))
+	return int(xAxisCount * yAxisCount)
 }
 
 // chunkBounds returns coords of the chunk area.

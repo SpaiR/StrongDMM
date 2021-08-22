@@ -12,7 +12,7 @@ import (
 
 type overlayState interface {
 	IconSize() int
-	HoveredTilePoint() (x, y float32)
+	HoveredTilePoint() (float32, float32)
 	HoverOutOfBounds() bool
 }
 
@@ -73,28 +73,20 @@ func (r *Render) draw(width, height float32) {
 }
 
 func (r *Render) batchBucketUnits(width, height float32) {
-	// Get transformed bounds of the map, so we can ignore out of bounds units.
-	w := width / r.Camera.Scale
-	h := height / r.Camera.Scale
+	x1, y1, x2, y2 := r.viewportBounds(width, height)
 
-	// Get bounds of the current viewport.
-	x1 := -r.Camera.ShiftX
-	y1 := -r.Camera.ShiftY
-	x2 := x1 + w
-	y2 := y1 + h
-
-	// Iterate though every available layer which can be rendered.
+	// Iterate through every layer to render.
 	for _, layer := range r.visibleLevel().Layers {
-		// Get a chunk, which has units with currently rendered layer.
+		// Iterate though chunks with units on the rendered layer.
 		for _, chunk := range r.visibleLevel().ChunksByLayers[layer] {
-			// Skip out of view chunks
+			// Out of bounds = skip.
 			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
 				continue
 			}
 
 			// Get all units in the chunk for the specific layer.
 			for _, u := range chunk.UnitsByLayers[layer] {
-				// Skip out of view units
+				// Out of bounds = skip.
 				if !u.ViewBounds.ContainsV(x1, y1, x2, y2) {
 					continue
 				}
@@ -108,6 +100,19 @@ func (r *Render) batchBucketUnits(width, height float32) {
 			}
 		}
 	}
+}
+
+func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) {
+	// Get transformed bounds of the map, so we can ignore out of bounds units.
+	w := width / r.Camera.Scale
+	h := height / r.Camera.Scale
+
+	x1 = -r.Camera.ShiftX
+	y1 = -r.Camera.ShiftY
+	x2 = x1 + w
+	y2 = y1 + h
+
+	return x1, y1, x2, y2
 }
 
 var chunkColors map[bucket.Bounds]brush.Color

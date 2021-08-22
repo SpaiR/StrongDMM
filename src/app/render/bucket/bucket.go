@@ -38,7 +38,7 @@ func (b *Bucket) getOrCreateLevel(dmm *dmmap.Dmm, level int) *Level {
 		return l
 	} else {
 		log.Println("[bucket] created level:", level)
-		l = createLevel(dmm, level)
+		l = newLevel(dmm, level)
 		b.Levels = append(b.Levels, level)
 		sort.Ints(b.Levels)
 		b.levels[level] = l

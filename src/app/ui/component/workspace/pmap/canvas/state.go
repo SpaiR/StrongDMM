@@ -54,7 +54,7 @@ func (s State) HoveredTile() util.Point {
 	return s.hoveredTile
 }
 
-func (s State) HoveredTilePoint() (x, y float32) {
+func (s State) HoveredTilePoint() (float32, float32) {
 	return float32(s.hoveredTilePoint.X), float32(s.hoveredTilePoint.Y)
 }
 
