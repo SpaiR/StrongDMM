@@ -4,6 +4,7 @@ import (
 	"log"
 	"sort"
 
+	"sdmm/app/render/bucket/level"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
@@ -12,36 +13,36 @@ import (
 // The Bucket itself is made of Level's which are made of Chunk's.
 type Bucket struct {
 	Levels []int
-	levels map[int]*Level
+	levels map[int]*level.Level
 }
 
 func New() *Bucket {
 	return &Bucket{
-		levels: make(map[int]*Level),
+		levels: make(map[int]*level.Level),
 	}
 }
 
 // UpdateLevel updates a specific level of the bucket. If the level not exist, will create it at first.
-func (b *Bucket) UpdateLevel(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
+func (b *Bucket) UpdateLevel(dmm *dmmap.Dmm, levelValue int, tilesToUpdate []util.Point) {
 	log.Printf("[bucket] updating bucket with [%s]...", dmm.Path.Readable)
-	b.getOrCreateLevel(dmm, level).update(dmm, tilesToUpdate)
+	b.getOrCreateLevel(dmm, levelValue).Update(dmm, tilesToUpdate)
 	log.Println("[bucket] bucket updated")
 }
 
 // Level returns a specific level of the bucket or nil if it's not exist.
-func (b *Bucket) Level(level int) *Level {
+func (b *Bucket) Level(level int) *level.Level {
 	return b.levels[level]
 }
 
-func (b *Bucket) getOrCreateLevel(dmm *dmmap.Dmm, level int) *Level {
-	if l, ok := b.levels[level]; ok {
+func (b *Bucket) getOrCreateLevel(dmm *dmmap.Dmm, levelValue int) *level.Level {
+	if l, ok := b.levels[levelValue]; ok {
 		return l
 	} else {
-		log.Println("[bucket] created level:", level)
-		l = newLevel(dmm, level)
-		b.Levels = append(b.Levels, level)
+		log.Println("[bucket] created level:", levelValue)
+		l = level.New(dmm, levelValue)
+		b.Levels = append(b.Levels, levelValue)
 		sort.Ints(b.Levels)
-		b.levels[level] = l
+		b.levels[levelValue] = l
 		return l
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
-	"sdmm/app/render/bucket/chunk/unit"
+	"sdmm/app/render/bucket/level/chunk/unit"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
@@ -75,11 +75,12 @@ func (r *Render) draw(width, height float32) {
 
 func (r *Render) batchBucketUnits(width, height float32) {
 	x1, y1, x2, y2 := r.viewportBounds(width, height)
+	visibleLevel := r.bucket.Level(r.Camera.Level)
 
 	// Iterate through every layer to render.
-	for _, layer := range r.visibleLevel().Layers {
+	for _, layer := range visibleLevel.Layers {
 		// Iterate though chunks with units on the rendered layer.
-		for _, chunk := range r.visibleLevel().ChunksByLayers[layer] {
+		for _, chunk := range visibleLevel.ChunksByLayers[layer] {
 			// Out of bounds = skip.
 			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
 				continue
@@ -125,7 +126,9 @@ func (r *Render) batchChunksVisuals() {
 		chunkColors = make(map[util.Bounds]brush.Color)
 	}
 
-	for _, c := range r.visibleLevel().Chunks {
+	visibleLevel := r.bucket.Level(r.Camera.Level)
+
+	for _, c := range visibleLevel.Chunks {
 		var chunkColor brush.Color
 		if color, ok := chunkColors[c.MapBounds]; ok {
 			chunkColor = color
@@ -137,11 +140,6 @@ func (r *Render) batchChunksVisuals() {
 		brush.RectFilled(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, chunkColor)
 		brush.RectV(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, 1, 1, 1, .5)
 	}
-}
-
-// Returns current visible level to render.
-func (r *Render) visibleLevel() *bucket.Level {
-	return r.bucket.Level(r.Camera.Level)
 }
 
 var (

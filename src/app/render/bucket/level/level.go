@@ -1,9 +1,9 @@
-package bucket
+package level
 
 import (
 	"sort"
 
-	"sdmm/app/render/bucket/chunk"
+	"sdmm/app/render/bucket/level/chunk"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
@@ -20,14 +20,16 @@ type Level struct {
 	ChunksByLayers map[float32][]*chunk.Chunk
 }
 
-func newLevel(dmm *dmmap.Dmm, level int) *Level {
+func New(dmm *dmmap.Dmm, level int) *Level {
 	return &Level{
 		value:  level,
 		Chunks: chunk.Generate(dmm.MaxX, dmm.MaxY),
 	}
 }
 
-func (l *Level) update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
+// Update updates current level chunks data.
+// If tilesToUpdate is not nil, then only chunks with provided tiles will be updated.
+func (l *Level) Update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	if tilesToUpdate != nil {
 		// Store a slice of updated chunks to avoid multiple updates for the same chunk area.
 		var updatedChunks []*chunk.Chunk
