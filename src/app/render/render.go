@@ -6,6 +6,7 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
+	"sdmm/app/render/bucket/chunk/unit"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
@@ -17,7 +18,7 @@ type overlayState interface {
 }
 
 func Free() {
-	bucket.UnitsCache.Free()
+	unit.Cache.Free()
 }
 
 type Render struct {

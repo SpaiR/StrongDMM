@@ -1,4 +1,4 @@
-package bucket
+package unit
 
 import (
 	"sdmm/dm"
@@ -7,8 +7,10 @@ import (
 	"sdmm/util"
 )
 
-// unit stores render information about specific object instance on the map.
-type unit struct {
+var Cache = &unitsCache{make(map[unitHash]Unit)}
+
+// Unit stores render information about specific object instance on the map.
+type Unit struct {
 	Sp *dmicon.Sprite
 
 	Layer      float32
@@ -23,26 +25,24 @@ type unitHash struct {
 }
 
 type unitsCache struct {
-	units map[unitHash]unit
+	units map[unitHash]Unit
 }
 
 func (u *unitsCache) Free() {
-	u.units = make(map[unitHash]unit)
+	u.units = make(map[unitHash]Unit)
 }
 
-var UnitsCache = &unitsCache{make(map[unitHash]unit)}
-
-func getOrMakeUnit(x, y int, i *dmminstance.Instance) unit {
+func (u *unitsCache) Get(x, y int, i *dmminstance.Instance) Unit {
 	hash := unitHash{x: x, y: y, id: i.Id}
-	if cachedUnit, ok := UnitsCache.units[hash]; ok {
+	if cachedUnit, ok := u.units[hash]; ok {
 		return cachedUnit
 	}
-	u := makeUnit(x, y, i)
-	UnitsCache.units[hash] = u
-	return u
+	unit := makeUnit(x, y, i)
+	u.units[hash] = unit
+	return unit
 }
 
-func makeUnit(x, y int, i *dmminstance.Instance) unit {
+func makeUnit(x, y int, i *dmminstance.Instance) Unit {
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")
 	dir, _ := i.Vars.Int("dir")
@@ -58,9 +58,9 @@ func makeUnit(x, y int, i *dmminstance.Instance) unit {
 	y2 := y1 + float32(sp.IconHeight())
 	var r, g, b, a float32 = 1, 1, 1, 1 // FIXME: color extraction
 
-	return unit{
+	return Unit{
 		sp, countLayer(i),
-		util.Bounds{x1, y1, x2, y2},
+		util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
 		r, g, b, a,
 	}
 }

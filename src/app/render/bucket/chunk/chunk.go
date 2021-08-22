@@ -1,14 +1,15 @@
-package bucket
+package chunk
 
 import (
 	"log"
 
+	"sdmm/app/render/bucket/chunk/unit"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
 
-// Maximum number of tiles by any axis which could be stored in the Chunk.
-const chunkMaxTileCapacity = 25
+// Maximum number of tiles per axis for a single Chunk.
+const chunkSize = 25
 
 // Chunk stores the actual data to render.
 // It stores two types of bounds: view and map.
@@ -17,7 +18,7 @@ const chunkMaxTileCapacity = 25
 type Chunk struct {
 	ViewBounds, MapBounds util.Bounds
 
-	UnitsByLayers map[float32][]unit
+	UnitsByLayers map[float32][]unit.Unit
 }
 
 func newChunk(x1, y1, x2, y2 float32) *Chunk {
@@ -27,19 +28,21 @@ func newChunk(x1, y1, x2, y2 float32) *Chunk {
 	}
 }
 
-func (c *Chunk) update(dmm *dmmap.Dmm, level int) {
+// Update will update internal data of the current chunk.
+// Basically, we will create units for every tile in the chunk.
+func (c *Chunk) Update(dmm *dmmap.Dmm, level int) {
 	// Create a storage for our units by Layers with initial capacity.
 	// Inner slices are created with initial capacity as well.
-	unitsByLayers := make(map[float32][]unit, len(c.UnitsByLayers))
+	unitsByLayers := make(map[float32][]unit.Unit, len(c.UnitsByLayers))
 	for layer := range c.UnitsByLayers {
-		unitsByLayers[layer] = make([]unit, 0, len(c.UnitsByLayers[layer]))
+		unitsByLayers[layer] = make([]unit.Unit, 0, len(c.UnitsByLayers[layer]))
 	}
 
 	for x := c.MapBounds.X1; x <= c.MapBounds.X2; x++ {
 		for y := c.MapBounds.Y1; y <= c.MapBounds.Y2; y++ {
 			x, y := int(x), int(y)
 			for _, i := range dmm.GetTile(util.Point{X: x, Y: y, Z: level}).Content {
-				u := getOrMakeUnit(x, y, i)
+				u := unit.Cache.Get(x, y, i)
 				unitsByLayers[u.Layer] = append(unitsByLayers[u.Layer], u)
 			}
 		}
