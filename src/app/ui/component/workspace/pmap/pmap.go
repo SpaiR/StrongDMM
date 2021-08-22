@@ -64,7 +64,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
-	ws.canvas.Render.UpdateBucket(ws.Dmm, ws.activeLevel)
+	ws.canvas.Render.ValidateLevel(ws.Dmm, ws.activeLevel)
 
 	return ws
 }
@@ -93,7 +93,7 @@ func (p *PaneMap) createLayout() layout.BorderPaneLayout {
 func (p *PaneMap) showCanvas() {
 	size := imgui.WindowSize()
 
-	p.canvasControl.Process(size)
+	p.canvasControl.Process(size, p.activeLevel)
 	p.canvas.Process(size)
 
 	texture := imgui.TextureID(p.canvas.Texture)

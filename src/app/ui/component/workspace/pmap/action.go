@@ -11,10 +11,11 @@ func (p *PaneMap) PMapAddSelectedInstance(coord util.Point) {
 	if instance := p.action.AppSelectedInstance(); instance != nil {
 		tile := p.Dmm.GetTile(coord)
 		tile.Content = append(tile.Content, instance)
-		p.canvas.Render.UpdateBucketV(p.Dmm, p.activeLevel, []util.Point{coord})
+		p.canvas.Render.UpdateBucket(p.Dmm, p.activeLevel, []util.Point{coord})
 	}
 }
 
+// PMapHasSelectedInstance returns true if there is any selected instance.
 func (p *PaneMap) PMapHasSelectedInstance() bool {
 	return p.action.AppHasSelectedInstance()
 }
@@ -33,14 +34,9 @@ func (p *PaneMap) PMapCommitChanges(changesType string) {
 
 	p.action.AppPushCommand(command.New(changesType, func() {
 		p.Snapshot.GoTo(stateId - 1)
-		p.canvas.Render.UpdateBucketV(p.Dmm, activeLevel, tilesToUpdate)
+		p.canvas.Render.UpdateBucket(p.Dmm, activeLevel, tilesToUpdate)
 	}, func() {
 		p.Snapshot.GoTo(stateId)
-		p.canvas.Render.UpdateBucketV(p.Dmm, activeLevel, tilesToUpdate)
+		p.canvas.Render.UpdateBucket(p.Dmm, activeLevel, tilesToUpdate)
 	}))
-}
-
-// PMapActiveLevel returns current active Z-level.
-func (p *PaneMap) PMapActiveLevel() int {
-	return p.activeLevel
 }

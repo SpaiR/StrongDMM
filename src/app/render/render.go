@@ -1,7 +1,6 @@
 package render
 
 import (
-	"log"
 	"math/rand"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
@@ -26,10 +25,6 @@ type Render struct {
 	bucket *bucket.Bucket
 
 	overlayState overlayState
-
-	tmpDmmToUpdateBucket   *dmmap.Dmm
-	tmpTilesToUpdateBucket []util.Point
-	tmpLevelToUpdateBucket int
 }
 
 func New() *Render {
@@ -44,36 +39,25 @@ func (r *Render) SetOverlayState(state overlayState) {
 	r.overlayState = state
 }
 
-// UpdateBucket used to update internal data about the map.
-func (r *Render) UpdateBucket(dmm *dmmap.Dmm, level int) {
-	r.UpdateBucketV(dmm, level, nil)
+// UpdateBucket will update the bucket data by the provided level.
+func (r *Render) UpdateBucket(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
+	r.bucket.UpdateLevel(dmm, level, tilesToUpdate)
 }
 
-func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
-	r.tmpDmmToUpdateBucket = dmm
-	r.tmpTilesToUpdateBucket = append(r.tmpTilesToUpdateBucket, tilesToUpdate...)
-	r.tmpLevelToUpdateBucket = level
-}
-
-func (r *Render) updateBucketState() {
-	if r.tmpDmmToUpdateBucket != nil && !r.bucket.Updating {
-		log.Printf("[render] updating bucket with [%s]...", r.tmpDmmToUpdateBucket.Path.Readable)
-		r.bucket.UpdateV(r.tmpDmmToUpdateBucket, r.tmpLevelToUpdateBucket, r.tmpTilesToUpdateBucket)
-		r.tmpDmmToUpdateBucket = nil
-		r.tmpTilesToUpdateBucket = nil
-		r.tmpLevelToUpdateBucket = 1 // Reset to 1 just in case.
-		log.Println("[render] bucket updated")
+// ValidateLevel will ensure that the bucket has data by the provided level.
+func (r *Render) ValidateLevel(dmm *dmmap.Dmm, level int) {
+	if r.bucket.Level(level) == nil {
+		r.UpdateBucket(dmm, level, nil)
 	}
 }
 
 func (r *Render) Draw(width, height float32) {
-	r.updateBucketState()
 	r.prepare()
 	r.draw(width, height)
 	r.cleanup()
 }
 
-// prepare method to initialize OpenGL state.
+// Initialize OpenGL state.
 func (r *Render) prepare() {
 	gl.Enable(gl.BLEND)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
@@ -100,9 +84,9 @@ func (r *Render) batchBucketUnits(width, height float32) {
 	y2 := y1 + h
 
 	// Iterate though every available layer which can be rendered.
-	for _, layer := range r.bucket.Layers {
+	for _, layer := range r.visibleLevel().Layers {
 		// Get a chunk, which has units with currently rendered layer.
-		for _, chunk := range r.bucket.ChunksByLayers[layer] {
+		for _, chunk := range r.visibleLevel().ChunksByLayers[layer] {
 			// Skip out of view chunks
 			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
 				continue
@@ -128,13 +112,14 @@ func (r *Render) batchBucketUnits(width, height float32) {
 
 var chunkColors map[bucket.Bounds]brush.Color
 
+// Debug method to render chunks borders.
 func (r *Render) batchChunksVisuals() {
 	if chunkColors == nil {
 		println("[debug] CHUNKS VISUALISATION ENABLED!")
 		chunkColors = make(map[bucket.Bounds]brush.Color)
 	}
 
-	for _, c := range r.bucket.Chunks {
+	for _, c := range r.visibleLevel().Chunks {
 		var chunkColor brush.Color
 		if color, ok := chunkColors[c.MapBounds]; ok {
 			chunkColor = color
@@ -148,11 +133,17 @@ func (r *Render) batchChunksVisuals() {
 	}
 }
 
+// Returns current visible level to render.
+func (r *Render) visibleLevel() *bucket.Level {
+	return r.bucket.Level(r.Camera.Level)
+}
+
 var (
 	activeTileCol       = brush.Color{R: 1, G: 1, B: 1, A: 0.25}
 	activeTileBorderCol = brush.Color{R: 1, G: 1, B: 1, A: 1}
 )
 
+// Draws the map overlays, like: hovered tile borders, areas borders etc.
 func (r *Render) batchOverlay() {
 	if !r.overlayState.HoverOutOfBounds() {
 		size := float32(r.overlayState.IconSize())
@@ -165,7 +156,7 @@ func (r *Render) batchOverlay() {
 	}
 }
 
-// cleanup method to clean up OpenGL state after rendering.
+// Clean OpenGL state after rendering.
 func (r *Render) cleanup() {
 	gl.Disable(gl.BLEND)
 }

@@ -30,7 +30,10 @@ func (c *Control) Active() bool {
 	return c.active
 }
 
-func (c *Control) Process(size imgui.Vec2) {
+func (c *Control) Process(size imgui.Vec2, activeLevel int) {
+	// Update currently visible level for camera.
+	c.Camera.Level = activeLevel
+
 	c.showControlArea(size)
 	c.processMouseMove()
 	c.processMouseDrag()
