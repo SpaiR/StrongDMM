@@ -4,6 +4,7 @@ import (
 	"sdmm/dm"
 	"sdmm/dm/dmicon"
 	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/util"
 )
 
 // unit stores render information about specific object instance on the map.
@@ -11,7 +12,7 @@ type unit struct {
 	Sp *dmicon.Sprite
 
 	Layer      float32
-	ViewBounds Bounds
+	ViewBounds util.Bounds
 
 	R, G, B, A float32
 }
@@ -59,7 +60,7 @@ func makeUnit(x, y int, i *dmminstance.Instance) unit {
 
 	return unit{
 		sp, countLayer(i),
-		Bounds{x1, y1, x2, y2},
+		util.Bounds{x1, y1, x2, y2},
 		r, g, b, a,
 	}
 }

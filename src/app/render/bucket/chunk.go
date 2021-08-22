@@ -15,15 +15,15 @@ const chunkMaxTileCapacity = 25
 // View bounds are a visual bounds which are used to ignore the chunk if it's out of the user viewport.
 // Map bounds are coordinate points of tiles in the chunk.
 type Chunk struct {
-	ViewBounds, MapBounds Bounds
+	ViewBounds, MapBounds util.Bounds
 
 	UnitsByLayers map[float32][]unit
 }
 
 func newChunk(x1, y1, x2, y2 float32) *Chunk {
 	return &Chunk{
-		ViewBounds: Bounds{(x1 - 1) * 32, (y1 - 1) * 32, x2 * 32, y2 * 32},
-		MapBounds:  Bounds{x1, y1, x2, y2},
+		ViewBounds: util.Bounds{X1: (x1 - 1) * 32, Y1: (y1 - 1) * 32, X2: x2 * 32, Y2: y2 * 32},
+		MapBounds:  util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
 	}
 }
 

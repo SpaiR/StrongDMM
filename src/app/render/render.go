@@ -115,13 +115,13 @@ func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) 
 	return x1, y1, x2, y2
 }
 
-var chunkColors map[bucket.Bounds]brush.Color
+var chunkColors map[util.Bounds]brush.Color
 
 // Debug method to render chunks borders.
 func (r *Render) batchChunksVisuals() {
 	if chunkColors == nil {
 		println("[debug] CHUNKS VISUALISATION ENABLED!")
-		chunkColors = make(map[bucket.Bounds]brush.Color)
+		chunkColors = make(map[util.Bounds]brush.Color)
 	}
 
 	for _, c := range r.visibleLevel().Chunks {
