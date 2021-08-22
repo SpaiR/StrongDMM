@@ -13,7 +13,7 @@ type dmmPatch []tilePatch
 
 // Snapshot is a structure to store map states in the different moments of time.
 // It stores patches between different map states, so UNDO/REDO operations simplified to the "apply patch operation".
-// TODO: provide local VCS
+// TODO: Possible to implement local VCS history.
 type Snapshot struct {
 	// Initial map is a state before changes. Basically, it's a copy of the current map, which is modified.
 	// When we commit changes with Commit method we compare and collect differences between unmodifiable and
@@ -99,7 +99,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 	return s.stateId, tilesToUpdate
 }
 
-// GoTo used to change current map state, so it will be equal to a specific stateId value.
+// GoTo will update Snapshot state by applying spe
 func (s *Snapshot) GoTo(stateId int) {
 	log.Println("[snapshot] changing snapshot state to:", stateId)
 	s.goTo(stateId, patchFull)

@@ -40,7 +40,7 @@ func (t *Tools) Process() {
 }
 
 func (t *Tools) process() {
-	// TODO: normal selection
+	// FIXME: normal selection
 	t.selected = t.add
 
 	t.processSelectedToolStart()

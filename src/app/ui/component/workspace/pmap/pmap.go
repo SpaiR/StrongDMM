@@ -54,7 +54,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 
 	ws.action = action
 
-	ws.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // TODO: world.icon_size
+	ws.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, 32) // FIXME: world.icon_size
 	ws.canvas = canvas.New(action)
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
 	ws.canvasTools = canvas.NewTools(ws, ws.canvasControl, ws.canvasState)

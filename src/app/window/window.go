@@ -28,7 +28,7 @@ func New() *Window {
 	log.Println("[window] creating native window")
 
 	w := Window{
-		PointSize:            2.5, // TODO: make configurable and 1 by default
+		PointSize:            2.5, // FIXME: make configurable and 1 by default
 		mouseChangeCallbacks: make(map[int]func(uint, uint)),
 	}
 

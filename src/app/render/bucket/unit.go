@@ -51,11 +51,11 @@ func makeUnit(x, y int, i *dmminstance.Instance) unit {
 	stepY, _ := i.Vars.Int("step_y")
 
 	sp := dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir)
-	x1 := float32((x-1)*32 + pixelX + stepX) // TODO: world icon_size
-	y1 := float32((y-1)*32 + pixelY + stepY) // TODO: world icon_size
+	x1 := float32((x-1)*32 + pixelX + stepX) // FIXME: world icon_size
+	y1 := float32((y-1)*32 + pixelY + stepY) // FIXME: world icon_size
 	x2 := x1 + float32(sp.IconWidth())
 	y2 := y1 + float32(sp.IconHeight())
-	var r, g, b, a float32 = 1, 1, 1, 1 // TODO: color extraction
+	var r, g, b, a float32 = 1, 1, 1, 1 // FIXME: color extraction
 
 	return unit{
 		sp, countLayer(i),

@@ -82,7 +82,7 @@ func (a *app) run() {
 }
 
 func (a *app) loop() {
-	// TODO: Remove
+	// FIXME: Remove
 	//imgui.ShowDemoWindow(nil)
 
 	shortcut.Process()
