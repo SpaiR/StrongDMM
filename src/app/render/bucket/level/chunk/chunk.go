@@ -8,8 +8,8 @@ import (
 	"sdmm/util"
 )
 
-// Maximum number of tiles per axis for a single Chunk.
-const chunkSize = 25
+// Size is a maximum number of tiles per axis for a single Chunk.
+const Size = 25
 
 // Chunk stores the actual data to render.
 // It stores two types of bounds: view and map.
@@ -21,7 +21,7 @@ type Chunk struct {
 	UnitsByLayers map[float32][]unit.Unit
 }
 
-func newChunk(x1, y1, x2, y2 float32) *Chunk {
+func New(x1, y1, x2, y2 float32) *Chunk {
 	return &Chunk{
 		ViewBounds: util.Bounds{X1: (x1 - 1) * 32, Y1: (y1 - 1) * 32, X2: x2 * 32, Y2: y2 * 32},
 		MapBounds:  util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
