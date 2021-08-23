@@ -7,8 +7,8 @@ import (
 	"sdmm/app/render/bucket/level/chunk"
 )
 
-// generateChunks creates a slice filled with Chunk's.
-// Generation is made by creating square areas. Each area will have a limited number of tiles to store.
+// generateChunks creates a slice filled with chunk.Chunk's.
+// Generation is made by creating square areas. Each area has a limited number of tiles to store.
 // Method won't fill chunks with actual data. It's meant to be done in the future.
 func generateChunks(maxX, maxY int) []*chunk.Chunk {
 	// Chunks capacity.
@@ -17,21 +17,26 @@ func generateChunks(maxX, maxY int) []*chunk.Chunk {
 	// Helps to track if there is tiles to create chunks.
 	var chunkCreated bool
 
+	// When `max/chunk.Size != 0` there will be dangled areas.
+	// Size of such areas physically can't be equal to square.
+	// Variables below help to find start points for those areas.
+	var nextX, nextY int
+
 	generateAxis := func(x, xRange int) {
+		nextY = 0 // Reset for every new Y axis.
 		for y := 1; y <= maxY; y++ {
 			chunkCreated = false
 			// maxCapacity+1 since we iterate from 1.
 			if y%(chunk.Size+1) == 0 {
 				chunkCreated = true
-				chunks = append(chunks, chunk.New(chunkBounds(x, y, xRange, chunk.Size)))
+				c := chunk.New(chunkBounds(x, y, xRange, chunk.Size))
+				nextX = int(c.MapBounds.X2) + 1
+				nextY = int(c.MapBounds.Y2) + 1
+				chunks = append(chunks, c)
 			}
 		}
 		if !chunkCreated {
 			chunkCreated = true
-			var nextY int
-			if len(chunks) != 0 {
-				nextY = int(chunks[len(chunks)-1].MapBounds.Y2) + 1
-			}
 			chunks = append(chunks, chunk.New(chunkBounds(x, maxY, xRange, maxY-nextY)))
 		}
 	}
@@ -44,10 +49,6 @@ func generateChunks(maxX, maxY int) []*chunk.Chunk {
 		}
 	}
 	if !chunkCreated {
-		var nextX int
-		if len(chunks) != 0 {
-			nextX = int(chunks[len(chunks)-1].MapBounds.X2) + 1
-		}
 		generateAxis(maxX, maxX-nextX)
 	}
 
