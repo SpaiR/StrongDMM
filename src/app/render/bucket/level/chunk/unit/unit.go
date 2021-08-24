@@ -1,6 +1,9 @@
 package unit
 
 import (
+	"log"
+
+	"github.com/mazznoer/csscolorparser"
 	"sdmm/dm"
 	"sdmm/dm/dmicon"
 	"sdmm/dm/dmmap/dmminstance"
@@ -43,6 +46,7 @@ func (u *unitsCache) Get(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 }
 
 func makeUnit(x, y int, i *dmminstance.Instance, iconSize int) Unit {
+	// All vars below are built-in and expected to exist.
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")
 	dir, _ := i.Vars.Int("dir")
@@ -56,13 +60,28 @@ func makeUnit(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	y1 := float32((y-1)*iconSize + pixelY + stepY)
 	x2 := x1 + float32(sp.IconWidth())
 	y2 := y1 + float32(sp.IconHeight())
-	var r, g, b, a float32 = 1, 1, 1, 1 // FIXME: color extraction
+	r, g, b, a := parseColor(i)
 
 	return Unit{
 		sp, countLayer(i),
 		util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
 		r, g, b, a,
 	}
+}
+
+func parseColor(i *dmminstance.Instance) (r, g, b, a float32) {
+	// Default rgba is white.
+	r, g, b, a = 1, 1, 1, 1
+	if color, _ := i.Vars.Text("color"); color != "" {
+		if c, err := csscolorparser.Parse(color); err == nil {
+			// Color = RGB from color variable + alpha variable.
+			alpha, _ := i.Vars.Float("alpha")
+			r, g, b, a = float32(c.R), float32(c.G), float32(c.B), alpha/255
+		} else {
+			log.Printf("[unit] unable to parse [%s] for [%s]: [%v]", color, i.Path, err)
+		}
+	}
+	return r, g, b, a
 }
 
 // countLayer returns the value of combined instance vars: plane + Layer.

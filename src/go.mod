@@ -11,4 +11,5 @@ require (
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/sqweek/dialog v0.0.0-20200911184034-8a3d98e8211d
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb // indirect
+	github.com/mazznoer/csscolorparser v0.1.1 // indirect
 )
