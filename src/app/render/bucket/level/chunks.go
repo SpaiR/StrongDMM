@@ -11,8 +11,7 @@ import (
 // Generation is made by creating square areas. Each area has a limited number of tiles to store.
 // Method won't fill chunks with actual data. It's meant to be done in the future.
 func generateChunks(maxX, maxY int) []*chunk.Chunk {
-	// Chunks capacity.
-	chunks := make([]*chunk.Chunk, 0, totalChunksCount(maxX, maxY))
+	var chunks []*chunk.Chunk
 
 	// Helps to track if there is tiles to create chunks.
 	var chunkCreated bool
@@ -55,12 +54,6 @@ func generateChunks(maxX, maxY int) []*chunk.Chunk {
 	log.Printf("[level] generated chunks number: [%d]", len(chunks))
 
 	return chunks
-}
-
-func totalChunksCount(maxX, maxY int) int {
-	xAxisCount := math.Ceil(float64(maxX / chunk.Size))
-	yAxisCount := math.Ceil(float64(maxY / chunk.Size))
-	return int(xAxisCount * yAxisCount)
 }
 
 // chunkBounds returns coords of the chunk area.

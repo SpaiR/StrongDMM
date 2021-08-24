@@ -36,18 +36,20 @@ func (l *Level) Update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 
 		// Only update chunks, which area contains updated tiles.
 		for _, tile := range tilesToUpdate {
+		updateChunk:
 			for _, c := range l.Chunks {
-				chunkAlreadyUpdated := false
+				if !c.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
+					continue
+				}
+
 				for _, updatedChunk := range updatedChunks {
-					if chunkAlreadyUpdated = c == updatedChunk; chunkAlreadyUpdated {
-						break
+					if c == updatedChunk {
+						continue updateChunk
 					}
 				}
 
-				if !chunkAlreadyUpdated && c.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
-					c.Update(dmm, l.value)
-					updatedChunks = append(updatedChunks, c)
-				}
+				c.Update(dmm, l.value)
+				updatedChunks = append(updatedChunks, c)
 			}
 		}
 	} else {
