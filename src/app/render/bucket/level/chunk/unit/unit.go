@@ -32,17 +32,17 @@ func (u *unitsCache) Free() {
 	u.units = make(map[unitHash]Unit)
 }
 
-func (u *unitsCache) Get(x, y int, i *dmminstance.Instance) Unit {
+func (u *unitsCache) Get(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	hash := unitHash{x: x, y: y, id: i.Id}
 	if cachedUnit, ok := u.units[hash]; ok {
 		return cachedUnit
 	}
-	unit := makeUnit(x, y, i)
+	unit := makeUnit(x, y, i, iconSize)
 	u.units[hash] = unit
 	return unit
 }
 
-func makeUnit(x, y int, i *dmminstance.Instance) Unit {
+func makeUnit(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")
 	dir, _ := i.Vars.Int("dir")
@@ -52,8 +52,8 @@ func makeUnit(x, y int, i *dmminstance.Instance) Unit {
 	stepY, _ := i.Vars.Int("step_y")
 
 	sp := dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir)
-	x1 := float32((x-1)*32 + pixelX + stepX) // FIXME: world icon_size
-	y1 := float32((y-1)*32 + pixelY + stepY) // FIXME: world icon_size
+	x1 := float32((x-1)*iconSize + pixelX + stepX)
+	y1 := float32((y-1)*iconSize + pixelY + stepY)
 	x2 := x1 + float32(sp.IconWidth())
 	y2 := y1 + float32(sp.IconHeight())
 	var r, g, b, a float32 = 1, 1, 1, 1 // FIXME: color extraction

@@ -6,7 +6,6 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
 	"sdmm/dm/dmmap/dmminstance"
-	"sdmm/dm/dmvars"
 )
 
 /*
@@ -77,9 +76,7 @@ func (a *app) AppDoSelectInstance(instance *dmminstance.Instance) {
 // AppDoSelectInstanceByPath globally selects an instance with provided type path.
 func (a *app) AppDoSelectInstanceByPath(path string) {
 	log.Println("[app] select instance by path:", path)
-	empty := &dmvars.Variables{}
-	empty.SetParent(a.loadedEnvironment.Objects[path].Vars)
-	a.AppDoSelectInstance(dmminstance.Cache.Get(path, empty))
+	a.AppDoSelectInstance(dmminstance.Cache.Get(path, a.AppInitialInstanceVariables(path)))
 }
 
 // AppDoExit exits the app.

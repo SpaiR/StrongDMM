@@ -5,6 +5,7 @@ import (
 	"sdmm/app/command"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmvars"
 )
 
 /*
@@ -116,4 +117,18 @@ func (a *app) AppLoadedEnvironment() *dmenv.Dme {
 // AppHasLoadedEnvironment returns true if there is any loaded environment.
 func (a *app) AppHasLoadedEnvironment() bool {
 	return a.loadedEnvironment != nil
+}
+
+// AppEnvironmentObjectVariables returns initial variables for an environment object with provided path.
+func (a *app) AppEnvironmentObjectVariables(path string) *dmvars.Variables {
+	return a.loadedEnvironment.Objects[path].Vars
+}
+
+// AppInitialInstanceVariables returns initial variables for an instance of the map with provided path.
+// Initial variables don't have any internal data.
+// They have a parent, as variables of the appropriate environment object.
+func (a *app) AppInitialInstanceVariables(path string) *dmvars.Variables {
+	vars := &dmvars.Variables{}
+	vars.SetParent(a.AppEnvironmentObjectVariables(path))
+	return vars
 }

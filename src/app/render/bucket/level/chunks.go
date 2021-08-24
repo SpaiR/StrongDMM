@@ -12,7 +12,7 @@ import (
 // Keys contain a bottom-left bound of the value chunk.
 // Generation is made by creating square areas. Each area has a limited number of tiles to store.
 // Method won't fill chunks with actual data. It's meant to be done in the future.
-func generateChunks(maxX, maxY int) map[util.Point]*chunk.Chunk {
+func generateChunks(maxX, maxY, iconSize int) map[util.Point]*chunk.Chunk {
 	chunks := make(map[util.Point]*chunk.Chunk)
 
 	// Helps to track if there is tiles to create chunks.
@@ -30,7 +30,8 @@ func generateChunks(maxX, maxY int) map[util.Point]*chunk.Chunk {
 			// maxCapacity+1 since we iterate from 1.
 			if y%(chunk.Size+1) == 0 {
 				chunkCreated = true
-				c := chunk.New(chunkBounds(x, y, xRange, chunk.Size))
+				x1, y1, x2, y2 := chunkBounds(x, y, xRange, chunk.Size)
+				c := chunk.New(x1, y1, x2, y2, float32(iconSize))
 				nextX = int(c.MapBounds.X2) + 1
 				nextY = int(c.MapBounds.Y2) + 1
 				chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
@@ -38,7 +39,8 @@ func generateChunks(maxX, maxY int) map[util.Point]*chunk.Chunk {
 		}
 		if !chunkCreated {
 			chunkCreated = true
-			c := chunk.New(chunkBounds(x, maxY, xRange, maxY-nextY))
+			x1, y1, x2, y2 := chunkBounds(x, maxY, xRange, maxY-nextY)
+			c := chunk.New(x1, y1, x2, y2, float32(iconSize))
 			chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
 		}
 	}

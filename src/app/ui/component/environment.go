@@ -166,7 +166,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 func (e *Environment) doSelectOnClick(node *treeNode) {
 	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
 		e.action.AppDoSelectInstanceByPath(node.orig.Path)
-		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from tree itself
+		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from the tree itself
 	}
 }
 

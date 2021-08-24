@@ -11,6 +11,9 @@ import (
 )
 
 type Dmm struct {
+	// Value is used mostly for stuff connected with the rendering.
+	WorldIconSize int
+
 	Name string
 	Path DmmPath
 
@@ -33,7 +36,11 @@ func (d *Dmm) tileIndex(x, y, z int) int {
 }
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
+	worldIconSize, _ := dme.Objects["/world"].Vars.Int("icon_size")
+
 	dmm := Dmm{
+		WorldIconSize: worldIconSize,
+
 		Name:  filepath.Base(data.Filepath),
 		Path:  newDmmPath(dme, data),
 		Tiles: make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
