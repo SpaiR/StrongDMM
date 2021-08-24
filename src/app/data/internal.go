@@ -6,7 +6,7 @@ import (
 	"sdmm/util/slice"
 )
 
-const internalFileName = "Internal.data"
+const internalFileName = "internal.json"
 const internalVersion = 1
 
 type Internal struct {
@@ -40,11 +40,7 @@ func (i *Internal) ClearRecentMaps(environment string) {
 }
 
 func (i *Internal) Save() {
-	storeToFile(i.filepath,
-		encode(i.Version),
-		encode(i.RecentEnvironments),
-		encode(i.RecentMapsByEnvironment),
-	)
+	save(i.filepath, i)
 	log.Println("[data] saved internal")
 }
 
@@ -57,20 +53,14 @@ func LoadInternal(internalDir string) *Internal {
 		filepath: filepath,
 
 		Version:                 internalVersion,
-		RecentMapsByEnvironment: make(map[string][]string, 0),
+		RecentMapsByEnvironment: make(map[string][]string),
 	}
 
-	data, err := readFromFile(filepath)
-	if err != nil {
-		log.Println("[data] unable to load internal data:", err)
-		return &d
+	if err := read(filepath, &d); err != nil {
+		log.Println("[data] unable to load internal:", err)
+	} else {
+		log.Println("[data] internal loaded:", d)
 	}
-
-	data.getInt(0, &d.Version)
-	data.getStrSlice(1, &d.RecentEnvironments)
-	data.getStrMapStrSlice(2, &d.RecentMapsByEnvironment)
-
-	log.Println("[data] internal loaded:", d)
 
 	return &d
 }

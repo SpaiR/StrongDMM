@@ -42,23 +42,39 @@ func (e *Empty) Name() string {
 
 func (e *Empty) Process() {
 	if !e.action.AppHasLoadedEnvironment() {
-		if imgui.Button("Open Environment...") {
-			e.action.AppDoOpenEnvironment()
-		}
-		imgui.Separator()
+		e.showEnvironmentsControl()
+	} else {
+		e.showMapsControl()
+	}
+}
+
+func (e *Empty) showEnvironmentsControl() {
+	if imgui.Button("Open Environment...") {
+		e.action.AppDoOpenEnvironment()
+	}
+	imgui.Separator()
+	if len(e.action.AppRecentEnvironments()) == 0 {
+		imgui.Text("No Recent Environments")
+	} else {
 		imgui.Text("Recent Environments:")
 		for _, envPath := range e.action.AppRecentEnvironments() {
 			if imgui.SmallButton(envPath) {
 				e.action.AppDoOpenEnvironmentByPath(envPath)
 			}
 		}
+	}
+}
+
+func (e *Empty) showMapsControl() {
+	imgui.Text(fmt.Sprint("Environment: ", e.action.AppLoadedEnvironment().RootFile))
+	imgui.Separator()
+	if imgui.Button("Open Map...") {
+		e.action.AppDoOpenMap()
+	}
+	imgui.Separator()
+	if len(e.action.AppRecentMapsByLoadedEnvironment()) == 0 {
+		imgui.Text("No Recent Maps")
 	} else {
-		imgui.Text(fmt.Sprint("Environment: ", e.action.AppLoadedEnvironment().RootFile))
-		imgui.Separator()
-		if imgui.Button("Open Map...") {
-			e.action.AppDoOpenMap()
-		}
-		imgui.Separator()
 		imgui.Text("Recent Maps:")
 		for _, mapPath := range e.action.AppRecentMapsByLoadedEnvironment() {
 			if imgui.SmallButton(sanitizeMapPath(e.action.AppLoadedEnvironment().RootDir, mapPath)) {
