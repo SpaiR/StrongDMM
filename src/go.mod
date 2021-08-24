@@ -1,6 +1,6 @@
 module sdmm
 
-go 1.16
+go 1.17
 
 require (
 	github.com/SpaiR/imgui-go v1.12.1-0.20210814083056-819c472a5279
