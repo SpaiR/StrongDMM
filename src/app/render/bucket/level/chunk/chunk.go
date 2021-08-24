@@ -9,7 +9,7 @@ import (
 )
 
 // Size is a maximum number of tiles per axis for a single Chunk.
-const Size = 25
+const Size = 24
 
 // Chunk stores the actual data to render.
 // It stores two types of bounds: view and map.

@@ -13,7 +13,7 @@ type Level struct {
 	value int
 
 	// Chunks is a slice of all chunks on the level.
-	Chunks []*chunk.Chunk
+	Chunks map[util.Point]*chunk.Chunk
 	// Layers stores all available layers for the level.
 	Layers []float32
 	// ChunksByLayers is the map which helps to find chunks with units on the specific layer.
@@ -34,23 +34,20 @@ func (l *Level) Update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 		// Store a slice of updated chunks to avoid multiple updates for the same chunk area.
 		var updatedChunks []*chunk.Chunk
 
-		// Only update chunks, which area contains updated tiles.
+	updateChunkWithTile:
 		for _, tile := range tilesToUpdate {
-		updateChunk:
-			for _, c := range l.Chunks {
-				if !c.MapBounds.Contains(float32(tile.X), float32(tile.Y)) {
-					continue
-				}
+			// Only update chunk with an updated tile.
+			c := l.Chunks[findChunkBounds(tile.X, tile.Y)]
 
-				for _, updatedChunk := range updatedChunks {
-					if c == updatedChunk {
-						continue updateChunk
-					}
+			// Do not update the chunk twice.
+			for _, updatedChunk := range updatedChunks {
+				if c == updatedChunk {
+					continue updateChunkWithTile
 				}
-
-				c.Update(dmm, l.value)
-				updatedChunks = append(updatedChunks, c)
 			}
+
+			c.Update(dmm, l.value)
+			updatedChunks = append(updatedChunks, c)
 		}
 	} else {
 		// Update all available chunks.
@@ -60,6 +57,20 @@ func (l *Level) Update(dmm *dmmap.Dmm, tilesToUpdate []util.Point) {
 	}
 
 	l.createChunksLayers()
+}
+
+func findChunkBounds(x, y int) util.Point {
+	return util.Point{X: findChunkBound(x), Y: findChunkBound(y)}
+}
+
+func findChunkBound(value int) int {
+	bound := 1
+	for {
+		if bound <= value && (bound+chunk.Size) >= value {
+			return bound
+		}
+		bound += chunk.Size + 1
+	}
 }
 
 // Method collects layers for every unit in every chunk.

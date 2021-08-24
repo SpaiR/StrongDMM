@@ -5,13 +5,15 @@ import (
 	"math"
 
 	"sdmm/app/render/bucket/level/chunk"
+	"sdmm/util"
 )
 
-// generateChunks creates a slice filled with chunk.Chunk's.
+// generateChunks creates a map with util.Point's as a key, and a chunk.Chunk's as a value.
+// Keys contain a bottom-left bound of the value chunk.
 // Generation is made by creating square areas. Each area has a limited number of tiles to store.
 // Method won't fill chunks with actual data. It's meant to be done in the future.
-func generateChunks(maxX, maxY int) []*chunk.Chunk {
-	var chunks []*chunk.Chunk
+func generateChunks(maxX, maxY int) map[util.Point]*chunk.Chunk {
+	chunks := make(map[util.Point]*chunk.Chunk)
 
 	// Helps to track if there is tiles to create chunks.
 	var chunkCreated bool
@@ -31,12 +33,13 @@ func generateChunks(maxX, maxY int) []*chunk.Chunk {
 				c := chunk.New(chunkBounds(x, y, xRange, chunk.Size))
 				nextX = int(c.MapBounds.X2) + 1
 				nextY = int(c.MapBounds.Y2) + 1
-				chunks = append(chunks, c)
+				chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
 			}
 		}
 		if !chunkCreated {
 			chunkCreated = true
-			chunks = append(chunks, chunk.New(chunkBounds(x, maxY, xRange, maxY-nextY)))
+			c := chunk.New(chunkBounds(x, maxY, xRange, maxY-nextY))
+			chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
 		}
 	}
 
