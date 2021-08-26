@@ -39,7 +39,12 @@ func (i *Instances) Process() {
 	for _, node := range i.instanceNodes {
 		isSelected := node.orig.Id == i.selectedId
 
-		if imgui.SelectableV(fmt.Sprintf("##instance_%d", node.orig.Id), isSelected, imgui.SelectableFlagsNone, imgui.Vec2{Y: i.iconSize()}) {
+		if imgui.SelectableV(
+			fmt.Sprintf("##instance_%d", node.orig.Id),
+			isSelected,
+			imgui.SelectableFlagsNone,
+			imgui.Vec2{Y: i.iconSize()},
+		) {
 			i.doSelect(node)
 		}
 
@@ -57,7 +62,18 @@ func (i *Instances) Process() {
 
 		imgui.SameLine()
 		imgui.IndentV(i.iconIndent())
-		w.Image(imgui.TextureID(node.sprite.Texture()), i.iconSize(), i.iconSize()).Uv(imgui.Vec2{X: node.sprite.U1, Y: node.sprite.V1}, imgui.Vec2{X: node.sprite.U2, Y: node.sprite.V2}).Build()
+		w.Image(imgui.TextureID(node.sprite.Texture()), i.iconSize(), i.iconSize()).
+			Uv(
+				imgui.Vec2{
+					X: node.sprite.U1,
+					Y: node.sprite.V1,
+				},
+				imgui.Vec2{
+					X: node.sprite.U2,
+					Y: node.sprite.V2,
+				},
+			).
+			Build()
 		imgui.UnindentV(i.iconIndent())
 	}
 }
@@ -120,6 +136,7 @@ func makeInstancesNodes(instances []*dmminstance.Instance) []*instanceNode {
 			return strings.Compare(nodes[i].name, nodes[j].name) == -1
 		})
 
+		// Fine an initial instance index.
 		idx := 0
 		for i, node := range nodes {
 			if node.orig.Vars.Len() == 0 {
@@ -128,7 +145,7 @@ func makeInstancesNodes(instances []*dmminstance.Instance) []*instanceNode {
 			}
 		}
 
-		// Move the initial instance at the beginning of the slice
+		// Move the initial instance to the beginning of the slice
 		initial := nodes[idx]
 		nodes = append(nodes[:idx], nodes[idx+1:]...)
 		nodes = append([]*instanceNode{initial}, nodes...)
