@@ -32,7 +32,7 @@ func (w *WorkspaceArea) Process() {
 			open := true
 			flags := imgui.TabItemFlagsNoTooltip
 
-			if ws.IsSelect() {
+			if ws.IsDoSelect() {
 				ws.Select(false)
 				flags |= imgui.TabItemFlagsSetSelected
 			}

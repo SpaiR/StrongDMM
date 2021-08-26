@@ -6,7 +6,7 @@ type Workspace interface {
 	WantClose() bool
 	Dispose()
 	Select(bool)
-	IsSelect() bool
+	IsDoSelect() bool
 	HasTooltip() bool
 	Tooltip() string
 	Border() bool
@@ -15,7 +15,7 @@ type Workspace interface {
 type base struct {
 	Workspace
 
-	isSelect bool
+	isDoSelect bool
 }
 
 func (*base) WantClose() bool {
@@ -26,11 +26,11 @@ func (*base) Dispose() {
 }
 
 func (b *base) Select(value bool) {
-	b.isSelect = value
+	b.isDoSelect = value
 }
 
-func (b *base) IsSelect() bool {
-	return b.isSelect
+func (b *base) IsDoSelect() bool {
+	return b.isDoSelect
 }
 
 func (b *base) HasTooltip() bool {
