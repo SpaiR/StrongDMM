@@ -1,6 +1,9 @@
 package app
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/dm/dmenv"
@@ -131,4 +134,25 @@ func (a *app) AppInitialInstanceVariables(path string) *dmvars.Variables {
 	vars := &dmvars.Variables{}
 	vars.SetParent(a.AppEnvironmentObjectVariables(path))
 	return vars
+}
+
+// AppUpdateTitle updates title in the application system window.
+// The title depends on current open environment and workspace.
+func (a *app) AppUpdateTitle() {
+	envTitle := a.environmentName()
+	wsTitle := a.layout.WorkspaceArea.WorkspaceTitle()
+
+	title := ""
+	if envTitle != "" {
+		if wsTitle != "" {
+			title = fmt.Sprintf("%s [%s] - %s", envTitle, wsTitle, Title)
+		} else {
+			title = fmt.Sprintf("%s - %s", envTitle, Title)
+		}
+	} else {
+		title = Title
+	}
+
+	a.masterWindow.Handle.SetTitle(title)
+	log.Println("[app] title updated:", title)
 }

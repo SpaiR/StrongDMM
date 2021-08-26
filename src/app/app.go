@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -73,7 +72,7 @@ func (a *app) initialize(internalDir string) {
 	a.menu = ui.NewMenu(a)
 	a.layout = ui.NewLayout(a)
 
-	a.updateTitle()
+	a.AppUpdateTitle()
 	a.resetWindows()
 }
 
@@ -155,19 +154,6 @@ func (a *app) checkShouldClose() {
 func (a *app) dropTmpState() {
 	a.tmpShouldClose = false
 	a.tmpWindowCond = imgui.ConditionFirstUseEver
-}
-
-func (a *app) updateTitle() {
-	var title string
-
-	if a.loadedEnvironment != nil {
-		title = fmt.Sprintf("%s - %s", a.loadedEnvironment.Name, Title)
-	} else {
-		title = Title
-	}
-
-	a.masterWindow.Handle.SetTitle(title)
-	log.Println("[app] title updated:", title)
 }
 
 func (a *app) resetWindows() {

@@ -13,10 +13,14 @@ import (
 type WorkspaceAreaAction interface {
 	workspace.EmptyAction
 	workspace.MapAction
+
+	AppUpdateTitle()
 }
 
 type WorkspaceArea struct {
 	action WorkspaceAreaAction
+
+	activeWs workspace.Workspace
 
 	workspaces []workspace.Workspace
 }
@@ -27,6 +31,8 @@ func (w *WorkspaceArea) Init(action WorkspaceAreaAction) {
 }
 
 func (w *WorkspaceArea) Process() {
+	var activeWs workspace.Workspace
+
 	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
 		for idx, ws := range w.workspaces {
 			open := true
@@ -39,6 +45,7 @@ func (w *WorkspaceArea) Process() {
 
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
 			if imgui.BeginTabItemV(ws.Name(), &open, flags) {
+				activeWs = ws
 				imgui.PopStyleVar()
 				if ws.HasTooltip() {
 					imguiext.SetItemHoveredTooltip(ws.Tooltip())
@@ -71,6 +78,11 @@ func (w *WorkspaceArea) Process() {
 
 		imgui.EndTabBar()
 	}
+
+	if w.activeWs != activeWs {
+		w.activeWs = activeWs
+		w.action.AppUpdateTitle()
+	}
 }
 
 func (w *WorkspaceArea) Free() {
@@ -92,6 +104,13 @@ func (w *WorkspaceArea) OpenMap(dmm *dmmap.Dmm) {
 	} else {
 		w.addWorkspace(ws)
 	}
+}
+
+func (w *WorkspaceArea) WorkspaceTitle() string {
+	if w.activeWs != nil {
+		return w.activeWs.Tooltip()
+	}
+	return ""
 }
 
 func (w *WorkspaceArea) closeAllMaps() {

@@ -33,7 +33,7 @@ func (a *app) openEnvironment(path string) {
 	dmminstance.Cache.Free()
 	render.Free()
 
-	a.updateTitle()
+	a.AppUpdateTitle()
 
 	log.Println("[app] environment opened:", path)
 }
@@ -53,4 +53,11 @@ func (a *app) openMap(path string) {
 	a.layout.Instances.Update()
 
 	log.Println("[app] map opened:", path)
+}
+
+func (a *app) environmentName() string {
+	if a.loadedEnvironment != nil {
+		return a.loadedEnvironment.Name
+	}
+	return ""
 }
