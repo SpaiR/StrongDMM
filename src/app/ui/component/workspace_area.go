@@ -15,6 +15,7 @@ type WorkspaceAreaAction interface {
 	workspace.MapAction
 
 	AppUpdateTitle()
+	AppSwitchCommandStack(id string)
 }
 
 type WorkspaceArea struct {
@@ -79,10 +80,7 @@ func (w *WorkspaceArea) Process() {
 		imgui.EndTabBar()
 	}
 
-	if w.activeWs != activeWs {
-		w.activeWs = activeWs
-		w.action.AppUpdateTitle()
-	}
+	w.switchActiveWorkspace(activeWs)
 }
 
 func (w *WorkspaceArea) Free() {
@@ -181,4 +179,18 @@ func (w *WorkspaceArea) findEmptyWorkspaceIdx() int {
 		}
 	}
 	return -1
+}
+
+func (w *WorkspaceArea) switchActiveWorkspace(activeWs workspace.Workspace) {
+	if w.activeWs != activeWs {
+		w.activeWs = activeWs
+
+		w.action.AppUpdateTitle()
+
+		if activeWs == nil {
+			w.action.AppSwitchCommandStack("")
+		} else {
+			w.action.AppSwitchCommandStack(w.activeWs.Id())
+		}
+	}
 }

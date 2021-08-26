@@ -1,6 +1,7 @@
 package workspace
 
 type Workspace interface {
+	Id() string
 	Name() string
 	Process()
 	WantClose() bool
@@ -16,6 +17,10 @@ type base struct {
 	Workspace
 
 	isDoSelect bool
+}
+
+func (*base) Id() string {
+	return ""
 }
 
 func (*base) WantClose() bool {

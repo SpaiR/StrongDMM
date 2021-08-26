@@ -11,7 +11,7 @@ import (
 type MapAction interface {
 	pmap.Action
 
-	AppSwitchCommandStack(id string)
+	AppIsCommandStackModified(id string) bool
 }
 
 type Map struct {
@@ -33,12 +33,19 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	return ws
 }
 
+func (m *Map) Id() string {
+	return m.PaneMap.Dmm.Path.Absolute
+}
+
 func (m *Map) Name() string {
-	return fmt.Sprint(m.PaneMap.Dmm.Name, "##workspace_map_", m.PaneMap.Dmm.Path.Absolute)
+	visibleName := m.PaneMap.Dmm.Name
+	if m.action.AppIsCommandStackModified(m.Id()) {
+		visibleName += " *"
+	}
+	return fmt.Sprint(visibleName, "###workspace_map_", m.PaneMap.Dmm.Path.Absolute)
 }
 
 func (m *Map) Process() {
-	m.action.AppSwitchCommandStack(m.Name())
 	m.PaneMap.Process()
 }
 

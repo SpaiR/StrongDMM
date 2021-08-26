@@ -65,17 +65,29 @@ func (s *Storage) Redo() {
 }
 
 func (s *Storage) HasUndo() bool {
-	if stack, ok := s.commandStacks[s.currentStackId]; ok {
+	return s.HasUndoV(s.currentStackId)
+}
+
+func (s *Storage) HasUndoV(id string) bool {
+	if stack, ok := s.commandStacks[id]; ok {
 		return len(stack.undo) > 0
 	}
 	return false
 }
 
 func (s *Storage) HasRedo() bool {
-	if stack, ok := s.commandStacks[s.currentStackId]; ok {
+	return s.HasRedoV(s.currentStackId)
+}
+
+func (s *Storage) HasRedoV(id string) bool {
+	if stack, ok := s.commandStacks[id]; ok {
 		return len(stack.redo) > 0
 	}
 	return false
+}
+
+func (s *Storage) IsModified(id string) bool {
+	return s.HasUndoV(id)
 }
 
 func logNoStackAvailable(action string) {

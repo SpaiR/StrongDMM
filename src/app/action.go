@@ -81,6 +81,11 @@ func (a *app) AppHasRedo() bool {
 	return a.commandStorage.HasRedo()
 }
 
+// AppIsCommandStackModified return true, if a command stack by provided id is modified.
+func (a *app) AppIsCommandStackModified(id string) bool {
+	return a.commandStorage.IsModified(id)
+}
+
 // AppSelectedInstance returns currently selected *dmminstance.Instance or nil.
 // Selected instance is taken from the component.Instances panel.
 func (a *app) AppSelectedInstance() *dmminstance.Instance {
