@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"time"
 
 	"sdmm/app/render"
 	"sdmm/dm/dmenv"
@@ -14,11 +15,14 @@ import (
 func (a *app) openEnvironment(path string) {
 	log.Printf("[app] opening environment [%s]...", path)
 
+	start := time.Now()
+	log.Printf("[app] parsing environment: [%s]...", path)
 	env, err := dmenv.New(path)
 	if err != nil {
 		log.Println("[app] unable to open environment:", err)
 		return
 	}
+	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
 	a.internalData.AddRecentEnvironment(path)
 	a.internalData.Save()
@@ -41,11 +45,15 @@ func (a *app) openEnvironment(path string) {
 func (a *app) openMap(path string) {
 	log.Printf("[app] opening map [%s]...", path)
 
+	start := time.Now()
+	log.Printf("[app] parsing map: [%s]...", path)
 	data, err := dmmdata.New(path)
 	if err != nil {
 		log.Printf("[app] unable to open map by path [%s]: %v", path, err)
 		return
 	}
+	elapsed := time.Since(start).Milliseconds()
+	log.Printf("[app] map [%s] parsed in [%d] ms", path, elapsed)
 
 	a.internalData.AddRecentMap(a.loadedEnvironment.RootFile, path)
 	a.internalData.Save()

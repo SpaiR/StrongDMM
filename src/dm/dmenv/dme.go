@@ -2,10 +2,8 @@ package dmenv
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"sdmm/dm/dmvars"
 	"sdmm/third_party/sdmmparser"
@@ -26,14 +24,10 @@ func New(path string) (*Dme, error) {
 		Objects:  make(map[string]*Object),
 	}
 
-	start := time.Now()
-
-	log.Printf("[dmenv] parsing environment: [%s]...", path)
 	objectTreeType, err := sdmmparser.ParseEnvironment(path)
 	if err != nil {
 		return nil, fmt.Errorf("[dmenv] unable to create dme by path [%s]: %w", path, err)
 	}
-	log.Printf("[dmenv] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
 	traverseTree0(objectTreeType, nil, &dme)
 

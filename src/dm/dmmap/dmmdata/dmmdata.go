@@ -2,9 +2,7 @@ package dmmdata
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"time"
 
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
@@ -37,11 +35,5 @@ func New(path string) (*DmmData, error) {
 		return nil, err
 	}
 	defer file.Close()
-
-	start := time.Now()
-	data, err := parse(file)
-	elapsed := time.Since(start).Milliseconds()
-	log.Printf("[dmmdata] data [%s] parsed in [%d] ms", path, elapsed)
-
-	return data, err
+	return parse(file)
 }
