@@ -25,8 +25,8 @@ const (
 )
 
 func Start() {
-	internalDir := getOrCreateInternalDir()
-	logDir := initializeLogger(internalDir)
+	internalDir := filepath.FromSlash(getOrCreateInternalDir())
+	logDir := filepath.FromSlash(initializeLogger(internalDir))
 
 	log.Printf("%s, v%s", Title, Version)
 	log.Println("[app] starting")

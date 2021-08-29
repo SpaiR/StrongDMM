@@ -2,6 +2,7 @@ package data
 
 import (
 	"log"
+	"path/filepath"
 
 	"sdmm/util/slice"
 )
@@ -10,7 +11,7 @@ const internalFileName = "internal.json"
 const internalVersion = 1
 
 type Internal struct {
-	filepath string
+	path string
 
 	Version                 int
 	RecentEnvironments      []string
@@ -40,23 +41,23 @@ func (i *Internal) ClearRecentMaps(environment string) {
 }
 
 func (i *Internal) Save() {
-	save(i.filepath, i)
+	save(i.path, i)
 	log.Println("[data] saved internal")
 }
 
 func LoadInternal(internalDir string) *Internal {
-	filepath := internalDir + "/" + internalFileName
+	path := filepath.FromSlash(internalDir + "/" + internalFileName)
 
-	log.Println("[data] loading internal:", filepath)
+	log.Println("[data] loading internal:", path)
 
 	d := Internal{
-		filepath: filepath,
+		path: path,
 
 		Version:                 internalVersion,
 		RecentMapsByEnvironment: make(map[string][]string),
 	}
 
-	if err := read(filepath, &d); err != nil {
+	if err := read(path, &d); err != nil {
 		log.Println("[data] unable to load internal:", err)
 	} else {
 		log.Println("[data] internal loaded:", d)
