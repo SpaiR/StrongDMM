@@ -20,13 +20,22 @@ func (i *InstanceCache) Free() {
 	i.instancesByPath = make(map[string][]*Instance)
 }
 
+func (i *InstanceCache) Put(instance Instance) *Instance {
+	if cachedInstance := i.GetById(instance.Id()); cachedInstance != nil {
+		return cachedInstance
+	}
+	cachedInstance := &instance
+	i.persist(cachedInstance)
+	return cachedInstance
+}
+
 func (i *InstanceCache) Get(path string, vars *dmvars.Variables) *Instance {
 	id := computeInstanceId(path, vars)
 	if instance, ok := i.instances[id]; ok {
 		return instance
 	}
-	instance := i.makeInstance(id, path, vars)
-	i.instances[id] = instance
+	instance := newInstance(id, path, vars)
+	i.persist(instance)
 	return instance
 }
 
@@ -38,13 +47,8 @@ func (i *InstanceCache) GetByPath(path string) []*Instance {
 	return i.instancesByPath[path]
 }
 
-func (i *InstanceCache) makeInstance(id uint64, path string, vars *dmvars.Variables) *Instance {
-	instance := newInstance(id, path, vars)
-	i.storeInstance(instance)
-	return instance
-}
-
-func (i *InstanceCache) storeInstance(instance *Instance) {
+func (i *InstanceCache) persist(instance *Instance) {
+	i.instances[instance.Id()] = instance
 	i.instancesByPath[instance.Path] = append(i.instancesByPath[instance.Path], instance)
 }
 

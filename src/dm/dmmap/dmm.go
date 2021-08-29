@@ -53,12 +53,12 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
 				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
-				for _, prefab := range data.Dictionary[data.Grid[tile.Coord]] {
-					if obj, ok := dme.Objects[prefab.Path]; ok {
-						prefab.Vars.SetParent(obj.Vars)
-						tile.Content = append(tile.Content, dmminstance.Cache.Get(prefab.Path, prefab.Vars))
+				for _, instance := range data.Dictionary[data.Grid[tile.Coord]] {
+					if obj, ok := dme.Objects[instance.Path]; ok {
+						instance.Vars.SetParent(obj.Vars) // Instances from the dmmdata don't know about env objects.
+						tile.Content = append(tile.Content, dmminstance.Cache.Put(instance))
 					} else {
-						log.Println("[dmmap] unknown prefab:", prefab.Path)
+						log.Println("[dmmap] unknown instance:", instance.Path)
 					}
 				}
 				dmm.SetTile(x, y, z, &tile)

@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"sdmm/dm/dmvars"
+	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -21,7 +21,7 @@ type DmmData struct {
 	KeyLength        int
 	MaxX, MaxY, MaxZ int
 
-	Dictionary map[Key][]Prefab
+	Dictionary map[Key][]dmminstance.Instance
 	Grid       map[util.Point]Key
 }
 
@@ -29,11 +29,6 @@ func (d DmmData) String() string {
 	return fmt.Sprintf(
 		"Filepath: %s, IsTgm: %t, IsWinLineBreak: %t, KeyLength: %d, MaxX: %d, MaxY: %d, MaxZ: %d",
 		d.Filepath, d.IsTgm, d.IsWinLineBreak, d.KeyLength, d.MaxX, d.MaxY, d.MaxZ)
-}
-
-type Prefab struct {
-	Path string
-	Vars *dmvars.Variables
 }
 
 func New(path string) (*DmmData, error) {

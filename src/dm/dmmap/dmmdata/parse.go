@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
 	"sdmm/util"
 )
@@ -23,7 +24,7 @@ func parse(file *os.File) (*DmmData, error) {
 	var (
 		dmmData = DmmData{
 			Filepath:   file.Name(),
-			Dictionary: make(map[Key][]Prefab),
+			Dictionary: make(map[Key][]dmminstance.Instance),
 			Grid:       make(map[util.Point]Key),
 		}
 
@@ -39,10 +40,10 @@ func parse(file *os.File) (*DmmData, error) {
 		escaping       bool
 		skipWhitespace bool
 
-		currData   []Prefab
-		currPrefab = Prefab{Vars: &dmvars.Variables{}}
-		currVar    = make([]rune, 0)
-		currDatum  = make([]rune, 0)
+		currData     []dmminstance.Instance
+		currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
+		currVar      = make([]rune, 0)
+		currDatum    = make([]rune, 0)
 
 		currKey       []rune
 		currKeyLength = 0
@@ -119,14 +120,14 @@ func parse(file *os.File) (*DmmData, error) {
 							skipWhitespace = true
 						} else if c == ';' {
 							value := string(currDatum)
-							currPrefab.Vars.Put(string(currVar), &value)
+							currInstance.Vars.Put(string(currVar), &value)
 							currVar = currVar[:0]
 							currDatum = currDatum[:0]
 							skipWhitespace = true
 						} else if c == '}' {
 							if len(currVar) > 0 {
 								value := string(currDatum)
-								currPrefab.Vars.Put(string(currVar), &value)
+								currInstance.Vars.Put(string(currVar), &value)
 								currVar = currVar[:0]
 								currDatum = currDatum[:0]
 							}
@@ -136,26 +137,26 @@ func parse(file *os.File) (*DmmData, error) {
 						}
 					}
 				} else if c == '{' {
-					currPrefab.Path = string(currDatum)
+					currInstance.Path = string(currDatum)
 					currDatum = currDatum[:0]
 					inVarEditBlock = true
 				} else if c == ',' {
-					if len(currPrefab.Path) == 0 && len(currDatum) > 0 {
-						currPrefab.Path = string(currDatum)
+					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
+						currInstance.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
-					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: &dmvars.Variables{}}
+					currData = append(currData, currInstance)
+					currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
 				} else if c == ')' {
-					if len(currPrefab.Path) == 0 && len(currDatum) > 0 {
-						currPrefab.Path = string(currDatum)
+					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
+						currInstance.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
-					currData = append(currData, currPrefab)
-					currPrefab = Prefab{Vars: &dmvars.Variables{}}
+					currData = append(currData, currInstance)
+					currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
 					key := Key(currKey)
 					currKey = currKey[:0]
-					data := make([]Prefab, len(currData))
+					data := make([]dmminstance.Instance, len(currData))
 					copy(data, currData)
 					currData = currData[:0]
 					currKeyLength = 0
