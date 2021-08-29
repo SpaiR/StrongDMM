@@ -33,19 +33,22 @@ func Start() {
 	log.Println("[app] internal dir:", internalDir)
 	log.Println("[app] log dir:", logDir)
 
-	app := app{
+	a := app{
 		masterWindow: window.New(),
 		logDir:       logDir,
 	}
 
-	log.Println("[app] phase: initialization")
-	app.initialize(internalDir)
+	log.Println("[app] start phase: [initialization]")
+	a.initialize(internalDir)
+	log.Println("[app] end phase: [initialization]")
 
-	log.Println("[app] phase: application loop")
-	app.run()
+	log.Println("[app] start phase: [loop]")
+	a.run()
+	log.Println("[app] end phase: [loop]")
 
-	log.Println("[app] phase: disposing")
-	app.dispose()
+	log.Println("[app] start phase: [disposing]")
+	a.dispose()
+	log.Println("[app] end phase: [disposing]")
 }
 
 type app struct {
