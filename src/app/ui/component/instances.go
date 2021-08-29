@@ -163,9 +163,10 @@ type instanceNode struct {
 func makeInstanceNode(instance *dmminstance.Instance) *instanceNode {
 	icon, _ := instance.Vars.Text("icon")
 	iconState, _ := instance.Vars.Text("icon_state")
+	dir, _ := instance.Vars.Int("dir")
 	return &instanceNode{
 		name:   instance.Path[strings.LastIndex(instance.Path, "/")+1:],
 		orig:   instance,
-		sprite: dmicon.Cache.GetSpriteOrPlaceholder(icon, iconState),
+		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),
 	}
 }
