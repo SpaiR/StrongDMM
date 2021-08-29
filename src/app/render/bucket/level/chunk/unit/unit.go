@@ -36,7 +36,7 @@ func (u *unitsCache) Free() {
 }
 
 func (u *unitsCache) Get(x, y int, i *dmminstance.Instance, iconSize int) Unit {
-	hash := unitHash{x: x, y: y, id: i.Id}
+	hash := unitHash{x: x, y: y, id: i.Id()}
 	if cachedUnit, ok := u.units[hash]; ok {
 		return cachedUnit
 	}

@@ -37,10 +37,10 @@ func (i *Instances) Free() {
 
 func (i *Instances) Process() {
 	for _, node := range i.instanceNodes {
-		isSelected := node.orig.Id == i.selectedId
+		isSelected := node.orig.Id() == i.selectedId
 
 		if imgui.SelectableV(
-			fmt.Sprintf("##instance_%d", node.orig.Id),
+			fmt.Sprintf("##instance_%d", node.orig.Id()),
 			isSelected,
 			imgui.SelectableFlagsNone,
 			imgui.Vec2{Y: i.iconSize()},
@@ -80,7 +80,7 @@ func (i *Instances) Process() {
 
 func (i *Instances) Select(instance *dmminstance.Instance) {
 	i.instanceNodes = makeInstancesNodes(dmminstance.Cache.GetByPath(instance.Path))
-	i.selectedId = instance.Id
+	i.selectedId = instance.Id()
 	i.tmpDoScrollToInstance = true
 	log.Println("[component] selected instance id:", i.selectedId)
 }

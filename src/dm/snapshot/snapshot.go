@@ -48,7 +48,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		if !tileModified {
 			// Iteratee through tiles contents and compare instances inside them.
 			for instanceIdx, currentInstance := range currentTile.Content {
-				if tileModified = currentInstance.Id != initialTile.Content[instanceIdx].Id; tileModified {
+				if tileModified = currentInstance.Id() != initialTile.Content[instanceIdx].Id(); tileModified {
 					break
 				}
 			}
