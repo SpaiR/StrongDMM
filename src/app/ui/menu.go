@@ -4,7 +4,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dm/dmenv"
-	"sdmm/imguiext/widget"
+	w "sdmm/imguiext/widget"
 )
 
 //goland:noinspection GoCommentStart
@@ -28,11 +28,15 @@ type menuAction interface {
 	// Help
 	AppDoOpenLogs()
 
+	// Helpers
+
 	AppRecentEnvironments() []string
 	AppRecentMapsByLoadedEnvironment() []string
 
 	AppLoadedEnvironment() *dmenv.Dme
 	AppHasLoadedEnvironment() bool
+
+	AppHasActiveMap() bool
 
 	AppHasUndo() bool
 	AppHasRedo() bool
@@ -51,52 +55,54 @@ func NewMenu(action menuAction) *Menu {
 }
 
 func (m *Menu) Process() {
-	widget.MainMenuBar(widget.Layout{
-		widget.Menu("File", widget.Layout{
-			widget.MenuItem("Open Environment...", m.action.AppDoOpenEnvironment),
-			widget.Menu("Recent Environments", widget.Layout{
-				widget.Custom(func() {
+	w.MainMenuBar(w.Layout{
+		w.Menu("File", w.Layout{
+			w.MenuItem("Open Environment...", m.action.AppDoOpenEnvironment),
+			w.Menu("Recent Environments", w.Layout{
+				w.Custom(func() {
 					for _, recentEnvironment := range m.action.AppRecentEnvironments() {
-						widget.MenuItem(recentEnvironment, func() {
+						w.MenuItem(recentEnvironment, func() {
 							m.action.AppDoOpenEnvironmentByPath(recentEnvironment)
 						}).Build()
 					}
-					widget.Layout{
-						widget.Separator(),
-						widget.MenuItem("Clear Recent Environments", m.action.AppDoClearRecentEnvironments),
+					w.Layout{
+						w.Separator(),
+						w.MenuItem("Clear Recent Environments", m.action.AppDoClearRecentEnvironments),
 					}.Build()
 				}),
 			}).Enabled(len(m.action.AppRecentEnvironments()) != 0),
-			widget.Separator(),
-			widget.MenuItem("Open Map...", m.action.AppDoOpenMap).Enabled(m.action.AppHasLoadedEnvironment()),
-			widget.Menu("Recent Maps", widget.Layout{
-				widget.Custom(func() {
+			w.Separator(),
+			w.MenuItem("Open Map...", m.action.AppDoOpenMap).Enabled(m.action.AppHasLoadedEnvironment()),
+			w.Menu("Recent Maps", w.Layout{
+				w.Custom(func() {
 					for _, recentMap := range m.action.AppRecentMapsByLoadedEnvironment() {
-						widget.MenuItem(recentMap, func() {
+						w.MenuItem(recentMap, func() {
 							m.action.AppDoOpenMapByPath(recentMap)
 						}).Build()
 					}
-					widget.Layout{
-						widget.Separator(),
-						widget.MenuItem("Clear Recent Maps", m.action.AppDoClearRecentMaps),
+					w.Layout{
+						w.Separator(),
+						w.MenuItem("Clear Recent Maps", m.action.AppDoClearRecentMaps),
 					}.Build()
 				}),
 			}).Enabled(m.action.AppHasLoadedEnvironment() && len(m.action.AppRecentMapsByLoadedEnvironment()) != 0),
-			widget.Separator(),
-			widget.MenuItem("Exit", m.action.AppDoExit),
+			w.Separator(),
+			w.MenuItem("Save", nil).Enabled(m.action.AppHasActiveMap()),
+			w.Separator(),
+			w.MenuItem("Exit", m.action.AppDoExit),
 		}),
 
-		widget.Menu("Edit", widget.Layout{
-			widget.MenuItem("Undo", m.action.AppDoUndo).Enabled(m.action.AppHasUndo()),
-			widget.MenuItem("Redo", m.action.AppDoRedo).Enabled(m.action.AppHasRedo()),
+		w.Menu("Edit", w.Layout{
+			w.MenuItem("Undo", m.action.AppDoUndo).Enabled(m.action.AppHasUndo()),
+			w.MenuItem("Redo", m.action.AppDoRedo).Enabled(m.action.AppHasRedo()),
 		}),
 
-		widget.Menu("Window", widget.Layout{
-			widget.MenuItem("Reset Windows", m.action.AppDoResetWindows).Shortcut("F5"),
+		w.Menu("Window", w.Layout{
+			w.MenuItem("Reset Windows", m.action.AppDoResetWindows).Shortcut("F5"),
 		}),
 
-		widget.Menu("Help", widget.Layout{
-			widget.MenuItem("Open Logs Folder", m.action.AppDoOpenLogs),
+		w.Menu("Help", w.Layout{
+			w.MenuItem("Open Logs Folder", m.action.AppDoOpenLogs),
 		}),
 	}).Build()
 }

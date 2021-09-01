@@ -127,6 +127,11 @@ func (a *app) AppHasLoadedEnvironment() bool {
 	return a.loadedEnvironment != nil
 }
 
+// AppHasActiveMap return true if there is any active map at the moment.
+func (a *app) AppHasActiveMap() bool {
+	return a.layout.WorkspaceArea.ActiveMap() != nil
+}
+
 // AppEnvironmentObjectVariables returns initial variables for an environment object with provided path.
 func (a *app) AppEnvironmentObjectVariables(path string) *dmvars.Variables {
 	return a.loadedEnvironment.Objects[path].Vars
