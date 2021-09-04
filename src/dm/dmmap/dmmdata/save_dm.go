@@ -11,11 +11,11 @@ import (
 	"sdmm/util"
 )
 
-// SaveDM writes DmmData to a file with the provided path.
+// SaveDM writes DmmData in DM format to a file with the provided path.
 func (d DmmData) SaveDM(path string) {
 	f, err := os.Create(path)
 	if err != nil {
-		log.Printf("[dmmdata] unable to save as DM [%s]: %v", d, err)
+		log.Printf("[dmmdata] unable to save as [DM] [%s]: %v", d, err)
 		return
 	}
 	defer f.Close()
@@ -34,7 +34,8 @@ func (d DmmData) SaveDM(path string) {
 	// Write map grids.
 	for z := 1; z <= d.MaxZ; z++ {
 		write(d.LineBreak)
-		write(fmt.Sprintf("(1,1,%d) = {\"%s", z, d.LineBreak))
+		write(fmt.Sprintf("(1,1,%d) = {\"", z))
+		write(d.LineBreak)
 
 		for y := d.MaxY; y >= 1; y-- {
 			for x := 1; x <= d.MaxX; x++ {
