@@ -26,6 +26,7 @@ func parse(file *os.File) (*DmmData, error) {
 			Filepath:   file.Name(),
 			Dictionary: make(map[Key][]dmminstance.Instance),
 			Grid:       make(map[util.Point]Key),
+			LineBreak:  "\n",
 		}
 
 		firstRune = true
@@ -253,7 +254,7 @@ func parse(file *os.File) (*DmmData, error) {
 					adjustY = true
 					currY -= 1
 				} else if c == '\r' {
-					dmmData.IsWinLineBreak = true // Windows line break for sure.
+					dmmData.LineBreak = "\r\n" // Windows line break for sure.
 				} else if c == '\n' {
 					if adjustY {
 						adjustY = false
