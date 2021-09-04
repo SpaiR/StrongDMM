@@ -59,5 +59,5 @@ func (c *Chunk) Update(dmm *dmmap.Dmm, level int) {
 	}
 
 	c.UnitsByLayers = unitsByLayers
-	log.Println("[bucket] chunk updated:", c.MapBounds)
+	log.Printf("[bucket] chunk level [%d] updated: %v", level, c.MapBounds)
 }
