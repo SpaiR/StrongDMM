@@ -69,6 +69,8 @@ type app struct {
 }
 
 func (a *app) initialize(internalDir string) {
+	a.deleteOldLogs()
+
 	a.internalData = data.LoadInternal(internalDir)
 	a.commandStorage = command.NewStorage()
 
@@ -125,14 +127,6 @@ func initializeLogger(internalDir string) string {
 	logDir := internalDir + "/logs"
 	_ = os.MkdirAll(logDir, os.ModePerm)
 
-	// Clear old logs
-	_ = filepath.Walk(logDir, func(path string, info os.FileInfo, _ error) error {
-		if time.Now().Sub(info.ModTime()).Hours()/24 > LogsTtlDays {
-			_ = os.Remove(path)
-		}
-		return nil
-	})
-
 	// Create log file for the current session.
 	formattedDate := time.Now().Format("2006.01.02-15.04.05")
 	logFile := logDir + "/" + formattedDate + ".log"
@@ -162,4 +156,20 @@ func (a *app) dropTmpState() {
 func (a *app) resetWindows() {
 	a.tmpWindowCond = imgui.ConditionAlways
 	log.Println("[app] window reset")
+}
+
+func (a *app) deleteOldLogs() {
+	logsCount := 0
+	_ = filepath.Walk(a.logDir, func(path string, info os.FileInfo, _ error) error {
+		if time.Now().Sub(info.ModTime()).Hours()/24 > LogsTtlDays {
+			_ = os.Remove(path)
+			logsCount++
+		}
+		return nil
+	})
+	if logsCount > 0 {
+		log.Println("[app] old logs deleted:", logsCount)
+	} else {
+		log.Println("[app] no old logs to delete")
+	}
 }
