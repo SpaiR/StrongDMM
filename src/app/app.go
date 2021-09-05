@@ -19,9 +19,11 @@ import (
 )
 
 const (
-	Title       = "StrongDMM"
-	Version     = "2.0"
-	LogsTtlDays = 3
+	Title   = "StrongDMM"
+	Version = "2.0"
+
+	LogsTtlDays    = 3
+	BackupsTtlDays = 3
 )
 
 func Start() {
@@ -36,6 +38,7 @@ func Start() {
 	a := app{
 		masterWindow: window.New(),
 		logDir:       logDir,
+		backupDir:    filepath.FromSlash(internalDir + "/backup"),
 	}
 
 	log.Println("[app] start phase: [initialization]")
@@ -54,7 +57,8 @@ func Start() {
 type app struct {
 	masterWindow *window.Window
 
-	logDir string
+	logDir    string
+	backupDir string
 
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
@@ -70,6 +74,7 @@ type app struct {
 
 func (a *app) initialize(internalDir string) {
 	a.deleteOldLogs()
+	a.deleteOldBackups()
 
 	a.internalData = data.LoadInternal(internalDir)
 	a.commandStorage = command.NewStorage()
@@ -171,5 +176,21 @@ func (a *app) deleteOldLogs() {
 		log.Println("[app] old logs deleted:", logsCount)
 	} else {
 		log.Println("[app] no old logs to delete")
+	}
+}
+
+func (a *app) deleteOldBackups() {
+	backupsCount := 0
+	_ = filepath.Walk(a.backupDir, func(path string, info os.FileInfo, _ error) error {
+		if !info.IsDir() && time.Now().Sub(info.ModTime()).Hours()/24 > BackupsTtlDays {
+			_ = os.Remove(path)
+			backupsCount++
+		}
+		return nil
+	})
+	if backupsCount > 0 {
+		log.Println("[app] old backups deleted:", backupsCount)
+	} else {
+		log.Println("[app] no old backups to delete")
 	}
 }

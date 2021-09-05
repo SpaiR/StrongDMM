@@ -20,6 +20,8 @@ type Dmm struct {
 	Tiles []*Tile
 
 	MaxX, MaxY, MaxZ int
+
+	backup string
 }
 
 func (d *Dmm) GetTile(coord util.Point) *Tile {
@@ -35,7 +37,7 @@ func (d *Dmm) tileIndex(x, y, z int) int {
 	return d.MaxX*d.MaxY*(z-1) + d.MaxX*(y-1) + (x - 1)
 }
 
-func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
+func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 	worldIconSize, _ := dme.Objects["/world"].Vars.Int("icon_size")
 
 	dmm := Dmm{
@@ -47,6 +49,8 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData) *Dmm {
 		MaxX:  data.MaxX,
 		MaxY:  data.MaxY,
 		MaxZ:  data.MaxZ,
+
+		backup: backup,
 	}
 
 	for z := 1; z <= data.MaxZ; z++ {

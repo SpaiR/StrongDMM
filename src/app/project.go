@@ -1,7 +1,10 @@
 package app
 
 import (
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"time"
 
 	"sdmm/app/render"
@@ -10,6 +13,7 @@ import (
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/util"
 )
 
 func (a *app) openEnvironment(path string) {
@@ -57,7 +61,7 @@ func (a *app) openMap(path string) {
 
 	a.internalData.AddRecentMap(a.loadedEnvironment.RootFile, path)
 	a.internalData.Save()
-	a.layout.WorkspaceArea.OpenMap(dmmap.New(a.loadedEnvironment, data))
+	a.layout.WorkspaceArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)))
 	a.layout.Instances.Update()
 
 	log.Println("[app] map opened:", path)
@@ -68,4 +72,32 @@ func (a *app) environmentName() string {
 		return a.loadedEnvironment.Name
 	}
 	return ""
+}
+
+func (a *app) backupMap(path string) string {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Println("[app] unable to read map to backup:", path)
+		util.ShowErrorDialog("Unable to read map to backup: " + path)
+		os.Exit(1)
+	}
+
+	// format: backup/environment.dme/map.dmm/time.dmm
+	dst := filepath.FromSlash(a.backupDir + "/" +
+		a.environmentName() + "/" +
+		filepath.Base(path) + "/" +
+		time.Now().Format("2006.01.02-15.04.05") + ".dmm",
+	)
+
+	_ = os.MkdirAll(filepath.Dir(dst), os.ModePerm)
+
+	err = ioutil.WriteFile(dst, data, os.ModePerm)
+	if err != nil {
+		log.Println("[app] unable to write map backup to a file:", dst)
+		util.ShowErrorDialog("Unable to write map backup to a file: " + path)
+		os.Exit(1)
+	}
+	log.Println("[app] map backup created:", dst)
+
+	return dst
 }
