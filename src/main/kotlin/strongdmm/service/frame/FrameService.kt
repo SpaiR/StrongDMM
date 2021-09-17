@@ -74,11 +74,11 @@ class FrameService : Service, PostInitialize {
                         val colorG = tileItem.colorG
                         val colorB = tileItem.colorB
                         val colorA = tileItem.colorA
-                        var plane = tileItem.plane;
-                        if(plane < -10000)
+                        var plane = tileItem.plane
+                        if (plane < -10000)
                             plane -= FLOAT_PLANE
-                        else if(plane > 10000)
-                            plane += FLOAT_PLANE-2
+                        else if (plane > 10000)
+                            plane += FLOAT_PLANE - 2
                         val depth = plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
 
                         val specificDepth = when {
