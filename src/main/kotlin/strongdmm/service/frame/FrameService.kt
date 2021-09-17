@@ -15,6 +15,7 @@ import strongdmm.util.DEFAULT_ICON_SIZE
 
 class FrameService : Service, PostInitialize {
     companion object {
+        private const val FLOAT_PLANE: Short = -32767
         private const val PLANE_DEPTH: Short = 10000
         private const val LAYER_DEPTH: Short = 1000
         private const val OBJ_DEPTH: Short = 100
@@ -73,7 +74,12 @@ class FrameService : Service, PostInitialize {
                         val colorG = tileItem.colorG
                         val colorB = tileItem.colorB
                         val colorA = tileItem.colorA
-                        val depth = tileItem.plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
+                        var plane = tileItem.plane;
+                        if(plane < -10000)
+                            plane -= FLOAT_PLANE
+                        else if(plane > 10000)
+                            plane += FLOAT_PLANE-2
+                        val depth = plane * PLANE_DEPTH + tileItem.layer * LAYER_DEPTH
 
                         val specificDepth = when {
                             tileItem.isType(TYPE_OBJ) -> OBJ_DEPTH
