@@ -22,6 +22,14 @@ type DmmData struct {
 	Grid       map[util.Point]Key
 }
 
+func (d DmmData) Save() {
+	if d.IsTgm {
+		d.SaveTGM(d.Filepath)
+	} else {
+		d.SaveDM(d.Filepath)
+	}
+}
+
 func (d DmmData) Keys() []Key {
 	keys := make([]Key, 0, len(d.Dictionary))
 	for key := range d.Dictionary {

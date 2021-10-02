@@ -5,6 +5,7 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
+	"sdmm/app/ui/component/workspace"
 	"sdmm/dm/dmmap/dmminstance"
 )
 
@@ -64,6 +65,16 @@ func (a *app) AppDoClearRecentMaps() {
 	log.Println("[app] clear recent maps")
 	a.internalData.ClearRecentMaps(a.loadedEnvironment.RootFile)
 	a.internalData.Save()
+}
+
+// AppDoSave saves current active map.
+func (a *app) AppDoSave() {
+	log.Println("[app] do save")
+	if activeWs := a.layout.WorkspaceArea.ActiveWorkspace(); activeWs != nil {
+		if activeWs, ok := activeWs.(*workspace.Map); ok {
+			activeWs.Save()
+		}
+	}
 }
 
 // AppDoSelectInstance globally selects provided instance in the app.

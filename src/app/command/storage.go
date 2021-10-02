@@ -87,7 +87,18 @@ func (s *Storage) HasRedoV(id string) bool {
 }
 
 func (s *Storage) IsModified(id string) bool {
-	return s.HasUndoV(id)
+	if stack, ok := s.commandStacks[id]; ok {
+		return stack.balance != 0 || stack.appliedCommandId() != stack.balanceCommandId
+	}
+	return false
+}
+
+func (s *Storage) ForceBalance(id string) {
+	if stack, ok := s.commandStacks[id]; ok {
+		logStackAction(stack, "force balance")
+		stack.balance = 0
+		stack.balanceCommandId = stack.appliedCommandId()
+	}
 }
 
 func logNoStackAvailable(action string) {
@@ -103,4 +114,14 @@ type commandStack struct {
 	balance int
 	undo    []Command
 	redo    []Command
+
+	// Field stores a command id at the moment when the stack was forcefully balanced.
+	balanceCommandId uint64
+}
+
+func (c commandStack) appliedCommandId() uint64 {
+	if len(c.undo) > 0 {
+		return c.undo[0].id
+	}
+	return 0
 }

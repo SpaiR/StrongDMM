@@ -6,6 +6,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
+	"sdmm/app/ui/component/workspace"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
@@ -81,9 +82,14 @@ func (a *app) AppHasRedo() bool {
 	return a.commandStorage.HasRedo()
 }
 
-// AppIsCommandStackModified return true, if a command stack by provided id is modified.
+// AppIsCommandStackModified returns true, if the command stack with provided id is modified.
 func (a *app) AppIsCommandStackModified(id string) bool {
 	return a.commandStorage.IsModified(id)
+}
+
+// AppForceBalanceCommandStack will do a force balance of the command stack with provided id.
+func (a *app) AppForceBalanceCommandStack(id string) {
+	a.commandStorage.ForceBalance(id)
 }
 
 // AppSelectedInstance returns currently selected *dmminstance.Instance or nil.
@@ -127,9 +133,13 @@ func (a *app) AppHasLoadedEnvironment() bool {
 	return a.loadedEnvironment != nil
 }
 
-// AppHasActiveMap return true if there is any active map at the moment.
+// AppHasActiveMap returns true if there is any active map at the moment.
 func (a *app) AppHasActiveMap() bool {
-	return a.layout.WorkspaceArea.ActiveMap() != nil
+	if activeWs := a.layout.WorkspaceArea.ActiveWorkspace(); activeWs != nil {
+		_, ok := activeWs.(*workspace.Map)
+		return ok
+	}
+	return false
 }
 
 // AppEnvironmentObjectVariables returns initial variables for an environment object with provided path.

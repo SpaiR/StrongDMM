@@ -111,11 +111,8 @@ func (w *WorkspaceArea) WorkspaceTitle() string {
 	return ""
 }
 
-func (w *WorkspaceArea) ActiveMap() *dmmap.Dmm {
-	if wsMap, ok := w.activeWs.(*workspace.Map); ok {
-		return wsMap.PaneMap.Dmm
-	}
-	return nil
+func (w *WorkspaceArea) ActiveWorkspace() workspace.Workspace {
+	return w.activeWs
 }
 
 func (w *WorkspaceArea) closeAllMaps() {

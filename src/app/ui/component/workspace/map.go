@@ -12,6 +12,7 @@ type MapAction interface {
 	pmap.Action
 
 	AppIsCommandStackModified(id string) bool
+	AppForceBalanceCommandStack(id string)
 }
 
 type Map struct {
@@ -31,6 +32,12 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 	ws.action = action
 
 	return ws
+}
+
+func (m *Map) Save() {
+	log.Println("[workspace] saving map workspace:", m.Id())
+	m.PaneMap.Dmm.Save()
+	m.action.AppForceBalanceCommandStack(m.Id())
 }
 
 func (m *Map) Id() string {

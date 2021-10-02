@@ -16,6 +16,7 @@ type menuAction interface {
 	AppDoOpenMap()
 	AppDoOpenMapByPath(path string)
 	AppDoClearRecentMaps()
+	AppDoSave()
 	AppDoExit()
 
 	// Edit
@@ -87,7 +88,7 @@ func (m *Menu) Process() {
 				}),
 			}).Enabled(m.action.AppHasLoadedEnvironment() && len(m.action.AppRecentMapsByLoadedEnvironment()) != 0),
 			w.Separator(),
-			w.MenuItem("Save", nil).Enabled(m.action.AppHasActiveMap()),
+			w.MenuItem("Save", m.action.AppDoSave).Enabled(m.action.AppHasActiveMap()),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.AppDoExit),
 		}),
