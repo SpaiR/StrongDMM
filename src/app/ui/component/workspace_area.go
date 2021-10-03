@@ -34,8 +34,6 @@ func (w *WorkspaceArea) Init(action WorkspaceAreaAction) {
 }
 
 func (w *WorkspaceArea) Process() {
-	var activeWs workspace.Workspace
-
 	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
 		for idx, ws := range w.workspaces {
 			open := true
@@ -48,20 +46,25 @@ func (w *WorkspaceArea) Process() {
 
 			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
 			if imgui.BeginTabItemV(ws.Name(), &open, flags) {
-				activeWs = ws
 				imgui.PopStyleVar()
+
+				w.switchActiveWorkspace(ws)
+
 				if ws.HasTooltip() {
 					imguiext.SetItemHoveredTooltip(ws.Tooltip())
 				}
+
 				if ws.Border() {
 					imgui.PushStyleVarFloat(imgui.StyleVarChildBorderSize, 1)
 				}
+
 				imgui.BeginChildV(fmt.Sprint("workspace_", ws.Name(), idx), imgui.Vec2{}, ws.Border(), imgui.WindowFlagsNone)
 				if ws.Border() {
 					imgui.PopStyleVar()
 				}
 				ws.Process()
 				imgui.EndChild()
+
 				imgui.EndTabItem()
 			} else {
 				imgui.PopStyleVar()
@@ -81,8 +84,6 @@ func (w *WorkspaceArea) Process() {
 
 		imgui.EndTabBar()
 	}
-
-	w.switchActiveWorkspace(activeWs)
 }
 
 func (w *WorkspaceArea) Free() {
