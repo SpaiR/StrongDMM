@@ -144,7 +144,7 @@ func (d *Dmm) SaveV(path string) {
 	output.Save()
 }
 
-func calcContentHash(content []*dmminstance.Instance) uint64 {
+func calcContentHash(content []dmminstance.Instance) uint64 {
 	sb := strings.Builder{}
 	for _, instance := range content {
 		sb.WriteString(strconv.FormatUint(instance.Id(), 10))
@@ -155,7 +155,7 @@ func calcContentHash(content []*dmminstance.Instance) uint64 {
 func findKeyByTileContent(
 	data *dmmdata.DmmData,
 	keyByContentCache map[uint64]dmmdata.Key,
-	content []*dmminstance.Instance) (dmmdata.Key, bool) {
+	content []dmminstance.Instance) (dmmdata.Key, bool) {
 	contentHash := calcContentHash(content)
 
 	if key, ok := keyByContentCache[contentHash]; ok {
@@ -172,7 +172,7 @@ func findKeyByTileContent(
 	return "", false
 }
 
-func isSameContent(cnt1 []dmminstance.Instance, cnt2 []*dmminstance.Instance) bool {
+func isSameContent(cnt1, cnt2 []dmminstance.Instance) bool {
 	if len(cnt1) != len(cnt2) {
 		return false
 	}
@@ -186,10 +186,10 @@ func isSameContent(cnt1 []dmminstance.Instance, cnt2 []*dmminstance.Instance) bo
 	return true
 }
 
-func copyContent(content []*dmminstance.Instance) []dmminstance.Instance {
+func copyContent(content []dmminstance.Instance) []dmminstance.Instance {
 	cpy := make([]dmminstance.Instance, 0, len(content))
 	for _, instance := range content {
-		cpy = append(cpy, *instance)
+		cpy = append(cpy, instance)
 	}
 	return cpy
 }

@@ -35,7 +35,7 @@ func (u *unitsCache) Free() {
 	u.units = make(map[unitHash]Unit)
 }
 
-func (u *unitsCache) Get(x, y int, i *dmminstance.Instance, iconSize int) Unit {
+func (u *unitsCache) Get(x, y int, i dmminstance.Instance, iconSize int) Unit {
 	hash := unitHash{x: x, y: y, id: i.Id()}
 	if cachedUnit, ok := u.units[hash]; ok {
 		return cachedUnit
@@ -45,7 +45,7 @@ func (u *unitsCache) Get(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	return unit
 }
 
-func makeUnit(x, y int, i *dmminstance.Instance, iconSize int) Unit {
+func makeUnit(x, y int, i dmminstance.Instance, iconSize int) Unit {
 	// All vars below are built-in and expected to exist.
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")
@@ -69,7 +69,7 @@ func makeUnit(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	}
 }
 
-func parseColor(i *dmminstance.Instance) (r, g, b, a float32) {
+func parseColor(i dmminstance.Instance) (r, g, b, a float32) {
 	// Default rgba is white.
 	r, g, b, a = 1, 1, 1, 1
 	if color, _ := i.Vars.Text("color"); color != "" {
@@ -85,7 +85,7 @@ func parseColor(i *dmminstance.Instance) (r, g, b, a float32) {
 }
 
 // countLayer returns the value of combined instance vars: plane + Layer.
-func countLayer(i *dmminstance.Instance) float32 {
+func countLayer(i dmminstance.Instance) float32 {
 	plane, _ := i.Vars.Float("plane")
 	layer, _ := i.Vars.Float("layer")
 

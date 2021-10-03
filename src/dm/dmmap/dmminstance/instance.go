@@ -10,15 +10,7 @@ type Instance struct {
 	Vars *dmvars.Variables
 }
 
-func newInstance(id uint64, path string, vars *dmvars.Variables) *Instance {
-	return &Instance{
-		id:   id,
-		Path: path,
-		Vars: vars,
-	}
-}
-
-func (i *Instance) Id() uint64 {
+func (i Instance) Id() uint64 {
 	if i.id == 0 {
 		i.id = computeInstanceId(i.Path, i.Vars)
 	}

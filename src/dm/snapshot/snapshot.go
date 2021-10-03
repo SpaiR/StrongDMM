@@ -60,11 +60,11 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		}
 
 		// State to restore.
-		backward := make([]*dmminstance.Instance, len(initialTile.Content))
+		backward := make([]dmminstance.Instance, len(initialTile.Content))
 		copy(backward, initialTile.Content)
 
 		// State to reproduce.
-		forward := make([]*dmminstance.Instance, len(currentTile.Content))
+		forward := make([]dmminstance.Instance, len(currentTile.Content))
 		copy(forward, currentTile.Content)
 
 		tilePatches = append(tilePatches, tilePatch{
@@ -143,7 +143,7 @@ func (p patchType) String() string {
 func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) {
 	log.Printf("[snapshot] patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
 	for _, patch := range s.patches[stateId] {
-		var content []*dmminstance.Instance
+		var content []dmminstance.Instance
 		if isForward {
 			content = patch.forward
 		} else {
@@ -153,14 +153,14 @@ func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) 
 		// Update current map.
 		if patchType&patchCurrent != 0 {
 			tile := s.current.GetTile(patch.coord)
-			tile.Content = make([]*dmminstance.Instance, len(content))
+			tile.Content = make([]dmminstance.Instance, len(content))
 			copy(tile.Content, content)
 		}
 
 		// Update initial map.
 		if patchType&patchInitial != 0 {
 			tile := s.initial.GetTile(patch.coord)
-			tile.Content = make([]*dmminstance.Instance, len(content))
+			tile.Content = make([]dmminstance.Instance, len(content))
 			copy(tile.Content, content)
 		}
 	}
@@ -190,5 +190,5 @@ func (s *Snapshot) syncInitialWithCurrent() {
 type tilePatch struct {
 	coord util.Point
 
-	backward, forward []*dmminstance.Instance
+	backward, forward []dmminstance.Instance
 }

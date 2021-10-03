@@ -97,15 +97,16 @@ func (a *app) AppDisposeCommandStack(id string) {
 	a.commandStorage.DisposeStack(id)
 }
 
-// AppSelectedInstance returns currently selected *dmminstance.Instance or nil.
+// AppSelectedInstance returns currently selected dmminstance.Instance and bool value which shows if there is one.
 // Selected instance is taken from the component.Instances panel.
-func (a *app) AppSelectedInstance() *dmminstance.Instance {
+func (a *app) AppSelectedInstance() (dmminstance.Instance, bool) {
 	return dmminstance.Cache.GetById(a.layout.Instances.SelectedInstanceId())
 }
 
 // AppHasSelectedInstance returns true, if the application has a globally selected instance.
 func (a *app) AppHasSelectedInstance() bool {
-	return a.AppSelectedInstance() != nil
+	_, ok := a.AppSelectedInstance()
+	return ok
 }
 
 // AppRecentEnvironments returns a slice with paths to recently opened environments.

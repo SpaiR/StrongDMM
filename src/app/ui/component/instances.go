@@ -14,7 +14,7 @@ import (
 
 type InstancesAction interface {
 	AppPointSize() float32
-	AppDoSelectInstance(instance *dmminstance.Instance)
+	AppDoSelectInstance(instance dmminstance.Instance)
 }
 
 type Instances struct {
@@ -78,8 +78,8 @@ func (i *Instances) Process() {
 	}
 }
 
-func (i *Instances) Select(instance *dmminstance.Instance) {
-	i.instanceNodes = makeInstancesNodes(dmminstance.Cache.GetByPath(instance.Path))
+func (i *Instances) Select(instance dmminstance.Instance) {
+	i.instanceNodes = makeInstancesNodes(dmminstance.Cache.GetAllByPath(instance.Path))
 	i.selectedId = instance.Id()
 	i.tmpDoScrollToInstance = true
 	log.Println("[component] selected instance id:", i.selectedId)
@@ -87,7 +87,9 @@ func (i *Instances) Select(instance *dmminstance.Instance) {
 
 func (i *Instances) Update() {
 	if i.selectedId != 0 {
-		i.Select(dmminstance.Cache.GetById(i.selectedId))
+		if instance, ok := dmminstance.Cache.GetById(i.selectedId); ok {
+			i.Select(instance)
+		}
 	}
 }
 
@@ -117,7 +119,7 @@ func (i *Instances) iconIndent() float32 {
 	return 1 * i.action.AppPointSize()
 }
 
-func makeInstancesNodes(instances []*dmminstance.Instance) []*instanceNode {
+func makeInstancesNodes(instances []dmminstance.Instance) []*instanceNode {
 	var nodes []*instanceNode
 
 	for _, instance := range instances {
@@ -156,11 +158,11 @@ func makeInstancesNodes(instances []*dmminstance.Instance) []*instanceNode {
 
 type instanceNode struct {
 	name   string
-	orig   *dmminstance.Instance
+	orig   dmminstance.Instance
 	sprite *dmicon.Sprite
 }
 
-func makeInstanceNode(instance *dmminstance.Instance) *instanceNode {
+func makeInstanceNode(instance dmminstance.Instance) *instanceNode {
 	icon, _ := instance.Vars.Text("icon")
 	iconState, _ := instance.Vars.Text("icon_state")
 	dir, _ := instance.Vars.Int("dir")
