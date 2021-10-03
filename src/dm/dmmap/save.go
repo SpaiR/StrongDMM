@@ -1,6 +1,7 @@
 package dmmap
 
 import (
+	"fmt"
 	"log"
 
 	"sdmm/dm/dmmap/dmmdata"
@@ -10,10 +11,11 @@ import (
 
 func (d *Dmm) Save() {
 	d.SaveV(d.Path.Absolute)
-	log.Println("[dmmap] map saved:", d.Path.Absolute)
 }
 
 func (d *Dmm) SaveV(path string) {
+	logSaveDmm("start [" + path + "]...")
+
 	initial, err := dmmdata.New(d.backup)
 	if err != nil {
 		log.Println("[dmmap] unable to read map backup:", d.backup)
@@ -52,6 +54,8 @@ func (d *Dmm) SaveV(path string) {
 
 	// Fill with reused keys.
 	{
+		logSaveDmm("filling with reused keys...")
+
 		keyByContentCache := make(map[uint64]dmmdata.Key)
 
 		for z := 1; z <= d.MaxZ; z++ {
@@ -68,11 +72,16 @@ func (d *Dmm) SaveV(path string) {
 				}
 			}
 		}
+
+		logSaveDmm(fmt.Sprintf("remaining count of unused keys: %d", len(unusedKeys)))
 	}
 
 	// Fill remaining tiles.
 	{
 	fillRemainingTiles:
+		logSaveDmm("filling remaining tiles...")
+		logSaveDmm("collecting locations without keys...")
+
 		locsWithoutKey := make(map[util.Point]bool)
 
 		// Collect all locs without keys.
@@ -88,8 +97,12 @@ func (d *Dmm) SaveV(path string) {
 			}
 		}
 
+		logSaveDmm(fmt.Sprintf("count of locations without keys: %d", len(locsWithoutKey)))
+
 		// Try to find the most appropriate key for a location.
 		if len(unusedKeys) != 0 {
+			logSaveDmm("trying to match unused keys with its previous location...")
+
 			// Copy to modify the original slice safely during its iteration.
 			for _, unusedKey := range append(make([]dmmdata.Key, 0, len(unusedKeys)), unusedKeys...) {
 				for loc := range locsWithoutKey {
@@ -104,9 +117,20 @@ func (d *Dmm) SaveV(path string) {
 					}
 				}
 			}
+
+			logSaveDmm(fmt.Sprintf("remaining count of unused keys: %d", len(unusedKeys)))
+			logSaveDmm(fmt.Sprintf("count of locations without keys: %d", len(locsWithoutKey)))
 		}
 
+		logSaveDmm("handling remaining locations...")
+
 		keyByContentCache := make(map[uint64]dmmdata.Key)
+
+		// For logging.
+		var (
+			reusedKeys  []dmmdata.Key
+			createdKeys []dmmdata.Key
+		)
 
 		// Handle remaining locations.
 		for loc := range locsWithoutKey {
@@ -118,6 +142,7 @@ func (d *Dmm) SaveV(path string) {
 			} else if len(unusedKeys) != 0 {
 				key = unusedKeys[0]
 				unusedKeys = append(unusedKeys[:0], unusedKeys[1:]...)
+				reusedKeys = append(reusedKeys, key)
 			} else {
 				var newSize int
 				if key, newSize = keyGenerator.createKey(); newSize != 0 {
@@ -126,20 +151,37 @@ func (d *Dmm) SaveV(path string) {
 						return
 					}
 
+					logSaveDmm(fmt.Sprintf("unable to create a key, changing key length: %d", newSize))
+
+					keyGenerator.dropKeysPool()
+
 					output.KeyLength = newSize
 					output.Dictionary = make(map[dmmdata.Key][]dmminstance.Instance)
 					output.Grid = make(map[util.Point]dmmdata.Key)
 
 					goto fillRemainingTiles
 				}
+				createdKeys = append(createdKeys, key)
 			}
 
 			output.Grid[loc] = key
 			output.Dictionary[key] = content
 		}
+
+		logSaveDmm("all tiles handled")
+		logSaveDmm(fmt.Sprintf("reused keys: %v", reusedKeys))
+		logSaveDmm(fmt.Sprintf("created keys: %v", createdKeys))
 	}
 
+	logSaveDmm("saving dmm data...")
+
 	output.Save()
+
+	logSaveDmm("finish")
+}
+
+func logSaveDmm(msg string) {
+	log.Println("[dmmap] SAVE DMM:", msg)
 }
 
 func findKeyByTileContent(

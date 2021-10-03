@@ -1,6 +1,8 @@
 package dmmap
 
 import (
+	"fmt"
+	"log"
 	"math"
 	"math/rand"
 
@@ -83,6 +85,11 @@ func newKeyGenerator(data *dmmdata.DmmData) *keyGenerator {
 	}
 }
 
+func (k *keyGenerator) dropKeysPool() {
+	k.keysPool = nil
+	logKeyGenerator("keys pool dropped")
+}
+
 // Generates a random key.
 // Returns two values: a new key, a new key length.
 // The second one will come only in case, when there is no free key in the keys pool with the current size.
@@ -93,7 +100,6 @@ func (k *keyGenerator) createKey() (dmmdata.Key, int) {
 
 	// If the keys pool is empty, then we need to create a new one with a new key length.
 	if len(k.keysPool) == 0 {
-		k.keysPool = nil
 		switch k.freeKeys {
 		case realTier1limit:
 			return "", 2
@@ -131,5 +137,13 @@ func createKeysPool(data *dmmdata.DmmData) (keysPool []int, freeKeys int) {
 		}
 	}
 
+	logKeyGenerator("keys pool created")
+	logKeyGenerator(fmt.Sprintf("keys pool size: %d", len(keysPool)))
+	logKeyGenerator(fmt.Sprintf("free keys tier: %d", freeKeys))
+
 	return keysPool, freeKeys
+}
+
+func logKeyGenerator(msg string) {
+	log.Println("[dmmap] KEY GENERATOR:", msg)
 }

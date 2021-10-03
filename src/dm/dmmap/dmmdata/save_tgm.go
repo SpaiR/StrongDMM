@@ -13,6 +13,8 @@ import (
 
 // SaveTGM writes DmmData in TGM format to a file with the provided path.
 func (d DmmData) SaveTGM(path string) {
+	log.Println("[dmmdata] saving dmm data in [TGM] format...")
+
 	f, err := os.Create(path)
 	if err != nil {
 		log.Printf("[dmmdata] unable to save as [TGM] [%s]: %v", d, err)
@@ -32,10 +34,14 @@ func (d DmmData) SaveTGM(path string) {
 	// yeah, yeah, dmm2tgm.py, sure...
 	writeln("//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE")
 
+	log.Println("[dmmdata] writing instances...")
+
 	// Write instances.
 	for _, key := range d.Keys() {
 		writeln(toTGMStr(key, d.Dictionary[key], d.LineBreak))
 	}
+
+	log.Println("[dmmdata] writing grid...")
 
 	// Write map grids.
 	for z := 1; z <= d.MaxZ; z++ {

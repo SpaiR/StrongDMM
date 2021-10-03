@@ -13,6 +13,8 @@ import (
 
 // SaveDM writes DmmData in DM format to a file with the provided path.
 func (d DmmData) SaveDM(path string) {
+	log.Println("[dmmdata] saving dmm data in [DM] format...")
+
 	f, err := os.Create(path)
 	if err != nil {
 		log.Printf("[dmmdata] unable to save as [DM] [%s]: %v", d, err)
@@ -25,11 +27,15 @@ func (d DmmData) SaveDM(path string) {
 		_, _ = w.WriteString(str)
 	}
 
+	log.Println("[dmmdata] writing instances...")
+
 	// Write instances.
 	for _, key := range d.Keys() {
 		write(toDMStr(key, d.Dictionary[key]))
 		write(d.LineBreak)
 	}
+
+	log.Println("[dmmdata] writing grid...")
 
 	// Write map grids.
 	for z := 1; z <= d.MaxZ; z++ {
