@@ -2,8 +2,6 @@ package dmmap
 
 import (
 	"log"
-	"strconv"
-	"strings"
 
 	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/dmmap/dmminstance"
@@ -60,11 +58,11 @@ func (d *Dmm) SaveV(path string) {
 			for y := 1; y <= d.MaxY; y++ {
 				for x := 1; x <= d.MaxX; x++ {
 					loc := util.Point{X: x, Y: y, Z: z}
-					newContent := d.GetTile(loc).Content
+					newContent := d.GetTile(loc).Content()
 
 					if initialKey, ok := findKeyByTileContent(initial, keyByContentCache, newContent); ok {
 						output.Grid[loc] = initialKey
-						output.Dictionary[initialKey] = copyContent(newContent)
+						output.Dictionary[initialKey] = newContent
 						removeUnusedKey(initialKey)
 					}
 				}
@@ -97,7 +95,7 @@ func (d *Dmm) SaveV(path string) {
 				for loc := range locsWithoutKey {
 					if initial.Grid[loc] == unusedKey {
 						output.Grid[loc] = unusedKey
-						output.Dictionary[unusedKey] = copyContent(d.GetTile(loc).Content)
+						output.Dictionary[unusedKey] = d.GetTile(loc).Content()
 
 						removeUnusedKey(unusedKey)
 						delete(locsWithoutKey, loc)
@@ -113,7 +111,7 @@ func (d *Dmm) SaveV(path string) {
 		// Handle remaining locations.
 		for loc := range locsWithoutKey {
 			var key dmmdata.Key
-			content := d.GetTile(loc).Content
+			content := d.GetTile(loc).Content()
 
 			if reusableKey, ok := findKeyByTileContent(&output, keyByContentCache, content); ok {
 				key = reusableKey
@@ -137,59 +135,30 @@ func (d *Dmm) SaveV(path string) {
 			}
 
 			output.Grid[loc] = key
-			output.Dictionary[key] = copyContent(content)
+			output.Dictionary[key] = content
 		}
 	}
 
 	output.Save()
 }
 
-func calcContentHash(content []dmminstance.Instance) uint64 {
-	sb := strings.Builder{}
-	for _, instance := range content {
-		sb.WriteString(strconv.FormatUint(instance.Id(), 10))
-	}
-	return util.Djb2(sb.String())
-}
-
 func findKeyByTileContent(
 	data *dmmdata.DmmData,
 	keyByContentCache map[uint64]dmmdata.Key,
-	content []dmminstance.Instance) (dmmdata.Key, bool) {
-	contentHash := calcContentHash(content)
+	content TileContent,
+) (dmmdata.Key, bool) {
+	contentHash := content.Hash()
 
 	if key, ok := keyByContentCache[contentHash]; ok {
 		return key, true
 	}
 
 	for key, instances := range data.Dictionary {
-		if isSameContent(instances, content) {
+		if TileContent(instances).Equals(content) {
 			keyByContentCache[contentHash] = key
 			return key, true
 		}
 	}
 
 	return "", false
-}
-
-func isSameContent(cnt1, cnt2 []dmminstance.Instance) bool {
-	if len(cnt1) != len(cnt2) {
-		return false
-	}
-
-	for idx, instance1 := range cnt1 {
-		if instance1.Id() != cnt2[idx].Id() {
-			return false
-		}
-	}
-
-	return true
-}
-
-func copyContent(content []dmminstance.Instance) []dmminstance.Instance {
-	cpy := make([]dmminstance.Instance, 0, len(content))
-	for _, instance := range content {
-		cpy = append(cpy, instance)
-	}
-	return cpy
 }
