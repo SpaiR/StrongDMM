@@ -36,40 +36,34 @@ func (d *Dmm) SaveV(path string) {
 			Grid:       make(map[util.Point]dmmdata.Key),
 		}
 
-		unusedKeys   = initial.Keys()
 		keyGenerator = newKeyGenerator(&output)
 	)
 
-	// Util function.
-	removeUnusedKey := func(unusedKey dmmdata.Key) {
-		for idx, key := range unusedKeys {
-			if key == unusedKey {
-				unusedKeys = append(unusedKeys[:idx], unusedKeys[idx+1:]...)
-				break
-			}
-		}
-	}
-
 	// TODO: Add map sanitizing
+
+	// Collect unused keys in map.
+	// Use map instead of slice, because during the first phase (fill with reused keys) it's modified a lot.
+	unusedKeys := make(map[dmmdata.Key]bool)
+	for _, key := range initial.Keys() {
+		unusedKeys[key] = true
+	}
 
 	// Fill with reused keys.
 	{
 		logSaveDmm("filling with reused keys...")
 
-		keyByContentCache := make(map[uint64]dmmdata.Key)
+		// Cache the initial content, since we know it won't change.
+		keyByContentCache := make(map[uint64]dmmdata.Key, len(initial.Dictionary))
+		for key, instances := range initial.Dictionary {
+			keyByContentCache[TileContent(instances).Hash()] = key
+		}
 
-		for z := 1; z <= d.MaxZ; z++ {
-			for y := 1; y <= d.MaxY; y++ {
-				for x := 1; x <= d.MaxX; x++ {
-					loc := util.Point{X: x, Y: y, Z: z}
-					newContent := d.GetTile(loc).Content()
-
-					if initialKey, ok := findKeyByTileContent(initial, keyByContentCache, newContent); ok {
-						output.Grid[loc] = initialKey
-						output.Dictionary[initialKey] = newContent
-						removeUnusedKey(initialKey)
-					}
-				}
+		for _, tile := range d.Tiles {
+			newContent := tile.Content()
+			if initialKey, ok := findKeyByTileContent(initial, keyByContentCache, newContent); ok {
+				output.Grid[tile.Coord] = initialKey
+				output.Dictionary[initialKey] = newContent
+				delete(unusedKeys, initialKey)
 			}
 		}
 
@@ -104,13 +98,18 @@ func (d *Dmm) SaveV(path string) {
 			logSaveDmm("trying to match unused keys with its previous location...")
 
 			// Copy to modify the original slice safely during its iteration.
-			for _, unusedKey := range append(make([]dmmdata.Key, 0, len(unusedKeys)), unusedKeys...) {
+			unusedKeysCpy := make(map[dmmdata.Key]bool)
+			for key := range unusedKeys {
+				unusedKeysCpy[key] = true
+			}
+
+			for unusedKey := range unusedKeysCpy {
 				for loc := range locsWithoutKey {
 					if initial.Grid[loc] == unusedKey {
 						output.Grid[loc] = unusedKey
 						output.Dictionary[unusedKey] = d.GetTile(loc).Content()
 
-						removeUnusedKey(unusedKey)
+						delete(unusedKeys, unusedKey)
 						delete(locsWithoutKey, loc)
 
 						break
@@ -140,9 +139,12 @@ func (d *Dmm) SaveV(path string) {
 			if reusableKey, ok := findKeyByTileContent(&output, keyByContentCache, content); ok {
 				key = reusableKey
 			} else if len(unusedKeys) != 0 {
-				key = unusedKeys[0]
-				unusedKeys = append(unusedKeys[:0], unusedKeys[1:]...)
-				reusedKeys = append(reusedKeys, key)
+				for unusedKey := range unusedKeys { // Hack to pick the first available key.
+					key = unusedKey
+					delete(unusedKeys, unusedKey)
+					reusedKeys = append(reusedKeys, key)
+					break
+				}
 			} else {
 				var newSize int
 				if key, newSize = keyGenerator.createKey(); newSize != 0 {
