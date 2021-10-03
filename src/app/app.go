@@ -36,10 +36,11 @@ func Start() {
 	log.Println("[app] log dir:", logDir)
 
 	a := app{
-		masterWindow: window.New(),
-		logDir:       logDir,
-		backupDir:    filepath.FromSlash(internalDir + "/backup"),
+		logDir:    logDir,
+		backupDir: filepath.FromSlash(internalDir + "/backup"),
 	}
+
+	a.masterWindow = window.New(a.loop)
 
 	log.Println("[app] start phase: [initialization]")
 	a.initialize(internalDir)
@@ -87,7 +88,7 @@ func (a *app) initialize(internalDir string) {
 }
 
 func (a *app) run() {
-	a.masterWindow.Run(a.loop)
+	a.masterWindow.Run()
 }
 
 func (a *app) loop() {

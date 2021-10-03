@@ -17,6 +17,8 @@ const fps int = 60
 type Window struct {
 	Handle *glfw.Window
 
+	loop func()
+
 	mouseChangeCallbackId int
 	mouseChangeCallbacks  map[int]func(uint, uint)
 
@@ -24,10 +26,11 @@ type Window struct {
 	laterJobs []func()
 }
 
-func New() *Window {
+func New(loop func()) *Window {
 	log.Println("[window] creating native window")
 
 	w := Window{
+		loop:                 loop,
 		PointSize:            2.5, // FIXME: make configurable and 1 by default
 		mouseChangeCallbacks: make(map[int]func(uint, uint)),
 	}
@@ -87,12 +90,15 @@ func (w *Window) setupGlfw() {
 
 	window.SetIcon([]image.Image{assets.EditorIcon().RGBA()})
 	window.MakeContextCurrent()
+
 	glfw.SwapInterval(glfw.True)
-	window.Maximize()
 
 	if err := gl.Init(); err != nil {
 		log.Fatal("[window] unable to initialize opengl:", err)
 	}
+
+	window.Maximize()
+	window.SetSizeCallback(w.resizeCallback)
 
 	log.Println("[window] opengl initialized")
 
@@ -123,4 +129,8 @@ func (*Window) disposeImGui() {
 func (w *Window) disposeGlfw() {
 	w.Handle.Destroy()
 	glfw.Terminate()
+}
+
+func (w *Window) resizeCallback(_ *glfw.Window, _, _ int) {
+	w.runFrame()
 }
