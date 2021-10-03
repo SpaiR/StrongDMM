@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/command"
 	"sdmm/app/ui/component/workspace"
 	"sdmm/dm/dmmap"
 	"sdmm/imguiext"
@@ -16,6 +17,7 @@ type WorkspaceAreaAction interface {
 
 	AppUpdateTitle()
 	AppSwitchCommandStack(id string)
+	AppDisposeCommandStack(id string)
 }
 
 type WorkspaceArea struct {
@@ -160,6 +162,7 @@ func (w *WorkspaceArea) closeWorkspaceByIdx(idx int) {
 		w.workspaces = append(w.workspaces[:idx], w.workspaces[idx+1:]...)
 		ws.Dispose()
 		log.Printf("[component] workspace closed in idx [%d]: %s", idx, ws.Name())
+		w.action.AppDisposeCommandStack(ws.CommandStackId())
 	}
 }
 
@@ -192,9 +195,9 @@ func (w *WorkspaceArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 		w.action.AppUpdateTitle()
 
 		if activeWs == nil {
-			w.action.AppSwitchCommandStack("")
+			w.action.AppSwitchCommandStack(command.NullSpaceStackId)
 		} else {
-			w.action.AppSwitchCommandStack(w.activeWs.Id())
+			w.action.AppSwitchCommandStack(w.activeWs.CommandStackId())
 		}
 	}
 }

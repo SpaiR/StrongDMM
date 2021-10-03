@@ -35,18 +35,18 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 }
 
 func (m *Map) Save() {
-	log.Println("[workspace] saving map workspace:", m.Id())
+	log.Println("[workspace] saving map workspace:", m.CommandStackId())
 	m.PaneMap.Dmm.Save()
-	m.action.AppForceBalanceCommandStack(m.Id())
+	m.action.AppForceBalanceCommandStack(m.CommandStackId())
 }
 
-func (m *Map) Id() string {
+func (m *Map) CommandStackId() string {
 	return m.PaneMap.Dmm.Path.Absolute
 }
 
 func (m *Map) Name() string {
 	visibleName := m.PaneMap.Dmm.Name
-	if m.action.AppIsCommandStackModified(m.Id()) {
+	if m.action.AppIsCommandStackModified(m.CommandStackId()) {
 		visibleName += " *"
 	}
 	return fmt.Sprint(visibleName, "###workspace_map_", m.PaneMap.Dmm.Path.Absolute)

@@ -2,6 +2,9 @@ package command
 
 import "log"
 
+// NullSpaceStackId is for a stack which won't hold any command and will be always empty.
+const NullSpaceStackId = "__NULL_SPACE__"
+
 // Storage is used to store application command and handle undo/redo stuff.
 type Storage struct {
 	currentStackId string
@@ -9,9 +12,15 @@ type Storage struct {
 }
 
 func NewStorage() *Storage {
-	return &Storage{
-		commandStacks: make(map[string]*commandStack),
-	}
+	s := &Storage{commandStacks: make(map[string]*commandStack)}
+	s.SetStack(NullSpaceStackId)
+	return s
+}
+
+func (s *Storage) Free() {
+	s.commandStacks = make(map[string]*commandStack, len(s.commandStacks))
+	s.SetStack(NullSpaceStackId)
+	log.Println("[command] storage free")
 }
 
 func (s *Storage) SetStack(id string) {
@@ -24,10 +33,29 @@ func (s *Storage) SetStack(id string) {
 	s.currentStackId = id
 	if _, ok := s.commandStacks[id]; !ok {
 		s.commandStacks[id] = &commandStack{id: id}
+		log.Println("[command] created stack:", id)
+	}
+}
+
+func (s *Storage) DisposeStack(id string) {
+	if id == NullSpaceStackId {
+		log.Println("[command] skip disposing for:", id)
+		return
+	}
+
+	log.Println("[command] disposing stack:", id)
+	delete(s.commandStacks, id)
+	if s.currentStackId == id {
+		s.SetStack(NullSpaceStackId)
 	}
 }
 
 func (s *Storage) Push(command Command) {
+	if s.currentStackId == NullSpaceStackId {
+		log.Println("[command] skip pushing for:", s.currentStackId)
+		return
+	}
+
 	if stack, ok := s.commandStacks[s.currentStackId]; ok {
 		logStackAction(stack, "push command")
 		stack.undo = append(stack.undo, command)
@@ -42,6 +70,11 @@ func (s *Storage) Undo() {
 	if stack, ok := s.commandStacks[s.currentStackId]; ok {
 		logStackAction(stack, "undo")
 
+		if len(stack.undo) == 0 {
+			log.Println("[command] unable to undo empty stack")
+			return
+		}
+
 		var command Command
 		command, stack.undo = stack.undo[len(stack.undo)-1], stack.undo[:len(stack.undo)-1]
 		stack.redo = append(stack.redo, command.Run())
@@ -54,6 +87,11 @@ func (s *Storage) Undo() {
 func (s *Storage) Redo() {
 	if stack, ok := s.commandStacks[s.currentStackId]; ok {
 		logStackAction(stack, "redo")
+
+		if len(stack.redo) == 0 {
+			log.Println("[command] unable to read empty stack")
+			return
+		}
 
 		var command Command
 		command, stack.redo = stack.redo[len(stack.redo)-1], stack.redo[:len(stack.redo)-1]
@@ -94,6 +132,11 @@ func (s *Storage) IsModified(id string) bool {
 }
 
 func (s *Storage) ForceBalance(id string) {
+	if id == NullSpaceStackId {
+		log.Println("[command] skipping force balance for:", id)
+		return
+	}
+
 	if stack, ok := s.commandStacks[id]; ok {
 		logStackAction(stack, "force balance")
 		stack.balance = 0

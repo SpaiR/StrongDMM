@@ -92,6 +92,11 @@ func (a *app) AppForceBalanceCommandStack(id string) {
 	a.commandStorage.ForceBalance(id)
 }
 
+// AppDisposeCommandStack will dispose the command stack with provided id.
+func (a *app) AppDisposeCommandStack(id string) {
+	a.commandStorage.DisposeStack(id)
+}
+
 // AppSelectedInstance returns currently selected *dmminstance.Instance or nil.
 // Selected instance is taken from the component.Instances panel.
 func (a *app) AppSelectedInstance() *dmminstance.Instance {

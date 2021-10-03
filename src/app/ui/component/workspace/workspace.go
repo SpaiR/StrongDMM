@@ -1,7 +1,9 @@
 package workspace
 
+import "sdmm/app/command"
+
 type Workspace interface {
-	Id() string
+	CommandStackId() string
 	Name() string
 	Process()
 	WantClose() bool
@@ -19,8 +21,8 @@ type base struct {
 	isDoSelect bool
 }
 
-func (*base) Id() string {
-	return ""
+func (*base) CommandStackId() string {
+	return command.NullSpaceStackId
 }
 
 func (*base) WantClose() bool {
