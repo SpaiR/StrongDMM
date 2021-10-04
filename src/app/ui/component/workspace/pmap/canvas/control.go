@@ -20,6 +20,18 @@ type Control struct {
 	dragging  bool
 }
 
+func (c *Control) Activated() bool {
+	return c.activated
+}
+
+func (c *Control) Moving() bool {
+	return c.moving
+}
+
+func (c *Control) Dragging() bool {
+	return c.dragging
+}
+
 func NewControl(camera *render.Camera) *Control {
 	return &Control{
 		Camera: camera,

@@ -2,9 +2,9 @@ package tool
 
 import "sdmm/util"
 
-type Action interface {
-	ToolsAddModifiedTile(coord util.Point)
-	ToolsResetModifiedTiles()
+type Visuals interface {
+	MarkModifiedTile(coord util.Point)
+	ClearModifiedTiles()
 }
 
 // Tool is a basic interface for tools in the panel.

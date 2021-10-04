@@ -6,6 +6,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/component/workspace/pmap/canvas"
+	"sdmm/app/ui/component/workspace/pmap/canvas/tools"
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/snapshot"
@@ -37,7 +38,7 @@ type PaneMap struct {
 	canvasState   *canvas.State
 	canvasStatus  *canvas.Status
 	canvasControl *canvas.Control
-	canvasTools   *canvas.Tools
+	canvasTools   *tools.Tools
 	canvas        *canvas.Canvas
 
 	bp *layout.BorderPane
@@ -57,7 +58,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmm.WorldIconSize)
 	ws.canvas = canvas.New(action)
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
-	ws.canvasTools = canvas.NewTools(ws, ws.canvasControl, ws.canvasState)
+	ws.canvasTools = tools.NewTools(ws, ws.canvasControl, ws.canvasState)
 	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
 
 	ws.bp = layout.NewBorderPane(ws.createLayout())

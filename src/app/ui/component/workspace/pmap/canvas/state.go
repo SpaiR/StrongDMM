@@ -24,6 +24,10 @@ func NewState(maxX, maxY, iconSize int) *State {
 	}
 }
 
+func (s *State) AddHoverChangeListener(listener func()) {
+	s.onHoverChangeListeners = append(s.onHoverChangeListeners, listener)
+}
+
 func (s *State) SetHoveredTile(relLocalX, relLocalY, level int) {
 	// We are out of bounds for sure.
 	if relLocalX < 0 || relLocalY < 0 || level < 0 {
@@ -54,7 +58,7 @@ func (s *State) SetHoveredTile(relLocalX, relLocalY, level int) {
 	}
 }
 
-func (s *State) AddModifiedTile(coord util.Point) {
+func (s *State) MarkModifiedTile(coord util.Point) {
 	s.modifiedTiles = append(s.modifiedTiles, util.Bounds{
 		X1: float32((coord.X - 1) * s.iconSize),
 		Y1: float32((coord.Y - 1) * s.iconSize),
@@ -63,7 +67,7 @@ func (s *State) AddModifiedTile(coord util.Point) {
 	})
 }
 
-func (s *State) ResetModifiedTiles() {
+func (s *State) ClearModifiedTiles() {
 	s.modifiedTiles = nil
 }
 
