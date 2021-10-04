@@ -21,7 +21,7 @@ type Dmm struct {
 
 	MaxX, MaxY, MaxZ int
 
-	backup string
+	Backup string
 }
 
 func (d *Dmm) GetTile(coord util.Point) *Tile {
@@ -50,7 +50,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 		MaxY:  data.MaxY,
 		MaxZ:  data.MaxZ,
 
-		backup: backup,
+		Backup: backup,
 	}
 
 	for z := 1; z <= data.MaxZ; z++ {

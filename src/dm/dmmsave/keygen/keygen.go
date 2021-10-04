@@ -1,7 +1,6 @@
-package dmmap
+package keygen
 
 import (
-	"fmt"
 	"log"
 	"math"
 	"math/rand"
@@ -72,28 +71,28 @@ func num2key(num, keyLength int) dmmdata.Key {
 	return dmmdata.Key(result)
 }
 
-type keyGenerator struct {
+type KeyGen struct {
 	data *dmmdata.DmmData
 
 	keysPool []int
 	freeKeys int
 }
 
-func newKeyGenerator(data *dmmdata.DmmData) *keyGenerator {
-	return &keyGenerator{
+func New(data *dmmdata.DmmData) *KeyGen {
+	return &KeyGen{
 		data: data,
 	}
 }
 
-func (k *keyGenerator) dropKeysPool() {
+func (k *KeyGen) DropKeysPool() {
 	k.keysPool = nil
-	logKeyGenerator("keys pool dropped")
+	log.Println("[keygen] keys pool dropped")
 }
 
-// Generates a random key.
-// Returns two values: a new key, a new key length.
-// The second one will come only in case, when there is no free key in the keys pool with the current size.
-func (k *keyGenerator) createKey() (dmmdata.Key, int) {
+// CreateKey generates a random key.
+// Returns two values: a new key and a new key length.
+// The second one will come only in the case, when there is no free keys in the keys pool with the current size.
+func (k *KeyGen) CreateKey() (dmmdata.Key, int) {
 	if k.keysPool == nil {
 		k.keysPool, k.freeKeys = createKeysPool(k.data)
 	}
@@ -137,13 +136,9 @@ func createKeysPool(data *dmmdata.DmmData) (keysPool []int, freeKeys int) {
 		}
 	}
 
-	logKeyGenerator("keys pool created")
-	logKeyGenerator(fmt.Sprintf("keys pool size: %d", len(keysPool)))
-	logKeyGenerator(fmt.Sprintf("free keys tier: %d", freeKeys))
+	log.Println("[keygen] keys pool created")
+	log.Println("[keygen] keys pool size:", len(keysPool))
+	log.Println("[keygen] free keys tier:", freeKeys)
 
 	return keysPool, freeKeys
-}
-
-func logKeyGenerator(msg string) {
-	log.Println("[dmmap] KEY GENERATOR:", msg)
 }

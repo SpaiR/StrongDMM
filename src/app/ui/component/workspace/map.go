@@ -6,6 +6,7 @@ import (
 
 	"sdmm/app/ui/component/workspace/pmap"
 	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmsave"
 )
 
 type MapAction interface {
@@ -36,7 +37,7 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 
 func (m *Map) Save() {
 	log.Println("[workspace] saving map workspace:", m.CommandStackId())
-	m.PaneMap.Dmm.Save()
+	dmmsave.Save(m.PaneMap.Dmm)
 	m.action.AppForceBalanceCommandStack(m.CommandStackId())
 }
 
