@@ -12,9 +12,9 @@ import (
 )
 
 type overlayState interface {
-	IconSize() int
-	HoveredTilePoint() (float32, float32)
 	HoverOutOfBounds() bool
+	HoveredTileBounds() util.Bounds
+	ModifiedTiles() []util.Bounds
 }
 
 func Free() {
@@ -145,18 +145,21 @@ func (r *Render) batchChunksVisuals() {
 var (
 	activeTileCol       = brush.Color{R: 1, G: 1, B: 1, A: 0.25}
 	activeTileBorderCol = brush.Color{R: 1, G: 1, B: 1, A: 1}
+	modifiedTileCol     = brush.Color{R: 0, G: 1, B: 0, A: 1}
 )
 
 // Draws the map overlays, like: hovered tile borders, areas borders etc.
 func (r *Render) batchOverlay() {
+	// Hovered tile
 	if !r.overlayState.HoverOutOfBounds() {
-		size := float32(r.overlayState.IconSize())
+		t := r.overlayState.HoveredTileBounds()
+		brush.RectFilled(t.X1, t.Y1, t.X2, t.Y2, activeTileCol)
+		brush.Rect(t.X1, t.Y1, t.X2, t.Y2, activeTileBorderCol)
+	}
 
-		x1, y1 := r.overlayState.HoveredTilePoint()
-		x2, y2 := x1+size, y1+size
-
-		brush.RectFilled(x1, y1, x2, y2, activeTileCol)
-		brush.Rect(x1, y1, x2, y2, activeTileBorderCol)
+	// Modified tiles
+	for _, c := range r.overlayState.ModifiedTiles() {
+		brush.Rect(c.X1, c.Y1, c.X2, c.Y2, modifiedTileCol)
 	}
 }
 

@@ -2,6 +2,11 @@ package tool
 
 import "sdmm/util"
 
+type Action interface {
+	ToolsAddModifiedTile(coord util.Point)
+	ToolsResetModifiedTiles()
+}
+
 // Tool is a basic interface for tools in the panel.
 type Tool interface {
 	// OnStart goes when user clicks on the map.

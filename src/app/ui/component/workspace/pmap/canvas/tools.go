@@ -25,9 +25,9 @@ func NewTools(action ToolsAction, control *Control, state *State) *Tools {
 	tools := &Tools{
 		control: control,
 		state:   state,
-
-		add: tool.NewAdd(action),
 	}
+
+	tools.add = tool.NewAdd(action, tools)
 
 	state.onHoverChangeListeners = append(state.onHoverChangeListeners, tools.processSelectedToolMove)
 
