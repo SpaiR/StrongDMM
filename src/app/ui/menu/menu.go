@@ -11,15 +11,15 @@ type action interface {
 	AppDoOpenEnvironment()
 	AppDoOpenEnvironmentByPath(path string)
 	AppDoClearRecentEnvironments()
-	AppDoOpenMap()
+	AppDoOpenMap() // Ctrl+O
 	AppDoOpenMapByPath(path string)
 	AppDoClearRecentMaps()
 	AppDoSave() // Ctrl+S
 	AppDoExit()
 
 	// Edit
-	AppDoUndo()
-	AppDoRedo()
+	AppDoUndo() // Ctrl+Z
+	AppDoRedo() // Ctrl+Shift+Z | Ctrl+Y
 
 	// Window
 	AppDoResetWindows() // F5
@@ -69,7 +69,9 @@ func (m *Menu) Process() {
 				}),
 			}).Enabled(len(m.action.AppRecentEnvironments()) != 0),
 			w.Separator(),
-			w.MenuItem("Open Map...", m.action.AppDoOpenMap).Enabled(m.action.AppHasLoadedEnvironment()),
+			w.MenuItem("Open Map...", m.action.AppDoOpenMap).
+				Enabled(m.action.AppHasLoadedEnvironment()).
+				Shortcut("Ctrl+O"),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
 					for _, recentMap := range m.action.AppRecentMapsByLoadedEnvironment() {
@@ -84,14 +86,20 @@ func (m *Menu) Process() {
 				}),
 			}).Enabled(m.action.AppHasLoadedEnvironment() && len(m.action.AppRecentMapsByLoadedEnvironment()) != 0),
 			w.Separator(),
-			w.MenuItem("Save", m.action.AppDoSave).Enabled(m.action.AppHasActiveMap()),
+			w.MenuItem("Save", m.action.AppDoSave).
+				Enabled(m.action.AppHasActiveMap()).
+				Shortcut("Ctrl+S"),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.AppDoExit),
 		}),
 
 		w.Menu("Edit", w.Layout{
-			w.MenuItem("Undo", m.action.AppDoUndo).Enabled(m.action.AppHasUndo()),
-			w.MenuItem("Redo", m.action.AppDoRedo).Enabled(m.action.AppHasRedo()),
+			w.MenuItem("Undo", m.action.AppDoUndo).
+				Enabled(m.action.AppHasUndo()).
+				Shortcut("Ctrl+Z"),
+			w.MenuItem("Redo", m.action.AppDoRedo).
+				Enabled(m.action.AppHasRedo()).
+				Shortcut("Ctrl+Shift+Z"),
 		}),
 
 		w.Menu("Window", w.Layout{

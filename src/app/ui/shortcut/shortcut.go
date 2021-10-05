@@ -3,29 +3,39 @@ package shortcut
 import (
 	"fmt"
 	"log"
+	"sort"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 type Shortcut struct {
-	Name      string
-	FirstKey  glfw.Key
-	SecondKey glfw.Key
-	ThirdKey  glfw.Key
-	Action    func()
-	IsEnabled func() bool
+	Name         string
+	FirstKey     glfw.Key
+	FirstKeyAlt  glfw.Key
+	SecondKey    glfw.Key
+	SecondKeyAlt glfw.Key
+	ThirdKey     glfw.Key
+	ThirdKeyAlt  glfw.Key
+	Action       func()
+	IsEnabled    func() bool
 }
 
 func (s Shortcut) String() string {
 	return fmt.Sprintf(
-		"Name: %s, FirstKey: %d, SecondKey: %d, ThirdKey: %d, HasAction: %t, HasIsEnabled: %t",
-		s.Name, s.FirstKey, s.SecondKey, s.ThirdKey, s.Action != nil, s.IsEnabled != nil,
+		"Name: %s, "+
+			"FirstKey: %d, FirstKeyAlt: %d, "+
+			"SecondKey: %d, SecondKeyAlt: %d, "+
+			"ThirdKey: %d, ThirdKeyAlt: %d, "+
+			"HasAction: %t, HasIsEnabled: %t, "+
+			"Wheight: %d",
+		s.Name,
+		s.FirstKey, s.FirstKeyAlt,
+		s.SecondKey, s.SecondKeyAlt,
+		s.ThirdKey, s.ThirdKeyAlt,
+		s.Action != nil, s.IsEnabled != nil,
+		s.weight(),
 	)
-}
-
-func (s Shortcut) isNil() bool {
-	return s.Action == nil
 }
 
 func (s Shortcut) weight() int {
@@ -40,21 +50,25 @@ func (s Shortcut) weight() int {
 }
 
 func (s Shortcut) isPressed() bool {
-	if s.SecondKey == 0 && s.ThirdKey == 0 && imgui.IsKeyPressed(int(s.FirstKey)) {
-		return true
+	if s.SecondKey == 0 && s.ThirdKey == 0 {
+		if imgui.IsKeyPressed(int(s.FirstKey)) || imgui.IsKeyPressed(int(s.FirstKeyAlt)) {
+			return true
+		}
 	}
-	if !imgui.IsKeyDown(int(s.FirstKey)) {
+	if !imgui.IsKeyDown(int(s.FirstKey)) && !imgui.IsKeyDown(int(s.FirstKeyAlt)) {
 		return false
 	}
 
-	if s.SecondKey != 0 && s.ThirdKey == 0 && imgui.IsKeyPressed(int(s.SecondKey)) {
-		return true
+	if s.SecondKey != 0 && s.ThirdKey == 0 {
+		if imgui.IsKeyPressed(int(s.SecondKey)) || imgui.IsKeyPressed(int(s.SecondKeyAlt)) {
+			return true
+		}
 	}
-	if !imgui.IsKeyDown(int(s.SecondKey)) {
+	if !imgui.IsKeyDown(int(s.SecondKey)) && !imgui.IsKeyDown(int(s.SecondKeyAlt)) {
 		return false
 	}
 
-	return s.ThirdKey != 0 && imgui.IsKeyPressed(int(s.ThirdKey))
+	return s.ThirdKey != 0 && (imgui.IsKeyPressed(int(s.ThirdKey)) || imgui.IsKeyPressed(int(s.ThirdKeyAlt)))
 }
 
 var shortcuts []Shortcut
@@ -65,24 +79,22 @@ func Add(shortcut Shortcut) {
 }
 
 func Process() {
-	var shortcutToTrigger Shortcut
+	var pressedShortcuts []Shortcut
 
 	for _, shortcut := range shortcuts {
-		if !shortcut.isPressed() {
-			continue
-		}
-
-		if shortcut.IsEnabled != nil && !shortcut.IsEnabled() {
-			continue
-		}
-
-		if shortcutToTrigger.isNil() || shortcutToTrigger.weight() < shortcut.weight() {
-			shortcutToTrigger = shortcut
+		if shortcut.isPressed() {
+			pressedShortcuts = append(pressedShortcuts, shortcut)
 		}
 	}
 
-	if !shortcutToTrigger.isNil() {
-		log.Println("[shortcut] triggered:", shortcutToTrigger)
-		shortcutToTrigger.Action()
+	if len(pressedShortcuts) != 0 {
+		sort.Slice(pressedShortcuts, func(i, j int) bool {
+			return pressedShortcuts[i].weight() > pressedShortcuts[j].weight()
+		})
+
+		if shortcut := pressedShortcuts[0]; shortcut.IsEnabled == nil || shortcut.IsEnabled() {
+			log.Println("[shortcut] triggered:", shortcut)
+			shortcut.Action()
+		}
 	}
 }
