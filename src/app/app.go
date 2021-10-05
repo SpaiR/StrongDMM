@@ -27,8 +27,8 @@ const (
 )
 
 func Start() {
-	internalDir := filepath.FromSlash(getOrCreateInternalDir())
-	logDir := filepath.FromSlash(initializeLogger(internalDir))
+	internalDir := getOrCreateInternalDir()
+	logDir := initializeLogger(internalDir)
 
 	log.Printf("%s, v%s", Title, Version)
 	log.Println("[app] starting")
@@ -125,7 +125,7 @@ func getOrCreateInternalDir() string {
 	}
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 
-	return internalDir
+	return filepath.FromSlash(internalDir)
 }
 
 func initializeLogger(internalDir string) string {
@@ -145,7 +145,7 @@ func initializeLogger(internalDir string) string {
 	multiOut := io.MultiWriter(file, os.Stdout)
 	log.SetOutput(multiOut)
 
-	return logDir
+	return filepath.FromSlash(logDir)
 }
 
 func (a *app) checkShouldClose() {

@@ -13,14 +13,10 @@ import (
 )
 
 /*
-	File contains all the app package methods, called by the app itself.
+	File contains all the application methods, called by components of the application.
 	The idea is that on lower layers we define interfaces with those methods.
-	And then we provide app struct as a high level realization.
+	Then we provide the app struct as a high level realization which knows how to handle stuff.
 */
-
-func (a *app) AppWindowCond() imgui.Condition {
-	return a.tmpWindowCond
-}
 
 // AppIsWindowReset returns true if we reset application windows to their initial positions.
 func (a *app) AppIsWindowReset() bool {
@@ -38,11 +34,6 @@ func (a *app) AppPointSize() float32 {
 // AppPointSizePtr returns same value as the AppPointSize, but in a form of the pointer.
 func (a *app) AppPointSizePtr() *float32 {
 	return &a.masterWindow.PointSize
-}
-
-// AppMasterWindowSize returns sizes of the application system window.
-func (a *app) AppMasterWindowSize() (width, height int) {
-	return a.masterWindow.Handle.GetSize()
 }
 
 // AppRunLater ques received function to execute it later.
