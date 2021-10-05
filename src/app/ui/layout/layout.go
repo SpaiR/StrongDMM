@@ -1,11 +1,11 @@
-package ui
+package layout
 
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/component"
 )
 
-type layoutAction interface {
+type action interface {
 	component.EnvironmentAction
 	component.InstancesAction
 	component.WorkspaceAreaAction
@@ -19,7 +19,7 @@ type Layout struct {
 	component.Instances
 	component.WorkspaceArea
 
-	action layoutAction
+	action action
 
 	leftNodeId     int32
 	leftUpNodeId   int32
@@ -28,7 +28,7 @@ type Layout struct {
 	rightNodeId    int32
 }
 
-func NewLayout(a layoutAction) *Layout {
+func New(a action) *Layout {
 	l := &Layout{action: a}
 	l.Environment.Init(a)
 	l.Instances.Init(a)

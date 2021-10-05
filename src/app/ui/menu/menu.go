@@ -1,14 +1,12 @@
-package ui
+package menu
 
 import (
-	"github.com/go-gl/glfw/v3.3/glfw"
-	"sdmm/app/ui/shortcut"
 	"sdmm/dm/dmenv"
 	w "sdmm/imguiext/widget"
 )
 
 //goland:noinspection GoCommentStart
-type menuAction interface {
+type action interface {
 	// File
 	AppDoOpenEnvironment()
 	AppDoOpenEnvironmentByPath(path string)
@@ -16,7 +14,7 @@ type menuAction interface {
 	AppDoOpenMap()
 	AppDoOpenMapByPath(path string)
 	AppDoClearRecentMaps()
-	AppDoSave()
+	AppDoSave() // Ctrl+S
 	AppDoExit()
 
 	// Edit
@@ -24,7 +22,7 @@ type menuAction interface {
 	AppDoRedo()
 
 	// Window
-	AppDoResetWindows()
+	AppDoResetWindows() // F5
 
 	// Help
 	AppDoOpenLogs()
@@ -44,15 +42,13 @@ type menuAction interface {
 }
 
 type Menu struct {
-	action menuAction
+	action action
 }
 
-func NewMenu(action menuAction) *Menu {
-	addShortcuts(action)
-
-	return &Menu{
-		action: action,
-	}
+func New(action action) *Menu {
+	m := &Menu{action}
+	m.addShortcuts()
+	return m
 }
 
 func (m *Menu) Process() {
@@ -106,11 +102,4 @@ func (m *Menu) Process() {
 			w.MenuItem("Open Logs Folder", m.action.AppDoOpenLogs),
 		}),
 	}).Build()
-}
-
-func addShortcuts(action menuAction) {
-	shortcut.Add(shortcut.Shortcut{
-		FirstKey: glfw.KeyF5,
-		Action:   action.AppDoResetWindows,
-	})
 }

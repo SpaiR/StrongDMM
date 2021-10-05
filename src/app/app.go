@@ -12,7 +12,8 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/data"
 	"sdmm/app/render/brush"
-	"sdmm/app/ui"
+	"sdmm/app/ui/layout"
+	"sdmm/app/ui/menu"
 	"sdmm/app/ui/shortcut"
 	"sdmm/app/window"
 	"sdmm/dm/dmenv"
@@ -69,8 +70,8 @@ type app struct {
 	internalData   *data.Internal
 	commandStorage *command.Storage
 
-	menu   *ui.Menu
-	layout *ui.Layout
+	menu   *menu.Menu
+	layout *layout.Layout
 }
 
 func (a *app) initialize(internalDir string) {
@@ -80,8 +81,8 @@ func (a *app) initialize(internalDir string) {
 	a.internalData = data.LoadInternal(internalDir)
 	a.commandStorage = command.NewStorage()
 
-	a.menu = ui.NewMenu(a)
-	a.layout = ui.NewLayout(a)
+	a.menu = menu.New(a)
+	a.layout = layout.New(a)
 
 	a.AppUpdateTitle()
 	a.resetWindows()
