@@ -2,26 +2,21 @@ package pmap
 
 import (
 	"sdmm/app/command"
+	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
-// AddSelectedInstance adds currently selected instance on the map.
-// If there is no selected instance, then nothing will happen.
-func (p *PaneMap) AddSelectedInstance(coord util.Point) {
-	if instance, ok := p.action.AppSelectedInstance(); ok {
-		p.Dmm.GetTile(coord).Add(instance)
-		p.canvas.Render.UpdateBucket(p.Dmm, p.activeLevel, []util.Point{coord})
-	}
+func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
+	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
-// HasSelectedInstance returns true if there is any selected instance.
-func (p *PaneMap) HasSelectedInstance() bool {
-	return p.action.AppHasSelectedInstance()
+func (p *PaneMap) SelectedInstance() (dmminstance.Instance, bool) {
+	return p.action.AppSelectedInstance()
 }
 
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) CommitChanges(changesType string) {
-	stateId, tilesToUpdate := p.Snapshot.Commit()
+	stateId, tilesToUpdate := p.snapshot.Commit()
 
 	// Do not push command if there is no tiles to update.
 	if len(tilesToUpdate) == 0 {
@@ -32,10 +27,10 @@ func (p *PaneMap) CommitChanges(changesType string) {
 	activeLevel := p.activeLevel
 
 	p.action.AppPushCommand(command.New(changesType, func() {
-		p.Snapshot.GoTo(stateId - 1)
-		p.canvas.Render.UpdateBucket(p.Dmm, activeLevel, tilesToUpdate)
+		p.snapshot.GoTo(stateId - 1)
+		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}, func() {
-		p.Snapshot.GoTo(stateId)
-		p.canvas.Render.UpdateBucket(p.Dmm, activeLevel, tilesToUpdate)
+		p.snapshot.GoTo(stateId)
+		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}))
 }

@@ -134,7 +134,7 @@ func (w *WorkspaceArea) closeAllMaps() {
 func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Map, bool) {
 	for _, ws := range w.workspaces {
 		if ws, ok := ws.(*workspace.Map); ok {
-			if ws.PaneMap.Dmm.Path == path {
+			if ws.PaneMap.Dmm().Path == path {
 				return ws, true
 			}
 		}

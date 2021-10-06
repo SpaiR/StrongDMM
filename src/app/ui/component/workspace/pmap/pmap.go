@@ -29,8 +29,8 @@ type Action interface {
 type PaneMap struct {
 	action Action
 
-	Dmm      *dmmap.Dmm
-	Snapshot *snapshot.Snapshot
+	dmm      *dmmap.Dmm
+	snapshot *snapshot.Snapshot
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
@@ -46,10 +46,14 @@ type PaneMap struct {
 	mouseChangeCbId int
 }
 
+func (p *PaneMap) Dmm() *dmmap.Dmm {
+	return p.dmm
+}
+
 func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws := &PaneMap{
-		Dmm:         dmm,
-		Snapshot:    snapshot.NewSnapshot(dmm),
+		dmm:         dmm,
+		snapshot:    snapshot.NewSnapshot(dmm),
 		activeLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 
@@ -65,7 +69,7 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
-	ws.canvas.Render.ValidateLevel(ws.Dmm, ws.activeLevel)
+	ws.canvas.Render.ValidateLevel(ws.dmm, ws.activeLevel)
 
 	return ws
 }

@@ -1,6 +1,10 @@
 package tool
 
-import "sdmm/util"
+import (
+	"github.com/SpaiR/imgui-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
+	"sdmm/util"
+)
 
 type Visuals interface {
 	MarkModifiedTile(coord util.Point)
@@ -15,4 +19,8 @@ type Tool interface {
 	OnMove(coord util.Point)
 	// OnStop goes when user releases the mouse button.
 	OnStop(coord util.Point)
+}
+
+func isControlDown() bool {
+	return imgui.IsKeyDown(int(glfw.KeyLeftControl)) || imgui.IsKeyDown(int(glfw.KeyRightControl))
 }

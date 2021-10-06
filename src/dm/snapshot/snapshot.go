@@ -46,10 +46,7 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		tileModified := len(currentTile.Content()) != len(initialTile.Content())
 
 		if !tileModified {
-			// Iteratee through tiles contents and compare instances inside them.
-			if tileModified = !currentTile.Content().Equals(initialTile.Content()); tileModified {
-				break
-			}
+			tileModified = !currentTile.Content().Equals(initialTile.Content())
 		}
 
 		// No changes - no patch.
@@ -165,6 +162,7 @@ func (s *Snapshot) syncInitialWithCurrent() {
 	}
 
 	// Do a full copy of tiles from the current map state to the initial.
+	s.initial.Tiles = make([]*dmmap.Tile, 0, len(s.current.Tiles))
 	for _, tile := range s.current.Tiles {
 		tileCopy := tile.Copy()
 		s.initial.Tiles = append(s.initial.Tiles, &tileCopy)

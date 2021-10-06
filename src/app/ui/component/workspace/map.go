@@ -37,20 +37,20 @@ func NewMap(action MapAction, dmm *dmmap.Dmm) *Map {
 
 func (m *Map) Save() {
 	log.Println("[workspace] saving map workspace:", m.CommandStackId())
-	dmmsave.Save(m.PaneMap.Dmm)
+	dmmsave.Save(m.PaneMap.Dmm())
 	m.action.AppForceBalanceCommandStack(m.CommandStackId())
 }
 
 func (m *Map) CommandStackId() string {
-	return m.PaneMap.Dmm.Path.Absolute
+	return m.PaneMap.Dmm().Path.Absolute
 }
 
 func (m *Map) Name() string {
-	visibleName := m.PaneMap.Dmm.Name
+	visibleName := m.PaneMap.Dmm().Name
 	if m.action.AppIsCommandStackModified(m.CommandStackId()) {
 		visibleName += " *"
 	}
-	return fmt.Sprint(visibleName, "###workspace_map_", m.PaneMap.Dmm.Path.Absolute)
+	return fmt.Sprint(visibleName, "###workspace_map_", m.PaneMap.Dmm().Path.Absolute)
 }
 
 func (m *Map) Process() {
@@ -58,7 +58,7 @@ func (m *Map) Process() {
 }
 
 func (m *Map) Tooltip() string {
-	return m.PaneMap.Dmm.Path.Readable
+	return m.PaneMap.Dmm().Path.Readable
 }
 
 func (m *Map) Dispose() {
