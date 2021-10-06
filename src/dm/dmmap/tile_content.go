@@ -1,9 +1,11 @@
 package dmmap
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 
+	"sdmm/dm"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
@@ -36,4 +38,12 @@ func (t TileContent) Hash() uint64 {
 		sb.WriteString(strconv.FormatUint(instance.Id(), 10))
 	}
 	return util.Djb2(sb.String())
+}
+
+func (t TileContent) Sorted() TileContent {
+	sorted := t.Copy()
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return dm.PathWeight(sorted[i].Path) < dm.PathWeight(sorted[j].Path)
+	})
+	return sorted
 }

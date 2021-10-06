@@ -66,8 +66,7 @@ func (sp *saveProcess) handleReusedKeys() {
 	for _, tile := range sp.dmm.Tiles {
 		newContent := tile.Content()
 		if initialKey, ok := findKeyByTileContent(sp.initial, keyByContentCache, newContent); ok {
-			sp.output.Grid[tile.Coord] = initialKey
-			sp.output.Dictionary[initialKey] = newContent
+			sp.setOutputKeyContent(tile.Coord, initialKey, newContent)
 			delete(sp.unusedKeys, initialKey)
 		}
 	}
@@ -128,11 +127,24 @@ func (sp *saveProcess) tryToReuseKeysByTheirInitialLocation(locsWithoutKey map[u
 		unusedKeysCpy[key] = true
 	}
 
+	// Content can be the same for different locations, so we will remember an unusedKey we applied to locs.
+	keyByContentCache := make(map[uint64]dmmdata.Key)
+
 	for unusedKey := range unusedKeysCpy {
 		for loc := range locsWithoutKey {
+			content := sp.dmm.GetTile(loc).Content()
+			contentHash := content.Hash()
+
+			// If the key was already applied to the content in a previous iteration.
+			if cachedKey, ok := keyByContentCache[contentHash]; ok {
+				sp.output.Grid[loc] = cachedKey
+				continue
+			}
+
 			if sp.initial.Grid[loc] == unusedKey {
-				sp.output.Grid[loc] = unusedKey
-				sp.output.Dictionary[unusedKey] = sp.dmm.GetTile(loc).Content()
+				keyByContentCache[contentHash] = unusedKey
+
+				sp.setOutputKeyContent(loc, unusedKey, content)
 
 				delete(sp.unusedKeys, unusedKey)
 				delete(locsWithoutKey, loc)
@@ -192,8 +204,7 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 			createdKeys = append(createdKeys, key)
 		}
 
-		sp.output.Grid[loc] = key
-		sp.output.Dictionary[key] = content
+		sp.setOutputKeyContent(loc, key, content)
 	}
 
 	log.Println("[dmmsave] all tiles handled")
@@ -201,6 +212,11 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 	log.Println("[dmmsave] created keys:", createdKeys)
 
 	return nil
+}
+
+func (sp *saveProcess) setOutputKeyContent(loc util.Point, key dmmdata.Key, content dmmap.TileContent) {
+	sp.output.Grid[loc] = key
+	sp.output.Dictionary[key] = content.Sorted()
 }
 
 func findKeyByTileContent(
