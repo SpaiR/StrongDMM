@@ -10,7 +10,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/data"
+	configData "sdmm/app/data/config"
 	"sdmm/app/render/brush"
 	"sdmm/app/ui/layout"
 	"sdmm/app/ui/menu"
@@ -67,7 +67,7 @@ type app struct {
 
 	loadedEnvironment *dmenv.Dme
 
-	internalData   *data.Internal
+	configData     *configData.Config
 	commandStorage *command.Storage
 
 	menu   *menu.Menu
@@ -78,7 +78,7 @@ func (a *app) initialize(internalDir string) {
 	a.deleteOldLogs()
 	a.deleteOldBackups()
 
-	a.internalData = data.LoadInternal(internalDir)
+	a.configData = configData.Load(internalDir)
 	a.commandStorage = command.NewStorage()
 
 	a.menu = menu.New(a)
@@ -107,7 +107,7 @@ func (a *app) loop() {
 
 func (a *app) dispose() {
 	brush.Dispose()
-	a.internalData.Save()
+	a.configData.Save()
 	a.masterWindow.Dispose()
 }
 

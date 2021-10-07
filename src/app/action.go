@@ -102,13 +102,13 @@ func (a *app) AppHasSelectedInstance() bool {
 
 // AppRecentEnvironments returns a slice with paths to recently opened environments.
 func (a *app) AppRecentEnvironments() []string {
-	return a.internalData.RecentEnvironments
+	return a.configData.RecentEnvironments
 }
 
 // AppRecentMapsByEnvironment returns a map with key as an environment path and value as a slice of maps opened
 // for the environment path.
 func (a *app) AppRecentMapsByEnvironment() map[string][]string {
-	return a.internalData.RecentMapsByEnvironment
+	return a.configData.RecentMapsByEnvironment
 }
 
 // AppRecentMapsByLoadedEnvironment returns a slice with paths to recently opened maps

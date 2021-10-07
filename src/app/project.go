@@ -28,8 +28,8 @@ func (a *app) openEnvironment(path string) {
 	}
 	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
-	a.internalData.AddRecentEnvironment(path)
-	a.internalData.Save()
+	a.configData.AddRecentEnvironment(path)
+	a.configData.Save()
 
 	a.loadedEnvironment = env
 	a.layout.Instances.Free()
@@ -61,8 +61,8 @@ func (a *app) openMap(path string) {
 	elapsed := time.Since(start).Milliseconds()
 	log.Printf("[app] map [%s] parsed in [%d] ms", path, elapsed)
 
-	a.internalData.AddRecentMap(a.loadedEnvironment.RootFile, path)
-	a.internalData.Save()
+	a.configData.AddRecentMap(a.loadedEnvironment.RootFile, path)
+	a.configData.Save()
 	a.layout.WorkspaceArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)))
 	a.layout.Instances.Update()
 

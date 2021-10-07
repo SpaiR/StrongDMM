@@ -7,7 +7,8 @@ import (
 	"os"
 )
 
-func save(filepath string, data interface{}) {
+func Save(filepath string, data interface{}) {
+	log.Println("[data] saving:", filepath)
 	f, err := os.Create(filepath)
 	if err != nil {
 		log.Println("[data] unable to create file by path:", filepath)
@@ -22,7 +23,8 @@ func save(filepath string, data interface{}) {
 	}
 }
 
-func read(filepath string, data interface{}) error {
+func Load(filepath string, data interface{}) error {
+	log.Println("[data] reading:", filepath)
 	f, err := os.Open(filepath)
 	if err != nil {
 		return err
