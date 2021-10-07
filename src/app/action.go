@@ -6,7 +6,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/component/workspace/wsmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
@@ -132,7 +132,7 @@ func (a *app) AppHasLoadedEnvironment() bool {
 
 // AppHasActiveMap returns true if there is any active map at the moment.
 func (a *app) AppHasActiveMap() bool {
-	if activeWs := a.layout.WorkspaceArea.ActiveWorkspace(); activeWs != nil {
+	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
 		_, ok := activeWs.(*wsmap.WsMap)
 		return ok
 	}
@@ -157,7 +157,7 @@ func (a *app) AppInitialInstanceVariables(path string) *dmvars.Variables {
 // The title depends on current open environment and workspace.
 func (a *app) AppUpdateTitle() {
 	envTitle := a.environmentName()
-	wsTitle := a.layout.WorkspaceArea.WorkspaceTitle()
+	wsTitle := a.layout.WsArea.WorkspaceTitle()
 
 	title := ""
 	if envTitle != "" {

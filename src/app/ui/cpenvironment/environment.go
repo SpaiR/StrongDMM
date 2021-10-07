@@ -1,4 +1,4 @@
-package component
+package cpenvironment
 
 import (
 	"fmt"
@@ -7,12 +7,11 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dm/dmenv"
-	"sdmm/dm/dmicon"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 )
 
-type EnvironmentAction interface {
+type Action interface {
 	AppLoadedEnvironment() *dmenv.Dme
 	AppPointSize() float32
 	AppDoSelectInstanceByPath(string)
@@ -23,7 +22,7 @@ type EnvironmentAction interface {
 const newTreeNodesLimit = 25
 
 type Environment struct {
-	action EnvironmentAction
+	action Action
 
 	treeId uint
 
@@ -39,7 +38,7 @@ type Environment struct {
 	tmpDoSelectPath      bool
 }
 
-func (e *Environment) Init(action EnvironmentAction) {
+func (e *Environment) Init(action Action) {
 	e.action = action
 	e.treeNodes = make(map[string]*treeNode)
 }
@@ -50,7 +49,7 @@ func (e *Environment) Free() {
 	e.filteredTreeNodes = nil
 	e.filter = ""
 	e.selectedPath = ""
-	log.Println("[component] environment panel free")
+	log.Println("[cpenvironment] environment panel free")
 }
 
 func (e *Environment) process() {
@@ -67,7 +66,7 @@ func (e *Environment) postProcess() {
 
 func (e *Environment) SelectPath(path string) {
 	if path != e.selectedPath {
-		log.Printf("[component] environment path selected: [%s]", path)
+		log.Printf("[cpenvironment] environment path selected: [%s]", path)
 		e.selectedPath = path
 		e.tmpDoSelectPath = true
 	}
@@ -234,34 +233,4 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 	for _, childPath := range object.DirectChildren {
 		e.filterBranch0(e.action.AppLoadedEnvironment().Objects[childPath])
 	}
-}
-
-type treeNode struct {
-	name   string
-	orig   *dmenv.Object
-	sprite *dmicon.Sprite
-}
-
-func (e *Environment) treeNode(object *dmenv.Object) (*treeNode, bool) {
-	if node, ok := e.treeNodes[object.Path]; ok {
-		return node, true
-	}
-
-	if e.tmpNewTreeNodesCount >= newTreeNodesLimit {
-		return nil, false
-	}
-
-	e.tmpNewTreeNodesCount += 1
-
-	icon, _ := object.Vars.Text("icon")
-	iconState, _ := object.Vars.Text("icon_state")
-
-	node := &treeNode{
-		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],
-		orig:   object,
-		sprite: dmicon.Cache.GetSpriteOrPlaceholder(icon, iconState),
-	}
-
-	e.treeNodes[object.Path] = node
-	return node, true
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"sdmm/app/ui/component/workspace"
-	"sdmm/app/ui/component/workspace/wsmap/pmap"
+	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmsave"
 )

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/component/workspace"
+	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dm/dmenv"
 )
 

@@ -2,22 +2,24 @@ package layout
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/component"
+	"sdmm/app/ui/cpenvironment"
+	"sdmm/app/ui/cpinstances"
+	"sdmm/app/ui/cpwsarea"
 )
 
 type action interface {
-	component.EnvironmentAction
-	component.InstancesAction
-	component.WorkspaceAreaAction
+	cpenvironment.Action
+	cpinstances.Action
+	cpwsarea.Action
 
 	AppIsWindowReset() bool
 	AppPointSizePtr() *float32
 }
 
 type Layout struct {
-	component.Environment
-	component.Instances
-	component.WorkspaceArea
+	cpenvironment.Environment
+	cpinstances.Instances
+	cpwsarea.WsArea
 
 	action action
 
@@ -32,7 +34,7 @@ func New(a action) *Layout {
 	l := &Layout{action: a}
 	l.Environment.Init(a)
 	l.Instances.Init(a)
-	l.WorkspaceArea.Init(a)
+	l.WsArea.Init(a)
 	return l
 }
 
@@ -54,7 +56,7 @@ func (l *Layout) showLeftDownNode() {
 }
 
 func (l *Layout) showCenterNode() {
-	wrapNodeV("centerNode", int(l.centerNodeId), false, l.WorkspaceArea.Process)
+	wrapNodeV("centerNode", int(l.centerNodeId), false, l.WsArea.Process)
 }
 
 func (l *Layout) showRightNode() {
