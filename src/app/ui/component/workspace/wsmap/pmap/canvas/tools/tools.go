@@ -2,7 +2,7 @@ package tools
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/component/workspace/pmap/canvas/tools/tool"
+	"sdmm/app/ui/component/workspace/wsmap/pmap/canvas/tools/tool"
 	"sdmm/util"
 )
 

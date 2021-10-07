@@ -5,8 +5,8 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/component/workspace/pmap/canvas"
-	"sdmm/app/ui/component/workspace/pmap/canvas/tools"
+	"sdmm/app/ui/component/workspace/wsmap/pmap/canvas"
+	"sdmm/app/ui/component/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/snapshot"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/component/workspace"
+	"sdmm/app/ui/component/workspace/wsmap"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
@@ -133,7 +133,7 @@ func (a *app) AppHasLoadedEnvironment() bool {
 // AppHasActiveMap returns true if there is any active map at the moment.
 func (a *app) AppHasActiveMap() bool {
 	if activeWs := a.layout.WorkspaceArea.ActiveWorkspace(); activeWs != nil {
-		_, ok := activeWs.(*workspace.Map)
+		_, ok := activeWs.(*wsmap.WsMap)
 		return ok
 	}
 	return false

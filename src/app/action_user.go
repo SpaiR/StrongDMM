@@ -5,7 +5,7 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
-	"sdmm/app/ui/component/workspace"
+	"sdmm/app/ui/component/workspace/wsmap"
 	"sdmm/dm/dmmap/dmminstance"
 )
 
@@ -71,7 +71,7 @@ func (a *app) AppDoClearRecentMaps() {
 func (a *app) AppDoSave() {
 	log.Println("[app] do save")
 	if activeWs := a.layout.WorkspaceArea.ActiveWorkspace(); activeWs != nil {
-		if activeWs, ok := activeWs.(*workspace.Map); ok {
+		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
 			activeWs.Save()
 		}
 	}

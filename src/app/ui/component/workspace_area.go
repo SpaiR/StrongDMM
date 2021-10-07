@@ -7,13 +7,15 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/component/workspace"
+	"sdmm/app/ui/component/workspace/wsempty"
+	"sdmm/app/ui/component/workspace/wsmap"
 	"sdmm/dm/dmmap"
 	"sdmm/imguiext"
 )
 
 type WorkspaceAreaAction interface {
-	workspace.EmptyAction
-	workspace.MapAction
+	wsempty.Action
+	wsmap.Action
 
 	AppUpdateTitle()
 	AppSwitchCommandStack(id string)
@@ -98,7 +100,7 @@ func (w *WorkspaceArea) OpenMap(dmm *dmmap.Dmm) {
 	}
 
 	idx := w.findEmptyWorkspaceIdx()
-	ws := workspace.NewMap(w.action, dmm)
+	ws := wsmap.New(w.action, dmm)
 	if idx != -1 {
 		w.closeWorkspaceByIdx(idx)
 		w.addWorkspaceV(ws, idx)
@@ -122,7 +124,7 @@ func (w *WorkspaceArea) closeAllMaps() {
 	workspaces := make([]workspace.Workspace, len(w.workspaces))
 	copy(workspaces, w.workspaces)
 	for _, ws := range workspaces {
-		if _, ok := ws.(*workspace.Map); ok {
+		if _, ok := ws.(*wsmap.WsMap); ok {
 			w.closeWorkspace(ws)
 		}
 	}
@@ -131,9 +133,9 @@ func (w *WorkspaceArea) closeAllMaps() {
 	}
 }
 
-func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Map, bool) {
+func (w *WorkspaceArea) mapWorkspace(path dmmap.DmmPath) (*wsmap.WsMap, bool) {
 	for _, ws := range w.workspaces {
-		if ws, ok := ws.(*workspace.Map); ok {
+		if ws, ok := ws.(*wsmap.WsMap); ok {
 			if ws.PaneMap.Dmm().Path == path {
 				return ws, true
 			}
@@ -168,7 +170,7 @@ func (w *WorkspaceArea) closeWorkspaceByIdx(idx int) {
 }
 
 func (w *WorkspaceArea) addEmptyWorkspace() {
-	w.addWorkspace(workspace.NewEmpty(w.action))
+	w.addWorkspace(wsempty.New(w.action))
 }
 
 func (w *WorkspaceArea) findWorkspaceIdx(ws workspace.Workspace) int {
@@ -182,7 +184,7 @@ func (w *WorkspaceArea) findWorkspaceIdx(ws workspace.Workspace) int {
 
 func (w *WorkspaceArea) findEmptyWorkspaceIdx() int {
 	for idx, ws := range w.workspaces {
-		if _, ok := ws.(*workspace.Empty); ok {
+		if _, ok := ws.(*wsempty.WsEmpty); ok {
 			return idx
 		}
 	}

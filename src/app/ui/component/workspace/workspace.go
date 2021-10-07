@@ -15,39 +15,39 @@ type Workspace interface {
 	Border() bool
 }
 
-type base struct {
+type Base struct {
 	Workspace
 
 	isDoSelect bool
 }
 
-func (*base) CommandStackId() string {
+func (*Base) CommandStackId() string {
 	return command.NullSpaceStackId
 }
 
-func (*base) WantClose() bool {
+func (*Base) WantClose() bool {
 	return true
 }
 
-func (*base) Dispose() {
+func (*Base) Dispose() {
 }
 
-func (b *base) Select(value bool) {
+func (b *Base) Select(value bool) {
 	b.isDoSelect = value
 }
 
-func (b *base) IsDoSelect() bool {
+func (b *Base) IsDoSelect() bool {
 	return b.isDoSelect
 }
 
-func (b *base) HasTooltip() bool {
+func (b *Base) HasTooltip() bool {
 	return b.Workspace.Tooltip() != ""
 }
 
-func (*base) Tooltip() string {
+func (*Base) Tooltip() string {
 	return ""
 }
 
-func (*base) Border() bool {
+func (*Base) Border() bool {
 	return true
 }
