@@ -77,6 +77,12 @@ func (a *app) AppDoSave() {
 	}
 }
 
+// AppDoOpenPreferences opens preferences tab.
+func (a *app) AppDoOpenPreferences() {
+	log.Println("[app] open preferences")
+	a.layout.OpenPreferences(a.makePreferences())
+}
+
 // AppDoSelectInstance globally selects provided instance in the app.
 func (a *app) AppDoSelectInstance(instance dmminstance.Instance) {
 	log.Printf("[app] select instance: path=[%s], id=[%d]", instance.Path, instance.Id())

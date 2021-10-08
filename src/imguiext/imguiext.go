@@ -2,15 +2,24 @@ package imguiext
 
 import "github.com/SpaiR/imgui-go"
 
-func SetNextWindowCentered(size imgui.Vec2, condition imgui.Condition) {
-	vp := imgui.MainViewport()
-	center := vp.Center()
-	imgui.SetNextWindowPosV(imgui.Vec2{X: center.X - size.X/2, Y: center.Y - size.Y/2}, condition, imgui.Vec2{})
-	imgui.SetNextWindowSizeV(size, condition)
-}
-
 func SetItemHoveredTooltip(text string) {
 	if imgui.IsItemHovered() {
 		imgui.SetTooltip(text)
 	}
+}
+
+func InputIntClamp(
+	label string,
+	v *int32,
+	min, max, step, stepFast int,
+) bool {
+	if imgui.InputIntV(label, v, step, stepFast, imgui.InputTextFlagsNone) {
+		if int(*v) > max {
+			*v = int32(max)
+		} else if int(*v) < min {
+			*v = int32(min)
+		}
+		return true
+	}
+	return false
 }

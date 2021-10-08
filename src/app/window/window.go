@@ -17,23 +17,20 @@ const fps int = 60
 type Window struct {
 	Handle *glfw.Window
 
-	loop func()
+	loop, postLoop func()
 
 	mouseChangeCallbackId int
 	mouseChangeCallbacks  map[int]func(uint, uint)
 
-	PointSize float32
+	pointSize float32
 	laterJobs []func()
 }
 
-func New(loop func()) *Window {
+func New(loop func(), postLoop func()) *Window {
 	log.Println("[window] creating native window")
 
-	w := Window{
-		loop:                 loop,
-		PointSize:            2.5, // FIXME: make configurable and 1 by default
-		mouseChangeCallbacks: make(map[int]func(uint, uint)),
-	}
+	w := Window{loop: loop, postLoop: postLoop, pointSize: 1}
+	w.mouseChangeCallbacks = make(map[int]func(uint, uint))
 
 	log.Println("[window] setting up glfw")
 	w.setupGlfw()
@@ -61,6 +58,16 @@ func (w *Window) Dispose() {
 
 	w.disposeImGui()
 	w.disposeGlfw()
+}
+
+func (w *Window) PointSize() float32 {
+	return w.pointSize
+}
+
+func (w *Window) SetPointSize(pointSize float32) {
+	w.pointSize = pointSize
+	w.configureFonts()
+	platform.UpdateFontsTexture()
 }
 
 func (w *Window) setupGlfw() {
@@ -116,8 +123,6 @@ func (w *Window) setupImGui() {
 	imgui.StyleColorsLight()
 	imgui.CurrentStyle().SetWindowBorderSize(0)
 	imgui.CurrentStyle().SetChildBorderSize(0)
-
-	w.configureFonts()
 }
 
 func (*Window) disposeImGui() {

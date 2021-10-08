@@ -11,6 +11,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	configData "sdmm/app/data/config"
+	prefsData "sdmm/app/data/prefs"
 	"sdmm/app/render/brush"
 	"sdmm/app/ui/layout"
 	"sdmm/app/ui/menu"
@@ -41,7 +42,7 @@ func Start() {
 		backupDir: filepath.FromSlash(internalDir + "/backup"),
 	}
 
-	a.masterWindow = window.New(a.loop)
+	a.masterWindow = window.New(a.loop, a.postLoop)
 
 	log.Println("[app] start phase: [initialization]")
 	a.initialize(internalDir)
@@ -64,10 +65,13 @@ type app struct {
 
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
+	tmpUpdateScale bool
 
 	loadedEnvironment *dmenv.Dme
 
-	configData     *configData.Config
+	configData *configData.Config
+	prefsData  *prefsData.Prefs
+
 	commandStorage *command.Storage
 
 	menu   *menu.Menu
@@ -79,12 +83,15 @@ func (a *app) initialize(internalDir string) {
 	a.deleteOldBackups()
 
 	a.configData = configData.Load(internalDir)
+	a.prefsData = prefsData.Load(internalDir)
+
 	a.commandStorage = command.NewStorage()
 
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)
 
 	a.AppUpdateTitle()
+	a.updateScale()
 	a.resetWindows()
 }
 
@@ -100,8 +107,11 @@ func (a *app) loop() {
 
 	a.menu.Process()
 	a.layout.Process()
+}
 
+func (a *app) postLoop() {
 	a.checkShouldClose()
+	a.checkUpdateScale()
 	a.dropTmpState()
 }
 
@@ -155,9 +165,20 @@ func (a *app) checkShouldClose() {
 	}
 }
 
+func (a *app) checkUpdateScale() {
+	if a.tmpUpdateScale {
+		a.updateScale()
+	}
+}
+
 func (a *app) dropTmpState() {
 	a.tmpShouldClose = false
 	a.tmpWindowCond = imgui.ConditionFirstUseEver
+	a.tmpUpdateScale = false
+}
+
+func (a *app) updateScale() {
+	a.masterWindow.SetPointSize(float32(a.prefsData.Scale) / 100)
 }
 
 func (a *app) resetWindows() {

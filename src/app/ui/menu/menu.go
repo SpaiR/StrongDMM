@@ -15,6 +15,7 @@ type action interface {
 	AppDoOpenMapByPath(path string)
 	AppDoClearRecentMaps()
 	AppDoSave() // Ctrl+S
+	AppDoOpenPreferences()
 	AppDoExit()
 
 	// Edit
@@ -89,6 +90,8 @@ func (m *Menu) Process() {
 			w.MenuItem("Save", m.action.AppDoSave).
 				Enabled(m.action.AppHasActiveMap()).
 				Shortcut("Ctrl+S"),
+			w.Separator(),
+			w.MenuItem("Preferences", m.action.AppDoOpenPreferences),
 			w.Separator(),
 			w.MenuItem("Exit", m.action.AppDoExit),
 		}),

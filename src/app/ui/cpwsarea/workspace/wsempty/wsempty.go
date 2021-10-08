@@ -29,12 +29,10 @@ type WsEmpty struct {
 }
 
 func New(action Action) *WsEmpty {
-	w := &WsEmpty{
-		action: action,
-		name:   fmt.Sprint("New##workspace_empty_", time.Now().Nanosecond()),
-	}
-	w.Workspace = w
-	return w
+	name := fmt.Sprint("New##workspace_empty_", time.Now().Nanosecond())
+	ws := &WsEmpty{action: action, name: name}
+	ws.Workspace = ws
+	return ws
 }
 
 func (ws *WsEmpty) Name() string {

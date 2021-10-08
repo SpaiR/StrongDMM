@@ -22,6 +22,7 @@ func (w *Window) runFrame() {
 	w.startFrame()
 	w.loop()
 	w.endFrame()
+	w.postLoop()
 }
 
 func (w *Window) startFrame() {

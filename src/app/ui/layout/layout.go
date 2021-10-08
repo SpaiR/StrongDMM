@@ -13,7 +13,6 @@ type action interface {
 	cpwsarea.Action
 
 	AppIsWindowReset() bool
-	AppPointSizePtr() *float32
 }
 
 type Layout struct {

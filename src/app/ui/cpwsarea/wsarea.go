@@ -1,16 +1,14 @@
 package cpwsarea
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/workspace/wsempty"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsprefs"
 	"sdmm/dm/dmmap"
-	"sdmm/imguiext"
 )
 
 type Action interface {
@@ -35,62 +33,20 @@ func (w *WsArea) Init(action Action) {
 	w.addEmptyWorkspace()
 }
 
-func (w *WsArea) Process() {
-	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
-		for idx, ws := range w.workspaces {
-			open := true
-			flags := imgui.TabItemFlagsNoTooltip
-
-			if ws.IsDoSelect() {
-				ws.Select(false)
-				flags |= imgui.TabItemFlagsSetSelected
-			}
-
-			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
-			if imgui.BeginTabItemV(ws.Name(), &open, flags) {
-				imgui.PopStyleVar()
-
-				w.switchActiveWorkspace(ws)
-
-				if ws.HasTooltip() {
-					imguiext.SetItemHoveredTooltip(ws.Tooltip())
-				}
-
-				if ws.Border() {
-					imgui.PushStyleVarFloat(imgui.StyleVarChildBorderSize, 1)
-				}
-
-				imgui.BeginChildV(fmt.Sprint("workspace_", ws.Name(), idx), imgui.Vec2{}, ws.Border(), imgui.WindowFlagsNone)
-				if ws.Border() {
-					imgui.PopStyleVar()
-				}
-				ws.Process()
-				imgui.EndChild()
-
-				imgui.EndTabItem()
-			} else {
-				imgui.PopStyleVar()
-				if ws.HasTooltip() {
-					imguiext.SetItemHoveredTooltip(ws.Tooltip())
-				}
-			}
-
-			if !open {
-				w.closeWorkspaceByIdx(idx)
-			}
-		}
-
-		if imgui.TabItemButton(imguiext.IconFaPlus) {
-			w.addEmptyWorkspace()
-		}
-
-		imgui.EndTabBar()
-	}
-}
-
 func (w *WsArea) Free() {
 	w.closeAllMaps()
 	log.Println("[cpwsarea] workspace area free")
+}
+
+func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
+	for _, ws := range w.workspaces {
+		if ws, ok := ws.(*wsprefs.WsPrefs); ok {
+			ws.Select(true)
+			return
+		}
+	}
+
+	w.addWorkspace(wsprefs.New(prefsView))
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm) {

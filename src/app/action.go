@@ -28,12 +28,7 @@ func (a *app) AppIsWindowReset() bool {
 // For 100% scale points size will be 1. For 200% it will be 2.
 // So we multiply all the application sizes (like the font size) to the point size and get sort of DPI support.
 func (a *app) AppPointSize() float32 {
-	return a.masterWindow.PointSize
-}
-
-// AppPointSizePtr returns same value as the AppPointSize, but in a form of the pointer.
-func (a *app) AppPointSizePtr() *float32 {
-	return &a.masterWindow.PointSize
+	return a.masterWindow.PointSize()
 }
 
 // AppRunLater ques received function to execute it later.

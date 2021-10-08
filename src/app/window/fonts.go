@@ -27,12 +27,12 @@ func (w *Window) configureFonts() {
 func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.FontConfig) (font imgui.Font) {
 	font = atlas.AddFontFromMemoryTTFV(
 		assets.FontTTF(),
-		size*w.PointSize,
+		size*w.pointSize,
 		config,
 		atlas.GlyphRangesCyrillic(),
 	)
 
-	iconSize := (size - 2) * w.PointSize
+	iconSize := (size - 2) * w.pointSize
 
 	config.SetMergeMode(true)
 	config.SetGlyphMaxAdvanceX(iconSize)
