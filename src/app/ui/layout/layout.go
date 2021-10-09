@@ -42,24 +42,24 @@ func (l *Layout) Process() {
 
 	l.showLeftUpNode()
 	l.showLeftDownNode()
-	l.showCenterNode()
 	l.showRightNode()
+	l.showCenterNode() // The latest node will have a focus by default
 }
 
 func (l *Layout) showLeftUpNode() {
-	wrapNode("leftUpNode", int(l.leftUpNodeId), l.Environment.Process)
+	wrapNode("Environment##leftUpNode", int(l.leftUpNodeId), l.Environment.Process)
 }
 
 func (l *Layout) showLeftDownNode() {
-	wrapNode("leftDownNode", int(l.leftDownNodeId), l.Instances.Process)
+	wrapNode("Instances##leftDownNode", int(l.leftDownNodeId), l.Instances.Process)
 }
 
 func (l *Layout) showCenterNode() {
-	wrapNodeV("centerNode", int(l.centerNodeId), false, l.WsArea.Process)
+	wrapNodeV("centerNode", int(l.centerNodeId), false, false, l.WsArea.Process)
 }
 
 func (l *Layout) showRightNode() {
-	wrapNode("rightNode", int(l.rightNodeId), func() {
+	wrapNode("Placeholder##rightNode", int(l.rightNodeId), func() {
 		imgui.Text("Placeholder")
 	})
 }
@@ -88,26 +88,35 @@ func (l *Layout) updateNodes() {
 }
 
 func wrapNode(id string, nodeId int, content func()) {
-	wrapNodeV(id, nodeId, true, content)
+	wrapNodeV(id, nodeId, true, true, content)
 }
 
-func wrapNodeV(id string, nodeId int, padding bool, content func()) {
+func wrapNodeV(id string, nodeId int, addPadding, showTabBar bool, content func()) {
 	imgui.DockBuilderDockWindow(id, nodeId)
-	if !padding {
+	if !addPadding {
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
-	imgui.BeginV(id, nil, imgui.WindowFlagsNoMove)
-	if !padding {
+	if imgui.BeginV(id, nil, imgui.WindowFlagsNoMove) {
+		if !addPadding {
+			imgui.PopStyleVar()
+		}
+		makeNodeNotAttachable(showTabBar)
+		content()
+	} else if !addPadding {
 		imgui.PopStyleVar()
 	}
-	makeNodeNotAttachable()
-	content()
 	imgui.End()
 }
 
 // Remove all node decorations, so window will become none attachable.
-func makeNodeNotAttachable() {
-	imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(
-		imgui.DockNodeFlagsNoTabBar | imgui.DockNodeFlagsNoCloseButton |
-			imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe)
+func makeNodeNotAttachable(showTabBar bool) {
+	flags := imgui.DockNodeFlagsNoCloseButton | imgui.DockNodeFlagsNoDocking | imgui.DockNodeFlagsNoDockingSplitMe
+
+	if !showTabBar {
+		flags |= imgui.DockNodeFlagsNoTabBar
+	} else {
+		flags |= imgui.DockNodeFlagsNoWindowMenuButton
+	}
+
+	imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(flags)
 }

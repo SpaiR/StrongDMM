@@ -8,6 +8,14 @@ import (
 )
 
 func (w *WsArea) Process() {
+	isCpInFocus := imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+
+	// Window of the component doesn't have title bar, so we need to mock focus behaviour in that way.
+	// Thus, if the window is unfocused that could be seen by tabs color.
+	if !isCpInFocus {
+		imgui.PushStyleColor(imgui.StyleColorTabActive, imgui.CurrentStyle().Color(imgui.StyleColorTabUnfocusedActive))
+	}
+
 	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
 		for idx, ws := range w.workspaces {
 			open := true
@@ -57,5 +65,9 @@ func (w *WsArea) Process() {
 		}
 
 		imgui.EndTabBar()
+	}
+
+	if !isCpInFocus {
+		imgui.PopStyleColor()
 	}
 }
