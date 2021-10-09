@@ -7,6 +7,7 @@ import (
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
 	"sdmm/app/render/bucket/level/chunk/unit"
+	"sdmm/dm"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
 )
@@ -23,16 +24,19 @@ func Free() {
 
 type Render struct {
 	Camera *Camera
-	bucket *bucket.Bucket
+
+	pathsFilter *dm.PathsFilter
+	bucket      *bucket.Bucket
 
 	overlayState overlayState
 }
 
-func New() *Render {
+func New(pathsFilter *dm.PathsFilter) *Render {
 	brush.TryInit()
 	return &Render{
-		Camera: newCamera(),
-		bucket: bucket.New(),
+		Camera:      newCamera(),
+		pathsFilter: pathsFilter,
+		bucket:      bucket.New(),
 	}
 }
 
@@ -79,7 +83,7 @@ func (r *Render) batchBucketUnits(width, height float32) {
 
 	// Iterate through every layer to render.
 	for _, layer := range visibleLevel.Layers {
-		// Iterate though chunks with units on the rendered layer.
+		// Iterate through chunks with units on the rendered layer.
 		for _, chunk := range visibleLevel.ChunksByLayers[layer] {
 			// Out of bounds = skip.
 			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
@@ -88,8 +92,12 @@ func (r *Render) batchBucketUnits(width, height float32) {
 
 			// Get all units in the chunk for the specific layer.
 			for _, u := range chunk.UnitsByLayers[layer] {
-				// Out of bounds = skip.
+				// Out of bounds = skip
 				if !u.ViewBounds.ContainsV(x1, y1, x2, y2) {
+					continue
+				}
+				// Hidden path = skip
+				if r.pathsFilter.IsHiddenPath(u.Inst.Path) {
 					continue
 				}
 

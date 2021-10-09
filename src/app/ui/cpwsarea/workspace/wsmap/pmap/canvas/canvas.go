@@ -6,10 +6,12 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render"
+	"sdmm/dm"
 )
 
 type Action interface {
 	AppRunLater(job func())
+	AppPathsFilter() *dm.PathsFilter
 }
 
 type Canvas struct {
@@ -37,7 +39,7 @@ func (c *Canvas) Dispose() {
 func New(action Action) *Canvas {
 	c := &Canvas{
 		action: action,
-		Render: render.New(),
+		Render: render.New(action.AppPathsFilter()),
 	}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c

@@ -14,7 +14,8 @@ var Cache = &unitsCache{make(map[unitHash]Unit)}
 
 // Unit stores render information about specific object instance on the map.
 type Unit struct {
-	Sp *dmicon.Sprite
+	Sp   *dmicon.Sprite
+	Inst *dmminstance.Instance
 
 	Layer      float32
 	ViewBounds util.Bounds
@@ -63,7 +64,7 @@ func makeUnit(x, y int, i dmminstance.Instance, iconSize int) Unit {
 	r, g, b, a := parseColor(i)
 
 	return Unit{
-		sp, countLayer(i),
+		sp, &i, countLayer(i),
 		util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
 		r, g, b, a,
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
+	"sdmm/dm"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
@@ -167,4 +168,9 @@ func (a *app) AppUpdateTitle() {
 
 	a.masterWindow.Handle.SetTitle(title)
 	log.Println("[app] title updated:", title)
+}
+
+// AppPathsFilter returns dm.PathsFilter for the application.
+func (a *app) AppPathsFilter() *dm.PathsFilter {
+	return a.pathsFilter
 }

@@ -13,7 +13,7 @@ import (
 type Action interface {
 	AppDoOpenEnvironment()
 	AppDoOpenEnvironmentByPath(path string)
-	AppDoOpenMap()
+	AppDoSelectMapFile() (string, error)
 	AppDoOpenMapByPathV(path string, workspaceIdx int)
 	AppHasLoadedEnvironment() bool
 	AppRecentEnvironments() []string
@@ -68,7 +68,9 @@ func (ws *WsEmpty) showMapsControl() {
 	imgui.Text(fmt.Sprint("Environment: ", ws.action.AppLoadedEnvironment().RootFile))
 	imgui.Separator()
 	if imgui.Button("Open Map...") {
-		ws.action.AppDoOpenMap()
+		if file, err := ws.action.AppDoSelectMapFile(); err == nil {
+			ws.action.AppDoOpenMapByPathV(file, ws.Idx())
+		}
 	}
 	imgui.Separator()
 	if len(ws.action.AppRecentMapsByLoadedEnvironment()) == 0 {

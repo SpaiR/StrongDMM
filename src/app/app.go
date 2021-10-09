@@ -17,12 +17,13 @@ import (
 	"sdmm/app/ui/menu"
 	"sdmm/app/ui/shortcut"
 	"sdmm/app/window"
+	"sdmm/dm"
 	"sdmm/dm/dmenv"
 )
 
 const (
 	Title   = "StrongDMM"
-	Version = "2.0"
+	Version = "2.0.0.alpha"
 
 	LogsTtlDays    = 3
 	BackupsTtlDays = 3
@@ -68,6 +69,7 @@ type app struct {
 	tmpUpdateScale bool
 
 	loadedEnvironment *dmenv.Dme
+	pathsFilter       *dm.PathsFilter
 
 	configData *configData.Config
 	prefsData  *prefsData.Prefs
@@ -86,6 +88,7 @@ func (a *app) initialize(internalDir string) {
 	a.prefsData = prefsData.Load(internalDir)
 
 	a.commandStorage = command.NewStorage()
+	a.pathsFilter = dm.NewPathsFilter()
 
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)

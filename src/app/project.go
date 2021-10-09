@@ -37,6 +37,7 @@ func (a *app) openEnvironment(path string) {
 	a.layout.WsArea.Free()
 
 	a.commandStorage.Free()
+	a.pathsFilter.Free()
 
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)

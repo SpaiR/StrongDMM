@@ -40,15 +40,21 @@ func (a *app) AppDoClearRecentEnvironments() {
 	a.configData.Save()
 }
 
-// AppDoOpenMap opens map, which user need to select in file dialog.
-func (a *app) AppDoOpenMap() {
-	log.Println("[app] selecting map to open...")
-	if file, err := dialog.
+// AppDoSelectMapFile opens dialog window to select a map file.
+func (a *app) AppDoSelectMapFile() (string, error) {
+	log.Println("[app] selecting map file...")
+	return dialog.
 		File().
 		Title("Open Map").
 		Filter("*.dmm", "dmm").
 		SetStartDir(a.loadedEnvironment.RootDir).
-		Load(); err == nil {
+		Load()
+}
+
+// AppDoOpenMap opens map, which user need to select in file dialog.
+func (a *app) AppDoOpenMap() {
+	log.Println("[app] selecting map to open...")
+	if file, err := a.AppDoSelectMapFile(); err == nil {
 		log.Println("[app] map to open selected:", file)
 		a.openMap(file)
 	}

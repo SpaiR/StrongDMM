@@ -1,40 +1,31 @@
 package slice
 
+// StrContains returns true if the slice contains the provided string.
 func StrContains(slice []string, str string) bool {
-	for _, s := range slice {
-		if s == str {
-			return true
-		}
-	}
-	return false
+	return StrIndexOf(slice, str) != -1
 }
 
 // StrPushUnique pushes string at the beginning of the slice.
 // If slice contains the string to push, the old one will be removed.
 func StrPushUnique(slice []string, str string) []string {
-	idx := -1
-
-	for i, s := range slice {
-		if s == str {
-			idx = i
-			break
-		}
-	}
-
-	if idx != -1 {
-		return append([]string{str}, StrRemoveIdxOrd(slice, idx)...)
+	if idx := StrIndexOf(slice, str); idx != -1 {
+		return append([]string{str}, StrRemoveIdx(slice, idx)...)
 	} else {
 		return append([]string{str}, slice...)
 	}
 }
 
-// StrRemoveIdx removes element from slice by index without order preserving.
-func StrRemoveIdx(slice []string, idx int) []string {
-	slice[idx] = slice[len(slice)-1]
-	return slice[:len(slice)-1]
+// StrIndexOf return the index of the provided string in the slice or -1.
+func StrIndexOf(slice []string, str string) int {
+	for idx, s := range slice {
+		if s == str {
+			return idx
+		}
+	}
+	return -1
 }
 
-// StrRemoveIdxOrd removes element from slice by index with order preserving.
-func StrRemoveIdxOrd(slice []string, idx int) []string {
+// StrRemoveIdx removes element from slice by index with order preserving.
+func StrRemoveIdx(slice []string, idx int) []string {
 	return append(slice[:idx], slice[idx+1:]...)
 }

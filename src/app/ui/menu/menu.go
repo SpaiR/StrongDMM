@@ -1,6 +1,7 @@
 package menu
 
 import (
+	"sdmm/dm"
 	"sdmm/dm/dmenv"
 	w "sdmm/imguiext/widget"
 )
@@ -40,6 +41,8 @@ type action interface {
 
 	AppHasUndo() bool
 	AppHasRedo() bool
+
+	AppPathsFilter() *dm.PathsFilter
 }
 
 type Menu struct {
@@ -105,6 +108,25 @@ func (m *Menu) Process() {
 				Shortcut("Ctrl+Shift+Z"),
 		}),
 
+		w.Menu("Options", w.Layout{
+			w.MenuItem("Toggle Area", m.doToggleTurf).
+				Enabled(m.action.AppHasLoadedEnvironment()).
+				Selected(m.isAreaToggled()).
+				Shortcut("Ctrl+1"),
+			w.MenuItem("Toggle Turf", m.doToggleTurf).
+				Enabled(m.action.AppHasLoadedEnvironment()).
+				Selected(m.isTurfToggled()).
+				Shortcut("Ctrl+2"),
+			w.MenuItem("Toggle Object", m.doToggleObject).
+				Enabled(m.action.AppHasLoadedEnvironment()).
+				Selected(m.isObjectToggled()).
+				Shortcut("Ctrl+3"),
+			w.MenuItem("Toggle Mob", m.doToggleMob).
+				Enabled(m.action.AppHasLoadedEnvironment()).
+				Selected(m.isMobToggled()).
+				Shortcut("Ctrl+4"),
+		}),
+
 		w.Menu("Window", w.Layout{
 			w.MenuItem("Reset Windows", m.action.AppDoResetWindows).Shortcut("F5"),
 		}),
@@ -113,4 +135,36 @@ func (m *Menu) Process() {
 			w.MenuItem("Open Logs Folder", m.action.AppDoOpenLogs),
 		}),
 	}).Build()
+}
+
+func (m *Menu) doToggleArea() {
+	m.action.AppPathsFilter().TogglePath("/area")
+}
+
+func (m *Menu) doToggleTurf() {
+	m.action.AppPathsFilter().TogglePath("/turf")
+}
+
+func (m *Menu) doToggleObject() {
+	m.action.AppPathsFilter().TogglePath("/obj")
+}
+
+func (m *Menu) doToggleMob() {
+	m.action.AppPathsFilter().TogglePath("/mob")
+}
+
+func (m *Menu) isAreaToggled() bool {
+	return m.action.AppPathsFilter().IsVisiblePath("/area")
+}
+
+func (m *Menu) isTurfToggled() bool {
+	return m.action.AppPathsFilter().IsVisiblePath("/turf")
+}
+
+func (m *Menu) isObjectToggled() bool {
+	return m.action.AppPathsFilter().IsVisiblePath("/obj")
+}
+
+func (m *Menu) isMobToggled() bool {
+	return m.action.AppPathsFilter().IsVisiblePath("/mob")
 }
