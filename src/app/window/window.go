@@ -120,7 +120,7 @@ func (w *Window) setupImGui() {
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	// TODO: Proper theming
-	imgui.StyleColorsLight()
+	imgui.StyleColorsDark()
 	imgui.CurrentStyle().SetWindowBorderSize(0)
 	imgui.CurrentStyle().SetChildBorderSize(0)
 }

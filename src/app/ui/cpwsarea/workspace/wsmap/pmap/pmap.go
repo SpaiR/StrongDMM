@@ -11,7 +11,6 @@ import (
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/snapshot"
 	"sdmm/imguiext"
-	"sdmm/imguiext/layout"
 )
 
 type Action interface {
@@ -41,9 +40,9 @@ type PaneMap struct {
 	canvasTools   *tools.Tools
 	canvas        *canvas.Canvas
 
-	bp *layout.BorderPane
-
 	mouseChangeCbId int
+
+	panePos, paneSize imgui.Vec2
 }
 
 func (p *PaneMap) Dmm() *dmmap.Dmm {
@@ -65,7 +64,6 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.canvasTools = tools.NewTools(ws, ws.canvasControl, ws.canvasState)
 	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
 
-	ws.bp = layout.NewBorderPane(ws.createLayout())
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
@@ -75,7 +73,10 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 }
 
 func (p *PaneMap) Process() {
-	p.bp.Draw()
+	p.panePos, p.paneSize = imgui.WindowPos(), imgui.WindowSize()
+	p.showPanel("canvasTools", pPosTop, p.canvasTools.Process)
+	p.showCanvas()
+	p.showPanel("canvasStatus", pPosBottom, p.canvasStatus.Process)
 }
 
 func (p *PaneMap) Dispose() {
@@ -84,22 +85,9 @@ func (p *PaneMap) Dispose() {
 	log.Println("[pmap] disposed")
 }
 
-func (p *PaneMap) createLayout() layout.BorderPaneLayout {
-	return layout.BorderPaneLayout{
-		Top: layout.BorderPaneAreaLayout{Content: p.canvasTools.Process},
-		Center: layout.BorderPaneAreaLayout{
-			Content:        p.showCanvas,
-			PaddingDisable: true,
-		},
-		Bottom: layout.BorderPaneAreaLayout{Content: p.canvasStatus.Process},
-	}
-}
-
 func (p *PaneMap) showCanvas() {
-	size := imgui.WindowSize()
-
-	p.canvasControl.Process(size, p.activeLevel)
-	p.canvas.Process(size)
+	p.canvasControl.Process(p.paneSize, p.activeLevel)
+	p.canvas.Process(p.paneSize)
 
 	texture := imgui.TextureID(p.canvas.Texture)
 	uvMin := imgui.Vec2{X: 0, Y: 1}
