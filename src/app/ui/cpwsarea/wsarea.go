@@ -49,17 +49,16 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 	w.addWorkspace(wsprefs.New(prefsView))
 }
 
-func (w *WsArea) OpenMap(dmm *dmmap.Dmm) {
+func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) {
 	if ws, ok := w.mapWorkspace(dmm.Path); ok {
 		ws.Select(true)
 		return
 	}
 
-	idx := w.findEmptyWorkspaceIdx()
 	ws := wsmap.New(w.action, dmm)
-	if idx != -1 {
-		w.closeWorkspaceByIdx(idx)
-		w.addWorkspaceV(ws, idx)
+	if workspaceIdx != -1 {
+		w.closeWorkspaceByIdx(workspaceIdx)
+		w.addWorkspaceV(ws, workspaceIdx)
 	} else {
 		w.addWorkspace(ws)
 	}
@@ -116,8 +115,7 @@ func (w *WsArea) closeWorkspace(ws workspace.Workspace) {
 }
 
 func (w *WsArea) closeWorkspaceByIdx(idx int) {
-	ws := w.workspaces[idx]
-	if ws.WantClose() {
+	if ws := w.workspaces[idx]; ws.WantClose() {
 		w.workspaces = append(w.workspaces[:idx], w.workspaces[idx+1:]...)
 		ws.Dispose()
 		log.Printf("[cpwsarea] workspace closed in idx [%d]: %s", idx, ws.Name())

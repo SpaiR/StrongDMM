@@ -60,6 +60,12 @@ func (a *app) AppDoOpenMapByPath(path string) {
 	a.openMap(path)
 }
 
+// AppDoOpenMapByPathV same as AppDoOpenMapByPath by map will be opened inside the concrete workspace with the provided index.
+func (a *app) AppDoOpenMapByPathV(path string, workspaceIdx int) {
+	log.Printf("[app] open map with workspace index [%d] by path: [%s]", workspaceIdx, path)
+	a.openMapV(path, workspaceIdx)
+}
+
 // AppDoClearRecentMaps clears recently opened maps.
 func (a *app) AppDoClearRecentMaps() {
 	log.Println("[app] clear recent maps")

@@ -49,6 +49,10 @@ func (a *app) openEnvironment(path string) {
 }
 
 func (a *app) openMap(path string) {
+	a.openMapV(path, -1)
+}
+
+func (a *app) openMapV(path string, workspaceIdx int) {
 	log.Printf("[app] opening map [%s]...", path)
 
 	start := time.Now()
@@ -63,7 +67,7 @@ func (a *app) openMap(path string) {
 
 	a.configData.AddRecentMap(a.loadedEnvironment.RootFile, path)
 	a.configData.Save()
-	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)))
+	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx)
 	a.layout.Instances.Update()
 
 	log.Println("[app] map opened:", path)

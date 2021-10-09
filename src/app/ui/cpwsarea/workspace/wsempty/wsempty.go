@@ -14,7 +14,7 @@ type Action interface {
 	AppDoOpenEnvironment()
 	AppDoOpenEnvironmentByPath(path string)
 	AppDoOpenMap()
-	AppDoOpenMapByPath(path string)
+	AppDoOpenMapByPathV(path string, workspaceIdx int)
 	AppHasLoadedEnvironment() bool
 	AppRecentEnvironments() []string
 	AppRecentMapsByLoadedEnvironment() []string
@@ -77,7 +77,7 @@ func (ws *WsEmpty) showMapsControl() {
 		imgui.Text("Recent Maps:")
 		for _, mapPath := range ws.action.AppRecentMapsByLoadedEnvironment() {
 			if imgui.SmallButton(sanitizeMapPath(ws.action.AppLoadedEnvironment().RootDir, mapPath)) {
-				ws.action.AppDoOpenMapByPath(mapPath)
+				ws.action.AppDoOpenMapByPathV(mapPath, ws.Idx())
 			}
 		}
 	}

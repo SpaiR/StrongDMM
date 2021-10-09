@@ -13,12 +13,14 @@ type Workspace interface {
 	HasTooltip() bool
 	Tooltip() string
 	Border() bool
+	SetIdx(idx int)
 }
 
 type Base struct {
 	Workspace
 
 	isDoSelect bool
+	idx        int
 }
 
 func (*Base) CommandStackId() string {
@@ -50,4 +52,12 @@ func (*Base) Tooltip() string {
 
 func (*Base) Border() bool {
 	return true
+}
+
+func (b *Base) Idx() int {
+	return b.idx
+}
+
+func (b *Base) SetIdx(idx int) {
+	b.idx = idx
 }
