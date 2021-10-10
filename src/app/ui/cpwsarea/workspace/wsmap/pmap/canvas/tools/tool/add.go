@@ -10,7 +10,7 @@ import (
 type Modify interface {
 	Dmm() *dmmap.Dmm
 	UpdateCanvasByCoord(coord util.Point)
-	SelectedInstance() (dmminstance.Instance, bool)
+	SelectedInstance() (*dmminstance.Instance, bool)
 	CommitChanges(string)
 }
 

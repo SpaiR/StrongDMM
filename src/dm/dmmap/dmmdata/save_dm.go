@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -62,12 +61,12 @@ func (d DmmData) SaveDM(path string) {
 	log.Printf("[dmmdata] [%s] saved in [DM] format to: %s", d, path)
 }
 
-func toDMStr(key Key, instances []dmminstance.Instance) string {
+func toDMStr(key Key, content Content) string {
 	sb := strings.Builder{}
 
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))
 
-	for idx, instance := range instances {
+	for idx, instance := range content {
 		sb.WriteString(instance.Path)
 
 		if instance.Vars.Len() > 0 {
@@ -88,7 +87,7 @@ func toDMStr(key Key, instances []dmminstance.Instance) string {
 			sb.WriteString("}")
 		}
 
-		if idx != len(instances)-1 {
+		if idx != len(content)-1 {
 			sb.WriteString(",")
 		}
 	}

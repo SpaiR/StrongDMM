@@ -10,7 +10,7 @@ func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
 	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
-func (p *PaneMap) SelectedInstance() (dmminstance.Instance, bool) {
+func (p *PaneMap) SelectedInstance() (*dmminstance.Instance, bool) {
 	return p.action.AppSelectedInstance()
 }
 

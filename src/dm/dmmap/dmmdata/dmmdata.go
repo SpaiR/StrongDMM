@@ -5,8 +5,12 @@ import (
 	"os"
 	"sort"
 
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
+)
+
+type (
+	DataDictionary map[Key]Content
+	DataGrid       map[util.Point]Key
 )
 
 type DmmData struct {
@@ -18,8 +22,8 @@ type DmmData struct {
 	KeyLength        int
 	MaxX, MaxY, MaxZ int
 
-	Dictionary map[Key][]dmminstance.Instance
-	Grid       map[util.Point]Key
+	Dictionary DataDictionary
+	Grid       DataGrid
 }
 
 func (d DmmData) Save() {

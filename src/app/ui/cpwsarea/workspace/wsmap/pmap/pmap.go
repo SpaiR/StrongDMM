@@ -16,7 +16,7 @@ import (
 type Action interface {
 	canvas.Action
 
-	AppSelectedInstance() (dmminstance.Instance, bool)
+	AppSelectedInstance() (*dmminstance.Instance, bool)
 	AppHasSelectedInstance() bool
 
 	AppAddMouseChangeCallback(cb func(uint, uint)) int

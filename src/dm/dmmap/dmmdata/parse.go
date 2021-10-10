@@ -24,8 +24,8 @@ func parse(file *os.File) (*DmmData, error) {
 	var (
 		dmmData = DmmData{
 			Filepath:   file.Name(),
-			Dictionary: make(map[Key][]dmminstance.Instance),
-			Grid:       make(map[util.Point]Key),
+			Dictionary: make(DataDictionary),
+			Grid:       make(DataGrid),
 			LineBreak:  "\n",
 		}
 
@@ -41,8 +41,8 @@ func parse(file *os.File) (*DmmData, error) {
 		escaping       bool
 		skipWhitespace bool
 
-		currData     []dmminstance.Instance
-		currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
+		currData     Content
+		currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
 		currVar      = make([]rune, 0)
 		currDatum    = make([]rune, 0)
 
@@ -147,17 +147,17 @@ func parse(file *os.File) (*DmmData, error) {
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currInstance)
-					currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
+					currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
 				} else if c == ')' {
 					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
 						currInstance.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currInstance)
-					currInstance = dmminstance.Instance{Vars: &dmvars.Variables{}}
+					currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
 					key := Key(currKey)
 					currKey = currKey[:0]
-					data := make([]dmminstance.Instance, len(currData))
+					data := make(Content, len(currData))
 					copy(data, currData)
 					currData = currData[:0]
 					currKeyLength = 0
@@ -284,7 +284,7 @@ func parse(file *os.File) (*DmmData, error) {
 	dmmData.MaxY = int(math.Max(float64(dmmData.MaxY), float64(currY)))
 
 	// Make Y axis to go from bottom to top
-	reversedGrid := make(map[util.Point]Key, len(dmmData.Grid))
+	reversedGrid := make(DataGrid, len(dmmData.Grid))
 	for z := 1; z <= dmmData.MaxZ; z++ {
 		for y := 1; y <= dmmData.MaxY; y++ {
 			for x := 1; x <= dmmData.MaxX; x++ {

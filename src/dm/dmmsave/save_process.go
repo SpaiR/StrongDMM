@@ -5,7 +5,6 @@ import (
 
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmmsave/keygen"
 	"sdmm/util"
 )
@@ -33,8 +32,8 @@ func create(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 		MaxX:       initial.MaxX,
 		MaxY:       initial.MaxY,
 		MaxZ:       initial.MaxZ,
-		Dictionary: make(map[dmmdata.Key][]dmminstance.Instance),
-		Grid:       make(map[util.Point]dmmdata.Key),
+		Dictionary: make(dmmdata.DataDictionary),
+		Grid:       make(dmmdata.DataGrid),
 	}
 
 	// Collect unused keys in map.
@@ -60,11 +59,11 @@ func (sp *saveProcess) handleReusedKeys() {
 	// Cache the initial content, since we know it won't change.
 	keyByContentCache := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
 	for key, instances := range sp.initial.Dictionary {
-		keyByContentCache[dmmap.TileContent(instances).Hash()] = key
+		keyByContentCache[instances.Hash()] = key
 	}
 
 	for _, tile := range sp.dmm.Tiles {
-		newContent := tile.Content()
+		newContent := tile.Content().Sorted()
 		if initialKey, ok := findKeyByTileContent(sp.initial, keyByContentCache, newContent); ok {
 			sp.setOutputKeyContent(tile.Coord, initialKey, newContent)
 			delete(sp.unusedKeys, initialKey)
@@ -132,7 +131,7 @@ func (sp *saveProcess) tryToReuseKeysByTheirInitialLocation(locsWithoutKey map[u
 
 	for unusedKey := range unusedKeysCpy {
 		for loc := range locsWithoutKey {
-			content := sp.dmm.GetTile(loc).Content()
+			content := sp.dmm.GetTile(loc).Content().Sorted()
 			contentHash := content.Hash()
 
 			// If the key was already applied to the content in a previous iteration.
@@ -171,7 +170,7 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 	keyByContentCache := make(map[uint64]dmmdata.Key)
 
 	for loc := range locsWithoutKey {
-		content := sp.dmm.GetTile(loc).Content()
+		content := sp.dmm.GetTile(loc).Content().Sorted()
 
 		var key dmmdata.Key
 		if reusableKey, ok := findKeyByTileContent(sp.output, keyByContentCache, content); ok {
@@ -195,8 +194,8 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 				sp.keygen.DropKeysPool()
 
 				sp.output.KeyLength = newSize
-				sp.output.Dictionary = make(map[dmmdata.Key][]dmminstance.Instance)
-				sp.output.Grid = make(map[util.Point]dmmdata.Key)
+				sp.output.Dictionary = make(dmmdata.DataDictionary)
+				sp.output.Grid = make(dmmdata.DataGrid)
 				sp.unusedKeys = nil
 
 				return errorRegenerateKeys
@@ -214,15 +213,15 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 	return nil
 }
 
-func (sp *saveProcess) setOutputKeyContent(loc util.Point, key dmmdata.Key, content dmmap.TileContent) {
+func (sp *saveProcess) setOutputKeyContent(loc util.Point, key dmmdata.Key, content dmmdata.Content) {
 	sp.output.Grid[loc] = key
-	sp.output.Dictionary[key] = content.Sorted()
+	sp.output.Dictionary[key] = content
 }
 
 func findKeyByTileContent(
 	data *dmmdata.DmmData,
 	keyByContentCache map[uint64]dmmdata.Key,
-	content dmmap.TileContent,
+	content dmmdata.Content,
 ) (dmmdata.Key, bool) {
 	contentHash := content.Hash()
 
@@ -231,7 +230,7 @@ func findKeyByTileContent(
 	}
 
 	for key, instances := range data.Dictionary {
-		if dmmap.TileContent(instances).Equals(content) {
+		if content.Equals(instances) {
 			keyByContentCache[contentHash] = key
 			return key, true
 		}

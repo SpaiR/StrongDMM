@@ -96,7 +96,7 @@ func (a *app) AppDoOpenPreferences() {
 }
 
 // AppDoSelectInstance globally selects provided instance in the app.
-func (a *app) AppDoSelectInstance(instance dmminstance.Instance) {
+func (a *app) AppDoSelectInstance(instance *dmminstance.Instance) {
 	log.Printf("[app] select instance: path=[%s], id=[%d]", instance.Path, instance.Id())
 	a.layout.Environment.SelectPath(instance.Path)
 	a.layout.Instances.Select(instance)

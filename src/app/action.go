@@ -86,7 +86,7 @@ func (a *app) AppDisposeCommandStack(id string) {
 
 // AppSelectedInstance returns currently selected dmminstance.Instance and bool value which shows if there is one.
 // Selected instance is taken from the component.Instances panel.
-func (a *app) AppSelectedInstance() (dmminstance.Instance, bool) {
+func (a *app) AppSelectedInstance() (*dmminstance.Instance, bool) {
 	return dmminstance.Cache.GetById(a.layout.Instances.SelectedInstanceId())
 }
 

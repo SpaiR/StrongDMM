@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/util"
 )
 
@@ -130,7 +130,7 @@ func (p patchType) String() string {
 func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) {
 	log.Printf("[snapshot] patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
 	for _, patch := range s.patches[stateId] {
-		var content dmmap.TileContent
+		var content dmmdata.Content
 		if isForward {
 			content = patch.forward
 		} else {
@@ -174,6 +174,6 @@ func (s *Snapshot) syncInitialWithCurrent() {
 type tilePatch struct {
 	coord util.Point
 
-	backward []dmminstance.Instance // State to restore.
-	forward  []dmminstance.Instance // State to reproduce.
+	backward dmmdata.Content // State to restore.
+	forward  dmmdata.Content // State to reproduce.
 }

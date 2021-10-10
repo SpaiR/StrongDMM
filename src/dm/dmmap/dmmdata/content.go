@@ -1,4 +1,4 @@
-package dmmap
+package dmmdata
 
 import (
 	"sort"
@@ -10,14 +10,14 @@ import (
 	"sdmm/util"
 )
 
-type TileContent []dmminstance.Instance
+type Content []*dmminstance.Instance
 
-func (t TileContent) Equals(content TileContent) bool {
-	if len(t) != len(content) {
+func (c Content) Equals(content Content) bool {
+	if len(c) != len(content) {
 		return false
 	}
 
-	for idx, instance1 := range t {
+	for idx, instance1 := range c {
 		if instance1.Id() != content[idx].Id() {
 			return false
 		}
@@ -26,22 +26,22 @@ func (t TileContent) Equals(content TileContent) bool {
 	return true
 }
 
-func (t TileContent) Copy() TileContent {
-	cpy := make(TileContent, len(t))
-	copy(cpy, t)
+func (c Content) Copy() Content {
+	cpy := make(Content, len(c))
+	copy(cpy, c)
 	return cpy
 }
 
-func (t TileContent) Hash() uint64 {
+func (c Content) Hash() uint64 {
 	sb := strings.Builder{}
-	for _, instance := range t {
+	for _, instance := range c {
 		sb.WriteString(strconv.FormatUint(instance.Id(), 10))
 	}
 	return util.Djb2(sb.String())
 }
 
-func (t TileContent) Sorted() TileContent {
-	sorted := t.Copy()
+func (c Content) Sorted() Content {
+	sorted := c.Copy()
 	sort.SliceStable(sorted, func(i, j int) bool {
 		return dm.PathWeight(sorted[i].Path) < dm.PathWeight(sorted[j].Path)
 	})

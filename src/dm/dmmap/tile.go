@@ -2,16 +2,17 @@ package dmmap
 
 import (
 	"sdmm/dm"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
 type Tile struct {
 	Coord   util.Point
-	content TileContent
+	content dmmdata.Content
 }
 
-func (t Tile) Content() TileContent {
+func (t Tile) Content() dmmdata.Content {
 	return t.content
 }
 
@@ -22,12 +23,12 @@ func (t Tile) Copy() Tile {
 	}
 }
 
-func (t *Tile) AddInstance(instance dmminstance.Instance) {
+func (t *Tile) AddInstance(instance *dmminstance.Instance) {
 	t.content = append(t.content, instance)
 }
 
 func (t *Tile) RemoveInstancesByPath(pathToRemove string) {
-	var newContent TileContent
+	var newContent dmmdata.Content
 	for _, instance := range t.content {
 		if !dm.IsPath(instance.Path, pathToRemove) {
 			newContent = append(newContent, instance)
@@ -36,6 +37,6 @@ func (t *Tile) RemoveInstancesByPath(pathToRemove string) {
 	t.content = newContent
 }
 
-func (t *Tile) Set(content TileContent) {
+func (t *Tile) Set(content dmmdata.Content) {
 	t.content = content
 }

@@ -8,7 +8,7 @@ import (
 
 type Action interface {
 	AppPointSize() float32
-	AppDoSelectInstance(instance dmminstance.Instance)
+	AppDoSelectInstance(instance *dmminstance.Instance)
 }
 
 type Instances struct {
@@ -29,7 +29,7 @@ func (i *Instances) Free() {
 	i.selectedId = 0
 }
 
-func (i *Instances) Select(instance dmminstance.Instance) {
+func (i *Instances) Select(instance *dmminstance.Instance) {
 	i.instanceNodes = makeInstancesNodes(dmminstance.Cache.GetAllByPath(instance.Path))
 	i.selectedId = instance.Id()
 	i.tmpDoScrollToInstance = true

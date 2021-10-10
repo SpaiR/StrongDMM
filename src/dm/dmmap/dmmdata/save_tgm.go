@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -65,13 +64,13 @@ func (d DmmData) SaveTGM(path string) {
 	log.Printf("[dmmdata] [%s] saved in [TGM] format to: %s", d, path)
 }
 
-func toTGMStr(key Key, instances []dmminstance.Instance, lineBreak string) string {
+func toTGMStr(key Key, content Content, lineBreak string) string {
 	sb := strings.Builder{}
 
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))
 	sb.WriteString(lineBreak)
 
-	for idx, instance := range instances {
+	for idx, instance := range content {
 		sb.WriteString(instance.Path)
 
 		if instance.Vars.Len() > 0 {
@@ -96,7 +95,7 @@ func toTGMStr(key Key, instances []dmminstance.Instance, lineBreak string) strin
 			sb.WriteString("\t}")
 		}
 
-		if idx != len(instances)-1 {
+		if idx != len(content)-1 {
 			sb.WriteString(",")
 			sb.WriteString(lineBreak)
 		}

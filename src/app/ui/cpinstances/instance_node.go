@@ -5,19 +5,20 @@ import (
 	"strings"
 
 	"sdmm/dm/dmicon"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/dmmap/dmminstance"
 )
 
 type instanceNode struct {
 	name   string
-	orig   dmminstance.Instance
+	orig   *dmminstance.Instance
 	sprite *dmicon.Sprite
 }
 
-func makeInstancesNodes(instances []dmminstance.Instance) []*instanceNode {
+func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 	var nodes []*instanceNode
 
-	for _, instance := range instances {
+	for _, instance := range content {
 		nodes = append(nodes, makeInstanceNode(instance))
 	}
 
@@ -51,7 +52,7 @@ func makeInstancesNodes(instances []dmminstance.Instance) []*instanceNode {
 	return nodes
 }
 
-func makeInstanceNode(instance dmminstance.Instance) *instanceNode {
+func makeInstanceNode(instance *dmminstance.Instance) *instanceNode {
 	icon, _ := instance.Vars.Text("icon")
 	iconState, _ := instance.Vars.Text("icon_state")
 	dir, _ := instance.Vars.Int("dir")
