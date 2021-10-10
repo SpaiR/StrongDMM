@@ -40,7 +40,7 @@ func New(path string) (*Dme, error) {
 
 	for _, object := range dme.Objects {
 		if object.parent != nil {
-			object.Vars.SetParent(object.parent.Vars)
+			object.Vars.LinkParent(object.parent.Vars)
 		}
 	}
 
@@ -57,7 +57,7 @@ func nameFromPath(path string, parentName *string) *string {
 }
 
 func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme) {
-	variables := dmvars.Variables{}
+	variables := dmvars.MutableVariables{}
 	var name *string
 
 	for _, treeVar := range root.Vars {
@@ -87,7 +87,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme
 	dme.Objects[root.Path] = &Object{
 		env:            dme,
 		Path:           root.Path,
-		Vars:           &variables,
+		Vars:           variables.ToImmutable(),
 		DirectChildren: children,
 	}
 }

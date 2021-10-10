@@ -145,9 +145,7 @@ func (a *app) AppEnvironmentObjectVariables(path string) *dmvars.Variables {
 // Initial variables don't have any internal data.
 // They have a parent, as variables of the appropriate environment object.
 func (a *app) AppInitialInstanceVariables(path string) *dmvars.Variables {
-	vars := &dmvars.Variables{}
-	vars.SetParent(a.AppEnvironmentObjectVariables(path))
-	return vars
+	return dmvars.FromParent(a.AppEnvironmentObjectVariables(path))
 }
 
 // AppUpdateTitle updates title in the application system window.

@@ -6,9 +6,10 @@ import (
 	"sdmm/util/slice"
 )
 
-// Variables is a structure to store instance (in the environment or on the map) variables.
-// Those vars are stored as a "string2string" map and immutable by concept.
-// It means that if you need to modify variables of an instance, then you need to create a new instance with modified vars.
+// Variables is a structure to store an instance (in the environment or on the map) variables.
+// Those variables are stored as a "string2string" map and immutable by concept.
+// It means that if you need to modify variables of an instance,
+// then you need to create a new instance with modified variables.
 // That restriction goes for the idea that instances by their nature are immutable as well.
 //
 // Variables do support an inheritance and value caching to avoid unnecessary value extraction.
@@ -23,7 +24,45 @@ type Variables struct {
 	cacheInt   map[string]int
 }
 
-func (v *Variables) SetParent(parent *Variables) {
+func FromParent(parent *Variables) *Variables {
+	return &Variables{parent: parent}
+}
+
+// MutableVariables are used to provide a basic modification interface,
+// without breaking of an immutability of Variables struct.
+type MutableVariables struct {
+	Variables
+}
+
+func (v *MutableVariables) Put(name string, value *string) {
+	if v.vars == nil {
+		v.vars = make(map[string]*string)
+	}
+	if !slice.StrContains(v.names, name) {
+		v.names = append(v.names, name)
+	}
+	v.vars[name] = value
+}
+
+func (v *MutableVariables) ToImmutable() *Variables {
+	return &Variables{
+		names:      v.names,
+		vars:       v.vars,
+		parent:     v.parent,
+		cacheText:  v.cacheText,
+		cacheFloat: v.cacheFloat,
+		cacheInt:   v.cacheInt,
+	}
+}
+
+func (v *Variables) HasParent() bool {
+	return v.parent != nil
+}
+
+func (v *Variables) LinkParent(parent *Variables) {
+	if v.parent != nil {
+		panic("Linking a parent to an occupied variables is prohibited!") // Just to ensure
+	}
 	v.parent = parent
 }
 
@@ -33,16 +72,6 @@ func (v *Variables) Iterate() []string {
 
 func (v *Variables) Len() int {
 	return len(v.names)
-}
-
-func (v *Variables) Put(name string, value *string) {
-	if v.vars == nil {
-		v.vars = make(map[string]*string)
-	}
-	if !slice.StrContains(v.names, name) {
-		v.names = append(v.names, name)
-	}
-	v.vars[name] = value
 }
 
 func (v *Variables) Value(name string) (string, bool) {

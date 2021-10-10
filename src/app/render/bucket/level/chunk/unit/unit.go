@@ -54,7 +54,7 @@ func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 			alpha, _ := i.Vars().Float("alpha")
 			r, g, b, a = float32(c.R), float32(c.G), float32(c.B), alpha/255
 		} else {
-			log.Printf("[unit] unable to parse [%s] for [%s]: [%v]", color, i.Path, err)
+			log.Printf("[unit] unable to parse [%s] for [%s]: [%v]", color, i.Path(), err)
 		}
 	}
 	return r, g, b, a

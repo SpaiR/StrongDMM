@@ -41,18 +41,21 @@ func parse(file *os.File) (*DmmData, error) {
 		escaping       bool
 		skipWhitespace bool
 
-		currData     Content
-		currInstance = &Instance{vars: &dmvars.Variables{}}
-		currVar      = make([]rune, 0)
-		currDatum    = make([]rune, 0)
+		currData      Content
+		currInstance  = &Instance{vars: &dmvars.Variables{}}
+		currVariables = &dmvars.MutableVariables{}
+		currVar       = make([]rune, 0)
+		currDatum     = make([]rune, 0)
 
 		currKey       []rune
 		currKeyLength = 0
 
 		// Functions:
 		flushCurrInstance = func() {
+			currInstance.vars = currVariables.ToImmutable()
 			currData = append(currData, currInstance)
 			currInstance = &Instance{vars: &dmvars.Variables{}}
+			currVariables = &dmvars.MutableVariables{}
 		}
 		flushCurrPath = func() {
 			currInstance.path = string(currDatum)
@@ -60,7 +63,7 @@ func parse(file *os.File) (*DmmData, error) {
 		}
 		flushCurrVariable = func() {
 			value := string(currDatum)
-			currInstance.vars.Put(string(currVar), &value)
+			currVariables.Put(string(currVar), &value)
 			currVar = currVar[:0]
 			currDatum = currDatum[:0]
 		}
