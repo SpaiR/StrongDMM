@@ -71,21 +71,21 @@ func toTGMStr(key Key, content Content, lineBreak string) string {
 	sb.WriteString(lineBreak)
 
 	for idx, instance := range content {
-		sb.WriteString(instance.Path)
+		sb.WriteString(instance.Path())
 
-		if instance.Vars.Len() > 0 {
+		if instance.Vars().Len() > 0 {
 			sb.WriteString("{")
 			sb.WriteString(lineBreak)
 
-			for idx, varName := range instance.Vars.Iterate() {
-				varValue, _ := instance.Vars.Value(varName)
+			for idx, varName := range instance.Vars().Iterate() {
+				varValue, _ := instance.Vars().Value(varName)
 
 				sb.WriteString("\t")
 				sb.WriteString(varName)
 				sb.WriteString(" = ")
 				sb.WriteString(varValue)
 
-				if idx != instance.Vars.Len()-1 {
+				if idx != instance.Vars().Len()-1 {
 					sb.WriteString(";")
 				}
 

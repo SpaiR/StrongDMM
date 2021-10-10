@@ -23,13 +23,13 @@ type Unit struct {
 
 func Make(x, y int, i *dmmdata.Instance, iconSize int) Unit {
 	// All vars below are built-in and expected to exist.
-	icon, _ := i.Vars.Text("icon")
-	iconState, _ := i.Vars.Text("icon_state")
-	dir, _ := i.Vars.Int("dir")
-	pixelX, _ := i.Vars.Int("pixel_x")
-	pixelY, _ := i.Vars.Int("pixel_y")
-	stepX, _ := i.Vars.Int("step_x")
-	stepY, _ := i.Vars.Int("step_y")
+	icon, _ := i.Vars().Text("icon")
+	iconState, _ := i.Vars().Text("icon_state")
+	dir, _ := i.Vars().Int("dir")
+	pixelX, _ := i.Vars().Int("pixel_x")
+	pixelY, _ := i.Vars().Int("pixel_y")
+	stepX, _ := i.Vars().Int("step_x")
+	stepY, _ := i.Vars().Int("step_y")
 
 	sp := dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir)
 	x1 := float32((x-1)*iconSize + pixelX + stepX)
@@ -48,10 +48,10 @@ func Make(x, y int, i *dmmdata.Instance, iconSize int) Unit {
 func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 	// Default rgba is white.
 	r, g, b, a = 1, 1, 1, 1
-	if color, _ := i.Vars.Text("color"); color != "" {
+	if color, _ := i.Vars().Text("color"); color != "" {
 		if c, err := csscolorparser.Parse(color); err == nil {
 			// Color = RGB from color variable + alpha variable.
-			alpha, _ := i.Vars.Float("alpha")
+			alpha, _ := i.Vars().Float("alpha")
 			r, g, b, a = float32(c.R), float32(c.G), float32(c.B), alpha/255
 		} else {
 			log.Printf("[unit] unable to parse [%s] for [%s]: [%v]", color, i.Path, err)
@@ -62,15 +62,15 @@ func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 
 // countLayer returns the value of combined instance vars: plane + Layer.
 func countLayer(i *dmmdata.Instance) float32 {
-	plane, _ := i.Vars.Float("plane")
-	layer, _ := i.Vars.Float("layer")
+	plane, _ := i.Vars().Float("plane")
+	layer, _ := i.Vars().Float("layer")
 
 	layer = plane*10_000 + layer*1000
 
 	// When mobs are on the same Layer with object they are always rendered above them (BYOND specific stuff).
-	if dm.IsPath(i.Path, "/obj") {
+	if dm.IsPath(i.Path(), "/obj") {
 		layer += 100
-	} else if dm.IsPath(i.Path, "/mob") {
+	} else if dm.IsPath(i.Path(), "/mob") {
 		layer += 10
 	}
 

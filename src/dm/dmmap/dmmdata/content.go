@@ -42,7 +42,7 @@ func (c Content) Hash() uint64 {
 func (c Content) Sorted() Content {
 	sorted := c.Copy()
 	sort.SliceStable(sorted, func(i, j int) bool {
-		return dm.PathWeight(sorted[i].Path) < dm.PathWeight(sorted[j].Path)
+		return dm.PathWeight(sorted[i].Path()) < dm.PathWeight(sorted[j].Path())
 	})
 	return sorted
 }

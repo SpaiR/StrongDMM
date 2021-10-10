@@ -49,5 +49,5 @@ func (i *instanceCache) GetAllByPath(path string) []*dmmdata.Instance {
 
 func (i *instanceCache) persist(instance *dmmdata.Instance) {
 	i.instances[instance.Id()] = instance
-	i.instancesByPath[instance.Path] = append(i.instancesByPath[instance.Path], instance)
+	i.instancesByPath[instance.Path()] = append(i.instancesByPath[instance.Path()], instance)
 }

@@ -31,7 +31,7 @@ func (i *Instances) Free() {
 }
 
 func (i *Instances) Select(instance *dmmdata.Instance) {
-	i.instanceNodes = makeInstancesNodes(dmmap.InstanceCache.GetAllByPath(instance.Path))
+	i.instanceNodes = makeInstancesNodes(dmmap.InstanceCache.GetAllByPath(instance.Path()))
 	i.selectedId = instance.Id()
 	i.tmpDoScrollToInstance = true
 	log.Println("[cpinstances] selected instance id:", i.selectedId)

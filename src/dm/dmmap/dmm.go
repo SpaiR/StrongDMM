@@ -59,8 +59,8 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 			for x := 1; x <= data.MaxX; x++ {
 				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
 				for _, instance := range data.Dictionary[data.Grid[tile.Coord]] {
-					if obj, ok := dme.Objects[instance.Path]; ok {
-						instance.Vars.SetParent(obj.Vars) // Instances from the dmmdata don't know about env objects.
+					if obj, ok := dme.Objects[instance.Path()]; ok {
+						instance.Vars().SetParent(obj.Vars) // Instances from the dmmdata don't know about env objects.
 						tile.AddInstance(InstanceCache.Put(instance))
 					} else {
 						log.Println("[dmmap] unknown instance:", instance.Path)

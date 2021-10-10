@@ -92,7 +92,7 @@ func (r *Render) batchBucketUnits(width, height float32) {
 					continue
 				}
 				// Hidden path = skip
-				if r.pathsFilter.IsHiddenPath(u.Inst.Path) {
+				if r.pathsFilter.IsHiddenPath(u.Inst.Path()) {
 					continue
 				}
 

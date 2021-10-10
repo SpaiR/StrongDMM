@@ -29,7 +29,7 @@ func (t *Tile) AddInstance(instance *dmmdata.Instance) {
 func (t *Tile) RemoveInstancesByPath(pathToRemove string) {
 	var newContent dmmdata.Content
 	for _, instance := range t.content {
-		if !dm.IsPath(instance.Path, pathToRemove) {
+		if !dm.IsPath(instance.Path(), pathToRemove) {
 			newContent = append(newContent, instance)
 		}
 	}

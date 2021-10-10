@@ -50,12 +50,12 @@ func (a *Add) OnMove(coord util.Point) {
 		tile := a.modify.Dmm().GetTile(coord)
 
 		if !a.altBehaviour {
-			if dm.IsPath(instance.Path, "/area") {
+			if dm.IsPath(instance.Path(), "/area") {
 				tile.RemoveInstancesByPath("/area")
-			} else if dm.IsPath(instance.Path, "/turf") {
+			} else if dm.IsPath(instance.Path(), "/turf") {
 				tile.RemoveInstancesByPath("/turf")
 			}
-		} else if dm.IsPath(instance.Path, "/obj") {
+		} else if dm.IsPath(instance.Path(), "/obj") {
 			tile.RemoveInstancesByPath("/obj")
 		}
 

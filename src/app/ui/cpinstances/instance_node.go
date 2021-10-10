@@ -24,8 +24,8 @@ func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 	if nodes != nil {
 		// Group by icon_state
 		sort.Slice(nodes, func(i, j int) bool {
-			iIconState, _ := nodes[i].orig.Vars.Text("icon_state")
-			jIconState, _ := nodes[j].orig.Vars.Text("icon_state")
+			iIconState, _ := nodes[i].orig.Vars().Text("icon_state")
+			jIconState, _ := nodes[j].orig.Vars().Text("icon_state")
 			return strings.Compare(iIconState, jIconState) == -1
 		})
 		// Group by name
@@ -36,7 +36,7 @@ func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 		// Fine an initial instance index.
 		idx := 0
 		for i, node := range nodes {
-			if node.orig.Vars.Len() == 0 {
+			if node.orig.Vars().Len() == 0 {
 				idx = i
 				break
 			}
@@ -52,11 +52,11 @@ func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 }
 
 func makeInstanceNode(instance *dmmdata.Instance) *instanceNode {
-	icon, _ := instance.Vars.Text("icon")
-	iconState, _ := instance.Vars.Text("icon_state")
-	dir, _ := instance.Vars.Int("dir")
+	icon, _ := instance.Vars().Text("icon")
+	iconState, _ := instance.Vars().Text("icon_state")
+	dir, _ := instance.Vars().Int("dir")
 	return &instanceNode{
-		name:   instance.Path[strings.LastIndex(instance.Path, "/")+1:],
+		name:   instance.Path()[strings.LastIndex(instance.Path(), "/")+1:],
 		orig:   instance,
 		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),
 	}

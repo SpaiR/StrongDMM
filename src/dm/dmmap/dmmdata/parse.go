@@ -21,6 +21,7 @@ func parse(file *os.File) (*DmmData, error) {
 	r := bufio.NewReader(file)
 
 	var (
+		// Variables:
 		dmmData = DmmData{
 			Filepath:   file.Name(),
 			Dictionary: make(DataDictionary),
@@ -41,12 +42,28 @@ func parse(file *os.File) (*DmmData, error) {
 		skipWhitespace bool
 
 		currData     Content
-		currInstance = &Instance{Vars: &dmvars.Variables{}}
+		currInstance = &Instance{vars: &dmvars.Variables{}}
 		currVar      = make([]rune, 0)
 		currDatum    = make([]rune, 0)
 
 		currKey       []rune
 		currKeyLength = 0
+
+		// Functions:
+		flushCurrInstance = func() {
+			currData = append(currData, currInstance)
+			currInstance = &Instance{vars: &dmvars.Variables{}}
+		}
+		flushCurrPath = func() {
+			currInstance.path = string(currDatum)
+			currDatum = currDatum[:0]
+		}
+		flushCurrVariable = func() {
+			value := string(currDatum)
+			currInstance.vars.Put(string(currVar), &value)
+			currVar = currVar[:0]
+			currDatum = currDatum[:0]
+		}
 	)
 
 	for {
@@ -119,17 +136,11 @@ func parse(file *os.File) (*DmmData, error) {
 							currVar = currVar[:length]
 							skipWhitespace = true
 						} else if c == ';' {
-							value := string(currDatum)
-							currInstance.Vars.Put(string(currVar), &value)
-							currVar = currVar[:0]
-							currDatum = currDatum[:0]
+							flushCurrVariable()
 							skipWhitespace = true
 						} else if c == '}' {
 							if len(currVar) > 0 {
-								value := string(currDatum)
-								currInstance.Vars.Put(string(currVar), &value)
-								currVar = currVar[:0]
-								currDatum = currDatum[:0]
+								flushCurrVariable()
 							}
 							inVarEditBlock = false
 						} else {
@@ -137,23 +148,18 @@ func parse(file *os.File) (*DmmData, error) {
 						}
 					}
 				} else if c == '{' {
-					currInstance.Path = string(currDatum)
-					currDatum = currDatum[:0]
+					flushCurrPath()
 					inVarEditBlock = true
 				} else if c == ',' {
-					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
-						currInstance.Path = string(currDatum)
-						currDatum = currDatum[:0]
+					if len(currInstance.path) == 0 && len(currDatum) > 0 {
+						flushCurrPath()
 					}
-					currData = append(currData, currInstance)
-					currInstance = &Instance{Vars: &dmvars.Variables{}}
+					flushCurrInstance()
 				} else if c == ')' {
-					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
-						currInstance.Path = string(currDatum)
-						currDatum = currDatum[:0]
+					if len(currInstance.path) == 0 && len(currDatum) > 0 {
+						flushCurrPath()
 					}
-					currData = append(currData, currInstance)
-					currInstance = &Instance{Vars: &dmvars.Variables{}}
+					flushCurrInstance()
 					key := Key(currKey)
 					currKey = currKey[:0]
 					data := make(Content, len(currData))

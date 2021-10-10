@@ -7,8 +7,8 @@ import (
 
 type Instance struct {
 	id   uint64
-	Path string
-	Vars *dmvars.Variables
+	path string
+	vars *dmvars.Variables
 }
 
 func NewInstance(id uint64, path string, vars *dmvars.Variables) *Instance {
@@ -17,9 +17,17 @@ func NewInstance(id uint64, path string, vars *dmvars.Variables) *Instance {
 
 func (i Instance) Id() uint64 {
 	if i.id == 0 {
-		i.id = InstanceId(i.Path, i.Vars)
+		i.id = InstanceId(i.path, i.vars)
 	}
 	return i.id
+}
+
+func (i Instance) Path() string {
+	return i.path
+}
+
+func (i Instance) Vars() *dmvars.Variables {
+	return i.vars
 }
 
 func InstanceId(path string, vars *dmvars.Variables) uint64 {
