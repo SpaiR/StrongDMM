@@ -6,14 +6,14 @@ import (
 	"github.com/mazznoer/csscolorparser"
 	"sdmm/dm"
 	"sdmm/dm/dmicon"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/util"
 )
 
 // Unit stores render information about specific object instance on the map.
 type Unit struct {
 	Sp   *dmicon.Sprite
-	Inst *dmminstance.Instance
+	Inst *dmmdata.Instance
 
 	Layer      float32
 	ViewBounds util.Bounds
@@ -21,7 +21,7 @@ type Unit struct {
 	R, G, B, A float32
 }
 
-func Make(x, y int, i *dmminstance.Instance, iconSize int) Unit {
+func Make(x, y int, i *dmmdata.Instance, iconSize int) Unit {
 	// All vars below are built-in and expected to exist.
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")
@@ -45,7 +45,7 @@ func Make(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	}
 }
 
-func parseColor(i *dmminstance.Instance) (r, g, b, a float32) {
+func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 	// Default rgba is white.
 	r, g, b, a = 1, 1, 1, 1
 	if color, _ := i.Vars.Text("color"); color != "" {
@@ -61,7 +61,7 @@ func parseColor(i *dmminstance.Instance) (r, g, b, a float32) {
 }
 
 // countLayer returns the value of combined instance vars: plane + Layer.
-func countLayer(i *dmminstance.Instance) float32 {
+func countLayer(i *dmmdata.Instance) float32 {
 	plane, _ := i.Vars.Float("plane")
 	layer, _ := i.Vars.Float("layer")
 

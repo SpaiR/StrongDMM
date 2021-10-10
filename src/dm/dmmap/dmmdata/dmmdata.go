@@ -13,6 +13,7 @@ type (
 	DataGrid       map[util.Point]Key
 )
 
+// DmmData stores raw information about the map. Mostly needed to for parsing and saving.
 type DmmData struct {
 	Filepath string
 

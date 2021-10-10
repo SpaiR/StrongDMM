@@ -12,7 +12,6 @@ import (
 	"sdmm/dm/dmicon"
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -41,7 +40,7 @@ func (a *app) openEnvironment(path string) {
 
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
-	dmminstance.Cache.Free()
+	dmmap.InstanceCache.Free()
 
 	a.AppUpdateTitle()
 

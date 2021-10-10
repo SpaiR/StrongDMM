@@ -6,11 +6,10 @@ import (
 	"strings"
 
 	"sdmm/dm"
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
-type Content []*dmminstance.Instance
+type Content []*Instance
 
 func (c Content) Equals(content Content) bool {
 	if len(c) != len(content) {

@@ -56,7 +56,7 @@ func create(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 func (sp *saveProcess) handleReusedKeys() {
 	log.Println("[dmmsave] handle reused keys...")
 
-	// Cache the initial content, since we know it won't change.
+	// InstanceCache the initial content, since we know it won't change.
 	keyByContentCache := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
 	for key, instances := range sp.initial.Dictionary {
 		keyByContentCache[instances.Hash()] = key

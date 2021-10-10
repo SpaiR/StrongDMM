@@ -3,12 +3,13 @@ package cpinstances
 import (
 	"log"
 
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmmdata"
 )
 
 type Action interface {
 	AppPointSize() float32
-	AppDoSelectInstance(instance *dmminstance.Instance)
+	AppDoSelectInstance(instance *dmmdata.Instance)
 }
 
 type Instances struct {
@@ -29,8 +30,8 @@ func (i *Instances) Free() {
 	i.selectedId = 0
 }
 
-func (i *Instances) Select(instance *dmminstance.Instance) {
-	i.instanceNodes = makeInstancesNodes(dmminstance.Cache.GetAllByPath(instance.Path))
+func (i *Instances) Select(instance *dmmdata.Instance) {
+	i.instanceNodes = makeInstancesNodes(dmmap.InstanceCache.GetAllByPath(instance.Path))
 	i.selectedId = instance.Id()
 	i.tmpDoScrollToInstance = true
 	log.Println("[cpinstances] selected instance id:", i.selectedId)
@@ -38,7 +39,7 @@ func (i *Instances) Select(instance *dmminstance.Instance) {
 
 func (i *Instances) Update() {
 	if i.selectedId != 0 {
-		if instance, ok := dmminstance.Cache.GetById(i.selectedId); ok {
+		if instance, ok := dmmap.InstanceCache.GetById(i.selectedId); ok {
 			i.Select(instance)
 		}
 	}

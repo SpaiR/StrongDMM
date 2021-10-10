@@ -9,7 +9,8 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
 	"sdmm/dm"
 	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/dmvars"
 )
 
@@ -86,8 +87,8 @@ func (a *app) AppDisposeCommandStack(id string) {
 
 // AppSelectedInstance returns currently selected dmminstance.Instance and bool value which shows if there is one.
 // Selected instance is taken from the component.Instances panel.
-func (a *app) AppSelectedInstance() (*dmminstance.Instance, bool) {
-	return dmminstance.Cache.GetById(a.layout.Instances.SelectedInstanceId())
+func (a *app) AppSelectedInstance() (*dmmdata.Instance, bool) {
+	return dmmap.InstanceCache.GetById(a.layout.Instances.SelectedInstanceId())
 }
 
 // AppHasSelectedInstance returns true, if the application has a globally selected instance.

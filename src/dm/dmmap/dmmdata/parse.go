@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/dm/dmvars"
 	"sdmm/util"
 )
@@ -42,7 +41,7 @@ func parse(file *os.File) (*DmmData, error) {
 		skipWhitespace bool
 
 		currData     Content
-		currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
+		currInstance = &Instance{Vars: &dmvars.Variables{}}
 		currVar      = make([]rune, 0)
 		currDatum    = make([]rune, 0)
 
@@ -147,14 +146,14 @@ func parse(file *os.File) (*DmmData, error) {
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currInstance)
-					currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
+					currInstance = &Instance{Vars: &dmvars.Variables{}}
 				} else if c == ')' {
 					if len(currInstance.Path) == 0 && len(currDatum) > 0 {
 						currInstance.Path = string(currDatum)
 						currDatum = currDatum[:0]
 					}
 					currData = append(currData, currInstance)
-					currInstance = &dmminstance.Instance{Vars: &dmvars.Variables{}}
+					currInstance = &Instance{Vars: &dmvars.Variables{}}
 					key := Key(currKey)
 					currKey = currKey[:0]
 					data := make(Content, len(currData))

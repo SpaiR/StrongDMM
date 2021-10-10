@@ -6,7 +6,8 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap"
+	"sdmm/dm/dmmap/dmmdata"
 )
 
 /*
@@ -96,7 +97,7 @@ func (a *app) AppDoOpenPreferences() {
 }
 
 // AppDoSelectInstance globally selects provided instance in the app.
-func (a *app) AppDoSelectInstance(instance *dmminstance.Instance) {
+func (a *app) AppDoSelectInstance(instance *dmmdata.Instance) {
 	log.Printf("[app] select instance: path=[%s], id=[%d]", instance.Path, instance.Id())
 	a.layout.Environment.SelectPath(instance.Path)
 	a.layout.Instances.Select(instance)
@@ -105,7 +106,7 @@ func (a *app) AppDoSelectInstance(instance *dmminstance.Instance) {
 // AppDoSelectInstanceByPath globally selects an instance with provided type path.
 func (a *app) AppDoSelectInstanceByPath(path string) {
 	log.Println("[app] select instance by path:", path)
-	a.AppDoSelectInstance(dmminstance.Cache.Get(path, a.AppInitialInstanceVariables(path)))
+	a.AppDoSelectInstance(dmmap.InstanceCache.Get(path, a.AppInitialInstanceVariables(path)))
 }
 
 // AppDoExit exits the app.

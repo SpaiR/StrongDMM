@@ -8,7 +8,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/snapshot"
 	"sdmm/imguiext"
 )
@@ -16,7 +16,7 @@ import (
 type Action interface {
 	canvas.Action
 
-	AppSelectedInstance() (*dmminstance.Instance, bool)
+	AppSelectedInstance() (*dmmdata.Instance, bool)
 	AppHasSelectedInstance() bool
 
 	AppAddMouseChangeCallback(cb func(uint, uint)) int

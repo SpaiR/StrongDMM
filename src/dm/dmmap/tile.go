@@ -3,7 +3,6 @@ package dmmap
 import (
 	"sdmm/dm"
 	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -23,7 +22,7 @@ func (t Tile) Copy() Tile {
 	}
 }
 
-func (t *Tile) AddInstance(instance *dmminstance.Instance) {
+func (t *Tile) AddInstance(instance *dmmdata.Instance) {
 	t.content = append(t.content, instance)
 }
 

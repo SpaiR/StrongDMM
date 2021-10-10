@@ -3,14 +3,14 @@ package tool
 import (
 	"sdmm/dm"
 	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmminstance"
+	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/util"
 )
 
 type Modify interface {
 	Dmm() *dmmap.Dmm
 	UpdateCanvasByCoord(coord util.Point)
-	SelectedInstance() (*dmminstance.Instance, bool)
+	SelectedInstance() (*dmmdata.Instance, bool)
 	CommitChanges(string)
 }
 

@@ -6,10 +6,11 @@ import (
 
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmmap/dmminstance"
 	"sdmm/util"
 )
 
+// Dmm stores information about the map.
+// Unlike the dmmdata.DmmData this information is needed mostly for the editor usages.
 type Dmm struct {
 	// Value is used mostly for stuff connected with the rendering.
 	WorldIconSize int
@@ -60,7 +61,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 				for _, instance := range data.Dictionary[data.Grid[tile.Coord]] {
 					if obj, ok := dme.Objects[instance.Path]; ok {
 						instance.Vars.SetParent(obj.Vars) // Instances from the dmmdata don't know about env objects.
-						tile.AddInstance(dmminstance.Cache.Put(instance))
+						tile.AddInstance(InstanceCache.Put(instance))
 					} else {
 						log.Println("[dmmap] unknown instance:", instance.Path)
 					}
