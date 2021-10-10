@@ -10,8 +10,6 @@ import (
 	"sdmm/util"
 )
 
-var Cache = &unitsCache{make(map[unitHash]Unit)}
-
 // Unit stores render information about specific object instance on the map.
 type Unit struct {
 	Sp   *dmicon.Sprite
@@ -23,30 +21,7 @@ type Unit struct {
 	R, G, B, A float32
 }
 
-type unitHash struct {
-	x, y int
-	id   uint64
-}
-
-type unitsCache struct {
-	units map[unitHash]Unit
-}
-
-func (u *unitsCache) Free() {
-	u.units = make(map[unitHash]Unit)
-}
-
-func (u *unitsCache) Get(x, y int, i dmminstance.Instance, iconSize int) Unit {
-	hash := unitHash{x: x, y: y, id: i.Id()}
-	if cachedUnit, ok := u.units[hash]; ok {
-		return cachedUnit
-	}
-	unit := makeUnit(x, y, i, iconSize)
-	u.units[hash] = unit
-	return unit
-}
-
-func makeUnit(x, y int, i dmminstance.Instance, iconSize int) Unit {
+func Make(x, y int, i dmminstance.Instance, iconSize int) Unit {
 	// All vars below are built-in and expected to exist.
 	icon, _ := i.Vars.Text("icon")
 	iconState, _ := i.Vars.Text("icon_state")

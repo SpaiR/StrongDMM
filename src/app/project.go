@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
-	"sdmm/app/render"
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmicon"
 	"sdmm/dm/dmmap"
@@ -42,9 +42,10 @@ func (a *app) openEnvironment(path string) {
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
 	dmminstance.Cache.Free()
-	render.Free()
 
 	a.AppUpdateTitle()
+
+	runtime.GC()
 
 	log.Println("[app] environment opened:", path)
 }
@@ -70,6 +71,8 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	a.configData.Save()
 	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx)
 	a.layout.Instances.Update()
+
+	runtime.GC()
 
 	log.Println("[app] map opened:", path)
 }

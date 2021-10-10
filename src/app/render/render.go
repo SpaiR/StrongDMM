@@ -6,7 +6,6 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
-	"sdmm/app/render/bucket/level/chunk/unit"
 	"sdmm/dm"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
@@ -16,10 +15,6 @@ type overlayState interface {
 	HoverOutOfBounds() bool
 	HoveredTileBounds() util.Bounds
 	ModifiedTiles() []util.Bounds
-}
-
-func Free() {
-	unit.Cache.Free()
 }
 
 type Render struct {
