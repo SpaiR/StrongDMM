@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	fontSizeDefault = 15
+	fontSizeDefault = 16
 )
 
 func (w *Window) configureFonts() {
