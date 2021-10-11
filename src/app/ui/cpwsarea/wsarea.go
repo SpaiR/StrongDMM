@@ -16,8 +16,7 @@ type App interface {
 	wsmap.App
 
 	UpdateTitle()
-	SwitchCommandStack(id string)
-	DisposeCommandStack(id string)
+	CommandStorage() *command.Storage
 }
 
 type WsArea struct {
@@ -119,7 +118,7 @@ func (w *WsArea) closeWorkspaceByIdx(idx int) {
 		w.workspaces = append(w.workspaces[:idx], w.workspaces[idx+1:]...)
 		ws.Dispose()
 		log.Printf("[cpwsarea] workspace closed in idx [%d]: %s", idx, ws.Name())
-		w.app.DisposeCommandStack(ws.CommandStackId())
+		w.app.CommandStorage().DisposeStack(ws.CommandStackId())
 	}
 }
 
@@ -152,9 +151,9 @@ func (w *WsArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 		w.app.UpdateTitle()
 
 		if activeWs == nil {
-			w.app.SwitchCommandStack(command.NullSpaceStackId)
+			w.app.CommandStorage().SetStack(command.NullSpaceStackId)
 		} else {
-			w.app.SwitchCommandStack(w.activeWs.CommandStackId())
+			w.app.CommandStorage().SetStack(w.activeWs.CommandStackId())
 		}
 	}
 }

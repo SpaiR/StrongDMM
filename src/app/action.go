@@ -50,41 +50,6 @@ func (a *app) RemoveMouseChangeCallback(callbackId int) {
 	a.masterWindow.RemoveMouseChangeCallback(callbackId)
 }
 
-// SwitchCommandStack switches application active command stack id.
-func (a *app) SwitchCommandStack(id string) {
-	a.commandStorage.SetStack(id)
-}
-
-// PushCommand pushes received command to the active command stack.
-func (a *app) PushCommand(command command.Command) {
-	a.commandStorage.Push(command)
-}
-
-// HasUndo returns true, if the current active command stack has any command to undo.
-func (a *app) HasUndo() bool {
-	return a.commandStorage.HasUndo()
-}
-
-// HasRedo returns true, if the current active command stack has any command to redo.
-func (a *app) HasRedo() bool {
-	return a.commandStorage.HasRedo()
-}
-
-// IsCommandStackModified returns true, if the command stack with provided id is modified.
-func (a *app) IsCommandStackModified(id string) bool {
-	return a.commandStorage.IsModified(id)
-}
-
-// ForceBalanceCommandStack will do a force balance of the command stack with provided id.
-func (a *app) ForceBalanceCommandStack(id string) {
-	a.commandStorage.ForceBalance(id)
-}
-
-// DisposeCommandStack will dispose the command stack with provided id.
-func (a *app) DisposeCommandStack(id string) {
-	a.commandStorage.DisposeStack(id)
-}
-
 // SelectedInstance returns currently selected dmmdata.Instance and bool value which shows if there is one.
 // Selected instance is taken from the component.Instances panel.
 func (a *app) SelectedInstance() (*dmmdata.Instance, bool) {
@@ -167,6 +132,11 @@ func (a *app) UpdateTitle() {
 
 	a.masterWindow.Handle.SetTitle(title)
 	log.Println("[app] title updated:", title)
+}
+
+// CommandStorage returns command.Storage for the application.
+func (a *app) CommandStorage() *command.Storage {
+	return a.commandStorage
 }
 
 // PathsFilter returns dm.PathsFilter for the application.

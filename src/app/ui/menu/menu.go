@@ -1,6 +1,7 @@
 package menu
 
 import (
+	"sdmm/app/command"
 	"sdmm/dm"
 	"sdmm/dm/dmenv"
 	w "sdmm/imguiext/widget"
@@ -39,10 +40,8 @@ type app interface {
 
 	HasActiveMap() bool
 
-	HasUndo() bool
-	HasRedo() bool
-
 	PathsFilter() *dm.PathsFilter
+	CommandStorage() *command.Storage
 }
 
 type Menu struct {
@@ -101,10 +100,10 @@ func (m *Menu) Process() {
 
 		w.Menu("Edit", w.Layout{
 			w.MenuItem("Undo", m.app.DoUndo).
-				Enabled(m.app.HasUndo()).
+				Enabled(m.app.CommandStorage().HasUndo()).
 				Shortcut("Ctrl+Z"),
 			w.MenuItem("Redo", m.app.DoRedo).
-				Enabled(m.app.HasRedo()).
+				Enabled(m.app.CommandStorage().HasRedo()).
 				Shortcut("Ctrl+Shift+Z"),
 		}),
 

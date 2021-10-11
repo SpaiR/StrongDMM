@@ -5,10 +5,10 @@ import w "sdmm/imguiext/widget"
 func (t *TileMenu) showControls() {
 	w.Layout{
 		w.MenuItem("Undo", t.app.DoUndo).
-			Enabled(t.app.HasUndo()).
+			Enabled(t.app.CommandStorage().HasUndo()).
 			Shortcut("Ctrl+Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
-			Enabled(t.app.HasRedo()).
+			Enabled(t.app.CommandStorage().HasRedo()).
 			Shortcut("Ctrl+Shift+Z"),
 	}.Build()
 }

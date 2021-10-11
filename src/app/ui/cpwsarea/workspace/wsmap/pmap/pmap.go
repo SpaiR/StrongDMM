@@ -24,7 +24,7 @@ type App interface {
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)
 
-	PushCommand(command command.Command)
+	CommandStorage() *command.Storage
 }
 
 type PaneMap struct {

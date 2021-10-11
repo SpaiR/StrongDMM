@@ -30,7 +30,7 @@ func (m *Menu) addShortcuts() {
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyZ,
 		Action:      m.app.DoUndo,
-		IsEnabled:   m.app.HasUndo,
+		IsEnabled:   m.app.CommandStorage().HasUndo,
 	})
 
 	shortcut.Add(shortcut.Shortcut{
@@ -41,7 +41,7 @@ func (m *Menu) addShortcuts() {
 		SecondKeyAlt: glfw.KeyRightShift,
 		ThirdKey:     glfw.KeyZ,
 		Action:       m.app.DoRedo,
-		IsEnabled:    m.app.HasRedo,
+		IsEnabled:    m.app.CommandStorage().HasRedo,
 	})
 	shortcut.Add(shortcut.Shortcut{
 		Id:          "menu#AppDoRedo",
@@ -49,7 +49,7 @@ func (m *Menu) addShortcuts() {
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyY,
 		Action:      m.app.DoRedo,
-		IsEnabled:   m.app.HasRedo,
+		IsEnabled:   m.app.CommandStorage().HasRedo,
 	})
 
 	shortcut.Add(shortcut.Shortcut{

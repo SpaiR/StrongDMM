@@ -2,6 +2,7 @@ package tilemenu
 
 import (
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dm/dmmap"
 	"sdmm/util"
@@ -11,8 +12,7 @@ type App interface {
 	DoUndo()
 	DoRedo()
 
-	HasUndo() bool
-	HasRedo() bool
+	CommandStorage() *command.Storage
 }
 
 type mapState interface {
