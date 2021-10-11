@@ -7,13 +7,13 @@ import (
 	"sdmm/dm/dmmap/dmmdata"
 )
 
-type Action interface {
-	AppPointSize() float32
-	AppDoSelectInstance(instance *dmmdata.Instance)
+type App interface {
+	PointSize() float32
+	DoSelectInstance(instance *dmmdata.Instance)
 }
 
 type Instances struct {
-	action Action
+	app App
 
 	instanceNodes []*instanceNode
 	selectedId    uint64
@@ -21,8 +21,8 @@ type Instances struct {
 	tmpDoScrollToInstance bool
 }
 
-func (i *Instances) Init(action Action) {
-	i.action = action
+func (i *Instances) Init(app App) {
+	i.app = app
 }
 
 func (i *Instances) Free() {
@@ -51,7 +51,7 @@ func (i *Instances) SelectedInstanceId() uint64 {
 }
 
 func (i *Instances) doSelect(node *instanceNode) {
-	i.action.AppDoSelectInstance(node.orig)
+	i.app.DoSelectInstance(node.orig)
 	i.tmpDoScrollToInstance = false // do not scroll panel when we're in panel itself
 }
 
@@ -60,13 +60,13 @@ func (i *Instances) showContextMenu(node *instanceNode) {
 }
 
 func (i Instances) iconSize() float32 {
-	return 32 * i.action.AppPointSize()
+	return 32 * i.app.PointSize()
 }
 
 func (i *Instances) textIndent() float32 {
-	return 36 * i.action.AppPointSize()
+	return 36 * i.app.PointSize()
 }
 
 func (i *Instances) iconIndent() float32 {
-	return 1 * i.action.AppPointSize()
+	return 1 * i.app.PointSize()
 }

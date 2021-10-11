@@ -10,28 +10,28 @@ import (
 	"sdmm/dm/dmmsave"
 )
 
-type Action interface {
-	pmap.Action
+type App interface {
+	pmap.App
 
-	AppIsCommandStackModified(id string) bool
-	AppForceBalanceCommandStack(id string)
+	IsCommandStackModified(id string) bool
+	ForceBalanceCommandStack(id string)
 }
 
 type WsMap struct {
 	workspace.Base
 
-	action Action
+	app App
 
 	PaneMap *pmap.PaneMap
 }
 
-func New(action Action, dmm *dmmap.Dmm) *WsMap {
+func New(app App, dmm *dmmap.Dmm) *WsMap {
 	ws := &WsMap{
-		PaneMap: pmap.New(action, dmm),
+		PaneMap: pmap.New(app, dmm),
 	}
 
 	ws.Workspace = ws
-	ws.action = action
+	ws.app = app
 
 	return ws
 }
@@ -39,7 +39,7 @@ func New(action Action, dmm *dmmap.Dmm) *WsMap {
 func (ws *WsMap) Save() {
 	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
 	dmmsave.Save(ws.PaneMap.Dmm())
-	ws.action.AppForceBalanceCommandStack(ws.CommandStackId())
+	ws.app.ForceBalanceCommandStack(ws.CommandStackId())
 }
 
 func (ws *WsMap) CommandStackId() string {
@@ -48,7 +48,7 @@ func (ws *WsMap) CommandStackId() string {
 
 func (ws *WsMap) Name() string {
 	visibleName := ws.PaneMap.Dmm().Name
-	if ws.action.AppIsCommandStackModified(ws.CommandStackId()) {
+	if ws.app.IsCommandStackModified(ws.CommandStackId()) {
 		visibleName += " *"
 	}
 	return fmt.Sprint(visibleName, "###workspace_map_", ws.PaneMap.Dmm().Path.Absolute)

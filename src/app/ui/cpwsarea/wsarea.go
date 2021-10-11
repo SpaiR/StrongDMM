@@ -11,25 +11,25 @@ import (
 	"sdmm/dm/dmmap"
 )
 
-type Action interface {
-	wsempty.Action
-	wsmap.Action
+type App interface {
+	wsempty.App
+	wsmap.App
 
-	AppUpdateTitle()
-	AppSwitchCommandStack(id string)
-	AppDisposeCommandStack(id string)
+	UpdateTitle()
+	SwitchCommandStack(id string)
+	DisposeCommandStack(id string)
 }
 
 type WsArea struct {
-	action Action
+	app App
 
 	activeWs workspace.Workspace
 
 	workspaces []workspace.Workspace
 }
 
-func (w *WsArea) Init(action Action) {
-	w.action = action
+func (w *WsArea) Init(app App) {
+	w.app = app
 	w.addEmptyWorkspace()
 }
 
@@ -55,7 +55,7 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) {
 		return
 	}
 
-	ws := wsmap.New(w.action, dmm)
+	ws := wsmap.New(w.app, dmm)
 	if workspaceIdx != -1 {
 		w.closeWorkspaceByIdx(workspaceIdx)
 		w.addWorkspaceV(ws, workspaceIdx)
@@ -119,12 +119,12 @@ func (w *WsArea) closeWorkspaceByIdx(idx int) {
 		w.workspaces = append(w.workspaces[:idx], w.workspaces[idx+1:]...)
 		ws.Dispose()
 		log.Printf("[cpwsarea] workspace closed in idx [%d]: %s", idx, ws.Name())
-		w.action.AppDisposeCommandStack(ws.CommandStackId())
+		w.app.DisposeCommandStack(ws.CommandStackId())
 	}
 }
 
 func (w *WsArea) addEmptyWorkspace() {
-	w.addWorkspace(wsempty.New(w.action))
+	w.addWorkspace(wsempty.New(w.app))
 }
 
 func (w *WsArea) findWorkspaceIdx(ws workspace.Workspace) int {
@@ -149,12 +149,12 @@ func (w *WsArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 	if w.activeWs != activeWs {
 		w.activeWs = activeWs
 
-		w.action.AppUpdateTitle()
+		w.app.UpdateTitle()
 
 		if activeWs == nil {
-			w.action.AppSwitchCommandStack(command.NullSpaceStackId)
+			w.app.SwitchCommandStack(command.NullSpaceStackId)
 		} else {
-			w.action.AppSwitchCommandStack(w.activeWs.CommandStackId())
+			w.app.SwitchCommandStack(w.activeWs.CommandStackId())
 		}
 	}
 }

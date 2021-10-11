@@ -15,8 +15,8 @@ import (
 	Such methods have a "Do" prefix, and they are logged excessively.
 */
 
-// AppDoOpenEnvironment opens environment, which user need to select in file dialog.
-func (a *app) AppDoOpenEnvironment() {
+// DoOpenEnvironment opens environment, which user need to select in file dialog.
+func (a *app) DoOpenEnvironment() {
 	log.Println("[app] selecting environment to open...")
 	if file, err := dialog.
 		File().
@@ -28,21 +28,21 @@ func (a *app) AppDoOpenEnvironment() {
 	}
 }
 
-// AppDoOpenEnvironmentByPath opens environment by provided path.
-func (a *app) AppDoOpenEnvironmentByPath(path string) {
+// DoOpenEnvironmentByPath opens environment by provided path.
+func (a *app) DoOpenEnvironmentByPath(path string) {
 	log.Println("[app] open environment by path:", path)
 	a.openEnvironment(path)
 }
 
-// AppDoClearRecentEnvironments clears recently opened environments.
-func (a *app) AppDoClearRecentEnvironments() {
+// DoClearRecentEnvironments clears recently opened environments.
+func (a *app) DoClearRecentEnvironments() {
 	log.Println("[app] clear recent environments")
 	a.configData.ClearRecentEnvironments()
 	a.configData.Save()
 }
 
-// AppDoSelectMapFile opens dialog window to select a map file.
-func (a *app) AppDoSelectMapFile() (string, error) {
+// DoSelectMapFile opens dialog window to select a map file.
+func (a *app) DoSelectMapFile() (string, error) {
 	log.Println("[app] selecting map file...")
 	return dialog.
 		File().
@@ -52,36 +52,36 @@ func (a *app) AppDoSelectMapFile() (string, error) {
 		Load()
 }
 
-// AppDoOpenMap opens map, which user need to select in file dialog.
-func (a *app) AppDoOpenMap() {
+// DoOpenMap opens map, which user need to select in file dialog.
+func (a *app) DoOpenMap() {
 	log.Println("[app] selecting map to open...")
-	if file, err := a.AppDoSelectMapFile(); err == nil {
+	if file, err := a.DoSelectMapFile(); err == nil {
 		log.Println("[app] map to open selected:", file)
 		a.openMap(file)
 	}
 }
 
-// AppDoOpenMapByPath opens map by provided path.
-func (a *app) AppDoOpenMapByPath(path string) {
+// DoOpenMapByPath opens map by provided path.
+func (a *app) DoOpenMapByPath(path string) {
 	log.Println("[app] open map by path:", path)
 	a.openMap(path)
 }
 
-// AppDoOpenMapByPathV same as AppDoOpenMapByPath by map will be opened inside the concrete workspace with the provided index.
-func (a *app) AppDoOpenMapByPathV(path string, workspaceIdx int) {
+// DoOpenMapByPathV same as DoOpenMapByPath by map will be opened inside the concrete workspace with the provided index.
+func (a *app) DoOpenMapByPathV(path string, workspaceIdx int) {
 	log.Printf("[app] open map with workspace index [%d] by path: [%s]", workspaceIdx, path)
 	a.openMapV(path, workspaceIdx)
 }
 
-// AppDoClearRecentMaps clears recently opened maps.
-func (a *app) AppDoClearRecentMaps() {
+// DoClearRecentMaps clears recently opened maps.
+func (a *app) DoClearRecentMaps() {
 	log.Println("[app] clear recent maps")
 	a.configData.ClearRecentMaps(a.loadedEnvironment.RootFile)
 	a.configData.Save()
 }
 
-// AppDoSave saves current active map.
-func (a *app) AppDoSave() {
+// DoSave saves current active map.
+func (a *app) DoSave() {
 	log.Println("[app] do save")
 	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
 		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
@@ -90,51 +90,51 @@ func (a *app) AppDoSave() {
 	}
 }
 
-// AppDoOpenPreferences opens preferences tab.
-func (a *app) AppDoOpenPreferences() {
+// DoOpenPreferences opens preferences tab.
+func (a *app) DoOpenPreferences() {
 	log.Println("[app] open preferences")
 	a.layout.OpenPreferences(a.makePreferences())
 }
 
-// AppDoSelectInstance globally selects provided instance in the app.
-func (a *app) AppDoSelectInstance(instance *dmmdata.Instance) {
+// DoSelectInstance globally selects provided instance in the app.
+func (a *app) DoSelectInstance(instance *dmmdata.Instance) {
 	log.Printf("[app] select instance: path=[%s], id=[%d]", instance.Path(), instance.Id())
 	a.layout.Environment.SelectPath(instance.Path())
 	a.layout.Instances.Select(instance)
 }
 
-// AppDoSelectInstanceByPath globally selects an instance with provided type path.
-func (a *app) AppDoSelectInstanceByPath(path string) {
+// DoSelectInstanceByPath globally selects an instance with provided type path.
+func (a *app) DoSelectInstanceByPath(path string) {
 	log.Println("[app] select instance by path:", path)
-	a.AppDoSelectInstance(dmmap.InstanceCache.Get(path, a.AppInitialInstanceVariables(path)))
+	a.DoSelectInstance(dmmap.InstanceCache.Get(path, a.InitialInstanceVariables(path)))
 }
 
-// AppDoExit exits the app.
-func (a *app) AppDoExit() {
+// DoExit exits the app.
+func (a *app) DoExit() {
 	log.Println("[app] exit")
 	a.tmpShouldClose = true
 }
 
-// AppDoUndo does undo of the latest command.
-func (a *app) AppDoUndo() {
+// DoUndo does undo of the latest command.
+func (a *app) DoUndo() {
 	log.Println("[app] undo")
 	a.commandStorage.Undo()
 }
 
-// AppDoRedo does redo of the previous command.
-func (a *app) AppDoRedo() {
+// DoRedo does redo of the previous command.
+func (a *app) DoRedo() {
 	log.Println("[app] redo")
 	a.commandStorage.Redo()
 }
 
-// AppDoResetWindows resets application windows to their initial positions.
-func (a *app) AppDoResetWindows() {
+// DoResetWindows resets application windows to their initial positions.
+func (a *app) DoResetWindows() {
 	log.Println("[app] reset windows")
 	a.resetWindows()
 }
 
-// AppDoOpenLogs open the logs folder.
-func (a *app) AppDoOpenLogs() {
+// DoOpenLogs open the logs folder.
+func (a *app) DoOpenLogs() {
 	log.Println("[app] open logs dir:", a.logDir)
 	if err := open.Run(a.logDir); err != nil {
 		log.Println("[app] unable to open log dir:", err)

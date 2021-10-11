@@ -11,7 +11,7 @@ func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
 }
 
 func (p *PaneMap) SelectedInstance() (*dmmdata.Instance, bool) {
-	return p.action.AppSelectedInstance()
+	return p.app.SelectedInstance()
 }
 
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.
@@ -26,7 +26,7 @@ func (p *PaneMap) CommitChanges(changesType string) {
 	// Copy the value to pass it to the lambda.
 	activeLevel := p.activeLevel
 
-	p.action.AppPushCommand(command.Make(changesType, func() {
+	p.app.PushCommand(command.Make(changesType, func() {
 		p.snapshot.GoTo(stateId - 1)
 		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}, func() {

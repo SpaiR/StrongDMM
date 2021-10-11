@@ -7,12 +7,12 @@ import (
 	"sdmm/app/ui/cpwsarea"
 )
 
-type action interface {
-	cpenvironment.Action
-	cpinstances.Action
-	cpwsarea.Action
+type app interface {
+	cpenvironment.App
+	cpinstances.App
+	cpwsarea.App
 
-	AppIsWindowReset() bool
+	IsWindowReset() bool
 }
 
 type Layout struct {
@@ -20,7 +20,7 @@ type Layout struct {
 	cpinstances.Instances
 	cpwsarea.WsArea
 
-	action action
+	app app
 
 	leftNodeId     int32
 	leftUpNodeId   int32
@@ -29,11 +29,11 @@ type Layout struct {
 	rightNodeId    int32
 }
 
-func New(a action) *Layout {
-	l := &Layout{action: a}
-	l.Environment.Init(a)
-	l.Instances.Init(a)
-	l.WsArea.Init(a)
+func New(app app) *Layout {
+	l := &Layout{app: app}
+	l.Environment.Init(app)
+	l.Instances.Init(app)
+	l.WsArea.Init(app)
 	return l
 }
 
@@ -67,7 +67,7 @@ func (l *Layout) showRightNode() {
 func (l *Layout) updateNodes() {
 	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
 
-	if !l.action.AppIsWindowReset() {
+	if !l.app.IsWindowReset() {
 		return
 	}
 

@@ -11,10 +11,10 @@ import (
 	w "sdmm/imguiext/widget"
 )
 
-type Action interface {
-	AppLoadedEnvironment() *dmenv.Dme
-	AppPointSize() float32
-	AppDoSelectInstanceByPath(string)
+type App interface {
+	LoadedEnvironment() *dmenv.Dme
+	PointSize() float32
+	DoSelectInstanceByPath(string)
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -22,7 +22,7 @@ type Action interface {
 const newTreeNodesLimit = 25
 
 type Environment struct {
-	action Action
+	app App
 
 	treeId uint
 
@@ -38,8 +38,8 @@ type Environment struct {
 	tmpDoSelectPath      bool
 }
 
-func (e *Environment) Init(action Action) {
-	e.action = action
+func (e *Environment) Init(app App) {
+	e.app = app
 	e.treeNodes = make(map[string]*treeNode)
 }
 
@@ -73,7 +73,7 @@ func (e *Environment) SelectPath(path string) {
 }
 
 func (e *Environment) Process() {
-	if e.action.AppLoadedEnvironment() == nil {
+	if e.app.LoadedEnvironment() == nil {
 		imgui.Text("No Environment Loaded")
 	} else {
 		e.process()
@@ -124,7 +124,7 @@ func (e *Environment) showFilteredNodes() {
 }
 
 func (e *Environment) showPathBranch(t string) {
-	if atom := e.action.AppLoadedEnvironment().Objects[t]; atom != nil {
+	if atom := e.app.LoadedEnvironment().Objects[t]; atom != nil {
 		e.showBranch0(atom)
 	}
 }
@@ -153,7 +153,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 				imgui.StateStorage().SetAllInt(0)
 			}
 			for _, childPath := range object.DirectChildren {
-				e.showBranch0(e.action.AppLoadedEnvironment().Objects[childPath])
+				e.showBranch0(e.app.LoadedEnvironment().Objects[childPath])
 			}
 			imgui.TreePop()
 		} else {
@@ -164,7 +164,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 
 func (e *Environment) doSelectOnClick(node *treeNode) {
 	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
-		e.action.AppDoSelectInstanceByPath(node.orig.Path)
+		e.app.DoSelectInstanceByPath(node.orig.Path)
 		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from the tree itself
 	}
 }
@@ -195,7 +195,7 @@ func (e *Environment) scrollToSelectedPath(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := 16 * e.action.AppPointSize()
+	iconSize := 16 * e.app.PointSize()
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
 }
@@ -218,7 +218,7 @@ func (e *Environment) doFilter() {
 }
 
 func (e *Environment) filterPathBranch(t string) {
-	if atom := e.action.AppLoadedEnvironment().Objects[t]; atom != nil {
+	if atom := e.app.LoadedEnvironment().Objects[t]; atom != nil {
 		e.filterBranch0(atom)
 	}
 }
@@ -231,6 +231,6 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 	}
 
 	for _, childPath := range object.DirectChildren {
-		e.filterBranch0(e.action.AppLoadedEnvironment().Objects[childPath])
+		e.filterBranch0(e.app.LoadedEnvironment().Objects[childPath])
 	}
 }

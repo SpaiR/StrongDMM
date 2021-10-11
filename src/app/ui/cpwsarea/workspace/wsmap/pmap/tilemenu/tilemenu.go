@@ -7,12 +7,12 @@ import (
 	"sdmm/util"
 )
 
-type Action interface {
-	AppDoUndo()
-	AppDoRedo()
+type App interface {
+	DoUndo()
+	DoRedo()
 
-	AppHasUndo() bool
-	AppHasRedo() bool
+	HasUndo() bool
+	HasRedo() bool
 }
 
 type mapState interface {
@@ -22,7 +22,7 @@ type mapState interface {
 type TileMenu struct {
 	shortcuts shortcut.Shortcuts
 
-	action   Action
+	app      App
 	mapState mapState
 
 	opened bool
@@ -30,8 +30,8 @@ type TileMenu struct {
 	tile *dmmap.Tile
 }
 
-func New(action Action, state mapState) *TileMenu {
-	t := &TileMenu{action: action, mapState: state}
+func New(app App, state mapState) *TileMenu {
+	t := &TileMenu{app: app, mapState: state}
 	t.addShortcuts()
 	return t
 }

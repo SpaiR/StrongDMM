@@ -14,21 +14,21 @@ import (
 	"sdmm/imguiext"
 )
 
-type Action interface {
-	canvas.Action
-	tilemenu.Action
+type App interface {
+	canvas.App
+	tilemenu.App
 
-	AppSelectedInstance() (*dmmdata.Instance, bool)
-	AppHasSelectedInstance() bool
+	SelectedInstance() (*dmmdata.Instance, bool)
+	HasSelectedInstance() bool
 
-	AppAddMouseChangeCallback(cb func(uint, uint)) int
-	AppRemoveMouseChangeCallback(id int)
+	AddMouseChangeCallback(cb func(uint, uint)) int
+	RemoveMouseChangeCallback(id int)
 
-	AppPushCommand(command command.Command)
+	PushCommand(command command.Command)
 }
 
 type PaneMap struct {
-	action Action
+	app App
 
 	dmm      *dmmap.Dmm
 	snapshot *snapshot.Snapshot
@@ -52,29 +52,29 @@ func (p *PaneMap) Dmm() *dmmap.Dmm {
 	return p.dmm
 }
 
-func New(action Action, dmm *dmmap.Dmm) *PaneMap {
-	ws := &PaneMap{
+func New(app App, dmm *dmmap.Dmm) *PaneMap {
+	p := &PaneMap{
 		dmm:         dmm,
 		snapshot:    snapshot.NewSnapshot(dmm),
 		activeLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 
-	ws.action = action
+	p.app = app
 
-	ws.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmm.WorldIconSize)
-	ws.canvas = canvas.New(action)
-	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
-	ws.canvasTools = tools.NewTools(ws, ws.canvasControl, ws.canvasState)
-	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
-	ws.tileMenu = tilemenu.New(action, ws)
+	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmm.WorldIconSize)
+	p.canvas = canvas.New(app)
+	p.canvasControl = canvas.NewControl(p.canvas.Render.Camera)
+	p.canvasTools = tools.NewTools(p, p.canvasControl, p.canvasState)
+	p.canvasStatus = canvas.NewStatus(p.canvasState)
+	p.tileMenu = tilemenu.New(app, p)
 
-	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
-	ws.canvasControl.SetOnRmbClick(func() { ws.tileMenu.Open(ws.canvasState.HoveredTile()) })
+	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
+	p.canvasControl.SetOnRmbClick(func() { p.tileMenu.Open(p.canvasState.HoveredTile()) })
 
-	ws.canvas.Render.SetOverlayState(ws.canvasState)
-	ws.canvas.Render.ValidateLevel(ws.dmm, ws.activeLevel)
+	p.canvas.Render.SetOverlayState(p.canvasState)
+	p.canvas.Render.ValidateLevel(p.dmm, p.activeLevel)
 
-	return ws
+	return p
 }
 
 func (p *PaneMap) Process() {
@@ -87,7 +87,7 @@ func (p *PaneMap) Process() {
 
 func (p *PaneMap) Dispose() {
 	p.canvas.Dispose()
-	p.action.AppRemoveMouseChangeCallback(p.mouseChangeCbId)
+	p.app.RemoveMouseChangeCallback(p.mouseChangeCbId)
 	p.tileMenu.Dispose()
 	log.Println("[pmap] disposed")
 }

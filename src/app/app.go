@@ -93,7 +93,7 @@ func (a *app) initialize(internalDir string) {
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)
 
-	a.AppUpdateTitle()
+	a.UpdateTitle()
 	a.updateScale()
 	a.resetWindows()
 }

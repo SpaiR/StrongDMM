@@ -9,13 +9,13 @@ import (
 	"sdmm/dm"
 )
 
-type Action interface {
-	AppRunLater(job func())
-	AppPathsFilter() *dm.PathsFilter
+type App interface {
+	RunLater(job func())
+	PathsFilter() *dm.PathsFilter
 }
 
 type Canvas struct {
-	action Action
+	app App
 
 	Render *render.Render
 
@@ -28,7 +28,7 @@ type Canvas struct {
 func (c *Canvas) Dispose() {
 	// Run later, so it will be cleared in the next frame.
 	// Otherwise, we will see graphics artifacts.
-	c.action.AppRunLater(func() {
+	c.app.RunLater(func() {
 		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)
@@ -36,10 +36,10 @@ func (c *Canvas) Dispose() {
 	})
 }
 
-func New(action Action) *Canvas {
+func New(app App) *Canvas {
 	c := &Canvas{
-		action: action,
-		Render: render.New(action.AppPathsFilter()),
+		app:    app,
+		Render: render.New(app.PathsFilter()),
 	}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
