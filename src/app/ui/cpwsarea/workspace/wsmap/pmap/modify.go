@@ -26,7 +26,7 @@ func (p *PaneMap) CommitChanges(changesType string) {
 	// Copy the value to pass it to the lambda.
 	activeLevel := p.activeLevel
 
-	p.action.AppPushCommand(command.New(changesType, func() {
+	p.action.AppPushCommand(command.Make(changesType, func() {
 		p.snapshot.GoTo(stateId - 1)
 		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}, func() {

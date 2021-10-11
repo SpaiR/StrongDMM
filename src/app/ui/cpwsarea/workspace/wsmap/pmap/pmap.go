@@ -7,6 +7,7 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
 	"sdmm/dm/dmmap"
 	"sdmm/dm/dmmap/dmmdata"
 	"sdmm/dm/snapshot"
@@ -15,6 +16,7 @@ import (
 
 type Action interface {
 	canvas.Action
+	tilemenu.Action
 
 	AppSelectedInstance() (*dmmdata.Instance, bool)
 	AppHasSelectedInstance() bool
@@ -39,6 +41,7 @@ type PaneMap struct {
 	canvasControl *canvas.Control
 	canvasTools   *tools.Tools
 	canvas        *canvas.Canvas
+	tileMenu      *tilemenu.TileMenu
 
 	mouseChangeCbId int
 
@@ -63,8 +66,10 @@ func New(action Action, dmm *dmmap.Dmm) *PaneMap {
 	ws.canvasControl = canvas.NewControl(ws.canvas.Render.Camera)
 	ws.canvasTools = tools.NewTools(ws, ws.canvasControl, ws.canvasState)
 	ws.canvasStatus = canvas.NewStatus(ws.canvasState)
+	ws.tileMenu = tilemenu.New(action, ws)
 
 	ws.mouseChangeCbId = action.AppAddMouseChangeCallback(ws.mouseChangeCallback)
+	ws.canvasControl.SetOnRmbClick(func() { ws.tileMenu.Open(ws.canvasState.HoveredTile()) })
 
 	ws.canvas.Render.SetOverlayState(ws.canvasState)
 	ws.canvas.Render.ValidateLevel(ws.dmm, ws.activeLevel)
@@ -76,12 +81,14 @@ func (p *PaneMap) Process() {
 	p.panePos, p.paneSize = imgui.WindowPos(), imgui.WindowSize()
 	p.showPanel("canvasTools", pPosTop, p.canvasTools.Process)
 	p.showCanvas()
+	p.tileMenu.Process()
 	p.showPanel("canvasStatus", pPosBottom, p.canvasStatus.Process)
 }
 
 func (p *PaneMap) Dispose() {
 	p.canvas.Dispose()
 	p.action.AppRemoveMouseChangeCallback(p.mouseChangeCbId)
+	p.tileMenu.Dispose()
 	log.Println("[pmap] disposed")
 }
 

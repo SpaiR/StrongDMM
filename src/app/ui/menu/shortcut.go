@@ -7,7 +7,7 @@ import (
 
 func (m *Menu) addShortcuts() {
 	shortcut.Add(shortcut.Shortcut{
-		Name:        "AppDoOpenMap",
+		Id:          "menu#AppDoOpenMap",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyO,
@@ -16,7 +16,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
-		Name:        "AppDoSave",
+		Id:          "menu#AppDoSave",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyS,
@@ -25,7 +25,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
-		Name:        "AppDoUndo",
+		Id:          "menu#AppDoUndo",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyZ,
@@ -34,7 +34,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
-		Name:         "AppDoRedo",
+		Id:           "menu#AppDoRedo",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.KeyLeftShift,
@@ -44,7 +44,7 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:    m.action.AppHasRedo,
 	})
 	shortcut.Add(shortcut.Shortcut{
-		Name:        "AppDoRedo",
+		Id:          "menu#AppDoRedo",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyY,
@@ -53,7 +53,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
-		Name:         "doToggleArea",
+		Id:           "menu#doToggleArea",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.Key1,
@@ -62,7 +62,7 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:    m.action.AppHasLoadedEnvironment,
 	})
 	shortcut.Add(shortcut.Shortcut{
-		Name:         "doToggleTurf",
+		Id:           "menu#doToggleTurf",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.Key2,
@@ -71,7 +71,7 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:    m.action.AppHasLoadedEnvironment,
 	})
 	shortcut.Add(shortcut.Shortcut{
-		Name:         "doToggleObject",
+		Id:           "menu#doToggleObject",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.Key3,
@@ -80,7 +80,7 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:    m.action.AppHasLoadedEnvironment,
 	})
 	shortcut.Add(shortcut.Shortcut{
-		Name:         "doToggleMob",
+		Id:           "menu#doToggleMob",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.Key4,
@@ -90,7 +90,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
-		Name:     "AppDoResetWindows",
+		Id:       "menu#AppDoResetWindows",
 		FirstKey: glfw.KeyF5,
 		Action:   m.action.AppDoResetWindows,
 	})

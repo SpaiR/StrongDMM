@@ -10,7 +10,7 @@ type Command struct {
 	undo, redo func()
 }
 
-func New(name string, undo, redo func()) Command {
+func Make(name string, undo, redo func()) Command {
 	commandCounter++
 	return Command{
 		id:   commandCounter,

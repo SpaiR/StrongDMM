@@ -10,7 +10,7 @@ import (
 )
 
 type Shortcut struct {
-	Name         string
+	Id           string
 	FirstKey     glfw.Key
 	FirstKeyAlt  glfw.Key
 	SecondKey    glfw.Key
@@ -23,13 +23,13 @@ type Shortcut struct {
 
 func (s Shortcut) String() string {
 	return fmt.Sprintf(
-		"Name: %s, "+
+		"Id: %s, "+
 			"FirstKey: %d, FirstKeyAlt: %d, "+
 			"SecondKey: %d, SecondKeyAlt: %d, "+
 			"ThirdKey: %d, ThirdKeyAlt: %d, "+
 			"HasAction: %t, HasIsEnabled: %t, "+
 			"Wheight: %d",
-		s.Name,
+		s.Id,
 		s.FirstKey, s.FirstKeyAlt,
 		s.SecondKey, s.SecondKeyAlt,
 		s.ThirdKey, s.ThirdKeyAlt,
@@ -76,6 +76,16 @@ var shortcuts []Shortcut
 func Add(shortcut Shortcut) {
 	log.Println("[shortcut] added:", shortcut)
 	shortcuts = append(shortcuts, shortcut)
+}
+
+func Remove(shortcut Shortcut) {
+	log.Println("[shortcut] removed:", shortcut)
+	for idx, s := range shortcuts {
+		if s.Id == shortcut.Id {
+			shortcuts = append(shortcuts[:idx], shortcuts[idx+1:]...)
+			break
+		}
+	}
 }
 
 func Process() {

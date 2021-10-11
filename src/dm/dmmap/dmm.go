@@ -25,6 +25,11 @@ type Dmm struct {
 	Backup string
 }
 
+func (d *Dmm) HasTile(coord util.Point) bool {
+	idx := d.tileIndex(coord.X, coord.Y, coord.Z)
+	return idx >= 0 && idx < len(d.Tiles)
+}
+
 func (d *Dmm) GetTile(coord util.Point) *Tile {
 	return d.Tiles[d.tileIndex(coord.X, coord.Y, coord.Z)]
 }

@@ -17,7 +17,7 @@ type saveProcess struct {
 	unusedKeys map[dmmdata.Key]bool
 }
 
-func create(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
+func makeSaveProcess(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 	initial, err := dmmdata.New(dmm.Backup)
 	if err != nil {
 		log.Println("[dmmsave] unable to read map backup:", dmm.Backup)

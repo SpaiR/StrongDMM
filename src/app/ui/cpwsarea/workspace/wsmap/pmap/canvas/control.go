@@ -18,6 +18,12 @@ type Control struct {
 	activated bool
 	moving    bool
 	dragging  bool
+
+	onRmbClick func()
+}
+
+func (c *Control) SetOnRmbClick(cb func()) {
+	c.onRmbClick = cb
 }
 
 func (c *Control) Activated() bool {
@@ -50,6 +56,7 @@ func (c *Control) Process(size imgui.Vec2, activeLevel int) {
 	c.processMouseMove()
 	c.processMouseDrag()
 	c.processMouseScroll(size)
+	c.processMouseClick()
 }
 
 func (c *Control) showControlArea(size imgui.Vec2) {
@@ -118,4 +125,10 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 
 	c.Camera.Translate(offsetX, offsetY)
 	c.Camera.Zoom(zoomIn, scaleFactor)
+}
+
+func (c *Control) processMouseClick() {
+	if c.active && imgui.IsMouseClicked(imgui.MouseButtonRight) {
+		c.onRmbClick()
+	}
 }

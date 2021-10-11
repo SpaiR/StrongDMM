@@ -14,7 +14,7 @@ func Save(dmm *dmmap.Dmm) {
 func SaveV(dmm *dmmap.Dmm, path string) {
 	log.Println("[dmmsave] save started [" + path + "]...")
 
-	sp, err := create(dmm, path)
+	sp, err := makeSaveProcess(dmm, path)
 	if err != nil {
 		log.Println("[dmmsave] unable to start save process")
 		util.ShowErrorDialog("Unable to start save process")
