@@ -29,7 +29,7 @@ func New(path string) (*Dme, error) {
 		return nil, fmt.Errorf("[dmenv] unable to create dme by path [%s]: %w", path, err)
 	}
 
-	traverseTree0(objectTreeType, nil, &dme)
+	traverseTree0(objectTreeType, "", &dme)
 
 	linkPathFamily(&dme, "/atom", "/datum")
 	linkPathFamily(&dme, "/atom/movable", "/atom")
@@ -47,24 +47,22 @@ func New(path string) (*Dme, error) {
 	return &dme, nil
 }
 
-func nameFromPath(path string, parentName *string) *string {
-	if parentName == nil && len(path) > 1 {
-		s := path[strings.LastIndex(path, "/")+1:]
-		return &s
-	} else {
-		return parentName
+func nameFromPath(path string, parentName string) string {
+	if parentName == "" && len(path) > 1 {
+		return path[strings.LastIndex(path, "/")+1:]
 	}
+	return parentName
 }
 
-func traverseTree0(root *sdmmparser.ObjectTreeType, parentName *string, dme *Dme) {
+func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, dme *Dme) {
 	variables := dmvars.MutableVariables{}
-	var name *string
+	var name string
 
 	for _, treeVar := range root.Vars {
 		value := sanitizeVar(treeVar.Value)
 
 		if treeVar.Name == "name" {
-			if value == nil {
+			if value == dmvars.NullValue {
 				value = nameFromPath(root.Path, parentName)
 			}
 
@@ -105,12 +103,10 @@ func linkFamily0(dme *Dme, object *Object, parentType string) {
 	}
 }
 
-func sanitizeVar(value string) *string {
+func sanitizeVar(value string) string {
 	if len(value) > 2 && strings.HasPrefix(value, "{\"") && strings.HasSuffix(value, "\"}") {
 		value = value[1 : len(value)-1]
-		return &value
-	} else if value == "null" {
-		return nil
+		return value
 	}
-	return &value
+	return value
 }

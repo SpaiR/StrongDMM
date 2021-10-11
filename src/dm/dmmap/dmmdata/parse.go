@@ -62,8 +62,7 @@ func parse(file *os.File) (*DmmData, error) {
 			currDatum = currDatum[:0]
 		}
 		flushCurrVariable = func() {
-			value := string(currDatum)
-			currVariables.Put(string(currVar), &value)
+			currVariables.Put(string(currVar), string(currDatum))
 			currVar = currVar[:0]
 			currDatum = currDatum[:0]
 		}
