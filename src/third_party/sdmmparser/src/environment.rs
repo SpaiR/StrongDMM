@@ -1,3 +1,5 @@
+use std::panic;
+
 use dm::constants::Constant;
 use dm::Context;
 use dm::objtree::TypeRef;
@@ -16,9 +18,21 @@ struct ObjectTreeVar {
 }
 
 pub fn parse_environment(path: String) -> String {
-    match parse(&path) {
-        Some(json) => json,
-        None => format!("Unable to parse environment {}", path)
+    let result = panic::catch_unwind(|| {
+        match parse(&path) {
+            Some(json) => json,
+            None => format!("error: unable to parse environment {}", path)
+        }
+    });
+    match result {
+        Ok(res) => res,
+        Err(e) => {
+            if let Some(e) = e.downcast_ref::<String>() {
+                format!("error: {}", e)
+            } else {
+                String::from("error: unknown")
+            }
+        }
     }
 }
 

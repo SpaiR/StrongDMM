@@ -37,6 +37,7 @@ func (d *Dmi) State(state string) (*State, error) {
 func New(path string) (*Dmi, error) {
 	iconMetadata, err := sdmmparser.ParseIconMetadata(path)
 	if err != nil {
+		log.Printf("[dmi] unable to parse icon metadata [%s]: %s", path, err)
 		return nil, err
 	}
 

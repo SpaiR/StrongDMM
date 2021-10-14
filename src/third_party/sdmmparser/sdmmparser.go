@@ -2,7 +2,7 @@ package sdmmparser
 
 /*
 #cgo CFLAGS: -I./lib
-#cgo LDFLAGS: -L./lib -lsdmmparser
+#cgo LDFLAGS: -L./src/target/release -lsdmmparser
 #include <stdlib.h>
 #include "lib/sdmmparser.h"
 */
@@ -10,6 +10,7 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"unsafe"
 )
 
@@ -31,8 +32,13 @@ func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {
 	nativeStr := C.SdmmParseEnvironment(nativePath)
 	defer C.SdmmFreeStr(nativeStr)
 
+	str := C.GoString(nativeStr)
+	if strings.HasPrefix(str, "error") {
+		return nil, fmt.Errorf(str)
+	}
+
 	var data ObjectTreeType
-	if err := json.Unmarshal([]byte(C.GoString(nativeStr)), &data); err != nil {
+	if err := json.Unmarshal([]byte(str), &data); err != nil {
 		return nil, fmt.Errorf("unable to deserialize environment: %w", err)
 	}
 
@@ -56,8 +62,13 @@ func ParseIconMetadata(iconPath string) (*IconMetadata, error) {
 	nativeStr := C.SdmmParseIconMetadata(nativePath)
 	defer C.SdmmFreeStr(nativeStr)
 
+	str := C.GoString(nativeStr)
+	if strings.HasPrefix(str, "error") {
+		return nil, fmt.Errorf(str)
+	}
+
 	var data IconMetadata
-	if err := json.Unmarshal([]byte(C.GoString(nativeStr)), &data); err != nil {
+	if err := json.Unmarshal([]byte(str), &data); err != nil {
 		return nil, fmt.Errorf("unable to deserialize icon metadata: %w", err)
 	}
 

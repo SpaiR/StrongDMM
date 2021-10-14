@@ -23,6 +23,7 @@ func (a *app) openEnvironment(path string) {
 	env, err := dmenv.New(path)
 	if err != nil {
 		log.Println("[app] unable to open environment:", err)
+		util.ShowErrorDialog("Unable to open environment: " + path)
 		return
 	}
 	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())

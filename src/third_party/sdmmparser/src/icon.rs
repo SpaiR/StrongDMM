@@ -1,3 +1,4 @@
+use std::panic;
 use std::path::Path;
 
 use dm::dmi::*;
@@ -17,9 +18,21 @@ struct IconState {
 }
 
 pub fn parse_icon_metadata(path: String) -> String {
-    match parse(&path) {
-        Some(json) => json,
-        None => format!("Unable to parse icon metadata {}", path)
+    let result = panic::catch_unwind(|| {
+        match parse(&path) {
+            Some(json) => json,
+            None => format!("error: unable to parse icon metadata {}", path)
+        }
+    });
+    match result {
+        Ok(res) => res,
+        Err(e) => {
+            if let Some(e) = e.downcast_ref::<String>() {
+                format!("error: {}", e)
+            } else {
+                String::from("error: unknown")
+            }
+        }
     }
 }
 
