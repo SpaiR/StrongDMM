@@ -23,6 +23,11 @@ func (p *PaneMap) PasteTiles() {
 	p.CommitChanges("Paste")
 }
 
+func (p *PaneMap) CutTiles() {
+	p.CopyTiles()
+	p.DeleteTiles()
+}
+
 func (p *PaneMap) DeleteTiles() {
 	tile := p.dmm.GetTile(p.canvasState.LastHoveredTile())
 

@@ -155,6 +155,13 @@ func (a *app) DoPaste() {
 	}
 }
 
+func (a *app) DoCut() {
+	log.Println("[app] do cut")
+	if ws, ok := a.activeWsMap(); ok {
+		ws.PaneMap.CutTiles()
+	}
+}
+
 // DoDelete deletes tiles from the currently selected (hovered) tiles.
 func (a *app) DoDelete() {
 	log.Println("[app] do delete")

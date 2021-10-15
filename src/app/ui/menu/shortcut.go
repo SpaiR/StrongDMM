@@ -68,6 +68,13 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:   m.app.Clipboard().HasData,
 	})
 	shortcut.Add(shortcut.Shortcut{
+		Id:          "menu#DoCut",
+		FirstKey:    glfw.KeyLeftControl,
+		FirstKeyAlt: glfw.KeyRightControl,
+		SecondKey:   glfw.KeyX,
+		Action:      m.app.DoCut,
+	})
+	shortcut.Add(shortcut.Shortcut{
 		Id:       "menu#DoDelete",
 		FirstKey: glfw.KeyDelete,
 		Action:   m.app.DoDelete,

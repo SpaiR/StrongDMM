@@ -14,6 +14,7 @@ type App interface {
 
 	DoCopy()
 	DoPaste()
+	DoCut()
 	DoDelete()
 
 	CommandStorage() *command.Storage

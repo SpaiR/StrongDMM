@@ -26,6 +26,7 @@ type app interface {
 	DoRedo()   // Ctrl+Shift+Z | Ctrl+Y
 	DoCopy()   // Ctrl+C
 	DoPaste()  // Ctrl+V
+	DoCut()    // Ctrl+X
 	DoDelete() // Delete
 
 	// Window
@@ -116,6 +117,8 @@ func (m *Menu) Process() {
 			w.MenuItem("Paste", m.app.DoPaste).
 				Enabled(m.app.Clipboard().HasData()).
 				Shortcut("Ctrl+V"),
+			w.MenuItem("Cut", m.app.DoCut).
+				Shortcut("Ctrl+X"),
 			w.MenuItem("Delete", m.app.DoDelete).
 				Shortcut("Delete"),
 		}),
