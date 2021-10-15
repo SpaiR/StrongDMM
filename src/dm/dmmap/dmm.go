@@ -6,16 +6,12 @@ import (
 
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmvars"
 	"sdmm/util"
 )
 
 // Dmm stores information about the map.
 // Unlike the dmmdata.DmmData this information is needed mostly for the editor usages.
 type Dmm struct {
-	// Value is used mostly for stuff connected with the rendering.
-	WorldIconSize int
-
 	Name string
 	Path DmmPath
 
@@ -45,17 +41,9 @@ func (d *Dmm) tileIndex(x, y, z int) int {
 }
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
-	worldIconSize, _ := dme.Objects["/world"].Vars.Int("icon_size")
-	baseAreaPath, _ := dme.Objects["/world"].Vars.Value("area")
-	baseTurfPath, _ := dme.Objects["/world"].Vars.Value("turf")
-	baseArea := InstanceCache.Get(baseAreaPath, dmvars.FromParent(dme.Objects[baseAreaPath].Vars))
-	baseTurf := InstanceCache.Get(baseTurfPath, dmvars.FromParent(dme.Objects[baseTurfPath].Vars))
-
 	dmm := Dmm{
-		WorldIconSize: worldIconSize,
-
 		Name:  filepath.Base(data.Filepath),
-		Path:  newDmmPath(dme, data),
+		Path:  newDmmPath(dme.RootDir, data),
 		Tiles: make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
 		MaxX:  data.MaxX,
 		MaxY:  data.MaxY,
@@ -67,11 +55,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 	for z := 1; z <= data.MaxZ; z++ {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
-				tile := Tile{
-					Coord:    util.Point{X: x, Y: y, Z: z},
-					baseArea: baseArea,
-					baseTurf: baseTurf,
-				}
+				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
 
 				for _, instance := range data.Dictionary[data.Grid[tile.Coord]] {
 					if obj, ok := dme.Objects[instance.Path()]; ok {
@@ -98,8 +82,8 @@ type DmmPath struct {
 	Absolute string
 }
 
-func newDmmPath(dme *dmenv.Dme, data *dmmdata.DmmData) DmmPath {
-	readable, err := filepath.Rel(dme.RootDir, data.Filepath)
+func newDmmPath(rootDir string, data *dmmdata.DmmData) DmmPath {
+	readable, err := filepath.Rel(rootDir, data.Filepath)
 	if err != nil {
 		log.Println("[dmmap] unable to get relative path of the map:", data.Filepath)
 		readable = data.Filepath

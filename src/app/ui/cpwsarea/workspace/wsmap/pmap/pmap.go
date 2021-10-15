@@ -62,7 +62,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 
 	p.app = app
 
-	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmm.WorldIconSize)
+	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
 	p.canvas = canvas.New(app)
 	p.canvasControl = canvas.NewControl(p.canvas.Render.Camera)
 	p.canvasTools = tools.NewTools(p, p.canvasControl, p.canvasState)

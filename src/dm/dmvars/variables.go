@@ -78,6 +78,13 @@ func (v *Variables) Value(name string) (string, bool) {
 	return "", false
 }
 
+func (v *Variables) ValueV(name string, defaultValue string) string {
+	if value, ok := v.Value(name); ok {
+		return value
+	}
+	return defaultValue
+}
+
 func (v *Variables) Text(name string) (string, bool) {
 	if value, ok := v.Value(name); ok && value != NullValue {
 		if len(value) > 1 {
@@ -89,6 +96,13 @@ func (v *Variables) Text(name string) (string, bool) {
 	return "", false
 }
 
+func (v *Variables) TextV(name string, defaultValue string) string {
+	if value, ok := v.Text(name); ok {
+		return value
+	}
+	return defaultValue
+}
+
 func (v *Variables) Float(name string) (float32, bool) {
 	if value, ok := v.Value(name); ok && value != NullValue {
 		if n, err := strconv.ParseFloat(value, 32); err == nil {
@@ -98,6 +112,13 @@ func (v *Variables) Float(name string) (float32, bool) {
 	return 0, false
 }
 
+func (v *Variables) FloatV(name string, defaultValue float32) float32 {
+	if value, ok := v.Float(name); ok {
+		return value
+	}
+	return defaultValue
+}
+
 func (v *Variables) Int(name string) (int, bool) {
 	if value, ok := v.Value(name); ok && value != NullValue {
 		if n, err := strconv.ParseInt(value, 10, 32); err == nil {
@@ -105,4 +126,11 @@ func (v *Variables) Int(name string) (int, bool) {
 		}
 	}
 	return 0, false
+}
+
+func (v *Variables) IntV(name string, defaultValue int) int {
+	if value, ok := v.Int(name); ok {
+		return value
+	}
+	return defaultValue
 }

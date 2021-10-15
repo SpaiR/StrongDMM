@@ -43,6 +43,7 @@ func (a *app) openEnvironment(path string) {
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
 	dmmap.InstanceCache.Free()
+	dmmap.Init(env)
 
 	a.UpdateTitle()
 

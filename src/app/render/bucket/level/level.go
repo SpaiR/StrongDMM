@@ -23,7 +23,7 @@ type Level struct {
 func New(dmm *dmmap.Dmm, level int) *Level {
 	return &Level{
 		value:  level,
-		Chunks: generateChunks(dmm.MaxX, dmm.MaxY, dmm.WorldIconSize),
+		Chunks: generateChunks(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize),
 	}
 }
 

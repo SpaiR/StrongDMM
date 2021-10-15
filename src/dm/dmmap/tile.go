@@ -9,10 +9,6 @@ import (
 type Tile struct {
 	Coord   util.Point
 	content dmmdata.Content
-
-	// Tiles should have at least one area and one turf.
-	// Those fields will store them to ensure that the tile has a proper content.
-	baseArea, baseTurf *dmmdata.Instance
 }
 
 func (t Tile) Content() dmmdata.Content {
@@ -23,8 +19,6 @@ func (t Tile) Copy() Tile {
 	return Tile{
 		t.Coord,
 		t.content.Copy(),
-		t.baseArea,
-		t.baseTurf,
 	}
 }
 
@@ -57,9 +51,9 @@ func (t *Tile) AdjustBaseContent() {
 		}
 	}
 	if !hasArea {
-		t.AddInstance(t.baseArea)
+		t.AddInstance(baseArea)
 	}
 	if !hasTurf {
-		t.AddInstance(t.baseTurf)
+		t.AddInstance(baseTurf)
 	}
 }
