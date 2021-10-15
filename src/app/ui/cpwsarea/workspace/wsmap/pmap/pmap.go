@@ -25,6 +25,7 @@ type App interface {
 	RemoveMouseChangeCallback(id int)
 
 	CommandStorage() *command.Storage
+	Clipboard() *dmmap.Clipboard
 }
 
 type PaneMap struct {

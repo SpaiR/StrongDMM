@@ -6,6 +6,7 @@ import (
 
 	"sdmm/dm/dmenv"
 	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dm/dmvars"
 	"sdmm/util"
 )
 
@@ -34,7 +35,7 @@ func (d *Dmm) GetTile(coord util.Point) *Tile {
 	return d.Tiles[d.tileIndex(coord.X, coord.Y, coord.Z)]
 }
 
-func (d *Dmm) SetTile(x, y, z int, tile *Tile) {
+func (d *Dmm) setTile(x, y, z int, tile *Tile) {
 	d.Tiles[d.tileIndex(x, y, z)] = tile
 }
 
@@ -45,6 +46,10 @@ func (d *Dmm) tileIndex(x, y, z int) int {
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 	worldIconSize, _ := dme.Objects["/world"].Vars.Int("icon_size")
+	baseAreaPath, _ := dme.Objects["/world"].Vars.Value("area")
+	baseTurfPath, _ := dme.Objects["/world"].Vars.Value("turf")
+	baseArea := InstanceCache.Get(baseAreaPath, dmvars.FromParent(dme.Objects[baseAreaPath].Vars))
+	baseTurf := InstanceCache.Get(baseTurfPath, dmvars.FromParent(dme.Objects[baseTurfPath].Vars))
 
 	dmm := Dmm{
 		WorldIconSize: worldIconSize,
@@ -62,7 +67,12 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 	for z := 1; z <= data.MaxZ; z++ {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
-				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
+				tile := Tile{
+					Coord:    util.Point{X: x, Y: y, Z: z},
+					baseArea: baseArea,
+					baseTurf: baseTurf,
+				}
+
 				for _, instance := range data.Dictionary[data.Grid[tile.Coord]] {
 					if obj, ok := dme.Objects[instance.Path()]; ok {
 						// Instances from the dmmdata don't know about environment objects.
@@ -74,7 +84,8 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 						log.Println("[dmmap] unknown instance:", instance.Path())
 					}
 				}
-				dmm.SetTile(x, y, z, &tile)
+
+				dmm.setTile(x, y, z, &tile)
 			}
 		}
 	}

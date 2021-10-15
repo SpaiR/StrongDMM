@@ -10,5 +10,11 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Redo", t.app.DoRedo).
 			Enabled(t.app.CommandStorage().HasRedo()).
 			Shortcut("Ctrl+Shift+Z"),
+		w.Separator(),
+		w.MenuItem("Copy", t.app.DoCopy).
+			Shortcut("Ctrl+C"),
+		w.MenuItem("Paste", t.app.DoPaste).
+			Enabled(t.app.Clipboard().HasData()).
+			Shortcut("Ctrl+V"),
 	}.Build()
 }

@@ -60,6 +60,7 @@ func (a *Add) OnMove(coord util.Point) {
 		}
 
 		tile.AddInstance(instance)
+		tile.AdjustBaseContent()
 
 		a.modify.UpdateCanvasByCoord(coord)
 		a.visuals.MarkModifiedTile(coord)

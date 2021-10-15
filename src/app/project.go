@@ -38,6 +38,7 @@ func (a *app) openEnvironment(path string) {
 
 	a.commandStorage.Free()
 	a.pathsFilter.Free()
+	a.clipboard.Free()
 
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)

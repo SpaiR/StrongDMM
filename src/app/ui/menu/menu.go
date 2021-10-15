@@ -4,6 +4,7 @@ import (
 	"sdmm/app/command"
 	"sdmm/dm"
 	"sdmm/dm/dmenv"
+	"sdmm/dm/dmmap"
 	w "sdmm/imguiext/widget"
 )
 
@@ -21,8 +22,10 @@ type app interface {
 	DoExit()
 
 	// Edit
-	DoUndo() // Ctrl+Z
-	DoRedo() // Ctrl+Shift+Z | Ctrl+Y
+	DoUndo()  // Ctrl+Z
+	DoRedo()  // Ctrl+Shift+Z | Ctrl+Y
+	DoCopy()  // Ctrl+C
+	DoPaste() // Ctrl+V
 
 	// Window
 	DoResetWindows() // F5
@@ -42,6 +45,7 @@ type app interface {
 
 	PathsFilter() *dm.PathsFilter
 	CommandStorage() *command.Storage
+	Clipboard() *dmmap.Clipboard
 }
 
 type Menu struct {
@@ -105,6 +109,12 @@ func (m *Menu) Process() {
 			w.MenuItem("Redo", m.app.DoRedo).
 				Enabled(m.app.CommandStorage().HasRedo()).
 				Shortcut("Ctrl+Shift+Z"),
+			w.Separator(),
+			w.MenuItem("Copy", m.app.DoCopy).
+				Shortcut("Ctrl+C"),
+			w.MenuItem("Paste", m.app.DoPaste).
+				Enabled(m.app.Clipboard().HasData()).
+				Shortcut("Ctrl+V"),
 		}),
 
 		w.Menu("Options", w.Layout{

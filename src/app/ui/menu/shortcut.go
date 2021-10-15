@@ -53,6 +53,22 @@ func (m *Menu) addShortcuts() {
 	})
 
 	shortcut.Add(shortcut.Shortcut{
+		Id:          "menu#DoCopy",
+		FirstKey:    glfw.KeyLeftControl,
+		FirstKeyAlt: glfw.KeyRightControl,
+		SecondKey:   glfw.KeyC,
+		Action:      m.app.DoCopy,
+	})
+	shortcut.Add(shortcut.Shortcut{
+		Id:          "menu#DoPaste",
+		FirstKey:    glfw.KeyLeftControl,
+		FirstKeyAlt: glfw.KeyRightControl,
+		SecondKey:   glfw.KeyV,
+		Action:      m.app.DoPaste,
+		IsEnabled:   m.app.Clipboard().HasData,
+	})
+
+	shortcut.Add(shortcut.Shortcut{
 		Id:           "menu#doToggleArea",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,

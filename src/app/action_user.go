@@ -83,10 +83,8 @@ func (a *app) DoClearRecentMaps() {
 // DoSave saves current active map.
 func (a *app) DoSave() {
 	log.Println("[app] do save")
-	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
-		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
-			activeWs.Save()
-		}
+	if ws, ok := a.activeWsMap(); ok {
+		ws.Save()
 	}
 }
 
@@ -133,10 +131,35 @@ func (a *app) DoResetWindows() {
 	a.resetWindows()
 }
 
-// DoOpenLogs open the logs folder.
+// DoOpenLogs opens the logs folder.
 func (a *app) DoOpenLogs() {
 	log.Println("[app] open logs dir:", a.logDir)
 	if err := open.Run(a.logDir); err != nil {
 		log.Println("[app] unable to open log dir:", err)
 	}
+}
+
+// DoCopy copies currently selected (hovered) tile to the global clipboard.
+func (a *app) DoCopy() {
+	log.Println("[app] do copy")
+	if ws, ok := a.activeWsMap(); ok {
+		ws.PaneMap.CopyTiles()
+	}
+}
+
+// DoPaste pastes tiles from the global clipboard on the currently hovered tile.
+func (a *app) DoPaste() {
+	log.Println("[app] do paste")
+	if ws, ok := a.activeWsMap(); ok {
+		ws.PaneMap.PasteTiles()
+	}
+}
+
+func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
+	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
+		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
+			return activeWs, ok
+		}
+	}
+	return nil, false
 }

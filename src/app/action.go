@@ -143,3 +143,8 @@ func (a *app) CommandStorage() *command.Storage {
 func (a *app) PathsFilter() *dm.PathsFilter {
 	return a.pathsFilter
 }
+
+// Clipboard returns *dmmap.Clipboard for the application.
+func (a *app) Clipboard() *dmmap.Clipboard {
+	return a.clipboard
+}

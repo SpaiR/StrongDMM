@@ -19,6 +19,7 @@ import (
 	"sdmm/app/window"
 	"sdmm/dm"
 	"sdmm/dm/dmenv"
+	"sdmm/dm/dmmap"
 )
 
 const (
@@ -75,6 +76,7 @@ type app struct {
 	prefsData  *prefsData.Prefs
 
 	commandStorage *command.Storage
+	clipboard      *dmmap.Clipboard
 
 	menu   *menu.Menu
 	layout *layout.Layout
@@ -89,6 +91,7 @@ func (a *app) initialize(internalDir string) {
 
 	a.commandStorage = command.NewStorage()
 	a.pathsFilter = dm.NewPathsFilter()
+	a.clipboard = dmmap.NewClipboard(a.pathsFilter)
 
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)

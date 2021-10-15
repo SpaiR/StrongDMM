@@ -6,6 +6,7 @@ import (
 
 type State struct {
 	hoveredTile       util.Point  // DMM coord system: starts from 1, position in tiles.
+	lastHoveredTile   util.Point  // Same as the hoveredTile, but always stores the latest tile which was hovered.
 	hoveredTileBounds util.Bounds // Absolute coord system: starts from 0, position in pixels.
 
 	modifiedTiles []util.Bounds
@@ -45,6 +46,7 @@ func (s *State) SetHoveredTile(relLocalX, relLocalY, level int) {
 	mapMouseY := localMouseY + 1
 
 	s.hoveredTile = util.Point{X: mapMouseX, Y: mapMouseY, Z: level}
+	s.lastHoveredTile = s.hoveredTile.Copy()
 
 	s.hoveredTileBounds = util.Bounds{
 		X1: float32(localMouseX * s.iconSize),
@@ -73,6 +75,10 @@ func (s *State) ClearModifiedTiles() {
 
 func (s State) HoveredTile() util.Point {
 	return s.hoveredTile
+}
+
+func (s State) LastHoveredTile() util.Point {
+	return s.lastHoveredTile
 }
 
 func (s State) HoveredTileBounds() util.Bounds {

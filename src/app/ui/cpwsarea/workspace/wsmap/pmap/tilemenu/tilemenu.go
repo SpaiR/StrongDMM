@@ -12,7 +12,11 @@ type App interface {
 	DoUndo()
 	DoRedo()
 
+	DoCopy()
+	DoPaste()
+
 	CommandStorage() *command.Storage
+	Clipboard() *dmmap.Clipboard
 }
 
 type mapState interface {

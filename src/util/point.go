@@ -10,3 +10,11 @@ type Point struct {
 func (p Point) String() string {
 	return fmt.Sprintf("X:%d, Y:%d, Z:%d", p.X, p.Y, p.Z)
 }
+
+func (p Point) Copy() Point {
+	return Point{
+		X: p.X,
+		Y: p.Y,
+		Z: p.Z,
+	}
+}

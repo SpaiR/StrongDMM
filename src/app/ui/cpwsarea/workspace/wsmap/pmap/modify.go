@@ -14,6 +14,15 @@ func (p *PaneMap) SelectedInstance() (*dmmdata.Instance, bool) {
 	return p.app.SelectedInstance()
 }
 
+func (p *PaneMap) CopyTiles() {
+	p.app.Clipboard().Copy(p.dmm, []util.Point{p.canvasState.LastHoveredTile()})
+}
+
+func (p *PaneMap) PasteTiles() {
+	p.app.Clipboard().Paste(p.dmm, p.canvasState.LastHoveredTile())
+	p.CommitChanges("Paste")
+}
+
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) CommitChanges(changesType string) {
 	stateId, tilesToUpdate := p.snapshot.Commit()
@@ -25,6 +34,9 @@ func (p *PaneMap) CommitChanges(changesType string) {
 
 	// Copy the value to pass it to the lambda.
 	activeLevel := p.activeLevel
+
+	// Ensure that the user has updated visuals.
+	p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 
 	p.app.CommandStorage().Push(command.Make(changesType, func() {
 		p.snapshot.GoTo(stateId - 1)
