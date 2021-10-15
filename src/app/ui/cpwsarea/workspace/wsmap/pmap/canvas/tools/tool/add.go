@@ -51,15 +51,15 @@ func (a *Add) OnMove(coord util.Point) {
 
 		if !a.altBehaviour {
 			if dm.IsPath(instance.Path(), "/area") {
-				tile.RemoveInstancesByPath("/area")
+				tile.RemoveByPath("/area")
 			} else if dm.IsPath(instance.Path(), "/turf") {
-				tile.RemoveInstancesByPath("/turf")
+				tile.RemoveByPath("/turf")
 			}
 		} else if dm.IsPath(instance.Path(), "/obj") {
-			tile.RemoveInstancesByPath("/obj")
+			tile.RemoveByPath("/obj")
 		}
 
-		tile.AddInstance(instance)
+		tile.Add(instance)
 		tile.AdjustBaseContent()
 
 		a.modify.UpdateCanvasByCoord(coord)

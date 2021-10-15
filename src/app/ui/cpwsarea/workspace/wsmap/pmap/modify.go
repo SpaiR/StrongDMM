@@ -23,6 +23,19 @@ func (p *PaneMap) PasteTiles() {
 	p.CommitChanges("Paste")
 }
 
+func (p *PaneMap) DeleteTiles() {
+	tile := p.dmm.GetTile(p.canvasState.LastHoveredTile())
+
+	for _, instance := range tile.Content() {
+		if p.app.PathsFilter().IsVisiblePath(instance.Path()) {
+			tile.RemoveByPath(instance.Path())
+		}
+	}
+
+	tile.AdjustBaseContent()
+	p.CommitChanges("Delete")
+}
+
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) CommitChanges(changesType string) {
 	stateId, tilesToUpdate := p.snapshot.Commit()

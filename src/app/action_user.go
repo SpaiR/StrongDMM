@@ -139,7 +139,7 @@ func (a *app) DoOpenLogs() {
 	}
 }
 
-// DoCopy copies currently selected (hovered) tile to the global clipboard.
+// DoCopy copies currently selected (hovered) tiles to the global clipboard.
 func (a *app) DoCopy() {
 	log.Println("[app] do copy")
 	if ws, ok := a.activeWsMap(); ok {
@@ -152,6 +152,14 @@ func (a *app) DoPaste() {
 	log.Println("[app] do paste")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.PaneMap.PasteTiles()
+	}
+}
+
+// DoDelete deletes tiles from the currently selected (hovered) tiles.
+func (a *app) DoDelete() {
+	log.Println("[app] do delete")
+	if ws, ok := a.activeWsMap(); ok {
+		ws.PaneMap.DeleteTiles()
 	}
 }
 

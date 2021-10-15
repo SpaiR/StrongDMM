@@ -22,11 +22,11 @@ func (t Tile) Copy() Tile {
 	}
 }
 
-func (t *Tile) AddInstance(instance *dmmdata.Instance) {
+func (t *Tile) Add(instance *dmmdata.Instance) {
 	t.content = append(t.content, instance)
 }
 
-func (t *Tile) RemoveInstancesByPath(pathToRemove string) {
+func (t *Tile) RemoveByPath(pathToRemove string) {
 	var newContent dmmdata.Content
 	for _, instance := range t.content {
 		if !dm.IsPath(instance.Path(), pathToRemove) {
@@ -51,9 +51,9 @@ func (t *Tile) AdjustBaseContent() {
 		}
 	}
 	if !hasArea {
-		t.AddInstance(baseArea)
+		t.Add(baseArea)
 	}
 	if !hasTurf {
-		t.AddInstance(baseTurf)
+		t.Add(baseTurf)
 	}
 }

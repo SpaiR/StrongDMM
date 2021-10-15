@@ -14,6 +14,7 @@ type App interface {
 
 	DoCopy()
 	DoPaste()
+	DoDelete()
 
 	CommandStorage() *command.Storage
 	Clipboard() *dmmap.Clipboard

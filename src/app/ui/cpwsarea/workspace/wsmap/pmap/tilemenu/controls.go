@@ -16,5 +16,7 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Paste", t.app.DoPaste).
 			Enabled(t.app.Clipboard().HasData()).
 			Shortcut("Ctrl+V"),
+		w.MenuItem("Delete", t.app.DoDelete).
+			Shortcut("Delete"),
 	}.Build()
 }
