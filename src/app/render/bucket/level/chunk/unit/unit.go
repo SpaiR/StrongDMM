@@ -1,9 +1,6 @@
 package unit
 
 import (
-	"log"
-
-	"github.com/mazznoer/csscolorparser"
 	"sdmm/dm"
 	"sdmm/dm/dmicon"
 	"sdmm/dm/dmmap/dmmdata"
@@ -49,13 +46,9 @@ func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 	// Default rgba is white.
 	r, g, b, a = 1, 1, 1, 1
 	if color, _ := i.Vars().Text("color"); color != "" {
-		if c, err := csscolorparser.Parse(color); err == nil {
-			// Color = RGB from color variable + alpha variable.
-			alpha, _ := i.Vars().Float("alpha")
-			r, g, b, a = float32(c.R), float32(c.G), float32(c.B), alpha/255
-		} else {
-			log.Printf("[unit] unable to parse [%s] for [%s]: [%v]", color, i.Path(), err)
-		}
+		r, g, b, a = util.ParseColor(color)
+		alpha := i.Vars().FloatV("alpha", 255)
+		a /= alpha // Color = RGB from color variable + alpha variable.
 	}
 	return r, g, b, a
 }
