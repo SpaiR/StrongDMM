@@ -1,9 +1,9 @@
 package unit
 
 import (
-	"sdmm/dm"
-	"sdmm/dm/dmicon"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmicon"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

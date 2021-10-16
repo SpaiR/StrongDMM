@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
-	"sdmm/dm"
+	"sdmm/dmapi/dm"
 	"sdmm/platform"
 	"sdmm/third_party/sdmmparser"
 	"sdmm/third_party/stbi"

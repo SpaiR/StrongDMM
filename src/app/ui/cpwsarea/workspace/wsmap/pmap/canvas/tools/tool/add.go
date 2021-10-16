@@ -1,9 +1,9 @@
 package tool
 
 import (
-	"sdmm/dm"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

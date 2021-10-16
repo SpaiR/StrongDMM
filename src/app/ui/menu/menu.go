@@ -2,9 +2,9 @@ package menu
 
 import (
 	"sdmm/app/command"
-	"sdmm/dm"
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap"
 	w "sdmm/imguiext/widget"
 )
 

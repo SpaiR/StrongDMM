@@ -4,8 +4,8 @@ import (
 	"log"
 	"path/filepath"
 
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

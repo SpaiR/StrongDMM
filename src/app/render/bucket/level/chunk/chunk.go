@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"sdmm/app/render/bucket/level/chunk/unit"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 

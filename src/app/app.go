@@ -17,9 +17,9 @@ import (
 	"sdmm/app/ui/menu"
 	"sdmm/app/ui/shortcut"
 	"sdmm/app/window"
-	"sdmm/dm"
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap"
 )
 
 const (

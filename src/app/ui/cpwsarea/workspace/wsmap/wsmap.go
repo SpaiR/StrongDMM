@@ -7,8 +7,8 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmsave"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmsave"
 )
 
 type App interface {

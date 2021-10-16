@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"sdmm/dm"
+	"sdmm/dmapi/dm"
 )
 
 var Cache = &IconsCache{icons: make(map[string]*Dmi)}

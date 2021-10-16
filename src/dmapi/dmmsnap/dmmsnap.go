@@ -1,20 +1,20 @@
-package snapshot
+package dmmsnap
 
 import (
 	"log"
 	"strings"
 
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 
 type dmmPatch []tilePatch
 
-// Snapshot is a structure to store map states in the different moments of time.
+// DmmSnap is a structure to store map states in the different moments of time.
 // It stores patches between different map states, so UNDO/REDO operations simplified to the "apply patch operation".
 // TODO: Possible to implement local VCS history.
-type Snapshot struct {
+type DmmSnap struct {
 	// Initial map is a state before changes. Basically, it's a copy of the current map, which is modified.
 	// When we commit changes with Commit method we compare and collect differences between unmodifiable and
 	// modifiable states. Those differences are collected into patches.
@@ -25,22 +25,22 @@ type Snapshot struct {
 	patches []dmmPatch
 }
 
-func NewSnapshot(current *dmmap.Dmm) *Snapshot {
-	s := &Snapshot{current: current}
+func New(current *dmmap.Dmm) *DmmSnap {
+	s := &DmmSnap{current: current}
 	s.syncInitialWithCurrent()
 	return s
 }
 
 // Commit creates a patch with the map changes between two snapshot states.
 // stateId is an integer value, which can be used in the future to iterate snapshot to the specific state.
-func (s *Snapshot) Commit() (int, []util.Point) {
+func (d *DmmSnap) Commit() (int, []util.Point) {
 	log.Println("[snapshot] committing snapshot state...")
 
 	var tilePatches []tilePatch
 
 	// Iterate through the current tiles state.
-	for _, currentTile := range s.current.Tiles {
-		initialTile := s.initial.GetTile(currentTile.Coord)
+	for _, currentTile := range d.current.Tiles {
+		initialTile := d.initial.GetTile(currentTile.Coord)
 
 		// If tiles contents have different length, then they are different for sure.
 		tileModified := len(currentTile.Content()) != len(initialTile.Content())
@@ -68,11 +68,11 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 		log.Println("[snapshot] collected snapshot patches count:", len(tilePatches))
 
 		// Drop all patches, if their stateId is more than the current one.
-		s.patches = append(s.patches[:s.stateId], tilePatches)
+		d.patches = append(d.patches[:d.stateId], tilePatches)
 		// Apply created patch to the initial state, so it will be synced with the current one.
-		s.patchState(s.stateId, true, patchInitial)
+		d.patchState(d.stateId, true, patchInitial)
 		// Update stateId to a new value.
-		s.stateId = len(s.patches)
+		d.stateId = len(d.patches)
 
 		// Collect tiles to update from created tile patches
 		tilesToUpdate = make([]util.Point, 0, len(tilePatches))
@@ -83,28 +83,28 @@ func (s *Snapshot) Commit() (int, []util.Point) {
 
 	log.Println("[snapshot] snapshot state committed")
 
-	return s.stateId, tilesToUpdate
+	return d.stateId, tilesToUpdate
 }
 
-// GoTo will update Snapshot state by applying spe
-func (s *Snapshot) GoTo(stateId int) {
+// GoTo will update DmmSnap state by applying spe
+func (d *DmmSnap) GoTo(stateId int) {
 	log.Println("[snapshot] changing snapshot state to:", stateId)
-	s.goTo(stateId, patchFull)
+	d.goTo(stateId, patchFull)
 }
 
-func (s *Snapshot) goTo(stateId int, patchType patchType) {
-	if s.stateId != stateId {
-		isForward := s.stateId < stateId
+func (d *DmmSnap) goTo(stateId int, patchType patchType) {
+	if d.stateId != stateId {
+		isForward := d.stateId < stateId
 
 		if !isForward {
-			s.stateId--
+			d.stateId--
 		}
-		s.patchState(s.stateId, isForward, patchType)
+		d.patchState(d.stateId, isForward, patchType)
 		if isForward {
-			s.stateId++
+			d.stateId++
 		}
 
-		s.goTo(stateId, patchType)
+		d.goTo(stateId, patchType)
 	}
 }
 
@@ -127,9 +127,9 @@ func (p patchType) String() string {
 	return strings.Join(results, "|")
 }
 
-func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) {
+func (d *DmmSnap) patchState(stateId int, isForward bool, patchType patchType) {
 	log.Printf("[snapshot] patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
-	for _, patch := range s.patches[stateId] {
+	for _, patch := range d.patches[stateId] {
 		var content dmmdata.Content
 		if isForward {
 			content = patch.forward
@@ -139,33 +139,33 @@ func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) 
 
 		// Update current map.
 		if patchType&patchCurrent != 0 {
-			s.current.GetTile(patch.coord).ContentSet(content.Copy())
+			d.current.GetTile(patch.coord).ContentSet(content.Copy())
 		}
 
 		// Update initial map.
 		if patchType&patchInitial != 0 {
-			s.initial.GetTile(patch.coord).ContentSet(content.Copy())
+			d.initial.GetTile(patch.coord).ContentSet(content.Copy())
 		}
 	}
 }
 
 // Basically, does a full copy of the current state to the initial one.
-func (s *Snapshot) syncInitialWithCurrent() {
+func (d *DmmSnap) syncInitialWithCurrent() {
 	log.Println("[snapshot] syncing initial state with the current...")
 
-	s.initial = &dmmap.Dmm{
-		Name: s.current.Name,
-		Path: s.current.Path,
-		MaxX: s.current.MaxX,
-		MaxY: s.current.MaxY,
-		MaxZ: s.current.MaxZ,
+	d.initial = &dmmap.Dmm{
+		Name: d.current.Name,
+		Path: d.current.Path,
+		MaxX: d.current.MaxX,
+		MaxY: d.current.MaxY,
+		MaxZ: d.current.MaxZ,
 	}
 
 	// Do a full copy of tiles from the current map state to the initial.
-	s.initial.Tiles = make([]*dmmap.Tile, 0, len(s.current.Tiles))
-	for _, tile := range s.current.Tiles {
+	d.initial.Tiles = make([]*dmmap.Tile, 0, len(d.current.Tiles))
+	for _, tile := range d.current.Tiles {
 		tileCopy := tile.Copy()
-		s.initial.Tiles = append(s.initial.Tiles, &tileCopy)
+		d.initial.Tiles = append(d.initial.Tiles, &tileCopy)
 	}
 
 	log.Println("[snapshot] initial state synced with the current")

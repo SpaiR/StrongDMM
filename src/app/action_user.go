@@ -6,8 +6,8 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 )
 
 /*

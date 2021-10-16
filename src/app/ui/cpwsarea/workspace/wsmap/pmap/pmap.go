@@ -8,9 +8,9 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/snapshot"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
 )
 
@@ -32,7 +32,7 @@ type PaneMap struct {
 	app App
 
 	dmm      *dmmap.Dmm
-	snapshot *snapshot.Snapshot
+	snapshot *dmmsnap.DmmSnap
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
@@ -56,7 +56,7 @@ func (p *PaneMap) Dmm() *dmmap.Dmm {
 func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p := &PaneMap{
 		dmm:         dmm,
-		snapshot:    snapshot.NewSnapshot(dmm),
+		snapshot:    dmmsnap.New(dmm),
 		activeLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 

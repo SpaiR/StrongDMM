@@ -2,7 +2,7 @@ package pmap
 
 import (
 	"sdmm/app/command"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

@@ -1,7 +1,7 @@
 package dmmdata
 
 import (
-	"sdmm/dm/dmvars"
+	"sdmm/dmapi/dmvars"
 	"sdmm/util"
 )
 

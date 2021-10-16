@@ -4,8 +4,8 @@ import (
 	"log"
 	"sort"
 
-	"sdmm/dm"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

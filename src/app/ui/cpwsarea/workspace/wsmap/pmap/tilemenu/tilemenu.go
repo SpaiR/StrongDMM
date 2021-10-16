@@ -4,7 +4,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 

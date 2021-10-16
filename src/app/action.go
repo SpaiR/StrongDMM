@@ -7,11 +7,11 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
-	"sdmm/dm"
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmvars"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmvars"
 )
 
 /*

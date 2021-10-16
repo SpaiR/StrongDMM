@@ -3,8 +3,8 @@ package cpinstances
 import (
 	"log"
 
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 )
 
 type App interface {

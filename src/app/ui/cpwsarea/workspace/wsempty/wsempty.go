@@ -7,7 +7,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
-	"sdmm/dm/dmenv"
+	"sdmm/dmapi/dmenv"
 )
 
 type App interface {

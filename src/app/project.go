@@ -8,10 +8,10 @@ import (
 	"runtime"
 	"time"
 
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmicon"
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmicon"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
 )
 

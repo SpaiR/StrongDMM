@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/SpaiR/imgui-go"
-	"sdmm/dm"
-	"sdmm/dm/dmicon"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmicon"
+	"sdmm/dmapi/dmmap/dmmdata"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )

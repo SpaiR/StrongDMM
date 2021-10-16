@@ -4,8 +4,8 @@ import (
 	"sort"
 	"strings"
 
-	"sdmm/dm/dmicon"
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmicon"
+	"sdmm/dmapi/dmmap/dmmdata"
 )
 
 type instanceNode struct {

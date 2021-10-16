@@ -8,7 +8,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsempty"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
 	"sdmm/app/ui/cpwsarea/workspace/wsprefs"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dmmap"
 )
 
 type App interface {

@@ -3,9 +3,9 @@ package dmmsave
 import (
 	"log"
 
-	"sdmm/dm/dmmap"
-	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmmsave/keygen"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmsave/keygen"
 	"sdmm/util"
 )
 

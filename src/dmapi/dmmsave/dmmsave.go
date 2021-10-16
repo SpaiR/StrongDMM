@@ -3,7 +3,7 @@ package dmmsave
 import (
 	"log"
 
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 

@@ -3,8 +3,8 @@ package dmmap
 import (
 	"log"
 
-	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmvars"
+	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmvars"
 )
 
 var InstanceCache = &instanceCache{instances: make(map[uint64]*dmmdata.Instance)}

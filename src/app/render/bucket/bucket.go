@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"sdmm/app/render/bucket/level"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 

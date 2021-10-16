@@ -5,7 +5,7 @@ import (
 	"math"
 	"math/rand"
 
-	"sdmm/dm/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata"
 )
 
 const (

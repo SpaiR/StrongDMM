@@ -6,7 +6,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render"
-	"sdmm/dm"
+	"sdmm/dmapi/dm"
 )
 
 type App interface {

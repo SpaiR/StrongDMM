@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"sdmm/dm"
+	"sdmm/dmapi/dm"
 	"sdmm/util"
 )
 

@@ -3,8 +3,8 @@ package cpenvironment
 import (
 	"strings"
 
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmicon"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmicon"
 )
 
 type treeNode struct {

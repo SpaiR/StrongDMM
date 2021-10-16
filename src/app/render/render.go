@@ -6,8 +6,8 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
-	"sdmm/dm"
-	"sdmm/dm/dmmap"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 

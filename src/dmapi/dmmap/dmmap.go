@@ -3,9 +3,9 @@ package dmmap
 import (
 	"log"
 
-	"sdmm/dm/dmenv"
-	"sdmm/dm/dmmap/dmmdata"
-	"sdmm/dm/dmvars"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmvars"
 )
 
 var (
