@@ -47,7 +47,7 @@ func (c *Clipboard) Copy(dmm *Dmm, tiles []util.Point) {
 			}
 		}
 
-		tile.Set(tileContent)
+		tile.ContentSet(tileContent)
 
 		c.buffer = append(c.buffer, tile)
 	}
@@ -77,8 +77,8 @@ func (c *Clipboard) Paste(dmm *Dmm, pastePos util.Point) {
 		}
 
 		tile := dmm.GetTile(pos)
-		tile.Set(tileCopy.content.Copy())
-		tile.AdjustBaseContent()
+		tile.ContentSet(tileCopy.content.Copy())
+		tile.ContentRegenerate()
 	}
 }
 

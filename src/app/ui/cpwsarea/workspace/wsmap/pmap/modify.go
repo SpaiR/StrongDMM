@@ -33,11 +33,11 @@ func (p *PaneMap) DeleteTiles() {
 
 	for _, instance := range tile.Content() {
 		if p.app.PathsFilter().IsVisiblePath(instance.Path()) {
-			tile.RemoveByPath(instance.Path())
+			tile.ContentRemoveByPath(instance.Path())
 		}
 	}
 
-	tile.AdjustBaseContent()
+	tile.ContentRegenerate()
 	p.CommitChanges("Delete")
 }
 

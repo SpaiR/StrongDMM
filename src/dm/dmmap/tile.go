@@ -11,10 +11,6 @@ type Tile struct {
 	content dmmdata.Content
 }
 
-func (t Tile) Content() dmmdata.Content {
-	return t.content
-}
-
 func (t Tile) Copy() Tile {
 	return Tile{
 		t.Coord,
@@ -22,11 +18,19 @@ func (t Tile) Copy() Tile {
 	}
 }
 
-func (t *Tile) Add(instance *dmmdata.Instance) {
+func (t Tile) Content() dmmdata.Content {
+	return t.content
+}
+
+func (t *Tile) ContentSet(content dmmdata.Content) {
+	t.content = content
+}
+
+func (t *Tile) ContentAdd(instance *dmmdata.Instance) {
 	t.content = append(t.content, instance)
 }
 
-func (t *Tile) RemoveByPath(pathToRemove string) {
+func (t *Tile) ContentRemoveByPath(pathToRemove string) {
 	var newContent dmmdata.Content
 	for _, instance := range t.content {
 		if !dm.IsPath(instance.Path(), pathToRemove) {
@@ -36,12 +40,8 @@ func (t *Tile) RemoveByPath(pathToRemove string) {
 	t.content = newContent
 }
 
-func (t *Tile) Set(content dmmdata.Content) {
-	t.content = content
-}
-
-// AdjustBaseContent adds missing base instances, if there are some of them.
-func (t *Tile) AdjustBaseContent() {
+// ContentRegenerate adds missing base instances, if there are some of them.
+func (t *Tile) ContentRegenerate() {
 	var hasArea, hasTurf bool
 	for _, instance := range t.content {
 		if dm.IsPath(instance.Path(), "/area") {
@@ -51,9 +51,9 @@ func (t *Tile) AdjustBaseContent() {
 		}
 	}
 	if !hasArea {
-		t.Add(baseArea)
+		t.ContentAdd(baseArea)
 	}
 	if !hasTurf {
-		t.Add(baseTurf)
+		t.ContentAdd(baseTurf)
 	}
 }

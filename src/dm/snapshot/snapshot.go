@@ -139,12 +139,12 @@ func (s *Snapshot) patchState(stateId int, isForward bool, patchType patchType) 
 
 		// Update current map.
 		if patchType&patchCurrent != 0 {
-			s.current.GetTile(patch.coord).Set(content.Copy())
+			s.current.GetTile(patch.coord).ContentSet(content.Copy())
 		}
 
 		// Update initial map.
 		if patchType&patchInitial != 0 {
-			s.initial.GetTile(patch.coord).Set(content.Copy())
+			s.initial.GetTile(patch.coord).ContentSet(content.Copy())
 		}
 	}
 }

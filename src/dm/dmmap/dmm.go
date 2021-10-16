@@ -63,7 +63,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 						if !instance.Vars().HasParent() {
 							instance.Vars().LinkParent(obj.Vars)
 						}
-						tile.Add(InstanceCache.Put(instance))
+						tile.ContentAdd(InstanceCache.Put(instance))
 					} else {
 						log.Println("[dmmap] unknown instance:", instance.Path())
 					}
