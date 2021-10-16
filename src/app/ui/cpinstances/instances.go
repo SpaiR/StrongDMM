@@ -59,7 +59,7 @@ func (i *Instances) showContextMenu(node *instanceNode) {
 	// TODO: instance context menu
 }
 
-func (i Instances) iconSize() float32 {
+func (i *Instances) iconSize() float32 {
 	return 32 * i.app.PointSize()
 }
 

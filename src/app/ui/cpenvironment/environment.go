@@ -195,7 +195,7 @@ func (e *Environment) scrollToSelectedPath(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := 16 * e.app.PointSize()
+	iconSize := e.iconSize()
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
 }
@@ -233,4 +233,8 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 	for _, childPath := range object.DirectChildren {
 		e.filterBranch0(e.app.LoadedEnvironment().Objects[childPath])
 	}
+}
+
+func (e *Environment) iconSize() float32 {
+	return 16 * e.app.PointSize()
 }

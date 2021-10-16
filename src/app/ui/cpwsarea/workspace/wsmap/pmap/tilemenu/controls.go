@@ -40,7 +40,7 @@ func (t *TileMenu) showControls() {
 
 func (t *TileMenu) showInstance(i *dmmdata.Instance, idx int) {
 	s := instanceSprite(i)
-	iconSize := 16 * t.app.PointSize()
+	iconSize := t.iconSize()
 	r, g, b, _ := util.ParseColor(i.Vars().TextV("color", ""))
 	name := fmt.Sprintf("%s##instance_row_%d", i.Vars().TextV("name", ""), idx)
 
@@ -87,4 +87,8 @@ func instanceSprite(i *dmmdata.Instance) *dmicon.Sprite {
 		i.Vars().TextV("icon", ""),
 		i.Vars().TextV("icon_state", ""),
 	)
+}
+
+func (t *TileMenu) iconSize() float32 {
+	return 16 * t.app.PointSize()
 }
