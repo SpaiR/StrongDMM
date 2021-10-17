@@ -19,6 +19,32 @@ type Variables struct {
 	parent *Variables
 }
 
+func (v *Variables) Copy() Variables {
+	names := make([]string, len(v.names))
+	copy(names, v.names)
+
+	vars := make(map[string]string)
+	for n, v := range v.vars {
+		vars[n] = v
+	}
+
+	return Variables{
+		names:  names,
+		vars:   vars,
+		parent: v.parent,
+	}
+}
+
+func (v *Variables) put(name string, value string) {
+	if v.vars == nil {
+		v.vars = make(map[string]string)
+	}
+	if !slice.StrContains(v.names, name) {
+		v.names = append(v.names, name)
+	}
+	v.vars[name] = value
+}
+
 func FromParent(parent *Variables) *Variables {
 	return &Variables{parent: parent}
 }
@@ -30,21 +56,12 @@ type MutableVariables struct {
 }
 
 func (v *MutableVariables) Put(name string, value string) {
-	if v.vars == nil {
-		v.vars = make(map[string]string)
-	}
-	if !slice.StrContains(v.names, name) {
-		v.names = append(v.names, name)
-	}
-	v.vars[name] = value
+	v.put(name, value)
 }
 
 func (v *MutableVariables) ToImmutable() *Variables {
-	return &Variables{
-		names:  v.names,
-		vars:   v.vars,
-		parent: v.parent,
-	}
+	vars := v.Copy()
+	return &vars
 }
 
 func (v *Variables) HasParent() bool {
