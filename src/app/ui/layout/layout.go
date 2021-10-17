@@ -3,13 +3,13 @@ package layout
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpenvironment"
-	"sdmm/app/ui/cpinstances"
+	"sdmm/app/ui/cpprefabs"
 	"sdmm/app/ui/cpwsarea"
 )
 
 type app interface {
 	cpenvironment.App
-	cpinstances.App
+	cpprefabs.App
 	cpwsarea.App
 
 	IsWindowReset() bool
@@ -17,7 +17,7 @@ type app interface {
 
 type Layout struct {
 	cpenvironment.Environment
-	cpinstances.Instances
+	cpprefabs.Prefabs
 	cpwsarea.WsArea
 
 	app app
@@ -32,7 +32,7 @@ type Layout struct {
 func New(app app) *Layout {
 	l := &Layout{app: app}
 	l.Environment.Init(app)
-	l.Instances.Init(app)
+	l.Prefabs.Init(app)
 	l.WsArea.Init(app)
 	return l
 }
@@ -51,7 +51,7 @@ func (l *Layout) showLeftUpNode() {
 }
 
 func (l *Layout) showLeftDownNode() {
-	wrapNode("Instances##leftDownNode", int(l.leftDownNodeId), l.Instances.Process)
+	wrapNode("Prefabs##leftDownNode", int(l.leftDownNodeId), l.Prefabs.Process)
 }
 
 func (l *Layout) showCenterNode() {

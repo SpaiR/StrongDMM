@@ -56,10 +56,10 @@ func makeSaveProcess(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 func (sp *saveProcess) handleReusedKeys() {
 	log.Println("[dmmsave] handle reused keys...")
 
-	// InstanceCache the initial content, since we know it won't change.
+	// Cache the initial content, since we know it won't change.
 	keyByContentCache := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
-	for key, instances := range sp.initial.Dictionary {
-		keyByContentCache[instances.Hash()] = key
+	for key, content := range sp.initial.Dictionary {
+		keyByContentCache[content.Hash()] = key
 	}
 
 	for _, tile := range sp.dmm.Tiles {
@@ -229,8 +229,8 @@ func findKeyByTileContent(
 		return key, true
 	}
 
-	for key, instances := range data.Dictionary {
-		if content.Equals(instances) {
+	for key, dataContent := range data.Dictionary {
+		if content.Equals(dataContent) {
 			keyByContentCache[contentHash] = key
 			return key, true
 		}

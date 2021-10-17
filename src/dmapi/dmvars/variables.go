@@ -8,11 +8,11 @@ import (
 
 const NullValue = "null"
 
-// Variables is a structure to store an instance (in the environment or on the map) variables.
+// Variables is a structure to store a prefab (in the environment or on the map) variables.
 // Those variables are stored as a "string2string" map and immutable by concept.
-// It means that if you need to modify variables of an instance,
-// then you need to create a new instance with modified variables.
-// That restriction goes for the idea that instances by their nature are immutable as well.
+// It means that if you need to modify variables of a prefab,
+// then you need to create a new prefab with modified variables.
+// That restriction goes for the idea that prefabs by their nature are immutable as well.
 type Variables struct {
 	names  []string
 	vars   map[string]string

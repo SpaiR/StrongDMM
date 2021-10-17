@@ -94,17 +94,17 @@ func (a *app) DoOpenPreferences() {
 	a.layout.OpenPreferences(a.makePreferences())
 }
 
-// DoSelectInstance globally selects provided instance in the app.
-func (a *app) DoSelectInstance(instance *dmmdata.Instance) {
-	log.Printf("[app] select instance: path=[%s], id=[%d]", instance.Path(), instance.Id())
-	a.layout.Environment.SelectPath(instance.Path())
-	a.layout.Instances.Select(instance)
+// DoSelectPrefab globally selects provided prefab in the app.
+func (a *app) DoSelectPrefab(prefab *dmmdata.Prefab) {
+	log.Printf("[app] select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
+	a.layout.Environment.SelectPath(prefab.Path())
+	a.layout.Prefabs.Select(prefab)
 }
 
-// DoSelectInstanceByPath globally selects an instance with provided type path.
-func (a *app) DoSelectInstanceByPath(path string) {
-	log.Println("[app] select instance by path:", path)
-	a.DoSelectInstance(dmmap.InstanceCache.Get(path, a.InitialInstanceVariables(path)))
+// DoSelectPrefabByPath globally selects a prefab with provided type path.
+func (a *app) DoSelectPrefabByPath(path string) {
+	log.Println("[app] select prefab by path:", path)
+	a.DoSelectPrefab(dmmap.PrefabStorage.Get(path, a.InitialPrefabVariables(path)))
 }
 
 // DoExit exits the app.

@@ -13,7 +13,7 @@ var (
 
 	// Tiles should have at least one area and one turf.
 	// Those vars will store them to ensure that the tile has a proper content.
-	baseArea, baseTurf *dmmdata.Instance
+	baseArea, baseTurf *dmmdata.Prefab
 )
 
 func Init(dme *dmenv.Dme) {
@@ -21,8 +21,8 @@ func Init(dme *dmenv.Dme) {
 
 	baseAreaPath, _ := dme.Objects["/world"].Vars.Value("area")
 	baseTurfPath, _ := dme.Objects["/world"].Vars.Value("turf")
-	baseArea = InstanceCache.Get(baseAreaPath, dmvars.FromParent(dme.Objects[baseAreaPath].Vars))
-	baseTurf = InstanceCache.Get(baseTurfPath, dmvars.FromParent(dme.Objects[baseTurfPath].Vars))
+	baseArea = PrefabStorage.Get(baseAreaPath, dmvars.FromParent(dme.Objects[baseAreaPath].Vars))
+	baseTurf = PrefabStorage.Get(baseTurfPath, dmvars.FromParent(dme.Objects[baseTurfPath].Vars))
 
 	log.Println("[dmmap] initialized with:", dme.RootFile)
 	log.Println("[dmmap] base area:", baseAreaPath)

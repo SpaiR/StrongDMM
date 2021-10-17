@@ -42,7 +42,7 @@ func parse(file *os.File) (*DmmData, error) {
 		skipWhitespace bool
 
 		currData      Content
-		currInstance  = &Instance{vars: &dmvars.Variables{}}
+		currPrefab    = &Prefab{vars: &dmvars.Variables{}}
 		currVariables = &dmvars.MutableVariables{}
 		currVar       = make([]rune, 0)
 		currDatum     = make([]rune, 0)
@@ -51,14 +51,14 @@ func parse(file *os.File) (*DmmData, error) {
 		currKeyLength = 0
 
 		// Functions:
-		flushCurrInstance = func() {
-			currInstance.vars = currVariables.ToImmutable()
-			currData = append(currData, currInstance)
-			currInstance = &Instance{vars: &dmvars.Variables{}}
+		flushCurrPrefab = func() {
+			currPrefab.vars = currVariables.ToImmutable()
+			currData = append(currData, currPrefab)
+			currPrefab = &Prefab{vars: &dmvars.Variables{}}
 			currVariables = &dmvars.MutableVariables{}
 		}
 		flushCurrPath = func() {
-			currInstance.path = string(currDatum)
+			currPrefab.path = string(currDatum)
 			currDatum = currDatum[:0]
 		}
 		flushCurrVariable = func() {
@@ -153,15 +153,15 @@ func parse(file *os.File) (*DmmData, error) {
 					flushCurrPath()
 					inVarEditBlock = true
 				} else if c == ',' {
-					if len(currInstance.path) == 0 && len(currDatum) > 0 {
+					if len(currPrefab.path) == 0 && len(currDatum) > 0 {
 						flushCurrPath()
 					}
-					flushCurrInstance()
+					flushCurrPrefab()
 				} else if c == ')' {
-					if len(currInstance.path) == 0 && len(currDatum) > 0 {
+					if len(currPrefab.path) == 0 && len(currDatum) > 0 {
 						flushCurrPath()
 					}
-					flushCurrInstance()
+					flushCurrPrefab()
 					key := Key(currKey)
 					currKey = currKey[:0]
 					data := make(Content, len(currData))

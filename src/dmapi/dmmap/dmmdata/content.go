@@ -9,15 +9,15 @@ import (
 	"sdmm/util"
 )
 
-type Content []*Instance
+type Content []*Prefab
 
 func (c Content) Equals(content Content) bool {
 	if len(c) != len(content) {
 		return false
 	}
 
-	for idx, instance1 := range c {
-		if instance1.Id() != content[idx].Id() {
+	for idx, prefab := range c {
+		if prefab.Id() != content[idx].Id() {
 			return false
 		}
 	}
@@ -33,8 +33,8 @@ func (c Content) Copy() Content {
 
 func (c Content) Hash() uint64 {
 	sb := strings.Builder{}
-	for _, instance := range c {
-		sb.WriteString(strconv.FormatUint(instance.Id(), 10))
+	for _, prefab := range c {
+		sb.WriteString(strconv.FormatUint(prefab.Id(), 10))
 	}
 	return util.Djb2(sb.String())
 }

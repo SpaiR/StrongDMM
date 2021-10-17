@@ -10,8 +10,8 @@ func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
 	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
-func (p *PaneMap) SelectedInstance() (*dmmdata.Instance, bool) {
-	return p.app.SelectedInstance()
+func (p *PaneMap) SelectedPrefab() (*dmmdata.Prefab, bool) {
+	return p.app.SelectedPrefab()
 }
 
 func (p *PaneMap) CopyTiles() {
@@ -31,9 +31,9 @@ func (p *PaneMap) CutTiles() {
 func (p *PaneMap) DeleteTiles() {
 	tile := p.dmm.GetTile(p.canvasState.LastHoveredTile())
 
-	for _, instance := range tile.Content() {
-		if p.app.PathsFilter().IsVisiblePath(instance.Path()) {
-			tile.ContentRemoveByPath(instance.Path())
+	for _, prefab := range tile.Content() {
+		if p.app.PathsFilter().IsVisiblePath(prefab.Path()) {
+			tile.ContentRemoveByPath(prefab.Path())
 		}
 	}
 

@@ -26,9 +26,8 @@ func (d DmmData) SaveDM(path string) {
 		_, _ = w.WriteString(str)
 	}
 
-	log.Println("[dmmdata] writing instances...")
+	log.Println("[dmmdata] writing prefabs...")
 
-	// Write instances.
 	for _, key := range d.Keys() {
 		write(toDMStr(key, d.Dictionary[key]))
 		write(d.LineBreak)
@@ -36,7 +35,6 @@ func (d DmmData) SaveDM(path string) {
 
 	log.Println("[dmmdata] writing grid...")
 
-	// Write map grids.
 	for z := 1; z <= d.MaxZ; z++ {
 		write(d.LineBreak)
 		write(fmt.Sprintf("(1,1,%d) = {\"", z))
@@ -66,20 +64,20 @@ func toDMStr(key Key, content Content) string {
 
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))
 
-	for idx, instance := range content {
-		sb.WriteString(instance.Path())
+	for idx, prefab := range content {
+		sb.WriteString(prefab.Path())
 
-		if instance.Vars().Len() > 0 {
+		if prefab.Vars().Len() > 0 {
 			sb.WriteString("{")
 
-			for idx, varName := range instance.Vars().Iterate() {
-				varValue, _ := instance.Vars().Value(varName)
+			for idx, varName := range prefab.Vars().Iterate() {
+				varValue, _ := prefab.Vars().Value(varName)
 
 				sb.WriteString(varName)
 				sb.WriteString(" = ")
 				sb.WriteString(varValue)
 
-				if idx != instance.Vars().Len()-1 {
+				if idx != prefab.Vars().Len()-1 {
 					sb.WriteString("; ")
 				}
 			}

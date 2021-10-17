@@ -7,10 +7,10 @@ import (
 	"sdmm/util"
 )
 
-// Unit stores render information about specific object instance on the map.
+// Unit stores render information about specific object prefab on the map.
 type Unit struct {
 	Sp   *dmicon.Sprite
-	Inst *dmmdata.Instance
+	Inst *dmmdata.Prefab
 
 	Layer      float32
 	ViewBounds util.Bounds
@@ -18,7 +18,7 @@ type Unit struct {
 	R, G, B, A float32
 }
 
-func Make(x, y int, i *dmmdata.Instance, iconSize int) Unit {
+func Make(x, y int, i *dmmdata.Prefab, iconSize int) Unit {
 	// All vars below are built-in and expected to exist.
 	icon, _ := i.Vars().Text("icon")
 	iconState, _ := i.Vars().Text("icon_state")
@@ -42,7 +42,7 @@ func Make(x, y int, i *dmmdata.Instance, iconSize int) Unit {
 	}
 }
 
-func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
+func parseColor(i *dmmdata.Prefab) (r, g, b, a float32) {
 	// Default rgba is white.
 	r, g, b, a = 1, 1, 1, 1
 	if color, _ := i.Vars().Text("color"); color != "" {
@@ -53,8 +53,8 @@ func parseColor(i *dmmdata.Instance) (r, g, b, a float32) {
 	return r, g, b, a
 }
 
-// countLayer returns the value of combined instance vars: plane + Layer.
-func countLayer(i *dmmdata.Instance) float32 {
+// countLayer returns the value of combined prefab vars: plane + Layer.
+func countLayer(i *dmmdata.Prefab) float32 {
 	plane, _ := i.Vars().Float("plane")
 	layer, _ := i.Vars().Float("layer")
 

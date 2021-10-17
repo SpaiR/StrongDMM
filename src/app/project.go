@@ -32,7 +32,7 @@ func (a *app) openEnvironment(path string) {
 	a.configData.Save()
 
 	a.loadedEnvironment = env
-	a.layout.Instances.Free()
+	a.layout.Prefabs.Free()
 	a.layout.Environment.Free()
 	a.layout.WsArea.Free()
 
@@ -42,7 +42,7 @@ func (a *app) openEnvironment(path string) {
 
 	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
-	dmmap.InstanceCache.Free()
+	dmmap.PrefabStorage.Free()
 	dmmap.Init(env)
 
 	a.UpdateTitle()
@@ -72,7 +72,7 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	a.configData.AddRecentMap(a.loadedEnvironment.RootFile, path)
 	a.configData.Save()
 	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx)
-	a.layout.Instances.Update()
+	a.layout.Prefabs.Update()
 
 	runtime.GC()
 

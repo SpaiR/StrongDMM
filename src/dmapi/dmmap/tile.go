@@ -26,27 +26,27 @@ func (t *Tile) ContentSet(content dmmdata.Content) {
 	t.content = content
 }
 
-func (t *Tile) ContentAdd(instance *dmmdata.Instance) {
-	t.content = append(t.content, instance)
+func (t *Tile) ContentAdd(prefab *dmmdata.Prefab) {
+	t.content = append(t.content, prefab)
 }
 
 func (t *Tile) ContentRemoveByPath(pathToRemove string) {
 	var newContent dmmdata.Content
-	for _, instance := range t.content {
-		if !dm.IsPath(instance.Path(), pathToRemove) {
-			newContent = append(newContent, instance)
+	for _, prefab := range t.content {
+		if !dm.IsPath(prefab.Path(), pathToRemove) {
+			newContent = append(newContent, prefab)
 		}
 	}
 	t.content = newContent
 }
 
-// ContentRegenerate adds missing base instances, if there are some of them.
+// ContentRegenerate adds missing base prefabs, if there are some of them.
 func (t *Tile) ContentRegenerate() {
 	var hasArea, hasTurf bool
-	for _, instance := range t.content {
-		if dm.IsPath(instance.Path(), "/area") {
+	for _, prefab := range t.content {
+		if dm.IsPath(prefab.Path(), "/area") {
 			hasArea = true
-		} else if dm.IsPath(instance.Path(), "/turf") {
+		} else if dm.IsPath(prefab.Path(), "/turf") {
 			hasTurf = true
 		}
 	}

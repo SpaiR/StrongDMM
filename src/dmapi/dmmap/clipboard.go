@@ -41,9 +41,9 @@ func (c *Clipboard) Copy(dmm *Dmm, tiles []util.Point) {
 		tile := dmm.GetTile(pos).Copy()
 
 		var tileContent dmmdata.Content
-		for _, instance := range tile.Content() {
-			if c.pathsFilter.IsVisiblePath(instance.Path()) {
-				tileContent = append(tileContent, instance)
+		for _, prefab := range tile.Content() {
+			if c.pathsFilter.IsVisiblePath(prefab.Path()) {
+				tileContent = append(tileContent, prefab)
 			}
 		}
 

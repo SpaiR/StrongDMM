@@ -33,16 +33,14 @@ func (d DmmData) SaveTGM(path string) {
 	// yeah, yeah, dmm2tgm.py, sure...
 	writeln("//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE")
 
-	log.Println("[dmmdata] writing instances...")
+	log.Println("[dmmdata] writing prefabs...")
 
-	// Write instances.
 	for _, key := range d.Keys() {
 		writeln(toTGMStr(key, d.Dictionary[key], d.LineBreak))
 	}
 
 	log.Println("[dmmdata] writing grid...")
 
-	// Write map grids.
 	for z := 1; z <= d.MaxZ; z++ {
 		writeln()
 
@@ -70,22 +68,22 @@ func toTGMStr(key Key, content Content, lineBreak string) string {
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))
 	sb.WriteString(lineBreak)
 
-	for idx, instance := range content {
-		sb.WriteString(instance.Path())
+	for idx, prefab := range content {
+		sb.WriteString(prefab.Path())
 
-		if instance.Vars().Len() > 0 {
+		if prefab.Vars().Len() > 0 {
 			sb.WriteString("{")
 			sb.WriteString(lineBreak)
 
-			for idx, varName := range instance.Vars().Iterate() {
-				varValue, _ := instance.Vars().Value(varName)
+			for idx, varName := range prefab.Vars().Iterate() {
+				varValue, _ := prefab.Vars().Value(varName)
 
 				sb.WriteString("\t")
 				sb.WriteString(varName)
 				sb.WriteString(" = ")
 				sb.WriteString(varValue)
 
-				if idx != instance.Vars().Len()-1 {
+				if idx != prefab.Vars().Len()-1 {
 					sb.WriteString(";")
 				}
 

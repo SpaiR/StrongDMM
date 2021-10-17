@@ -31,31 +31,31 @@ func (t *TileMenu) showControls() {
 			Shortcut("Delete"),
 		w.Separator(),
 		w.Custom(func() {
-			for idx, instance := range t.tile.Content().Sorted() {
-				t.showInstance(instance, idx)
+			for idx, prefab := range t.tile.Content().Sorted() {
+				t.showPrefab(prefab, idx)
 			}
 		}),
 	}.Build()
 }
 
-func (t *TileMenu) showInstance(i *dmmdata.Instance, idx int) {
-	s := instanceSprite(i)
+func (t *TileMenu) showPrefab(i *dmmdata.Prefab, idx int) {
+	s := prefabSprite(i)
 	iconSize := t.iconSize()
 	r, g, b, _ := util.ParseColor(i.Vars().TextV("color", ""))
-	name := fmt.Sprintf("%s##instance_row_%d", i.Vars().TextV("name", ""), idx)
+	name := fmt.Sprintf("%s##prefab_row_%d", i.Vars().TextV("name", ""), idx)
 
 	w.Layout{
 		w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).
 			Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).
 			TintColor(imgui.Vec4{X: r, Y: g, Z: b, W: 1}),
 		w.SameLine(),
-		w.Menu(name, t.showInstanceControls(i, idx)),
+		w.Menu(name, t.showPrefabControls(i, idx)),
 		w.SameLine(),
 		w.Text(fmt.Sprintf("[%s]\t\t", i.Path())),
 	}.Build()
 }
 
-func (t *TileMenu) showInstanceControls(i *dmmdata.Instance, idx int) w.Layout {
+func (t *TileMenu) showPrefabControls(i *dmmdata.Prefab, idx int) w.Layout {
 	return w.Layout{
 		w.Custom(func() {
 			if dm.IsPath(i.Path(), "/obj") || dm.IsPath(i.Path(), "/mob") {
@@ -82,7 +82,7 @@ func (t *TileMenu) showInstanceControls(i *dmmdata.Instance, idx int) w.Layout {
 	}
 }
 
-func instanceSprite(i *dmmdata.Instance) *dmicon.Sprite {
+func prefabSprite(i *dmmdata.Prefab) *dmicon.Sprite {
 	return dmicon.Cache.GetSpriteOrPlaceholder(
 		i.Vars().TextV("icon", ""),
 		i.Vars().TextV("icon_state", ""),

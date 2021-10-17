@@ -1,4 +1,4 @@
-package cpinstances
+package cpprefabs
 
 import (
 	"sort"
@@ -8,17 +8,17 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata"
 )
 
-type instanceNode struct {
+type node struct {
 	name   string
-	orig   *dmmdata.Instance
+	orig   *dmmdata.Prefab
 	sprite *dmicon.Sprite
 }
 
-func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
-	var nodes []*instanceNode
+func makeNodes(content dmmdata.Content) []*node {
+	var nodes []*node
 
-	for _, instance := range content {
-		nodes = append(nodes, makeInstanceNode(instance))
+	for _, prefab := range content {
+		nodes = append(nodes, makeNode(prefab))
 	}
 
 	if nodes != nil {
@@ -33,7 +33,7 @@ func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 			return strings.Compare(nodes[i].name, nodes[j].name) == -1
 		})
 
-		// Fine an initial instance index.
+		// Fine an initial prefab index.
 		idx := 0
 		for i, node := range nodes {
 			if node.orig.Vars().Len() == 0 {
@@ -42,22 +42,22 @@ func makeInstancesNodes(content dmmdata.Content) []*instanceNode {
 			}
 		}
 
-		// Move the initial instance to the beginning of the slice
+		// Move the initial prefab to the beginning of the slice
 		initial := nodes[idx]
 		nodes = append(nodes[:idx], nodes[idx+1:]...)
-		nodes = append([]*instanceNode{initial}, nodes...)
+		nodes = append([]*node{initial}, nodes...)
 	}
 
 	return nodes
 }
 
-func makeInstanceNode(instance *dmmdata.Instance) *instanceNode {
-	icon, _ := instance.Vars().Text("icon")
-	iconState, _ := instance.Vars().Text("icon_state")
-	dir, _ := instance.Vars().Int("dir")
-	return &instanceNode{
-		name:   instance.Path()[strings.LastIndex(instance.Path(), "/")+1:],
-		orig:   instance,
+func makeNode(prefab *dmmdata.Prefab) *node {
+	icon, _ := prefab.Vars().Text("icon")
+	iconState, _ := prefab.Vars().Text("icon_state")
+	dir, _ := prefab.Vars().Int("dir")
+	return &node{
+		name:   prefab.Path()[strings.LastIndex(prefab.Path(), "/")+1:],
+		orig:   prefab,
 		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),
 	}
 }

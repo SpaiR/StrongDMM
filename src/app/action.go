@@ -50,15 +50,15 @@ func (a *app) RemoveMouseChangeCallback(callbackId int) {
 	a.masterWindow.RemoveMouseChangeCallback(callbackId)
 }
 
-// SelectedInstance returns currently selected dmmdata.Instance and bool value which shows if there is one.
-// Selected instance is taken from the component.Instances panel.
-func (a *app) SelectedInstance() (*dmmdata.Instance, bool) {
-	return dmmap.InstanceCache.GetById(a.layout.Instances.SelectedInstanceId())
+// SelectedPrefab returns currently selected dmmdata.Prefab and bool value which shows if there is one.
+// Selected prefab is taken from the cpprefabs.Prefabs panel.
+func (a *app) SelectedPrefab() (*dmmdata.Prefab, bool) {
+	return dmmap.PrefabStorage.GetById(a.layout.Prefabs.SelectedPrefabId())
 }
 
-// HasSelectedInstance returns true, if the application has a globally selected instance.
-func (a *app) HasSelectedInstance() bool {
-	_, ok := a.SelectedInstance()
+// HasSelectedPrefab returns true, if the application has a globally selected prefab.
+func (a *app) HasSelectedPrefab() bool {
+	_, ok := a.SelectedPrefab()
 	return ok
 }
 
@@ -106,10 +106,10 @@ func (a *app) EnvironmentObjectVariables(path string) *dmvars.Variables {
 	return a.loadedEnvironment.Objects[path].Vars
 }
 
-// InitialInstanceVariables returns initial variables for an instance of the map with provided path.
+// InitialPrefabVariables returns initial variables for a prefab of the map with provided path.
 // Initial variables don't have any internal data.
 // They have a parent, as variables of the appropriate environment object.
-func (a *app) InitialInstanceVariables(path string) *dmvars.Variables {
+func (a *app) InitialPrefabVariables(path string) *dmvars.Variables {
 	return dmvars.FromParent(a.EnvironmentObjectVariables(path))
 }
 

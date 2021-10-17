@@ -18,8 +18,8 @@ type App interface {
 	canvas.App
 	tilemenu.App
 
-	SelectedInstance() (*dmmdata.Instance, bool)
-	HasSelectedInstance() bool
+	SelectedPrefab() (*dmmdata.Prefab, bool)
+	HasSelectedPrefab() bool
 
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)

@@ -10,13 +10,13 @@ import (
 type Modify interface {
 	Dmm() *dmmap.Dmm
 	UpdateCanvasByCoord(coord util.Point)
-	SelectedInstance() (*dmmdata.Instance, bool)
+	SelectedPrefab() (*dmmdata.Prefab, bool)
 	CommitChanges(string)
 }
 
-// Add tool can be used to add instances to the map.
-// During mouse moving when the tool is active a selected instance will be added on every tile under the mouse.
-// You can't add the same instance twice on the same tile during the one OnStart -> OnStop cycle.
+// Add tool can be used to add prefabs to the map.
+// During mouse moving when the tool is active a selected prefab will be added on every tile under the mouse.
+// You can't add the same prefab twice on the same tile during the one OnStart -> OnStop cycle.
 //
 // Default: obj placed on top, area and turfs replaced.
 // Alternative: obj replaced, area and turfs placed on top.
@@ -44,22 +44,22 @@ func (a *Add) OnStart(coord util.Point) {
 }
 
 func (a *Add) OnMove(coord util.Point) {
-	if instance, ok := a.modify.SelectedInstance(); ok && !a.tiles[coord] {
+	if prefab, ok := a.modify.SelectedPrefab(); ok && !a.tiles[coord] {
 		a.tiles[coord] = true
 
 		tile := a.modify.Dmm().GetTile(coord)
 
 		if !a.altBehaviour {
-			if dm.IsPath(instance.Path(), "/area") {
+			if dm.IsPath(prefab.Path(), "/area") {
 				tile.ContentRemoveByPath("/area")
-			} else if dm.IsPath(instance.Path(), "/turf") {
+			} else if dm.IsPath(prefab.Path(), "/turf") {
 				tile.ContentRemoveByPath("/turf")
 			}
-		} else if dm.IsPath(instance.Path(), "/obj") {
+		} else if dm.IsPath(prefab.Path(), "/obj") {
 			tile.ContentRemoveByPath("/obj")
 		}
 
-		tile.ContentAdd(instance)
+		tile.ContentAdd(prefab)
 		tile.ContentRegenerate()
 
 		a.modify.UpdateCanvasByCoord(coord)
