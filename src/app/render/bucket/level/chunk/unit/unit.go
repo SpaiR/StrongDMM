@@ -49,7 +49,7 @@ func parseColor(p *dmmprefab.Prefab) (r, g, b, a float32) {
 	if color, _ := p.Vars().Text("color"); color != "" {
 		r, g, b, a = util.ParseColor(color)
 		alpha := p.Vars().FloatV("alpha", 255)
-		a /= alpha // Color = RGB from color variable + alpha variable.
+		a = alpha / 255 // Color = RGB from color variable + alpha variable.
 	}
 	return r, g, b, a
 }
