@@ -73,7 +73,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, dme *Dme)
 	}
 
 	if _, ok := variables.Value("name"); !ok {
-		variables.Put("name", "\""+nameFromPath(root.Path, parentName)+"\"")
+		variables.Put("name", nameFromPath(root.Path, parentName))
 	}
 
 	var children []string
