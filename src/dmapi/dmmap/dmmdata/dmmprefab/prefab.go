@@ -1,4 +1,4 @@
-package dmmdata
+package dmmprefab
 
 import (
 	"sdmm/dmapi/dmvars"
@@ -11,13 +11,13 @@ type Prefab struct {
 	vars *dmvars.Variables
 }
 
-func NewPrefab(id uint64, path string, vars *dmvars.Variables) *Prefab {
+func New(id uint64, path string, vars *dmvars.Variables) *Prefab {
 	return &Prefab{id, path, vars}
 }
 
 func (p Prefab) Id() uint64 {
 	if p.id == 0 {
-		p.id = PrefabId(p.path, p.vars)
+		p.id = Id(p.path, p.vars)
 	}
 	return p.id
 }
@@ -30,7 +30,7 @@ func (p Prefab) Vars() *dmvars.Variables {
 	return p.vars
 }
 
-func PrefabId(path string, vars *dmvars.Variables) uint64 {
+func Id(path string, vars *dmvars.Variables) uint64 {
 	snap := path
 	if vars != nil {
 		for _, name := range vars.Iterate() {

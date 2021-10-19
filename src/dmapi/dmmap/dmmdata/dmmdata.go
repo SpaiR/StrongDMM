@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	DataDictionary map[Key]Content
+	DataDictionary map[Key]Prefabs
 	DataGrid       map[util.Point]Key
 )
 

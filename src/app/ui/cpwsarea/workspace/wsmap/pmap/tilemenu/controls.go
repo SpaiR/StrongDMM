@@ -6,7 +6,8 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )
@@ -31,34 +32,36 @@ func (t *TileMenu) showControls() {
 			Shortcut("Delete"),
 		w.Separator(),
 		w.Custom(func() {
-			for idx, prefab := range t.tile.Content().Sorted() {
-				t.showPrefab(prefab, idx)
+			for idx, instance := range t.tile.Instances().Sorted() {
+				t.showInstance(instance, idx)
 			}
 		}),
 	}.Build()
 }
 
-func (t *TileMenu) showPrefab(i *dmmdata.Prefab, idx int) {
-	s := prefabSprite(i)
+func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {
+	p := i.Prefab()
+	s := getSprite(p)
 	iconSize := t.iconSize()
-	r, g, b, _ := util.ParseColor(i.Vars().TextV("color", ""))
-	name := fmt.Sprintf("%s##prefab_row_%d", i.Vars().TextV("name", ""), idx)
+	r, g, b, _ := util.ParseColor(p.Vars().TextV("color", ""))
+	name := fmt.Sprintf("%s##prefab_row_%d", p.Vars().TextV("name", ""), idx)
 
 	w.Layout{
 		w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).
 			Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).
 			TintColor(imgui.Vec4{X: r, Y: g, Z: b, W: 1}),
 		w.SameLine(),
-		w.Menu(name, t.showPrefabControls(i, idx)),
+		w.Menu(name, t.showInstanceControls(i, idx)),
 		w.SameLine(),
-		w.Text(fmt.Sprintf("[%s]\t\t", i.Path())),
+		w.Text(fmt.Sprintf("[%s]\t\t", p.Path())),
 	}.Build()
 }
 
-func (t *TileMenu) showPrefabControls(i *dmmdata.Prefab, idx int) w.Layout {
+func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layout {
+	p := i.Prefab()
 	return w.Layout{
 		w.Custom(func() {
-			if dm.IsPath(i.Path(), "/obj") || dm.IsPath(i.Path(), "/mob") {
+			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
 					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), nil).Enabled(false),
 					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), nil).Enabled(false),
@@ -82,7 +85,7 @@ func (t *TileMenu) showPrefabControls(i *dmmdata.Prefab, idx int) w.Layout {
 	}
 }
 
-func prefabSprite(i *dmmdata.Prefab) *dmicon.Sprite {
+func getSprite(i *dmmprefab.Prefab) *dmicon.Sprite {
 	return dmicon.Cache.GetSpriteOrPlaceholder(
 		i.Vars().TextV("icon", ""),
 		i.Vars().TextV("icon_state", ""),

@@ -3,6 +3,7 @@ package app
 import (
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -83,6 +84,8 @@ type app struct {
 }
 
 func (a *app) initialize(internalDir string) {
+	rand.Seed(time.Now().UnixNano())
+
 	a.deleteOldLogs()
 	a.deleteOldBackups()
 

@@ -9,7 +9,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
 )
@@ -18,7 +18,7 @@ type App interface {
 	canvas.App
 	tilemenu.App
 
-	SelectedPrefab() (*dmmdata.Prefab, bool)
+	SelectedPrefab() (*dmmprefab.Prefab, bool)
 	HasSelectedPrefab() bool
 
 	AddMouseChangeCallback(cb func(uint, uint)) int

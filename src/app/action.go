@@ -10,7 +10,7 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
 )
 
@@ -52,7 +52,7 @@ func (a *app) RemoveMouseChangeCallback(callbackId int) {
 
 // SelectedPrefab returns currently selected dmmdata.Prefab and bool value which shows if there is one.
 // Selected prefab is taken from the cpprefabs.Prefabs panel.
-func (a *app) SelectedPrefab() (*dmmdata.Prefab, bool) {
+func (a *app) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 	return dmmap.PrefabStorage.GetById(a.layout.Prefabs.SelectedPrefabId())
 }
 

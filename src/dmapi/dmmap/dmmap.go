@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"sdmm/dmapi/dmenv"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
 )
 
@@ -13,7 +13,7 @@ var (
 
 	// Tiles should have at least one area and one turf.
 	// Those vars will store them to ensure that the tile has a proper content.
-	baseArea, baseTurf *dmmdata.Prefab
+	baseArea, baseTurf *dmmprefab.Prefab
 )
 
 func Init(dme *dmenv.Dme) {

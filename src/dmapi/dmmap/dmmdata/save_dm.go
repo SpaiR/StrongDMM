@@ -59,12 +59,12 @@ func (d DmmData) SaveDM(path string) {
 	log.Printf("[dmmdata] [%s] saved in [DM] format to: %s", d, path)
 }
 
-func toDMStr(key Key, content Content) string {
+func toDMStr(key Key, prefabs Prefabs) string {
 	sb := strings.Builder{}
 
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))
 
-	for idx, prefab := range content {
+	for idx, prefab := range prefabs {
 		sb.WriteString(prefab.Path())
 
 		if prefab.Vars().Len() > 0 {
@@ -85,7 +85,7 @@ func toDMStr(key Key, content Content) string {
 			sb.WriteString("}")
 		}
 
-		if idx != len(content)-1 {
+		if idx != len(prefabs)-1 {
 			sb.WriteString(",")
 		}
 	}

@@ -57,15 +57,15 @@ func (sp *saveProcess) handleReusedKeys() {
 	log.Println("[dmmsave] handle reused keys...")
 
 	// Cache the initial content, since we know it won't change.
-	keyByContentCache := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
-	for key, content := range sp.initial.Dictionary {
-		keyByContentCache[content.Hash()] = key
+	keyByPrefabs := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
+	for key, prefabs := range sp.initial.Dictionary {
+		keyByPrefabs[prefabs.Hash()] = key
 	}
 
 	for _, tile := range sp.dmm.Tiles {
-		newContent := tile.Content().Sorted()
-		if initialKey, ok := findKeyByTileContent(sp.initial, keyByContentCache, newContent); ok {
-			sp.setOutputKeyContent(tile.Coord, initialKey, newContent)
+		prefabs := tile.Instances().Sorted().Prefabs()
+		if initialKey, ok := findKeyByTileContent(sp.initial, keyByPrefabs, prefabs); ok {
+			sp.setOutputKeyContent(tile.Coord, initialKey, prefabs)
 			delete(sp.unusedKeys, initialKey)
 		}
 	}
@@ -86,6 +86,10 @@ func (sp *saveProcess) handleLocationsWithoutKeys() error {
 
 	switch sp.fillLocations(locsWithoutKey) {
 	case errorRegenerateKeys:
+		sp.keygen.DropKeysPool()
+		sp.output.Dictionary = make(dmmdata.DataDictionary)
+		sp.output.Grid = make(dmmdata.DataGrid)
+		sp.unusedKeys = nil
 		return sp.handleLocationsWithoutKeys()
 	case errorKeysLimitExceeded:
 		return errorKeysLimitExceeded
@@ -127,23 +131,23 @@ func (sp *saveProcess) tryToReuseKeysByTheirInitialLocation(locsWithoutKey map[u
 	}
 
 	// Content can be the same for different locations, so we will remember an unusedKey we applied to locs.
-	keyByContentCache := make(map[uint64]dmmdata.Key)
+	keyByPrefabs := make(map[uint64]dmmdata.Key)
 
 	for unusedKey := range unusedKeysCpy {
 		for loc := range locsWithoutKey {
-			content := sp.dmm.GetTile(loc).Content().Sorted()
-			contentHash := content.Hash()
+			prefabs := sp.dmm.GetTile(loc).Instances().Sorted().Prefabs()
+			prefabsHash := prefabs.Hash()
 
 			// If the key was already applied to the content in a previous iteration.
-			if cachedKey, ok := keyByContentCache[contentHash]; ok {
+			if cachedKey, ok := keyByPrefabs[prefabsHash]; ok {
 				sp.output.Grid[loc] = cachedKey
 				continue
 			}
 
 			if sp.initial.Grid[loc] == unusedKey {
-				keyByContentCache[contentHash] = unusedKey
+				keyByPrefabs[prefabsHash] = unusedKey
 
-				sp.setOutputKeyContent(loc, unusedKey, content)
+				sp.setOutputKeyContent(loc, unusedKey, prefabs)
 
 				delete(sp.unusedKeys, unusedKey)
 				delete(locsWithoutKey, loc)
@@ -167,13 +171,13 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 		createdKeys []dmmdata.Key
 	)
 
-	keyByContentCache := make(map[uint64]dmmdata.Key)
+	keyByPrefabs := make(map[uint64]dmmdata.Key)
 
 	for loc := range locsWithoutKey {
-		content := sp.dmm.GetTile(loc).Content().Sorted()
+		prefabs := sp.dmm.GetTile(loc).Instances().Sorted().Prefabs()
 
 		var key dmmdata.Key
-		if reusableKey, ok := findKeyByTileContent(sp.output, keyByContentCache, content); ok {
+		if reusableKey, ok := findKeyByTileContent(sp.output, keyByPrefabs, prefabs); ok {
 			key = reusableKey
 		} else if len(sp.unusedKeys) != 0 {
 			for unusedKey := range sp.unusedKeys { // Pick up the first available key.
@@ -188,22 +192,14 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 				if newSize == -1 {
 					return errorKeysLimitExceeded
 				}
-
-				log.Println("[dmmsave] unable to create a key, changing key length:", newSize)
-
-				sp.keygen.DropKeysPool()
-
 				sp.output.KeyLength = newSize
-				sp.output.Dictionary = make(dmmdata.DataDictionary)
-				sp.output.Grid = make(dmmdata.DataGrid)
-				sp.unusedKeys = nil
-
+				log.Println("[dmmsave] unable to create a key, changing key length:", newSize)
 				return errorRegenerateKeys
 			}
 			createdKeys = append(createdKeys, key)
 		}
 
-		sp.setOutputKeyContent(loc, key, content)
+		sp.setOutputKeyContent(loc, key, prefabs)
 	}
 
 	log.Println("[dmmsave] all tiles handled")
@@ -213,25 +209,25 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 	return nil
 }
 
-func (sp *saveProcess) setOutputKeyContent(loc util.Point, key dmmdata.Key, content dmmdata.Content) {
+func (sp *saveProcess) setOutputKeyContent(loc util.Point, key dmmdata.Key, prefabs dmmdata.Prefabs) {
 	sp.output.Grid[loc] = key
-	sp.output.Dictionary[key] = content
+	sp.output.Dictionary[key] = prefabs
 }
 
 func findKeyByTileContent(
 	data *dmmdata.DmmData,
-	keyByContentCache map[uint64]dmmdata.Key,
-	content dmmdata.Content,
+	keyByPrefabs map[uint64]dmmdata.Key,
+	prefabs dmmdata.Prefabs,
 ) (dmmdata.Key, bool) {
-	contentHash := content.Hash()
+	contentHash := prefabs.Hash()
 
-	if key, ok := keyByContentCache[contentHash]; ok {
+	if key, ok := keyByPrefabs[contentHash]; ok {
 		return key, true
 	}
 
 	for key, dataContent := range data.Dictionary {
-		if content.Equals(dataContent) {
-			keyByContentCache[contentHash] = key
+		if prefabs.Equals(dataContent) {
+			keyByPrefabs[contentHash] = key
 			return key, true
 		}
 	}

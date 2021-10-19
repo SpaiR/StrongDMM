@@ -13,7 +13,7 @@ type treeNode struct {
 	sprite *dmicon.Sprite
 }
 
-func (e *Environment) treeNode(object *dmenv.Object) (*treeNode, bool) {
+func (e *Environment) newTreeNode(object *dmenv.Object) (*treeNode, bool) {
 	if node, ok := e.treeNodes[object.Path]; ok {
 		return node, true
 	}

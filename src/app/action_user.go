@@ -7,7 +7,7 @@ import (
 	"github.com/sqweek/dialog"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
 
 /*
@@ -95,7 +95,7 @@ func (a *app) DoOpenPreferences() {
 }
 
 // DoSelectPrefab globally selects provided prefab in the app.
-func (a *app) DoSelectPrefab(prefab *dmmdata.Prefab) {
+func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 	log.Printf("[app] select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
 	a.layout.Environment.SelectPath(prefab.Path())
 	a.layout.Prefabs.Select(prefab)

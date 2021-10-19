@@ -3,57 +3,59 @@ package dmmap
 import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
 type Tile struct {
-	Coord   util.Point
-	content dmmdata.Content
+	Coord     util.Point
+	instances Instances
 }
 
 func (t Tile) Copy() Tile {
 	return Tile{
 		t.Coord,
-		t.content.Copy(),
+		t.instances.Copy(),
 	}
 }
 
-func (t Tile) Content() dmmdata.Content {
-	return t.content
+func (t Tile) Instances() Instances {
+	return t.instances
 }
 
-func (t *Tile) ContentSet(content dmmdata.Content) {
-	t.content = content
+func (t *Tile) InstancesSet(prefabs dmmdata.Prefabs) {
+	t.instances = InstancesFromPrefabs(prefabs)
 }
 
-func (t *Tile) ContentAdd(prefab *dmmdata.Prefab) {
-	t.content = append(t.content, prefab)
+func (t *Tile) InstancesAdd(prefab *dmmprefab.Prefab) {
+	t.instances = append(t.instances, dmminstance.New(prefab))
 }
 
-func (t *Tile) ContentRemoveByPath(pathToRemove string) {
-	var newContent dmmdata.Content
-	for _, prefab := range t.content {
-		if !dm.IsPath(prefab.Path(), pathToRemove) {
-			newContent = append(newContent, prefab)
+func (t *Tile) InstancesRemoveByPath(pathToRemove string) {
+	instances := make(Instances, 0, len(t.instances))
+	for _, instance := range t.instances {
+		if !dm.IsPath(instance.Prefab().Path(), pathToRemove) {
+			instances = append(instances, instance)
 		}
 	}
-	t.content = newContent
+	t.instances = instances
 }
 
-// ContentRegenerate adds missing base prefabs, if there are some of them.
-func (t *Tile) ContentRegenerate() {
+// InstancesRegenerate adds missing base prefabs, if there are some of them.
+func (t *Tile) InstancesRegenerate() {
 	var hasArea, hasTurf bool
-	for _, prefab := range t.content {
-		if dm.IsPath(prefab.Path(), "/area") {
+	for _, instance := range t.instances {
+		if dm.IsPath(instance.Prefab().Path(), "/area") {
 			hasArea = true
-		} else if dm.IsPath(prefab.Path(), "/turf") {
+		} else if dm.IsPath(instance.Prefab().Path(), "/turf") {
 			hasTurf = true
 		}
 	}
 	if !hasArea {
-		t.ContentAdd(baseArea)
+		t.InstancesAdd(baseArea)
 	}
 	if !hasTurf {
-		t.ContentAdd(baseTurf)
+		t.InstancesAdd(baseTurf)
 	}
 }

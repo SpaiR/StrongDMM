@@ -2,7 +2,7 @@ package pmap
 
 import (
 	"sdmm/app/command"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/util"
 )
 
@@ -10,7 +10,7 @@ func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
 	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
-func (p *PaneMap) SelectedPrefab() (*dmmdata.Prefab, bool) {
+func (p *PaneMap) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 	return p.app.SelectedPrefab()
 }
 
@@ -20,7 +20,7 @@ func (p *PaneMap) CopyTiles() {
 
 func (p *PaneMap) PasteTiles() {
 	p.app.Clipboard().Paste(p.dmm, p.canvasState.LastHoveredTile())
-	p.CommitChanges("Paste")
+	go p.CommitChanges("Paste")
 }
 
 func (p *PaneMap) CutTiles() {
@@ -31,14 +31,14 @@ func (p *PaneMap) CutTiles() {
 func (p *PaneMap) DeleteTiles() {
 	tile := p.dmm.GetTile(p.canvasState.LastHoveredTile())
 
-	for _, prefab := range tile.Content() {
-		if p.app.PathsFilter().IsVisiblePath(prefab.Path()) {
-			tile.ContentRemoveByPath(prefab.Path())
+	for _, instance := range tile.Instances() {
+		if p.app.PathsFilter().IsVisiblePath(instance.Prefab().Path()) {
+			tile.InstancesRemoveByPath(instance.Prefab().Path())
 		}
 	}
 
-	tile.ContentRegenerate()
-	p.CommitChanges("Delete")
+	tile.InstancesRegenerate()
+	go p.CommitChanges("Delete")
 }
 
 // CommitChanges triggers snapshot to commit changes and create a patch between two map states.

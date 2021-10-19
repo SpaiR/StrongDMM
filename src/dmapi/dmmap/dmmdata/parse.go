@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
 	"sdmm/util"
 )
@@ -41,8 +42,8 @@ func parse(file *os.File) (*DmmData, error) {
 		escaping       bool
 		skipWhitespace bool
 
-		currData      Content
-		currPrefab    = &Prefab{vars: &dmvars.Variables{}}
+		currData      Prefabs
+		currPath      = ""
 		currVariables = &dmvars.MutableVariables{}
 		currVar       = make([]rune, 0)
 		currDatum     = make([]rune, 0)
@@ -52,13 +53,12 @@ func parse(file *os.File) (*DmmData, error) {
 
 		// Functions:
 		flushCurrPrefab = func() {
-			currPrefab.vars = currVariables.ToImmutable()
-			currData = append(currData, currPrefab)
-			currPrefab = &Prefab{vars: &dmvars.Variables{}}
+			currData = append(currData, dmmprefab.New(0, currPath, currVariables.ToImmutable()))
+			currPath = ""
 			currVariables = &dmvars.MutableVariables{}
 		}
 		flushCurrPath = func() {
-			currPrefab.path = string(currDatum)
+			currPath = string(currDatum)
 			currDatum = currDatum[:0]
 		}
 		flushCurrVariable = func() {
@@ -153,18 +153,18 @@ func parse(file *os.File) (*DmmData, error) {
 					flushCurrPath()
 					inVarEditBlock = true
 				} else if c == ',' {
-					if len(currPrefab.path) == 0 && len(currDatum) > 0 {
+					if len(currPath) == 0 && len(currDatum) > 0 {
 						flushCurrPath()
 					}
 					flushCurrPrefab()
 				} else if c == ')' {
-					if len(currPrefab.path) == 0 && len(currDatum) > 0 {
+					if len(currPath) == 0 && len(currDatum) > 0 {
 						flushCurrPath()
 					}
 					flushCurrPrefab()
 					key := Key(currKey)
 					currKey = currKey[:0]
-					data := make(Content, len(currData))
+					data := make(Prefabs, len(currData))
 					copy(data, currData)
 					currData = currData[:0]
 					currKeyLength = 0

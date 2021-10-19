@@ -3,14 +3,14 @@ package tool
 import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/util"
 )
 
 type Modify interface {
 	Dmm() *dmmap.Dmm
 	UpdateCanvasByCoord(coord util.Point)
-	SelectedPrefab() (*dmmdata.Prefab, bool)
+	SelectedPrefab() (*dmmprefab.Prefab, bool)
 	CommitChanges(string)
 }
 
@@ -51,16 +51,16 @@ func (a *Add) OnMove(coord util.Point) {
 
 		if !a.altBehaviour {
 			if dm.IsPath(prefab.Path(), "/area") {
-				tile.ContentRemoveByPath("/area")
+				tile.InstancesRemoveByPath("/area")
 			} else if dm.IsPath(prefab.Path(), "/turf") {
-				tile.ContentRemoveByPath("/turf")
+				tile.InstancesRemoveByPath("/turf")
 			}
 		} else if dm.IsPath(prefab.Path(), "/obj") {
-			tile.ContentRemoveByPath("/obj")
+			tile.InstancesRemoveByPath("/obj")
 		}
 
-		tile.ContentAdd(prefab)
-		tile.ContentRegenerate()
+		tile.InstancesAdd(prefab)
+		tile.InstancesRegenerate()
 
 		a.modify.UpdateCanvasByCoord(coord)
 		a.visuals.MarkModifiedTile(coord)
@@ -71,7 +71,7 @@ func (a *Add) OnStop(_ util.Point) {
 	a.altBehaviour = false
 	if len(a.tiles) != 0 {
 		a.tiles = make(map[util.Point]bool, len(a.tiles))
-		a.modify.CommitChanges("Add Atoms")
 		a.visuals.ClearModifiedTiles()
+		go a.modify.CommitChanges("Add Atoms")
 	}
 }

@@ -6,19 +6,19 @@ import (
 
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
 
-type node struct {
+type prefabNode struct {
 	name   string
-	orig   *dmmdata.Prefab
+	orig   *dmmprefab.Prefab
 	sprite *dmicon.Sprite
 }
 
-func makeNodes(content dmmdata.Content) []*node {
-	var nodes []*node
-
-	for _, prefab := range content {
-		nodes = append(nodes, makeNode(prefab))
+func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
+	nodes := make([]*prefabNode, 0, len(prefabs))
+	for _, prefab := range prefabs {
+		nodes = append(nodes, newPrefabNode(prefab))
 	}
 
 	if nodes != nil {
@@ -33,7 +33,7 @@ func makeNodes(content dmmdata.Content) []*node {
 			return strings.Compare(nodes[i].name, nodes[j].name) == -1
 		})
 
-		// Fine an initial prefab index.
+		// Find the initial prefab index.
 		idx := 0
 		for i, node := range nodes {
 			if node.orig.Vars().Len() == 0 {
@@ -45,17 +45,17 @@ func makeNodes(content dmmdata.Content) []*node {
 		// Move the initial prefab to the beginning of the slice
 		initial := nodes[idx]
 		nodes = append(nodes[:idx], nodes[idx+1:]...)
-		nodes = append([]*node{initial}, nodes...)
+		nodes = append([]*prefabNode{initial}, nodes...)
 	}
 
 	return nodes
 }
 
-func makeNode(prefab *dmmdata.Prefab) *node {
+func newPrefabNode(prefab *dmmprefab.Prefab) *prefabNode {
 	icon, _ := prefab.Vars().Text("icon")
 	iconState, _ := prefab.Vars().Text("icon_state")
 	dir, _ := prefab.Vars().Int("dir")
-	return &node{
+	return &prefabNode{
 		name:   prefab.Path()[strings.LastIndex(prefab.Path(), "/")+1:],
 		orig:   prefab,
 		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),

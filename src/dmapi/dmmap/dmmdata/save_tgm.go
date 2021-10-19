@@ -62,7 +62,7 @@ func (d DmmData) SaveTGM(path string) {
 	log.Printf("[dmmdata] [%s] saved in [TGM] format to: %s", d, path)
 }
 
-func toTGMStr(key Key, content Content, lineBreak string) string {
+func toTGMStr(key Key, content Prefabs, lineBreak string) string {
 	sb := strings.Builder{}
 
 	sb.WriteString(fmt.Sprintf("\"%s\" = (", key))

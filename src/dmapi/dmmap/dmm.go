@@ -63,7 +63,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 						if !prefab.Vars().HasParent() {
 							prefab.Vars().LinkParent(obj.Vars)
 						}
-						tile.ContentAdd(PrefabStorage.Put(prefab))
+						tile.InstancesAdd(PrefabStorage.Put(prefab))
 					} else {
 						log.Println("[dmmap] unknown prefab:", prefab.Path())
 					}

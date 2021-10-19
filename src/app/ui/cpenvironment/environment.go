@@ -130,7 +130,7 @@ func (e *Environment) showPathBranch(t string) {
 }
 
 func (e *Environment) showBranch0(object *dmenv.Object) {
-	node, ok := e.treeNode(object)
+	node, ok := e.newTreeNode(object)
 	if ok != true {
 		return
 	}
@@ -225,7 +225,7 @@ func (e *Environment) filterPathBranch(t string) {
 
 func (e *Environment) filterBranch0(object *dmenv.Object) {
 	if strings.Contains(object.Path, e.filter) {
-		if node, ok := e.treeNode(object); ok == true {
+		if node, ok := e.newTreeNode(object); ok == true {
 			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
 		}
 	}

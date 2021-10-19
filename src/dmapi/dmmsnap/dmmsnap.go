@@ -42,11 +42,14 @@ func (d *DmmSnap) Commit() (int, []util.Point) {
 	for _, currentTile := range d.current.Tiles {
 		initialTile := d.initial.GetTile(currentTile.Coord)
 
+		currInstances := currentTile.Instances()
+		initialInstances := initialTile.Instances()
+
 		// If tiles contents have different length, then they are different for sure.
-		tileModified := len(currentTile.Content()) != len(initialTile.Content())
+		tileModified := len(currInstances) != len(initialInstances)
 
 		if !tileModified {
-			tileModified = !currentTile.Content().Equals(initialTile.Content())
+			tileModified = !currInstances.PrefabsEquals(initialInstances)
 		}
 
 		// No changes - no patch.
@@ -56,8 +59,8 @@ func (d *DmmSnap) Commit() (int, []util.Point) {
 
 		tilePatches = append(tilePatches, tilePatch{
 			coord:    currentTile.Coord,
-			backward: initialTile.Content().Copy(),
-			forward:  currentTile.Content().Copy(),
+			backward: initialInstances.Prefabs(),
+			forward:  currInstances.Prefabs(),
 		})
 	}
 
@@ -130,21 +133,21 @@ func (p patchType) String() string {
 func (d *DmmSnap) patchState(stateId int, isForward bool, patchType patchType) {
 	log.Printf("[snapshot] patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
 	for _, patch := range d.patches[stateId] {
-		var content dmmdata.Content
+		var prefabs dmmdata.Prefabs
 		if isForward {
-			content = patch.forward
+			prefabs = patch.forward
 		} else {
-			content = patch.backward
+			prefabs = patch.backward
 		}
 
 		// Update current map.
 		if patchType&patchCurrent != 0 {
-			d.current.GetTile(patch.coord).ContentSet(content.Copy())
+			d.current.GetTile(patch.coord).InstancesSet(prefabs)
 		}
 
 		// Update initial map.
 		if patchType&patchInitial != 0 {
-			d.initial.GetTile(patch.coord).ContentSet(content.Copy())
+			d.initial.GetTile(patch.coord).InstancesSet(prefabs)
 		}
 	}
 }
@@ -174,6 +177,6 @@ func (d *DmmSnap) syncInitialWithCurrent() {
 type tilePatch struct {
 	coord util.Point
 
-	backward dmmdata.Content // State to restore.
-	forward  dmmdata.Content // State to reproduce.
+	backward dmmdata.Prefabs // State to restore.
+	forward  dmmdata.Prefabs // State to reproduce.
 }

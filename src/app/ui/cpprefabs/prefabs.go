@@ -4,18 +4,18 @@ import (
 	"log"
 
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
 
 type App interface {
 	PointSize() float32
-	DoSelectPrefab(*dmmdata.Prefab)
+	DoSelectPrefab(*dmmprefab.Prefab)
 }
 
 type Prefabs struct {
 	app App
 
-	nodes      []*node
+	nodes      []*prefabNode
 	selectedId uint64
 
 	tmpDoScrollToPrefab bool
@@ -30,8 +30,8 @@ func (p *Prefabs) Free() {
 	p.selectedId = 0
 }
 
-func (p *Prefabs) Select(prefab *dmmdata.Prefab) {
-	p.nodes = makeNodes(dmmap.PrefabStorage.GetAllByPath(prefab.Path()))
+func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
+	p.nodes = newPrefabNodes(dmmap.PrefabStorage.GetAllByPath(prefab.Path()))
 	p.selectedId = prefab.Id()
 	p.tmpDoScrollToPrefab = true
 	log.Println("[cpprefabs] selected prefab id:", p.selectedId)
@@ -50,12 +50,12 @@ func (p *Prefabs) SelectedPrefabId() uint64 {
 	return p.selectedId
 }
 
-func (p *Prefabs) doSelect(node *node) {
+func (p *Prefabs) doSelect(node *prefabNode) {
 	p.app.DoSelectPrefab(node.orig)
 	p.tmpDoScrollToPrefab = false // do not scroll panel when we're in panel itself
 }
 
-func (p *Prefabs) showContextMenu(node *node) {
+func (p *Prefabs) showContextMenu(node *prefabNode) {
 	// TODO: prefab context menu
 }
 

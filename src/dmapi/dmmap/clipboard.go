@@ -40,14 +40,14 @@ func (c *Clipboard) Copy(dmm *Dmm, tiles []util.Point) {
 
 		tile := dmm.GetTile(pos).Copy()
 
-		var tileContent dmmdata.Content
-		for _, prefab := range tile.Content() {
-			if c.pathsFilter.IsVisiblePath(prefab.Path()) {
-				tileContent = append(tileContent, prefab)
+		var prefabs dmmdata.Prefabs
+		for _, instance := range tile.Instances() {
+			if c.pathsFilter.IsVisiblePath(instance.Prefab().Path()) {
+				prefabs = append(prefabs, instance.Prefab())
 			}
 		}
 
-		tile.ContentSet(tileContent)
+		tile.InstancesSet(prefabs)
 
 		c.buffer = append(c.buffer, tile)
 	}
@@ -77,8 +77,8 @@ func (c *Clipboard) Paste(dmm *Dmm, pastePos util.Point) {
 		}
 
 		tile := dmm.GetTile(pos)
-		tile.ContentSet(tileCopy.content.Copy())
-		tile.ContentRegenerate()
+		tile.InstancesSet(tileCopy.instances.Prefabs())
+		tile.InstancesRegenerate()
 	}
 }
 
