@@ -2,6 +2,7 @@ package menu
 
 import (
 	"sdmm/app/command"
+	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -52,10 +53,12 @@ type app interface {
 
 type Menu struct {
 	app app
+
+	shortcuts shortcut.Shortcuts
 }
 
 func New(app app) *Menu {
-	m := &Menu{app}
+	m := &Menu{app: app}
 	m.addShortcuts()
 	return m
 }

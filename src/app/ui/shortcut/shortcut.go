@@ -10,7 +10,8 @@ import (
 )
 
 type Shortcut struct {
-	Id           string
+	id           uint64
+	Name         string
 	FirstKey     glfw.Key
 	FirstKeyAlt  glfw.Key
 	SecondKey    glfw.Key
@@ -19,22 +20,23 @@ type Shortcut struct {
 	ThirdKeyAlt  glfw.Key
 	Action       func()
 	IsEnabled    func() bool
+	IsVisible    bool
 }
 
 func (s Shortcut) String() string {
 	return fmt.Sprintf(
-		"Id: %s, "+
+		"Id: %d, Name: %s, "+
 			"FirstKey: %d, FirstKeyAlt: %d, "+
 			"SecondKey: %d, SecondKeyAlt: %d, "+
 			"ThirdKey: %d, ThirdKeyAlt: %d, "+
 			"HasAction: %t, HasIsEnabled: %t, "+
-			"Wheight: %d",
-		s.Id,
+			"Wheight: %d, IsVisible: %t",
+		s.id, s.Name,
 		s.FirstKey, s.FirstKeyAlt,
 		s.SecondKey, s.SecondKeyAlt,
 		s.ThirdKey, s.ThirdKeyAlt,
 		s.Action != nil, s.IsEnabled != nil,
-		s.weight(),
+		s.weight(), s.IsVisible,
 	)
 }
 
@@ -71,17 +73,17 @@ func (s Shortcut) isPressed() bool {
 	return s.ThirdKey != 0 && (imgui.IsKeyPressed(int(s.ThirdKey)) || imgui.IsKeyPressed(int(s.ThirdKeyAlt)))
 }
 
-var shortcuts []Shortcut
+var shortcuts []*Shortcut
 
-func Add(shortcut Shortcut) {
+func add(shortcut *Shortcut) {
 	log.Println("[shortcut] added:", shortcut)
 	shortcuts = append(shortcuts, shortcut)
 }
 
-func Remove(shortcut Shortcut) {
+func remove(shortcut *Shortcut) {
 	log.Println("[shortcut] removed:", shortcut)
 	for idx, s := range shortcuts {
-		if s.Id == shortcut.Id {
+		if s.id == shortcut.id {
 			shortcuts = append(shortcuts[:idx], shortcuts[idx+1:]...)
 			break
 		}
@@ -89,10 +91,10 @@ func Remove(shortcut Shortcut) {
 }
 
 func Process() {
-	var pressedShortcuts []Shortcut
+	var pressedShortcuts []*Shortcut
 
 	for _, shortcut := range shortcuts {
-		if shortcut.isPressed() {
+		if shortcut.IsVisible && shortcut.isPressed() {
 			pressedShortcuts = append(pressedShortcuts, shortcut)
 		}
 	}

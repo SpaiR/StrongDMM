@@ -7,7 +7,7 @@ import (
 
 func (t *TileMenu) addShortcuts() {
 	t.shortcuts.Add(shortcut.Shortcut{
-		Id:        "tileMenu#close",
+		Name:      "tileMenu#close",
 		FirstKey:  glfw.KeyEscape,
 		Action:    t.close,
 		IsEnabled: func() bool { return t.opened },

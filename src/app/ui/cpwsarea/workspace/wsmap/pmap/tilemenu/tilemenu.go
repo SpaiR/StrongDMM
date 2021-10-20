@@ -58,6 +58,8 @@ func (t *TileMenu) Open(coord util.Point) {
 }
 
 func (t *TileMenu) Process() {
+	t.shortcuts.SetVisible(t.opened)
+
 	if !t.opened {
 		return
 	}
