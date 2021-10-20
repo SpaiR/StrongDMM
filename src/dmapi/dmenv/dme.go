@@ -49,7 +49,7 @@ func New(path string) (*Dme, error) {
 
 func nameFromPath(path string, parentName string) string {
 	if parentName == "" && len(path) > 1 {
-		return path[strings.LastIndex(path, "/")+1:]
+		return "\"" + path[strings.LastIndex(path, "/")+1:] + "\""
 	}
 	return parentName
 }
