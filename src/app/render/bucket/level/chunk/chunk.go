@@ -53,7 +53,7 @@ func (c *Chunk) Update(dmm *dmmap.Dmm, level int) {
 			x, y := int(x), int(y)
 			for _, i := range dmm.GetTile(util.Point{X: x, Y: y, Z: level}).Instances() {
 				u := unit.Make(x, y, i, dmmap.WorldIconSize)
-				unitsByLayers[u.Layer] = append(unitsByLayers[u.Layer], u)
+				unitsByLayers[u.Layer()] = append(unitsByLayers[u.Layer()], u)
 			}
 		}
 	}

@@ -10,13 +10,45 @@ import (
 
 // Unit stores render information about specific object prefab on the map.
 type Unit struct {
-	Sp   *dmicon.Sprite
-	Inst *dmminstance.Instance
+	sprite   *dmicon.Sprite
+	instance *dmminstance.Instance
 
-	Layer      float32
-	ViewBounds util.Bounds
+	layer      float32
+	viewBounds util.Bounds
 
-	R, G, B, A float32
+	r, g, b, a float32
+}
+
+func (u Unit) Sprite() *dmicon.Sprite {
+	return u.sprite
+}
+
+func (u Unit) Instance() *dmminstance.Instance {
+	return u.instance
+}
+
+func (u Unit) Layer() float32 {
+	return u.layer
+}
+
+func (u Unit) ViewBounds() util.Bounds {
+	return u.viewBounds
+}
+
+func (u Unit) R() float32 {
+	return u.r
+}
+
+func (u Unit) G() float32 {
+	return u.g
+}
+
+func (u Unit) B() float32 {
+	return u.b
+}
+
+func (u Unit) A() float32 {
+	return u.a
 }
 
 func Make(x, y int, i *dmminstance.Instance, iconSize int) Unit {

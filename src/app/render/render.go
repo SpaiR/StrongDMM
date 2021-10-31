@@ -6,7 +6,7 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
-	"sdmm/dmapi/dm"
+	"sdmm/app/render/bucket/level/chunk/unit"
 	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
@@ -17,22 +17,29 @@ type overlayState interface {
 	ModifiedTiles() []util.Bounds
 }
 
+type unitProcessor interface {
+	ProcessUnit(unit.Unit) (visible bool)
+}
+
 type Render struct {
 	Camera *Camera
 
-	pathsFilter *dm.PathsFilter
-	bucket      *bucket.Bucket
+	bucket *bucket.Bucket
 
-	overlayState overlayState
+	overlayState  overlayState
+	unitProcessor unitProcessor
 }
 
-func New(pathsFilter *dm.PathsFilter) *Render {
+func New() *Render {
 	brush.TryInit()
 	return &Render{
-		Camera:      newCamera(),
-		pathsFilter: pathsFilter,
-		bucket:      bucket.New(),
+		Camera: newCamera(),
+		bucket: bucket.New(),
 	}
+}
+
+func (r *Render) SetUnitProcessor(processor unitProcessor) {
+	r.unitProcessor = processor
 }
 
 func (r *Render) SetOverlayState(state overlayState) {
@@ -88,19 +95,19 @@ func (r *Render) batchBucketUnits(width, height float32) {
 			// Get all units in the chunk for the specific layer.
 			for _, u := range chunk.UnitsByLayers[layer] {
 				// Out of bounds = skip
-				if !u.ViewBounds.ContainsV(x1, y1, x2, y2) {
+				if !u.ViewBounds().ContainsV(x1, y1, x2, y2) {
 					continue
 				}
-				// Hidden path = skip
-				if r.pathsFilter.IsHiddenPath(u.Inst.Prefab().Path()) {
+				// Process unit
+				if !r.unitProcessor.ProcessUnit(u) {
 					continue
 				}
 
 				brush.RectTexturedV(
-					u.ViewBounds.X1, u.ViewBounds.Y1, u.ViewBounds.X2, u.ViewBounds.Y2,
-					u.R, u.G, u.B, u.A,
-					u.Sp.Texture(),
-					u.Sp.U1, u.Sp.V1, u.Sp.U2, u.Sp.V2,
+					u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
+					u.R(), u.G(), u.B(), u.A(),
+					u.Sprite().Texture(),
+					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
 				)
 			}
 		}

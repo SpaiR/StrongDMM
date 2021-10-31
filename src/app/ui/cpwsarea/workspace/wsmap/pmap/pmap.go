@@ -8,6 +8,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
+	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmsnap"
@@ -26,6 +27,7 @@ type App interface {
 
 	CommandStorage() *command.Storage
 	Clipboard() *dmmap.Clipboard
+	PathsFilter() *dm.PathsFilter
 }
 
 type PaneMap struct {
@@ -73,6 +75,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvasControl.SetOnRmbClick(func() { p.tileMenu.Open(p.canvasState.HoveredTile()) })
 
 	p.canvas.Render.SetOverlayState(p.canvasState)
+	p.canvas.Render.SetUnitProcessor(p)
 	p.canvas.Render.ValidateLevel(p.dmm, p.activeLevel)
 
 	return p
