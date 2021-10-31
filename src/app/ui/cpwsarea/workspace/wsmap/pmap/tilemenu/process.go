@@ -12,6 +12,21 @@ import (
 	"sdmm/util"
 )
 
+func (t *TileMenu) Process() {
+	t.shortcuts.SetVisible(t.opened)
+
+	if !t.opened {
+		return
+	}
+
+	if imgui.BeginPopup("tileMenu") {
+		t.showControls()
+		imgui.EndPopup()
+	} else {
+		t.close()
+	}
+}
+
 func (t *TileMenu) showControls() {
 	w.Layout{
 		w.MenuItem("Undo", t.app.DoUndo).
@@ -90,9 +105,10 @@ func (t *TileMenu) editInstance(i *dmminstance.Instance) {
 }
 
 func getSprite(i *dmmprefab.Prefab) *dmicon.Sprite {
-	return dmicon.Cache.GetSpriteOrPlaceholder(
+	return dmicon.Cache.GetSpriteOrPlaceholderV(
 		i.Vars().TextV("icon", ""),
 		i.Vars().TextV("icon_state", ""),
+		i.Vars().IntV("dir", dm.DirDefault),
 	)
 }
 
