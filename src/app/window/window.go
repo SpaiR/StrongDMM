@@ -14,10 +14,16 @@ import (
 
 const fps int = 60
 
+type application interface {
+	Process()
+	PostProcess()
+	LayoutIniPath() string
+}
+
 type Window struct {
 	Handle *glfw.Window
 
-	process, postProcess func()
+	application application
 
 	mouseChangeCallbackId int
 	mouseChangeCallbacks  map[int]func(uint, uint)
@@ -26,10 +32,10 @@ type Window struct {
 	laterJobs []func()
 }
 
-func New(process func(), postProcess func()) *Window {
+func New(application application) *Window {
 	log.Println("[window] creating native window")
 
-	w := Window{process: process, postProcess: postProcess, pointSize: 1}
+	w := Window{application: application, pointSize: 1}
 	w.mouseChangeCallbacks = make(map[int]func(uint, uint))
 
 	log.Println("[window] setting up glfw")
@@ -116,7 +122,7 @@ func (w *Window) setupImGui() {
 	imgui.CreateContext(nil)
 
 	io := imgui.CurrentIO()
-	io.SetIniFilename("")
+	io.SetIniFilename(w.application.LayoutIniPath())
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	// TODO: Proper theming

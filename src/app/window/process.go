@@ -20,9 +20,9 @@ func (w *Window) Process() {
 
 func (w *Window) runFrame() {
 	w.startFrame()
-	w.process()
+	w.application.Process()
 	w.endFrame()
-	w.postProcess()
+	w.application.PostProcess()
 }
 
 func (w *Window) startFrame() {

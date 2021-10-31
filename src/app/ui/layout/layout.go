@@ -17,6 +17,11 @@ type app interface {
 	IsWindowReset() bool
 }
 
+// Version returns the current version of the layout. Need to be updated after any major layout changes.
+func Version() uint {
+	return 1
+}
+
 type Layout struct {
 	cpenvironment.Environment
 	cpprefabs.Prefabs

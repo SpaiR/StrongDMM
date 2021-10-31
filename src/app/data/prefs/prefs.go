@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	fileName = "preferences.json"
-	version  = 1
+	fileName      = "preferences.json"
+	version  uint = 1
 )
 
 type Prefs struct {
 	path string
 
-	Version int
+	Version uint
 	Scale   int
 }
 

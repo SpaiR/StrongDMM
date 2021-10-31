@@ -9,14 +9,15 @@ import (
 )
 
 const (
-	fileName = "config.json"
-	version  = 1
+	fileName      = "config.json"
+	version  uint = 1
 )
 
 type Config struct {
 	path string
 
-	Version                 int
+	Version                 uint
+	LayoutVersion           uint
 	RecentEnvironments      []string
 	RecentMapsByEnvironment map[string][]string
 }

@@ -41,11 +41,12 @@ func Start() {
 	log.Println("[app] log dir:", logDir)
 
 	a := app{
-		logDir:    logDir,
-		backupDir: filepath.FromSlash(internalDir + "/backup"),
+		internalDir: internalDir,
+		logDir:      logDir,
+		backupDir:   filepath.FromSlash(internalDir + "/backup"),
 	}
 
-	a.masterWindow = window.New(a.process, a.postProcess)
+	a.masterWindow = window.New(&a)
 
 	log.Println("[app] start phase: [initialize]")
 	a.initialize(internalDir)
@@ -63,8 +64,9 @@ func Start() {
 type app struct {
 	masterWindow *window.Window
 
-	logDir    string
-	backupDir string
+	internalDir string
+	logDir      string
+	backupDir   string
 
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
@@ -105,10 +107,10 @@ func (a *app) initialize(internalDir string) {
 
 	a.UpdateTitle()
 	a.updateScale()
-	a.resetWindows()
+	a.checkLayoutState()
 }
 
-func (a *app) process() {
+func (a *app) Process() {
 	// FIXME: Remove
 	//imgui.ShowDemoWindow(nil)
 
@@ -120,10 +122,14 @@ func (a *app) process() {
 	a.layout.Process()
 }
 
-func (a *app) postProcess() {
+func (a *app) PostProcess() {
 	a.checkShouldClose()
 	a.checkUpdateScale()
 	a.dropTmpState()
+}
+
+func (a *app) LayoutIniPath() string {
+	return filepath.FromSlash(a.internalDir + "/layout.ini")
 }
 
 func (a *app) dispose() {
@@ -190,6 +196,22 @@ func (a *app) dropTmpState() {
 
 func (a *app) updateScale() {
 	a.masterWindow.SetPointSize(float32(a.prefsData.Scale) / 100)
+}
+
+// Checks the version of the layout in the user config data and the app itself.
+// When different, the user layout will be reset.
+// Otherwise, the layout will persist its state between the app sessions.
+func (a *app) checkLayoutState() {
+	if a.configData.LayoutVersion != layout.Version() {
+		log.Printf("[app] up layout version from [%d] to: %d", a.configData.LayoutVersion, layout.Version())
+		_ = os.Remove(a.LayoutIniPath())
+		a.resetWindows()
+		a.configData.LayoutVersion = layout.Version()
+		a.configData.Save()
+		log.Println("[app] layout reset")
+	} else {
+		log.Println("[app] layout version is not changed")
+	}
 }
 
 func (a *app) resetWindows() {
