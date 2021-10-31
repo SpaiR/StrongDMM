@@ -18,6 +18,8 @@ type Control struct {
 	activated bool
 	moving    bool
 	dragging  bool
+	zoomed    bool
+	clicked   bool
 
 	onRmbClick func()
 }
@@ -36,6 +38,18 @@ func (c *Control) Moving() bool {
 
 func (c *Control) Dragging() bool {
 	return c.dragging
+}
+
+func (c *Control) Zoomed() bool {
+	return c.zoomed
+}
+
+func (c *Control) Clicked() bool {
+	return c.clicked
+}
+
+func (c *Control) Touched() bool {
+	return c.moving || (c.active && c.dragging) || c.zoomed || c.clicked
 }
 
 func NewControl(camera *render.Camera) *Control {
@@ -106,7 +120,9 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 	}
 
 	_, mouseWheel := imgui.CurrentIO().MouseWheel()
-	if mouseWheel == 0 {
+	c.zoomed = mouseWheel != 0
+
+	if !c.zoomed {
 		return
 	}
 
@@ -128,6 +144,7 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 }
 
 func (c *Control) processMouseClick() {
+	c.clicked = imgui.IsMouseClicked(imgui.MouseButtonLeft | imgui.MouseButtonMiddle | imgui.MouseButtonRight)
 	if c.active && imgui.IsMouseClicked(imgui.MouseButtonRight) {
 		c.onRmbClick()
 	}

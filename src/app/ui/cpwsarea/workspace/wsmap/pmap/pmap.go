@@ -79,6 +79,10 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 }
 
 func (p *PaneMap) Process() {
+	if p.canvasControl.Touched() && !imgui.IsWindowFocused() {
+		imgui.SetWindowFocus()
+	}
+
 	p.panePos, p.paneSize = imgui.WindowPos(), imgui.WindowSize()
 	p.showPanel("canvasTools", pPosTop, p.canvasTools.Process)
 	p.showCanvas()

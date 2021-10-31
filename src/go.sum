@@ -1,5 +1,5 @@
-github.com/SpaiR/imgui-go v1.12.1-0.20211008065736-20faee8b06a8 h1:IUPIh0HqZtcav3oBKBQaXB1zWOWf9i0G6pSTbuFfgKc=
-github.com/SpaiR/imgui-go v1.12.1-0.20211008065736-20faee8b06a8/go.mod h1:bzOQqDbRE58xRB4EGTlUrIhCTWxNvU7YtJckrFf+HpM=
+github.com/SpaiR/imgui-go v1.12.1-0.20211031153955-961e098dc43f h1:MPqL068idU/CNOreTDid2Nt2fjpb4iZiJqnp+T/OsHo=
+github.com/SpaiR/imgui-go v1.12.1-0.20211031153955-961e098dc43f/go.mod h1:bzOQqDbRE58xRB4EGTlUrIhCTWxNvU7YtJckrFf+HpM=
 github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf/go.mod h1:peYoMncQljjNS6tZwI9WVyQB3qZS6u79/N3mBOcnd3I=
 github.com/TheTitanrain/w32 v0.0.0-20200114052255-2654d97dbd3d h1:2xp1BQbqcDDaikHnASWpVZRjibOxu7y9LhAv04whugI=
 github.com/TheTitanrain/w32 v0.0.0-20200114052255-2654d97dbd3d/go.mod h1:peYoMncQljjNS6tZwI9WVyQB3qZS6u79/N3mBOcnd3I=
