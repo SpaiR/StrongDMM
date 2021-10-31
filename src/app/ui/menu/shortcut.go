@@ -7,7 +7,7 @@ import (
 
 func (m *Menu) addShortcuts() {
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:        "menu#AppDoOpenMap",
+		Name:        "menu#DoOpenMap",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyO,
@@ -16,7 +16,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:        "menu#AppDoSave",
+		Name:        "menu#DoSave",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyS,
@@ -25,7 +25,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:        "menu#AppDoUndo",
+		Name:        "menu#DoUndo",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyZ,
@@ -34,7 +34,7 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:         "menu#AppDoRedo",
+		Name:         "menu#DoRedo",
 		FirstKey:     glfw.KeyLeftControl,
 		FirstKeyAlt:  glfw.KeyRightControl,
 		SecondKey:    glfw.KeyLeftShift,
@@ -44,7 +44,7 @@ func (m *Menu) addShortcuts() {
 		IsEnabled:    m.app.CommandStorage().HasRedo,
 	})
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:        "menu#AppDoRedo",
+		Name:        "menu#DoRedo",
 		FirstKey:    glfw.KeyLeftControl,
 		FirstKeyAlt: glfw.KeyRightControl,
 		SecondKey:   glfw.KeyY,
@@ -118,9 +118,9 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:     "menu#AppDoResetWindows",
+		Name:     "menu#DoResetLayout",
 		FirstKey: glfw.KeyF5,
-		Action:   m.app.DoResetWindows,
+		Action:   m.app.DoResetLayout,
 	})
 
 	m.shortcuts.SetVisible(true)

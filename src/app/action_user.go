@@ -143,10 +143,10 @@ func (a *app) DoRedo() {
 	a.commandStorage.Redo()
 }
 
-// DoResetWindows resets application windows to their initial positions.
-func (a *app) DoResetWindows() {
-	log.Println("[app] reset windows")
-	a.resetWindows()
+// DoResetLayout resets application windows to their initial positions.
+func (a *app) DoResetLayout() {
+	log.Println("[app] reset layout")
+	a.resetLayout()
 }
 
 // DoOpenLogs opens the logs folder.

@@ -204,8 +204,7 @@ func (a *app) updateScale() {
 func (a *app) checkLayoutState() {
 	if a.configData.LayoutVersion != layout.Version() {
 		log.Printf("[app] up layout version from [%d] to: %d", a.configData.LayoutVersion, layout.Version())
-		_ = os.Remove(a.LayoutIniPath())
-		a.resetWindows()
+		a.resetLayout()
 		a.configData.LayoutVersion = layout.Version()
 		a.configData.Save()
 		log.Println("[app] layout reset")
@@ -214,9 +213,11 @@ func (a *app) checkLayoutState() {
 	}
 }
 
-func (a *app) resetWindows() {
+func (a *app) resetLayout() {
+	_ = os.Remove(a.LayoutIniPath())
+	log.Println("[app] layout data deleted:", a.LayoutIniPath())
 	a.tmpWindowCond = imgui.ConditionAlways
-	log.Println("[app] window reset")
+	log.Println("[app] layout reset")
 }
 
 func (a *app) deleteOldLogs() {

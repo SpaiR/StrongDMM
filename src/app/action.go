@@ -20,8 +20,8 @@ import (
 	Then we provide the app struct as a high level realization which knows how to handle stuff.
 */
 
-// IsWindowReset returns true if we reset application windows to their initial positions.
-func (a *app) IsWindowReset() bool {
+// IsLayoutReset returns true if we reset application layout to its initial state.
+func (a *app) IsLayoutReset() bool {
 	return a.tmpWindowCond == imgui.ConditionAlways
 }
 

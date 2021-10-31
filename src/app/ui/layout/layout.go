@@ -14,7 +14,7 @@ type app interface {
 	cpwsarea.App
 	cpvareditor.App
 
-	IsWindowReset() bool
+	IsLayoutReset() bool
 }
 
 // Version returns the current version of the layout. Need to be updated after any major layout changes.
@@ -83,7 +83,7 @@ const (
 func (l *Layout) updateNodes() {
 	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
 
-	if !l.app.IsWindowReset() {
+	if !l.app.IsLayoutReset() {
 		return
 	}
 
@@ -111,7 +111,7 @@ func (l *Layout) wrapNode(id string, nodeId int, content func()) {
 const defaultWindowFlags = imgui.WindowFlagsNone
 
 func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar bool, content func()) {
-	if l.app.IsWindowReset() {
+	if l.app.IsLayoutReset() {
 		imgui.DockBuilderDockWindow(id, nodeId)
 	}
 

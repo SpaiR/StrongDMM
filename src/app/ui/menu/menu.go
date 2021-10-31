@@ -31,7 +31,7 @@ type app interface {
 	DoDelete() // Delete
 
 	// Window
-	DoResetWindows() // F5
+	DoResetLayout() // F5
 
 	// Help
 	DoOpenLogs()
@@ -146,7 +146,7 @@ func (m *Menu) Process() {
 		}),
 
 		w.Menu("Window", w.Layout{
-			w.MenuItem("Reset Windows", m.app.DoResetWindows).Shortcut("F5"),
+			w.MenuItem("Reset Layout", m.app.DoResetLayout).Shortcut("F5"),
 		}),
 
 		w.Menu("Help", w.Layout{
