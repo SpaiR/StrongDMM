@@ -45,19 +45,19 @@ func Start() {
 		backupDir: filepath.FromSlash(internalDir + "/backup"),
 	}
 
-	a.masterWindow = window.New(a.loop, a.postLoop)
+	a.masterWindow = window.New(a.process, a.postProcess)
 
-	log.Println("[app] start phase: [initialization]")
+	log.Println("[app] start phase: [initialize]")
 	a.initialize(internalDir)
-	log.Println("[app] end phase: [initialization]")
+	log.Println("[app] end phase: [initialize]")
 
-	log.Println("[app] start phase: [loop]")
-	a.run()
-	log.Println("[app] end phase: [loop]")
+	log.Println("[app] start phase: [process]")
+	a.masterWindow.Process()
+	log.Println("[app] end phase: [process]")
 
-	log.Println("[app] start phase: [disposing]")
+	log.Println("[app] start phase: [dispose]")
 	a.dispose()
-	log.Println("[app] end phase: [disposing]")
+	log.Println("[app] end phase: [dispose]")
 }
 
 type app struct {
@@ -108,11 +108,7 @@ func (a *app) initialize(internalDir string) {
 	a.resetWindows()
 }
 
-func (a *app) run() {
-	a.masterWindow.Run()
-}
-
-func (a *app) loop() {
+func (a *app) process() {
 	// FIXME: Remove
 	//imgui.ShowDemoWindow(nil)
 
@@ -124,7 +120,7 @@ func (a *app) loop() {
 	a.layout.Process()
 }
 
-func (a *app) postLoop() {
+func (a *app) postProcess() {
 	a.checkShouldClose()
 	a.checkUpdateScale()
 	a.dropTmpState()

@@ -17,7 +17,7 @@ const fps int = 60
 type Window struct {
 	Handle *glfw.Window
 
-	loop, postLoop func()
+	process, postProcess func()
 
 	mouseChangeCallbackId int
 	mouseChangeCallbacks  map[int]func(uint, uint)
@@ -26,10 +26,10 @@ type Window struct {
 	laterJobs []func()
 }
 
-func New(loop func(), postLoop func()) *Window {
+func New(process func(), postProcess func()) *Window {
 	log.Println("[window] creating native window")
 
-	w := Window{loop: loop, postLoop: postLoop, pointSize: 1}
+	w := Window{process: process, postProcess: postProcess, pointSize: 1}
 	w.mouseChangeCallbacks = make(map[int]func(uint, uint))
 
 	log.Println("[window] setting up glfw")

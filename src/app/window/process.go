@@ -9,7 +9,7 @@ import (
 	"sdmm/platform"
 )
 
-func (w *Window) Run() {
+func (w *Window) Process() {
 	ticker := time.NewTicker(time.Second / time.Duration(fps))
 
 	for !w.Handle.ShouldClose() {
@@ -20,9 +20,9 @@ func (w *Window) Run() {
 
 func (w *Window) runFrame() {
 	w.startFrame()
-	w.loop()
+	w.process()
 	w.endFrame()
-	w.postLoop()
+	w.postProcess()
 }
 
 func (w *Window) startFrame() {
