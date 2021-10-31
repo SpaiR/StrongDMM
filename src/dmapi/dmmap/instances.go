@@ -46,6 +46,15 @@ func (i Instances) Copy() Instances {
 	return cpy
 }
 
+func (i Instances) DeepCopy() Instances {
+	cpy := make(Instances, 0, len(i))
+	for _, instance := range i {
+		instance := instance.Copy()
+		cpy = append(cpy, &instance)
+	}
+	return cpy
+}
+
 func (i Instances) Sorted() Instances {
 	sorted := i.Copy()
 	sort.SliceStable(sorted, func(i, j int) bool {

@@ -6,29 +6,35 @@ import (
 	"sdmm/util"
 )
 
+// UpdateCanvasByCoord updates the canvas for the provided point.
 func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
 	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
+// SelectedPrefab returns a currently selected prefab.
 func (p *PaneMap) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 	return p.app.SelectedPrefab()
 }
 
-func (p *PaneMap) CopyTiles() {
+// CopyHoveredTile copies currently hovered tiles.
+func (p *PaneMap) CopyHoveredTile() {
 	p.app.Clipboard().Copy(p.dmm, []util.Point{p.canvasState.LastHoveredTile()})
 }
 
-func (p *PaneMap) PasteTiles() {
+// PasteHoveredTile does a paste to the currently hovered tile.
+func (p *PaneMap) PasteHoveredTile() {
 	p.app.Clipboard().Paste(p.dmm, p.canvasState.LastHoveredTile())
 	go p.CommitChanges("Paste")
 }
 
-func (p *PaneMap) CutTiles() {
-	p.CopyTiles()
-	p.DeleteTiles()
+// CutHoveredTile does a cut (copy+delete) of the currently hovered tile.
+func (p *PaneMap) CutHoveredTile() {
+	p.CopyHoveredTile()
+	p.DeleteHoveredTile()
 }
 
-func (p *PaneMap) DeleteTiles() {
+// DeleteHoveredTile deletes the last hovered by the mouse tile.
+func (p *PaneMap) DeleteHoveredTile() {
 	tile := p.dmm.GetTile(p.canvasState.LastHoveredTile())
 
 	for _, instance := range tile.Instances() {
@@ -38,10 +44,23 @@ func (p *PaneMap) DeleteTiles() {
 	}
 
 	tile.InstancesRegenerate()
-	go p.CommitChanges("Delete")
+	go p.CommitChanges("Delete Tile")
 }
 
-// CommitChanges triggers snapshot to commit changes and create a patch between two map states.
+// ReplacePrefab replaces all old prefabs on the map with the new one.
+// Commits map changes.
+func (p *PaneMap) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
+	for _, tile := range p.dmm.Tiles {
+		for _, instance := range tile.Instances() {
+			if instance.Prefab().Id() == oldPrefab.Id() {
+				instance.SetPrefab(newPrefab)
+			}
+		}
+	}
+	go p.CommitChanges("Replace Prefab")
+}
+
+// CommitChanges triggers a snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) CommitChanges(changesType string) {
 	stateId, tilesToUpdate := p.snapshot.Commit()
 

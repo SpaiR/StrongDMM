@@ -4,11 +4,22 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
 
-var instanceCount uint64
+var id uint64
 
 type Instance struct {
 	id     uint64
 	prefab *dmmprefab.Prefab
+}
+
+func (i *Instance) SetPrefab(prefab *dmmprefab.Prefab) {
+	i.prefab = prefab
+}
+
+func (i Instance) Copy() Instance {
+	return Instance{
+		id:     i.id,
+		prefab: i.prefab,
+	}
 }
 
 func (i Instance) Duplicate() *Instance {
@@ -24,9 +35,9 @@ func (i Instance) Prefab() *dmmprefab.Prefab {
 }
 
 func New(prefab *dmmprefab.Prefab) *Instance {
-	instanceCount++
+	id++
 	return &Instance{
-		id:     instanceCount,
+		id:     id,
 		prefab: prefab,
 	}
 }

@@ -8,6 +8,11 @@ import (
 )
 
 func (p *Prefabs) Process() {
+	if len(p.nodes) == 0 {
+		imgui.TextDisabled("No Prefab Selected")
+		return
+	}
+
 	for _, node := range p.nodes {
 		isSelected := node.orig.Id() == p.selectedId
 
@@ -45,6 +50,7 @@ func (p *Prefabs) Process() {
 					Y: node.sprite.V2,
 				},
 			).
+			TintColor(node.color).
 			Build()
 		imgui.UnindentV(p.iconIndent())
 	}

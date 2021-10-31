@@ -5,9 +5,9 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 )
 
 /*
@@ -107,6 +107,24 @@ func (a *app) DoSelectPrefabByPath(path string) {
 	a.DoSelectPrefab(dmmap.PrefabStorage.Get(path, a.InitialPrefabVariables(path)))
 }
 
+// DoEditInstance enables an editing for the provided instance.
+func (a *app) DoEditInstance(instance *dmminstance.Instance) {
+	log.Println("[app] edit instance:", instance.Id())
+	a.layout.VarEditor.EditInstance(instance)
+}
+
+// DoEditPrefab enables an editing for the provided prefab.
+func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
+	log.Println("[app] edit prefab:", prefab.Id())
+	a.layout.VarEditor.EditPrefab(prefab)
+}
+
+// DoEditPrefabByPath enables an editing for the provided prefab by its path.
+func (a *app) DoEditPrefabByPath(path string) {
+	log.Println("[app] edit prefab by path:", path)
+	a.DoEditPrefab(dmmap.PrefabStorage.Get(path, a.InitialPrefabVariables(path)))
+}
+
 // DoExit exits the app.
 func (a *app) DoExit() {
 	log.Println("[app] exit")
@@ -143,7 +161,7 @@ func (a *app) DoOpenLogs() {
 func (a *app) DoCopy() {
 	log.Println("[app] do copy")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.PaneMap.CopyTiles()
+		ws.PaneMap.CopyHoveredTile()
 	}
 }
 
@@ -151,14 +169,14 @@ func (a *app) DoCopy() {
 func (a *app) DoPaste() {
 	log.Println("[app] do paste")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.PaneMap.PasteTiles()
+		ws.PaneMap.PasteHoveredTile()
 	}
 }
 
 func (a *app) DoCut() {
 	log.Println("[app] do cut")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.PaneMap.CutTiles()
+		ws.PaneMap.CutHoveredTile()
 	}
 }
 
@@ -166,15 +184,6 @@ func (a *app) DoCut() {
 func (a *app) DoDelete() {
 	log.Println("[app] do delete")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.PaneMap.DeleteTiles()
+		ws.PaneMap.DeleteHoveredTile()
 	}
-}
-
-func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
-	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
-		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
-			return activeWs, ok
-		}
-	}
-	return nil, false
 }

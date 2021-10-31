@@ -70,6 +70,8 @@ type app struct {
 	tmpWindowCond  imgui.Condition
 	tmpUpdateScale bool
 
+	shortcutsEnabled bool
+
 	loadedEnvironment *dmenv.Dme
 	pathsFilter       *dm.PathsFilter
 
@@ -92,6 +94,8 @@ func (a *app) initialize(internalDir string) {
 	a.configData = configData.Load(internalDir)
 	a.prefsData = prefsData.Load(internalDir)
 
+	a.shortcutsEnabled = true
+
 	a.commandStorage = command.NewStorage()
 	a.pathsFilter = dm.NewPathsFilter()
 	a.clipboard = dmmap.NewClipboard(a.pathsFilter)
@@ -112,7 +116,9 @@ func (a *app) loop() {
 	// FIXME: Remove
 	//imgui.ShowDemoWindow(nil)
 
-	shortcut.Process()
+	if a.shortcutsEnabled {
+		shortcut.Process()
+	}
 
 	a.menu.Process()
 	a.layout.Process()

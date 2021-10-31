@@ -72,8 +72,7 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		w.MenuItem(fmt.Sprint("Make Active Object##make_active_object_", idx), nil).
 			Enabled(false).
 			Shortcut("Shift+LMB"),
-		w.MenuItem(fmt.Sprint("Edit...##edit_", idx), nil).
-			Enabled(false).
+		w.MenuItem(fmt.Sprint("Edit...##edit_", idx), func() { t.editInstance(i) }).
 			Shortcut("Shift+RMB"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), nil).
 			Enabled(false).
@@ -83,6 +82,11 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 			Shortcut("Ctrl+Shift+RMB"),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), nil).Enabled(false),
 	}
+}
+
+func (t *TileMenu) editInstance(i *dmminstance.Instance) {
+	t.app.DoSelectPrefab(i.Prefab())
+	t.app.DoEditInstance(i)
 }
 
 func getSprite(i *dmmprefab.Prefab) *dmicon.Sprite {

@@ -148,3 +148,36 @@ func (a *app) PathsFilter() *dm.PathsFilter {
 func (a *app) Clipboard() *dmmap.Clipboard {
 	return a.clipboard
 }
+
+// CommitCurrentMapChanges commits changes for the current type.
+// Basically, gets the currently open map and calls the CommitChanges method.
+func (a *app) CommitCurrentMapChanges(changesType string) {
+	if wsMap, ok := a.activeWsMap(); ok {
+		wsMap.PaneMap.CommitChanges(changesType)
+	}
+}
+
+// ReplaceCurrentMapPrefab replaces an old prefab with the new one.
+// Calls a ReplacePrefab method on the currently open map.
+// Doesn't require to commit a map changes, since ReplacePrefab commits them under the hood.
+func (a *app) ReplaceCurrentMapPrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
+	if wsMap, ok := a.activeWsMap(); ok {
+		wsMap.PaneMap.ReplacePrefab(oldPrefab, newPrefab)
+	}
+}
+
+// ToggleShortcuts toggles shortcuts processing for the whole application.
+// Helps in cases where there are shortcuts on the Dear ImGui side (basically, input fields) and we need them to work.
+func (a *app) ToggleShortcuts(enabled bool) {
+	log.Println("[app] shortcuts toggled:", enabled)
+	a.shortcutsEnabled = enabled
+}
+
+func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
+	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
+		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
+			return activeWs, ok
+		}
+	}
+	return nil, false
+}

@@ -10,6 +10,7 @@ import (
 type App interface {
 	PointSize() float32
 	DoSelectPrefab(*dmmprefab.Prefab)
+	DoEditPrefab(prefab *dmmprefab.Prefab)
 }
 
 type Prefabs struct {
@@ -52,6 +53,7 @@ func (p *Prefabs) SelectedPrefabId() uint64 {
 
 func (p *Prefabs) doSelect(node *prefabNode) {
 	p.app.DoSelectPrefab(node.orig)
+	p.app.DoEditPrefab(node.orig)
 	p.tmpDoScrollToPrefab = false // do not scroll panel when we're in panel itself
 }
 

@@ -4,6 +4,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpenvironment"
 	"sdmm/app/ui/cpprefabs"
+	"sdmm/app/ui/cpvareditor"
 	"sdmm/app/ui/cpwsarea"
 )
 
@@ -11,6 +12,7 @@ type app interface {
 	cpenvironment.App
 	cpprefabs.App
 	cpwsarea.App
+	cpvareditor.App
 
 	IsWindowReset() bool
 }
@@ -19,6 +21,7 @@ type Layout struct {
 	cpenvironment.Environment
 	cpprefabs.Prefabs
 	cpwsarea.WsArea
+	cpvareditor.VarEditor
 
 	app app
 
@@ -34,6 +37,7 @@ func New(app app) *Layout {
 	l.Environment.Init(app)
 	l.Prefabs.Init(app)
 	l.WsArea.Init(app)
+	l.VarEditor.Init(app)
 	return l
 }
 
@@ -59,9 +63,7 @@ func (l *Layout) showCenterNode() {
 }
 
 func (l *Layout) showRightNode() {
-	wrapNode("Placeholder##rightNode", int(l.rightNodeId), func() {
-		imgui.Text("Placeholder")
-	})
+	wrapNode("Variables##rightNode", int(l.rightNodeId), l.VarEditor.Process)
 }
 
 func (l *Layout) updateNodes() {

@@ -16,7 +16,7 @@ type Tile struct {
 func (t Tile) Copy() Tile {
 	return Tile{
 		t.Coord,
-		t.instances.Copy(),
+		t.instances.DeepCopy(),
 	}
 }
 

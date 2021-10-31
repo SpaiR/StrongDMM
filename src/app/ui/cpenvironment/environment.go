@@ -15,6 +15,7 @@ type App interface {
 	LoadedEnvironment() *dmenv.Dme
 	PointSize() float32
 	DoSelectPrefabByPath(string)
+	DoEditPrefabByPath(string)
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -74,7 +75,7 @@ func (e *Environment) SelectPath(path string) {
 
 func (e *Environment) Process() {
 	if e.app.LoadedEnvironment() == nil {
-		imgui.Text("No Environment Loaded")
+		imgui.TextDisabled("No Environment Loaded")
 	} else {
 		e.process()
 		e.showControls()
@@ -165,12 +166,13 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 func (e *Environment) doSelectOnClick(node *treeNode) {
 	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
 		e.app.DoSelectPrefabByPath(node.orig.Path)
+		e.app.DoEditPrefabByPath(node.orig.Path)
 		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from the tree itself
 	}
 }
 
 func (e *Environment) nodeFlags(node *treeNode, leaf bool) imgui.TreeNodeFlags {
-	flags := 0
+	flags := int(imgui.TreeNodeFlagsSpanAvailWidth)
 	if node.orig.Path == e.selectedPath {
 		flags |= int(imgui.TreeNodeFlagsSelected)
 	}

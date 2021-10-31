@@ -8,7 +8,24 @@ import (
 
 var (
 	ColorZero = imgui.Vec4{}
+
 	ColorGold = intHsl2col(51, 100, 50)
+
+	ColorRed        = intHsl2col(4, 60, 47)
+	ColorRedLighter = intHsl2col(4, 60, 57)
+	ColorRedDarker  = intHsl2col(4, 60, 37)
+
+	ColorGreen1        = intHsl2col(112, 89, 28)
+	ColorGreen1Lighter = intHsl2col(112, 89, 38)
+	ColorGreen1Darker  = intHsl2col(112, 89, 18)
+
+	ColorGreen2        = intHsl2col(109, 85, 41)
+	ColorGreen2Lighter = intHsl2col(109, 85, 51)
+	ColorGreen2Darker  = intHsl2col(109, 85, 31)
+
+	ColorGreen3        = intHsl2col(103, 100, 49)
+	ColorGreen3Lighter = intHsl2col(103, 100, 39)
+	ColorGreen3Darker  = intHsl2col(103, 100, 59)
 
 	ColorWhitePacked = imgui.Packed(color.RGBA{R: 255, G: 255, B: 255, A: 255})
 )

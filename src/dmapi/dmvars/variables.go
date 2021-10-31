@@ -49,6 +49,12 @@ func FromParent(parent *Variables) *Variables {
 	return &Variables{parent: parent}
 }
 
+func Modify(vars *Variables, name, value string) *Variables {
+	cpy := vars.Copy()
+	cpy.put(name, value)
+	return &cpy
+}
+
 // MutableVariables are used to provide a basic modification interface,
 // without breaking of an immutability of Variables struct.
 type MutableVariables struct {
@@ -66,6 +72,10 @@ func (v *MutableVariables) ToImmutable() *Variables {
 
 func (v *Variables) HasParent() bool {
 	return v.parent != nil
+}
+
+func (v *Variables) Parent() *Variables {
+	return v.parent
 }
 
 func (v *Variables) LinkParent(parent *Variables) {

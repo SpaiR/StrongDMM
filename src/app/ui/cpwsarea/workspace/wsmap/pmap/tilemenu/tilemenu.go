@@ -5,6 +5,8 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -16,6 +18,9 @@ type App interface {
 	DoPaste()
 	DoCut()
 	DoDelete()
+
+	DoEditInstance(*dmminstance.Instance)
+	DoSelectPrefab(prefab *dmmprefab.Prefab)
 
 	PointSize() float32
 

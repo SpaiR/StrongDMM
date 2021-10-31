@@ -35,6 +35,7 @@ func (a *app) openEnvironment(path string) {
 	a.layout.Prefabs.Free()
 	a.layout.Environment.Free()
 	a.layout.WsArea.Free()
+	a.layout.VarEditor.Free()
 
 	a.commandStorage.Free()
 	a.pathsFilter.Free()
