@@ -46,23 +46,10 @@ func New(path string) (*Dmi, error) {
 		return nil, err
 	}
 
-	f, err := os.Open(path)
+	rgba, err := loadRgbaImage(path)
 	if err != nil {
-		log.Printf("[dmicon] unable to open image file [%s]: %s", path, err)
+		log.Printf("[dmicon] unable to load rgba image [%s]: %s", path, err)
 		return nil, err
-	}
-	defer f.Close()
-
-	imgOs, _, err := image.Decode(f)
-	if err != nil {
-		log.Printf("[dmicon] unable to decode image file [%s]: %s", path, err)
-		return nil, err
-	}
-
-	rgba := image.NewNRGBA(imgOs.Bounds())
-	draw.Draw(rgba, rgba.Bounds(), imgOs, image.Pt(0, 0), draw.Src)
-	if rgba.Stride != rgba.Rect.Size().X*4 {
-		return nil, fmt.Errorf("[dmicon] unable to convert image to NRGBA")
 	}
 
 	width := rgba.Bounds().Dx()
@@ -97,6 +84,29 @@ func New(path string) (*Dmi, error) {
 	}
 
 	return dmi, nil
+}
+
+func loadRgbaImage(path string) (*image.NRGBA, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		log.Printf("[dmicon] unable to open image file [%s]: %s", path, err)
+		return nil, err
+	}
+	defer f.Close()
+
+	imgOs, _, err := image.Decode(f)
+	if err != nil {
+		log.Printf("[dmicon] unable to decode image file [%s]: %s", path, err)
+		return nil, err
+	}
+
+	rgba := image.NewNRGBA(imgOs.Bounds())
+	draw.Draw(rgba, rgba.Bounds(), imgOs, image.Pt(0, 0), draw.Src)
+	if rgba.Stride != rgba.Rect.Size().X*4 {
+		return nil, fmt.Errorf("[dmicon] unable to convert image to NRGBA")
+	}
+
+	return rgba, nil
 }
 
 type State struct {

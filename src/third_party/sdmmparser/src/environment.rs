@@ -18,14 +18,13 @@ struct ObjectTreeVar {
 }
 
 pub fn parse_environment(path: String) -> String {
-    let result = panic::catch_unwind(|| {
+    match panic::catch_unwind(|| {
         match parse(&path) {
             Some(json) => json,
             None => format!("error: unable to parse environment {}", path)
         }
-    });
-    match result {
-        Ok(res) => res,
+    }) {
+        Ok(result) => result,
         Err(e) => {
             if let Some(e) = e.downcast_ref::<String>() {
                 format!("error: {}", e)

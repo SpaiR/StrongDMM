@@ -1,5 +1,4 @@
-use std::panic;
-use std::path::Path;
+use std::{fs, panic};
 
 use dm::dmi::*;
 
@@ -18,14 +17,13 @@ struct IconState {
 }
 
 pub fn parse_icon_metadata(path: String) -> String {
-    let result = panic::catch_unwind(|| {
+    match panic::catch_unwind(|| {
         match parse(&path) {
             Some(json) => json,
             None => format!("error: unable to parse icon metadata {}", path)
         }
-    });
-    match result {
-        Ok(res) => res,
+    }) {
+        Ok(result) => result,
         Err(e) => {
             if let Some(e) = e.downcast_ref::<String>() {
                 format!("error: {}", e)
@@ -37,12 +35,18 @@ pub fn parse_icon_metadata(path: String) -> String {
 }
 
 fn parse(path: &str) -> Option<String> {
-    match Metadata::from_file(Path::new(path)) {
-        Ok((_, meta)) => {
-            Some(meta2json(meta))
-        }
-        Err(_) => None
-    }
+    fs::File::open(path).map_or(None, |f| {
+        png::Decoder::new(f).read_info().map_or(None, |reader| {
+            for text_chunk in &reader.info().compressed_latin1_text {
+                if text_chunk.keyword.eq("Description") {
+                    return text_chunk.get_text().map_or(None, |info| {
+                        Some(meta2json(Metadata::from_str(info.as_str())))
+                    });
+                }
+            }
+            None
+        })
+    })
 }
 
 fn meta2json(metadata: Metadata) -> String {
