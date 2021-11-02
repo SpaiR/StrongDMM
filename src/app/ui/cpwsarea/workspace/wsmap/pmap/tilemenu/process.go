@@ -78,30 +78,23 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		w.Custom(func() {
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
-					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), nil).Enabled(false),
-					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), nil).Enabled(false),
+					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), nil).
+						Enabled(false),
+					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), nil).
+						Enabled(false),
 					w.Separator(),
 				}.Build()
 			}
 		}),
-		w.MenuItem(fmt.Sprint("Make Active Object##make_active_object_", idx), nil).
+		w.MenuItem(fmt.Sprint("Make Active Object##make_active_object_", idx), func() { t.mapState.SelectInstance(i) }).
 			Enabled(false).
 			Shortcut("Shift+LMB"),
-		w.MenuItem(fmt.Sprint("Edit...##edit_", idx), func() { t.editInstance(i) }).
-			Shortcut("Shift+RMB"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), nil).
-			Enabled(false).
-			Shortcut("Ctrl+Shift+LMB"),
+			Enabled(false),
 		w.MenuItem(fmt.Sprint("Replace With Selected Object##replace_with_selected_", idx), nil).
-			Enabled(false).
-			Shortcut("Ctrl+Shift+RMB"),
+			Enabled(false),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), nil).Enabled(false),
 	}
-}
-
-func (t *TileMenu) editInstance(i *dmminstance.Instance) {
-	t.app.DoSelectPrefab(i.Prefab())
-	t.app.DoEditInstance(i)
 }
 
 func getSprite(i *dmmprefab.Prefab) *dmicon.Sprite {

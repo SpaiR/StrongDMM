@@ -6,28 +6,30 @@ import (
 )
 
 var (
-	placeholder *Sprite
+	spritePlaceholder *Sprite
 )
 
 func initEditorSprites() {
-	editorTextureAtlas := assets.EditorTextureAtlas()
+	atlas := assets.EditorTextureAtlas()
+	img := atlas.RGBA()
 
 	dmi := &Dmi{
 		IconWidth:     32,
 		IconHeight:    32,
-		TextureWidth:  editorTextureAtlas.Width,
-		TextureHeight: editorTextureAtlas.Height,
+		TextureWidth:  atlas.Width,
+		TextureHeight: atlas.Height,
 		Cols:          1,
 		Rows:          1,
-		Texture:       platform.CreateTexture(editorTextureAtlas.RGBA()),
+		Image:         img,
+		Texture:       platform.CreateTexture(img),
 	}
 
-	placeholder = newDmiSprite(dmi, 0)
+	spritePlaceholder = newDmiSprite(dmi, 0)
 }
 
 func SpritePlaceholder() *Sprite {
-	if placeholder == nil {
+	if spritePlaceholder == nil {
 		initEditorSprites()
 	}
-	return placeholder
+	return spritePlaceholder
 }

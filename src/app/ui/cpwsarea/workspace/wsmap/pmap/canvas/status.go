@@ -22,4 +22,9 @@ func (s *Status) Process() {
 	} else {
 		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", s.state.hoveredTile.X, s.state.hoveredTile.Y))
 	}
+
+	if s.state.hoveredInstance != nil {
+		imgui.SameLine()
+		imgui.Text(s.state.hoveredInstance.Prefab().Path())
+	}
 }

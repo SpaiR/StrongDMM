@@ -49,7 +49,7 @@ func (ws *WsMap) CommandStackId() string {
 func (ws *WsMap) Name() string {
 	visibleName := ws.PaneMap.Dmm().Name
 	if ws.app.CommandStorage().IsModified(ws.CommandStackId()) {
-		visibleName += " *"
+		visibleName = "* " + visibleName
 	}
 	return fmt.Sprint(visibleName, "###workspace_map_", ws.PaneMap.Dmm().Path.Absolute)
 }

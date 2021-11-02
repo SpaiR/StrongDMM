@@ -1,6 +1,7 @@
 package canvas
 
 import (
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -9,12 +10,20 @@ type State struct {
 	lastHoveredTile   util.Point  // Same as the hoveredTile, but always stores the latest tile which was hovered.
 	hoveredTileBounds util.Bounds // Absolute coord system: starts from 0, position in pixels.
 
+	hoveredInstance *dmminstance.Instance
+
+	relMouseX, relMouseY int
+
 	modifiedTiles []util.Bounds
 
 	iconSize   int
 	maxX, maxY int
 
 	onHoverChangeListeners []func()
+}
+
+func (s *State) SetHoveredInstance(hoveredInstance *dmminstance.Instance) {
+	s.hoveredInstance = hoveredInstance
 }
 
 func NewState(maxX, maxY, iconSize int) *State {
@@ -29,17 +38,19 @@ func (s *State) AddHoverChangeListener(listener func()) {
 	s.onHoverChangeListeners = append(s.onHoverChangeListeners, listener)
 }
 
-func (s *State) SetHoveredTile(relLocalX, relLocalY, level int) {
+func (s *State) SetMousePosition(relMouseX, relMouseY, level int) {
+	s.relMouseX, s.relMouseY = relMouseX, relMouseY
+
 	// We are out of bounds for sure.
-	if relLocalX < 0 || relLocalY < 0 || level < 0 {
+	if relMouseX < 0 || relMouseY < 0 || level < 0 {
 		s.hoveredTile = util.Point{}
 		s.hoveredTileBounds = util.Bounds{}
 		return
 	}
 
 	// Mouse position coords, but local to the tiles.
-	localMouseX := relLocalX / s.iconSize
-	localMouseY := relLocalY / s.iconSize
+	localMouseX := relMouseX / s.iconSize
+	localMouseY := relMouseY / s.iconSize
 
 	// Local coords, but adjusted to DMM coord system.
 	mapMouseX := localMouseX + 1
@@ -71,6 +82,18 @@ func (s *State) MarkModifiedTile(coord util.Point) {
 
 func (s *State) ClearModifiedTiles() {
 	s.modifiedTiles = nil
+}
+
+func (s *State) HoveredInstance() *dmminstance.Instance {
+	return s.hoveredInstance
+}
+
+func (s State) RelMouseX() int {
+	return s.relMouseX
+}
+
+func (s State) RelMouseY() int {
+	return s.relMouseY
 }
 
 func (s State) HoveredTile() util.Point {

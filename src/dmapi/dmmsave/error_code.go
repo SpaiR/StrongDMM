@@ -1,5 +1,7 @@
 package dmmsave
 
+import "log"
+
 type saveErrorCode int
 
 const (
@@ -14,5 +16,6 @@ func (s saveErrorCode) Error() string {
 	case errorKeysLimitExceeded:
 		return "keys limit exceeded error"
 	}
-	panic("unknown error code")
+	log.Panic("[dmmsave] unknown error code!")
+	return "" // unreachable
 }

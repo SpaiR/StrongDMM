@@ -3,21 +3,26 @@ package dmicon
 import (
 	"fmt"
 	"image"
+	"image/draw"
+	_ "image/png"
 	"log"
+	"os"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/dmapi/dm"
 	"sdmm/platform"
 	"sdmm/third_party/sdmmparser"
-	"sdmm/third_party/stbi"
 )
 
 type Dmi struct {
-	IconWidth, IconHeight       int
-	TextureWidth, TextureHeight int
-	Cols, Rows                  int
-	Texture                     uint32
-	States                      map[string]*State
+	IconWidth     int
+	IconHeight    int
+	TextureWidth  int
+	TextureHeight int
+	Cols, Rows    int
+	Image         image.Image
+	Texture       uint32
+	States        map[string]*State
 }
 
 func (d *Dmi) free() {
@@ -37,13 +42,31 @@ func (d *Dmi) State(state string) (*State, error) {
 func New(path string) (*Dmi, error) {
 	iconMetadata, err := sdmmparser.ParseIconMetadata(path)
 	if err != nil {
-		log.Printf("[dmi] unable to parse icon metadata [%s]: %s", path, err)
+		log.Printf("[dmicon] unable to parse icon metadata [%s]: %s", path, err)
 		return nil, err
 	}
 
-	img := loadImage(path)
-	width := img.Bounds().Dx()
-	height := img.Bounds().Dy()
+	f, err := os.Open(path)
+	if err != nil {
+		log.Printf("[dmicon] unable to open image file [%s]: %s", path, err)
+		return nil, err
+	}
+	defer f.Close()
+
+	imgOs, _, err := image.Decode(f)
+	if err != nil {
+		log.Printf("[dmicon] unable to decode image file [%s]: %s", path, err)
+		return nil, err
+	}
+
+	rgba := image.NewNRGBA(imgOs.Bounds())
+	draw.Draw(rgba, rgba.Bounds(), imgOs, image.Pt(0, 0), draw.Src)
+	if rgba.Stride != rgba.Rect.Size().X*4 {
+		return nil, fmt.Errorf("[dmicon] unable to convert image to NRGBA")
+	}
+
+	width := rgba.Bounds().Dx()
+	height := rgba.Bounds().Dy()
 
 	dmi := &Dmi{
 		IconWidth:     iconMetadata.Width,
@@ -52,7 +75,8 @@ func New(path string) (*Dmi, error) {
 		TextureHeight: height,
 		Cols:          width / iconMetadata.Width,
 		Rows:          height / iconMetadata.Height,
-		Texture:       platform.CreateTexture(img),
+		Image:         rgba,
+		Texture:       platform.CreateTexture(rgba),
 		States:        make(map[string]*State),
 	}
 
@@ -73,14 +97,6 @@ func New(path string) (*Dmi, error) {
 	}
 
 	return dmi, nil
-}
-
-func loadImage(path string) *image.RGBA {
-	img, err := stbi.Load(path)
-	if err != nil {
-		log.Println("[dmicon] unable to read image by path:", path, "error:", err)
-	}
-	return img
 }
 
 type State struct {
@@ -135,6 +151,10 @@ type Sprite struct {
 	dmi            *Dmi
 	X1, Y1, X2, Y2 int
 	U1, V1, U2, V2 float32
+}
+
+func (d Sprite) Image() image.Image {
+	return d.dmi.Image
 }
 
 func (d Sprite) Texture() uint32 {

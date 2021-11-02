@@ -8,6 +8,7 @@ import (
 
 type canvasControl interface {
 	Dragging() bool
+	SelectionMode() bool
 }
 
 type canvasState interface {
@@ -43,8 +44,10 @@ func NewTools(toolModify tool.Modify, canvasControl canvasControl, canvasState c
 }
 
 func (t *Tools) Process() {
-	t.process()
 	t.showControls()
+	if !t.canvasControl.SelectionMode() {
+		t.process()
+	}
 }
 
 func (t *Tools) process() {

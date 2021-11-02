@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/draw"
 	_ "image/png"
+	"log"
 )
 
 var (
@@ -53,9 +54,12 @@ type TextureAtlas struct {
 	data   []byte
 }
 
-func (a TextureAtlas) RGBA() *image.RGBA {
-	res, _, _ := image.Decode(bytes.NewReader(a.data))
-	img := image.NewRGBA(image.Rect(0, 0, a.Width, a.Height))
+func (a TextureAtlas) RGBA() *image.NRGBA {
+	res, _, err := image.Decode(bytes.NewReader(a.data))
+	if err != nil {
+		log.Panic("[assets] unable to decode texture atlas!")
+	}
+	img := image.NewNRGBA(image.Rect(0, 0, a.Width, a.Height))
 	draw.Draw(img, img.Bounds(), res, image.Point{}, draw.Src)
 	return img
 }

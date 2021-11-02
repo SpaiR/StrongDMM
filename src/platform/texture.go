@@ -6,13 +6,14 @@ import (
 	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
-func CreateTexture(img *image.RGBA) uint32 {
+func CreateTexture(img *image.NRGBA) uint32 {
 	var lastTexture int32
 	var handle uint32
 
 	gl.GetIntegerv(gl.TEXTURE_BINDING_2D, &lastTexture)
 	gl.GenTextures(1, &handle)
 	gl.BindTexture(gl.TEXTURE_2D, handle)
+	defer gl.BindTexture(gl.TEXTURE_2D, uint32(lastTexture))
 
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
@@ -22,8 +23,6 @@ func CreateTexture(img *image.RGBA) uint32 {
 
 	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, int32(img.Bounds().Dx()), int32(img.Bounds().Dy()), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(img.Pix))
 	gl.GenerateMipmap(gl.TEXTURE_2D)
-
-	gl.BindTexture(gl.TEXTURE_2D, uint32(lastTexture))
 
 	return handle
 }

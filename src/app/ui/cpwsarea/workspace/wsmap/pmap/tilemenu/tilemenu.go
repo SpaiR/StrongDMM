@@ -5,7 +5,6 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
@@ -19,9 +18,6 @@ type App interface {
 	DoCut()
 	DoDelete()
 
-	DoEditInstance(*dmminstance.Instance)
-	DoSelectPrefab(prefab *dmmprefab.Prefab)
-
 	PointSize() float32
 
 	CommandStorage() *command.Storage
@@ -30,6 +26,7 @@ type App interface {
 
 type mapState interface {
 	Dmm() *dmmap.Dmm
+	SelectInstance(instance *dmminstance.Instance)
 }
 
 type TileMenu struct {

@@ -1,6 +1,7 @@
 package dmvars
 
 import (
+	"log"
 	"strconv"
 
 	"sdmm/util/slice"
@@ -80,7 +81,7 @@ func (v *Variables) Parent() *Variables {
 
 func (v *Variables) LinkParent(parent *Variables) {
 	if v.parent != nil {
-		panic("Linking a parent to an occupied variables is prohibited!") // Just to ensure
+		log.Panic("[dmvars] linking of a parent to an occupied variables is prohibited!") // Just to ensure
 	}
 	v.parent = parent
 }

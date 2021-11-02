@@ -21,7 +21,12 @@ type Control struct {
 	zoomed    bool
 	clicked   bool
 
+	onLmbClick func()
 	onRmbClick func()
+}
+
+func (c *Control) SetOnLmbClick(cb func()) {
+	c.onLmbClick = cb
 }
 
 func (c *Control) SetOnRmbClick(cb func()) {
@@ -52,14 +57,18 @@ func (c *Control) Touched() bool {
 	return c.moving || (c.active && c.dragging) || c.zoomed || c.clicked
 }
 
-func NewControl(camera *render.Camera) *Control {
-	return &Control{
-		Camera: camera,
-	}
+func (c *Control) SelectionMode() bool {
+	return c.active && (imgui.IsKeyDown(int(glfw.KeyLeftShift)) || imgui.IsKeyDown(int(glfw.KeyRightShift)))
 }
 
 func (c *Control) Active() bool {
 	return c.active
+}
+
+func NewControl(camera *render.Camera) *Control {
+	return &Control{
+		Camera: camera,
+	}
 }
 
 func (c *Control) Process(size imgui.Vec2, activeLevel int) {
@@ -145,7 +154,12 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 
 func (c *Control) processMouseClick() {
 	c.clicked = imgui.IsMouseClicked(imgui.MouseButtonLeft | imgui.MouseButtonMiddle | imgui.MouseButtonRight)
-	if c.active && imgui.IsMouseClicked(imgui.MouseButtonRight) {
-		c.onRmbClick()
+	if c.active {
+		if imgui.IsMouseClicked(imgui.MouseButtonLeft) && c.onLmbClick != nil {
+			c.onLmbClick()
+		}
+		if imgui.IsMouseClicked(imgui.MouseButtonRight) && c.onRmbClick != nil {
+			c.onRmbClick()
+		}
 	}
 }
