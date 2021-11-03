@@ -127,23 +127,23 @@ func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) 
 	return x1, y1, x2, y2
 }
 
-var chunkColors map[util.Bounds]brush.Color
+var chunkColors map[util.Bounds]util.Color
 
 // Debug method to render chunks borders.
 func (r *Render) batchChunksVisuals() {
 	if chunkColors == nil {
 		println("[debug] CHUNKS VISUALISATION ENABLED!")
-		chunkColors = make(map[util.Bounds]brush.Color)
+		chunkColors = make(map[util.Bounds]util.Color)
 	}
 
 	visibleLevel := r.bucket.Level(r.Camera.Level)
 
 	for _, c := range visibleLevel.Chunks {
-		var chunkColor brush.Color
+		var chunkColor util.Color
 		if color, ok := chunkColors[c.MapBounds]; ok {
 			chunkColor = color
 		} else {
-			chunkColor = brush.Color{R: rand.Float32(), G: rand.Float32(), B: rand.Float32(), A: .25}
+			chunkColor = util.MakeColor(rand.Float32(), rand.Float32(), rand.Float32(), .25)
 			chunkColors[c.MapBounds] = chunkColor
 		}
 
@@ -153,9 +153,9 @@ func (r *Render) batchChunksVisuals() {
 }
 
 var (
-	activeTileCol       = brush.Color{R: 1, G: 1, B: 1, A: 0.25}
-	activeTileBorderCol = brush.Color{R: 1, G: 1, B: 1, A: 1}
-	modifiedTileCol     = brush.Color{R: 0, G: 1, B: 0, A: 1}
+	activeTileCol       = util.MakeColor(1, 1, 1, 0.25)
+	activeTileBorderCol = util.MakeColor(1, 1, 1, 1)
+	modifiedTileCol     = util.MakeColor(0, 1, 0, 1)
 )
 
 // Draws the map overlays, like: hovered tile borders, areas borders etc.

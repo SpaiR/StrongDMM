@@ -58,7 +58,7 @@ func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {
 	p := i.Prefab()
 	s := getSprite(p)
 	iconSize := t.iconSize()
-	r, g, b, _ := util.ParseColor(p.Vars().TextV("color", ""))
+	r, g, b, _ := util.ParseColor(p.Vars().TextV("color", "")).RGBA()
 	name := fmt.Sprintf("%s##prefab_row_%d", p.Vars().TextV("name", ""), idx)
 
 	w.Layout{

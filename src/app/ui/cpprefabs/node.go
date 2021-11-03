@@ -59,7 +59,7 @@ func newPrefabNode(prefab *dmmprefab.Prefab) *prefabNode {
 	icon, _ := prefab.Vars().Text("icon")
 	iconState, _ := prefab.Vars().Text("icon_state")
 	dir, _ := prefab.Vars().Int("dir")
-	r, g, b, _ := util.ParseColor(prefab.Vars().TextV("color", dmvars.NullValue))
+	r, g, b, _ := util.ParseColor(prefab.Vars().TextV("color", dmvars.NullValue)).RGBA()
 	return &prefabNode{
 		name:   prefab.Path()[strings.LastIndex(prefab.Path(), "/")+1:],
 		orig:   prefab,

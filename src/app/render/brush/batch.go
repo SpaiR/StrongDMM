@@ -1,5 +1,7 @@
 package brush
 
+import "sdmm/util"
+
 type modeType int
 
 const (
@@ -71,8 +73,8 @@ const (
 	lineIndicesLen  = 2 // Line contains of 2 indices.
 )
 
-func RectTextured(x1, y1, x2, y2 float32, col Color, texture uint32, u1, v1, u2, v2 float32) {
-	RectTexturedV(x1, y1, x2, y2, col.R, col.G, col.B, col.A, texture, u1, v1, u2, v2)
+func RectTextured(x1, y1, x2, y2 float32, col util.Color, texture uint32, u1, v1, u2, v2 float32) {
+	RectTexturedV(x1, y1, x2, y2, col.R(), col.G(), col.B(), col.A(), texture, u1, v1, u2, v2)
 }
 
 func RectTexturedV(x1, y1, x2, y2, r, g, b, a float32, texture uint32, u1, v1, u2, v2 float32) {
@@ -100,16 +102,16 @@ func RectTexturedV(x1, y1, x2, y2, r, g, b, a float32, texture uint32, u1, v1, u
 	batching.len += rectIndicesLen
 }
 
-func RectFilled(x1, y1, x2, y2 float32, col Color) {
-	RectFilledV(x1, y1, x2, y2, col.R, col.G, col.B, col.A)
+func RectFilled(x1, y1, x2, y2 float32, col util.Color) {
+	RectFilledV(x1, y1, x2, y2, col.R(), col.G(), col.B(), col.A())
 }
 
 func RectFilledV(x1, y1, x2, y2, r, g, b, a float32) {
 	RectTexturedV(x1, y1, x2, y2, r, g, b, a, 0, 0, 0, 0, 0)
 }
 
-func Rect(x1, y1, x2, y2 float32, col Color) {
-	RectV(x1, y1, x2, y2, col.R, col.G, col.B, col.A)
+func Rect(x1, y1, x2, y2 float32, col util.Color) {
+	RectV(x1, y1, x2, y2, col.R(), col.G(), col.B(), col.A())
 }
 
 func RectV(x1, y1, x2, y2, r, g, b, a float32) {
@@ -119,8 +121,8 @@ func RectV(x1, y1, x2, y2, r, g, b, a float32) {
 	LineV(x1, y2, x1, y1, r, g, b, a)
 }
 
-func Line(x1, y1, x2, y2 float32, col Color) {
-	LineV(x1, y1, x2, y2, col.R, col.G, col.B, col.A)
+func Line(x1, y1, x2, y2 float32, col util.Color) {
+	LineV(x1, y1, x2, y2, col.R(), col.G(), col.B(), col.A())
 }
 
 func LineV(x1, y1, x2, y2, r, g, b, a float32) {
