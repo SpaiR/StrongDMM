@@ -45,6 +45,7 @@ type PaneMap struct {
 	canvasControl *canvas.Control
 	canvasTools   *tools.Tools
 	canvasStatus  *canvas.Status
+	canvasOverlay *canvas.Overlay
 
 	tileMenu *tilemenu.TileMenu
 
@@ -81,6 +82,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvasControl = canvas.NewControl(p.canvas.Render.Camera)
 	p.canvasTools = tools.NewTools(p, p.canvasControl, p.canvasState)
 	p.canvasStatus = canvas.NewStatus(p.canvasState)
+	p.canvasOverlay = canvas.NewOverlay()
 	p.tileMenu = tilemenu.New(app, p)
 
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
@@ -88,7 +90,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvasControl.SetOnLmbClick(p.selectHoveredInstance)
 	p.canvasControl.SetOnRmbClick(p.openTileMenu)
 
-	p.canvas.Render.SetOverlayState(p.canvasState)
+	p.canvas.Render.SetOverlay(p.canvasOverlay)
 	p.canvas.Render.SetUnitProcessor(p)
 	p.canvas.Render.ValidateLevel(p.dmm, p.activeLevel)
 
@@ -99,6 +101,8 @@ func (p *PaneMap) Process() {
 	if p.canvasControl.Touched() && !imgui.IsWindowFocused() {
 		imgui.SetWindowFocus()
 	}
+
+	p.processCanvasOverlay()
 
 	p.panePos, p.paneSize = imgui.WindowPos(), imgui.WindowSize()
 	p.showPanel("canvasTools", pPosTop, p.canvasTools.Process)

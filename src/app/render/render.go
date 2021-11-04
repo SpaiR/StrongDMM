@@ -11,10 +11,15 @@ import (
 	"sdmm/util"
 )
 
-type overlayState interface {
-	HoverOutOfBounds() bool
-	HoveredTileBounds() util.Bounds
-	ModifiedTiles() []util.Bounds
+type OverlayTile interface {
+	Bounds() util.Bounds
+	FillColor() util.Color
+	BorderColor() util.Color
+}
+
+type overlay interface {
+	Tiles() []OverlayTile
+	Flush()
 }
 
 type unitProcessor interface {
@@ -26,7 +31,7 @@ type Render struct {
 
 	bucket *bucket.Bucket
 
-	overlayState  overlayState
+	overlay       overlay
 	unitProcessor unitProcessor
 }
 
@@ -42,8 +47,8 @@ func (r *Render) SetUnitProcessor(processor unitProcessor) {
 	r.unitProcessor = processor
 }
 
-func (r *Render) SetOverlayState(state overlayState) {
-	r.overlayState = state
+func (r *Render) SetOverlay(state overlay) {
+	r.overlay = state
 }
 
 // UpdateBucket will update the bucket data by the provided level.
@@ -75,7 +80,7 @@ func (r *Render) prepare() {
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
 	//r.batchChunksVisuals()
-	r.batchOverlay()
+	r.batchOverlayTiles()
 	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
 
@@ -152,25 +157,18 @@ func (r *Render) batchChunksVisuals() {
 	}
 }
 
-var (
-	activeTileCol       = util.MakeColor(1, 1, 1, 0.25)
-	activeTileBorderCol = util.MakeColor(1, 1, 1, 1)
-	modifiedTileCol     = util.MakeColor(0, 1, 0, 1)
-)
-
-// Draws the map overlays, like: hovered tile borders, areas borders etc.
-func (r *Render) batchOverlay() {
-	// Hovered tile
-	if !r.overlayState.HoverOutOfBounds() {
-		t := r.overlayState.HoveredTileBounds()
-		brush.RectFilled(t.X1, t.Y1, t.X2, t.Y2, activeTileCol)
-		brush.Rect(t.X1, t.Y1, t.X2, t.Y2, activeTileBorderCol)
+// Draw an overlay for the map tiles.
+func (r *Render) batchOverlayTiles() {
+	if r.overlay == nil {
+		return
 	}
 
-	// Modified tiles
-	for _, c := range r.overlayState.ModifiedTiles() {
-		brush.Rect(c.X1, c.Y1, c.X2, c.Y2, modifiedTileCol)
+	for _, t := range r.overlay.Tiles() {
+		brush.RectFilled(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.FillColor())
+		brush.Rect(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.BorderColor())
 	}
+
+	r.overlay.Flush()
 }
 
 // Clean OpenGL state after rendering.
