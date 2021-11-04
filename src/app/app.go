@@ -178,7 +178,7 @@ func initializeLogger(internalDir string) string {
 
 func (a *app) checkShouldClose() {
 	if a.tmpShouldClose {
-		a.masterWindow.Handle.SetShouldClose(true)
+		a.masterWindow.Handle().SetShouldClose(true)
 	}
 }
 

@@ -9,10 +9,10 @@ import (
 const scaleFactor float32 = 1.5
 
 type Control struct {
-	Camera *render.Camera
+	camera *render.Camera
 
-	PosMin imgui.Vec2
-	PosMax imgui.Vec2
+	posMin imgui.Vec2
+	posMax imgui.Vec2
 
 	active    bool
 	activated bool
@@ -23,6 +23,18 @@ type Control struct {
 
 	onLmbClick func()
 	onRmbClick func()
+}
+
+func (c *Control) Camera() *render.Camera {
+	return c.camera
+}
+
+func (c *Control) PosMin() imgui.Vec2 {
+	return c.posMin
+}
+
+func (c *Control) PosMax() imgui.Vec2 {
+	return c.posMax
 }
 
 func (c *Control) SetOnLmbClick(cb func()) {
@@ -67,13 +79,13 @@ func (c *Control) Active() bool {
 
 func NewControl(camera *render.Camera) *Control {
 	return &Control{
-		Camera: camera,
+		camera: camera,
 	}
 }
 
 func (c *Control) Process(size imgui.Vec2, activeLevel int) {
 	// Update currently visible level for camera.
-	c.Camera.Level = activeLevel
+	c.camera.Level = activeLevel
 
 	c.showControlArea(size)
 	c.processMouseMove()
@@ -92,8 +104,8 @@ func (c *Control) showControlArea(size imgui.Vec2) {
 	c.activated = active && !c.active
 	c.active = active
 
-	c.PosMin = imgui.ItemRectMin()
-	c.PosMax = imgui.ItemRectMax()
+	c.posMin = imgui.ItemRectMin()
+	c.posMax = imgui.ItemRectMax()
 }
 
 func (c *Control) processMouseMove() {
@@ -105,7 +117,7 @@ func (c *Control) processMouseMove() {
 
 	if c.moving {
 		if delta := imgui.CurrentIO().MouseDelta(); delta.X != 0 || delta.Y != 0 {
-			c.Camera.Translate(delta.X/c.Camera.Scale, -delta.Y/c.Camera.Scale)
+			c.camera.Translate(delta.X/c.camera.Scale, -delta.Y/c.camera.Scale)
 		}
 	}
 }
@@ -136,20 +148,20 @@ func (c *Control) processMouseScroll(size imgui.Vec2) {
 	}
 
 	zoomIn := mouseWheel > 0
-	scale := c.Camera.Scale
+	scale := c.camera.Scale
 
 	if zoomIn {
 		scale *= -scaleFactor
 	}
 
 	mousePos := imgui.MousePos()
-	localPos := mousePos.Minus(c.PosMin)
+	localPos := mousePos.Minus(c.posMin)
 
 	offsetX := localPos.X / scale / 2
 	offsetY := (size.Y - localPos.Y) / scale / 2
 
-	c.Camera.Translate(offsetX, offsetY)
-	c.Camera.Zoom(zoomIn, scaleFactor)
+	c.camera.Translate(offsetX, offsetY)
+	c.camera.Zoom(zoomIn, scaleFactor)
 }
 
 func (c *Control) processMouseClick() {

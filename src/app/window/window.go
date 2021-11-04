@@ -21,7 +21,7 @@ type application interface {
 }
 
 type Window struct {
-	Handle *glfw.Window
+	handle *glfw.Window
 
 	application application
 
@@ -29,7 +29,10 @@ type Window struct {
 	mouseChangeCallbacks  map[int]func(uint, uint)
 
 	pointSize float32
-	laterJobs []func()
+}
+
+func (w *Window) Handle() *glfw.Window {
+	return w.handle
 }
 
 func New(application application) *Window {
@@ -115,7 +118,7 @@ func (w *Window) setupGlfw() {
 
 	log.Println("[window] opengl initialized")
 
-	w.Handle = window
+	w.handle = window
 }
 
 func (w *Window) setupImGui() {
@@ -138,7 +141,7 @@ func (*Window) disposeImGui() {
 }
 
 func (w *Window) disposeGlfw() {
-	w.Handle.Destroy()
+	w.handle.Destroy()
 	glfw.Terminate()
 }
 

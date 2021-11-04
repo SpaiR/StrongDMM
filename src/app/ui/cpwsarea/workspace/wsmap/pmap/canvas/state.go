@@ -14,8 +14,6 @@ type State struct {
 
 	relMouseX, relMouseY int
 
-	modifiedTiles []util.Bounds
-
 	iconSize   int
 	maxX, maxY int
 
@@ -71,19 +69,6 @@ func (s *State) SetMousePosition(relMouseX, relMouseY, level int) {
 	}
 }
 
-func (s *State) MarkModifiedTile(coord util.Point) {
-	s.modifiedTiles = append(s.modifiedTiles, util.Bounds{
-		X1: float32((coord.X - 1) * s.iconSize),
-		Y1: float32((coord.Y - 1) * s.iconSize),
-		X2: float32((coord.X-1)*s.iconSize + s.iconSize),
-		Y2: float32((coord.Y-1)*s.iconSize + s.iconSize),
-	})
-}
-
-func (s *State) ClearModifiedTiles() {
-	s.modifiedTiles = nil
-}
-
 func (s *State) HoveredInstance() *dmminstance.Instance {
 	return s.hoveredInstance
 }
@@ -110,8 +95,4 @@ func (s State) HoveredTileBounds() util.Bounds {
 
 func (s State) HoverOutOfBounds() bool {
 	return s.hoveredTile.X < 1 || s.hoveredTile.Y < 1 || s.hoveredTile.X > s.maxX || s.hoveredTile.Y > s.maxY
-}
-
-func (s State) ModifiedTiles() []util.Bounds {
-	return s.modifiedTiles
 }

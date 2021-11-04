@@ -20,7 +20,7 @@ func (p *PaneMap) processCanvasOverlay() {
 		})
 	}
 
-	for _, editedTilesBounds := range p.canvasState.ModifiedTiles() {
+	for _, editedTilesBounds := range p.editedTiles {
 		p.canvasOverlay.PushTile(canvas.OverlayTile{
 			Bounds_:      editedTilesBounds,
 			BorderColor_: overlayColorEditedTileBorder,

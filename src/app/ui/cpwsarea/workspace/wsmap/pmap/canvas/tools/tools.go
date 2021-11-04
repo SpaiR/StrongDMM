@@ -12,8 +12,6 @@ type canvasControl interface {
 }
 
 type canvasState interface {
-	tool.Visuals
-
 	AddHoverChangeListener(func())
 	HoverOutOfBounds() bool
 	HoveredTile() util.Point
@@ -30,12 +28,12 @@ type Tools struct {
 	add      tool.Tool
 }
 
-func NewTools(toolModify tool.Modify, canvasControl canvasControl, canvasState canvasState) *Tools {
+func NewTools(editor tool.Editor, canvasControl canvasControl, canvasState canvasState) *Tools {
 	tools := &Tools{
 		canvasControl: canvasControl,
 		canvasState:   canvasState,
 
-		add: tool.NewAdd(toolModify, canvasState),
+		add: tool.NewAdd(editor),
 	}
 
 	canvasState.AddHoverChangeListener(tools.processSelectedToolMove)

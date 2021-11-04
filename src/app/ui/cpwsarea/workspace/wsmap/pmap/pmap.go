@@ -14,10 +14,10 @@ import (
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
+	"sdmm/util"
 )
 
 type App interface {
-	canvas.App
 	tilemenu.App
 
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
@@ -56,6 +56,8 @@ type PaneMap struct {
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
 
+	editedTiles []util.Bounds
+
 	tmpLastHoveredInstance *dmminstance.Instance
 }
 
@@ -77,9 +79,9 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	}
 
 	p.snapshot = dmmsnap.New(dmm)
-	p.canvas = canvas.New(app)
+	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
-	p.canvasControl = canvas.NewControl(p.canvas.Render.Camera)
+	p.canvasControl = canvas.NewControl(p.canvas.Render().Camera())
 	p.canvasTools = tools.NewTools(p, p.canvasControl, p.canvasState)
 	p.canvasStatus = canvas.NewStatus(p.canvasState)
 	p.canvasOverlay = canvas.NewOverlay()
@@ -90,9 +92,9 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvasControl.SetOnLmbClick(p.selectHoveredInstance)
 	p.canvasControl.SetOnRmbClick(p.openTileMenu)
 
-	p.canvas.Render.SetOverlay(p.canvasOverlay)
-	p.canvas.Render.SetUnitProcessor(p)
-	p.canvas.Render.ValidateLevel(p.dmm, p.activeLevel)
+	p.canvas.Render().SetOverlay(p.canvasOverlay)
+	p.canvas.Render().SetUnitProcessor(p)
+	p.canvas.Render().ValidateLevel(p.dmm, p.activeLevel)
 
 	return p
 }
@@ -130,7 +132,7 @@ func (p *PaneMap) showCanvas() {
 
 	imgui.WindowDrawList().AddImageV(
 		texture,
-		p.canvasControl.PosMin, p.canvasControl.PosMax,
+		p.canvasControl.PosMin(), p.canvasControl.PosMax(),
 		uvMin, uvMax,
 		imguiext.ColorWhitePacked,
 	)
@@ -155,18 +157,18 @@ func (p *PaneMap) updateMousePosition(mouseX, mouseY int) {
 	}
 
 	// Mouse position relative to canvas.
-	relMouseX := float32(mouseX - int(p.canvasControl.PosMin.X))
-	relMouseY := float32(mouseY - int(p.canvasControl.PosMin.Y))
+	relMouseX := float32(mouseX - int(p.canvasControl.PosMin().X))
+	relMouseY := float32(mouseY - int(p.canvasControl.PosMin().Y))
 
 	// Canvas height itself.
-	canvasHeight := p.canvasControl.PosMax.Y - p.canvasControl.PosMin.Y
+	canvasHeight := p.canvasControl.PosMax().Y - p.canvasControl.PosMin().Y
 
 	// Mouse position by Y axis, but with bottom-up orientation.
 	relMouseY = canvasHeight - relMouseY
 
 	// Transformed coordinates with respect of camera scale and shift.
-	relMouseX = relMouseX/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftX)
-	relMouseY = relMouseY/p.canvasControl.Camera.Scale - (p.canvasControl.Camera.ShiftY)
+	relMouseX = relMouseX/p.canvasControl.Camera().Scale - (p.canvasControl.Camera().ShiftX)
+	relMouseY = relMouseY/p.canvasControl.Camera().Scale - (p.canvasControl.Camera().ShiftY)
 
 	p.canvasState.SetMousePosition(int(relMouseX), int(relMouseY), p.activeLevel)
 }

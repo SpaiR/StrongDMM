@@ -6,16 +6,11 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render"
+	"sdmm/app/window"
 )
 
-type App interface {
-	RunLater(job func())
-}
-
 type Canvas struct {
-	app App
-
-	Render *render.Render
+	render *render.Render
 
 	width, height float32
 
@@ -23,10 +18,14 @@ type Canvas struct {
 	Texture     uint32
 }
 
+func (c *Canvas) Render() *render.Render {
+	return c.render
+}
+
 func (c *Canvas) Dispose() {
 	// Run later, so it will be cleared in the next frame.
 	// Otherwise, we will see graphics artifacts.
-	c.app.RunLater(func() {
+	window.RunLater(func() {
 		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.Texture)
@@ -34,11 +33,8 @@ func (c *Canvas) Dispose() {
 	})
 }
 
-func New(app App) *Canvas {
-	c := &Canvas{
-		app:    app,
-		Render: render.New(),
-	}
+func New() *Canvas {
+	c := &Canvas{render: render.New()}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
 }
@@ -49,7 +45,7 @@ func (c *Canvas) Process(size imgui.Vec2) {
 	gl.Viewport(0, 0, int32(size.X), int32(size.Y))
 	gl.ClearColor(.25, .25, .5, 1)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
-	c.Render.Draw(size.X, size.Y)
+	c.render.Draw(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 }
 

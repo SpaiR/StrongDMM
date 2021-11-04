@@ -12,7 +12,7 @@ import (
 func (w *Window) Process() {
 	ticker := time.NewTicker(time.Second / time.Duration(fps))
 
-	for !w.Handle.ShouldClose() {
+	for !w.handle.ShouldClose() {
 		w.runFrame()
 		<-ticker.C
 	}
@@ -33,15 +33,15 @@ func (w *Window) startFrame() {
 }
 
 func (w *Window) runLaterJobs() {
-	for _, job := range w.laterJobs {
+	for _, job := range laterJobs {
 		job()
 	}
-	w.laterJobs = nil
+	laterJobs = nil
 }
 
 func (w *Window) endFrame() {
 	imgui.Render()
 	platform.Render(imgui.RenderedDrawData())
-	w.Handle.SwapBuffers()
+	w.handle.SwapBuffers()
 	glfw.PollEvents()
 }

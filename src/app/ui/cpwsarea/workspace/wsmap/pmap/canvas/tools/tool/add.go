@@ -7,11 +7,13 @@ import (
 	"sdmm/util"
 )
 
-type Modify interface {
+type Editor interface {
 	Dmm() *dmmap.Dmm
 	UpdateCanvasByCoord(coord util.Point)
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
 	CommitChanges(string)
+	MarkEditedTile(coord util.Point)
+	ClearEditedTiles()
 }
 
 // Add tool can be used to add prefabs to the map.
@@ -21,20 +23,18 @@ type Modify interface {
 // Default: obj placed on top, area and turfs replaced.
 // Alternative: obj replaced, area and turfs placed on top.
 type Add struct {
-	modify  Modify
-	visuals Visuals
+	editor Editor
 
 	// Objects will be replaced, turfs and areas will be added on top.
 	altBehaviour bool
 
-	tiles map[util.Point]bool
+	editedTiles map[util.Point]bool
 }
 
-func NewAdd(modify Modify, visuals Visuals) *Add {
+func NewAdd(editor Editor) *Add {
 	return &Add{
-		modify:  modify,
-		visuals: visuals,
-		tiles:   make(map[util.Point]bool),
+		editor:      editor,
+		editedTiles: make(map[util.Point]bool),
 	}
 }
 
@@ -44,10 +44,10 @@ func (a *Add) OnStart(coord util.Point) {
 }
 
 func (a *Add) OnMove(coord util.Point) {
-	if prefab, ok := a.modify.SelectedPrefab(); ok && !a.tiles[coord] {
-		a.tiles[coord] = true
+	if prefab, ok := a.editor.SelectedPrefab(); ok && !a.editedTiles[coord] {
+		a.editedTiles[coord] = true // Don't add to the same tile twice
 
-		tile := a.modify.Dmm().GetTile(coord)
+		tile := a.editor.Dmm().GetTile(coord)
 
 		if !a.altBehaviour {
 			if dm.IsPath(prefab.Path(), "/area") {
@@ -62,16 +62,16 @@ func (a *Add) OnMove(coord util.Point) {
 		tile.InstancesAdd(prefab)
 		tile.InstancesRegenerate()
 
-		a.modify.UpdateCanvasByCoord(coord)
-		a.visuals.MarkModifiedTile(coord)
+		a.editor.UpdateCanvasByCoord(coord)
+		a.editor.MarkEditedTile(coord)
 	}
 }
 
 func (a *Add) OnStop(_ util.Point) {
 	a.altBehaviour = false
-	if len(a.tiles) != 0 {
-		a.tiles = make(map[util.Point]bool, len(a.tiles))
-		a.visuals.ClearModifiedTiles()
-		go a.modify.CommitChanges("Add Atoms")
+	if len(a.editedTiles) != 0 {
+		a.editedTiles = make(map[util.Point]bool, len(a.editedTiles))
+		a.editor.ClearEditedTiles()
+		go a.editor.CommitChanges("Add Atoms")
 	}
 }

@@ -2,13 +2,14 @@ package pmap
 
 import (
 	"sdmm/app/command"
+	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/util"
 )
 
 // UpdateCanvasByCoord updates the canvas for the provided point.
 func (p *PaneMap) UpdateCanvasByCoord(coord util.Point) {
-	p.canvas.Render.UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
+	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel, []util.Point{coord})
 }
 
 // SelectedPrefab returns a currently selected prefab.
@@ -60,6 +61,19 @@ func (p *PaneMap) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
 	go p.CommitChanges("Replace Prefab")
 }
 
+func (p *PaneMap) MarkEditedTile(coord util.Point) {
+	p.editedTiles = append(p.editedTiles, util.Bounds{
+		X1: float32((coord.X - 1) * dmmap.WorldIconSize),
+		Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
+		X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+		Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+	})
+}
+
+func (p *PaneMap) ClearEditedTiles() {
+	p.editedTiles = nil
+}
+
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.
 func (p *PaneMap) CommitChanges(changesType string) {
 	stateId, tilesToUpdate := p.snapshot.Commit()
@@ -73,13 +87,13 @@ func (p *PaneMap) CommitChanges(changesType string) {
 	activeLevel := p.activeLevel
 
 	// Ensure that the user has updated visuals.
-	p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
+	p.canvas.Render().UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 
 	p.app.CommandStorage().Push(command.Make(changesType, func() {
 		p.snapshot.GoTo(stateId - 1)
-		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
+		p.canvas.Render().UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}, func() {
 		p.snapshot.GoTo(stateId)
-		p.canvas.Render.UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
+		p.canvas.Render().UpdateBucket(p.dmm, activeLevel, tilesToUpdate)
 	}))
 }

@@ -27,7 +27,7 @@ type unitProcessor interface {
 }
 
 type Render struct {
-	Camera *Camera
+	camera *Camera
 
 	bucket *bucket.Bucket
 
@@ -35,10 +35,14 @@ type Render struct {
 	unitProcessor unitProcessor
 }
 
+func (r *Render) Camera() *Camera {
+	return r.camera
+}
+
 func New() *Render {
 	brush.TryInit()
 	return &Render{
-		Camera: newCamera(),
+		camera: newCamera(),
 		bucket: bucket.New(),
 	}
 }
@@ -81,12 +85,12 @@ func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
 	//r.batchChunksVisuals()
 	r.batchOverlayTiles()
-	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+	brush.Draw(width, height, r.camera.ShiftX, r.camera.ShiftY, r.camera.Scale)
 }
 
 func (r *Render) batchBucketUnits(width, height float32) {
 	x1, y1, x2, y2 := r.viewportBounds(width, height)
-	visibleLevel := r.bucket.Level(r.Camera.Level)
+	visibleLevel := r.bucket.Level(r.camera.Level)
 
 	// Iterate through every layer to render.
 	for _, layer := range visibleLevel.Layers {
@@ -121,11 +125,11 @@ func (r *Render) batchBucketUnits(width, height float32) {
 
 func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) {
 	// Get transformed bounds of the map, so we can ignore out of bounds units.
-	w := width / r.Camera.Scale
-	h := height / r.Camera.Scale
+	w := width / r.camera.Scale
+	h := height / r.camera.Scale
 
-	x1 = -r.Camera.ShiftX
-	y1 = -r.Camera.ShiftY
+	x1 = -r.camera.ShiftX
+	y1 = -r.camera.ShiftY
 	x2 = x1 + w
 	y2 = y1 + h
 
@@ -141,7 +145,7 @@ func (r *Render) batchChunksVisuals() {
 		chunkColors = make(map[util.Bounds]util.Color)
 	}
 
-	visibleLevel := r.bucket.Level(r.Camera.Level)
+	visibleLevel := r.bucket.Level(r.camera.Level)
 
 	for _, c := range visibleLevel.Chunks {
 		var chunkColor util.Color

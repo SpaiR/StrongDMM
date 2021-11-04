@@ -33,12 +33,6 @@ func (a *app) PointSize() float32 {
 	return a.masterWindow.PointSize()
 }
 
-// RunLater ques received function to execute it later.
-// Basically, later jobs will be executed at the beginning of the next frame.
-func (a *app) RunLater(job func()) {
-	a.masterWindow.RunLater(job)
-}
-
 // AddMouseChangeCallback adds a new mouse change callback and returns its ID.
 // ID could be used to remove callback in the future.
 func (a *app) AddMouseChangeCallback(cb func(uint, uint)) (callbackId int) {
@@ -130,7 +124,7 @@ func (a *app) UpdateTitle() {
 		title = Title
 	}
 
-	a.masterWindow.Handle.SetTitle(title)
+	a.masterWindow.Handle().SetTitle(title)
 	log.Println("[app] title updated:", title)
 }
 

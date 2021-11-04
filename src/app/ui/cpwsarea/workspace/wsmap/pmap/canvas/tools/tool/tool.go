@@ -6,11 +6,6 @@ import (
 	"sdmm/util"
 )
 
-type Visuals interface {
-	MarkModifiedTile(coord util.Point)
-	ClearModifiedTiles()
-}
-
 // Tool is a basic interface for tools in the panel.
 type Tool interface {
 	// OnStart goes when user clicks on the map.
