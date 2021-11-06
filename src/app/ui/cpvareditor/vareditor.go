@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strings"
 
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -12,10 +13,9 @@ import (
 )
 
 type App interface {
-	CommitCurrentMapChanges(changesType string)
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
-	ReplaceCurrentMapPrefab(oldPrefab, newPrefab *dmmprefab.Prefab)
 	ToggleShortcuts(enabled bool)
+	CurrentEditor() *pmap.Editor
 }
 
 type editMode int
@@ -77,7 +77,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 	}
 
 	v.instance.SetPrefab(newPrefab)
-	v.app.CommitCurrentMapChanges("Edit Variable")
+	v.app.CurrentEditor().CommitChanges("Edit Variable")
 	v.app.DoSelectPrefab(newPrefab)
 
 	v.prefab = newPrefab
@@ -86,7 +86,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	newPrefab := dmmap.PrefabStorage.Get(v.prefab.Path(), dmvars.Modify(v.prefab.Vars(), varName, varValue))
 
-	v.app.ReplaceCurrentMapPrefab(v.prefab, newPrefab)
+	v.app.CurrentEditor().ReplacePrefab(v.prefab, newPrefab)
 	v.app.DoSelectPrefab(newPrefab)
 
 	v.prefab = newPrefab

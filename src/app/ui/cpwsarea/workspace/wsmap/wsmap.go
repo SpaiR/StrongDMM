@@ -22,12 +22,12 @@ type WsMap struct {
 
 	app App
 
-	PaneMap *pmap.PaneMap
+	paneMap *pmap.PaneMap
 }
 
 func New(app App, dmm *dmmap.Dmm) *WsMap {
 	ws := &WsMap{
-		PaneMap: pmap.New(app, dmm),
+		paneMap: pmap.New(app, dmm),
 	}
 
 	ws.Workspace = ws
@@ -36,34 +36,38 @@ func New(app App, dmm *dmmap.Dmm) *WsMap {
 	return ws
 }
 
+func (ws *WsMap) Map() *pmap.PaneMap {
+	return ws.paneMap
+}
+
 func (ws *WsMap) Save() {
 	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
-	dmmsave.Save(ws.PaneMap.Dmm())
+	dmmsave.Save(ws.paneMap.Dmm())
 	ws.app.CommandStorage().ForceBalance(ws.CommandStackId())
 }
 
 func (ws *WsMap) CommandStackId() string {
-	return ws.PaneMap.Dmm().Path.Absolute
+	return ws.paneMap.Dmm().Path.Absolute
 }
 
 func (ws *WsMap) Name() string {
-	visibleName := ws.PaneMap.Dmm().Name
+	visibleName := ws.paneMap.Dmm().Name
 	if ws.app.CommandStorage().IsModified(ws.CommandStackId()) {
 		visibleName = "* " + visibleName
 	}
-	return fmt.Sprint(visibleName, "###workspace_map_", ws.PaneMap.Dmm().Path.Absolute)
+	return fmt.Sprint(visibleName, "###workspace_map_", ws.paneMap.Dmm().Path.Absolute)
 }
 
 func (ws *WsMap) Process() {
-	ws.PaneMap.Process()
+	ws.paneMap.Process()
 }
 
 func (ws *WsMap) Tooltip() string {
-	return ws.PaneMap.Dmm().Path.Readable
+	return ws.paneMap.Dmm().Path.Readable
 }
 
 func (ws *WsMap) Dispose() {
-	ws.PaneMap.Dispose()
+	ws.paneMap.Dispose()
 	log.Println("[wsmap] map workspace disposed:", ws.Name())
 }
 

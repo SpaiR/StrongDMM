@@ -3,14 +3,9 @@ package canvas
 import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"sdmm/app/render"
 )
 
-const scaleFactor float32 = 1.5
-
 type Control struct {
-	camera *render.Camera
-
 	posMin imgui.Vec2
 	posMax imgui.Vec2
 
@@ -23,10 +18,6 @@ type Control struct {
 
 	onLmbClick func()
 	onRmbClick func()
-}
-
-func (c *Control) Camera() *render.Camera {
-	return c.camera
 }
 
 func (c *Control) PosMin() imgui.Vec2 {
@@ -77,20 +68,16 @@ func (c *Control) Active() bool {
 	return c.active
 }
 
-func NewControl(camera *render.Camera) *Control {
-	return &Control{
-		camera: camera,
-	}
+func NewControl() *Control {
+	return &Control{}
 }
 
-func (c *Control) Process(size imgui.Vec2, activeLevel int) {
-	// Update currently visible level for camera.
-	c.camera.Level = activeLevel
-
+func (c *Control) Process(size imgui.Vec2) {
 	c.showControlArea(size)
+
 	c.processMouseMove()
 	c.processMouseDrag()
-	c.processMouseScroll(size)
+	c.processMouseScroll()
 	c.processMouseClick()
 }
 
@@ -114,12 +101,6 @@ func (c *Control) processMouseMove() {
 	}
 
 	c.moving = imgui.IsMouseDown(imgui.MouseButtonMiddle) || imgui.IsKeyDown(int(glfw.KeySpace))
-
-	if c.moving {
-		if delta := imgui.CurrentIO().MouseDelta(); delta.X != 0 || delta.Y != 0 {
-			c.camera.Translate(delta.X/c.camera.Scale, -delta.Y/c.camera.Scale)
-		}
-	}
 }
 
 func (c *Control) processMouseDrag() {
@@ -135,33 +116,13 @@ func (c *Control) processMouseDrag() {
 	}
 }
 
-func (c *Control) processMouseScroll(size imgui.Vec2) {
+func (c *Control) processMouseScroll() {
 	if !c.active {
 		return
 	}
 
 	_, mouseWheel := imgui.CurrentIO().MouseWheel()
 	c.zoomed = mouseWheel != 0
-
-	if !c.zoomed {
-		return
-	}
-
-	zoomIn := mouseWheel > 0
-	scale := c.camera.Scale
-
-	if zoomIn {
-		scale *= -scaleFactor
-	}
-
-	mousePos := imgui.MousePos()
-	localPos := mousePos.Minus(c.posMin)
-
-	offsetX := localPos.X / scale / 2
-	offsetY := (size.Y - localPos.Y) / scale / 2
-
-	c.camera.Translate(offsetX, offsetY)
-	c.camera.Zoom(zoomIn, scaleFactor)
 }
 
 func (c *Control) processMouseClick() {

@@ -1,8 +1,7 @@
 package tools
 
 import (
-	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools/tool"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools/tool"
 	"sdmm/util"
 )
 
@@ -12,7 +11,6 @@ type canvasControl interface {
 }
 
 type canvasState interface {
-	AddHoverChangeListener(func())
 	HoverOutOfBounds() bool
 	HoveredTile() util.Point
 }
@@ -28,24 +26,28 @@ type Tools struct {
 	add      tool.Tool
 }
 
-func NewTools(editor tool.Editor, canvasControl canvasControl, canvasState canvasState) *Tools {
-	tools := &Tools{
-		canvasControl: canvasControl,
-		canvasState:   canvasState,
+func (t *Tools) SetCanvasControl(canvasControl canvasControl) {
+	t.canvasControl = canvasControl
+}
 
+func (t *Tools) SetCanvasState(canvasState canvasState) {
+	t.canvasState = canvasState
+}
+
+func New(editor tool.Editor) *Tools {
+	return &Tools{
 		add: tool.NewAdd(editor),
 	}
-
-	canvasState.AddHoverChangeListener(tools.processSelectedToolMove)
-
-	return tools
 }
 
 func (t *Tools) Process() {
-	t.showControls()
 	if !t.canvasControl.SelectionMode() {
 		t.process()
 	}
+}
+
+func (t *Tools) OnMouseMove() {
+	t.processSelectedToolMove()
 }
 
 func (t *Tools) process() {
@@ -78,8 +80,4 @@ func (t *Tools) processSelectedToolsStop() {
 		t.selected.OnStop(t.oldCoord)
 		t.active = false
 	}
-}
-
-func (t *Tools) showControls() {
-	imgui.Button("A")
 }

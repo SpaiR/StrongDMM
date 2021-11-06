@@ -6,15 +6,14 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas/tools"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
-	"sdmm/util"
 )
 
 type App interface {
@@ -37,28 +36,33 @@ type App interface {
 type PaneMap struct {
 	app App
 
-	dmm      *dmmap.Dmm
+	dmm *dmmap.Dmm
+
 	snapshot *dmmsnap.DmmSnap
+	editor   *Editor
+
+	tools    *tools.Tools
+	tileMenu *tilemenu.TileMenu
 
 	canvas        *canvas.Canvas
 	canvasState   *canvas.State
 	canvasControl *canvas.Control
-	canvasTools   *tools.Tools
-	canvasStatus  *canvas.Status
 	canvasOverlay *canvas.Overlay
 
-	tileMenu *tilemenu.TileMenu
-
+	// ID is needed to dispose a mouse callback when the pane is closed.
 	mouseChangeCbId int
 
-	panePos, paneSize imgui.Vec2
+	// Properties for the pane.
+	pos, size imgui.Vec2
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
 
-	editedTiles []util.Bounds
-
 	tmpLastHoveredInstance *dmminstance.Instance
+}
+
+func (p *PaneMap) Editor() *Editor {
+	return p.editor
 }
 
 func (p *PaneMap) Dmm() *dmmap.Dmm {
@@ -74,45 +78,58 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p := &PaneMap{
 		app: app,
 		dmm: dmm,
-
-		activeLevel: 1, // Every map has at least 1 z-level, so we point to it.
 	}
 
+	p.activeLevel = 1 // Every map has at least 1 z-level, so we point to it.
+
 	p.snapshot = dmmsnap.New(dmm)
+	p.editor = &Editor{pMap: p}
+
+	p.tileMenu = tilemenu.New(app, p)
+	p.tools = tools.New(p.editor)
+
 	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
-	p.canvasControl = canvas.NewControl(p.canvas.Render().Camera())
-	p.canvasTools = tools.NewTools(p, p.canvasControl, p.canvasState)
-	p.canvasStatus = canvas.NewStatus(p.canvasState)
+	p.canvasControl = canvas.NewControl()
 	p.canvasOverlay = canvas.NewOverlay()
-	p.tileMenu = tilemenu.New(app, p)
-
-	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
 
 	p.canvasControl.SetOnLmbClick(p.selectHoveredInstance)
 	p.canvasControl.SetOnRmbClick(p.openTileMenu)
 
 	p.canvas.Render().SetOverlay(p.canvasOverlay)
 	p.canvas.Render().SetUnitProcessor(p)
-	p.canvas.Render().ValidateLevel(p.dmm, p.activeLevel)
+	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
+
+	p.tools.SetCanvasState(p.canvasState)
+	p.tools.SetCanvasControl(p.canvasControl)
+
+	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
 
 	return p
 }
 
 func (p *PaneMap) Process() {
+	// Enforce a focus to the current window if the canvas was touched.
 	if p.canvasControl.Touched() && !imgui.IsWindowFocused() {
 		imgui.SetWindowFocus()
 	}
 
+	p.pos, p.size = imgui.WindowPos(), imgui.WindowSize() // Update properties.
+	p.canvas.Render().Camera().Level = p.activeLevel      // Update the canvas camera visible level.
+
+	p.canvasControl.Process(p.size)
+	p.canvas.Process(p.size)
+
+	p.processCanvasCamera()
 	p.processCanvasOverlay()
+	p.processCanvasHoveredInstance()
 
-	p.panePos, p.paneSize = imgui.WindowPos(), imgui.WindowSize()
-	p.showPanel("canvasTools", pPosTop, p.canvasTools.Process)
-	p.showCanvas()
+	p.tools.Process()
 	p.tileMenu.Process()
-	p.showPanel("canvasStatus", pPosBottom, p.canvasStatus.Process)
 
-	p.updateHoveredInstance()
+	p.showCanvas()
+	p.showPanel("canvasTools", pPosTop, p.showToolsPanel)
+	p.showPanel("canvasStatus", pPosBottom, p.showStatusPanel)
 }
 
 func (p *PaneMap) Dispose() {
@@ -123,10 +140,7 @@ func (p *PaneMap) Dispose() {
 }
 
 func (p *PaneMap) showCanvas() {
-	p.canvasControl.Process(p.paneSize, p.activeLevel)
-	p.canvas.Process(p.paneSize)
-
-	texture := imgui.TextureID(p.canvas.Texture)
+	texture := imgui.TextureID(p.canvas.Texture())
 	uvMin := imgui.Vec2{X: 0, Y: 1}
 	uvMax := imgui.Vec2{X: 1, Y: 0}
 
@@ -139,45 +153,8 @@ func (p *PaneMap) showCanvas() {
 }
 
 func (p *PaneMap) mouseChangeCallback(x, y uint) {
-	p.updateMousePosition(int(x), int(y))
-}
-
-func (p *PaneMap) updateHoveredInstance() {
-	if !p.canvasControl.SelectionMode() || p.canvasState.HoverOutOfBounds() {
-		p.tmpLastHoveredInstance = nil
-	}
-	p.canvasState.SetHoveredInstance(p.tmpLastHoveredInstance)
-}
-
-func (p *PaneMap) updateMousePosition(mouseX, mouseY int) {
-	// If canvas itself is not active, then no need to search for mouse position at all.
-	if !p.canvasControl.Active() {
-		p.canvasState.SetMousePosition(-1, -1, -1)
-		return
-	}
-
-	// Mouse position relative to canvas.
-	relMouseX := float32(mouseX - int(p.canvasControl.PosMin().X))
-	relMouseY := float32(mouseY - int(p.canvasControl.PosMin().Y))
-
-	// Canvas height itself.
-	canvasHeight := p.canvasControl.PosMax().Y - p.canvasControl.PosMin().Y
-
-	// Mouse position by Y axis, but with bottom-up orientation.
-	relMouseY = canvasHeight - relMouseY
-
-	// Transformed coordinates with respect of camera scale and shift.
-	relMouseX = relMouseX/p.canvasControl.Camera().Scale - (p.canvasControl.Camera().ShiftX)
-	relMouseY = relMouseY/p.canvasControl.Camera().Scale - (p.canvasControl.Camera().ShiftY)
-
-	p.canvasState.SetMousePosition(int(relMouseX), int(relMouseY), p.activeLevel)
-}
-
-func (p *PaneMap) selectHoveredInstance() {
-	if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil && p.canvasControl.SelectionMode() {
-		log.Println("[pmap] selected hovered instance:", hoveredInstance.Id())
-		p.SelectInstance(hoveredInstance)
-	}
+	p.updateCanvasMousePosition(int(x), int(y))
+	p.tools.OnMouseMove()
 }
 
 func (p *PaneMap) openTileMenu() {

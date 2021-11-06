@@ -7,6 +7,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -143,21 +144,15 @@ func (a *app) Clipboard() *dmmap.Clipboard {
 	return a.clipboard
 }
 
-// CommitCurrentMapChanges commits changes for the current type.
-// Basically, gets the currently open map and calls the CommitChanges method.
-func (a *app) CommitCurrentMapChanges(changesType string) {
+// CurrentEditor returns *pmap.Editor for the currently active map.
+// Panics when the method called without having the active map.
+// We are implying that there won't be any situations like that.
+func (a *app) CurrentEditor() *pmap.Editor {
 	if wsMap, ok := a.activeWsMap(); ok {
-		wsMap.PaneMap.CommitChanges(changesType)
+		return wsMap.Map().Editor()
 	}
-}
-
-// ReplaceCurrentMapPrefab replaces an old prefab with the new one.
-// Calls a ReplacePrefab method on the currently open map.
-// Doesn't require to commit a map changes, since ReplacePrefab commits them under the hood.
-func (a *app) ReplaceCurrentMapPrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
-	if wsMap, ok := a.activeWsMap(); ok {
-		wsMap.PaneMap.ReplacePrefab(oldPrefab, newPrefab)
-	}
+	log.Panic("[app] requesting for the editor without having one!")
+	return nil
 }
 
 // ToggleShortcuts toggles shortcuts processing for the whole application.

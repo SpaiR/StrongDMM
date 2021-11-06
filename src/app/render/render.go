@@ -11,14 +11,14 @@ import (
 	"sdmm/util"
 )
 
-type OverlayTile interface {
+type OverlayArea interface {
 	Bounds() util.Bounds
 	FillColor() util.Color
 	BorderColor() util.Color
 }
 
 type overlay interface {
-	Tiles() []OverlayTile
+	Areas() []OverlayArea
 	Flush()
 }
 
@@ -55,16 +55,14 @@ func (r *Render) SetOverlay(state overlay) {
 	r.overlay = state
 }
 
-// UpdateBucket will update the bucket data by the provided level.
-func (r *Render) UpdateBucket(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
+// UpdateBucketV will update the bucket data by the provided level.
+func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
 	r.bucket.UpdateLevel(dmm, level, tilesToUpdate)
 }
 
-// ValidateLevel will ensure that the bucket has data by the provided level.
-func (r *Render) ValidateLevel(dmm *dmmap.Dmm, level int) {
-	if r.bucket.Level(level) == nil {
-		r.UpdateBucket(dmm, level, nil)
-	}
+// UpdateBucket will ensure that the bucket has data by the provided level.
+func (r *Render) UpdateBucket(dmm *dmmap.Dmm, level int) {
+	r.UpdateBucketV(dmm, level, nil)
 }
 
 func (r *Render) Draw(width, height float32) {
@@ -167,7 +165,7 @@ func (r *Render) batchOverlayTiles() {
 		return
 	}
 
-	for _, t := range r.overlay.Tiles() {
+	for _, t := range r.overlay.Areas() {
 		brush.RectFilled(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.FillColor())
 		brush.Rect(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.BorderColor())
 	}

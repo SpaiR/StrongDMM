@@ -90,7 +90,7 @@ func (w *WsArea) closeAllMaps() {
 func (w *WsArea) mapWorkspace(path dmmap.DmmPath) (*wsmap.WsMap, bool) {
 	for _, ws := range w.workspaces {
 		if ws, ok := ws.(*wsmap.WsMap); ok {
-			if ws.PaneMap.Dmm().Path == path {
+			if ws.Map().Dmm().Path == path {
 				return ws, true
 			}
 		}

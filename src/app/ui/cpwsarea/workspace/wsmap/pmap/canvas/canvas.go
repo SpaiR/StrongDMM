@@ -15,7 +15,11 @@ type Canvas struct {
 	width, height float32
 
 	frameBuffer uint32
-	Texture     uint32
+	texture     uint32
+}
+
+func (c *Canvas) Texture() uint32 {
+	return c.texture
 }
 
 func (c *Canvas) Render() *render.Render {
@@ -28,7 +32,7 @@ func (c *Canvas) Dispose() {
 	window.RunLater(func() {
 		log.Println("[canvas] disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
-		gl.DeleteTextures(1, &c.Texture)
+		gl.DeleteTextures(1, &c.texture)
 		log.Println("[canvas] disposed")
 	})
 }
@@ -50,22 +54,22 @@ func (c *Canvas) Process(size imgui.Vec2) {
 }
 
 func (c *Canvas) updateCanvasTexture(width, height float32) {
-	if c.width != width || c.height != height || c.Texture == 0 {
+	if c.width != width || c.height != height || c.texture == 0 {
 		c.width, c.height = width, height
 		c.createCanvasTexture()
 	}
 }
 
 func (c *Canvas) createCanvasTexture() {
-	gl.DeleteTextures(1, &c.Texture)
-	gl.GenTextures(1, &c.Texture)
-	gl.BindTexture(gl.TEXTURE_2D, c.Texture)
+	gl.DeleteTextures(1, &c.texture)
+	gl.GenTextures(1, &c.texture)
+	gl.BindTexture(gl.TEXTURE_2D, c.texture)
 	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, int32(c.width), int32(c.height), 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(make([]float32, int(c.width*c.height))))
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 	gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 	gl.BindTexture(gl.TEXTURE_2D, 0)
 
 	gl.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
-	gl.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, c.Texture, 0)
+	gl.FramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, c.texture, 0)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 }

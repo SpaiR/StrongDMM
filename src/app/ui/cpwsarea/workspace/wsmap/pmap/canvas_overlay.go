@@ -13,15 +13,15 @@ var (
 
 func (p *PaneMap) processCanvasOverlay() {
 	if !p.canvasState.HoverOutOfBounds() {
-		p.canvasOverlay.PushTile(canvas.OverlayTile{
+		p.canvasOverlay.PushArea(canvas.OverlayArea{
 			Bounds_:      p.canvasState.HoveredTileBounds(),
 			FillColor_:   overlayColorHoveredTileFill,
 			BorderColor_: overlayColorHoveredTileBorder,
 		})
 	}
 
-	for _, editedTilesBounds := range p.editedTiles {
-		p.canvasOverlay.PushTile(canvas.OverlayTile{
+	for _, editedTilesBounds := range p.editor.editedAreas {
+		p.canvasOverlay.PushArea(canvas.OverlayArea{
 			Bounds_:      editedTilesBounds,
 			BorderColor_: overlayColorEditedTileBorder,
 		})

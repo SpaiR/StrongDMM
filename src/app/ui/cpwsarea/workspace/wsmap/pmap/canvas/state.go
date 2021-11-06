@@ -16,8 +16,6 @@ type State struct {
 
 	iconSize   int
 	maxX, maxY int
-
-	onHoverChangeListeners []func()
 }
 
 func (s *State) SetHoveredInstance(hoveredInstance *dmminstance.Instance) {
@@ -30,10 +28,6 @@ func NewState(maxX, maxY, iconSize int) *State {
 		maxY:     maxY,
 		iconSize: iconSize,
 	}
-}
-
-func (s *State) AddHoverChangeListener(listener func()) {
-	s.onHoverChangeListeners = append(s.onHoverChangeListeners, listener)
 }
 
 func (s *State) SetMousePosition(relMouseX, relMouseY, level int) {
@@ -62,10 +56,6 @@ func (s *State) SetMousePosition(relMouseX, relMouseY, level int) {
 		Y1: float32(localMouseY * s.iconSize),
 		X2: float32(localMouseX*s.iconSize + s.iconSize),
 		Y2: float32(localMouseY*s.iconSize + s.iconSize),
-	}
-
-	for _, listener := range s.onHoverChangeListeners {
-		listener()
 	}
 }
 

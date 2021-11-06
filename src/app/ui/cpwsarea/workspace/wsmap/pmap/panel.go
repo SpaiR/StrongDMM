@@ -27,11 +27,11 @@ func (p *PaneMap) showPanel(id string, panelPos panelPos, content func()) {
 
 	switch panelPos {
 	case pPosTop:
-		pos = p.panePos.Plus(imgui.Vec2{X: panelPadding, Y: panelPadding})
-		size = imgui.Vec2{X: p.paneSize.X - panelPadding*2}
+		pos = p.pos.Plus(imgui.Vec2{X: panelPadding, Y: panelPadding})
+		size = imgui.Vec2{X: p.size.X - panelPadding*2}
 	case pPosBottom:
-		pos = p.panePos.Plus(imgui.Vec2{X: panelPadding, Y: p.paneSize.Y - bottomPanelSize.Y - panelPadding})
-		size = imgui.Vec2{X: p.paneSize.X - panelPadding*2}
+		pos = p.pos.Plus(imgui.Vec2{X: panelPadding, Y: p.size.Y - bottomPanelSize.Y - panelPadding})
+		size = imgui.Vec2{X: p.size.X - panelPadding*2}
 	}
 
 	imgui.SetNextWindowPos(pos)
