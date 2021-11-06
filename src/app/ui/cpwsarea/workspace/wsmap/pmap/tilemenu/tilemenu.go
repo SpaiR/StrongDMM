@@ -35,6 +35,7 @@ type editor interface {
 	MoveInstanceToBottom(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)
 	ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab)
+	ResetInstance(i *dmminstance.Instance)
 }
 
 type TileMenu struct {

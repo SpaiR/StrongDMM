@@ -91,7 +91,7 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
 			Enabled(t.app.HasSelectedPrefab()),
-		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), nil).Enabled(false),
+		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), t.doResetToDefault(i)),
 	}
 }
 
@@ -129,6 +129,13 @@ func (t *TileMenu) doReplaceWithSelected(i *dmminstance.Instance) func() {
 			log.Printf("[tilemenu] do replace instance[%s] with [%s]: %d", i.Prefab().Path(), prefab.Path(), i.Id())
 			t.editor.ReplaceInstance(i, prefab)
 		}
+	}
+}
+
+func (t *TileMenu) doResetToDefault(i *dmminstance.Instance) func() {
+	return func() {
+		log.Printf("[tilemenu] do reset instance[%s] to default: %d", i.Prefab().Path(), i.Id())
+		t.editor.ResetInstance(i)
 	}
 }
 
