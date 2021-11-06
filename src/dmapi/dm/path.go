@@ -2,8 +2,14 @@ package dm
 
 import "strings"
 
-func IsPath(p1, p2 string) bool {
-	return strings.HasPrefix(p1, p2)
+// IsPath returns true orig path is the same type of the provided.
+func IsPath(orig, path string) bool {
+	return strings.HasPrefix(orig, path)
+}
+
+// IsPathBaseSame returns true if both provided paths has the same base.
+func IsPathBaseSame(p1, p2 string) bool {
+	return PathBase(p1) == PathBase(p2)
 }
 
 // PathWeight let us sort the content by the path weight. Basically: /obj->/turf->/area
@@ -15,4 +21,10 @@ func PathWeight(p string) int {
 		return 2
 	}
 	return 1
+}
+
+// PathBase returns the base of the provided path.
+func PathBase(p string) string {
+	separatorIdx := strings.Index(p[1:], "/") + 1
+	return p[:separatorIdx]
 }

@@ -72,7 +72,7 @@ func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top boo
 				go e.CommitChanges(commitMsg)
 			}
 
-			break
+			return
 		}
 	}
 }
@@ -83,6 +83,22 @@ func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
 	tile.InstancesRemoveByInstance(i)
 	tile.InstancesRegenerate()
 	go e.CommitChanges("Delete Instance")
+}
+
+// ReplaceInstance replaces the provided instance with the provided prefab.
+func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab) {
+	tile := e.pMap.dmm.GetTile(i.Coord())
+
+	instances := tile.Instances()
+	for _, instance := range instances {
+		if instance.Id() == i.Id() {
+			if dm.IsPathBaseSame(instance.Prefab().Path(), prefab.Path()) {
+				instance.SetPrefab(prefab)
+				go e.CommitChanges("Replace Instance")
+			}
+			return
+		}
+	}
 }
 
 // UpdateCanvasByCoord updates the canvas for the provided point.

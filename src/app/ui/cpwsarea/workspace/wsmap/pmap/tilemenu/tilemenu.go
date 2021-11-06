@@ -5,6 +5,7 @@ import (
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
@@ -22,6 +23,9 @@ type App interface {
 
 	CommandStorage() *command.Storage
 	Clipboard() *dmmap.Clipboard
+
+	HasSelectedPrefab() bool
+	SelectedPrefab() (*dmmprefab.Prefab, bool)
 }
 
 type editor interface {
@@ -30,6 +34,7 @@ type editor interface {
 	MoveInstanceToTop(i *dmminstance.Instance)
 	MoveInstanceToBottom(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)
+	ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab)
 }
 
 type TileMenu struct {
