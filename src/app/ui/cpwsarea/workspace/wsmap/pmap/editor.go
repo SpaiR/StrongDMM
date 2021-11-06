@@ -77,6 +77,14 @@ func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top boo
 	}
 }
 
+// DeleteInstance deletes the provided instance from the map.
+func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
+	tile := e.pMap.dmm.GetTile(i.Coord())
+	tile.InstancesRemoveByInstance(i)
+	tile.InstancesRegenerate()
+	go e.CommitChanges("Delete Instance")
+}
+
 // UpdateCanvasByCoord updates the canvas for the provided point.
 func (e *Editor) UpdateCanvasByCoord(coord util.Point) {
 	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, e.pMap.activeLevel, []util.Point{coord})

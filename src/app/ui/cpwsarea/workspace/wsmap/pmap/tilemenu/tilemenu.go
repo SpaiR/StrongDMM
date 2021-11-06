@@ -26,9 +26,10 @@ type App interface {
 
 type editor interface {
 	Dmm() *dmmap.Dmm
-	SelectInstance(instance *dmminstance.Instance)
+	SelectInstance(i *dmminstance.Instance)
 	MoveInstanceToTop(i *dmminstance.Instance)
 	MoveInstanceToBottom(i *dmminstance.Instance)
+	DeleteInstance(i *dmminstance.Instance)
 }
 
 type TileMenu struct {

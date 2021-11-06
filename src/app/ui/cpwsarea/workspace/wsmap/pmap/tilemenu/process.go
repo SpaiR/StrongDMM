@@ -88,8 +88,7 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		}),
 		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
 			Shortcut("Shift+LMB"),
-		w.MenuItem(fmt.Sprint("Delete##delete_", idx), nil).
-			Enabled(false),
+		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), nil).
 			Enabled(false),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), nil).Enabled(false),
@@ -114,6 +113,13 @@ func (t *TileMenu) doSelect(i *dmminstance.Instance) func() {
 	return func() {
 		log.Printf("[tilemenu] do select instance[%s]: %d", i.Prefab().Path(), i.Id())
 		t.editor.SelectInstance(i)
+	}
+}
+
+func (t *TileMenu) doDelete(i *dmminstance.Instance) func() {
+	return func() {
+		log.Printf("[tilemenu] do delete instance[%s]: %d", i.Prefab().Path(), i.Id())
+		t.editor.DeleteInstance(i)
 	}
 }
 

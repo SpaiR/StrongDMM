@@ -46,6 +46,15 @@ func (t *Tile) InstancesRemoveByPath(pathToRemove string) {
 	t.instances = instances
 }
 
+func (t *Tile) InstancesRemoveByInstance(i *dmminstance.Instance) {
+	for idx, instance := range t.instances {
+		if instance.Id() == i.Id() {
+			t.instances = append(t.instances[:idx], t.instances[idx+1:]...)
+			return
+		}
+	}
+}
+
 // InstancesRegenerate adds missing base prefabs, if there are some of them.
 func (t *Tile) InstancesRegenerate() {
 	var hasArea, hasTurf bool
