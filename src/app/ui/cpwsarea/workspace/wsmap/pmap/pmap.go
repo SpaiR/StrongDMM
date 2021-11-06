@@ -8,6 +8,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
+	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -38,6 +39,8 @@ type PaneMap struct {
 
 	dmm *dmmap.Dmm
 
+	shortcuts shortcut.Shortcuts
+
 	snapshot *dmmsnap.DmmSnap
 	editor   *Editor
 
@@ -58,6 +61,7 @@ type PaneMap struct {
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
 
+	tmpLastSelectedTool    tools.Tool
 	tmpLastHoveredInstance *dmminstance.Instance
 }
 
@@ -67,6 +71,10 @@ func (p *PaneMap) Editor() *Editor {
 
 func (p *PaneMap) Dmm() *dmmap.Dmm {
 	return p.dmm
+}
+
+func (p *PaneMap) SetShortcutsVisible(visible bool) {
+	p.shortcuts.SetVisible(visible)
 }
 
 func New(app App, dmm *dmmap.Dmm) *PaneMap {
@@ -88,7 +96,6 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvasControl = canvas.NewControl()
 	p.canvasOverlay = canvas.NewOverlay()
 
-	p.canvasControl.SetOnLmbClick(p.selectHoveredInstance)
 	p.canvasControl.SetOnRmbClick(p.openTileMenu)
 
 	p.canvas.Render().SetOverlay(p.canvasOverlay)
@@ -99,15 +106,18 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.tools.SetCanvasControl(p.canvasControl)
 
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
+	p.addShortcuts()
 
 	return p
 }
 
 func (p *PaneMap) Process() {
 	// Enforce a focus to the current window if the canvas was touched.
-	if p.canvasControl.Touched() && !imgui.IsWindowFocused() {
+	if p.canvasControl.Touched() && !imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows) {
 		imgui.SetWindowFocus()
 	}
+
+	p.updateShortcutsState()
 
 	p.pos, p.size = imgui.WindowPos(), imgui.WindowSize() // Update properties.
 	p.canvas.Render().Camera().Level = p.activeLevel      // Update the canvas camera visible level.
@@ -119,7 +129,9 @@ func (p *PaneMap) Process() {
 	p.processCanvasOverlay()
 	p.processCanvasHoveredInstance()
 
-	p.tools.Process()
+	p.processToolsSelectionMode()
+
+	p.tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
 	p.tileMenu.Process()
 
 	p.showCanvas()
@@ -131,6 +143,7 @@ func (p *PaneMap) Dispose() {
 	p.canvas.Dispose()
 	p.app.RemoveMouseChangeCallback(p.mouseChangeCbId)
 	p.tileMenu.Dispose()
+	p.shortcuts.Dispose()
 	log.Println("[pmap] disposed")
 }
 
@@ -156,5 +169,16 @@ func (p *PaneMap) openTileMenu() {
 	if !p.canvasState.HoverOutOfBounds() {
 		log.Println("[pmap] open tile menu:", p.canvasState.HoveredTile())
 		p.tileMenu.Open(p.canvasState.HoveredTile())
+	}
+}
+
+func (p *PaneMap) processCanvasHoveredInstance() {
+	p.canvasState.SetHoveredInstance(p.tmpLastHoveredInstance)
+	p.tmpLastHoveredInstance = nil
+}
+
+func (p *PaneMap) updateShortcutsState() {
+	if imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows) {
+		p.shortcuts.SetVisible(true)
 	}
 }

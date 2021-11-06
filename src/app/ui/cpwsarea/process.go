@@ -19,6 +19,7 @@ func (w *WsArea) Process() {
 	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
 		for idx, ws := range w.workspaces {
 			ws.SetIdx(idx)
+			ws.PreProcess()
 
 			open := true
 			flags := imgui.TabItemFlagsNoTooltip

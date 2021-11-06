@@ -184,7 +184,7 @@ func keyCallback(_ *glfw.Window, key glfw.Key, _ int, action glfw.Action, _ glfw
 	// Modifiers are not reliable across systems
 	io.KeyCtrl(int(glfw.KeyLeftControl), int(glfw.KeyRightControl))
 	io.KeyShift(int(glfw.KeyLeftShift), int(glfw.KeyRightShift))
-	io.KeyAlt(int(glfw.KeyLeftAlt), int(glfw.KeyRightAlt))
+	//io.KeyAlt(int(glfw.KeyLeftAlt), int(glfw.KeyRightAlt)) // ImGui has strange widows behaviour when alt pressed.
 	io.KeySuper(int(glfw.KeyLeftSuper), int(glfw.KeyRightSuper))
 }
 

@@ -1,20 +1,9 @@
-package tool
+package tools
 
 import (
 	"sdmm/dmapi/dm"
-	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/util"
 )
-
-type Editor interface {
-	Dmm() *dmmap.Dmm
-	UpdateCanvasByCoord(coord util.Point)
-	SelectedPrefab() (*dmmprefab.Prefab, bool)
-	CommitChanges(string)
-	MarkEditedTile(coord util.Point)
-	ClearEditedTiles()
-}
 
 // Add tool can be used to add prefabs to the map.
 // During mouse moving when the tool is active a selected prefab will be added on every tile under the mouse.
@@ -22,28 +11,30 @@ type Editor interface {
 //
 // Default: obj placed on top, area and turfs replaced.
 // Alternative: obj replaced, area and turfs placed on top.
-type Add struct {
-	editor Editor
+type tAdd struct {
+	tool
 
-	// Objects will be replaced, turfs and areas will be added on top.
-	altBehaviour bool
+	editor editor
 
 	editedTiles map[util.Point]bool
 }
 
-func NewAdd(editor Editor) *Add {
-	return &Add{
+func (tAdd) Name() string {
+	return TNAdd
+}
+
+func newAdd(editor editor) *tAdd {
+	return &tAdd{
 		editor:      editor,
 		editedTiles: make(map[util.Point]bool),
 	}
 }
 
-func (a *Add) OnStart(coord util.Point) {
-	a.altBehaviour = isControlDown()
-	a.OnMove(coord)
+func (a *tAdd) onStart(coord util.Point) {
+	a.onMove(coord)
 }
 
-func (a *Add) OnMove(coord util.Point) {
+func (a *tAdd) onMove(coord util.Point) {
 	if prefab, ok := a.editor.SelectedPrefab(); ok && !a.editedTiles[coord] {
 		a.editedTiles[coord] = true // Don't add to the same tile twice
 
@@ -67,7 +58,7 @@ func (a *Add) OnMove(coord util.Point) {
 	}
 }
 
-func (a *Add) OnStop(_ util.Point) {
+func (a *tAdd) onStop(_ util.Point) {
 	a.altBehaviour = false
 	if len(a.editedTiles) != 0 {
 		a.editedTiles = make(map[util.Point]bool, len(a.editedTiles))

@@ -9,7 +9,9 @@ import (
 var (
 	ColorZero = imgui.Vec4{}
 
-	ColorGold = intHsl2col(51, 100, 50)
+	ColorGold        = intHsl2col(51, 100, 50)
+	ColorGoldLighter = intHsl2col(51, 100, 60)
+	ColorGoldDarker  = intHsl2col(51, 100, 40)
 
 	ColorRed        = intHsl2col(4, 60, 47)
 	ColorRedLighter = intHsl2col(4, 60, 57)

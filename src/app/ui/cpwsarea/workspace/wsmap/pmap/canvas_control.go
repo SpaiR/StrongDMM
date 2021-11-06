@@ -1,7 +1,5 @@
 package pmap
 
-import "log"
-
 func (p *PaneMap) updateCanvasMousePosition(mouseX, mouseY int) {
 	// If canvas itself is not active, then no need to search for mouse position at all.
 	if !p.canvasControl.Active() {
@@ -25,18 +23,4 @@ func (p *PaneMap) updateCanvasMousePosition(mouseX, mouseY int) {
 	relMouseY = relMouseY/camera.Scale - (camera.ShiftY)
 
 	p.canvasState.SetMousePosition(int(relMouseX), int(relMouseY), p.activeLevel)
-}
-
-func (p *PaneMap) processCanvasHoveredInstance() {
-	if !p.canvasControl.SelectionMode() || p.canvasState.HoverOutOfBounds() {
-		p.tmpLastHoveredInstance = nil
-	}
-	p.canvasState.SetHoveredInstance(p.tmpLastHoveredInstance)
-}
-
-func (p *PaneMap) selectHoveredInstance() {
-	if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil && p.canvasControl.SelectionMode() {
-		log.Println("[pmap] selected hovered instance:", hoveredInstance.Id())
-		p.editor.SelectInstance(hoveredInstance)
-	}
 }

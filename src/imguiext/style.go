@@ -31,3 +31,33 @@ func (StyleButtonDefault) ActiveColor() imgui.Vec4 {
 func (StyleButtonDefault) HoverColor() imgui.Vec4 {
 	return imgui.CurrentStyle().Color(imgui.StyleColorButtonHovered)
 }
+
+type StyleButtonGold struct {
+}
+
+func (StyleButtonGold) NormalColor() imgui.Vec4 {
+	return ColorGold
+}
+
+func (StyleButtonGold) ActiveColor() imgui.Vec4 {
+	return ColorGoldDarker
+}
+
+func (StyleButtonGold) HoverColor() imgui.Vec4 {
+	return ColorGoldLighter
+}
+
+type StyleButtonRed struct {
+}
+
+func (StyleButtonRed) NormalColor() imgui.Vec4 {
+	return ColorRed
+}
+
+func (StyleButtonRed) ActiveColor() imgui.Vec4 {
+	return ColorRedDarker
+}
+
+func (StyleButtonRed) HoverColor() imgui.Vec4 {
+	return ColorRedLighter
+}

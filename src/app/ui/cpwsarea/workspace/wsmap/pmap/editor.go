@@ -26,6 +26,10 @@ func (e *Editor) SelectInstance(i *dmminstance.Instance) {
 	e.pMap.app.DoEditInstance(i)
 }
 
+func (e *Editor) HoveredInstance() *dmminstance.Instance {
+	return e.pMap.canvasState.HoveredInstance()
+}
+
 // MoveInstanceToTop swaps the provided instance with the one which is upper.
 func (e *Editor) MoveInstanceToTop(i *dmminstance.Instance) {
 	e.moveInstance(e.pMap.dmm.GetTile(i.Coord()), i, true)

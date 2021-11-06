@@ -1,18 +1,35 @@
 package tools
 
 import (
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools/tool"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
+)
+
+const (
+	TNAdd    = "Add"
+	TNSelect = "Select"
 )
 
 type canvasControl interface {
 	Dragging() bool
-	SelectionMode() bool
 }
 
 type canvasState interface {
 	HoverOutOfBounds() bool
 	HoveredTile() util.Point
+}
+
+type editor interface {
+	Dmm() *dmmap.Dmm
+	UpdateCanvasByCoord(coord util.Point)
+	SelectedPrefab() (*dmmprefab.Prefab, bool)
+	CommitChanges(string)
+	MarkEditedTile(coord util.Point)
+	ClearEditedTiles()
+	SelectInstance(i *dmminstance.Instance)
+	HoveredInstance() *dmminstance.Instance
 }
 
 type Tools struct {
@@ -22,8 +39,9 @@ type Tools struct {
 	active   bool
 	oldCoord util.Point
 
-	selected tool.Tool
-	add      tool.Tool
+	selected Tool
+
+	tools map[string]Tool
 }
 
 func (t *Tools) SetCanvasControl(canvasControl canvasControl) {
@@ -34,34 +52,51 @@ func (t *Tools) SetCanvasState(canvasState canvasState) {
 	t.canvasState = canvasState
 }
 
-func New(editor tool.Editor) *Tools {
+func (t *Tools) SetSelectedByName(toolName string) {
+	t.selected = t.tools[toolName]
+}
+
+func (t *Tools) SetSelected(tool Tool) {
+	t.selected = tool
+}
+
+func (t *Tools) Selected() Tool {
+	return t.selected
+}
+
+func (t *Tools) Tools() map[string]Tool {
+	return t.tools
+}
+
+func (t Tools) IsSelected(toolName string) bool {
+	return t.selected.Name() == toolName
+}
+
+func New(editor editor) *Tools {
+	tools := map[string]Tool{
+		TNAdd:    newAdd(editor),
+		TNSelect: newSelect(editor),
+	}
 	return &Tools{
-		add: tool.NewAdd(editor),
+		selected: tools[TNAdd],
+		tools:    tools,
 	}
 }
 
-func (t *Tools) Process() {
-	if !t.canvasControl.SelectionMode() {
-		t.process()
-	}
+func (t *Tools) Process(altBehaviour bool) {
+	t.selected.setAltBehaviour(altBehaviour)
+	t.processSelectedToolStart()
+	t.processSelectedToolsStop()
 }
 
 func (t *Tools) OnMouseMove() {
 	t.processSelectedToolMove()
 }
 
-func (t *Tools) process() {
-	// FIXME: normal selection
-	t.selected = t.add
-
-	t.processSelectedToolStart()
-	t.processSelectedToolsStop()
-}
-
 func (t *Tools) processSelectedToolStart() {
 	if !t.canvasState.HoverOutOfBounds() {
 		if t.canvasControl.Dragging() && !t.active {
-			t.selected.OnStart(t.canvasState.HoveredTile())
+			t.selected.onStart(t.canvasState.HoveredTile())
 			t.active = true
 		}
 	}
@@ -70,14 +105,14 @@ func (t *Tools) processSelectedToolStart() {
 func (t *Tools) processSelectedToolMove() {
 	coord := t.canvasState.HoveredTile()
 	if coord != t.oldCoord && t.active {
-		t.selected.OnMove(coord)
+		t.selected.onMove(coord)
 	}
 	t.oldCoord = coord
 }
 
 func (t *Tools) processSelectedToolsStop() {
 	if !t.canvasControl.Dragging() && t.active {
-		t.selected.OnStop(t.oldCoord)
+		t.selected.onStop(t.oldCoord)
 		t.active = false
 	}
 }

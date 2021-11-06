@@ -36,6 +36,10 @@ func (c *Control) SetOnRmbClick(cb func()) {
 	c.onRmbClick = cb
 }
 
+func (c *Control) Active() bool {
+	return c.active
+}
+
 func (c *Control) Activated() bool {
 	return c.activated
 }
@@ -58,14 +62,6 @@ func (c *Control) Clicked() bool {
 
 func (c *Control) Touched() bool {
 	return c.moving || (c.active && c.dragging) || c.zoomed || c.clicked
-}
-
-func (c *Control) SelectionMode() bool {
-	return c.active && (imgui.IsKeyDown(int(glfw.KeyLeftShift)) || imgui.IsKeyDown(int(glfw.KeyRightShift)))
-}
-
-func (c *Control) Active() bool {
-	return c.active
 }
 
 func NewControl() *Control {

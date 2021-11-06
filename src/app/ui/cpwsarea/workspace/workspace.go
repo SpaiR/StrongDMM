@@ -5,6 +5,7 @@ import "sdmm/app/command"
 type Workspace interface {
 	CommandStackId() string
 	Name() string
+	PreProcess()
 	Process()
 	WantClose() bool
 	Dispose()
@@ -21,6 +22,10 @@ type Base struct {
 
 	isDoSelect bool
 	idx        int
+}
+
+func (*Base) PreProcess() {
+	// do nothing
 }
 
 func (*Base) CommandStackId() string {

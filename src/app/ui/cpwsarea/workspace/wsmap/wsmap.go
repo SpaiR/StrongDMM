@@ -58,6 +58,10 @@ func (ws *WsMap) Name() string {
 	return fmt.Sprint(visibleName, "###workspace_map_", ws.paneMap.Dmm().Path.Absolute)
 }
 
+func (ws *WsMap) PreProcess() {
+	ws.paneMap.SetShortcutsVisible(false)
+}
+
 func (ws *WsMap) Process() {
 	ws.paneMap.Process()
 }

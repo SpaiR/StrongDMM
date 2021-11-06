@@ -4,9 +4,12 @@ import (
 	"fmt"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 )
 
 func (p *PaneMap) showStatusPanel() {
+	p.updateShortcutsState()
+
 	if p.canvasState.HoverOutOfBounds() {
 		imgui.Text("[out of bounds]")
 	} else {
@@ -14,8 +17,10 @@ func (p *PaneMap) showStatusPanel() {
 		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", hoveredTiles.X, hoveredTiles.Y))
 	}
 
-	if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
-		imgui.SameLine()
-		imgui.Text(hoveredInstance.Prefab().Path())
+	if p.tools.IsSelected(tools.TNSelect) {
+		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
+			imgui.SameLine()
+			imgui.Text(hoveredInstance.Prefab().Path())
+		}
 	}
 }

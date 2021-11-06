@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/util"
 )
 
@@ -12,12 +13,14 @@ var (
 )
 
 func (p *PaneMap) processCanvasOverlay() {
-	if !p.canvasState.HoverOutOfBounds() {
-		p.canvasOverlay.PushArea(canvas.OverlayArea{
-			Bounds_:      p.canvasState.HoveredTileBounds(),
-			FillColor_:   overlayColorHoveredTileFill,
-			BorderColor_: overlayColorHoveredTileBorder,
-		})
+	if !p.tools.IsSelected(tools.TNSelect) {
+		if !p.canvasState.HoverOutOfBounds() {
+			p.canvasOverlay.PushArea(canvas.OverlayArea{
+				Bounds_:      p.canvasState.HoveredTileBounds(),
+				FillColor_:   overlayColorHoveredTileFill,
+				BorderColor_: overlayColorHoveredTileBorder,
+			})
+		}
 	}
 
 	for _, editedTilesBounds := range p.editor.editedAreas {

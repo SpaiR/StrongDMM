@@ -1,6 +1,9 @@
 package imguiext
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"github.com/SpaiR/imgui-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
+)
 
 func SetItemHoveredTooltip(text string) {
 	if imgui.IsItemHovered() {
@@ -22,4 +25,12 @@ func InputIntClamp(
 		return true
 	}
 	return false
+}
+
+func IsAltDown() bool {
+	return imgui.IsKeyDown(int(glfw.KeyLeftAlt)) || imgui.IsKeyDown(int(glfw.KeyRightAlt))
+}
+
+func IsShiftDown() bool {
+	return imgui.IsKeyDown(int(glfw.KeyLeftShift)) || imgui.IsKeyDown(int(glfw.KeyRightShift))
 }
