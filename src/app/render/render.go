@@ -17,9 +17,16 @@ type OverlayArea interface {
 	BorderColor() util.Color
 }
 
+type HighlightUnit interface {
+	Id() uint64
+	Color() util.Color
+}
+
 type overlay interface {
 	Areas() []OverlayArea
-	Flush()
+	FlushAreas()
+	Units() map[uint64]HighlightUnit
+	FlushUnits()
 }
 
 type unitProcessor interface {
@@ -82,7 +89,7 @@ func (r *Render) prepare() {
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(width, height)
 	//r.batchChunksVisuals()
-	r.batchOverlayTiles()
+	r.batchOverlayAreas()
 	brush.Draw(width, height, r.camera.ShiftX, r.camera.ShiftY, r.camera.Scale)
 }
 
@@ -110,15 +117,26 @@ func (r *Render) batchBucketUnits(width, height float32) {
 					continue
 				}
 
+				r, g, b, a := r.unitColor(u)
+
 				brush.RectTexturedV(
 					u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
-					u.R(), u.G(), u.B(), u.A(),
+					r, g, b, a,
 					u.Sprite().Texture(),
 					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
 				)
 			}
 		}
 	}
+
+	r.overlay.FlushUnits()
+}
+
+func (r *Render) unitColor(u unit.Unit) (float32, float32, float32, float32) {
+	if highlight := r.overlay.Units()[u.Instance().Id()]; highlight != nil {
+		return highlight.Color().RGBA()
+	}
+	return u.R(), u.G(), u.B(), u.A()
 }
 
 func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) {
@@ -160,7 +178,7 @@ func (r *Render) batchChunksVisuals() {
 }
 
 // Draw an overlay for the map tiles.
-func (r *Render) batchOverlayTiles() {
+func (r *Render) batchOverlayAreas() {
 	if r.overlay == nil {
 		return
 	}
@@ -170,7 +188,7 @@ func (r *Render) batchOverlayTiles() {
 		brush.Rect(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.BorderColor())
 	}
 
-	r.overlay.Flush()
+	r.overlay.FlushAreas()
 }
 
 // Clean OpenGL state after rendering.
