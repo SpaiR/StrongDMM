@@ -37,6 +37,6 @@ func (p *PaneMap) processCanvasHoveredInstance() {
 func (p *PaneMap) selectHoveredInstance() {
 	if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil && p.canvasControl.SelectionMode() {
 		log.Println("[pmap] selected hovered instance:", hoveredInstance.Id())
-		p.SelectInstance(hoveredInstance)
+		p.editor.SelectInstance(hoveredInstance)
 	}
 }

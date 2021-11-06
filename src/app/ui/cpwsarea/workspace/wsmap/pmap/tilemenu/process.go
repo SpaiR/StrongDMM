@@ -2,6 +2,7 @@ package tilemenu
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
@@ -74,26 +75,45 @@ func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {
 
 func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layout {
 	p := i.Prefab()
+
 	return w.Layout{
 		w.Custom(func() {
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
-					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), nil).
-						Enabled(false),
-					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), nil).
-						Enabled(false),
+					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)),
+					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), t.doMoveToBottom(i)),
 					w.Separator(),
 				}.Build()
 			}
 		}),
-		w.MenuItem(fmt.Sprint("Make Active Object##make_active_object_", idx), func() { t.mapState.SelectInstance(i) }).
-			Enabled(false).
+		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
 			Shortcut("Shift+LMB"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), nil).
 			Enabled(false),
-		w.MenuItem(fmt.Sprint("Replace With Selected Object##replace_with_selected_", idx), nil).
+		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), nil).
 			Enabled(false),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), nil).Enabled(false),
+	}
+}
+
+func (t *TileMenu) doMoveToTop(i *dmminstance.Instance) func() {
+	return func() {
+		log.Printf("[tilemenu] do move instance[%s] to top: %d", i.Prefab().Path(), i.Id())
+		t.editor.MoveInstanceToTop(t.tile.Coord, i)
+	}
+}
+
+func (t *TileMenu) doMoveToBottom(i *dmminstance.Instance) func() {
+	return func() {
+		log.Printf("[tilemenu] do move instance[%s] to bottom: %d", i.Prefab().Path(), i.Id())
+		t.editor.MoveInstanceToBottom(t.tile.Coord, i)
+	}
+}
+
+func (t *TileMenu) doSelect(i *dmminstance.Instance) func() {
+	return func() {
+		log.Printf("[tilemenu] do select instance[%s]: %d", i.Prefab().Path(), i.Id())
+		t.editor.SelectInstance(i)
 	}
 }
 

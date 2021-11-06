@@ -2,8 +2,10 @@ package pmap
 
 import (
 	"sdmm/app/command"
+	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
@@ -13,8 +15,66 @@ type Editor struct {
 	editedAreas []util.Bounds
 }
 
+// Dmm returns currently edited map.
 func (e *Editor) Dmm() *dmmap.Dmm {
 	return e.pMap.dmm
+}
+
+// SelectInstance selects the provided instance to edit.
+func (e *Editor) SelectInstance(i *dmminstance.Instance) {
+	e.pMap.app.DoSelectPrefab(i.Prefab())
+	e.pMap.app.DoEditInstance(i)
+}
+
+// MoveInstanceToTop swaps the provided instance with the one which is upper.
+func (e *Editor) MoveInstanceToTop(coord util.Point, i *dmminstance.Instance) {
+	e.moveInstance(e.pMap.dmm.GetTile(coord), i, true)
+}
+
+// MoveInstanceToBottom swaps the provided instance with the one which is under.
+func (e *Editor) MoveInstanceToBottom(coord util.Point, i *dmminstance.Instance) {
+	e.moveInstance(e.pMap.dmm.GetTile(coord), i, false)
+}
+
+func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top bool) {
+	sortedInstances := tile.Instances().Sorted()
+
+	for idx, instance := range sortedInstances {
+		if instance.Id() == i.Id() {
+			var nextIdx int
+			if top {
+				nextIdx = idx + 1
+			} else {
+				nextIdx = idx - 1
+			}
+
+			if nextIdx < 0 || nextIdx >= len(sortedInstances) {
+				break
+			}
+
+			nextInstance := sortedInstances[nextIdx]
+			nextInstancePath := nextInstance.Prefab().Path()
+
+			// Move the instance only if the next instance is /obj or /mob type.
+			if dm.IsPath(nextInstancePath, "/obj") || dm.IsPath(nextInstancePath, "/mob") {
+				sortedInstances[idx] = sortedInstances[nextIdx]
+				sortedInstances[nextIdx] = instance
+
+				tile.Set(sortedInstances)
+
+				var commitMsg string
+				if top {
+					commitMsg = "Move to Top"
+				} else {
+					commitMsg = "Move to Bottom"
+				}
+
+				go e.CommitChanges(commitMsg)
+			}
+
+			break
+		}
+	}
 }
 
 // UpdateCanvasByCoord updates the canvas for the provided point.
@@ -85,7 +145,7 @@ func (e *Editor) ClearEditedTiles() {
 }
 
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.
-func (e *Editor) CommitChanges(changesType string) {
+func (e *Editor) CommitChanges(commitMsg string) {
 	stateId, tilesToUpdate := e.pMap.snapshot.Commit()
 
 	// Do not push command if there is no tiles to update.
@@ -99,7 +159,7 @@ func (e *Editor) CommitChanges(changesType string) {
 	// Ensure that the user has updated visuals.
 	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
 
-	e.pMap.app.CommandStorage().Push(command.Make(changesType, func() {
+	e.pMap.app.CommandStorage().Push(command.Make(commitMsg, func() {
 		e.pMap.snapshot.GoTo(stateId - 1)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
 	}, func() {

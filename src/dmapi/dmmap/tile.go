@@ -20,6 +20,10 @@ func (t Tile) Copy() Tile {
 	}
 }
 
+func (t *Tile) Set(instances Instances) {
+	t.instances = instances
+}
+
 func (t Tile) Instances() Instances {
 	return t.instances
 }

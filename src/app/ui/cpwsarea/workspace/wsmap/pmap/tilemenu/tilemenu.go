@@ -24,24 +24,26 @@ type App interface {
 	Clipboard() *dmmap.Clipboard
 }
 
-type mapState interface {
+type editor interface {
 	Dmm() *dmmap.Dmm
 	SelectInstance(instance *dmminstance.Instance)
+	MoveInstanceToTop(coord util.Point, i *dmminstance.Instance)
+	MoveInstanceToBottom(coord util.Point, i *dmminstance.Instance)
 }
 
 type TileMenu struct {
 	shortcuts shortcut.Shortcuts
 
-	app      App
-	mapState mapState
+	app    App
+	editor editor
 
 	opened bool
 
 	tile *dmmap.Tile
 }
 
-func New(app App, state mapState) *TileMenu {
-	t := &TileMenu{app: app, mapState: state}
+func New(app App, editor editor) *TileMenu {
+	t := &TileMenu{app: app, editor: editor}
 	t.addShortcuts()
 	return t
 }
@@ -52,8 +54,8 @@ func (t *TileMenu) Dispose() {
 }
 
 func (t *TileMenu) Open(coord util.Point) {
-	if t.mapState.Dmm().HasTile(coord) {
-		t.tile = t.mapState.Dmm().GetTile(coord)
+	if t.editor.Dmm().HasTile(coord) {
+		t.tile = t.editor.Dmm().GetTile(coord)
 		t.opened = true
 		imgui.OpenPopup("tileMenu")
 	}

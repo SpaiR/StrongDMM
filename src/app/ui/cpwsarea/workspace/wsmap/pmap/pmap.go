@@ -69,11 +69,6 @@ func (p *PaneMap) Dmm() *dmmap.Dmm {
 	return p.dmm
 }
 
-func (p *PaneMap) SelectInstance(i *dmminstance.Instance) {
-	p.app.DoSelectPrefab(i.Prefab())
-	p.app.DoEditInstance(i)
-}
-
 func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p := &PaneMap{
 		app: app,
@@ -85,7 +80,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.snapshot = dmmsnap.New(dmm)
 	p.editor = &Editor{pMap: p}
 
-	p.tileMenu = tilemenu.New(app, p)
+	p.tileMenu = tilemenu.New(app, p.editor)
 	p.tools = tools.New(p.editor)
 
 	p.canvas = canvas.New()
