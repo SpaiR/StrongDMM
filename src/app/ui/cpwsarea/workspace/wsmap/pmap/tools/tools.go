@@ -103,11 +103,13 @@ func (t *Tools) processSelectedToolStart() {
 }
 
 func (t *Tools) processSelectedToolMove() {
-	coord := t.canvasState.HoveredTile()
-	if coord != t.oldCoord && t.active {
-		t.selected.onMove(coord)
+	if !t.canvasState.HoverOutOfBounds() {
+		coord := t.canvasState.HoveredTile()
+		if coord != t.oldCoord && t.active {
+			t.selected.onMove(coord)
+		}
+		t.oldCoord = coord
 	}
-	t.oldCoord = coord
 }
 
 func (t *Tools) processSelectedToolsStop() {
