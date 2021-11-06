@@ -29,11 +29,11 @@ func (t Tile) Instances() Instances {
 }
 
 func (t *Tile) InstancesSet(prefabs dmmdata.Prefabs) {
-	t.instances = InstancesFromPrefabs(prefabs)
+	t.instances = InstancesFromPrefabs(t.Coord, prefabs)
 }
 
 func (t *Tile) InstancesAdd(prefab *dmmprefab.Prefab) {
-	t.instances = append(t.instances, dmminstance.New(prefab))
+	t.instances = append(t.instances, dmminstance.New(t.Coord, prefab))
 }
 
 func (t *Tile) InstancesRemoveByPath(pathToRemove string) {

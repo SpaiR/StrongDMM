@@ -27,13 +27,13 @@ func (e *Editor) SelectInstance(i *dmminstance.Instance) {
 }
 
 // MoveInstanceToTop swaps the provided instance with the one which is upper.
-func (e *Editor) MoveInstanceToTop(coord util.Point, i *dmminstance.Instance) {
-	e.moveInstance(e.pMap.dmm.GetTile(coord), i, true)
+func (e *Editor) MoveInstanceToTop(i *dmminstance.Instance) {
+	e.moveInstance(e.pMap.dmm.GetTile(i.Coord()), i, true)
 }
 
 // MoveInstanceToBottom swaps the provided instance with the one which is under.
-func (e *Editor) MoveInstanceToBottom(coord util.Point, i *dmminstance.Instance) {
-	e.moveInstance(e.pMap.dmm.GetTile(coord), i, false)
+func (e *Editor) MoveInstanceToBottom(i *dmminstance.Instance) {
+	e.moveInstance(e.pMap.dmm.GetTile(i.Coord()), i, false)
 }
 
 func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top bool) {

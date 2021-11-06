@@ -99,14 +99,14 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 func (t *TileMenu) doMoveToTop(i *dmminstance.Instance) func() {
 	return func() {
 		log.Printf("[tilemenu] do move instance[%s] to top: %d", i.Prefab().Path(), i.Id())
-		t.editor.MoveInstanceToTop(t.tile.Coord, i)
+		t.editor.MoveInstanceToTop(i)
 	}
 }
 
 func (t *TileMenu) doMoveToBottom(i *dmminstance.Instance) func() {
 	return func() {
 		log.Printf("[tilemenu] do move instance[%s] to bottom: %d", i.Prefab().Path(), i.Id())
-		t.editor.MoveInstanceToBottom(t.tile.Coord, i)
+		t.editor.MoveInstanceToBottom(i)
 	}
 }
 

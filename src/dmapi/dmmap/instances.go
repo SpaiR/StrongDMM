@@ -6,14 +6,15 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/util"
 )
 
 type Instances []*dmminstance.Instance
 
-func InstancesFromPrefabs(prefabs dmmdata.Prefabs) Instances {
+func InstancesFromPrefabs(coord util.Point, prefabs dmmdata.Prefabs) Instances {
 	instances := make(Instances, 0, len(prefabs))
 	for _, prefab := range prefabs {
-		instances = append(instances, dmminstance.New(prefab))
+		instances = append(instances, dmminstance.New(coord, prefab))
 	}
 	return instances
 }
