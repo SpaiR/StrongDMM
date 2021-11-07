@@ -5,8 +5,8 @@ import "sdmm/util"
 type modeType int
 
 const (
-	rect modeType = iota
-	line
+	mtRect modeType = iota
+	mtLine
 )
 
 type Batching struct {
@@ -78,12 +78,12 @@ func RectTextured(x1, y1, x2, y2 float32, col util.Color, texture uint32, u1, v1
 }
 
 func RectTexturedV(x1, y1, x2, y2, r, g, b, a float32, texture uint32, u1, v1, u2, v2 float32) {
-	if batching.mode != rect || batching.texture != texture {
+	if batching.mode != mtRect || batching.texture != texture {
 		batching.flush()
 	}
 
 	batching.texture = texture
-	batching.mode = rect
+	batching.mode = mtRect
 
 	batching.data = append(batching.data,
 		x1, y1, r, g, b, a, u1, v2, // bottom-left
@@ -126,11 +126,11 @@ func Line(x1, y1, x2, y2 float32, col util.Color) {
 }
 
 func LineV(x1, y1, x2, y2, r, g, b, a float32) {
-	if batching.mode != line {
+	if batching.mode != mtLine {
 		batching.flush()
 	}
 
-	batching.mode = line
+	batching.mode = mtLine
 
 	batching.data = append(batching.data,
 		x1, y1, r, g, b, a, 0, 0, // first point

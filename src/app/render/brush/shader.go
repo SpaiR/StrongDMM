@@ -21,7 +21,7 @@ out vec4 frag_color;
 void main() {
 	frag_texture_uv = in_texture_uv;
 	frag_color = in_color;
-    gl_Position = Transform * vec4(in_pos, 1, 1);
+	gl_Position = Transform * vec4(in_pos, 1, 1);
 }
 ` + "\x00"
 }
@@ -39,10 +39,11 @@ in vec4 frag_color;
 out vec4 outputColor;
 
 void main() {
-	if (HasTexture)
-    	outputColor = frag_color * texture(Texture, frag_texture_uv);
-	else
+	if (HasTexture) {
+		outputColor = frag_color * texture(Texture, frag_texture_uv);
+	} else {
 		outputColor = frag_color;
+	}
 }
 ` + "\x00"
 }
