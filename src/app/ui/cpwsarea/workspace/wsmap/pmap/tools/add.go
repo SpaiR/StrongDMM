@@ -30,17 +30,17 @@ func newAdd(editor editor) *tAdd {
 	}
 }
 
-func (a *tAdd) onStart(coord util.Point) {
-	a.onMove(coord)
+func (t *tAdd) onStart(coord util.Point) {
+	t.onMove(coord)
 }
 
-func (a *tAdd) onMove(coord util.Point) {
-	if prefab, ok := a.editor.SelectedPrefab(); ok && !a.editedTiles[coord] {
-		a.editedTiles[coord] = true // Don't add to the same tile twice
+func (t *tAdd) onMove(coord util.Point) {
+	if prefab, ok := t.editor.SelectedPrefab(); ok && !t.editedTiles[coord] {
+		t.editedTiles[coord] = true // Don't add to the same tile twice
 
-		tile := a.editor.Dmm().GetTile(coord)
+		tile := t.editor.Dmm().GetTile(coord)
 
-		if !a.altBehaviour {
+		if !t.altBehaviour {
 			if dm.IsPath(prefab.Path(), "/area") {
 				tile.InstancesRemoveByPath("/area")
 			} else if dm.IsPath(prefab.Path(), "/turf") {
@@ -53,16 +53,15 @@ func (a *tAdd) onMove(coord util.Point) {
 		tile.InstancesAdd(prefab)
 		tile.InstancesRegenerate()
 
-		a.editor.UpdateCanvasByCoord(coord)
-		a.editor.MarkEditedTile(coord)
+		t.editor.UpdateCanvasByCoord(coord)
+		t.editor.MarkEditedTile(coord)
 	}
 }
 
-func (a *tAdd) onStop(_ util.Point) {
-	a.altBehaviour = false
-	if len(a.editedTiles) != 0 {
-		a.editedTiles = make(map[util.Point]bool, len(a.editedTiles))
-		a.editor.ClearEditedTiles()
-		go a.editor.CommitChanges("Add Atoms")
+func (t *tAdd) onStop(util.Point) {
+	if len(t.editedTiles) != 0 {
+		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
+		t.editor.ClearEditedTiles()
+		go t.editor.CommitChanges("Add Atoms")
 	}
 }

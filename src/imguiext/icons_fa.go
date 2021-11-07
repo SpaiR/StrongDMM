@@ -14,4 +14,5 @@ const (
 	IconFaMinus      = "\uf068"
 	IconFaPlus       = "\uf067"
 	IconFaEyeDropper = "\uf1fb"
+	IconFaEraser     = "\uf12d"
 )

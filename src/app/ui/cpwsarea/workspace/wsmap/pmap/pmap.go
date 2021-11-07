@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
@@ -129,7 +130,8 @@ func (p *PaneMap) Process() {
 	p.processCanvasOverlay()
 	p.processCanvasHoveredInstance()
 
-	p.processToolsSelectionMode()
+	p.processToolsTemporalMode(int(glfw.KeyS), -1, tools.TNSelect)
+	p.processToolsTemporalMode(int(glfw.KeyD), -1, tools.TNDelete)
 
 	p.tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
 	p.tileMenu.Process()

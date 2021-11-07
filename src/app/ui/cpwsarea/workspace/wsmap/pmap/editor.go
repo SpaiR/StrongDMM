@@ -12,7 +12,8 @@ import (
 type Editor struct {
 	pMap *PaneMap
 
-	editedAreas []util.Bounds
+	editedAreas  []util.Bounds
+	deletedAreas []util.Bounds
 }
 
 // Dmm returns currently edited map.
@@ -135,11 +136,12 @@ func (e *Editor) PasteHoveredTile() {
 // CutHoveredTile does a cut (copy+delete) of the currently hovered tile.
 func (e *Editor) CutHoveredTile() {
 	e.CopyHoveredTile()
-	e.DeleteHoveredTile()
+	e.DeleteHoveredTile(false)
+	go e.CommitChanges("Cut Tile")
 }
 
 // DeleteHoveredTile deletes the last hovered by the mouse tile.
-func (e *Editor) DeleteHoveredTile() {
+func (e *Editor) DeleteHoveredTile(commit bool) {
 	tile := e.pMap.dmm.GetTile(e.pMap.canvasState.LastHoveredTile())
 
 	for _, instance := range tile.Instances() {
@@ -149,7 +151,10 @@ func (e *Editor) DeleteHoveredTile() {
 	}
 
 	tile.InstancesRegenerate()
-	go e.CommitChanges("Delete Tile")
+
+	if commit {
+		go e.CommitChanges("Delete Tile")
+	}
 }
 
 // ReplacePrefab replaces all old prefabs on the map with the new one.
@@ -174,8 +179,21 @@ func (e *Editor) MarkEditedTile(coord util.Point) {
 	})
 }
 
+func (e *Editor) MarkDeletedTile(coord util.Point) {
+	e.deletedAreas = append(e.deletedAreas, util.Bounds{
+		X1: float32((coord.X - 1) * dmmap.WorldIconSize),
+		Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
+		X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+		Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+	})
+}
+
 func (e *Editor) ClearEditedTiles() {
 	e.editedAreas = nil
+}
+
+func (e *Editor) ClearDeletedTiles() {
+	e.deletedAreas = nil
 }
 
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.

@@ -24,7 +24,7 @@ func (tSelect) AltBehaviour() bool {
 	return false
 }
 
-func (t tSelect) onStart(_ util.Point) {
+func (t tSelect) onStart(util.Point) {
 	if hoveredInstance := t.editor.HoveredInstance(); hoveredInstance != nil {
 		t.editor.SelectInstance(hoveredInstance)
 	}

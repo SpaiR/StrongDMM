@@ -3,36 +3,67 @@ package pmap
 import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
+	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
 var (
-	overlayColorHoveredTileFill   = util.MakeColor(1, 1, 1, 0.25)
-	overlayColorHoveredTileBorder = util.MakeColor(1, 1, 1, 1)
-	overlayColorEditedTileBorder  = util.MakeColor(0, 1, 0, 1)
-	overlayColorHoveredInstance   = util.MakeColor(0, 1, 0, 1)
+	oColEmpty = util.Color{}
+
+	oColHoverTileFill   = util.MakeColor(1, 1, 1, 0.25)
+	oColHoverTileBorder = util.MakeColor(1, 1, 1, 1)
+
+	oColDeleteTileFile   = util.MakeColor(1, 0, 0, 0.25)
+	oColDeleteTileBorder = util.MakeColor(1, 0, 0, 1)
+
+	oColEditTileBorder    = util.MakeColor(0, 1, 0, 1)
+	oColDeletedTileBorder = util.MakeColor(1, 0, 0, 1)
+
+	oColSelectInstance = util.MakeColor(0, 1, 0, 1)
+	oColDeleteInstance = util.MakeColor(1, 0, 0, 1)
 )
 
 func (p *PaneMap) processCanvasOverlay() {
-	if p.tools.IsSelected(tools.TNSelect) {
-		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
-			p.canvasOverlay.PushUnit(canvas.HighlightUnit{
-				Id_:    hoveredInstance.Id(),
-				Color_: overlayColorHoveredInstance,
-			})
+	if p.tools.IsSelected(tools.TNSelect) || p.tools.IsSelected(tools.TNDelete) {
+		hoveredInstance := p.canvasState.HoveredInstance()
+
+		if p.tools.IsSelected(tools.TNSelect) {
+			p.pushUnitHighlight(hoveredInstance, oColSelectInstance)
+		} else {
+			if p.tools.Selected().AltBehaviour() {
+				if !p.canvasState.HoverOutOfBounds() {
+					p.pushAreaHover(p.canvasState.HoveredTileBounds(), oColDeleteTileFile, oColDeleteTileBorder)
+				}
+			} else {
+				p.pushUnitHighlight(hoveredInstance, oColDeleteInstance)
+			}
 		}
 	} else if !p.canvasState.HoverOutOfBounds() {
-		p.canvasOverlay.PushArea(canvas.OverlayArea{
-			Bounds_:      p.canvasState.HoveredTileBounds(),
-			FillColor_:   overlayColorHoveredTileFill,
-			BorderColor_: overlayColorHoveredTileBorder,
-		})
+		p.pushAreaHover(p.canvasState.HoveredTileBounds(), oColHoverTileFill, oColHoverTileBorder)
 	}
 
-	for _, editedTilesBounds := range p.editor.editedAreas {
-		p.canvasOverlay.PushArea(canvas.OverlayArea{
-			Bounds_:      editedTilesBounds,
-			BorderColor_: overlayColorEditedTileBorder,
+	for _, bounds := range p.editor.editedAreas {
+		p.pushAreaHover(bounds, oColEmpty, oColEditTileBorder)
+	}
+
+	for _, bounds := range p.editor.deletedAreas {
+		p.pushAreaHover(bounds, oColEmpty, oColDeletedTileBorder)
+	}
+}
+
+func (p *PaneMap) pushUnitHighlight(instance *dmminstance.Instance, color util.Color) {
+	if instance != nil {
+		p.canvasOverlay.PushUnit(canvas.HighlightUnit{
+			Id_:    instance.Id(),
+			Color_: color,
 		})
 	}
+}
+
+func (p *PaneMap) pushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color) {
+	p.canvasOverlay.PushArea(canvas.OverlayArea{
+		Bounds_:      bounds,
+		FillColor_:   fillColor,
+		BorderColor_: borderColor,
+	})
 }

@@ -10,6 +10,7 @@ import (
 const (
 	TNAdd    = "Add"
 	TNSelect = "Select"
+	TNDelete = "Delete"
 )
 
 type canvasControl interface {
@@ -28,7 +29,11 @@ type editor interface {
 	CommitChanges(string)
 	MarkEditedTile(coord util.Point)
 	ClearEditedTiles()
+	MarkDeletedTile(coord util.Point)
+	ClearDeletedTiles()
 	SelectInstance(i *dmminstance.Instance)
+	DeleteInstance(i *dmminstance.Instance)
+	DeleteHoveredTile(commit bool)
 	HoveredInstance() *dmminstance.Instance
 }
 
@@ -76,6 +81,7 @@ func New(editor editor) *Tools {
 	tools := map[string]Tool{
 		TNAdd:    newAdd(editor),
 		TNSelect: newSelect(editor),
+		TNDelete: newDelete(editor),
 	}
 	return &Tools{
 		selected: tools[TNAdd],

@@ -184,6 +184,6 @@ func (a *app) DoCut() {
 func (a *app) DoDelete() {
 	log.Println("[app] do delete")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.Map().Editor().DeleteHoveredTile()
+		ws.Map().Editor().DeleteHoveredTile(true)
 	}
 }
