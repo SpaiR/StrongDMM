@@ -70,12 +70,12 @@ func initShader(vertex, fragment string) {
 		log.Fatal("[brush] unable to create shader:", err)
 	}
 
-	indices := [2]uint32{}
-	uniforms, freeUniforms := gl.Strs("Transform\x00", "HasTexture\x00")
-	gl.GetUniformIndices(program, 2, uniforms, &indices[0])
-	freeUniforms()
-	uniformLocationTransform = int32(indices[0])
-	uniformLocationHasTexture = int32(indices[1])
+	uniformIndices := [2]uint32{}
+	uniformNames, freeUniformNames := gl.Strs("Transform\x00", "HasTexture\x00")
+	gl.GetUniformIndices(program, 2, uniformNames, &uniformIndices[0])
+	freeUniformNames()
+	uniformLocationTransform = int32(uniformIndices[0])
+	uniformLocationHasTexture = int32(uniformIndices[1])
 
 	log.Println("[brush] shader initialized")
 }
