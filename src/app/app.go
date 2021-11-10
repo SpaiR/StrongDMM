@@ -239,7 +239,7 @@ func (a *app) deleteOldLogs() {
 func (a *app) deleteOldBackups() {
 	backupsCount := 0
 	_ = filepath.Walk(a.backupDir, func(path string, info os.FileInfo, _ error) error {
-		if !info.IsDir() && time.Now().Sub(info.ModTime()).Hours()/24 > BackupsTtlDays {
+		if info != nil && !info.IsDir() && time.Now().Sub(info.ModTime()).Hours()/24 > BackupsTtlDays {
 			_ = os.Remove(path)
 			backupsCount++
 		}
