@@ -18,7 +18,7 @@ var (
 	vbo uint32
 	ebo uint32
 
-	uniformLocationTransform int32
+	uniformLocationTransform  int32
 	uniformLocationHasTexture int32
 )
 
