@@ -17,6 +17,9 @@ var (
 	vao uint32
 	vbo uint32
 	ebo uint32
+
+	uniformLocationTransform int32
+	uniformLocationHasTexture int32
 )
 
 func TryInit() {
@@ -66,6 +69,14 @@ func initShader(vertex, fragment string) {
 	if program, err = platform.NewShaderProgram(vertex, fragment); err != nil {
 		log.Fatal("[brush] unable to create shader:", err)
 	}
+
+	indices := [2]uint32{}
+	uniforms, freeUniforms := gl.Strs("Transform\x00", "HasTexture\x00")
+	gl.GetUniformIndices(program, 2, uniforms, &indices[0])
+	freeUniforms()
+	uniformLocationTransform = int32(indices[0])
+	uniformLocationHasTexture = int32(indices[1])
+
 	log.Println("[brush] shader initialized")
 }
 

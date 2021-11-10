@@ -1,10 +1,5 @@
 package brush
 
-const (
-	uniformLocationTransform  = 0
-	uniformLocationHasTexture = 1
-)
-
 func vertexShader() string {
 	return `
 #version 330 core
