@@ -40,7 +40,7 @@ fn parse(path: &str) -> Option<String> {
             for text_chunk in &reader.info().compressed_latin1_text {
                 if text_chunk.keyword.eq("Description") {
                     return text_chunk.get_text().map_or(None, |info| {
-                        Some(meta2json(Metadata::from_str(info.as_str())))
+                        Some(meta2json(Metadata::meta_from_str(info.as_str())))
                     });
                 }
             }
