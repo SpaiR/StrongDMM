@@ -12,6 +12,7 @@ import (
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmvars"
 )
 
@@ -140,7 +141,7 @@ func (a *app) PathsFilter() *dm.PathsFilter {
 }
 
 // Clipboard returns *dmmap.Clipboard for the application.
-func (a *app) Clipboard() *dmmap.Clipboard {
+func (a *app) Clipboard() *dmmclip.Clipboard {
 	return a.clipboard
 }
 

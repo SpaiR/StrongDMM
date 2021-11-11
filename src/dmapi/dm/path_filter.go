@@ -14,6 +14,16 @@ func NewPathsFilter() *PathsFilter {
 	return &PathsFilter{}
 }
 
+func (p *PathsFilter) Copy() PathsFilter {
+	excludedPaths, filteredPaths := make([]string, len(p.excludedPaths)), make([]string, len(p.filteredPaths))
+	copy(excludedPaths, p.excludedPaths)
+	copy(filteredPaths, p.filteredPaths)
+	return PathsFilter{
+		excludedPaths,
+		filteredPaths,
+	}
+}
+
 func (p *PathsFilter) Free() {
 	p.excludedPaths, p.filteredPaths = nil, nil
 	log.Println("[dm] paths filter free")

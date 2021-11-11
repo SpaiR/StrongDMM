@@ -20,7 +20,7 @@ import (
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
-	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmclip"
 )
 
 const (
@@ -81,7 +81,7 @@ type app struct {
 	prefsData  *prefsData.Prefs
 
 	commandStorage *command.Storage
-	clipboard      *dmmap.Clipboard
+	clipboard      *dmmclip.Clipboard
 
 	menu   *menu.Menu
 	layout *layout.Layout
@@ -100,7 +100,7 @@ func (a *app) initialize(internalDir string) {
 
 	a.commandStorage = command.NewStorage()
 	a.pathsFilter = dm.NewPathsFilter()
-	a.clipboard = dmmap.NewClipboard(a.pathsFilter)
+	a.clipboard = dmmclip.New()
 
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)

@@ -124,7 +124,8 @@ func (e *Editor) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 
 // CopyHoveredTile copies currently hovered tiles.
 func (e *Editor) CopyHoveredTile() {
-	e.pMap.app.Clipboard().Copy(e.pMap.dmm, []util.Point{e.pMap.canvasState.LastHoveredTile()})
+	tile := []util.Point{e.pMap.canvasState.LastHoveredTile()}
+	e.pMap.app.Clipboard().Copy(e.pMap.app.PathsFilter(), e.pMap.dmm, tile)
 }
 
 // PasteHoveredTile does a paste to the currently hovered tile.

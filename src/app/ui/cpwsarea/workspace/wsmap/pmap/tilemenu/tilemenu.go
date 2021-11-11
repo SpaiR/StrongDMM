@@ -7,6 +7,7 @@ import (
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/dmapi/dmmclip"
 	"sdmm/util"
 )
 
@@ -22,7 +23,7 @@ type App interface {
 	PointSize() float32
 
 	CommandStorage() *command.Storage
-	Clipboard() *dmmap.Clipboard
+	Clipboard() *dmmclip.Clipboard
 
 	HasSelectedPrefab() bool
 	SelectedPrefab() (*dmmprefab.Prefab, bool)

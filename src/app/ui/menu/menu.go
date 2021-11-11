@@ -5,7 +5,7 @@ import (
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
-	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmclip"
 	w "sdmm/imguiext/widget"
 )
 
@@ -48,7 +48,7 @@ type app interface {
 
 	PathsFilter() *dm.PathsFilter
 	CommandStorage() *command.Storage
-	Clipboard() *dmmap.Clipboard
+	Clipboard() *dmmclip.Clipboard
 }
 
 type Menu struct {

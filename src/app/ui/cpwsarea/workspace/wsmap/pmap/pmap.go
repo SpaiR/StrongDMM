@@ -14,6 +14,7 @@ import (
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
 )
@@ -31,7 +32,7 @@ type App interface {
 	RemoveMouseChangeCallback(id int)
 
 	CommandStorage() *command.Storage
-	Clipboard() *dmmap.Clipboard
+	Clipboard() *dmmclip.Clipboard
 	PathsFilter() *dm.PathsFilter
 }
 
