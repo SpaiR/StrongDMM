@@ -113,10 +113,9 @@ func (w *Window) setupGlfw() {
 		log.Fatal("[window] unable to initialize opengl:", err)
 	}
 
-	glfw.WindowHint(glfw.Visible, glfw.True)
-
 	window.Maximize()
 	window.SetSizeCallback(w.resizeCallback)
+	window.Show()
 
 	log.Println("[window] opengl initialized")
 
