@@ -55,7 +55,7 @@ func (p *PaneMap) showToolsPanel() {
 		desc := toolsDesc[toolName]
 
 		btn := w.Button(desc.icon, func() {
-			p.tools.SetSelected(tool)
+			tools.SetSelected(toolName)
 		})
 		if p.tools.Selected() == tool {
 			if tool.AltBehaviour() {
@@ -73,19 +73,19 @@ func (p *PaneMap) showToolsPanel() {
 func (p *PaneMap) processToolsTemporalMode(key, altKey int, modeName string) {
 	isKeyPressed := imgui.IsKeyPressedV(key, false) || imgui.IsKeyPressedV(altKey, false)
 	isKeyReleased := imgui.IsKeyReleased(key) || imgui.IsKeyReleased(altKey)
-	isSelected := p.tools.IsSelected(modeName)
+	isSelected := tools.IsSelected(modeName)
 
 	if isKeyPressed && !isSelected {
-		p.tmpLastSelectedTool = p.tools.Selected()
-		p.tools.SetSelectedByName(modeName)
-	} else if isKeyReleased && p.tmpLastSelectedTool != nil {
+		p.tmpLastSelectedToolName = p.tools.Selected().Name()
+		tools.SetSelected(modeName)
+	} else if isKeyReleased && len(p.tmpLastSelectedToolName) != 0 {
 		if isSelected {
-			p.tools.SetSelected(p.tmpLastSelectedTool)
+			tools.SetSelected(p.tmpLastSelectedToolName)
 		}
-		p.tmpLastSelectedTool = nil
+		p.tmpLastSelectedToolName = ""
 	}
 }
 
 func (p *PaneMap) selectAddTool() {
-	p.tools.SetSelectedByName(tools.TNAdd)
+	tools.SetSelected(tools.TNAdd)
 }

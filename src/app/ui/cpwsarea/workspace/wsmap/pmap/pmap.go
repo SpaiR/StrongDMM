@@ -63,8 +63,8 @@ type PaneMap struct {
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
 
-	tmpLastSelectedTool    tools.Tool
-	tmpLastHoveredInstance *dmminstance.Instance
+	tmpLastSelectedToolName string
+	tmpLastHoveredInstance  *dmminstance.Instance
 }
 
 func (p *PaneMap) Editor() *Editor {

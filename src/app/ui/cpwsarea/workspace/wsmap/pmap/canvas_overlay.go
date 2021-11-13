@@ -24,10 +24,10 @@ var (
 )
 
 func (p *PaneMap) processCanvasOverlay() {
-	if p.tools.IsSelected(tools.TNSelect) || p.tools.IsSelected(tools.TNDelete) {
+	if tools.IsSelected(tools.TNSelect) || tools.IsSelected(tools.TNDelete) {
 		hoveredInstance := p.canvasState.HoveredInstance()
 
-		if p.tools.IsSelected(tools.TNSelect) {
+		if tools.IsSelected(tools.TNSelect) {
 			p.pushUnitHighlight(hoveredInstance, oColSelectInstance)
 		} else {
 			if p.tools.Selected().AltBehaviour() {

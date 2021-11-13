@@ -37,14 +37,22 @@ type editor interface {
 	HoveredInstance() *dmminstance.Instance
 }
 
+var selectedToolName = TNAdd
+
+func SetSelected(toolName string) {
+	selectedToolName = toolName
+}
+
+func IsSelected(toolName string) bool {
+	return selectedToolName == toolName
+}
+
 type Tools struct {
 	canvasControl canvasControl
 	canvasState   canvasState
 
 	active   bool
 	oldCoord util.Point
-
-	selected Tool
 
 	tools map[string]Tool
 }
@@ -57,24 +65,12 @@ func (t *Tools) SetCanvasState(canvasState canvasState) {
 	t.canvasState = canvasState
 }
 
-func (t *Tools) SetSelectedByName(toolName string) {
-	t.selected = t.tools[toolName]
-}
-
-func (t *Tools) SetSelected(tool Tool) {
-	t.selected = tool
-}
-
 func (t *Tools) Selected() Tool {
-	return t.selected
+	return t.tools[selectedToolName]
 }
 
 func (t *Tools) Tools() map[string]Tool {
 	return t.tools
-}
-
-func (t Tools) IsSelected(toolName string) bool {
-	return t.selected.Name() == toolName
 }
 
 func New(editor editor) *Tools {
@@ -84,13 +80,12 @@ func New(editor editor) *Tools {
 		TNDelete: newDelete(editor),
 	}
 	return &Tools{
-		selected: tools[TNAdd],
-		tools:    tools,
+		tools: tools,
 	}
 }
 
 func (t *Tools) Process(altBehaviour bool) {
-	t.selected.setAltBehaviour(altBehaviour)
+	t.Selected().setAltBehaviour(altBehaviour)
 	t.processSelectedToolStart()
 	t.processSelectedToolsStop()
 }
@@ -102,7 +97,7 @@ func (t *Tools) OnMouseMove() {
 func (t *Tools) processSelectedToolStart() {
 	if !t.canvasState.HoverOutOfBounds() {
 		if t.canvasControl.Dragging() && !t.active {
-			t.selected.onStart(t.canvasState.HoveredTile())
+			t.Selected().onStart(t.canvasState.HoveredTile())
 			t.active = true
 		}
 	}
@@ -112,7 +107,7 @@ func (t *Tools) processSelectedToolMove() {
 	if !t.canvasState.HoverOutOfBounds() {
 		coord := t.canvasState.HoveredTile()
 		if coord != t.oldCoord && t.active {
-			t.selected.onMove(coord)
+			t.Selected().onMove(coord)
 		}
 		t.oldCoord = coord
 	}
@@ -120,7 +115,7 @@ func (t *Tools) processSelectedToolMove() {
 
 func (t *Tools) processSelectedToolsStop() {
 	if !t.canvasControl.Dragging() && t.active {
-		t.selected.onStop(t.oldCoord)
+		t.Selected().onStop(t.oldCoord)
 		t.active = false
 	}
 }
