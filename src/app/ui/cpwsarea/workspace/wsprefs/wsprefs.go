@@ -22,6 +22,10 @@ func (ws *WsPrefs) Name() string {
 	return "Preferences"
 }
 
+func (ws *WsPrefs) NameReadable() string {
+	return "Preferences"
+}
+
 func (ws *WsPrefs) ShowContent() {
 	for _, group := range prefsGroupOrder {
 		imgui.Text(string(group))

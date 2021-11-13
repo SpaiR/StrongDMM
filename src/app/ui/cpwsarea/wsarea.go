@@ -26,6 +26,14 @@ type WsArea struct {
 	activeWs workspace.Workspace
 
 	workspaces []workspace.Workspace
+
+	// An id for the tab state. Basically a counter which increments every time we change tabs programmatically.
+	// For example, when we move tabs between each others.
+	tabStateId uint
+
+	tmpMoveWsIdxHov int // Index of the hovered workspace (drop target)
+	tmpMoveWsIdxSrc int // Index of the moved workspace (drop source)
+	tmpMoveWsIdxDst int // Index where to move the workspace (drop target)
 }
 
 func (w *WsArea) Init(app App) {
@@ -66,7 +74,7 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) {
 
 func (w *WsArea) WorkspaceTitle() string {
 	if w.activeWs != nil {
-		return w.activeWs.Tooltip()
+		return w.activeWs.NameReadable()
 	}
 	return ""
 }
@@ -157,4 +165,11 @@ func (w *WsArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 			w.app.CommandStorage().SetStack(w.activeWs.CommandStackId())
 		}
 	}
+}
+
+func (w *WsArea) moveWorkspace(srcIdx, dstIdx int) {
+	src := w.workspaces[srcIdx]
+	w.workspaces = append(w.workspaces[:srcIdx], w.workspaces[srcIdx+1:]...)
+	w.workspaces = append(w.workspaces[:dstIdx], append([]workspace.Workspace{src}, w.workspaces[dstIdx:]...)...)
+	w.tabStateId++
 }

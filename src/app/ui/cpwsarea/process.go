@@ -38,11 +38,6 @@ func (w *WsArea) Process() {
 				// Track a current active workspace by the currently selected tab.
 				w.switchActiveWorkspace(ws)
 
-				// Show a tooltip if we have so.
-				if ws.HasTooltip() {
-					imguiext.SetItemHoveredTooltip(ws.Tooltip())
-				}
-
 				// Some workspaces require a border to render their content properly (visible better).
 				if ws.Border() {
 					imgui.PushStyleVarFloat(imgui.StyleVarChildBorderSize, 1)
@@ -65,9 +60,6 @@ func (w *WsArea) Process() {
 				imgui.EndTabItem()
 			} else {
 				imgui.PopStyleVar()
-				if ws.HasTooltip() {
-					imguiext.SetItemHoveredTooltip(ws.Tooltip())
-				}
 			}
 
 			// We store currently opened workspaces programmatically to be able to track their order inside of tabs.

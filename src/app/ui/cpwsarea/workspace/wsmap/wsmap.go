@@ -58,16 +58,16 @@ func (ws *WsMap) Name() string {
 	return fmt.Sprint(visibleName, "###workspace_map_", ws.paneMap.Dmm().Path.Absolute)
 }
 
+func (ws *WsMap) NameReadable() string {
+	return ws.paneMap.Dmm().Name
+}
+
 func (ws *WsMap) PreProcess() {
 	ws.paneMap.SetShortcutsVisible(false)
 }
 
 func (ws *WsMap) ShowContent() {
 	ws.paneMap.Process()
-}
-
-func (ws *WsMap) Tooltip() string {
-	return ws.paneMap.Dmm().Path.Readable
 }
 
 func (ws *WsMap) Dispose() {

@@ -8,6 +8,7 @@ import (
 type Workspace interface {
 	CommandStackId() string
 	Name() string
+	NameReadable() string
 	PreProcess()
 	Process()
 	ShowContent()
@@ -15,8 +16,6 @@ type Workspace interface {
 	Dispose()
 	Select(bool)
 	IsDoSelect() bool
-	HasTooltip() bool
-	Tooltip() string
 	Border() bool
 	SetIdx(idx int)
 	Focused() bool
@@ -57,14 +56,6 @@ func (b *Base) Select(value bool) {
 
 func (b *Base) IsDoSelect() bool {
 	return b.isDoSelect
-}
-
-func (b *Base) HasTooltip() bool {
-	return b.Workspace.Tooltip() != ""
-}
-
-func (*Base) Tooltip() string {
-	return ""
 }
 
 func (*Base) Border() bool {

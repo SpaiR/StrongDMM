@@ -39,6 +39,10 @@ func (ws *WsEmpty) Name() string {
 	return ws.name
 }
 
+func (ws *WsEmpty) NameReadable() string {
+	return "New"
+}
+
 func (ws *WsEmpty) ShowContent() {
 	if !ws.app.HasLoadedEnvironment() {
 		ws.showEnvironmentsControl()
