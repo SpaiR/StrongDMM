@@ -55,6 +55,8 @@ type Tools struct {
 	oldCoord util.Point
 
 	tools map[string]Tool
+
+	startedTool Tool
 }
 
 func (t *Tools) SetCanvasControl(canvasControl canvasControl) {
@@ -85,6 +87,10 @@ func New(editor editor) *Tools {
 }
 
 func (t *Tools) Process(altBehaviour bool) {
+	if t.active && t.startedTool != t.Selected() {
+		t.startedTool.onStop(t.oldCoord)
+	}
+
 	t.Selected().setAltBehaviour(altBehaviour)
 	t.processSelectedToolStart()
 	t.processSelectedToolsStop()
@@ -97,6 +103,7 @@ func (t *Tools) OnMouseMove() {
 func (t *Tools) processSelectedToolStart() {
 	if !t.canvasState.HoverOutOfBounds() {
 		if t.canvasControl.Dragging() && !t.active {
+			t.startedTool = t.Selected()
 			t.Selected().onStart(t.canvasState.HoveredTile())
 			t.active = true
 		}
