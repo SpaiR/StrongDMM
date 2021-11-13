@@ -10,38 +10,55 @@ import (
 var (
 	oColEmpty = util.Color{}
 
-	oColHoverTileFill   = util.MakeColor(1, 1, 1, 0.25)
-	oColHoverTileBorder = util.MakeColor(1, 1, 1, 1)
+	oColToolAddTileFill   = util.MakeColor(1, 1, 1, 0.25)
+	oColToolAddTileBorder = util.MakeColor(1, 1, 1, 1)
 
-	oColDeleteTileFile   = util.MakeColor(1, 0, 0, 0.25)
-	oColDeleteTileBorder = util.MakeColor(1, 0, 0, 1)
+	oColToolSelectInstance = util.MakeColor(0, 1, 0, 1)
+
+	oColToolDeleteInstance      = util.MakeColor(1, 0, 0, 1)
+	oColToolDeleteAltTileFill   = util.MakeColor(1, 0, 0, 0.25)
+	oColToolDeleteAltTileBorder = util.MakeColor(1, 0, 0, 1)
 
 	oColEditTileBorder    = util.MakeColor(0, 1, 0, 1)
 	oColDeletedTileBorder = util.MakeColor(1, 0, 0, 1)
-
-	oColSelectInstance = util.MakeColor(0, 1, 0, 1)
-	oColDeleteInstance = util.MakeColor(1, 0, 0, 1)
 )
 
 func (p *PaneMap) processCanvasOverlay() {
-	if tools.IsSelected(tools.TNSelect) || tools.IsSelected(tools.TNDelete) {
-		hoveredInstance := p.canvasState.HoveredInstance()
+	p.processCanvasOverlayTools()
+	p.processCanvasOverlayAreas()
+}
 
-		if tools.IsSelected(tools.TNSelect) {
-			p.pushUnitHighlight(hoveredInstance, oColSelectInstance)
+func (p *PaneMap) processCanvasOverlayTools() {
+	var (
+		colInstance   util.Color
+		colTileFill   util.Color
+		colTileBorder util.Color
+	)
+
+	switch p.tools.Selected().Name() {
+	case tools.TNAdd:
+		colTileFill = oColToolAddTileFill
+		colTileBorder = oColToolAddTileBorder
+	case tools.TNSelect:
+		colInstance = oColToolSelectInstance
+	case tools.TNDelete:
+		if !p.tools.Selected().AltBehaviour() {
+			colInstance = oColToolDeleteInstance
 		} else {
-			if p.tools.Selected().AltBehaviour() {
-				if !p.canvasState.HoverOutOfBounds() {
-					p.pushAreaHover(p.canvasState.HoveredTileBounds(), oColDeleteTileFile, oColDeleteTileBorder)
-				}
-			} else {
-				p.pushUnitHighlight(hoveredInstance, oColDeleteInstance)
-			}
+			colTileFill = oColToolDeleteAltTileFill
+			colTileBorder = oColToolDeleteAltTileBorder
 		}
-	} else if !p.canvasState.HoverOutOfBounds() {
-		p.pushAreaHover(p.canvasState.HoveredTileBounds(), oColHoverTileFill, oColHoverTileBorder)
 	}
 
+	if colInstance != oColEmpty {
+		p.pushUnitHighlight(p.canvasState.HoveredInstance(), colInstance)
+	}
+	if !p.canvasState.HoverOutOfBounds() {
+		p.pushAreaHover(p.canvasState.HoveredTileBounds(), colTileFill, colTileBorder)
+	}
+}
+
+func (p *PaneMap) processCanvasOverlayAreas() {
 	for _, bounds := range p.editor.editedAreas {
 		p.pushAreaHover(bounds, oColEmpty, oColEditTileBorder)
 	}
