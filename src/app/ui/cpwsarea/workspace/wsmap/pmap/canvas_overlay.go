@@ -10,8 +10,9 @@ import (
 var (
 	oColEmpty = util.Color{}
 
-	oColToolAddTileFill   = util.MakeColor(1, 1, 1, 0.25)
-	oColToolAddTileBorder = util.MakeColor(1, 1, 1, 1)
+	oColToolAddTileFill      = util.MakeColor(1, 1, 1, 0.25)
+	oColToolAddTileBorder    = util.MakeColor(1, 1, 1, 1)
+	oColToolAddAltTileBorder = util.MakeColor(0, 1, 0, 1)
 
 	oColToolSelectInstance = util.MakeColor(0, 1, 0, 1)
 
@@ -38,7 +39,11 @@ func (p *PaneMap) processCanvasOverlayTools() {
 	switch p.tools.Selected().Name() {
 	case tools.TNAdd:
 		colTileFill = oColToolAddTileFill
-		colTileBorder = oColToolAddTileBorder
+		if !p.tools.Selected().AltBehaviour() {
+			colTileBorder = oColToolAddTileBorder
+		} else {
+			colTileBorder = oColToolAddAltTileBorder
+		}
 	case tools.TNSelect:
 		colInstance = oColToolSelectInstance
 	case tools.TNDelete:
