@@ -62,7 +62,7 @@ func (ws *WsMap) PreProcess() {
 	ws.paneMap.SetShortcutsVisible(false)
 }
 
-func (ws *WsMap) Process() {
+func (ws *WsMap) ShowContent() {
 	ws.paneMap.Process()
 }
 
@@ -77,4 +77,8 @@ func (ws *WsMap) Dispose() {
 
 func (ws *WsMap) Border() bool {
 	return false
+}
+
+func (ws *WsMap) Focused() bool {
+	return ws.paneMap.Focused()
 }

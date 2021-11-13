@@ -8,48 +8,60 @@ import (
 )
 
 func (w *WsArea) Process() {
-	isCpInFocus := imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+	cpFocused := imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
 
-	// Window of the component doesn't have title bar, so we need to mock focus behaviour in that way.
+	// Window of the component doesn't have a title bar, so we need to mock a focus behaviour.
 	// Thus, if the window is unfocused that could be seen by tabs color.
-	if !isCpInFocus {
+	inactiveStyle := !(w.focused || cpFocused)
+	if inactiveStyle {
 		imgui.PushStyleColor(imgui.StyleColorTabActive, imgui.CurrentStyle().Color(imgui.StyleColorTabUnfocusedActive))
 	}
 
 	if imgui.BeginTabBarV("workspace_area", imgui.TabBarFlagsTabListPopupButton|imgui.TabBarFlagsAutoSelectNewTabs) {
-		for idx, ws := range w.workspaces {
+		for idx, ws := range w.workspaces { // Iterate through all workspaces.
 			ws.SetIdx(idx)
 			ws.PreProcess()
 
 			open := true
-			flags := imgui.TabItemFlagsNoTooltip
+			flags := imgui.TabItemFlagsNoTooltip // Not showing any tooltips by default.
 
+			// If the workspace is requested to be selected - enforce the tab selection.
 			if ws.IsDoSelect() {
 				ws.Select(false)
 				flags |= imgui.TabItemFlagsSetSelected
 			}
 
-			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{})
+			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{}) // Remove a default tab content padding.
 			if imgui.BeginTabItemV(ws.Name(), &open, flags) {
 				imgui.PopStyleVar()
 
+				// Track a current active workspace by the currently selected tab.
 				w.switchActiveWorkspace(ws)
 
+				// Show a tooltip if we have so.
 				if ws.HasTooltip() {
 					imguiext.SetItemHoveredTooltip(ws.Tooltip())
 				}
 
+				// Some workspaces require a border to render their content properly (visible better).
 				if ws.Border() {
 					imgui.PushStyleVarFloat(imgui.StyleVarChildBorderSize, 1)
 				}
-
 				imgui.BeginChildV(fmt.Sprint("workspace_", ws.Name(), idx), imgui.Vec2{}, ws.Border(), imgui.WindowFlagsNone)
 				if ws.Border() {
 					imgui.PopStyleVar()
 				}
-				ws.Process()
-				imgui.EndChild()
 
+				// The actual processing of the workspace with showing of its content.
+				ws.Process()
+
+				// In some cases a content of the tba may consist of the multiple windows.
+				// So we won't be able to track a "focus" state of the tab.
+				// To avoid that problem we determine the tab activeness with the focus of the workspace
+				// and the focus of the tab itself.
+				w.focused = cpFocused || ws.Focused()
+
+				imgui.EndChild()
 				imgui.EndTabItem()
 			} else {
 				imgui.PopStyleVar()
@@ -58,11 +70,14 @@ func (w *WsArea) Process() {
 				}
 			}
 
+			// We store currently opened workspaces programmatically to be able to track their order inside of tabs.
+			// When the tab is closed - close the workspace itself (basically means disposing).
 			if !open {
 				w.closeWorkspaceByIdx(idx)
 			}
 		}
 
+		// Add an empty workspace when the "plus" button is clicked.
 		if imgui.TabItemButton(imguiext.IconFaPlus) {
 			w.addEmptyWorkspace()
 		}
@@ -70,7 +85,7 @@ func (w *WsArea) Process() {
 		imgui.EndTabBar()
 	}
 
-	if !isCpInFocus {
+	if inactiveStyle {
 		imgui.PopStyleColor()
 	}
 }

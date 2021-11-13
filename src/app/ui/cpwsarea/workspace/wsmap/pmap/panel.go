@@ -42,6 +42,9 @@ func (p *PaneMap) showPanel(id string, panelPos panelPos, content func()) {
 	if imgui.BeginV(id, nil, panelFlags) {
 		imgui.PopStyleVar()
 
+		p.updateShortcutsState()
+		p.focused = p.focused || imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+
 		content()
 
 		if panelPos == pPosBottom {

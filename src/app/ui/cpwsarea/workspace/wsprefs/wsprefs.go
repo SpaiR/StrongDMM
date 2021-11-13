@@ -22,7 +22,7 @@ func (ws *WsPrefs) Name() string {
 	return "Preferences"
 }
 
-func (ws *WsPrefs) Process() {
+func (ws *WsPrefs) ShowContent() {
 	for _, group := range prefsGroupOrder {
 		imgui.Text(string(group))
 		imgui.Separator()

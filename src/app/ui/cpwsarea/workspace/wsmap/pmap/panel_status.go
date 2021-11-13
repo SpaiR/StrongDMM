@@ -8,8 +8,6 @@ import (
 )
 
 func (p *PaneMap) showStatusPanel() {
-	p.updateShortcutsState()
-
 	if p.canvasState.HoverOutOfBounds() {
 		imgui.Text("[out of bounds]")
 	} else {

@@ -22,6 +22,7 @@ type App interface {
 type WsArea struct {
 	app App
 
+	focused  bool
 	activeWs workspace.Workspace
 
 	workspaces []workspace.Workspace

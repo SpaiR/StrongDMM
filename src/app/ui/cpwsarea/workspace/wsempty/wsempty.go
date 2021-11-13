@@ -39,7 +39,7 @@ func (ws *WsEmpty) Name() string {
 	return ws.name
 }
 
-func (ws *WsEmpty) Process() {
+func (ws *WsEmpty) ShowContent() {
 	if !ws.app.HasLoadedEnvironment() {
 		ws.showEnvironmentsControl()
 	} else {

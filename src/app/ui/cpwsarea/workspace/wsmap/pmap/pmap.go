@@ -59,6 +59,7 @@ type PaneMap struct {
 
 	// Properties for the pane.
 	pos, size imgui.Vec2
+	focused   bool
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
@@ -73,6 +74,10 @@ func (p *PaneMap) Editor() *Editor {
 
 func (p *PaneMap) Dmm() *dmmap.Dmm {
 	return p.dmm
+}
+
+func (p *PaneMap) Focused() bool {
+	return p.focused
 }
 
 func (p *PaneMap) SetShortcutsVisible(visible bool) {
@@ -121,8 +126,11 @@ func (p *PaneMap) Process() {
 
 	p.updateShortcutsState()
 
-	p.pos, p.size = imgui.WindowPos(), imgui.WindowSize() // Update properties.
-	p.canvas.Render().Camera().Level = p.activeLevel      // Update the canvas camera visible level.
+	// Update properties.
+	p.pos, p.size = imgui.WindowPos(), imgui.WindowSize()
+	p.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+
+	p.canvas.Render().Camera().Level = p.activeLevel // Update the canvas camera visible level.
 
 	p.canvasControl.Process(p.size)
 	p.canvas.Process(p.size)

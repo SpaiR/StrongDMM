@@ -39,8 +39,6 @@ var (
 )
 
 func (p *PaneMap) showToolsPanel() {
-	p.updateShortcutsState()
-
 	for idx, toolName := range toolsOrder {
 		if idx > 0 || idx < len(toolsOrder)-1 {
 			imgui.SameLine()

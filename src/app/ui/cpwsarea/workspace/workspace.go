@@ -1,12 +1,16 @@
 package workspace
 
-import "sdmm/app/command"
+import (
+	"github.com/SpaiR/imgui-go"
+	"sdmm/app/command"
+)
 
 type Workspace interface {
 	CommandStackId() string
 	Name() string
 	PreProcess()
 	Process()
+	ShowContent()
 	WantClose() bool
 	Dispose()
 	Select(bool)
@@ -15,6 +19,7 @@ type Workspace interface {
 	Tooltip() string
 	Border() bool
 	SetIdx(idx int)
+	Focused() bool
 }
 
 type Base struct {
@@ -22,10 +27,17 @@ type Base struct {
 
 	isDoSelect bool
 	idx        int
+
+	focused bool
 }
 
 func (*Base) PreProcess() {
 	// do nothing
+}
+
+func (b *Base) Process() {
+	b.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+	b.Workspace.ShowContent()
 }
 
 func (*Base) CommandStackId() string {
@@ -65,4 +77,8 @@ func (b *Base) Idx() int {
 
 func (b *Base) SetIdx(idx int) {
 	b.idx = idx
+}
+
+func (b *Base) Focused() bool {
+	return b.focused
 }
