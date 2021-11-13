@@ -104,7 +104,7 @@ func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 // DoSelectPrefabByPath globally selects a prefab with provided type path.
 func (a *app) DoSelectPrefabByPath(path string) {
 	log.Println("[app] select prefab by path:", path)
-	a.DoSelectPrefab(dmmap.PrefabStorage.Get(path, a.InitialPrefabVariables(path)))
+	a.DoSelectPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
 // DoEditInstance enables an editing for the provided instance.
@@ -122,7 +122,7 @@ func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
 // DoEditPrefabByPath enables an editing for the provided prefab by its path.
 func (a *app) DoEditPrefabByPath(path string) {
 	log.Println("[app] edit prefab by path:", path)
-	a.DoEditPrefab(dmmap.PrefabStorage.Get(path, a.InitialPrefabVariables(path)))
+	a.DoEditPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
 // DoExit exits the app.

@@ -29,6 +29,11 @@ func (s *prefabStorage) Put(prefab *dmmprefab.Prefab) *dmmprefab.Prefab {
 	return prefab
 }
 
+// Initial returns a prefab with an initial state (initial prefabs).
+func (s *prefabStorage) Initial(path string) *dmmprefab.Prefab {
+	return s.Get(path, dmvars.FromParent(environment.Objects[path].Vars))
+}
+
 // Get returns a prefab for the provided path and variables.
 func (s *prefabStorage) Get(path string, vars *dmvars.Variables) *dmmprefab.Prefab {
 	p, _ := s.GetV(path, vars)

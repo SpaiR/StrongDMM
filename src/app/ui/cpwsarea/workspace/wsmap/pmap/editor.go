@@ -108,7 +108,7 @@ func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Pref
 
 // ResetInstance resets the provided instance to the initial state (no custom variables).
 func (e *Editor) ResetInstance(i *dmminstance.Instance) {
-	i.SetPrefab(dmmap.PrefabStorage.Get(i.Prefab().Path(), nil))
+	i.SetPrefab(dmmap.PrefabStorage.Initial(i.Prefab().Path()))
 	go e.CommitChanges("Reset Instance")
 }
 

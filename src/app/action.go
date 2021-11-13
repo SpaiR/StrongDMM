@@ -13,7 +13,6 @@ import (
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmclip"
-	"sdmm/dmapi/dmvars"
 )
 
 /*
@@ -95,18 +94,6 @@ func (a *app) HasActiveMap() bool {
 		return ok
 	}
 	return false
-}
-
-// EnvironmentObjectVariables returns initial variables for an environment object with provided path.
-func (a *app) EnvironmentObjectVariables(path string) *dmvars.Variables {
-	return a.loadedEnvironment.Objects[path].Vars
-}
-
-// InitialPrefabVariables returns initial variables for a prefab of the map with provided path.
-// Initial variables don't have any internal data.
-// They have a parent, as variables of the appropriate environment object.
-func (a *app) InitialPrefabVariables(path string) *dmvars.Variables {
-	return dmvars.FromParent(a.EnvironmentObjectVariables(path))
 }
 
 // UpdateTitle updates title in the application system window.
