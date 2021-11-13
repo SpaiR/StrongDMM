@@ -7,6 +7,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
+	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
@@ -39,7 +40,7 @@ func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
 		})
 
 		// Find the initial prefab index.
-		idx := 0
+		idx := -1
 		for i, node := range nodes {
 			if node.orig.Vars().Len() == 0 {
 				idx = i
@@ -47,10 +48,16 @@ func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
 			}
 		}
 
-		// Move the initial prefab to the beginning of the slice
-		initial := nodes[idx]
-		nodes = append(nodes[:idx], nodes[idx+1:]...)
-		nodes = append([]*prefabNode{initial}, nodes...)
+		if idx == -1 {
+			// If the initial prefab index is still -1, then we don't have it.  We will add the one.
+			initialPrefab := dmmap.PrefabStorage.Initial(prefabs[0].Path())
+			nodes = append([]*prefabNode{newPrefabNode(initialPrefab)}, nodes...)
+		} else {
+			// Move the initial prefab to the beginning of the slice
+			initial := nodes[idx]
+			nodes = append(nodes[:idx], nodes[idx+1:]...)
+			nodes = append([]*prefabNode{initial}, nodes...)
+		}
 	}
 
 	return nodes
