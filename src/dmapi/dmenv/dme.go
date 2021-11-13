@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmvars"
 	"sdmm/third_party/sdmmparser"
 )
@@ -49,7 +50,7 @@ func New(path string) (*Dme, error) {
 
 func nameFromPath(path string, parentName string) string {
 	if parentName == "" && len(path) > 1 {
-		return "\"" + path[strings.LastIndex(path, "/")+1:] + "\""
+		return "\"" + dm.PathLast(path) + "\""
 	}
 	return parentName
 }

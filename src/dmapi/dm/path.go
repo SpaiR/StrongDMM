@@ -28,3 +28,8 @@ func PathBase(p string) string {
 	separatorIdx := strings.Index(p[1:], "/") + 1
 	return p[:separatorIdx]
 }
+
+// PathLast returns the last part of the path (basically, a name of the type)
+func PathLast(p string) string {
+	return p[strings.LastIndex(p, "/")+1:]
+}

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -56,12 +57,13 @@ func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
 }
 
 func newPrefabNode(prefab *dmmprefab.Prefab) *prefabNode {
+	name := prefab.Vars().TextV("name", dm.PathLast(prefab.Path()))
 	icon, _ := prefab.Vars().Text("icon")
 	iconState, _ := prefab.Vars().Text("icon_state")
 	dir, _ := prefab.Vars().Int("dir")
 	r, g, b, _ := util.ParseColor(prefab.Vars().TextV("color", dmvars.NullValue)).RGBA()
 	return &prefabNode{
-		name:   prefab.Path()[strings.LastIndex(prefab.Path(), "/")+1:],
+		name:   name,
 		orig:   prefab,
 		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),
 		color:  imgui.Vec4{X: r, Y: g, Z: b, W: 1},
