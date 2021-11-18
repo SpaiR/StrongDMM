@@ -1,37 +1,12 @@
 package render
 
 import (
-	"math/rand"
-
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
-	"sdmm/app/render/bucket/level/chunk/unit"
 	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
-
-type OverlayArea interface {
-	Bounds() util.Bounds
-	FillColor() util.Color
-	BorderColor() util.Color
-}
-
-type HighlightUnit interface {
-	Id() uint64
-	Color() util.Color
-}
-
-type overlay interface {
-	Areas() []OverlayArea
-	FlushAreas()
-	Units() map[uint64]HighlightUnit
-	FlushUnits()
-}
-
-type unitProcessor interface {
-	ProcessUnit(unit.Unit) (visible bool)
-}
 
 type Render struct {
 	camera *Camera
@@ -87,111 +62,31 @@ func (r *Render) prepare() {
 }
 
 func (r *Render) draw(width, height float32) {
-	r.batchBucketUnits(width, height)
+	r.batchBucketUnits(r.viewportBounds(width, height))
 	//r.batchChunksVisuals()
 	r.batchOverlayAreas()
 	brush.Draw(width, height, r.camera.ShiftX, r.camera.ShiftY, r.camera.Scale)
 }
 
-func (r *Render) batchBucketUnits(width, height float32) {
-	x1, y1, x2, y2 := r.viewportBounds(width, height)
-	visibleLevel := r.bucket.Level(r.camera.Level)
-
-	// Iterate through every layer to render.
-	for _, layer := range visibleLevel.Layers {
-		// Iterate through chunks with units on the rendered layer.
-		for _, chunk := range visibleLevel.ChunksByLayers[layer] {
-			// Out of bounds = skip.
-			if !chunk.ViewBounds.ContainsV(x1, y1, x2, y2) {
-				continue
-			}
-
-			// Get all units in the chunk for the specific layer.
-			for _, u := range chunk.UnitsByLayers[layer] {
-				// Out of bounds = skip
-				if !u.ViewBounds().ContainsV(x1, y1, x2, y2) {
-					continue
-				}
-				// Process unit
-				if !r.unitProcessor.ProcessUnit(u) {
-					continue
-				}
-
-				r, g, b, a := r.unitColor(u)
-
-				brush.RectTexturedV(
-					u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
-					r, g, b, a,
-					u.Sprite().Texture(),
-					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
-				)
-			}
-		}
-	}
-
-	r.overlay.FlushUnits()
+// Clean OpenGL state after rendering.
+func (r *Render) cleanup() {
+	gl.Disable(gl.BLEND)
 }
 
-func (r *Render) unitColor(u unit.Unit) (float32, float32, float32, float32) {
-	if highlight := r.overlay.Units()[u.Instance().Id()]; highlight != nil {
-		return highlight.Color().RGBA()
-	}
-	return u.R(), u.G(), u.B(), u.A()
-}
-
-func (r *Render) viewportBounds(width, height float32) (x1, y1, x2, y2 float32) {
+func (r *Render) viewportBounds(width, height float32) util.Bounds {
 	// Get transformed bounds of the map, so we can ignore out of bounds units.
 	w := width / r.camera.Scale
 	h := height / r.camera.Scale
 
-	x1 = -r.camera.ShiftX
-	y1 = -r.camera.ShiftY
-	x2 = x1 + w
-	y2 = y1 + h
+	x1 := -r.camera.ShiftX
+	y1 := -r.camera.ShiftY
+	x2 := x1 + w
+	y2 := y1 + h
 
-	return x1, y1, x2, y2
-}
-
-var chunkColors map[util.Bounds]util.Color
-
-// Debug method to render chunks borders.
-func (r *Render) batchChunksVisuals() {
-	if chunkColors == nil {
-		println("[debug] CHUNKS VISUALISATION ENABLED!")
-		chunkColors = make(map[util.Bounds]util.Color)
+	return util.Bounds{
+		X1: x1,
+		Y1: y1,
+		X2: x2,
+		Y2: y2,
 	}
-
-	visibleLevel := r.bucket.Level(r.camera.Level)
-
-	for _, c := range visibleLevel.Chunks {
-		var chunkColor util.Color
-		if color, ok := chunkColors[c.MapBounds]; ok {
-			chunkColor = color
-		} else {
-			chunkColor = util.MakeColor(rand.Float32(), rand.Float32(), rand.Float32(), .25)
-			chunkColors[c.MapBounds] = chunkColor
-		}
-
-		brush.RectFilled(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, chunkColor)
-		brush.RectV(c.ViewBounds.X1, c.ViewBounds.Y1, c.ViewBounds.X2, c.ViewBounds.Y2, 1, 1, 1, .5)
-	}
-}
-
-// Draw an overlay for the map tiles.
-func (r *Render) batchOverlayAreas() {
-	if r.overlay == nil {
-		return
-	}
-
-	for _, t := range r.overlay.Areas() {
-		brush.RectFilled(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.FillColor())
-		brush.Rect(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.BorderColor())
-	}
-
-	r.overlay.FlushAreas()
-}
-
-// Clean OpenGL state after rendering.
-func (r *Render) cleanup() {
-	gl.Disable(gl.BLEND)
 }
