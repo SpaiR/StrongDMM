@@ -208,6 +208,9 @@ func (a *app) checkLayoutState() {
 		a.configData.LayoutVersion = layout.Version()
 		a.configData.Save()
 		log.Println("[app] layout reset")
+	} else if _, err := os.Stat(a.LayoutIniPath()); os.IsNotExist(err) {
+		log.Println("[app] no layout was found, resetting...")
+		a.resetLayout()
 	} else {
 		log.Println("[app] layout version is not changed")
 	}
