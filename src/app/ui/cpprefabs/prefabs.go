@@ -57,10 +57,6 @@ func (p *Prefabs) doSelect(node *prefabNode) {
 	p.tmpDoScrollToPrefab = false // do not scroll panel when we're in panel itself
 }
 
-func (p *Prefabs) showContextMenu(node *prefabNode) {
-	// TODO: prefab context menu
-}
-
 func (p *Prefabs) iconSize() float32 {
 	return 32 * p.app.PointSize()
 }
