@@ -98,6 +98,9 @@ func (a *app) initialize(internalDir string) {
 
 	a.shortcutsEnabled = true
 
+	a.updateScale()
+	a.updateLayoutState()
+
 	a.commandStorage = command.NewStorage()
 	a.pathsFilter = dm.NewPathsFilter()
 	a.clipboard = dmmclip.New()
@@ -106,8 +109,6 @@ func (a *app) initialize(internalDir string) {
 	a.layout = layout.New(a)
 
 	a.UpdateTitle()
-	a.updateScale()
-	a.checkLayoutState()
 }
 
 func (a *app) Process() {
@@ -201,7 +202,7 @@ func (a *app) updateScale() {
 // Checks the version of the layout in the user config data and the app itself.
 // When different, the user layout will be reset.
 // Otherwise, the layout will persist its state between the app sessions.
-func (a *app) checkLayoutState() {
+func (a *app) updateLayoutState() {
 	if a.configData.LayoutVersion != layout.Version() {
 		log.Printf("[app] up layout version from [%d] to: %d", a.configData.LayoutVersion, layout.Version())
 		a.resetLayout()

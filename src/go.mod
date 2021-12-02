@@ -3,7 +3,7 @@ module sdmm
 go 1.17
 
 require (
-	github.com/SpaiR/imgui-go v1.12.1-0.20211031153955-961e098dc43f
+	github.com/SpaiR/imgui-go v1.12.1-0.20211120102308-7707b30ba56a
 	github.com/go-gl/gl v0.0.0-20210308051507-640c6464cf3e
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210307203918-211ecac01a39
 	github.com/go-gl/mathgl v1.0.0

@@ -25,7 +25,12 @@ func StrIndexOf(slice []string, str string) int {
 	return -1
 }
 
-// StrRemoveIdx removes element from slice by index with order preserving.
+// StrRemoveIdx removes an element from the slice by the index with order preserving.
 func StrRemoveIdx(slice []string, idx int) []string {
 	return append(slice[:idx], slice[idx+1:]...)
+}
+
+// StrRemove removes an element from the slice.
+func StrRemove(slice []string, str string) []string {
+	return StrRemoveIdx(slice, StrIndexOf(slice, str))
 }

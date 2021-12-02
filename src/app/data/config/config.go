@@ -55,7 +55,8 @@ func Load(internalDir string) *Config {
 	d := Config{
 		path: path,
 
-		Version:                 version,
+		Version: version,
+
 		RecentMapsByEnvironment: make(map[string][]string),
 	}
 

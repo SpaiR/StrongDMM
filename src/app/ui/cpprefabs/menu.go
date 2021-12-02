@@ -1,17 +1,23 @@
 package cpprefabs
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"github.com/SpaiR/imgui-go"
+	w "sdmm/imguiext/widget"
+)
 
 func (p *Prefabs) showContextMenu(node *prefabNode) {
 	if imgui.BeginPopupContextWindowV("context_menu", imgui.PopupFlagsMouseButtonRight) {
-		imgui.MenuItem("Find Prefab on Map")
-		imgui.MenuItem("Find Object on Map")
-		imgui.Separator()
-		imgui.MenuItem("New")
-		imgui.MenuItem("Delete")
-		imgui.Separator()
-		imgui.MenuItem("Prefabs from icon states")
-		imgui.MenuItem("Prefabs from directions")
-		imgui.EndPopup()
+		w.Layout{
+			w.MenuItem("Find Prefab on Map", nil).
+				Enabled(p.app.HasActiveMap()),
+			w.MenuItem("Find Object on Map", nil).
+				Enabled(p.app.HasActiveMap()),
+			w.Separator(),
+			w.MenuItem("New", nil),
+			w.MenuItem("Delete", nil),
+			w.Separator(),
+			w.MenuItem("Prefabs from icon states", nil),
+			w.MenuItem("Prefabs from directions", nil),
+		}.Build()
 	}
 }

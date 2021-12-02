@@ -30,6 +30,8 @@ type Layout struct {
 
 	app app
 
+	initialized bool
+
 	leftNodeId      int32
 	leftUpNodeId    int32
 	leftDownNodeId  int32
@@ -55,22 +57,31 @@ func (l *Layout) Process() {
 	l.showPrefabsNode()
 	l.showVariablesNode()
 	l.showWorkspaceAreaNode() // The latest node will have a focus by default
+
+	l.initialized = true
 }
 
+const (
+	lNameEnvironment   = "Environment"
+	lNameWorkspaceArea = "Workspace Area"
+	lNamePrefabs       = "Prefabs"
+	lNameVariables     = "Variables"
+)
+
 func (l *Layout) showEnvironmentNode() {
-	l.wrapNode("Environment", int(l.leftNodeId), l.Environment.Process)
+	l.wrapNode(lNameEnvironment, int(l.leftNodeId), l.Environment.Process)
 }
 
 func (l *Layout) showWorkspaceAreaNode() {
-	l.wrapNodeV("Workspace Area", int(l.centerNodeId), false, false, l.WsArea.Process)
+	l.wrapNodeV(lNameWorkspaceArea, int(l.centerNodeId), false, false, false, l.WsArea.Process)
 }
 
 func (l *Layout) showPrefabsNode() {
-	l.wrapNode("Prefabs", int(l.rightUpNodeId), l.Prefabs.Process)
+	l.wrapNode(lNamePrefabs, int(l.rightUpNodeId), l.Prefabs.Process)
 }
 
 func (l *Layout) showVariablesNode() {
-	l.wrapNode("Variables", int(l.rightDownNodeId), l.VarEditor.Process)
+	l.wrapNode(lNameVariables, int(l.rightDownNodeId), l.VarEditor.Process)
 }
 
 const (
@@ -105,12 +116,12 @@ func (l *Layout) updateNodes() {
 }
 
 func (l *Layout) wrapNode(id string, nodeId int, content func()) {
-	l.wrapNodeV(id, nodeId, true, true, content)
+	l.wrapNodeV(id, nodeId, true, true, false, content)
 }
 
 const defaultWindowFlags = imgui.WindowFlagsNone
 
-func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar bool, content func()) {
+func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar, closable bool, content func()) {
 	if l.app.IsLayoutReset() {
 		imgui.DockBuilderDockWindow(id, nodeId)
 	}
@@ -118,12 +129,13 @@ func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar bool, c
 	if !addPadding {
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
+
 	if imgui.BeginV(id, nil, defaultWindowFlags) {
 		if !addPadding {
 			imgui.PopStyleVar()
 		}
 		if imgui.IsWindowDocked() {
-			tweakWindowDockFlags(showTabBar)
+			l.tweakWindowNode(showTabBar, closable)
 		}
 		content()
 	} else if !addPadding {
@@ -132,17 +144,25 @@ func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar bool, c
 	imgui.End()
 }
 
-const defaultNodeFlags = imgui.DockNodeFlagsNoCloseButton
+// Tweak window node flags and nodes ordering.
+func (l *Layout) tweakWindowNode(showTabBar bool, closable bool) {
+	if dockNode := imgui.DockBuilderGetNode(imgui.GetWindowDockID()); dockNode != 0 {
+		var flags imgui.DockNodeFlags
 
-// Remove all node decorations, so window will become none attachable.
-func tweakWindowDockFlags(showTabBar bool) {
-	flags := defaultNodeFlags
+		if !closable {
+			flags |= imgui.DockNodeFlagsNoCloseButton
+		}
 
-	if !showTabBar {
-		flags |= imgui.DockNodeFlagsNoTabBar
-	} else {
-		flags |= imgui.DockNodeFlagsNoWindowMenuButton
+		if !showTabBar {
+			flags |= imgui.DockNodeFlagsNoTabBar
+		} else {
+			flags |= imgui.DockNodeFlagsNoWindowMenuButton
+		}
+
+		dockNode.SetLocalFlags(int(flags))
+
+		if !l.initialized {
+			dockNode.ExtSelectFirstTab() // Ensure that after the launch windows will be selected properly
+		}
 	}
-
-	imgui.DockBuilderGetNode(imgui.GetWindowDockID()).SetLocalFlags(flags)
 }

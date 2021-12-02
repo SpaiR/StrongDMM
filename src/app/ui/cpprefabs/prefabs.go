@@ -11,6 +11,7 @@ type App interface {
 	PointSize() float32
 	DoSelectPrefab(*dmmprefab.Prefab)
 	DoEditPrefab(prefab *dmmprefab.Prefab)
+	HasActiveMap() bool
 }
 
 type Prefabs struct {
