@@ -11,8 +11,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	configData "sdmm/app/data/config"
-	prefsData "sdmm/app/data/prefs"
+	"sdmm/app/config"
 	"sdmm/app/render/brush"
 	"sdmm/app/ui/layout"
 	"sdmm/app/ui/menu"
@@ -44,12 +43,13 @@ func Start() {
 		internalDir: internalDir,
 		logDir:      logDir,
 		backupDir:   filepath.FromSlash(internalDir + "/backup"),
+		configDir:   filepath.FromSlash(internalDir + "/config"),
 	}
 
 	a.masterWindow = window.New(&a)
 
 	log.Println("[app] start phase: [initialize]")
-	a.initialize(internalDir)
+	a.initialize()
 	log.Println("[app] end phase: [initialize]")
 
 	log.Println("[app] start phase: [process]")
@@ -67,6 +67,7 @@ type app struct {
 	internalDir string
 	logDir      string
 	backupDir   string
+	configDir   string
 
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
@@ -77,8 +78,7 @@ type app struct {
 	loadedEnvironment *dmenv.Dme
 	pathsFilter       *dm.PathsFilter
 
-	configData *configData.Config
-	prefsData  *prefsData.Prefs
+	configs map[string]config.Config
 
 	commandStorage *command.Storage
 	clipboard      *dmmclip.Clipboard
@@ -87,19 +87,16 @@ type app struct {
 	layout *layout.Layout
 }
 
-func (a *app) initialize(internalDir string) {
+func (a *app) initialize() {
 	rand.Seed(time.Now().UnixNano())
 
 	a.deleteOldLogs()
 	a.deleteOldBackups()
 
-	a.configData = configData.Load(internalDir)
-	a.prefsData = prefsData.Load(internalDir)
+	a.loadProjectConfig()
+	a.loadPreferencesConfig()
 
 	a.shortcutsEnabled = true
-
-	a.updateScale()
-	a.updateLayoutState()
 
 	a.commandStorage = command.NewStorage()
 	a.pathsFilter = dm.NewPathsFilter()
@@ -107,6 +104,9 @@ func (a *app) initialize(internalDir string) {
 
 	a.menu = menu.New(a)
 	a.layout = layout.New(a)
+
+	a.updateScale()
+	a.updateLayoutState()
 
 	a.UpdateTitle()
 }
@@ -135,7 +135,7 @@ func (a *app) LayoutIniPath() string {
 
 func (a *app) dispose() {
 	brush.Dispose()
-	a.configData.Save()
+	a.ConfigSave()
 	a.masterWindow.Dispose()
 }
 
@@ -196,19 +196,16 @@ func (a *app) dropTmpState() {
 }
 
 func (a *app) updateScale() {
-	a.masterWindow.SetPointSize(float32(a.prefsData.Scale) / 100)
+	a.masterWindow.SetPointSize(float32(a.preferencesConfig().Scale) / 100)
 }
 
 // Checks the version of the layout in the user config data and the app itself.
 // When different, the user layout will be reset.
 // Otherwise, the layout will persist its state between the app sessions.
 func (a *app) updateLayoutState() {
-	if a.configData.LayoutVersion != layout.Version() {
-		log.Printf("[app] up layout version from [%d] to: %d", a.configData.LayoutVersion, layout.Version())
+	if layout.Updated() {
+		log.Println("[app] update layout")
 		a.resetLayout()
-		a.configData.LayoutVersion = layout.Version()
-		a.configData.Save()
-		log.Println("[app] layout reset")
 	} else if _, err := os.Stat(a.LayoutIniPath()); os.IsNotExist(err) {
 		log.Println("[app] no layout was found, resetting...")
 		a.resetLayout()

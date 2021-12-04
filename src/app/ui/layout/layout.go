@@ -2,6 +2,7 @@ package layout
 
 import (
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/config"
 	"sdmm/app/ui/cpenvironment"
 	"sdmm/app/ui/cpprefabs"
 	"sdmm/app/ui/cpvareditor"
@@ -14,12 +15,15 @@ type app interface {
 	cpwsarea.App
 	cpvareditor.App
 
+	ConfigRegister(config.Config)
+	ConfigFind(name string) config.Config
 	IsLayoutReset() bool
 }
 
-// Version returns the current version of the layout. Need to be updated after any major layout changes.
-func Version() uint {
-	return 1
+var versionUpdated bool
+
+func Updated() bool {
+	return versionUpdated
 }
 
 type Layout struct {
@@ -43,6 +47,7 @@ type Layout struct {
 
 func New(app app) *Layout {
 	l := &Layout{app: app}
+	l.loadLayoutConfig()
 	l.Environment.Init(app)
 	l.Prefabs.Init(app)
 	l.WsArea.Init(app)

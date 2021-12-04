@@ -28,8 +28,9 @@ func (a *app) openEnvironment(path string) {
 	}
 	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
-	a.configData.AddRecentEnvironment(path)
-	a.configData.Save()
+	cfg := a.projectConfig()
+	cfg.AddProject(path)
+	a.ConfigSaveV(cfg)
 
 	a.loadedEnvironment = env
 	a.layout.Prefabs.Free()
@@ -70,8 +71,10 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	elapsed := time.Since(start).Milliseconds()
 	log.Printf("[app] map [%s] parsed in [%d] ms", path, elapsed)
 
-	a.configData.AddRecentMap(a.loadedEnvironment.RootFile, path)
-	a.configData.Save()
+	cfg := a.projectConfig()
+	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
+	a.ConfigSaveV(cfg)
+
 	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx)
 	a.layout.Prefabs.Update()
 

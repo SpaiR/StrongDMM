@@ -21,11 +21,12 @@ func (a *app) makeScalePreference() wsprefs.IntPref {
 	scale.Max = 250
 
 	scale.FGet = func() int {
-		return a.prefsData.Scale
+		return a.preferencesConfig().Scale
 	}
 	scale.FSet = func(value int) {
-		a.prefsData.Scale = value
-		a.prefsData.Save()
+		cfg := a.preferencesConfig()
+		cfg.Scale = value
+		a.ConfigSaveV(cfg)
 		a.tmpUpdateScale = true
 		log.Println("[app] changing scale to:", value)
 	}

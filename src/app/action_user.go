@@ -37,8 +37,8 @@ func (a *app) DoOpenEnvironmentByPath(path string) {
 // DoClearRecentEnvironments clears recently opened environments.
 func (a *app) DoClearRecentEnvironments() {
 	log.Println("[app] clear recent environments")
-	a.configData.ClearRecentEnvironments()
-	a.configData.Save()
+	a.projectConfig().ClearProjects()
+	a.ConfigSave()
 }
 
 // DoSelectMapFile opens dialog window to select a map file.
@@ -76,8 +76,8 @@ func (a *app) DoOpenMapByPathV(path string, workspaceIdx int) {
 // DoClearRecentMaps clears recently opened maps.
 func (a *app) DoClearRecentMaps() {
 	log.Println("[app] clear recent maps")
-	a.configData.ClearRecentMaps(a.loadedEnvironment.RootFile)
-	a.configData.Save()
+	a.projectConfig().ClearMapsByProject(a.loadedEnvironment.RootFile)
+	a.ConfigSave()
 }
 
 // DoSave saves current active map.

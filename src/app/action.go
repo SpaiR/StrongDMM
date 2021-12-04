@@ -59,13 +59,13 @@ func (a *app) HasSelectedPrefab() bool {
 
 // RecentEnvironments returns a slice with paths to recently opened environments.
 func (a *app) RecentEnvironments() []string {
-	return a.configData.RecentEnvironments
+	return a.projectConfig().Projects
 }
 
 // RecentMapsByEnvironment returns a map with key as an environment path and value as a slice of maps opened
 // for the environment path.
 func (a *app) RecentMapsByEnvironment() map[string][]string {
-	return a.configData.RecentMapsByEnvironment
+	return a.projectConfig().MapsByProject
 }
 
 // RecentMapsByLoadedEnvironment returns a slice with paths to recently opened maps
