@@ -19,5 +19,6 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 			w.MenuItem("Prefabs from icon states", nil),
 			w.MenuItem("Prefabs from directions", nil),
 		}.Build()
+		imgui.EndPopup()
 	}
 }
