@@ -9,6 +9,7 @@ import (
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )
@@ -31,20 +32,26 @@ func (t *TileMenu) Process() {
 func (t *TileMenu) showControls() {
 	w.Layout{
 		w.MenuItem("Undo", t.app.DoUndo).
+			Icon(imguiext.IconFaUndo).
 			Enabled(t.app.CommandStorage().HasUndo()).
 			Shortcut("Ctrl+Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
+			Icon(imguiext.IconFaRedo).
 			Enabled(t.app.CommandStorage().HasRedo()).
 			Shortcut("Ctrl+Shift+Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
+			Icon(imguiext.IconFaCopy).
 			Shortcut("Ctrl+C"),
 		w.MenuItem("Paste", t.app.DoPaste).
+			Icon(imguiext.IconFaPaste).
 			Enabled(t.app.Clipboard().HasData()).
 			Shortcut("Ctrl+V"),
 		w.MenuItem("Cut", t.app.DoCut).
+			Icon(imguiext.IconFaCut).
 			Shortcut("Ctrl+X"),
 		w.MenuItem("Delete", t.app.DoDelete).
+			Icon(imguiext.IconFaEraser).
 			Shortcut("Delete"),
 		w.Separator(),
 		w.Custom(func() {
@@ -63,11 +70,18 @@ func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {
 	name := fmt.Sprintf("%s##prefab_row_%d", p.Vars().TextV("name", ""), idx)
 
 	w.Layout{
-		w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).
-			Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).
-			TintColor(imgui.Vec4{X: r, Y: g, Z: b, W: 1}),
-		w.SameLine(),
-		w.Menu(name, t.showInstanceControls(i, idx)),
+		w.Menu(name, t.showInstanceControls(i, idx)).
+			IconEmpty(),
+		w.Custom(func() {
+			// Draw the instance icon.
+			imgui.WindowDrawList().AddImageV(
+				imgui.TextureID(s.Texture()),
+				imgui.ItemRectMin(),
+				imgui.ItemRectMin().Plus(imgui.Vec2{X: iconSize, Y: iconSize}),
+				imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2},
+				imgui.PackedColorFromVec4(imgui.Vec4{X: r, Y: g, Z: b, W: 1}),
+			)
+		}),
 		w.SameLine(),
 		w.Text(fmt.Sprintf("[%s]\t\t", p.Path())),
 	}.Build()
@@ -80,18 +94,24 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		w.Custom(func() {
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
-					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)),
-					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), t.doMoveToBottom(i)),
+					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)).
+						Icon(imguiext.IconFaArrowUp),
+					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), t.doMoveToBottom(i)).
+						Icon(imguiext.IconFaArrowDown),
 					w.Separator(),
 				}.Build()
 			}
 		}),
 		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
+			Icon(imguiext.IconFaEyeDropper).
 			Shortcut("Shift+LMB"),
-		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)),
+		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)).
+			Icon(imguiext.IconFaEraser),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
+			IconEmpty().
 			Enabled(t.app.HasSelectedPrefab()),
-		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), t.doResetToDefault(i)),
+		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), t.doResetToDefault(i)).
+			IconEmpty(),
 	}
 }
 

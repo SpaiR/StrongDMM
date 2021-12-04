@@ -26,7 +26,7 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 			w.MenuItem("New", nil).
 				Icon(imguiext.IconFaPlusSquare),
 			w.MenuItem("Delete", nil).
-				Icon(imguiext.IconFaTrash),
+				Icon(imguiext.IconFaEraser),
 			w.Separator(),
 			w.MenuItem("Generate icon states", nil).
 				IconEmpty(),

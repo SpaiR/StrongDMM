@@ -1,10 +1,17 @@
 package widget
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"github.com/SpaiR/imgui-go"
+	"sdmm/imguiext"
+)
+
+// Placeholder to check if there is an empty icon for the menu.
+const mHolderEmptyIcon = "!/emptyIcon/!"
 
 type menuWidget struct {
 	label   string
 	enabled bool
+	icon    string
 	layout  Layout
 }
 
@@ -13,12 +20,44 @@ func (m *menuWidget) Enabled(enabled bool) *menuWidget {
 	return m
 }
 
+func (m *menuWidget) Icon(icon string) *menuWidget {
+	m.icon = icon
+	return m
+}
+
+func (m *menuWidget) IconEmpty() *menuWidget {
+	m.icon = miHolderEmptyIcon
+	return m
+}
+
 func (m *menuWidget) Build() {
-	if imgui.BeginMenuV(m.label, m.enabled) {
+	label := m.label
+
+	var iconPos imgui.Vec2
+	if len(m.icon) != 0 {
+		// Add padding to the label text. This padding will be filled with the icon.
+		label = "      " + label
+
+		// Draw a dummy. It's needed to correctly process an icon padding.
+		cursorPos := imgui.CursorPos()
+		imgui.Dummy(imgui.Vec2{})
+		imgui.SameLine()
+		imgui.SetCursorPos(cursorPos)
+		iconPos = imgui.ItemRectMin()
+	}
+
+	if imgui.BeginMenuV(label, m.enabled) {
+		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
+			imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
+		}
 		if m.layout != nil {
 			m.layout.Build()
 		}
 		imgui.EndMenu()
+	} else {
+		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
+			imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
+		}
 	}
 }
 
