@@ -64,6 +64,10 @@ func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 }
 
 func (v *VarEditor) setInstanceVariable(varName, varValue string) {
+	if len(varValue) == 0 {
+		varValue = dmvars.NullValue
+	}
+
 	origPrefab := v.instance.Prefab()
 	newPrefab, isNew := dmmap.PrefabStorage.GetV(origPrefab.Path(), dmvars.Modify(origPrefab.Vars(), varName, varValue))
 
@@ -84,6 +88,10 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 }
 
 func (v *VarEditor) setPrefabVariable(varName, varValue string) {
+	if len(varValue) == 0 {
+		varValue = dmvars.NullValue
+	}
+
 	newPrefab := dmmap.PrefabStorage.Get(v.prefab.Path(), dmvars.Modify(v.prefab.Vars(), varName, varValue))
 
 	v.app.CurrentEditor().ReplacePrefab(v.prefab, newPrefab)
