@@ -15,4 +15,8 @@ const (
 	IconFaPlus       = "\uf067"
 	IconFaEyeDropper = "\uf1fb"
 	IconFaEraser     = "\uf12d"
+	IconFaCopy       = "\uf0c5"
+	IconFaSearch     = "\uf002"
+	IconFaTrash      = "\uf1f8"
+	IconFaPlusSquare = "\uf0fe"
 )

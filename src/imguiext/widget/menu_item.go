@@ -1,12 +1,19 @@
 package widget
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"github.com/SpaiR/imgui-go"
+	"sdmm/imguiext"
+)
+
+// Placeholder to check if there is an empty icon for the menuItem.
+const miHolderEmptyIcon = "!/emptyIcon/!"
 
 type menuItemWidget struct {
 	label    string
 	shortcut string
 	selected bool
 	enabled  bool
+	icon     string
 	onClick  func()
 }
 
@@ -25,9 +32,38 @@ func (m *menuItemWidget) Enabled(enabled bool) *menuItemWidget {
 	return m
 }
 
+func (m *menuItemWidget) Icon(icon string) *menuItemWidget {
+	m.icon = icon
+	return m
+}
+
+func (m *menuItemWidget) IconEmpty() *menuItemWidget {
+	m.icon = miHolderEmptyIcon
+	return m
+}
+
 func (m *menuItemWidget) Build() {
-	if imgui.MenuItemV(m.label, m.shortcut, m.selected, m.enabled) && m.onClick != nil {
+	label := m.label
+
+	var iconPos imgui.Vec2
+	if len(m.icon) != 0 {
+		// Add padding to the label text. This padding will be filled with the icon.
+		label = "      " + label
+
+		// Draw a dummy. It's needed to correctly process an icon padding.
+		cursorPos := imgui.CursorPos()
+		imgui.Dummy(imgui.Vec2{})
+		imgui.SameLine()
+		imgui.SetCursorPos(cursorPos)
+		iconPos = imgui.ItemRectMin()
+	}
+
+	if imgui.MenuItemV(label, m.shortcut, m.selected, m.enabled) && m.onClick != nil {
 		m.onClick()
+	}
+
+	if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
+		imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
 	}
 }
 
