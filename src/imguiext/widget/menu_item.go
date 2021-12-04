@@ -63,7 +63,13 @@ func (m *menuItemWidget) Build() {
 	}
 
 	if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
-		imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
+		var iconCol imgui.PackedColor
+		if m.enabled {
+			iconCol = imguiext.ColorWhitePacked
+		} else {
+			iconCol = imgui.PackedColorFromVec4(imgui.CurrentStyle().Color(imgui.StyleColorTextDisabled))
+		}
+		imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
 	}
 }
 

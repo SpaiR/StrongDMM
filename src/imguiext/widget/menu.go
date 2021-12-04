@@ -34,6 +34,7 @@ func (m *menuWidget) Build() {
 	label := m.label
 
 	var iconPos imgui.Vec2
+	var iconCol imgui.PackedColor
 	if len(m.icon) != 0 {
 		// Add padding to the label text. This padding will be filled with the icon.
 		label = "      " + label
@@ -44,11 +45,17 @@ func (m *menuWidget) Build() {
 		imgui.SameLine()
 		imgui.SetCursorPos(cursorPos)
 		iconPos = imgui.ItemRectMin()
+
+		if m.enabled {
+			iconCol = imguiext.ColorWhitePacked
+		} else {
+			iconCol = imgui.PackedColorFromVec4(imgui.CurrentStyle().Color(imgui.StyleColorTextDisabled))
+		}
 	}
 
 	if imgui.BeginMenuV(label, m.enabled) {
 		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
-			imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
+			imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
 		}
 		if m.layout != nil {
 			m.layout.Build()
@@ -56,7 +63,7 @@ func (m *menuWidget) Build() {
 		imgui.EndMenu()
 	} else {
 		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
-			imgui.WindowDrawList().AddText(iconPos, imguiext.ColorWhitePacked, m.icon)
+			imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
 		}
 	}
 }
