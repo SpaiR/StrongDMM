@@ -19,7 +19,7 @@ func New(prefs Prefs) *WsPrefs {
 }
 
 func (ws *WsPrefs) Name() string {
-	return "Preferences"
+	return imguiext.IconFaWrench + " Preferences"
 }
 
 func (ws *WsPrefs) NameReadable() string {

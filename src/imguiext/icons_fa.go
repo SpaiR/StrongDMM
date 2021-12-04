@@ -29,4 +29,5 @@ const (
 	IconFaFolderOpen    = "\uf07c"
 	IconFaWrench        = "\uf0ad"
 	IconFaWindowRestore = "\uf2d2"
+	IconFaFile          = "\uf15b"
 )

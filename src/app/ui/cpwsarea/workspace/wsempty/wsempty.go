@@ -8,6 +8,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dmapi/dmenv"
+	"sdmm/imguiext"
 )
 
 type App interface {
@@ -36,7 +37,7 @@ func New(app App) *WsEmpty {
 }
 
 func (ws *WsEmpty) Name() string {
-	return ws.name
+	return imguiext.IconFaFile + " " + ws.name
 }
 
 func (ws *WsEmpty) NameReadable() string {
