@@ -1,6 +1,8 @@
 package layout
 
 import (
+	"log"
+
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/config"
 	"sdmm/app/ui/cpenvironment"
@@ -17,13 +19,9 @@ type app interface {
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
+	ConfigSaveV(config.Config)
+
 	IsLayoutReset() bool
-}
-
-var versionUpdated bool
-
-func Updated() bool {
-	return versionUpdated
 }
 
 type Layout struct {
@@ -35,6 +33,7 @@ type Layout struct {
 	app app
 
 	initialized bool
+	updated     bool
 
 	leftNodeId      int32
 	leftUpNodeId    int32
@@ -64,6 +63,17 @@ func (l *Layout) Process() {
 	l.showWorkspaceAreaNode() // The latest node will have a focus by default
 
 	l.initialized = true
+}
+
+func (l *Layout) CheckLayoutState() (updated bool) {
+	updated = configState != l.layoutConfig().State
+	if updated {
+		cfg := l.layoutConfig()
+		cfg.State = configState
+		l.app.ConfigSaveV(cfg)
+		log.Println("[layout] layout state updated:", configState)
+	}
+	return updated
 }
 
 const (

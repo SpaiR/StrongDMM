@@ -203,14 +203,14 @@ func (a *app) updateScale() {
 // When different, the user layout will be reset.
 // Otherwise, the layout will persist its state between the app sessions.
 func (a *app) updateLayoutState() {
-	if layout.Updated() {
-		log.Println("[app] update layout")
+	if a.layout.CheckLayoutState() {
+		log.Println("[app] reset layout state")
 		a.resetLayout()
 	} else if _, err := os.Stat(a.LayoutIniPath()); os.IsNotExist(err) {
 		log.Println("[app] no layout was found, resetting...")
 		a.resetLayout()
 	} else {
-		log.Println("[app] layout version is not changed")
+		log.Println("[app] layout state is not changed")
 	}
 }
 
