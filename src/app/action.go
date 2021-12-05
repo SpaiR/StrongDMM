@@ -120,7 +120,13 @@ func (a *app) UpdateTitle() {
 // OnWorkspaceSwitched called when the app workspace is switched.
 func (a *app) OnWorkspaceSwitched() {
 	a.UpdateTitle()
-	a.layout.Search.Free()
+
+	// Update search results for the current map.
+	if a.HasActiveMap() {
+		a.layout.Search.Sync()
+	} else {
+		a.layout.Search.Free()
+	}
 }
 
 // CommandStorage returns command.Storage for the application.

@@ -3,15 +3,12 @@ package cpsearch
 import (
 	"strconv"
 
-	"sdmm/app/config"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dmmap/dmminstance"
 )
 
 type App interface {
 	CurrentEditor() *pmap.Editor
-	ConfigRegister(config.Config)
-	ConfigFind(string) config.Config
 }
 
 type Search struct {
@@ -24,11 +21,14 @@ type Search struct {
 
 func (s *Search) Init(app App) {
 	s.app = app
-	s.loadConfig()
 }
 
 func (s *Search) Free() {
 	s.results = nil
+}
+
+func (s *Search) Sync() {
+	s.doSearch()
 }
 
 func (s *Search) Search(prefabId uint64) {

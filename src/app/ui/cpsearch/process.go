@@ -23,8 +23,6 @@ func (s *Search) showControls() {
 	imgui.InputTextWithHint("##search", "Prefab ID", &s.prefabId)
 }
 
-const resultsTableFlags = imgui.TableFlagsBordersV | imgui.TableFlagsResizable
-
 func (s *Search) showResults() {
 	if len(s.results) == 0 {
 		return
@@ -37,14 +35,13 @@ func (s *Search) showResults() {
 	imgui.Text(fmt.Sprintf("Count: %d", len(s.results)))
 
 	if imgui.BeginChild("search_results") {
-		if imgui.BeginTableV("results_table", int(s.config().Columns), resultsTableFlags, imgui.Vec2{}, 0) {
-			for _, result := range s.results {
-				imgui.TableNextColumn()
-				s.showResult(result)
+		var clipper imgui.ListClipper
+		clipper.Begin(len(s.results))
+		for clipper.Step() {
+			for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
+				s.showResult(s.results[i])
 			}
-			imgui.EndTable()
 		}
-
 		imgui.EndChild()
 	}
 }
@@ -59,16 +56,7 @@ func (s *Search) showFilterMenu() {
 	imgui.Button(imguiext.IconFaFilter)
 
 	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
-		cfg := s.config()
-
-		cols := int32(cfg.Columns)
-		imgui.Text("Columns")
-		imgui.SameLine()
-		imgui.SetNextItemWidth(imgui.WindowWidth() / 2)
-		if imguiext.InputIntClamp("##columns", &cols, 1, 64, 1, 10) {
-			cfg.Columns = uint(cols)
-		}
-
+		// TODO: Add coords filtering
 		imgui.EndPopup()
 	}
 }
