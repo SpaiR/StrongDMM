@@ -139,15 +139,15 @@ func (p *PaneMap) Process() {
 	p.processCanvasOverlay()
 	p.processCanvasHoveredInstance()
 
-	p.processToolsTemporalMode(int(glfw.KeyS), -1, tools.TNSelect)
-	p.processToolsTemporalMode(int(glfw.KeyD), -1, tools.TNDelete)
-
 	p.tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
 	p.tileMenu.Process()
 
 	p.showCanvas()
 	p.showPanel("canvasTools", pPosTop, p.showToolsPanel)
 	p.showPanel("canvasStatus", pPosBottom, p.showStatusPanel)
+
+	p.processToolsTemporalMode(int(glfw.KeyS), -1, tools.TNSelect)
+	p.processToolsTemporalMode(int(glfw.KeyD), -1, tools.TNDelete)
 }
 
 func (p *PaneMap) Dispose() {
