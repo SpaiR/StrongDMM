@@ -69,6 +69,11 @@ func (p *PaneMap) showToolsPanel() {
 }
 
 func (p *PaneMap) processToolsTemporalMode(key, altKey int, modeName string) {
+	// Ignore presses when Dear ImGui inputs are in charge or actual shortcuts are invisible.
+	if imgui.IsAnyItemActive() || !p.shortcuts.Visible() {
+		return
+	}
+
 	isKeyPressed := imgui.IsKeyPressedV(key, false) || imgui.IsKeyPressedV(altKey, false)
 	isKeyReleased := imgui.IsKeyReleased(key) || imgui.IsKeyReleased(altKey)
 	isSelected := tools.IsSelected(modeName)

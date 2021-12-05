@@ -17,6 +17,15 @@ func (s *Shortcuts) Add(shortcut Shortcut) {
 	shortcutId++
 }
 
+func (s *Shortcuts) Visible() bool {
+	for _, shortcut := range s.shortcuts {
+		if !shortcut.IsVisible {
+			return false
+		}
+	}
+	return true
+}
+
 func (s *Shortcuts) SetVisible(visible bool) {
 	for _, shortcut := range s.shortcuts {
 		shortcut.IsVisible = visible

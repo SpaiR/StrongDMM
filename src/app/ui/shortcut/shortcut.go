@@ -91,6 +91,11 @@ func remove(shortcut *Shortcut) {
 }
 
 func Process() {
+	// Dear ImGui has its own shortcuts for inputs, so when any is active - ignore ours.
+	if imgui.IsAnyItemActive() {
+		return
+	}
+
 	var pressedShortcuts []*Shortcut
 
 	for _, shortcut := range shortcuts {
