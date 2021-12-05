@@ -19,8 +19,8 @@ func (a *app) ConfigRegister(cfg config.Config) {
 
 	// Load a raw configuration data.
 	rawCfg := make(map[string]interface{})
-	e := config.LoadV(configFilePath, &rawCfg)
-	if e != nil {
+	err := config.LoadV(configFilePath, &rawCfg)
+	if err != nil {
 		log.Println("[app] unable to load config:", cfg.Name()) // Highly likely doesn't exist.
 	} else {
 		// Try to do a migration. The result var will be a nil, if there is nothing to migrate.
@@ -29,8 +29,8 @@ func (a *app) ConfigRegister(cfg config.Config) {
 		}
 
 		// Load migrated (or not) data.
-		e = config.Load(configFilePath, cfg)
-		if e != nil {
+		err = config.Load(configFilePath, cfg)
+		if err != nil {
 			log.Fatal("[app] unable to load config:", configFilePath)
 		}
 	}

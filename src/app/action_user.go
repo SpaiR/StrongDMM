@@ -5,6 +5,7 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
+	"sdmm/app/ui/layout"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -123,6 +124,13 @@ func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
 func (a *app) DoEditPrefabByPath(path string) {
 	log.Println("[app] edit prefab by path:", path)
 	a.DoEditPrefab(dmmap.PrefabStorage.Initial(path))
+}
+
+// DoSearchPrefab does a search of the provided prefab ID with selecting of the search window.
+func (a *app) DoSearchPrefab(prefabId uint64) {
+	log.Println("[app] search prefab id:", prefabId)
+	a.layout.SelectNode(layout.NodeNameSearch)
+	a.layout.Search.Search(prefabId)
 }
 
 // DoExit exits the app.

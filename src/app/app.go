@@ -165,8 +165,8 @@ func initializeLogger(internalDir string) string {
 	// Create log file for the current session.
 	formattedDate := time.Now().Format("2006.01.02-15.04.05")
 	logFile := logDir + "/" + formattedDate + ".log"
-	file, e := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
-	if e != nil {
+	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
+	if err != nil {
 		log.Fatal("[app] unable to open log file")
 	}
 
@@ -204,6 +204,7 @@ func (a *app) updateScale() {
 // Otherwise, the layout will persist its state between the app sessions.
 func (a *app) updateLayoutState() {
 	if a.layout.CheckLayoutState() {
+		a.layout.SyncLayoutState()
 		log.Println("[app] reset layout state")
 		a.resetLayout()
 	} else if _, err := os.Stat(a.LayoutIniPath()); os.IsNotExist(err) {

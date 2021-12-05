@@ -12,14 +12,14 @@ import (
 )
 
 func (p *Prefabs) showContextMenu(node *prefabNode) {
-	if imgui.BeginPopupContextWindowV(fmt.Sprintf("context_menu_%d", node.orig.Id()), imgui.PopupFlagsMouseButtonRight) {
+	if imgui.BeginPopupContextItemV(fmt.Sprintf("context_menu_%d", node.orig.Id()), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
 			w.MenuItem("Copy ID", p.doCopyId(node)).
 				Icon(imguiext.IconFaCopy),
 			w.MenuItem("Copy Type", p.doCopyType(node)).
 				Icon(imguiext.IconFaCopy),
 			w.Separator(),
-			w.MenuItem("Find on Map", nil).
+			w.MenuItem("Find on Map", p.doFindOnMap(node)).
 				Icon(imguiext.IconFaSearch).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
@@ -48,5 +48,12 @@ func (*Prefabs) doCopyType(node *prefabNode) func() {
 	return func() {
 		log.Println("[cpprefabs] do copy prefab type:", node.orig.Path())
 		platform.SetClipboard(node.orig.Path())
+	}
+}
+
+func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do find prefab on map:", node.orig.Id())
+		p.app.DoSearchPrefab(node.orig.Id())
 	}
 }

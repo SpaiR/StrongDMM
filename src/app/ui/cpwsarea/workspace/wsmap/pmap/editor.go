@@ -158,8 +158,7 @@ func (e *Editor) DeleteHoveredTile(commit bool) {
 	}
 }
 
-// ReplacePrefab replaces all old prefabs on the map with the new one.
-// Commits map changes.
+// ReplacePrefab replaces all old prefabs on the map with the new one. Commits map changes.
 func (e *Editor) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
 	for _, tile := range e.pMap.dmm.Tiles {
 		for _, instance := range tile.Instances() {
@@ -219,4 +218,16 @@ func (e *Editor) CommitChanges(commitMsg string) {
 		e.pMap.snapshot.GoTo(stateId)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
 	}))
+}
+
+// FindInstancesByPrefabId returns all instances from the current map with a corresponding prefab ID.
+func (e *Editor) FindInstancesByPrefabId(prefabId uint64) (result []*dmminstance.Instance) {
+	for _, tile := range e.pMap.dmm.Tiles {
+		for _, instance := range tile.Instances() {
+			if instance.Prefab().Id() == prefabId {
+				result = append(result, instance)
+			}
+		}
+	}
+	return result
 }

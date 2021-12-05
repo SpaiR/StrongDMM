@@ -22,17 +22,17 @@ func (layoutConfig) TryMigrate(_ map[string]interface{}) (result map[string]inte
 	return nil, migrated
 }
 
-func (l *Layout) loadLayoutConfig() {
+func (l *Layout) loadConfig() {
 	l.app.ConfigRegister(&layoutConfig{
 		Version: configVersion,
 		State:   configState,
 	})
 }
 
-func (l *Layout) layoutConfig() *layoutConfig {
+func (l *Layout) config() *layoutConfig {
 	if cfg, ok := l.app.ConfigFind(configName).(*layoutConfig); ok {
 		return cfg
 	}
-	log.Fatal("[layout] can't find layout config")
+	log.Fatal("[layout] can't find config")
 	return nil
 }
