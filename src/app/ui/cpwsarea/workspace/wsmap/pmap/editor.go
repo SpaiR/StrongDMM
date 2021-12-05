@@ -1,6 +1,7 @@
 package pmap
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
@@ -14,6 +15,9 @@ type Editor struct {
 
 	editedAreas  []util.Bounds
 	deletedAreas []util.Bounds
+
+	flickAreas    []flickArea
+	flickInstance []flickInstance
 }
 
 // Dmm returns currently edited map.
@@ -185,6 +189,25 @@ func (e *Editor) MarkDeletedTile(coord util.Point) {
 		Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
 		X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
 		Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+	})
+}
+
+func (e *Editor) MarkFlickTile(coord util.Point) {
+	e.flickAreas = append(e.flickAreas, flickArea{
+		time: imgui.Time(),
+		area: util.Bounds{
+			X1: float32((coord.X - 1) * dmmap.WorldIconSize),
+			Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
+			X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+			Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+		},
+	})
+}
+
+func (e *Editor) MarkFlickInstance(i *dmminstance.Instance) {
+	e.flickInstance = append(e.flickInstance, flickInstance{
+		time:     imgui.Time(),
+		instance: i,
 	})
 }
 

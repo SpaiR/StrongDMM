@@ -1,6 +1,7 @@
 package pmap
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -22,11 +23,27 @@ var (
 
 	oColEditTileBorder    = util.MakeColor(0, 1, 0, 1)
 	oColDeletedTileBorder = util.MakeColor(1, 0, 0, 1)
+
+	oColFlickTileFill = util.MakeColor(1, 1, 1, 1)
+	oColFlickInstance = util.MakeColor(0, 1, 0, 1)
 )
+
+const flickDurationSec = .5
+
+type flickArea struct {
+	time float64
+	area util.Bounds
+}
+
+type flickInstance struct {
+	time     float64
+	instance *dmminstance.Instance
+}
 
 func (p *PaneMap) processCanvasOverlay() {
 	p.processCanvasOverlayTools()
 	p.processCanvasOverlayAreas()
+	p.processCanvasOverlayFlick()
 }
 
 func (p *PaneMap) processCanvasOverlayTools() {
@@ -64,12 +81,35 @@ func (p *PaneMap) processCanvasOverlayTools() {
 }
 
 func (p *PaneMap) processCanvasOverlayAreas() {
-	for _, bounds := range p.editor.editedAreas {
-		p.pushAreaHover(bounds, oColEmpty, oColEditTileBorder)
+	for _, a := range p.editor.editedAreas {
+		p.pushAreaHover(a, oColEmpty, oColEditTileBorder)
 	}
 
-	for _, bounds := range p.editor.deletedAreas {
-		p.pushAreaHover(bounds, oColEmpty, oColDeletedTileBorder)
+	for _, a := range p.editor.deletedAreas {
+		p.pushAreaHover(a, oColEmpty, oColDeletedTileBorder)
+	}
+}
+
+func (p *PaneMap) processCanvasOverlayFlick() {
+	for idx, a := range p.editor.flickAreas {
+		delta := imgui.Time() - a.time
+		col := flickColor(oColFlickTileFill, delta)
+
+		if delta < flickDurationSec {
+			p.pushAreaHover(a.area, col, oColEmpty)
+		} else {
+			p.editor.flickAreas = append(p.editor.flickAreas[:idx], p.editor.flickAreas[idx+1:]...)
+		}
+	}
+
+	for idx, i := range p.editor.flickInstance {
+		delta := imgui.Time() - i.time
+
+		if delta < flickDurationSec {
+			p.pushUnitHighlight(i.instance, oColFlickInstance)
+		} else {
+			p.editor.flickInstance = append(p.editor.flickInstance[:idx], p.editor.flickInstance[idx+1:]...)
+		}
 	}
 }
 
@@ -88,4 +128,13 @@ func (p *PaneMap) pushAreaHover(bounds util.Bounds, fillColor, borderColor util.
 		FillColor_:   fillColor,
 		BorderColor_: borderColor,
 	})
+}
+
+func flickColor(col util.Color, delta float64) util.Color {
+	return util.MakeColor(
+		col.R(),
+		col.G(),
+		col.B(),
+		col.A()-float32(delta/flickDurationSec),
+	)
 }

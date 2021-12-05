@@ -34,8 +34,8 @@ func NewOverlay() *Overlay {
 	}
 }
 
-func (o *Overlay) PushArea(tile OverlayArea) {
-	o.areas = append(o.areas, tile)
+func (o *Overlay) PushArea(area OverlayArea) {
+	o.areas = append(o.areas, area)
 }
 
 func (o *Overlay) Areas() []render.OverlayArea {

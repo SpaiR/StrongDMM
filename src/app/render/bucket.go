@@ -50,7 +50,8 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 
 func (r *Render) unitColor(u unit.Unit) (float32, float32, float32, float32) {
 	if highlight := r.overlay.Units()[u.Instance().Id()]; highlight != nil {
-		return highlight.Color().RGBA()
+		r, g, b, _ := highlight.Color().RGBA()
+		return r, g, b, u.A() // use the unit alpha only
 	}
 	return u.R(), u.G(), u.B(), u.A()
 }

@@ -19,6 +19,7 @@ type HighlightUnit interface {
 type overlay interface {
 	Areas() []OverlayArea
 	FlushAreas()
+
 	Units() map[uint64]HighlightUnit
 	FlushUnits()
 }
@@ -29,9 +30,9 @@ func (r *Render) batchOverlayAreas() {
 		return
 	}
 
-	for _, t := range r.overlay.Areas() {
-		brush.RectFilled(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.FillColor())
-		brush.Rect(t.Bounds().X1, t.Bounds().Y1, t.Bounds().X2, t.Bounds().Y2, t.BorderColor())
+	for _, a := range r.overlay.Areas() {
+		brush.RectFilled(a.Bounds().X1, a.Bounds().Y1, a.Bounds().X2, a.Bounds().Y2, a.FillColor())
+		brush.Rect(a.Bounds().X1, a.Bounds().Y1, a.Bounds().X2, a.Bounds().Y2, a.BorderColor())
 	}
 
 	r.overlay.FlushAreas()

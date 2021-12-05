@@ -49,6 +49,8 @@ func (s *Search) showResults() {
 func (s *Search) showResult(i *dmminstance.Instance) {
 	if imgui.Button(fmt.Sprintf("x:%03d y:%03d z:%d", i.Coord().X, i.Coord().Y, i.Coord().Z)) {
 		s.app.CurrentEditor().FocusCamera(i)
+		s.app.CurrentEditor().MarkFlickTile(i.Coord())
+		s.app.CurrentEditor().MarkFlickInstance(i)
 	}
 }
 
