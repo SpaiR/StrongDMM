@@ -231,3 +231,12 @@ func (e *Editor) FindInstancesByPrefabId(prefabId uint64) (result []*dmminstance
 	}
 	return result
 }
+
+func (e *Editor) FocusCamera(i *dmminstance.Instance) {
+	relPos := i.Coord()
+	absPos := util.Point{X: (relPos.X - 1) * -dmmap.WorldIconSize, Y: (relPos.Y - 1) * -dmmap.WorldIconSize, Z: relPos.Z}
+
+	camera := e.pMap.canvas.Render().Camera()
+	camera.ShiftX = e.pMap.size.X/2/camera.Scale + float32(absPos.X)
+	camera.ShiftY = e.pMap.size.Y/2/camera.Scale + float32(absPos.Y)
+}

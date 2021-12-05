@@ -98,25 +98,30 @@ func (a *app) DoOpenPreferences() {
 // DoSelectPrefab globally selects provided prefab in the app.
 func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 	log.Printf("[app] select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
+	a.layout.SelectNode(layout.NodeNameEnvironment)
 	a.layout.Environment.SelectPath(prefab.Path())
+	a.layout.SelectNode(layout.NodeNamePrefabs)
 	a.layout.Prefabs.Select(prefab)
 }
 
 // DoSelectPrefabByPath globally selects a prefab with provided type path.
 func (a *app) DoSelectPrefabByPath(path string) {
 	log.Println("[app] select prefab by path:", path)
+	a.layout.SelectNode(layout.NodeNamePrefabs)
 	a.DoSelectPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
 // DoEditInstance enables an editing for the provided instance.
 func (a *app) DoEditInstance(instance *dmminstance.Instance) {
 	log.Println("[app] edit instance:", instance.Id())
+	a.layout.SelectNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditInstance(instance)
 }
 
 // DoEditPrefab enables an editing for the provided prefab.
 func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
 	log.Println("[app] edit prefab:", prefab.Id())
+	a.layout.SelectNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditPrefab(prefab)
 }
 
