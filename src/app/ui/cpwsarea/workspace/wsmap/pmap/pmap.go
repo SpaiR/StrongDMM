@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
@@ -64,8 +63,11 @@ type PaneMap struct {
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
 
+	tmpIsInTemporalToolMode bool
 	tmpLastSelectedToolName string
-	tmpLastHoveredInstance  *dmminstance.Instance
+	tmpPrevSelectedToolName string
+
+	tmpLastHoveredInstance *dmminstance.Instance
 }
 
 func (p *PaneMap) Editor() *Editor {
@@ -146,8 +148,7 @@ func (p *PaneMap) Process() {
 	p.showPanel("canvasTools", pPosTop, p.showToolsPanel)
 	p.showPanel("canvasStatus", pPosBottom, p.showStatusPanel)
 
-	p.processToolsTemporalMode(int(glfw.KeyS), -1, tools.TNSelect)
-	p.processToolsTemporalMode(int(glfw.KeyD), -1, tools.TNDelete)
+	p.processTempToolsMode()
 }
 
 func (p *PaneMap) Dispose() {
