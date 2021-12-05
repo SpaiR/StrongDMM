@@ -30,18 +30,10 @@ func (s *Search) showResults() {
 		return
 	}
 
-	imgui.Text("Columns:")
+	s.showFilterMenu()
 	imgui.SameLine()
-	if imgui.SmallButton(imguiext.IconFaMinus) {
-		if cfg := s.config(); cfg.Columns > 1 {
-			cfg.Columns--
-		}
-	}
+	imgui.TextDisabled("|")
 	imgui.SameLine()
-	if imgui.SmallButton(imguiext.IconFaPlus) {
-		s.config().Columns++
-	}
-
 	imgui.Text(fmt.Sprintf("Count: %d", len(s.results)))
 
 	if imgui.BeginChild("search_results") {
@@ -60,5 +52,23 @@ func (s *Search) showResults() {
 func (s *Search) showResult(i *dmminstance.Instance) {
 	if imgui.Button(fmt.Sprintf("x:%03d y:%03d z:%d", i.Coord().X, i.Coord().Y, i.Coord().Z)) {
 
+	}
+}
+
+func (s *Search) showFilterMenu() {
+	imgui.Button(imguiext.IconFaFilter)
+
+	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
+		cfg := s.config()
+
+		cols := int32(cfg.Columns)
+		imgui.Text("Columns")
+		imgui.SameLine()
+		imgui.SetNextItemWidth(imgui.WindowWidth() / 2)
+		if imguiext.InputIntClamp("##columns", &cols, 1, 64, 1, 10) {
+			cfg.Columns = uint(cols)
+		}
+
+		imgui.EndPopup()
 	}
 }

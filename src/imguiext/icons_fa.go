@@ -30,4 +30,5 @@ const (
 	IconFaWrench        = "\uf0ad"
 	IconFaWindowRestore = "\uf2d2"
 	IconFaFile          = "\uf15b"
+	IconFaFilter        = "\uf0b0"
 )
