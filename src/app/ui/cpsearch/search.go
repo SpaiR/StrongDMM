@@ -27,6 +27,10 @@ func (s *Search) Init(app App) {
 	s.loadConfig()
 }
 
+func (s *Search) Free() {
+	s.results = nil
+}
+
 func (s *Search) Search(prefabId uint64) {
 	s.prefabId = strconv.FormatUint(prefabId, 10)
 	s.doSearch()

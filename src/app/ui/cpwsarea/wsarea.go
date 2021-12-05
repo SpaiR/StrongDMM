@@ -15,7 +15,7 @@ type App interface {
 	wsempty.App
 	wsmap.App
 
-	UpdateTitle()
+	OnWorkspaceSwitched()
 	CommandStorage() *command.Storage
 }
 
@@ -57,10 +57,10 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 	w.addWorkspace(wsprefs.New(prefsView))
 }
 
-func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) {
+func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) bool {
 	if ws, ok := w.mapWorkspace(dmm.Path); ok {
 		ws.Select(true)
-		return
+		return false
 	}
 
 	ws := wsmap.New(w.app, dmm)
@@ -70,6 +70,8 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, workspaceIdx int) {
 	} else {
 		w.addWorkspace(ws)
 	}
+
+	return true
 }
 
 func (w *WsArea) WorkspaceTitle() string {
@@ -157,7 +159,7 @@ func (w *WsArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 	if w.activeWs != activeWs {
 		w.activeWs = activeWs
 
-		w.app.UpdateTitle()
+		w.app.OnWorkspaceSwitched()
 
 		if activeWs == nil {
 			w.app.CommandStorage().SetStack(command.NullSpaceStackId)

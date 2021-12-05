@@ -117,6 +117,12 @@ func (a *app) UpdateTitle() {
 	log.Println("[app] title updated:", title)
 }
 
+// OnWorkspaceSwitched called when the app workspace is switched.
+func (a *app) OnWorkspaceSwitched() {
+	a.UpdateTitle()
+	a.layout.Search.Free()
+}
+
 // CommandStorage returns command.Storage for the application.
 func (a *app) CommandStorage() *command.Storage {
 	return a.commandStorage

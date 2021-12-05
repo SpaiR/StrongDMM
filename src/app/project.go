@@ -34,6 +34,7 @@ func (a *app) openEnvironment(path string) {
 
 	a.loadedEnvironment = env
 	a.layout.Prefabs.Free()
+	a.layout.Search.Free()
 	a.layout.Environment.Free()
 	a.layout.WsArea.Free()
 	a.layout.VarEditor.Free()
@@ -75,8 +76,10 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
 	a.ConfigSaveV(cfg)
 
-	a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx)
-	a.layout.Prefabs.Update()
+	if a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx) {
+		a.layout.Prefabs.Update()
+	}
+	a.layout.Search.Free()
 
 	runtime.GC()
 
