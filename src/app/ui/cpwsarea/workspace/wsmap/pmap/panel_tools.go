@@ -26,15 +26,15 @@ var (
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
 			icon: imguiext.IconFaPlus,
-			help: "Add (Key \"1\")\nClick - Place selected object topmost\nAlt+Click - Place selected object with replace",
+			help: "Add (1)\nClick - Place selected object topmost\nAlt+Click - Place selected object with replace",
 		},
 		tools.TNSelect: {
 			icon: imguiext.IconFaEyeDropper,
-			help: "Select (Hold Key \"S\")\nClick - Select hovered object",
+			help: "Select (Hold S)\nClick - Select hovered object",
 		},
 		tools.TNDelete: {
 			icon: imguiext.IconFaEraser,
-			help: "Delete (Hold Key \"D\")\nClick - Delete hovered object\nAlt+Click - Delete tile",
+			help: "Delete (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
 		},
 	}
 )
@@ -87,7 +87,7 @@ func (p *PaneMap) processTempToolsMode() {
 
 func (p *PaneMap) processTempToolMode(key, altKey int, modeName string) bool {
 	// Ignore presses when Dear ImGui inputs are in charge or actual shortcuts are invisible.
-	if imgui.IsAnyItemActive() || !p.shortcuts.Visible() {
+	if !p.shortcuts.Visible() {
 		return false
 	}
 
