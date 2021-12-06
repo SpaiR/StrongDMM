@@ -16,6 +16,8 @@ type App interface {
 	PointSize() float32
 	DoSelectPrefabByPath(string)
 	DoEditPrefabByPath(string)
+	DoSearchPrefab(prefabId uint64)
+	HasActiveMap() bool
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -120,6 +122,7 @@ func (e *Environment) showFilteredNodes() {
 			e.showIcon(node)
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
 			e.doSelectOnClick(node)
+			e.showNodeMenu(node)
 		}
 	}
 }
@@ -140,15 +143,17 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 
 	if len(object.DirectChildren) == 0 {
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
-		e.scrollToSelectedPath(node)
 		e.doSelectOnClick(node)
+		e.showNodeMenu(node)
+		e.scrollToSelectedPath(node)
 	} else {
 		if e.isPartOfSelectedPath(node) {
 			imgui.SetNextItemOpen(true, imgui.ConditionAlways)
 		}
 		if imgui.TreeNodeV(node.name, e.nodeFlags(node, false)) {
-			e.scrollToSelectedPath(node)
 			e.doSelectOnClick(node)
+			e.showNodeMenu(node)
+			e.scrollToSelectedPath(node)
 
 			if e.tmpDoCollapseAll {
 				imgui.StateStorage().SetAllInt(0)
@@ -159,6 +164,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 			imgui.TreePop()
 		} else {
 			e.doSelectOnClick(node)
+			e.showNodeMenu(node)
 		}
 	}
 }
