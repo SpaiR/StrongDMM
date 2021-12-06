@@ -10,6 +10,7 @@ import (
 	"sdmm/app/ui/cpsearch"
 	"sdmm/app/ui/cpvareditor"
 	"sdmm/app/ui/cpwsarea"
+	"sdmm/util/slice"
 )
 
 type app interface {
@@ -45,7 +46,7 @@ type Layout struct {
 	rightUpNodeId   int32
 	rightDownNodeId int32
 
-	tmpNextShowNode  string
+	tmpNextShowNode  []string
 	tmpNextFocusNode string
 }
 
@@ -71,7 +72,7 @@ func (l *Layout) Process() {
 
 	l.initialized = true
 
-	l.tmpNextShowNode = ""
+	l.tmpNextShowNode = nil
 	l.tmpNextFocusNode = ""
 }
 
@@ -90,7 +91,7 @@ func (l *Layout) SyncLayoutState() {
 
 func (l *Layout) ShowNode(nodeName string) {
 	imgui.ExtSetDockTabSelected(nodeName)
-	l.tmpNextShowNode = nodeName
+	l.tmpNextShowNode = append(l.tmpNextShowNode, nodeName)
 }
 
 func (l *Layout) FocusNode(nodeName string) {
@@ -171,7 +172,7 @@ func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar, closab
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
 
-	if id == l.tmpNextShowNode {
+	if slice.StrContains(l.tmpNextShowNode, id) {
 		imgui.SetNextWindowCollapsed(false, imgui.ConditionOnce)
 	}
 	if id == l.tmpNextFocusNode {

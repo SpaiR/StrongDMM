@@ -95,10 +95,17 @@ func (s *Search) showResult(i *dmminstance.Instance, idx int) {
 	imgui.TextDisabled("|")
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(imguiext.IconFaSearch+"##search_result_", i.Id())) {
+	if imgui.Button(fmt.Sprint(imguiext.IconFaSearch+"##jump_to_", i.Id())) {
 		s.jumpTo(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Jump To")
+
+	imgui.SameLine()
+
+	if imgui.Button(fmt.Sprint(imguiext.IconFaEyeDropper+"##select_", i.Id())) {
+		s.selectInstance(idx)
+	}
+	imguiext.SetItemHoveredTooltip("Select")
 
 	imgui.Separator()
 }
@@ -122,6 +129,11 @@ func (s *Search) showJumpButtons() {
 		s.jumpToDown()
 	}
 	imguiext.SetItemHoveredTooltip("Next Result (F3)")
+}
+
+func (s *Search) selectInstance(idx int) {
+	s.app.DoEditInstance(s.results[idx])
+	s.focusedResultIdx = idx
 }
 
 func (s *Search) jumpTo(idx int) {

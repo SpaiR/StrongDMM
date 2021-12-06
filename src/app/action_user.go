@@ -107,7 +107,6 @@ func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 // DoSelectPrefabByPath globally selects a prefab with provided type path.
 func (a *app) DoSelectPrefabByPath(path string) {
 	log.Println("[app] select prefab by path:", path)
-	a.layout.ShowNode(layout.NodeNamePrefabs)
 	a.DoSelectPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
@@ -115,6 +114,7 @@ func (a *app) DoSelectPrefabByPath(path string) {
 func (a *app) DoEditInstance(instance *dmminstance.Instance) {
 	log.Println("[app] edit instance:", instance.Id())
 	a.layout.ShowNode(layout.NodeNameVariables)
+	a.layout.FocusNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditInstance(instance)
 }
 
@@ -122,6 +122,7 @@ func (a *app) DoEditInstance(instance *dmminstance.Instance) {
 func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
 	log.Println("[app] edit prefab:", prefab.Id())
 	a.layout.ShowNode(layout.NodeNameVariables)
+	a.layout.FocusNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditPrefab(prefab)
 }
 

@@ -10,6 +10,7 @@ import (
 
 type App interface {
 	CurrentEditor() *pmap.Editor
+	DoEditInstance(*dmminstance.Instance)
 }
 
 type Search struct {
