@@ -45,6 +45,7 @@ type Layout struct {
 	rightUpNodeId   int32
 	rightDownNodeId int32
 
+	tmpNextShowNode  string
 	tmpNextFocusNode string
 }
 
@@ -70,6 +71,7 @@ func (l *Layout) Process() {
 
 	l.initialized = true
 
+	l.tmpNextShowNode = ""
 	l.tmpNextFocusNode = ""
 }
 
@@ -86,9 +88,13 @@ func (l *Layout) SyncLayoutState() {
 	log.Println("[layout] layout state updated:", configState)
 }
 
-func (l *Layout) SelectNode(nodeName string) {
-	l.tmpNextFocusNode = nodeName
+func (l *Layout) ShowNode(nodeName string) {
 	imgui.ExtSetDockTabSelected(nodeName)
+	l.tmpNextShowNode = nodeName
+}
+
+func (l *Layout) FocusNode(nodeName string) {
+	l.tmpNextFocusNode = nodeName
 }
 
 const (
@@ -165,6 +171,9 @@ func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar, closab
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
 
+	if id == l.tmpNextShowNode {
+		imgui.SetNextWindowCollapsed(false, imgui.ConditionOnce)
+	}
 	if id == l.tmpNextFocusNode {
 		imgui.SetNextWindowFocus()
 	}
