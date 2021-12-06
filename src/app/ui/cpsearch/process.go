@@ -116,12 +116,12 @@ func (s *Search) showJumpButtons() {
 	if imgui.Button(imguiext.IconFaArrowUp) {
 		s.jumpToUp()
 	}
-	imguiext.SetItemHoveredTooltip("Previous Result (Shift+F7)")
+	imguiext.SetItemHoveredTooltip("Previous Result (Shift+F3)")
 	imgui.SameLine()
 	if imgui.Button(imguiext.IconFaArrowDown) {
 		s.jumpToDown()
 	}
-	imguiext.SetItemHoveredTooltip("Next Result (F7)")
+	imguiext.SetItemHoveredTooltip("Next Result (F3)")
 }
 
 func (s *Search) jumpTo(idx int) {

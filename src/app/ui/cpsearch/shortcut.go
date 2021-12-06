@@ -10,12 +10,12 @@ func (s *Search) addShortcuts() {
 		Name:        "cpsearch#jumpToUp",
 		FirstKey:    glfw.KeyLeftShift,
 		FirstKeyAlt: glfw.KeyRightShift,
-		SecondKey:   glfw.KeyF7,
+		SecondKey:   glfw.KeyF3,
 		Action:      s.jumpToUp,
 	})
 	s.shortcuts.Add(shortcut.Shortcut{
 		Name:     "cpsearch#jumpToDown",
-		FirstKey: glfw.KeyF7,
+		FirstKey: glfw.KeyF3,
 		Action:   s.jumpToDown,
 	})
 }
