@@ -104,9 +104,10 @@ func (p *PaneMap) processCanvasOverlayFlick() {
 
 	for idx, i := range p.editor.flickInstance {
 		delta := imgui.Time() - i.time
+		col := flickColor(oColFlickInstance, delta)
 
 		if delta < flickDurationSec {
-			p.pushUnitHighlight(i.instance, oColFlickInstance)
+			p.pushUnitHighlight(i.instance, col)
 		} else {
 			p.editor.flickInstance = append(p.editor.flickInstance[:idx], p.editor.flickInstance[idx+1:]...)
 		}

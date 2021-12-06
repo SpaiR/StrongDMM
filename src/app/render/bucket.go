@@ -33,14 +33,14 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 					continue
 				}
 
-				r, g, b, a := r.unitColor(u)
-
 				brush.RectTexturedV(
 					u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
-					r, g, b, a,
+					u.R(), u.G(), u.B(), u.A(),
 					u.Sprite().Texture(),
 					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
 				)
+
+				r.batchUnitHighlight(u)
 			}
 		}
 	}
@@ -48,10 +48,14 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 	r.overlay.FlushUnits()
 }
 
-func (r *Render) unitColor(u unit.Unit) (float32, float32, float32, float32) {
+func (r *Render) batchUnitHighlight(u unit.Unit) {
 	if highlight := r.overlay.Units()[u.Instance().Id()]; highlight != nil {
-		r, g, b, _ := highlight.Color().RGBA()
-		return r, g, b, u.A() // use the unit alpha only
+		r, g, b, a := highlight.Color().RGBA()
+		brush.RectTexturedV(
+			u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
+			r, g, b, a,
+			u.Sprite().Texture(),
+			u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
+		)
 	}
-	return u.R(), u.G(), u.B(), u.A()
 }
