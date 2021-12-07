@@ -61,7 +61,7 @@ func (c *Control) Clicked() bool {
 }
 
 func (c *Control) Touched() bool {
-	return c.moving || (c.active && c.dragging) || c.zoomed || c.clicked
+	return c.moving || (c.active && c.dragging) || c.clicked
 }
 
 func NewControl() *Control {
