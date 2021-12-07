@@ -35,6 +35,12 @@ func (p *Prefabs) Free() {
 
 func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
 	p.nodes = newPrefabNodes(dmmap.PrefabStorage.GetAllByPath(prefab.Path()))
+
+	// A special case for a "staged" prefab.
+	if prefab.Id() == dmmprefab.IdStage {
+		p.nodes = append(p.nodes, newPrefabNodeV(prefab, "[STAGED]"))
+	}
+
 	p.selectedId = prefab.Id()
 	p.tmpDoScrollToPrefab = true
 	log.Println("[cpprefabs] selected prefab id:", p.selectedId)

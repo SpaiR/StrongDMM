@@ -64,7 +64,10 @@ func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
 }
 
 func newPrefabNode(prefab *dmmprefab.Prefab) *prefabNode {
-	name := prefab.Vars().TextV("name", dm.PathLast(prefab.Path()))
+	return newPrefabNodeV(prefab, prefab.Vars().TextV("name", dm.PathLast(prefab.Path())))
+}
+
+func newPrefabNodeV(prefab *dmmprefab.Prefab, name string) *prefabNode {
 	icon, _ := prefab.Vars().Text("icon")
 	iconState, _ := prefab.Vars().Text("icon_state")
 	dir, _ := prefab.Vars().Int("dir")

@@ -25,7 +25,9 @@ func (s *prefabStorage) Put(prefab *dmmprefab.Prefab) *dmmprefab.Prefab {
 	if cachedPrefab, ok := s.GetById(prefab.Id()); ok {
 		return cachedPrefab
 	}
-	s.persist(prefab)
+	if prefab.Id() != dmmprefab.IdStage { // Ignore staged prefabs.
+		s.persist(prefab)
+	}
 	return prefab
 }
 

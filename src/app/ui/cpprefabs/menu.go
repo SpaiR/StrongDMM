@@ -23,7 +23,7 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 				Icon(imguiext.IconFaSearch).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
-			w.MenuItem("New", nil).
+			w.MenuItem("New", p.doNew(node)).
 				Icon(imguiext.IconFaPlusSquare),
 			w.MenuItem("Delete", nil).
 				Icon(imguiext.IconFaEraser),
@@ -55,5 +55,14 @@ func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
 	return func() {
 		log.Println("[cpprefabs] do find prefab on map:", node.orig.Id())
 		p.app.DoSearchPrefab(node.orig.Id())
+	}
+}
+
+func (p *Prefabs) doNew(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do new prefab:", node.orig.Id())
+		prefab := node.orig.Stage()
+		p.app.DoSelectPrefab(&prefab)
+		p.app.DoEditPrefab(&prefab)
 	}
 }
