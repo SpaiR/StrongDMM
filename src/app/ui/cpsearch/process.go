@@ -47,6 +47,10 @@ func (s *Search) doSearch() {
 	s.Free()
 
 	s.resultsAll = s.app.CurrentEditor().FindInstancesByPrefabId(prefabId)
+
+	if len(s.resultsAll) > 0 {
+		s.jumpTo(0)
+	}
 }
 
 func (s *Search) showResultsControls() {
@@ -58,7 +62,7 @@ func (s *Search) showResultsControls() {
 	imgui.SameLine()
 	imgui.TextDisabled("|")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("Count: %d", len(s.results())))
+	imgui.Text(fmt.Sprintf("%d/%d", s.focusedResultIdx+1, len(s.results())))
 }
 
 func (s *Search) showResults() {
