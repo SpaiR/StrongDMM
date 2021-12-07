@@ -3,6 +3,7 @@ package cpprefabs
 import (
 	"log"
 
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
@@ -14,6 +15,7 @@ type App interface {
 	DoSearchPrefab(prefabId uint64)
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
+	CurrentEditor() *pmap.Editor
 }
 
 type Prefabs struct {

@@ -24,9 +24,9 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 				Icon(imguiext.IconFaSearch).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
-			w.MenuItem("New", p.doNew(node)).
+			w.MenuItem("New Prefab", p.doNewPrefab(node)).
 				Icon(imguiext.IconFaPlusSquare),
-			w.MenuItem("Delete", nil).
+			w.MenuItem("Delete Instances", p.doDeleteInstances(node)).
 				Icon(imguiext.IconFaEraser),
 			w.Separator(),
 			w.MenuItem("Generate icon states", nil).
@@ -60,11 +60,18 @@ func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
 	}
 }
 
-func (p *Prefabs) doNew(node *prefabNode) func() {
+func (p *Prefabs) doNewPrefab(node *prefabNode) func() {
 	return func() {
 		log.Println("[cpprefabs] do new prefab:", node.orig.Id())
 		prefab := node.orig.Stage()
 		p.app.DoSelectPrefab(&prefab)
 		p.app.DoEditPrefab(&prefab)
+	}
+}
+
+func (p *Prefabs) doDeleteInstances(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do delete instances by prefab:", node.orig.Id())
+		p.app.CurrentEditor().DeleteInstancesByPrefab(node.orig)
 	}
 }

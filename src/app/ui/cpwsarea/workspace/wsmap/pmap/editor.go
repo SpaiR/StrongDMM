@@ -94,6 +94,17 @@ func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
 	go e.CommitChanges("Delete Instance")
 }
 
+// DeleteInstancesByPrefab deletes from the map all instances from the provided prefab.
+func (e *Editor) DeleteInstancesByPrefab(prefab *dmmprefab.Prefab) {
+	instances := e.FindInstancesByPrefabId(prefab.Id())
+	for _, instance := range instances {
+		tile := e.pMap.dmm.GetTile(instance.Coord())
+		tile.InstancesRemoveByInstance(instance)
+		tile.InstancesRegenerate()
+	}
+	go e.CommitChanges("Delete Instances")
+}
+
 // ReplaceInstance replaces the provided instance with the provided prefab.
 func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab) {
 	tile := e.pMap.dmm.GetTile(i.Coord())
