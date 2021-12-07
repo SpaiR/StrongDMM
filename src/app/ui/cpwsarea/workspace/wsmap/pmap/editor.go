@@ -3,6 +3,7 @@ package pmap
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -28,7 +29,9 @@ func (e *Editor) Dmm() *dmmap.Dmm {
 // SelectInstance selects the provided instance to edit.
 func (e *Editor) SelectInstance(i *dmminstance.Instance) {
 	e.pMap.app.DoSelectPrefab(i.Prefab())
+	e.pMap.app.ShowLayout(lnode.NamePrefabs, false)
 	e.pMap.app.DoEditInstance(i)
+	e.pMap.app.ShowLayout(lnode.NameVariables, false)
 }
 
 func (e *Editor) HoveredInstance() *dmminstance.Instance {

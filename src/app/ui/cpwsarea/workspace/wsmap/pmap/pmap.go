@@ -33,6 +33,8 @@ type App interface {
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
 	PathsFilter() *dm.PathsFilter
+
+	ShowLayout(name string, focus bool)
 }
 
 type PaneMap struct {

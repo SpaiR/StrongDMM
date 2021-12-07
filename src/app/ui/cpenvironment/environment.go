@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmenv"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
@@ -173,7 +174,9 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 func (e *Environment) doSelectOnClick(node *treeNode) {
 	if imgui.IsItemClicked() && e.selectedPath != node.orig.Path {
 		e.app.DoSelectPrefabByPath(node.orig.Path)
+		e.app.ShowLayout(lnode.NamePrefabs, false)
 		e.app.DoEditPrefabByPath(node.orig.Path)
+		e.app.ShowLayout(lnode.NameVariables, false)
 		e.tmpDoSelectPath = false // we don't need to scroll tree when we select item from the tree itself
 	}
 }
