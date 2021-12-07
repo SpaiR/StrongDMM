@@ -251,9 +251,13 @@ func (e *Editor) CommitChanges(commitMsg string) {
 	e.pMap.app.CommandStorage().Push(command.Make(commitMsg, func() {
 		e.pMap.snapshot.GoTo(stateId - 1)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
+		e.pMap.dmm.SyncPrefabs()
+		e.pMap.app.UpdatePrefabsList()
 	}, func() {
 		e.pMap.snapshot.GoTo(stateId)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
+		e.pMap.dmm.SyncPrefabs()
+		e.pMap.app.UpdatePrefabsList()
 	}))
 }
 

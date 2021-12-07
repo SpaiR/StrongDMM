@@ -77,6 +77,15 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 	return &dmm
 }
 
+// SyncPrefabs persists all prefabs from instances on the current map.
+func (d *Dmm) SyncPrefabs() {
+	for _, tile := range d.Tiles {
+		for _, instance := range tile.Instances() {
+			PrefabStorage.Put(instance.Prefab())
+		}
+	}
+}
+
 type DmmPath struct {
 	Readable string
 	Absolute string

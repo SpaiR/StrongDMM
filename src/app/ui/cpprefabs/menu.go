@@ -7,6 +7,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
+	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 	"sdmm/platform"
@@ -24,9 +25,9 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 				Icon(imguiext.IconFaSearch).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
-			w.MenuItem("New Prefab", p.doNewPrefab(node)).
+			w.MenuItem("New", p.doNew(node)).
 				Icon(imguiext.IconFaPlusSquare),
-			w.MenuItem("Delete Instances", p.doDeleteInstances(node)).
+			w.MenuItem("Delete", p.doDelete(node)).
 				Icon(imguiext.IconFaEraser),
 			w.Separator(),
 			w.MenuItem("Generate icon states", nil).
@@ -60,7 +61,7 @@ func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
 	}
 }
 
-func (p *Prefabs) doNewPrefab(node *prefabNode) func() {
+func (p *Prefabs) doNew(node *prefabNode) func() {
 	return func() {
 		log.Println("[cpprefabs] do new prefab:", node.orig.Id())
 		prefab := node.orig.Stage()
@@ -69,9 +70,16 @@ func (p *Prefabs) doNewPrefab(node *prefabNode) func() {
 	}
 }
 
-func (p *Prefabs) doDeleteInstances(node *prefabNode) func() {
+func (p *Prefabs) doDelete(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do delete instances by prefab:", node.orig.Id())
+		log.Println("[cpprefabs] do delete prefab:", node.orig.Id())
 		p.app.CurrentEditor().DeleteInstancesByPrefab(node.orig)
+
+		// Delete the prefab from the prefabs list if it's not an initial one (which is always the first in the list).
+		if node.orig.Id() != p.nodes[0].orig.Id() {
+			dmmap.PrefabStorage.Delete(node.orig)
+			p.selectedId = p.nodes[0].orig.Id()
+			p.Update()
+		}
 	}
 }

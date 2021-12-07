@@ -35,6 +35,7 @@ type App interface {
 	PathsFilter() *dm.PathsFilter
 
 	ShowLayout(name string, focus bool)
+	UpdatePrefabsList()
 }
 
 type PaneMap struct {

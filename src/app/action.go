@@ -170,6 +170,11 @@ func (a *app) ShowLayout(name string, focus bool) {
 	}
 }
 
+// UpdatePrefabsList updates the prefabs layout list.
+func (a *app) UpdatePrefabsList() {
+	a.layout.Update()
+}
+
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
 	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
 		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
