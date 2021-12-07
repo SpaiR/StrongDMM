@@ -5,6 +5,7 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -179,6 +180,7 @@ func (a *app) DoPaste() {
 	}
 }
 
+// DoCut cuts currently selected (hovered) tiles to the global clipboard.
 func (a *app) DoCut() {
 	log.Println("[app] do cut")
 	if ws, ok := a.activeWsMap(); ok {
@@ -192,4 +194,13 @@ func (a *app) DoDelete() {
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().Editor().DeleteHoveredTile(true)
 	}
+}
+
+// DoSearch searches for a currently selected prefab.
+func (a *app) DoSearch() {
+	log.Println("[app] do search")
+	if prefabId := a.layout.Prefabs.SelectedPrefabId(); prefabId != dmmprefab.IdNone {
+		a.DoSearchPrefab(prefabId)
+	}
+	a.ShowLayout(lnode.NameSearch, true)
 }

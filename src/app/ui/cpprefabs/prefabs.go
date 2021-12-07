@@ -33,7 +33,7 @@ func (p *Prefabs) Init(app App) {
 
 func (p *Prefabs) Free() {
 	p.nodes = nil
-	p.selectedId = 0
+	p.selectedId = dmmprefab.IdNone
 }
 
 func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
@@ -50,7 +50,7 @@ func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
 }
 
 func (p *Prefabs) Update() {
-	if p.selectedId != 0 {
+	if p.selectedId != dmmprefab.IdNone {
 		if prefab, ok := dmmap.PrefabStorage.GetById(p.selectedId); ok {
 			p.Select(prefab)
 		}

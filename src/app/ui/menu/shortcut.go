@@ -79,6 +79,14 @@ func (m *Menu) addShortcuts() {
 		FirstKey: glfw.KeyDelete,
 		Action:   m.app.DoDelete,
 	})
+	m.shortcuts.Add(shortcut.Shortcut{
+		Name:        "menu#DoSearch",
+		FirstKey:    glfw.KeyLeftControl,
+		FirstKeyAlt: glfw.KeyRightControl,
+		SecondKey:   glfw.KeyF,
+		Action:      m.app.DoSearch,
+		IsEnabled:   m.app.HasActiveMap,
+	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:         "menu#doToggleArea",

@@ -30,6 +30,7 @@ type app interface {
 	DoPaste()  // Ctrl+V
 	DoCut()    // Ctrl+X
 	DoDelete() // Delete
+	DoSearch() // Ctrl+F
 
 	// Window
 	DoResetLayout() // F5
@@ -138,6 +139,11 @@ func (m *Menu) Process() {
 			w.MenuItem("Delete", m.app.DoDelete).
 				Icon(imguiext.IconFaEraser).
 				Shortcut("Delete"),
+			w.Separator(),
+			w.MenuItem("Search", m.app.DoSearch).
+				Icon(imguiext.IconFaSearch).
+				Enabled(m.app.HasActiveMap()).
+				Shortcut("Ctrl+F"),
 		}),
 
 		w.Menu("Options", w.Layout{
