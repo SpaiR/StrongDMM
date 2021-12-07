@@ -156,7 +156,11 @@ func (s *Search) showJumpButtons() {
 }
 
 func (s *Search) selectInstance(idx int) {
-	s.app.DoEditInstance(s.results()[idx])
+	instance := s.results()[idx]
+	editor := s.app.CurrentEditor()
+	editor.MarkFlickTile(instance.Coord())
+	editor.MarkFlickInstance(instance)
+	s.app.DoEditInstance(instance)
 	s.focusedResultIdx = idx
 }
 
