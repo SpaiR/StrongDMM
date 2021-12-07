@@ -5,14 +5,21 @@ import (
 	"strconv"
 
 	"github.com/SpaiR/imgui-go"
-	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/imguiext"
+	w "sdmm/imguiext/widget"
 )
 
 func (s *Search) Process() {
 	s.shortcuts.SetVisible(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
 
 	s.showControls()
+	imgui.Separator()
+
+	if len(s.results()) == 0 {
+		return
+	}
+
+	s.showResultsControls()
 	imgui.Separator()
 	s.showResults()
 }
@@ -36,19 +43,9 @@ func (s *Search) doSearch() {
 		return
 	}
 
-	s.results = s.app.CurrentEditor().FindInstancesByPrefabId(prefabId)
-	s.focusedResultIdx = -1
-	s.lastFocusedResultIdx = -1
-}
+	s.Free()
 
-func (s *Search) showResults() {
-	if len(s.results) == 0 {
-		return
-	}
-
-	s.showResultsControls()
-	imgui.Separator()
-	s.showResultsList()
+	s.resultsAll = s.app.CurrentEditor().FindInstancesByPrefabId(prefabId)
 }
 
 func (s *Search) showResultsControls() {
@@ -60,33 +57,35 @@ func (s *Search) showResultsControls() {
 	imgui.SameLine()
 	imgui.TextDisabled("|")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("Count: %d", len(s.results)))
+	imgui.Text(fmt.Sprintf("Count: %d", len(s.results())))
 }
 
-func (s *Search) showResultsList() {
+func (s *Search) showResults() {
 	if imgui.BeginChild("search_results") {
 		var clipper imgui.ListClipper
-		clipper.Begin(len(s.results))
+		clipper.Begin(len(s.results()))
 		for clipper.Step() {
-			for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
-				if i == s.focusedResultIdx && i != s.lastFocusedResultIdx {
+			for idx := clipper.DisplayStart; idx < clipper.DisplayEnd; idx++ {
+				if idx == s.focusedResultIdx && idx != s.lastFocusedResultIdx {
 					imgui.SetScrollHereY(0)
 					s.lastFocusedResultIdx = s.focusedResultIdx
 				}
-				s.showResult(s.results[i], i)
+				s.showResult(idx)
 			}
 		}
+
 		imgui.EndChild()
 	}
 }
 
-func (s *Search) showResult(i *dmminstance.Instance, idx int) {
+func (s *Search) showResult(idx int) {
+	instance := s.results()[idx]
 	focused := idx == s.focusedResultIdx
 
 	if focused {
 		imgui.PushStyleColor(imgui.StyleColorText, imguiext.ColorGold)
 	}
-	imgui.Text(fmt.Sprintf("X:%03d Y:%03d Z:%d", i.Coord().X, i.Coord().Y, i.Coord().Z))
+	imgui.Text(fmt.Sprintf("X:%03d Y:%03d Z:%d", instance.Coord().X, instance.Coord().Y, instance.Coord().Z))
 	if focused {
 		imgui.PopStyleColor()
 	}
@@ -95,14 +94,14 @@ func (s *Search) showResult(i *dmminstance.Instance, idx int) {
 	imgui.TextDisabled("|")
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(imguiext.IconFaSearch+"##jump_to_", i.Id())) {
+	if imgui.Button(fmt.Sprint(imguiext.IconFaSearch+"##jump_to_", instance.Id())) {
 		s.jumpTo(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Jump To")
 
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(imguiext.IconFaEyeDropper+"##select_", i.Id())) {
+	if imgui.Button(fmt.Sprint(imguiext.IconFaEyeDropper+"##select_", instance.Id())) {
 		s.selectInstance(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Select")
@@ -114,9 +113,34 @@ func (s *Search) showFilterButton() {
 	imgui.Button(imguiext.IconFaFilter)
 
 	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
-		// TODO: Add coords filtering
+		imgui.Text("Bounds")
+
+		s.inputBound("X1:", &s.filterBoundX1)
+		imgui.SameLine()
+		s.inputBound("Y1:", &s.filterBoundY1)
+		s.inputBound("X2:", &s.filterBoundX2)
+		imgui.SameLine()
+		s.inputBound("Y2:", &s.filterBoundY2)
+
+		w.Button("Reset", s.doResetFilter).
+			Style(imguiext.StyleButtonRed{}).
+			Build()
+
 		imgui.EndPopup()
 	}
+}
+
+func (s *Search) inputBound(label string, v *int32) {
+	imgui.Text(label)
+	imgui.SameLine()
+	imgui.SetNextItemWidth(s.inputBoundWidth())
+	if imgui.InputInt("##"+label, v) {
+		s.updateFilteredResults()
+	}
+}
+
+func (s *Search) inputBoundWidth() float32 {
+	return s.app.PointSize() * 75
 }
 
 func (s *Search) showJumpButtons() {
@@ -132,16 +156,16 @@ func (s *Search) showJumpButtons() {
 }
 
 func (s *Search) selectInstance(idx int) {
-	s.app.DoEditInstance(s.results[idx])
+	s.app.DoEditInstance(s.results()[idx])
 	s.focusedResultIdx = idx
 }
 
 func (s *Search) jumpTo(idx int) {
-	if idx < 0 || idx >= len(s.results) {
+	if idx < 0 || idx >= len(s.results()) {
 		return
 	}
 
-	instance := s.results[idx]
+	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
 
 	editor.FocusCamera(instance)
