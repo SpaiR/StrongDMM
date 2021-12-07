@@ -182,9 +182,17 @@ func (s *Search) jumpTo(idx int) {
 }
 
 func (s *Search) jumpToUp() {
-	s.jumpTo(s.focusedResultIdx - 1)
+	idx := s.focusedResultIdx - 1
+	if idx < 0 {
+		idx = len(s.results()) - 1
+	}
+	s.jumpTo(idx)
 }
 
 func (s *Search) jumpToDown() {
-	s.jumpTo(s.focusedResultIdx + 1)
+	idx := s.focusedResultIdx + 1
+	if idx >= len(s.results()) {
+		idx = 0
+	}
+	s.jumpTo(idx)
 }
