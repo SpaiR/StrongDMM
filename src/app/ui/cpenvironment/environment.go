@@ -18,6 +18,7 @@ type App interface {
 	DoEditPrefabByPath(string)
 	DoSearchPrefab(prefabId uint64)
 	HasActiveMap() bool
+	ShowLayout(name string, focus bool)
 }
 
 // Only 25 nodes can be loaded per one process tick.

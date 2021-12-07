@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 )
@@ -160,6 +161,7 @@ func (s *Search) selectInstance(idx int) {
 	editor := s.app.CurrentEditor()
 	editor.MarkFlickTile(instance.Coord())
 	editor.MarkFlickInstance(instance)
+	s.app.ShowLayout(lnode.NameVariables, true)
 	s.app.DoEditInstance(instance)
 	s.focusedResultIdx = idx
 }

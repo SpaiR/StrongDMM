@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 	"sdmm/platform"
@@ -54,6 +55,7 @@ func (*Prefabs) doCopyType(node *prefabNode) func() {
 func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
 	return func() {
 		log.Println("[cpprefabs] do find prefab on map:", node.orig.Id())
+		p.app.ShowLayout(lnode.NameSearch, true)
 		p.app.DoSearchPrefab(node.orig.Id())
 	}
 }

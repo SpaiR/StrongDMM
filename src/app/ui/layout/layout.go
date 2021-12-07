@@ -10,6 +10,7 @@ import (
 	"sdmm/app/ui/cpsearch"
 	"sdmm/app/ui/cpvareditor"
 	"sdmm/app/ui/cpwsarea"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/util/slice"
 )
 
@@ -98,32 +99,24 @@ func (l *Layout) FocusNode(nodeName string) {
 	l.tmpNextFocusNode = nodeName
 }
 
-const (
-	NodeNameEnvironment   = "Environment"
-	NodeNameWorkspaceArea = "Workspace Area"
-	NodeNamePrefabs       = "Prefabs"
-	NodeNameSearch        = "Search"
-	NodeNameVariables     = "Variables"
-)
-
 func (l *Layout) showEnvironmentNode() {
-	l.wrapNode(NodeNameEnvironment, int(l.leftNodeId), l.Environment.Process)
+	l.wrapNode(lnode.NameEnvironment, int(l.leftNodeId), l.Environment.Process)
 }
 
 func (l *Layout) showWorkspaceAreaNode() {
-	l.wrapNodeV(NodeNameWorkspaceArea, int(l.centerNodeId), false, false, false, l.WsArea.Process)
+	l.wrapNodeV(lnode.NameWorkspaceArea, int(l.centerNodeId), false, false, false, l.WsArea.Process)
 }
 
 func (l *Layout) showPrefabsNode() {
-	l.wrapNode(NodeNamePrefabs, int(l.rightUpNodeId), l.Prefabs.Process)
+	l.wrapNode(lnode.NamePrefabs, int(l.rightUpNodeId), l.Prefabs.Process)
 }
 
 func (l *Layout) showSearchNode() {
-	l.wrapNode(NodeNameSearch, int(l.rightUpNodeId), l.Search.Process)
+	l.wrapNode(lnode.NameSearch, int(l.rightUpNodeId), l.Search.Process)
 }
 
 func (l *Layout) showVariablesNode() {
-	l.wrapNode(NodeNameVariables, int(l.rightDownNodeId), l.VarEditor.Process)
+	l.wrapNode(lnode.NameVariables, int(l.rightDownNodeId), l.VarEditor.Process)
 }
 
 const (

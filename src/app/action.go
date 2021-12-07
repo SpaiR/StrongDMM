@@ -162,6 +162,14 @@ func (a *app) ToggleShortcuts(enabled bool) {
 	a.shortcutsEnabled = enabled
 }
 
+// ShowLayout helps to make sure that a specific layout node is visible (and in a focus).
+func (a *app) ShowLayout(name string, focus bool) {
+	a.layout.ShowNode(name)
+	if focus {
+		a.layout.FocusNode(name)
+	}
+}
+
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
 	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
 		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {

@@ -13,6 +13,7 @@ type App interface {
 	DoEditPrefab(prefab *dmmprefab.Prefab)
 	DoSearchPrefab(prefabId uint64)
 	HasActiveMap() bool
+	ShowLayout(name string, focus bool)
 }
 
 type Prefabs struct {

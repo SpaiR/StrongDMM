@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
@@ -25,6 +26,7 @@ func (e *Environment) doFindOnMap(n *treeNode) func() {
 	return func() {
 		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
 		log.Println("[cpenvironment] do find object on map:", prefab.Path())
+		e.app.ShowLayout(lnode.NameSearch, true)
 		e.app.DoSearchPrefab(prefab.Id())
 	}
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
-	"sdmm/app/ui/layout"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -98,9 +97,7 @@ func (a *app) DoOpenPreferences() {
 // DoSelectPrefab globally selects provided prefab in the app.
 func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 	log.Printf("[app] select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
-	a.layout.ShowNode(layout.NodeNameEnvironment)
 	a.layout.Environment.SelectPath(prefab.Path())
-	a.layout.ShowNode(layout.NodeNamePrefabs)
 	a.layout.Prefabs.Select(prefab)
 }
 
@@ -113,16 +110,12 @@ func (a *app) DoSelectPrefabByPath(path string) {
 // DoEditInstance enables an editing for the provided instance.
 func (a *app) DoEditInstance(instance *dmminstance.Instance) {
 	log.Println("[app] edit instance:", instance.Id())
-	a.layout.ShowNode(layout.NodeNameVariables)
-	a.layout.FocusNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditInstance(instance)
 }
 
 // DoEditPrefab enables an editing for the provided prefab.
 func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
 	log.Println("[app] edit prefab:", prefab.Id())
-	a.layout.ShowNode(layout.NodeNameVariables)
-	a.layout.FocusNode(layout.NodeNameVariables)
 	a.layout.VarEditor.EditPrefab(prefab)
 }
 
@@ -135,8 +128,6 @@ func (a *app) DoEditPrefabByPath(path string) {
 // DoSearchPrefab does a search of the provided prefab ID with selecting of the search window.
 func (a *app) DoSearchPrefab(prefabId uint64) {
 	log.Println("[app] search prefab id:", prefabId)
-	a.layout.ShowNode(layout.NodeNameSearch)
-	a.layout.FocusNode(layout.NodeNameSearch)
 	a.layout.Search.Search(prefabId)
 }
 
