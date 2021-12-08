@@ -1,6 +1,7 @@
 [package]
 name = "sdmmparser"
 version = "2.0.0"
+rust-version = "1.57.0"
 
 [lib]
 name = "sdmmparser"
@@ -8,9 +9,9 @@ path = "lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-serde = "1.0.106"
-serde_derive = "1.0.106"
-serde_json = "1.0.51"
+serde = "1.0.130"
+serde_derive = "1.0.130"
+serde_json = "1.0.72"
 png = "0.17.2"
 
 [dependencies.dreammaker]
