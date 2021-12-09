@@ -46,14 +46,32 @@ func (v *Variables) put(name string, value string) {
 	v.vars[name] = value
 }
 
+func (v *Variables) delete(name string) {
+	v.names = slice.StrRemove(v.names, name)
+	delete(v.vars, name)
+}
+
 func FromParent(parent *Variables) *Variables {
 	return &Variables{parent: parent}
 }
 
-func Modify(vars *Variables, name, value string) *Variables {
+func Set(vars *Variables, name, value string) *Variables {
 	cpy := vars.Copy()
 	cpy.put(name, value)
 	return &cpy
+}
+
+func Delete(vars *Variables, name string) *Variables {
+	cpy := vars.Copy()
+	cpy.delete(name)
+	return &cpy
+}
+
+func IsInitialValue(vars *Variables, name, value string) bool {
+	if vars.HasParent() {
+		return vars.Parent().ValueV(name, NullValue) == value
+	}
+	return false
 }
 
 // MutableVariables are used to provide a basic modification interface,
@@ -92,6 +110,10 @@ func (v *Variables) Iterate() []string {
 
 func (v *Variables) Len() int {
 	return len(v.names)
+}
+
+func (v *Variables) IsInitialValue(name string) bool {
+	return IsInitialValue(v, name, v.ValueV(name, NullValue))
 }
 
 func (v *Variables) Value(name string) (string, bool) {

@@ -95,7 +95,7 @@ func (p *Prefabs) doGenerateIconStates(node *prefabNode) func() {
 			if node.orig.Vars().TextV("icon_state", "") == name {
 				continue
 			}
-			vars := dmvars.Modify(node.orig.Vars(), "icon_state", "\""+name+"\"")
+			vars := dmvars.Set(node.orig.Vars(), "icon_state", "\""+name+"\"")
 			dmmap.PrefabStorage.Get(node.orig.Path(), vars)
 		}
 
@@ -129,7 +129,7 @@ func (p *Prefabs) doGenerateDirections(node *prefabNode) func() {
 			if dir == initialDir {
 				continue
 			}
-			vars := dmvars.Modify(node.orig.Vars(), "dir", strconv.Itoa(dir))
+			vars := dmvars.Set(node.orig.Vars(), "dir", strconv.Itoa(dir))
 			dmmap.PrefabStorage.Get(node.orig.Path(), vars)
 		}
 
