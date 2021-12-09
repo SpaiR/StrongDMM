@@ -252,12 +252,14 @@ func (e *Editor) CommitChanges(commitMsg string) {
 		e.pMap.snapshot.GoTo(stateId - 1)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
 		e.pMap.dmm.SyncPrefabs()
-		e.pMap.app.UpdatePrefabsList()
+		e.pMap.app.SyncPrefabs()
+		e.pMap.app.SyncVarEditor()
 	}, func() {
 		e.pMap.snapshot.GoTo(stateId)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
 		e.pMap.dmm.SyncPrefabs()
-		e.pMap.app.UpdatePrefabsList()
+		e.pMap.app.SyncPrefabs()
+		e.pMap.app.SyncVarEditor()
 	}))
 }
 

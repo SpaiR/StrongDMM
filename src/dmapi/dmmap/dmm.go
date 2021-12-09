@@ -31,6 +31,18 @@ func (d *Dmm) GetTile(coord util.Point) *Tile {
 	return d.Tiles[d.tileIndex(coord.X, coord.Y, coord.Z)]
 }
 
+// IsInstanceExist returns true if there is an instance with the provided ID on the map.
+func (d *Dmm) IsInstanceExist(instanceId uint64) bool {
+	for _, tile := range d.Tiles {
+		for _, instance := range tile.instances {
+			if instance.Id() == instanceId {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (d *Dmm) setTile(x, y, z int, tile *Tile) {
 	d.Tiles[d.tileIndex(x, y, z)] = tile
 }

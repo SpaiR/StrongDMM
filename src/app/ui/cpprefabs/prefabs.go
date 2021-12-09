@@ -49,7 +49,7 @@ func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
 	log.Println("[cpprefabs] selected prefab id:", p.selectedId)
 }
 
-func (p *Prefabs) Update() {
+func (p *Prefabs) Sync() {
 	if p.selectedId != dmmprefab.IdNone {
 		if prefab, ok := dmmap.PrefabStorage.GetById(p.selectedId); ok {
 			p.Select(prefab)

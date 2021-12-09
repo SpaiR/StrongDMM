@@ -79,7 +79,7 @@ func (p *Prefabs) doDelete(node *prefabNode) func() {
 		if node.orig.Id() != p.nodes[0].orig.Id() {
 			dmmap.PrefabStorage.Delete(node.orig)
 			p.selectedId = p.nodes[0].orig.Id()
-			p.Update()
+			p.Sync()
 		}
 	}
 }

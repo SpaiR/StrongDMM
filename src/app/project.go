@@ -77,7 +77,7 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	a.ConfigSaveV(cfg)
 
 	if a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx) {
-		a.layout.Prefabs.Update()
+		a.layout.Prefabs.Sync()
 	}
 	a.layout.Search.Free()
 

@@ -170,9 +170,14 @@ func (a *app) ShowLayout(name string, focus bool) {
 	}
 }
 
-// UpdatePrefabsList updates the prefabs layout list.
-func (a *app) UpdatePrefabsList() {
-	a.layout.Update()
+// SyncPrefabs updates the prefabs layout list.
+func (a *app) SyncPrefabs() {
+	a.layout.Prefabs.Sync()
+}
+
+// SyncVarEditor syncs the variable editor state. Needed to ensure we edit an object which is exists.
+func (a *app) SyncVarEditor() {
+	a.layout.VarEditor.Sync()
 }
 
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {

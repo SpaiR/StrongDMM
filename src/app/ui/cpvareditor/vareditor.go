@@ -45,6 +45,18 @@ func (v *VarEditor) Free() {
 	v.resetSession()
 }
 
+// Sync does the check if we edit an instance which is exists.
+// If the instance doesn't exist, then the editor will switch its mode to the prefab editing.
+func (v *VarEditor) Sync() {
+	if v.prefab == nil {
+		return
+	}
+	if v.instance != nil && !v.app.CurrentEditor().Dmm().IsInstanceExist(v.instance.Id()) {
+		v.instance = nil
+		v.sessionEditMode = emPrefab
+	}
+}
+
 func (v *VarEditor) EditInstance(instance *dmminstance.Instance) {
 	v.resetSession()
 	v.sessionEditMode = emInstance
