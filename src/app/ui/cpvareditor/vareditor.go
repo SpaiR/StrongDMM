@@ -35,6 +35,8 @@ type VarEditor struct {
 
 	sessionEditMode editMode
 	sessionPrefabId uint64
+
+	filter string
 }
 
 func (v *VarEditor) Init(app App) {
@@ -162,4 +164,11 @@ func collectVariablesNames0(vars *dmvars.Variables) []string {
 		}
 	}
 	return variablesNames
+}
+
+func (v *VarEditor) isFilteredVariable(varName string) bool {
+	if len(v.filter) > 0 && !strings.Contains(varName, v.filter) {
+		return true
+	}
+	return false
 }

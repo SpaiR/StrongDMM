@@ -16,6 +16,7 @@ func (v *VarEditor) Process() {
 	}
 
 	v.showEditModeToggle()
+	v.showFilter()
 	imgui.Separator()
 	imgui.BeginChild("variables")
 	v.showVariables()
@@ -73,6 +74,11 @@ func (v *VarEditor) showPrefabModeButton() {
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 
+func (v *VarEditor) showFilter() {
+	imgui.SetNextItemWidth(-1)
+	imgui.InputTextWithHint("##filter", "Filter", &v.filter)
+}
+
 const (
 	varsTableFlags = imgui.TableFlagsResizable | imgui.TableFlagsBordersInner
 	varsInputFlags = imgui.InputTextFlagsAutoSelectAll | imgui.InputTextFlagsEnterReturnsTrue | imgui.InputTextFlagsCtrlEnterForNewLine
@@ -81,6 +87,10 @@ const (
 func (v *VarEditor) showVariables() {
 	if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
 		for _, varName := range v.variablesNames {
+			if v.isFilteredVariable(varName) {
+				continue
+			}
+
 			imgui.TableNextColumn()
 			v.showVarName(varName)
 			imgui.TableNextColumn()
