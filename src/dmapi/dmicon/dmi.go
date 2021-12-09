@@ -114,20 +114,20 @@ type State struct {
 	Sprites      []*Sprite
 }
 
-func (d State) Sprite() *Sprite {
-	return d.SpriteV(dm.DirDefault)
+func (s State) Sprite() *Sprite {
+	return s.SpriteV(dm.DirDefault)
 }
 
-func (d State) SpriteV(dir int) *Sprite {
-	return d.SpriteByFrame(dir, 0)
+func (s State) SpriteV(dir int) *Sprite {
+	return s.SpriteByFrame(dir, 0)
 }
 
-func (d State) SpriteByFrame(dir, frame int) *Sprite {
-	return d.Sprites[d.dir2idx(dir)+frame%d.Frames*d.Dirs]
+func (s State) SpriteByFrame(dir, frame int) *Sprite {
+	return s.Sprites[s.dir2idx(dir)+frame%s.Frames*s.Dirs]
 }
 
-func (d State) dir2idx(dir int) int {
-	if d.Dirs == 1 || dir < dm.DirNorth || dir > dm.DirSouthwest {
+func (s State) dir2idx(dir int) int {
+	if s.Dirs == 1 || dir < dm.DirNorth || dir > dm.DirSouthwest {
 		return 0
 	}
 
@@ -151,7 +151,7 @@ func (d State) dir2idx(dir int) int {
 		idx = 7
 	}
 
-	if idx+1 <= len(d.Sprites) {
+	if idx+1 <= len(s.Sprites) {
 		return idx
 	}
 	return 0
