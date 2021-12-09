@@ -163,28 +163,32 @@ type Sprite struct {
 	U1, V1, U2, V2 float32
 }
 
-func (d Sprite) Image() image.Image {
-	return d.dmi.Image
+func (s *Sprite) Dmi() *Dmi {
+	return s.dmi
 }
 
-func (d Sprite) Texture() uint32 {
-	return d.dmi.Texture
+func (s Sprite) Image() image.Image {
+	return s.dmi.Image
 }
 
-func (d Sprite) TextureWidth() int {
-	return d.dmi.TextureWidth
+func (s Sprite) Texture() uint32 {
+	return s.dmi.Texture
 }
 
-func (d Sprite) TextureHeight() int {
-	return d.dmi.TextureHeight
+func (s Sprite) TextureWidth() int {
+	return s.dmi.TextureWidth
 }
 
-func (d Sprite) IconWidth() int {
-	return d.dmi.IconWidth
+func (s Sprite) TextureHeight() int {
+	return s.dmi.TextureHeight
 }
 
-func (d Sprite) IconHeight() int {
-	return d.dmi.IconHeight
+func (s Sprite) IconWidth() int {
+	return s.dmi.IconWidth
+}
+
+func (s Sprite) IconHeight() int {
+	return s.dmi.IconHeight
 }
 
 func newDmiSprite(dmi *Dmi, idx int) *Sprite {

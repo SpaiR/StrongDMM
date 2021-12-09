@@ -7,7 +7,9 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
+	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmvars"
 	"sdmm/imguiext"
 	w "sdmm/imguiext/widget"
 	"sdmm/platform"
@@ -30,9 +32,9 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 			w.MenuItem("Delete", p.doDelete(node)).
 				Icon(imguiext.IconFaEraser),
 			w.Separator(),
-			w.MenuItem("Generate icon states", nil).
+			w.MenuItem("Generate icon states", p.doGenerateIconStates(node)).
 				IconEmpty(),
-			w.MenuItem("Generate directions", nil).
+			w.MenuItem("Generate directions", p.doGenerateDirections(node)).
 				IconEmpty(),
 		}.Build()
 		imgui.EndPopup()
@@ -81,5 +83,56 @@ func (p *Prefabs) doDelete(node *prefabNode) func() {
 			p.selectedId = p.nodes[0].orig.Id()
 			p.Sync()
 		}
+	}
+}
+
+func (p *Prefabs) doGenerateIconStates(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do generate prefabs from icon states:", node.orig.Id())
+
+		dmi := node.sprite.Dmi()
+		for name := range dmi.States {
+			if node.orig.Vars().TextV("icon_state", "") == name {
+				continue
+			}
+			vars := dmvars.Modify(node.orig.Vars(), "icon_state", "\""+name+"\"")
+			dmmap.PrefabStorage.Get(node.orig.Path(), vars)
+		}
+
+		p.Sync()
+	}
+}
+
+func (p *Prefabs) doGenerateDirections(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do generate prefabs from directions:", node.orig.Id())
+
+		initialDir := node.orig.Vars().IntV("dir", dm.DirDefault)
+		dmi := node.sprite.Dmi()
+		state := dmi.States[node.orig.Vars().TextV("icon_state", "")]
+
+		var dirs []int
+
+		switch state.Dirs {
+		case 4:
+			dirs = append(dirs, []int{
+				dm.DirNorth, dm.DirSouth, dm.DirEast, dm.DirWest}...,
+			)
+		case 8:
+			dirs = append(dirs, []int{
+				dm.DirNorth, dm.DirSouth, dm.DirEast, dm.DirWest,
+				dm.DirNortheast, dm.DirNorthwest, dm.DirSoutheast, dm.DirSouthwest}...,
+			)
+		}
+
+		for _, dir := range dirs {
+			if dir == initialDir {
+				continue
+			}
+			vars := dmvars.Modify(node.orig.Vars(), "dir", strconv.Itoa(dir))
+			dmmap.PrefabStorage.Get(node.orig.Path(), vars)
+		}
+
+		p.Sync()
 	}
 }
