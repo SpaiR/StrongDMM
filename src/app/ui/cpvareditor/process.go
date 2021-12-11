@@ -2,6 +2,7 @@ package cpvareditor
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmvars"
@@ -76,11 +77,23 @@ func (v *VarEditor) showPrefabModeButton() {
 
 func (v *VarEditor) showControls() {
 	imgui.SetNextItemWidth(-1)
-	imgui.InputTextWithHint("##filter", "Filter", &v.filter)
+	imgui.InputTextWithHint("##filter_var_name", v.filterVarNameHint(), &v.filterVarName)
 
 	imgui.Checkbox("Modified", &v.showModified)
 	imgui.SameLine()
 	imgui.Checkbox("By Type", &v.showByType)
+
+	if v.showByType {
+		imgui.SetNextItemWidth(-1)
+		imgui.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName)
+	}
+}
+
+func (v *VarEditor) filterVarNameHint() string {
+	if v.showByType {
+		return "Filter Name"
+	}
+	return "Filter"
 }
 
 const (
@@ -98,6 +111,10 @@ func (v *VarEditor) showVariables() {
 
 func (v *VarEditor) showVariablesByType() {
 	for _, path := range v.variablesPaths {
+		if v.isFilteredPath(path) {
+			continue
+		}
+
 		variablesNames := v.variablesNamesByPaths[path]
 
 		imgui.TextColored(imguiext.ColorGold, path)
@@ -168,4 +185,20 @@ func (v *VarEditor) currentVars() *dmvars.Variables {
 		return v.instance.Prefab().Vars()
 	}
 	return v.prefab.Vars()
+}
+
+func (v *VarEditor) isFilteredVariable(varName string) bool {
+	// Show modified only
+	if v.showModified && v.isCurrentVarInitial(varName) {
+		return true
+	}
+	// Show filtered by name only
+	if len(v.filterVarName) > 0 && !strings.Contains(varName, v.filterVarName) {
+		return true
+	}
+	return false
+}
+
+func (v *VarEditor) isFilteredPath(path string) bool {
+	return v.showByType && len(v.filterTypeName) > 0 && !strings.Contains(path, v.filterTypeName)
 }

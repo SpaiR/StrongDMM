@@ -1,8 +1,6 @@
 package cpvareditor
 
 import (
-	"strings"
-
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -39,7 +37,8 @@ type VarEditor struct {
 	sessionEditMode editMode
 	sessionPrefabId uint64
 
-	filter string
+	filterVarName  string
+	filterTypeName string
 
 	showModified bool
 	showByType   bool
@@ -145,18 +144,6 @@ func (v *VarEditor) resetSession() {
 	v.sessionEditMode = emPrefab
 	v.instance = nil
 	v.prefab = nil
-}
-
-func (v *VarEditor) isFilteredVariable(varName string) bool {
-	// Show modified only
-	if v.showModified && v.isCurrentVarInitial(varName) {
-		return true
-	}
-	// Show filtered by name only
-	if len(v.filter) > 0 && !strings.Contains(varName, v.filter) {
-		return true
-	}
-	return false
 }
 
 func (v *VarEditor) initialVarValue(varName string) string {
