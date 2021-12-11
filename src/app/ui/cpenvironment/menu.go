@@ -7,7 +7,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmmap"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 )
 
@@ -15,7 +15,7 @@ func (e *Environment) showNodeMenu(n *treeNode) {
 	if imgui.BeginPopupContextItemV(fmt.Sprint("environment_node_menu_", n.orig.Path), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
 			w.MenuItem("Find on Map", e.doFindOnMap(n)).
-				Icon(imguiext.IconFaSearch).
+				Icon(icon.FaSearch).
 				Enabled(e.app.HasActiveMap()),
 		}.Build()
 		imgui.EndPopup()

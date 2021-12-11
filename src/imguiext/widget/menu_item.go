@@ -2,7 +2,7 @@ package widget
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/imguiext"
+	"sdmm/imguiext/style"
 )
 
 // Placeholder to check if there is an empty icon for the menuItem.
@@ -65,7 +65,7 @@ func (m *menuItemWidget) Build() {
 	if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
 		var iconCol imgui.PackedColor
 		if m.enabled {
-			iconCol = imguiext.ColorWhitePacked
+			iconCol = style.ColorWhitePacked
 		} else {
 			iconCol = imgui.PackedColorFromVec4(imgui.CurrentStyle().Color(imgui.StyleColorTextDisabled))
 		}

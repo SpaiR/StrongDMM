@@ -4,6 +4,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 )
 
 type WsPrefs struct {
@@ -19,7 +20,7 @@ func New(prefs Prefs) *WsPrefs {
 }
 
 func (ws *WsPrefs) Name() string {
-	return imguiext.IconFaWrench + " Preferences"
+	return icon.FaWrench + " Preferences"
 }
 
 func (ws *WsPrefs) NameReadable() string {

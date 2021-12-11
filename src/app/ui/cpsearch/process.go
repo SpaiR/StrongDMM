@@ -7,6 +7,8 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
 
@@ -30,8 +32,7 @@ func (s *Search) showControls() {
 		s.doSearch()
 	}
 	imgui.SameLine()
-	imgui.SetNextItemWidth(-1)
-	imgui.InputTextWithHint("##search", "Prefab ID", &s.prefabId)
+	w.InputTextWithHint("##search", "Prefab ID", &s.prefabId).Width(-1).Build()
 }
 
 func (s *Search) doSearch() {
@@ -88,7 +89,7 @@ func (s *Search) showResult(idx int) {
 	focused := idx == s.focusedResultIdx
 
 	if focused {
-		imgui.PushStyleColor(imgui.StyleColorText, imguiext.ColorGold)
+		imgui.PushStyleColor(imgui.StyleColorText, style.ColorGold)
 	}
 	imgui.Text(fmt.Sprintf("X:%03d Y:%03d Z:%d", instance.Coord().X, instance.Coord().Y, instance.Coord().Z))
 	if focused {
@@ -99,14 +100,14 @@ func (s *Search) showResult(idx int) {
 	imgui.TextDisabled("|")
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(imguiext.IconFaSearch+"##jump_to_", instance.Id())) {
+	if imgui.Button(fmt.Sprint(icon.FaSearch+"##jump_to_", instance.Id())) {
 		s.jumpTo(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Jump To")
 
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(imguiext.IconFaEyeDropper+"##select_", instance.Id())) {
+	if imgui.Button(fmt.Sprint(icon.FaEyeDropper+"##select_", instance.Id())) {
 		s.selectInstance(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Select")
@@ -115,7 +116,7 @@ func (s *Search) showResult(idx int) {
 }
 
 func (s *Search) showFilterButton() {
-	imgui.Button(imguiext.IconFaFilter)
+	imgui.Button(icon.FaFilter)
 
 	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
 		imgui.Text("Bounds")
@@ -128,7 +129,7 @@ func (s *Search) showFilterButton() {
 		s.inputBound("Y2:", &s.filterBoundY2)
 
 		w.Button("Reset", s.doResetFilter).
-			Style(imguiext.StyleButtonRed{}).
+			Style(style.ButtonRed{}).
 			Build()
 
 		imgui.EndPopup()
@@ -149,12 +150,12 @@ func (s *Search) inputBoundWidth() float32 {
 }
 
 func (s *Search) showJumpButtons() {
-	if imgui.Button(imguiext.IconFaArrowUp) {
+	if imgui.Button(icon.FaArrowUp) {
 		s.jumpToUp()
 	}
 	imguiext.SetItemHoveredTooltip("Previous Result (Shift+F3)")
 	imgui.SameLine()
-	if imgui.Button(imguiext.IconFaArrowDown) {
+	if imgui.Button(icon.FaArrowDown) {
 		s.jumpToDown()
 	}
 	imguiext.SetItemHoveredTooltip("Next Result (F3)")

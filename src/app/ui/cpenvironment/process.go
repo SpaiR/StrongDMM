@@ -8,6 +8,7 @@ import (
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmenv"
 	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 )
 
@@ -23,15 +24,16 @@ func (e *Environment) Process() {
 }
 
 func (e *Environment) showControls() {
-	if imgui.Button(imguiext.IconFaMinus) {
+	if imgui.Button(icon.FaMinus) {
 		e.tmpDoCollapseAll = true
 	}
 	imguiext.SetItemHoveredTooltip("Collapse All")
 	imgui.SameLine()
-	imgui.SetNextItemWidth(-1)
-	if imgui.InputTextWithHint("##filter", "Filter", &e.filter) {
-		e.doFilter()
-	}
+	w.InputTextWithHint("##filter", "Filter", &e.filter).
+		ClearBtn().
+		Width(-1).
+		OnChange(e.doFilter).
+		Build()
 	imgui.Separator()
 }
 

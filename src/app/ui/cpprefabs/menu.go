@@ -10,7 +10,7 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmvars"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 	"sdmm/platform"
 )
@@ -19,18 +19,18 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 	if imgui.BeginPopupContextItemV(fmt.Sprintf("context_menu_%d", node.orig.Id()), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
 			w.MenuItem("Copy ID", p.doCopyId(node)).
-				Icon(imguiext.IconFaCopy),
+				Icon(icon.FaCopy),
 			w.MenuItem("Copy Type", p.doCopyType(node)).
-				Icon(imguiext.IconFaCopy),
+				Icon(icon.FaCopy),
 			w.Separator(),
 			w.MenuItem("Find on Map", p.doFindOnMap(node)).
-				Icon(imguiext.IconFaSearch).
+				Icon(icon.FaSearch).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
 			w.MenuItem("New", p.doNew(node)).
-				Icon(imguiext.IconFaPlusSquare),
+				Icon(icon.FaPlusSquare),
 			w.MenuItem("Delete", p.doDelete(node)).
-				Icon(imguiext.IconFaEraser),
+				Icon(icon.FaEraser),
 			w.Separator(),
 			w.MenuItem("Generate icon states", p.doGenerateIconStates(node)).
 				IconEmpty(),

@@ -9,7 +9,7 @@ import (
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )
@@ -32,26 +32,26 @@ func (t *TileMenu) Process() {
 func (t *TileMenu) showControls() {
 	w.Layout{
 		w.MenuItem("Undo", t.app.DoUndo).
-			Icon(imguiext.IconFaUndo).
+			Icon(icon.FaUndo).
 			Enabled(t.app.CommandStorage().HasUndo()).
 			Shortcut("Ctrl+Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
-			Icon(imguiext.IconFaRedo).
+			Icon(icon.FaRedo).
 			Enabled(t.app.CommandStorage().HasRedo()).
 			Shortcut("Ctrl+Shift+Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
-			Icon(imguiext.IconFaCopy).
+			Icon(icon.FaCopy).
 			Shortcut("Ctrl+C"),
 		w.MenuItem("Paste", t.app.DoPaste).
-			Icon(imguiext.IconFaPaste).
+			Icon(icon.FaPaste).
 			Enabled(t.app.Clipboard().HasData()).
 			Shortcut("Ctrl+V"),
 		w.MenuItem("Cut", t.app.DoCut).
-			Icon(imguiext.IconFaCut).
+			Icon(icon.FaCut).
 			Shortcut("Ctrl+X"),
 		w.MenuItem("Delete", t.app.DoDelete).
-			Icon(imguiext.IconFaEraser).
+			Icon(icon.FaEraser).
 			Shortcut("Delete"),
 		w.Separator(),
 		w.Custom(func() {
@@ -95,18 +95,18 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
 					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)).
-						Icon(imguiext.IconFaArrowUp),
+						Icon(icon.FaArrowUp),
 					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), t.doMoveToBottom(i)).
-						Icon(imguiext.IconFaArrowDown),
+						Icon(icon.FaArrowDown),
 					w.Separator(),
 				}.Build()
 			}
 		}),
 		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
-			Icon(imguiext.IconFaEyeDropper).
+			Icon(icon.FaEyeDropper).
 			Shortcut("Shift+LMB"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)).
-			Icon(imguiext.IconFaEraser),
+			Icon(icon.FaEraser),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
 			IconEmpty().
 			Enabled(t.app.HasSelectedPrefab()),

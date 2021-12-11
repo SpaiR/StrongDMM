@@ -3,7 +3,7 @@ package window
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/assets"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 )
 
 const (
@@ -38,7 +38,7 @@ func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.Fo
 	config.SetGlyphMaxAdvanceX(iconSize)
 
 	glyphsBuilder := imgui.GlyphRangesBuilder{}
-	glyphsBuilder.Add(imguiext.IconFaMin, imguiext.IconFaMax)
+	glyphsBuilder.Add(icon.FaMin, icon.FaMax)
 
 	atlas.AddFontFromMemoryTTFV(
 		assets.FontIconsTTF(),

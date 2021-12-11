@@ -7,7 +7,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmvars"
-	"sdmm/imguiext"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
 
@@ -53,9 +53,9 @@ func (v *VarEditor) showEditModeToggle() {
 func (v *VarEditor) showInstanceModeButton() {
 	var buttonStyle w.ButtonStyle
 	if v.sessionEditMode == emInstance {
-		buttonStyle = imguiext.StyleButtonGreen{}
+		buttonStyle = style.ButtonGreen{}
 	} else {
-		buttonStyle = imguiext.StyleButtonDefault{}
+		buttonStyle = style.ButtonDefault{}
 	}
 
 	w.Button("Instance", func() {
@@ -67,9 +67,9 @@ func (v *VarEditor) showInstanceModeButton() {
 func (v *VarEditor) showPrefabModeButton() {
 	var buttonStyle w.ButtonStyle
 	if v.sessionEditMode == emPrefab {
-		buttonStyle = imguiext.StyleButtonGreen{}
+		buttonStyle = style.ButtonGreen{}
 	} else {
-		buttonStyle = imguiext.StyleButtonDefault{}
+		buttonStyle = style.ButtonDefault{}
 	}
 
 	w.Button("Prefab", func() {
@@ -79,16 +79,20 @@ func (v *VarEditor) showPrefabModeButton() {
 }
 
 func (v *VarEditor) showControls() {
-	imgui.SetNextItemWidth(-1)
-	imgui.InputTextWithHint("##filter_var_name", v.filterVarNameHint(), &v.filterVarName)
+	w.InputTextWithHint("##filter_var_name", v.filterVarNameHint(), &v.filterVarName).
+		Width(-1).
+		ClearBtn().
+		Build()
 
 	imgui.Checkbox("Modified", &v.showModified)
 	imgui.SameLine()
 	imgui.Checkbox("By Type", &v.showByType)
 
 	if v.showByType {
-		imgui.SetNextItemWidth(-1)
-		imgui.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName)
+		w.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName).
+			Width(-1).
+			ClearBtn().
+			Build()
 	}
 }
 
@@ -120,7 +124,7 @@ func (v *VarEditor) showVariablesByType() {
 
 		variablesNames := v.variablesNamesByPaths[path]
 
-		imgui.TextColored(imguiext.ColorGold, path)
+		imgui.TextColored(style.ColorGold, path)
 		imgui.SameLine()
 		imgui.TextDisabled(fmt.Sprintf("(%d)", len(variablesNames)))
 
@@ -157,7 +161,7 @@ func (v *VarEditor) showVariable(varName string) {
 
 func (v *VarEditor) showVarName(varName string) {
 	if !v.isCurrentVarInitial(varName) {
-		imgui.TextColored(imguiext.ColorGreen3, varName)
+		imgui.TextColored(style.ColorGreen3, varName)
 	} else {
 		imgui.Text(varName)
 	}

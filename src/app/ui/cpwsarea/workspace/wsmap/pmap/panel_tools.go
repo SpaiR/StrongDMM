@@ -5,6 +5,8 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
 
@@ -25,15 +27,15 @@ var (
 
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
-			icon: imguiext.IconFaPlus,
+			icon: icon.FaPlus,
 			help: "Add (1)\nClick - Place selected object topmost\nAlt+Click - Place selected object with replace",
 		},
 		tools.TNSelect: {
-			icon: imguiext.IconFaEyeDropper,
+			icon: icon.FaEyeDropper,
 			help: "Select (Hold S)\nClick - Select hovered object",
 		},
 		tools.TNDelete: {
-			icon: imguiext.IconFaEraser,
+			icon: icon.FaEraser,
 			help: "Delete (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
 		},
 	}
@@ -58,9 +60,9 @@ func (p *PaneMap) showToolsPanel() {
 		})
 		if p.tools.Selected() == tool {
 			if tool.AltBehaviour() {
-				btn.Style(imguiext.StyleButtonRed{})
+				btn.Style(style.ButtonRed{})
 			} else {
-				btn.Style(imguiext.StyleButtonGreen{})
+				btn.Style(style.ButtonGreen{})
 			}
 		}
 		btn.Build()

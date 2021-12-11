@@ -1,4 +1,4 @@
-package imguiext
+package style
 
 import (
 	"image/color"

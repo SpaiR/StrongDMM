@@ -16,6 +16,7 @@ import (
 	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext"
+	"sdmm/imguiext/style"
 )
 
 type App interface {
@@ -173,7 +174,7 @@ func (p *PaneMap) showCanvas() {
 		texture,
 		p.canvasControl.PosMin(), p.canvasControl.PosMax(),
 		uvMin, uvMax,
-		imguiext.ColorWhitePacked,
+		style.ColorWhitePacked,
 	)
 }
 

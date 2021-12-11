@@ -6,7 +6,7 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmclip"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 )
 
@@ -69,7 +69,7 @@ func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
 			w.MenuItem("Open Environment...", m.app.DoOpenEnvironment).
-				Icon(imguiext.IconFaFolderOpen),
+				Icon(icon.FaFolderOpen),
 			w.Menu("Recent Environments", w.Layout{
 				w.Custom(func() {
 					for _, recentEnvironment := range m.app.RecentEnvironments() {
@@ -80,13 +80,13 @@ func (m *Menu) Process() {
 					w.Layout{
 						w.Separator(),
 						w.MenuItem("Clear Recent Environments", m.app.DoClearRecentEnvironments).
-							Icon(imguiext.IconFaTrash),
+							Icon(icon.FaTrash),
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentEnvironments()) != 0),
 			w.Separator(),
 			w.MenuItem("Open Map...", m.app.DoOpenMap).
-				Icon(imguiext.IconFaFolderOpen).
+				Icon(icon.FaFolderOpen).
 				Enabled(m.app.HasLoadedEnvironment()).
 				Shortcut("Ctrl+O"),
 			w.Menu("Recent Maps", w.Layout{
@@ -99,18 +99,18 @@ func (m *Menu) Process() {
 					w.Layout{
 						w.Separator(),
 						w.MenuItem("Clear Recent Maps", m.app.DoClearRecentMaps).
-							Icon(imguiext.IconFaTrash),
+							Icon(icon.FaTrash),
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(m.app.HasLoadedEnvironment() && len(m.app.RecentMapsByLoadedEnvironment()) != 0),
 			w.Separator(),
 			w.MenuItem("Save", m.app.DoSave).
-				Icon(imguiext.IconFaSave).
+				Icon(icon.FaSave).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut("Ctrl+S"),
 			w.Separator(),
 			w.MenuItem("Preferences", m.app.DoOpenPreferences).
-				Icon(imguiext.IconFaWrench),
+				Icon(icon.FaWrench),
 			w.Separator(),
 			w.MenuItem("Exit", m.app.DoExit).
 				IconEmpty(),
@@ -118,30 +118,30 @@ func (m *Menu) Process() {
 
 		w.Menu("Edit", w.Layout{
 			w.MenuItem("Undo", m.app.DoUndo).
-				Icon(imguiext.IconFaUndo).
+				Icon(icon.FaUndo).
 				Enabled(m.app.CommandStorage().HasUndo()).
 				Shortcut("Ctrl+Z"),
 			w.MenuItem("Redo", m.app.DoRedo).
-				Icon(imguiext.IconFaRedo).
+				Icon(icon.FaRedo).
 				Enabled(m.app.CommandStorage().HasRedo()).
 				Shortcut("Ctrl+Shift+Z"),
 			w.Separator(),
 			w.MenuItem("Copy", m.app.DoCopy).
-				Icon(imguiext.IconFaCopy).
+				Icon(icon.FaCopy).
 				Shortcut("Ctrl+C"),
 			w.MenuItem("Paste", m.app.DoPaste).
-				Icon(imguiext.IconFaPaste).
+				Icon(icon.FaPaste).
 				Enabled(m.app.Clipboard().HasData()).
 				Shortcut("Ctrl+V"),
 			w.MenuItem("Cut", m.app.DoCut).
-				Icon(imguiext.IconFaCut).
+				Icon(icon.FaCut).
 				Shortcut("Ctrl+X"),
 			w.MenuItem("Delete", m.app.DoDelete).
-				Icon(imguiext.IconFaEraser).
+				Icon(icon.FaEraser).
 				Shortcut("Delete"),
 			w.Separator(),
 			w.MenuItem("Search", m.app.DoSearch).
-				Icon(imguiext.IconFaSearch).
+				Icon(icon.FaSearch).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut("Ctrl+F"),
 		}),
@@ -171,7 +171,7 @@ func (m *Menu) Process() {
 
 		w.Menu("Window", w.Layout{
 			w.MenuItem("Reset Layout", m.app.DoResetLayout).Shortcut("F5").
-				Icon(imguiext.IconFaWindowRestore),
+				Icon(icon.FaWindowRestore),
 		}),
 
 		w.Menu("Help", w.Layout{

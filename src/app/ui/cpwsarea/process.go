@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/SpaiR/imgui-go"
-	"sdmm/imguiext"
+	"sdmm/imguiext/icon"
 )
 
 func (w *WsArea) Process() {
@@ -70,7 +70,7 @@ func (w *WsArea) Process() {
 		}
 
 		// Add an empty workspace when the "plus" button is clicked.
-		if imgui.TabItemButton(imguiext.IconFaPlus) {
+		if imgui.TabItemButton(icon.FaPlus) {
 			w.addEmptyWorkspace()
 		}
 
