@@ -22,7 +22,6 @@ func (v *VarEditor) Process() {
 
 	v.showEditModeToggle()
 	v.showControls()
-	imgui.Separator()
 	imgui.BeginChild("variables")
 	v.showVariables()
 	imgui.EndChild()
@@ -121,11 +120,16 @@ const (
 )
 
 func (v *VarEditor) showVariables() {
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{})
+	imgui.PushStyleVarVec2(imgui.StyleVarCellPadding, imgui.Vec2{Y: imgui.CurrentStyle().CellPadding().Y})
+
 	if v.showByType {
 		v.showVariablesByType()
 	} else {
 		v.showAllVariables()
 	}
+
+	imgui.PopStyleVarV(2)
 }
 
 func (v *VarEditor) showVariablesByType() {

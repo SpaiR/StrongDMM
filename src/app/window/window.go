@@ -130,9 +130,7 @@ func (w *Window) setupImGui() {
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
 	// TODO: Proper theming
-	imgui.StyleColorsDark()
-	imgui.CurrentStyle().SetWindowBorderSize(0)
-	imgui.CurrentStyle().SetChildBorderSize(0)
+	w.setDefaultTheme()
 }
 
 func (*Window) disposeImGui() {
