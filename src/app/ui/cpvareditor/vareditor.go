@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -37,6 +38,8 @@ const (
 type VarEditor struct {
 	app App
 
+	shortcuts shortcut.Shortcuts
+
 	instance *dmminstance.Instance
 	prefab   *dmmprefab.Prefab
 
@@ -57,10 +60,12 @@ type VarEditor struct {
 
 func (v *VarEditor) Init(app App) {
 	v.app = app
+	v.addShortcuts()
 }
 
 func (v *VarEditor) Free() {
 	v.resetSession()
+	log.Println("[cpvareditor] vareditor free")
 }
 
 // Sync does the check if we edit an instance which is exists.
@@ -171,4 +176,14 @@ func (v *VarEditor) initialVarValue(varName string) string {
 
 func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
+}
+
+func (v *VarEditor) doToggleShowModified() {
+	v.showModified = !v.showModified
+	log.Println("[cpvareditor] toggle 'showModified':", v.showModified)
+}
+
+func (v *VarEditor) doToggleShowByType() {
+	v.showByType = !v.showByType
+	log.Println("[cpvareditor] toggle 'showByType':", v.showByType)
 }

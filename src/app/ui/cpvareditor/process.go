@@ -13,6 +13,8 @@ import (
 )
 
 func (v *VarEditor) Process() {
+	v.shortcuts.SetVisible(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
+
 	if len(v.variablesNames) == 0 {
 		imgui.TextDisabled("No Instance/Prefab Selected")
 		return
@@ -80,14 +82,23 @@ func (v *VarEditor) showPrefabModeButton() {
 }
 
 func (v *VarEditor) showControls() {
+	imgui.Button(icon.FaFilter)
+	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {
+		if imgui.MenuItemV("Show modified only", "Ctrl+1", v.showModified, true) {
+			v.doToggleShowModified()
+		}
+		if imgui.MenuItemV("Show with types", "Ctrl+2", v.showByType, true) {
+			v.doToggleShowByType()
+		}
+		imgui.EndPopup()
+	}
+
+	imgui.SameLine()
+
 	w.InputTextWithHint("##filter_var_name", v.filterVarNameHint(), &v.filterVarName).
 		ButtonClear().
 		Width(-1).
 		Build()
-
-	imgui.Checkbox("Modified", &v.showModified)
-	imgui.SameLine()
-	imgui.Checkbox("By Type", &v.showByType)
 
 	if v.showByType {
 		w.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName).

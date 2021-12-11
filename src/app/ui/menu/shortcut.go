@@ -89,43 +89,6 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:         "menu#doToggleArea",
-		FirstKey:     glfw.KeyLeftControl,
-		FirstKeyAlt:  glfw.KeyRightControl,
-		SecondKey:    glfw.Key1,
-		SecondKeyAlt: glfw.KeyKP1,
-		Action:       m.doToggleArea,
-		IsEnabled:    m.app.HasLoadedEnvironment,
-	})
-	m.shortcuts.Add(shortcut.Shortcut{
-		Name:         "menu#doToggleTurf",
-		FirstKey:     glfw.KeyLeftControl,
-		FirstKeyAlt:  glfw.KeyRightControl,
-		SecondKey:    glfw.Key2,
-		SecondKeyAlt: glfw.KeyKP2,
-		Action:       m.doToggleTurf,
-		IsEnabled:    m.app.HasLoadedEnvironment,
-	})
-	m.shortcuts.Add(shortcut.Shortcut{
-		Name:         "menu#doToggleObject",
-		FirstKey:     glfw.KeyLeftControl,
-		FirstKeyAlt:  glfw.KeyRightControl,
-		SecondKey:    glfw.Key3,
-		SecondKeyAlt: glfw.KeyKP3,
-		Action:       m.doToggleObject,
-		IsEnabled:    m.app.HasLoadedEnvironment,
-	})
-	m.shortcuts.Add(shortcut.Shortcut{
-		Name:         "menu#doToggleMob",
-		FirstKey:     glfw.KeyLeftControl,
-		FirstKeyAlt:  glfw.KeyRightControl,
-		SecondKey:    glfw.Key4,
-		SecondKeyAlt: glfw.KeyKP4,
-		Action:       m.doToggleMob,
-		IsEnabled:    m.app.HasLoadedEnvironment,
-	})
-
-	m.shortcuts.Add(shortcut.Shortcut{
 		Name:     "menu#DoResetLayout",
 		FirstKey: glfw.KeyF5,
 		Action:   m.app.DoResetLayout,
