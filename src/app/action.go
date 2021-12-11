@@ -159,13 +159,6 @@ func (a *app) CurrentEditor() *pmap.Editor {
 	return nil
 }
 
-// ToggleShortcuts toggles shortcuts processing for the whole application.
-// Helps in cases where there are shortcuts on the Dear ImGui side (basically, input fields) and we need them to work.
-func (a *app) ToggleShortcuts(enabled bool) {
-	log.Println("[app] shortcuts toggled:", enabled)
-	a.shortcutsEnabled = enabled
-}
-
 // ShowLayout helps to make sure that a specific layout node is visible (and in a focus).
 func (a *app) ShowLayout(name string, focus bool) {
 	a.layout.ShowNode(name)

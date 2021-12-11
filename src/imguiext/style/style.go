@@ -78,3 +78,18 @@ func (ButtonTransparent) ActiveColor() imgui.Vec4 {
 func (ButtonTransparent) HoverColor() imgui.Vec4 {
 	return ColorZero
 }
+
+type ButtonFrame struct {
+}
+
+func (ButtonFrame) NormalColor() imgui.Vec4 {
+	return imgui.CurrentStyle().Color(imgui.StyleColorFrameBg)
+}
+
+func (ButtonFrame) ActiveColor() imgui.Vec4 {
+	return imgui.CurrentStyle().Color(imgui.StyleColorFrameBgActive)
+}
+
+func (ButtonFrame) HoverColor() imgui.Vec4 {
+	return imgui.CurrentStyle().Color(imgui.StyleColorFrameBgHovered)
+}

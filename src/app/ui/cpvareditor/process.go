@@ -175,33 +175,19 @@ func (v *VarEditor) showVarInput(varName string) {
 
 	var resetBtn *w.ButtonWidget
 	if isModified {
-		imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{Y: imgui.CurrentStyle().ItemSpacing().Y})
 		resetBtn = w.Button(icon.FaUndo+"##"+varName, func() {
 			v.setCurrentVariable(varName, initialValue)
-		}).Tooltip(initialValue)
+		}).Tooltip(initialValue).Style(style.ButtonFrame{})
 	}
 
-	if resetBtn != nil {
-		imgui.SetNextItemWidth(-resetBtn.CalcSize().X)
-	} else {
-		imgui.SetNextItemWidth(-1)
-	}
-
-	imgui.InputTextV(fmt.Sprint("##", v.prefab.Id(), varName), &varValue, varsInputFlags, nil)
-	if imgui.IsItemDeactivatedAfterEdit() {
-		v.setCurrentVariable(varName, varValue)
-	}
-	if imgui.IsItemActivated() {
-		v.app.ToggleShortcuts(false)
-	} else if imgui.IsItemDeactivated() {
-		v.app.ToggleShortcuts(true)
-	}
-
-	if isModified {
-		imgui.SameLine()
-		resetBtn.Build()
-		imgui.PopStyleVar()
-	}
+	w.InputText(fmt.Sprint("##", v.prefab.Id(), varName), &varValue).
+		Button(resetBtn).
+		Width(-1).
+		Flags(varsInputFlags).
+		OnDeactivatedAfterEdit(func() {
+			v.setCurrentVariable(varName, varValue)
+		}).
+		Build()
 }
 
 func (v *VarEditor) setCurrentVariable(varName, varValue string) {

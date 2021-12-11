@@ -13,7 +13,6 @@ import (
 
 type App interface {
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
-	ToggleShortcuts(enabled bool)
 	CurrentEditor() *pmap.Editor
 	LoadedEnvironment() *dmenv.Dme
 }
