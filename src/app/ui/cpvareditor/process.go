@@ -2,6 +2,7 @@ package cpvareditor
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
@@ -59,6 +60,7 @@ func (v *VarEditor) showInstanceModeButton() {
 
 	w.Button("Instance", func() {
 		v.sessionEditMode = emInstance
+		log.Println("[cpvareditor] set instance mode")
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 
@@ -72,6 +74,7 @@ func (v *VarEditor) showPrefabModeButton() {
 
 	w.Button("Prefab", func() {
 		v.sessionEditMode = emPrefab
+		log.Println("[cpvareditor] set prefab mode")
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 

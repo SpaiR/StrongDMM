@@ -1,6 +1,8 @@
 package cpvareditor
 
 import (
+	"log"
+
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -17,6 +19,16 @@ type App interface {
 }
 
 type editMode int
+
+func (e editMode) String() string {
+	switch e {
+	case emInstance:
+		return "editModeInstance"
+	case emPrefab:
+		return "editModePrefab"
+	}
+	return ""
+}
 
 const (
 	emInstance editMode = iota
@@ -62,6 +74,7 @@ func (v *VarEditor) Sync() {
 		v.instance = nil
 		v.sessionEditMode = emPrefab
 	}
+	log.Println("[cpvareditor] synced, editMode:", v.sessionEditMode)
 }
 
 func (v *VarEditor) EditInstance(instance *dmminstance.Instance) {
@@ -82,6 +95,8 @@ func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 	v.variablesNames = collectVariablesNames(prefab.Vars())
 	v.variablesPaths = collectVariablesPaths(v.app.LoadedEnvironment().Objects[v.prefab.Path()])
 	v.variablesNamesByPaths = collectVariablesNamesByPaths(v.app.LoadedEnvironment(), v.variablesPaths)
+	log.Printf("[cpvareditor] setup finished: [%s], variablesNames: [%d], variablesPaths: [%d]",
+		prefab.Path(), len(v.variablesNames), len(v.variablesPaths))
 }
 
 func (v *VarEditor) setInstanceVariable(varName, varValue string) {
@@ -114,6 +129,8 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 	v.app.DoSelectPrefab(newPrefab)
 
 	v.prefab = newPrefab
+
+	log.Printf("[cpvareditor] instance [%d] variable set; name: [%s], value: [%s]", v.instance.Id(), varName, varValue)
 }
 
 func (v *VarEditor) setPrefabVariable(varName, varValue string) {
@@ -134,6 +151,8 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	v.app.DoSelectPrefab(newPrefab)
 
 	v.prefab = newPrefab
+
+	log.Printf("[cpvareditor] prefab [%d] variable set; name: [%s], value: [%s]", v.prefab.Id(), varName, varValue)
 }
 
 func (v *VarEditor) resetSession() {
@@ -144,6 +163,7 @@ func (v *VarEditor) resetSession() {
 	v.sessionEditMode = emPrefab
 	v.instance = nil
 	v.prefab = nil
+	log.Println("[cpvareditor] session reset")
 }
 
 func (v *VarEditor) initialVarValue(varName string) string {
