@@ -44,7 +44,7 @@ func (i *inputTextWithHintWidget) OnChange(onChange func()) *inputTextWithHintWi
 func (i *inputTextWithHintWidget) Build() {
 	widgetWidth := i.width
 
-	var clearBtn *buttonWidget
+	var clearBtn *ButtonWidget
 	if i.clearBtn != "" && widgetWidth != 0 {
 		clearBtn = Button(i.clearBtn, func() { *i.text = "" }).
 			TextColor(imgui.CurrentStyle().Color(imgui.StyleColorTextDisabled)).

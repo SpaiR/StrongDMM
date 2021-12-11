@@ -7,6 +7,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmvars"
+	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
@@ -168,22 +169,46 @@ func (v *VarEditor) showVarName(varName string) {
 }
 
 func (v *VarEditor) showVarInput(varName string) {
-	imgui.SetNextItemWidth(-1)
-
 	varValue := v.currentVars().ValueV(varName, dmvars.NullValue)
+	initialValue := v.initialVarValue(varName)
+	isModified := initialValue != varValue
+
+	var resetBtn *w.ButtonWidget
+	if isModified {
+		imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{Y: imgui.CurrentStyle().ItemSpacing().Y})
+		resetBtn = w.Button(icon.FaUndo+"##"+varName, func() {
+			v.setCurrentVariable(varName, initialValue)
+		}).Tooltip(initialValue)
+	}
+
+	if resetBtn != nil {
+		imgui.SetNextItemWidth(-resetBtn.CalcSize().X)
+	} else {
+		imgui.SetNextItemWidth(-1)
+	}
 
 	imgui.InputTextV(fmt.Sprint("##", v.prefab.Id(), varName), &varValue, varsInputFlags, nil)
 	if imgui.IsItemDeactivatedAfterEdit() {
-		if v.sessionEditMode == emInstance {
-			v.setInstanceVariable(varName, varValue)
-		} else {
-			v.setPrefabVariable(varName, varValue)
-		}
+		v.setCurrentVariable(varName, varValue)
 	}
 	if imgui.IsItemActivated() {
 		v.app.ToggleShortcuts(false)
 	} else if imgui.IsItemDeactivated() {
 		v.app.ToggleShortcuts(true)
+	}
+
+	if isModified {
+		imgui.SameLine()
+		resetBtn.Build()
+		imgui.PopStyleVar()
+	}
+}
+
+func (v *VarEditor) setCurrentVariable(varName, varValue string) {
+	if v.sessionEditMode == emInstance {
+		v.setInstanceVariable(varName, varValue)
+	} else {
+		v.setPrefabVariable(varName, varValue)
 	}
 }
 
