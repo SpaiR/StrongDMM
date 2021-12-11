@@ -12,3 +12,7 @@ type Object struct {
 	Path           string
 	DirectChildren []string
 }
+
+func (o *Object) Parent() *Object {
+	return o.parent
+}

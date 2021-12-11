@@ -1,7 +1,6 @@
 package cpvareditor
 
 import (
-	"sort"
 	"strings"
 
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
@@ -10,7 +9,6 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmvars"
-	"sdmm/util/slice"
 )
 
 type App interface {
@@ -35,10 +33,16 @@ type VarEditor struct {
 
 	variablesNames []string
 
+	variablesPaths        []string
+	variablesNamesByPaths map[string][]string
+
 	sessionEditMode editMode
 	sessionPrefabId uint64
 
 	filter string
+
+	showModified bool
+	showByType   bool
 }
 
 func (v *VarEditor) Init(app App) {
@@ -77,6 +81,8 @@ func (v *VarEditor) EditPrefab(prefab *dmmprefab.Prefab) {
 func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 	v.prefab = prefab
 	v.variablesNames = collectVariablesNames(prefab.Vars())
+	v.variablesPaths = collectVariablesPaths(v.app.LoadedEnvironment().Objects[v.prefab.Path()])
+	v.variablesNamesByPaths = collectVariablesNamesByPaths(v.app.LoadedEnvironment(), v.variablesPaths)
 }
 
 func (v *VarEditor) setInstanceVariable(varName, varValue string) {
@@ -133,42 +139,20 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 
 func (v *VarEditor) resetSession() {
 	v.variablesNames = nil
+	v.variablesPaths = nil
+	v.variablesNamesByPaths = nil
 	v.sessionPrefabId = 0
 	v.sessionEditMode = emPrefab
 	v.instance = nil
 	v.prefab = nil
 }
 
-var unmodifiableVars = []string{
-	"type", "parent_type", "vars", "x", "y", "z", "contents", "filters",
-	"loc", "maptext", "maptext_width", "maptext_height", "maptext_x", "maptext_y",
-	"overlays", "underlays", "verbs", "appearance", "vis_locs",
-}
-
-func collectVariablesNames(vars *dmvars.Variables) (variablesNames []string) {
-	variablesNames = collectVariablesNames0(vars)
-	sort.Slice(variablesNames, func(i, j int) bool {
-		return strings.Compare(variablesNames[i], variablesNames[j]) == -1
-	})
-	return variablesNames
-}
-
-func collectVariablesNames0(vars *dmvars.Variables) []string {
-	variablesNames := make([]string, 0, vars.Len())
-	for _, varName := range vars.Iterate() {
-		if !slice.StrContains(unmodifiableVars, varName) {
-			variablesNames = append(variablesNames, varName)
-		}
-	}
-	if vars.HasParent() {
-		for _, parentVarName := range collectVariablesNames0(vars.Parent()) {
-			variablesNames = slice.StrPushUnique(variablesNames, parentVarName)
-		}
-	}
-	return variablesNames
-}
-
 func (v *VarEditor) isFilteredVariable(varName string) bool {
+	// Show modified only
+	if v.showModified && v.isCurrentVarInitial(varName) {
+		return true
+	}
+	// Show filtered by name only
 	if len(v.filter) > 0 && !strings.Contains(varName, v.filter) {
 		return true
 	}

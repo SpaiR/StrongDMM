@@ -16,7 +16,7 @@ func (v *VarEditor) Process() {
 	}
 
 	v.showEditModeToggle()
-	v.showFilter()
+	v.showControls()
 	imgui.Separator()
 	imgui.BeginChild("variables")
 	v.showVariables()
@@ -74,9 +74,13 @@ func (v *VarEditor) showPrefabModeButton() {
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 
-func (v *VarEditor) showFilter() {
+func (v *VarEditor) showControls() {
 	imgui.SetNextItemWidth(-1)
 	imgui.InputTextWithHint("##filter", "Filter", &v.filter)
+
+	imgui.Checkbox("Modified", &v.showModified)
+	imgui.SameLine()
+	imgui.Checkbox("By Type", &v.showByType)
 }
 
 const (
@@ -85,19 +89,50 @@ const (
 )
 
 func (v *VarEditor) showVariables() {
-	if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
-		for _, varName := range v.variablesNames {
-			if v.isFilteredVariable(varName) {
-				continue
-			}
+	if v.showByType {
+		v.showVariablesByType()
+	} else {
+		v.showAllVariables()
+	}
+}
 
-			imgui.TableNextColumn()
-			v.showVarName(varName)
-			imgui.TableNextColumn()
-			v.showVarInput(varName)
+func (v *VarEditor) showVariablesByType() {
+	for _, path := range v.variablesPaths {
+		variablesNames := v.variablesNamesByPaths[path]
+
+		imgui.TextColored(imguiext.ColorGold, path)
+		imgui.SameLine()
+		imgui.TextDisabled(fmt.Sprintf("(%d)", len(variablesNames)))
+
+		if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
+			v.showVariablesNames(variablesNames)
+			imgui.EndTable()
 		}
+	}
+}
+
+func (v *VarEditor) showAllVariables() {
+	if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
+		v.showVariablesNames(v.variablesNames)
 		imgui.EndTable()
 	}
+}
+
+func (v *VarEditor) showVariablesNames(variablesNames []string) {
+	for _, varName := range variablesNames {
+		v.showVariable(varName)
+	}
+}
+
+func (v *VarEditor) showVariable(varName string) {
+	if v.isFilteredVariable(varName) {
+		return
+	}
+
+	imgui.TableNextColumn()
+	v.showVarName(varName)
+	imgui.TableNextColumn()
+	v.showVarInput(varName)
 }
 
 func (v *VarEditor) showVarName(varName string) {

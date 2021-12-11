@@ -24,12 +24,14 @@ func PathWeight(p string) int {
 }
 
 // PathBase returns the base of the provided path.
+// Example: /obj/item/weapon -> /obj
 func PathBase(p string) string {
 	separatorIdx := strings.Index(p[1:], "/") + 1
 	return p[:separatorIdx]
 }
 
 // PathLast returns the last part of the path (basically, a name of the type)
+// Example: /obj/item/weapon -> weapon
 func PathLast(p string) string {
 	return p[strings.LastIndex(p, "/")+1:]
 }
