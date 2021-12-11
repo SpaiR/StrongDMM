@@ -32,11 +32,15 @@ func (s *Search) showControls() {
 		s.doSearch()
 	}
 	imgui.SameLine()
-	w.InputTextWithHint("##search", "Prefab ID", &s.prefabId).Width(-1).Build()
+	w.InputTextWithHint("##search", "Prefab ID", &s.prefabId).
+		ButtonClear().
+		Width(-1).
+		Build()
 }
 
 func (s *Search) doSearch() {
 	if len(s.prefabId) == 0 {
+		s.Free()
 		return
 	}
 
