@@ -67,13 +67,6 @@ func Delete(vars *Variables, name string) *Variables {
 	return &cpy
 }
 
-func IsInitialValue(vars *Variables, name, value string) bool {
-	if vars.HasParent() {
-		return vars.Parent().ValueV(name, NullValue) == value
-	}
-	return false
-}
-
 // MutableVariables are used to provide a basic modification interface,
 // without breaking of an immutability of Variables struct.
 type MutableVariables struct {
@@ -110,10 +103,6 @@ func (v *Variables) Iterate() []string {
 
 func (v *Variables) Len() int {
 	return len(v.names)
-}
-
-func (v *Variables) IsInitialValue(name string) bool {
-	return IsInitialValue(v, name, v.ValueV(name, NullValue))
 }
 
 func (v *Variables) Value(name string) (string, bool) {

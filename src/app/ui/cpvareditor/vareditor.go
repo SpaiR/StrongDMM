@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -16,6 +17,7 @@ type App interface {
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
 	ToggleShortcuts(enabled bool)
 	CurrentEditor() *pmap.Editor
+	LoadedEnvironment() *dmenv.Dme
 }
 
 type editMode int
@@ -85,7 +87,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 	origPrefab := v.instance.Prefab()
 
 	var newVars *dmvars.Variables
-	if dmvars.IsInitialValue(origPrefab.Vars(), varName, varValue) {
+	if v.initialVarValue(varName) == varValue {
 		newVars = dmvars.Delete(origPrefab.Vars(), varName)
 	} else {
 		newVars = dmvars.Set(origPrefab.Vars(), varName, varValue)
@@ -115,7 +117,7 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	}
 
 	var newVars *dmvars.Variables
-	if dmvars.IsInitialValue(v.prefab.Vars(), varName, varValue) {
+	if v.initialVarValue(varName) == varValue {
 		newVars = dmvars.Delete(v.prefab.Vars(), varName)
 	} else {
 		newVars = dmvars.Set(v.prefab.Vars(), varName, varValue)
@@ -171,4 +173,12 @@ func (v *VarEditor) isFilteredVariable(varName string) bool {
 		return true
 	}
 	return false
+}
+
+func (v *VarEditor) initialVarValue(varName string) string {
+	return v.app.LoadedEnvironment().Objects[v.prefab.Path()].Vars.ValueV(varName, dmvars.NullValue)
+}
+
+func (v *VarEditor) isCurrentVarInitial(varName string) bool {
+	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
 }

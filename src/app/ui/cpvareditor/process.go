@@ -101,7 +101,7 @@ func (v *VarEditor) showVariables() {
 }
 
 func (v *VarEditor) showVarName(varName string) {
-	if !v.currentVars().IsInitialValue(varName) {
+	if !v.isCurrentVarInitial(varName) {
 		imgui.TextColored(imguiext.ColorGreen3, varName)
 	} else {
 		imgui.Text(varName)
