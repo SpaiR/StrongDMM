@@ -128,7 +128,9 @@ func (a *app) OnWorkspaceSwitched() {
 		a.layout.Search.Free()
 	}
 
-	a.SyncVarEditor()
+	if a.HasActiveMap() {
+		a.SyncVarEditor()
+	}
 }
 
 // CommandStorage returns command.Storage for the application.
