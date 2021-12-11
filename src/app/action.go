@@ -127,6 +127,8 @@ func (a *app) OnWorkspaceSwitched() {
 	} else {
 		a.layout.Search.Free()
 	}
+
+	a.SyncVarEditor()
 }
 
 // CommandStorage returns command.Storage for the application.
