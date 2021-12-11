@@ -2,6 +2,7 @@ package cpsearch
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/SpaiR/imgui-go"
@@ -51,7 +52,9 @@ func (s *Search) doSearch() {
 
 	s.Free()
 
+	log.Println("[cpsearch] searching for:", s.prefabId)
 	s.resultsAll = s.app.CurrentEditor().FindInstancesByPrefabId(prefabId)
+	log.Println("[cpsearch] found search results:", len(s.resultsAll))
 
 	if len(s.resultsAll) > 0 {
 		s.jumpTo(0)
