@@ -3,6 +3,8 @@ package widget
 import "github.com/SpaiR/imgui-go"
 
 type inputTextWidget struct {
+	inputTextFunc func() bool
+
 	label                  string
 	text                   *string
 	width                  float32
@@ -62,7 +64,7 @@ func (i *inputTextWidget) Build() {
 		imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{Y: imgui.CurrentStyle().ItemSpacing().Y})
 	}
 
-	if imgui.InputTextV(i.label, i.text, i.flags, i.cb) && i.onChange != nil {
+	if i.inputTextFunc() && i.onChange != nil {
 		i.onChange()
 	}
 	if i.onDeactivatedAfterEdit != nil && imgui.IsItemDeactivatedAfterEdit() {
@@ -77,8 +79,12 @@ func (i *inputTextWidget) Build() {
 }
 
 func InputText(label string, text *string) *inputTextWidget {
-	return &inputTextWidget{
+	i := &inputTextWidget{
 		label: label,
 		text:  text,
 	}
+	i.inputTextFunc = func() bool {
+		return imgui.InputTextV(i.label, i.text, i.flags, i.cb)
+	}
+	return i
 }

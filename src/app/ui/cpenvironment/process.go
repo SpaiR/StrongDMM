@@ -30,7 +30,7 @@ func (e *Environment) showControls() {
 	imguiext.SetItemHoveredTooltip("Collapse All")
 	imgui.SameLine()
 	w.InputTextWithHint("##filter", "Filter", &e.filter).
-		ClearBtn().
+		ButtonClear().
 		Width(-1).
 		OnChange(e.doFilter).
 		Build()

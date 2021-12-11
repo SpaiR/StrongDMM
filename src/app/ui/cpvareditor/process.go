@@ -81,8 +81,8 @@ func (v *VarEditor) showPrefabModeButton() {
 
 func (v *VarEditor) showControls() {
 	w.InputTextWithHint("##filter_var_name", v.filterVarNameHint(), &v.filterVarName).
+		ButtonClear().
 		Width(-1).
-		ClearBtn().
 		Build()
 
 	imgui.Checkbox("Modified", &v.showModified)
@@ -91,8 +91,8 @@ func (v *VarEditor) showControls() {
 
 	if v.showByType {
 		w.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName).
+			ButtonClear().
 			Width(-1).
-			ClearBtn().
 			Build()
 	}
 }
