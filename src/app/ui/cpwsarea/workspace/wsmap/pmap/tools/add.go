@@ -29,6 +29,12 @@ func newAdd(editor editor) *tAdd {
 	}
 }
 
+func (t *tAdd) process() {
+	for coord := range t.editedTiles {
+		t.editor.MarkEditedTile(coord)
+	}
+}
+
 func (t *tAdd) onStart(coord util.Point) {
 	t.onMove(coord)
 }
@@ -41,14 +47,12 @@ func (t *tAdd) onMove(coord util.Point) {
 		t.basicPrefabAdd(tile, prefab)
 
 		t.editor.UpdateCanvasByCoord(coord)
-		t.editor.MarkEditedTile(coord)
 	}
 }
 
 func (t *tAdd) onStop(util.Point) {
 	if len(t.editedTiles) != 0 {
 		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
-		t.editor.ClearEditedTiles()
 		go t.editor.CommitChanges("Add Atoms")
 	}
 }

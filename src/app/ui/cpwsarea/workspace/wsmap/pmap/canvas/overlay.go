@@ -43,7 +43,7 @@ func (o *Overlay) Areas() []render.OverlayArea {
 }
 
 func (o *Overlay) FlushAreas() {
-	o.areas = nil
+	o.areas = o.areas[:0]
 }
 
 type HighlightUnit struct {

@@ -31,6 +31,12 @@ func newFill(editor editor) *tFill {
 	}
 }
 
+func (t *tFill) process() {
+	if t.active() {
+		t.editor.MarkEditedArea(t.fillArea)
+	}
+}
+
 func (t *tFill) onStart(coord util.Point) {
 	if _, ok := t.editor.SelectedPrefab(); ok {
 		t.start = coord
@@ -39,7 +45,7 @@ func (t *tFill) onStart(coord util.Point) {
 }
 
 func (t *tFill) onMove(coord util.Point) {
-	if t.start.Equals(0, 0, 0) {
+	if !t.active() {
 		return
 	}
 
@@ -47,13 +53,10 @@ func (t *tFill) onMove(coord util.Point) {
 	t.fillArea.Y1 = float32(math.Min(float64(t.start.Y), float64(coord.Y)))
 	t.fillArea.X2 = float32(math.Max(float64(t.start.X), float64(coord.X)))
 	t.fillArea.Y2 = float32(math.Max(float64(t.start.Y), float64(coord.Y)))
-
-	t.editor.ClearEditedTiles()
-	t.editor.MarkEditedArea(t.fillArea)
 }
 
 func (t *tFill) onStop(util.Point) {
-	if t.start.Equals(0, 0, 0) {
+	if !t.active() {
 		return
 	}
 
@@ -72,6 +75,8 @@ func (t *tFill) onStop(util.Point) {
 
 	t.start = util.Point{}
 	t.fillArea = util.Bounds{}
+}
 
-	t.editor.ClearEditedTiles()
+func (t *tFill) active() bool {
+	return !t.start.Equals(0, 0, 0)
 }

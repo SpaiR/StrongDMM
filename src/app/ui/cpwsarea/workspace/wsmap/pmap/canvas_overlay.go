@@ -46,7 +46,6 @@ type flickInstance struct {
 
 func (p *PaneMap) processCanvasOverlay() {
 	p.processCanvasOverlayTools()
-	p.processCanvasOverlayAreas()
 	p.processCanvasOverlayFlick()
 }
 
@@ -87,16 +86,6 @@ func (p *PaneMap) processCanvasOverlayTools() {
 	}
 	if !p.canvasState.HoverOutOfBounds() {
 		p.pushAreaHover(p.canvasState.HoveredTileBounds(), colTileFill, colTileBorder)
-	}
-}
-
-func (p *PaneMap) processCanvasOverlayAreas() {
-	for _, a := range p.editor.editedAreas {
-		p.pushAreaHover(a, oColEmpty, oColEditTileBorder)
-	}
-
-	for _, a := range p.editor.deletedAreas {
-		p.pushAreaHover(a, oColEmpty, oColDeletedTileBorder)
 	}
 }
 

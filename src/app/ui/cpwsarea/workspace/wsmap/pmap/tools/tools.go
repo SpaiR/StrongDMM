@@ -31,10 +31,7 @@ type editor interface {
 
 	MarkEditedTile(util.Point)
 	MarkEditedArea(util.Bounds)
-	ClearEditedTiles()
-
 	MarkDeletedTile(util.Point)
-	ClearDeletedTiles()
 
 	SelectInstance(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)
@@ -98,6 +95,7 @@ func (t *Tools) Process(altBehaviour bool) {
 		t.startedTool.onStop(t.oldCoord)
 	}
 
+	t.Selected().process()
 	t.Selected().setAltBehaviour(altBehaviour)
 	t.processSelectedToolStart()
 	t.processSelectedToolsStop()

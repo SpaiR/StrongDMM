@@ -14,6 +14,8 @@ type Tool interface {
 	AltBehaviour() bool
 	setAltBehaviour(bool)
 
+	// Goes every app cycle to handle stuff like pushing overlays etc.
+	process()
 	// Goes when user clicks on the map.
 	onStart(coord util.Point)
 	// Goes when user clicked and, while holding the mouse button, move the mouse.
@@ -33,6 +35,9 @@ func (t *tool) AltBehaviour() bool {
 
 func (t *tool) setAltBehaviour(altBehaviour bool) {
 	t.altBehaviour = altBehaviour
+}
+
+func (t *tool) process() {
 }
 
 func (t *tool) onStart(util.Point) {

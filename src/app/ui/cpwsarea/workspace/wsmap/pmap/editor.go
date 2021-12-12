@@ -14,9 +14,6 @@ import (
 type Editor struct {
 	pMap *PaneMap
 
-	editedAreas  []util.Bounds
-	deletedAreas []util.Bounds
-
 	flickAreas    []flickArea
 	flickInstance []flickInstance
 }
@@ -198,21 +195,30 @@ func (e *Editor) MarkEditedTile(coord util.Point) {
 }
 
 func (e *Editor) MarkEditedArea(area util.Bounds) {
-	e.editedAreas = append(e.editedAreas, util.Bounds{
+	e.pMap.pushAreaHover(util.Bounds{
 		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
 		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
 		X2: (area.X2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
 		Y2: (area.Y2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
-	})
+	}, oColEmpty, oColEditTileBorder)
 }
 
 func (e *Editor) MarkDeletedTile(coord util.Point) {
-	e.deletedAreas = append(e.deletedAreas, util.Bounds{
-		X1: float32((coord.X - 1) * dmmap.WorldIconSize),
-		Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
-		X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
-		Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+	e.MarkDeletedArea(util.Bounds{
+		X1: float32(coord.X),
+		Y1: float32(coord.Y),
+		X2: float32(coord.X),
+		Y2: float32(coord.Y),
 	})
+}
+
+func (e *Editor) MarkDeletedArea(area util.Bounds) {
+	e.pMap.pushAreaHover(util.Bounds{
+		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
+		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
+		X2: (area.X2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
+		Y2: (area.Y2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
+	}, oColEmpty, oColDeletedTileBorder)
 }
 
 func (e *Editor) MarkFlickTile(coord util.Point) {
@@ -232,14 +238,6 @@ func (e *Editor) MarkFlickInstance(i *dmminstance.Instance) {
 		time:     imgui.Time(),
 		instance: i,
 	})
-}
-
-func (e *Editor) ClearEditedTiles() {
-	e.editedAreas = e.editedAreas[:0]
-}
-
-func (e *Editor) ClearDeletedTiles() {
-	e.deletedAreas = e.deletedAreas[:0]
 }
 
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.

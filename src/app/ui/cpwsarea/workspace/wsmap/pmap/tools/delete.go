@@ -21,6 +21,12 @@ func newDelete(editor editor) *tDelete {
 	}
 }
 
+func (t *tDelete) process() {
+	for coord := range t.editedTiles {
+		t.editor.MarkDeletedTile(coord)
+	}
+}
+
 func (t *tDelete) onStart(coord util.Point) {
 	if t.AltBehaviour() {
 		t.onMove(coord)
@@ -43,7 +49,6 @@ func (t *tDelete) onMove(coord util.Point) {
 func (t *tDelete) onStop(util.Point) {
 	if len(t.editedTiles) != 0 {
 		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
-		t.editor.ClearDeletedTiles()
 		go t.editor.CommitChanges("Delete Tiles")
 	}
 }
