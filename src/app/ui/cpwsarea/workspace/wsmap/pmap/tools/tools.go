@@ -30,8 +30,11 @@ type editor interface {
 	CommitChanges(string)
 
 	MarkEditedTile(util.Point)
+	MarkEditedTileV(coord util.Point, colFill, colBorder util.Color)
 	MarkEditedArea(util.Bounds)
+	MarkEditedAreaV(area util.Bounds, colFill, colBorder util.Color)
 	MarkDeletedTile(util.Point)
+	MarkDeletedTileV(coord util.Point, colFill, colBorder util.Color)
 
 	SelectInstance(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)

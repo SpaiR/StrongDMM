@@ -23,7 +23,11 @@ func newDelete(editor editor) *tDelete {
 
 func (t *tDelete) process() {
 	for coord := range t.editedTiles {
-		t.editor.MarkDeletedTile(coord)
+		if t.AltBehaviour() {
+			t.editor.MarkDeletedTileV(coord, util.Color{}, overlayColorGold)
+		} else {
+			t.editor.MarkDeletedTile(coord)
+		}
 	}
 }
 

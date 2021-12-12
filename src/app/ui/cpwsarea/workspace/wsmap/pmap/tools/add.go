@@ -31,7 +31,11 @@ func newAdd(editor editor) *tAdd {
 
 func (t *tAdd) process() {
 	for coord := range t.editedTiles {
-		t.editor.MarkEditedTile(coord)
+		if t.AltBehaviour() {
+			t.editor.MarkEditedTileV(coord, util.Color{}, overlayColorGold)
+		} else {
+			t.editor.MarkEditedTile(coord)
+		}
 	}
 }
 

@@ -33,7 +33,11 @@ func newFill(editor editor) *tFill {
 
 func (t *tFill) process() {
 	if t.active() {
-		t.editor.MarkEditedArea(t.fillArea)
+		if t.AltBehaviour() {
+			t.editor.MarkEditedAreaV(t.fillArea, util.Color{}, overlayColorGold)
+		} else {
+			t.editor.MarkEditedArea(t.fillArea)
+		}
 	}
 }
 

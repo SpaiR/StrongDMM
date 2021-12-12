@@ -4,7 +4,12 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/imguiext/style"
 	"sdmm/util"
+)
+
+var (
+	overlayColorGold = util.MakeColorFromVec4(style.ColorGold)
 )
 
 // Tool is a basic interface for tools in the panel.
