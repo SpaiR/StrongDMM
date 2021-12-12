@@ -78,7 +78,8 @@ func (v *VarEditor) Sync() {
 	if v.prefab == nil {
 		return
 	}
-	if v.instance != nil && !v.app.CurrentEditor().Dmm().IsInstanceExist(v.instance.Id()) {
+	editor := v.app.CurrentEditor()
+	if editor == nil || (v.instance != nil && !editor.Dmm().IsInstanceExist(v.instance.Id())) {
 		v.instance = nil
 		v.sessionEditMode = emPrefab
 	}

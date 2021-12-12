@@ -128,9 +128,7 @@ func (a *app) OnWorkspaceSwitched() {
 		a.layout.Search.Free()
 	}
 
-	if a.HasActiveMap() {
-		a.SyncVarEditor()
-	}
+	a.SyncVarEditor()
 }
 
 // CommandStorage returns command.Storage for the application.
@@ -155,7 +153,6 @@ func (a *app) CurrentEditor() *pmap.Editor {
 	if wsMap, ok := a.activeWsMap(); ok {
 		return wsMap.Map().Editor()
 	}
-	log.Panic("[app] requesting for the editor without having one!")
 	return nil
 }
 
