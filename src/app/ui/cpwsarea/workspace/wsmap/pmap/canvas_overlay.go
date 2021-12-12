@@ -61,6 +61,8 @@ func (p *PaneMap) processCanvasOverlayTools() {
 		} else {
 			colTileBorder = oColToolAddAltTileBorder
 		}
+	case tools.TNFill:
+		colTileFill = oColToolAddTileFill
 	case tools.TNSelect:
 		colInstance = oColToolSelectInstance
 	case tools.TNDelete:

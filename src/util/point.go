@@ -7,6 +7,10 @@ type Point struct {
 	X, Y, Z int
 }
 
+func (p Point) Equals(x, y, z int) bool {
+	return p.X == x && p.Y == y && p.Z == z
+}
+
 func (p Point) String() string {
 	return fmt.Sprintf("X:%d, Y:%d, Z:%d", p.X, p.Y, p.Z)
 }

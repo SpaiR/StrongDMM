@@ -33,4 +33,6 @@ const (
 	FaFilter        = "\uf0b0"
 	FaTimes         = "\uf00d"
 	FaCog           = "\uf013"
+	FaBorderAll     = "\uf84c"
+	FaBorderStyle   = "\uf853"
 )

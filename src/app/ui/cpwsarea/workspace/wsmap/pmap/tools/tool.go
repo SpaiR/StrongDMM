@@ -1,6 +1,9 @@
 package tools
 
 import (
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/util"
 )
 
@@ -39,4 +42,22 @@ func (t *tool) onMove(util.Point) {
 }
 
 func (t *tool) onStop(util.Point) {
+}
+
+// A basic behaviour add.
+// Adds object above and tile with a replacement.
+// Mirrors that behaviour in the alt mode.
+func (t *tool) basicPrefabAdd(tile *dmmap.Tile, prefab *dmmprefab.Prefab) {
+	if !t.altBehaviour {
+		if dm.IsPath(prefab.Path(), "/area") {
+			tile.InstancesRemoveByPath("/area")
+		} else if dm.IsPath(prefab.Path(), "/turf") {
+			tile.InstancesRemoveByPath("/turf")
+		}
+	} else if dm.IsPath(prefab.Path(), "/obj") {
+		tile.InstancesRemoveByPath("/obj")
+	}
+
+	tile.InstancesAdd(prefab)
+	tile.InstancesRegenerate()
 }

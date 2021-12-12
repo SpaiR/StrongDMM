@@ -189,11 +189,20 @@ func (e *Editor) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
 }
 
 func (e *Editor) MarkEditedTile(coord util.Point) {
+	e.MarkEditedArea(util.Bounds{
+		X1: float32(coord.X),
+		Y1: float32(coord.Y),
+		X2: float32(coord.X),
+		Y2: float32(coord.Y),
+	})
+}
+
+func (e *Editor) MarkEditedArea(area util.Bounds) {
 	e.editedAreas = append(e.editedAreas, util.Bounds{
-		X1: float32((coord.X - 1) * dmmap.WorldIconSize),
-		Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
-		X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
-		Y2: float32((coord.Y-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
+		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
+		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
+		X2: (area.X2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
+		Y2: (area.Y2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
 	})
 }
 
@@ -226,11 +235,11 @@ func (e *Editor) MarkFlickInstance(i *dmminstance.Instance) {
 }
 
 func (e *Editor) ClearEditedTiles() {
-	e.editedAreas = nil
+	e.editedAreas = e.editedAreas[:0]
 }
 
 func (e *Editor) ClearDeletedTiles() {
-	e.deletedAreas = nil
+	e.deletedAreas = e.deletedAreas[:0]
 }
 
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.

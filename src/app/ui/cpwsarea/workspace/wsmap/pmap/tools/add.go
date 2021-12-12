@@ -1,7 +1,6 @@
 package tools
 
 import (
-	"sdmm/dmapi/dm"
 	"sdmm/util"
 )
 
@@ -9,8 +8,8 @@ import (
 // During mouse moving when the tool is active a selected prefab will be added on every tile under the mouse.
 // You can't add the same prefab twice on the same tile during the one OnStart -> OnStop cycle.
 //
-// Default: obj placed on top, area and turfs replaced.
-// Alternative: obj replaced, area and turfs placed on top.
+// Default: obj placed on top, area and turfs are replaced.
+// Alternative: obj replaced, area and turfs are placed on top.
 type tAdd struct {
 	tool
 
@@ -39,19 +38,7 @@ func (t *tAdd) onMove(coord util.Point) {
 		t.editedTiles[coord] = true // Don't add to the same tile twice
 
 		tile := t.editor.Dmm().GetTile(coord)
-
-		if !t.altBehaviour {
-			if dm.IsPath(prefab.Path(), "/area") {
-				tile.InstancesRemoveByPath("/area")
-			} else if dm.IsPath(prefab.Path(), "/turf") {
-				tile.InstancesRemoveByPath("/turf")
-			}
-		} else if dm.IsPath(prefab.Path(), "/obj") {
-			tile.InstancesRemoveByPath("/obj")
-		}
-
-		tile.InstancesAdd(prefab)
-		tile.InstancesRegenerate()
+		t.basicPrefabAdd(tile, prefab)
 
 		t.editor.UpdateCanvasByCoord(coord)
 		t.editor.MarkEditedTile(coord)

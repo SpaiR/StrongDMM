@@ -20,6 +20,7 @@ const tSeparator = "toolsSeparator"
 var (
 	toolsOrder = []string{
 		tools.TNAdd,
+		tools.TNFill,
 		tSeparator,
 		tools.TNSelect,
 		tools.TNDelete,
@@ -28,7 +29,11 @@ var (
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
 			icon: icon.FaPlus,
-			help: "Add (1)\nClick - Place selected object topmost\nAlt+Click - Place selected object with replace",
+			help: "Add (1)\nClick - Place selected object\nAlt+Click - Place selected object with replace",
+		},
+		tools.TNFill: {
+			icon: icon.FaBorderAll,
+			help: "Fill (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
 		},
 		tools.TNSelect: {
 			icon: icon.FaEyeDropper,
@@ -114,4 +119,8 @@ func (p *PaneMap) processTempToolMode(key, altKey int, modeName string) bool {
 
 func (p *PaneMap) selectAddTool() {
 	tools.SetSelected(tools.TNAdd)
+}
+
+func (p *PaneMap) selectFillTool() {
+	tools.SetSelected(tools.TNFill)
 }

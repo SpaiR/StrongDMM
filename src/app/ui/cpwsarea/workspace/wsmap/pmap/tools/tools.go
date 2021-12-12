@@ -9,6 +9,7 @@ import (
 
 const (
 	TNAdd    = "Add"
+	TNFill   = "Fill"
 	TNSelect = "Select"
 	TNDelete = "Delete"
 )
@@ -24,15 +25,20 @@ type canvasState interface {
 
 type editor interface {
 	Dmm() *dmmap.Dmm
-	UpdateCanvasByCoord(coord util.Point)
+	UpdateCanvasByCoord(util.Point)
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
 	CommitChanges(string)
-	MarkEditedTile(coord util.Point)
+
+	MarkEditedTile(util.Point)
+	MarkEditedArea(util.Bounds)
 	ClearEditedTiles()
-	MarkDeletedTile(coord util.Point)
+
+	MarkDeletedTile(util.Point)
 	ClearDeletedTiles()
+
 	SelectInstance(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)
+
 	DeleteHoveredTile(commit bool)
 	HoveredInstance() *dmminstance.Instance
 }
@@ -78,6 +84,7 @@ func (t *Tools) Tools() map[string]Tool {
 func New(editor editor) *Tools {
 	tools := map[string]Tool{
 		TNAdd:    newAdd(editor),
+		TNFill:   newFill(editor),
 		TNSelect: newSelect(editor),
 		TNDelete: newDelete(editor),
 	}
