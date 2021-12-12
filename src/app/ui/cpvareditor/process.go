@@ -3,6 +3,7 @@ package cpvareditor
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
@@ -10,6 +11,7 @@ import (
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+	"sdmm/util/slice"
 )
 
 func (v *VarEditor) Process() {
@@ -81,13 +83,17 @@ func (v *VarEditor) showPrefabModeButton() {
 }
 
 func (v *VarEditor) showControls() {
-	imgui.Button(icon.FaFilter)
+	imgui.Button(icon.FaCog)
 	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {
-		if imgui.MenuItemV("Show modified only", "Ctrl+1", v.showModified, true) {
+		cfg := v.config()
+		if imgui.MenuItemV("Show modified only", "Ctrl+1", cfg.ShowModified, true) {
 			v.doToggleShowModified()
 		}
-		if imgui.MenuItemV("Show with types", "Ctrl+2", v.showByType, true) {
+		if imgui.MenuItemV("Show types", "Ctrl+2", cfg.ShowByType, true) {
 			v.doToggleShowByType()
+		}
+		if imgui.MenuItemV("Show pins", "Ctrl+3", cfg.ShowPins, true) {
+			v.doToggleShowPins()
 		}
 		imgui.EndPopup()
 	}
@@ -99,7 +105,7 @@ func (v *VarEditor) showControls() {
 		Width(-1).
 		Build()
 
-	if v.showByType {
+	if v.config().ShowByType {
 		w.InputTextWithHint("##filter_type_name", "Filter Type", &v.filterTypeName).
 			ButtonClear().
 			Width(-1).
@@ -108,7 +114,7 @@ func (v *VarEditor) showControls() {
 }
 
 func (v *VarEditor) filterVarNameHint() string {
-	if v.showByType {
+	if v.config().ShowByType {
 		return "Filter Name"
 	}
 	return "Filter"
@@ -120,16 +126,11 @@ const (
 )
 
 func (v *VarEditor) showVariables() {
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{})
-	imgui.PushStyleVarVec2(imgui.StyleVarCellPadding, imgui.Vec2{Y: imgui.CurrentStyle().CellPadding().Y})
-
-	if v.showByType {
+	if v.config().ShowByType {
 		v.showVariablesByType()
 	} else {
 		v.showAllVariables()
 	}
-
-	imgui.PopStyleVarV(2)
 }
 
 func (v *VarEditor) showVariablesByType() {
@@ -152,6 +153,18 @@ func (v *VarEditor) showVariablesByType() {
 }
 
 func (v *VarEditor) showAllVariables() {
+	cfg := v.config()
+
+	if len(cfg.PinnedVarNames) != 0 {
+		imgui.TextColored(style.ColorGold, "Pinned")
+		if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
+			v.showVariablesNames(cfg.PinnedVarNames)
+			imgui.EndTable()
+		}
+		imgui.NewLine()
+		imgui.TextDisabled("Other")
+	}
+
 	if imgui.BeginTableV("variables", 2, varsTableFlags, imgui.Vec2{}, 0) {
 		v.showVariablesNames(v.variablesNames)
 		imgui.EndTable()
@@ -170,9 +183,34 @@ func (v *VarEditor) showVariable(varName string) {
 	}
 
 	imgui.TableNextColumn()
+	if v.config().ShowPins {
+		v.showVarPin(varName)
+		imgui.SameLine()
+	}
 	v.showVarName(varName)
 	imgui.TableNextColumn()
 	v.showVarInput(varName)
+}
+
+func (v *VarEditor) showVarPin(varName string) {
+	cfg := v.config()
+	pinned := slice.StrContains(cfg.PinnedVarNames, varName)
+	if imgui.RadioButton("##var_pin_"+varName, pinned) {
+		if pinned {
+			cfg.PinnedVarNames = slice.StrRemove(cfg.PinnedVarNames, varName)
+			v.variablesNames = append(v.variablesNames, varName)
+			log.Println("[cpvareditor] variable unpinned:", varName)
+		} else {
+			cfg.PinnedVarNames = append(cfg.PinnedVarNames, varName)
+			v.variablesNames = slice.StrRemove(v.variablesNames, varName)
+			log.Println("[cpvareditor] variable pinned:", varName)
+		}
+
+		sort.Strings(cfg.PinnedVarNames)
+		sort.Strings(v.variablesNames)
+
+		v.app.ConfigSaveV(cfg)
+	}
 }
 
 func (v *VarEditor) showVarName(varName string) {
@@ -222,7 +260,7 @@ func (v *VarEditor) currentVars() *dmvars.Variables {
 
 func (v *VarEditor) isFilteredVariable(varName string) bool {
 	// Show modified only
-	if v.showModified && v.isCurrentVarInitial(varName) {
+	if v.config().ShowModified && v.isCurrentVarInitial(varName) {
 		return true
 	}
 	// Show filtered by name only
@@ -233,5 +271,5 @@ func (v *VarEditor) isFilteredVariable(varName string) bool {
 }
 
 func (v *VarEditor) isFilteredPath(path string) bool {
-	return v.showByType && len(v.filterTypeName) > 0 && !strings.Contains(path, v.filterTypeName)
+	return v.config().ShowByType && len(v.filterTypeName) > 0 && !strings.Contains(path, v.filterTypeName)
 }

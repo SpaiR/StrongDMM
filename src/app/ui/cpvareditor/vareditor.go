@@ -3,6 +3,7 @@ package cpvareditor
 import (
 	"log"
 
+	"sdmm/app/config"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmenv"
@@ -10,12 +11,17 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmvars"
+	"sdmm/util/slice"
 )
 
 type App interface {
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
 	CurrentEditor() *pmap.Editor
 	LoadedEnvironment() *dmenv.Dme
+
+	ConfigRegister(config.Config)
+	ConfigFind(name string) config.Config
+	ConfigSaveV(config.Config)
 }
 
 type editMode int
@@ -53,14 +59,12 @@ type VarEditor struct {
 
 	filterVarName  string
 	filterTypeName string
-
-	showModified bool
-	showByType   bool
 }
 
 func (v *VarEditor) Init(app App) {
 	v.app = app
 	v.addShortcuts()
+	v.loadConfig()
 }
 
 func (v *VarEditor) Free() {
@@ -99,8 +103,14 @@ func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 	v.variablesNames = collectVariablesNames(prefab.Vars())
 	v.variablesPaths = collectVariablesPaths(v.app.LoadedEnvironment().Objects[v.prefab.Path()])
 	v.variablesNamesByPaths = collectVariablesNamesByPaths(v.app.LoadedEnvironment(), v.variablesPaths)
-	log.Printf("[cpvareditor] setup finished: [%s], variablesNames: [%d], variablesPaths: [%d]",
-		prefab.Path(), len(v.variablesNames), len(v.variablesPaths))
+
+	// Clear pinned variables from the common list, since they are showed separately.
+	for _, pinnedVarName := range v.config().PinnedVarNames {
+		v.variablesNames = slice.StrRemove(v.variablesNames, pinnedVarName)
+	}
+
+	log.Printf("[cpvareditor] setup finished: [%s], variablesNames: [%d], variablesPaths: [%d], pinnedVarNames: [%d]",
+		prefab.Path(), len(v.variablesNames), len(v.variablesPaths), len(v.config().PinnedVarNames))
 }
 
 func (v *VarEditor) setInstanceVariable(varName, varValue string) {
@@ -179,11 +189,22 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 }
 
 func (v *VarEditor) doToggleShowModified() {
-	v.showModified = !v.showModified
-	log.Println("[cpvareditor] toggle 'showModified':", v.showModified)
+	cfg := v.config()
+	cfg.ShowModified = !cfg.ShowModified
+	v.app.ConfigSaveV(cfg)
+	log.Println("[cpvareditor] toggle 'showModified':", cfg.ShowModified)
 }
 
 func (v *VarEditor) doToggleShowByType() {
-	v.showByType = !v.showByType
-	log.Println("[cpvareditor] toggle 'showByType':", v.showByType)
+	cfg := v.config()
+	cfg.ShowByType = !cfg.ShowByType
+	v.app.ConfigSaveV(cfg)
+	log.Println("[cpvareditor] toggle 'showByType':", cfg.ShowByType)
+}
+
+func (v *VarEditor) doToggleShowPins() {
+	cfg := v.config()
+	cfg.ShowPins = !cfg.ShowPins
+	v.app.ConfigSaveV(cfg)
+	log.Println("[cpvareditor] toggle 'showPins':", cfg.ShowPins)
 }

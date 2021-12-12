@@ -32,4 +32,5 @@ const (
 	FaFile          = "\uf15b"
 	FaFilter        = "\uf0b0"
 	FaTimes         = "\uf00d"
+	FaCog           = "\uf013"
 )

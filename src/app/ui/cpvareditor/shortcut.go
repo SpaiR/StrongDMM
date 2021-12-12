@@ -22,4 +22,12 @@ func (v *VarEditor) addShortcuts() {
 		SecondKeyAlt: glfw.KeyKP2,
 		Action:       v.doToggleShowByType,
 	})
+	v.shortcuts.Add(shortcut.Shortcut{
+		Name:         "cpvareditor#doToggleShowPins",
+		FirstKey:     glfw.KeyLeftControl,
+		FirstKeyAlt:  glfw.KeyRightControl,
+		SecondKey:    glfw.Key3,
+		SecondKeyAlt: glfw.KeyKP3,
+		Action:       v.doToggleShowPins,
+	})
 }
