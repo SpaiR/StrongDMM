@@ -83,6 +83,17 @@ func (v *VarEditor) showPrefabModeButton() {
 }
 
 func (v *VarEditor) showControls() {
+	imgui.BeginDisabledV(v.sessionEditMode == emPrefab)
+	if imgui.Button(icon.FaSearch) {
+		editor := v.app.CurrentEditor()
+		editor.FocusCamera(v.instance)
+		editor.MarkFlickTile(v.instance.Coord())
+		editor.MarkFlickInstance(v.instance)
+	}
+	imgui.EndDisabled()
+
+	imgui.SameLine()
+
 	imgui.Button(icon.FaCog)
 	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {
 		cfg := v.config()
