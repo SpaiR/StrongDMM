@@ -65,7 +65,7 @@ func (p *PaneMap) showToolsPanel() {
 		})
 		if p.tools.Selected() == tool {
 			if tool.AltBehaviour() {
-				btn.Style(style.ButtonRed{})
+				btn.Style(style.ButtonGold{}).TextColor(style.ColorBlack)
 			} else {
 				btn.Style(style.ButtonGreen{})
 			}

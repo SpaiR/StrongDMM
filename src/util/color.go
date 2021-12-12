@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"github.com/mazznoer/csscolorparser"
 )
 
@@ -10,6 +11,10 @@ type Color struct {
 
 func MakeColor(r float32, g float32, b float32, a float32) Color {
 	return Color{r: r, g: g, b: b, a: a}
+}
+
+func MakeColorFromVec4(col imgui.Vec4) Color {
+	return MakeColor(col.X, col.Y, col.Z, col.W)
 }
 
 func (c Color) RGBA() (float32, float32, float32, float32) {

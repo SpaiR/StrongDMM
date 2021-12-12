@@ -5,6 +5,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/imguiext/style"
 	"sdmm/util"
 )
 
@@ -13,13 +14,16 @@ var (
 
 	oColToolAddTileFill      = util.MakeColor(1, 1, 1, 0.25)
 	oColToolAddTileBorder    = util.MakeColor(1, 1, 1, 1)
-	oColToolAddAltTileBorder = util.MakeColor(0, 1, 0, 1)
+	oColToolAddAltTileBorder = util.MakeColorFromVec4(style.ColorGold)
 
-	oColToolSelectInstance = util.MakeColor(0, 1, 0, 1)
+	oColToolFillTileFill    = util.MakeColor(1, 1, 1, 0.25)
+	oColToolFillAltTileFill = util.MakeColorFromVec4(style.ColorGold.Minus(imgui.Vec4{W: 0.75}))
+
+	oColToolPickInstance = util.MakeColor(0, 1, 0, 1)
 
 	oColToolDeleteInstance      = util.MakeColor(1, 0, 0, 1)
 	oColToolDeleteAltTileFill   = util.MakeColor(1, 0, 0, 0.25)
-	oColToolDeleteAltTileBorder = util.MakeColor(1, 0, 0, 1)
+	oColToolDeleteAltTileBorder = util.MakeColorFromVec4(style.ColorGold)
 
 	oColEditTileBorder    = util.MakeColor(0, 1, 0, 1)
 	oColDeletedTileBorder = util.MakeColor(1, 0, 0, 1)
@@ -62,9 +66,13 @@ func (p *PaneMap) processCanvasOverlayTools() {
 			colTileBorder = oColToolAddAltTileBorder
 		}
 	case tools.TNFill:
-		colTileFill = oColToolAddTileFill
+		if !p.tools.Selected().AltBehaviour() {
+			colTileFill = oColToolFillTileFill
+		} else {
+			colTileFill = oColToolFillAltTileFill
+		}
 	case tools.TNPick:
-		colInstance = oColToolSelectInstance
+		colInstance = oColToolPickInstance
 	case tools.TNDelete:
 		if !p.tools.Selected().AltBehaviour() {
 			colInstance = oColToolDeleteInstance

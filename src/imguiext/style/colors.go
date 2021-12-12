@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ColorZero = imgui.Vec4{}
+	ColorZero  = imgui.Vec4{}
+	ColorBlack = imgui.Vec4{X: 0, Y: 0, Z: 0, W: 1}
 
 	ColorGold        = intHsl2col(51, 100, 50)
 	ColorGoldLighter = intHsl2col(51, 100, 60)
