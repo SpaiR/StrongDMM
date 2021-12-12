@@ -4,27 +4,27 @@ import (
 	"sdmm/util"
 )
 
-type tSelect struct {
+type tPick struct {
 	tool
 
 	editor editor
 }
 
-func (tSelect) Name() string {
-	return TNSelect
+func (tPick) Name() string {
+	return TNPick
 }
 
-func newSelect(editor editor) *tSelect {
-	return &tSelect{
+func newPick(editor editor) *tPick {
+	return &tPick{
 		editor: editor,
 	}
 }
 
-func (tSelect) AltBehaviour() bool {
+func (tPick) AltBehaviour() bool {
 	return false
 }
 
-func (t tSelect) onStart(util.Point) {
+func (t tPick) onStart(util.Point) {
 	if hoveredInstance := t.editor.HoveredInstance(); hoveredInstance != nil {
 		t.editor.SelectInstance(hoveredInstance)
 	}

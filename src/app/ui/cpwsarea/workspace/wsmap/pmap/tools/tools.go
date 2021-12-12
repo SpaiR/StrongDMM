@@ -10,7 +10,7 @@ import (
 const (
 	TNAdd    = "Add"
 	TNFill   = "Fill"
-	TNSelect = "Select"
+	TNPick   = "Pick"
 	TNDelete = "Delete"
 )
 
@@ -85,7 +85,7 @@ func New(editor editor) *Tools {
 	tools := map[string]Tool{
 		TNAdd:    newAdd(editor),
 		TNFill:   newFill(editor),
-		TNSelect: newSelect(editor),
+		TNPick:   newPick(editor),
 		TNDelete: newDelete(editor),
 	}
 	return &Tools{

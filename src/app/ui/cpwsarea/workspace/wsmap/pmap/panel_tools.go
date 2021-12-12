@@ -22,7 +22,7 @@ var (
 		tools.TNAdd,
 		tools.TNFill,
 		tSeparator,
-		tools.TNSelect,
+		tools.TNPick,
 		tools.TNDelete,
 	}
 
@@ -35,9 +35,9 @@ var (
 			icon: icon.FaBorderAll,
 			help: "Fill (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
 		},
-		tools.TNSelect: {
+		tools.TNPick: {
 			icon: icon.FaEyeDropper,
-			help: "Select (Hold S)\nClick - Select hovered object",
+			help: "Pick (Hold S)\nClick - Pick hovered object",
 		},
 		tools.TNDelete: {
 			icon: icon.FaEraser,
@@ -82,7 +82,7 @@ func (p *PaneMap) processTempToolsMode() {
 	}
 
 	var inMode bool
-	inMode = inMode || p.processTempToolMode(int(glfw.KeyS), -1, tools.TNSelect)
+	inMode = inMode || p.processTempToolMode(int(glfw.KeyS), -1, tools.TNPick)
 	inMode = inMode || p.processTempToolMode(int(glfw.KeyD), -1, tools.TNDelete)
 
 	if p.tmpIsInTemporalToolMode && !inMode {
