@@ -92,6 +92,7 @@ func (w *Window) setupGlfw() {
 	glfw.WindowHint(glfw.ContextVersionMinor, 3)
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
+	glfw.WindowHint(glfw.Maximized, glfw.True)
 
 	log.Println("[window] glfw initialized")
 	log.Println("[window] using opengl 3.3, core profile")
@@ -113,9 +114,14 @@ func (w *Window) setupGlfw() {
 		log.Fatal("[window] unable to initialize opengl:", err)
 	}
 
-	window.Maximize()
 	window.SetSizeCallback(w.resizeCallback)
-	window.Show()
+
+	// Ensure that the window is fully initialized before showing.
+	RunLater(func() {
+		window.Maximize()
+		window.Show()
+		window.RequestAttention()
+	})
 
 	log.Println("[window] opengl initialized")
 
