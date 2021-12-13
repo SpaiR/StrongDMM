@@ -185,12 +185,9 @@ func (e *Editor) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
 	go e.CommitChanges("Replace Prefab")
 }
 
-func (e *Editor) MarkEditedTile(coord util.Point) {
-	e.MarkEditedTileV(coord, oColEmpty, oColEditTileBorder)
-}
-
-func (e *Editor) MarkEditedTileV(coord util.Point, colFill, colBorder util.Color) {
-	e.MarkEditedAreaV(util.Bounds{
+// PushOverlayTile pushes tile overlay for the next frame.
+func (e *Editor) PushOverlayTile(coord util.Point, colFill, colBorder util.Color) {
+	e.PushOverlayArea(util.Bounds{
 		X1: float32(coord.X),
 		Y1: float32(coord.Y),
 		X2: float32(coord.X),
@@ -198,11 +195,8 @@ func (e *Editor) MarkEditedTileV(coord util.Point, colFill, colBorder util.Color
 	}, colFill, colBorder)
 }
 
-func (e *Editor) MarkEditedArea(area util.Bounds) {
-	e.MarkEditedAreaV(area, oColEmpty, oColEditTileBorder)
-}
-
-func (e *Editor) MarkEditedAreaV(area util.Bounds, colFill, colBorder util.Color) {
+// PushOverlayArea pushes area overlay for the next frame.
+func (e *Editor) PushOverlayArea(area util.Bounds, colFill, colBorder util.Color) {
 	e.pMap.pushAreaHover(util.Bounds{
 		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
 		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
@@ -211,33 +205,10 @@ func (e *Editor) MarkEditedAreaV(area util.Bounds, colFill, colBorder util.Color
 	}, colFill, colBorder)
 }
 
-func (e *Editor) MarkDeletedTile(coord util.Point) {
-	e.MarkDeletedTileV(coord, oColEmpty, oColDeletedTileBorder)
-}
-
-func (e *Editor) MarkDeletedTileV(coord util.Point, colFill, colBorder util.Color) {
-	e.MarkDeletedAreaV(util.Bounds{
-		X1: float32(coord.X),
-		Y1: float32(coord.Y),
-		X2: float32(coord.X),
-		Y2: float32(coord.Y),
-	}, colFill, colBorder)
-}
-
-func (e *Editor) MarkDeletedArea(area util.Bounds) {
-	e.MarkDeletedAreaV(area, oColEmpty, oColDeletedTileBorder)
-}
-
-func (e *Editor) MarkDeletedAreaV(area util.Bounds, colFill, colBorder util.Color) {
-	e.pMap.pushAreaHover(util.Bounds{
-		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
-		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
-		X2: (area.X2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
-		Y2: (area.Y2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
-	}, colFill, colBorder)
-}
-
-func (e *Editor) MarkFlickTile(coord util.Point) {
+// SetOverlayTileFlick sets for the provided tile a flick overlay.
+// Unlike the PushOverlayTile or PushOverlayArea methods, flick overlay is set only once.
+// It will exist until it disappears.
+func (e *Editor) SetOverlayTileFlick(coord util.Point) {
 	e.flickAreas = append(e.flickAreas, flickArea{
 		time: imgui.Time(),
 		area: util.Bounds{
@@ -249,7 +220,10 @@ func (e *Editor) MarkFlickTile(coord util.Point) {
 	})
 }
 
-func (e *Editor) MarkFlickInstance(i *dmminstance.Instance) {
+// SetOverlayInstanceFlick sets for the provided instance a flick overlay.
+// Unlike the PushOverlayTile or PushOverlayArea methods, flick overlay is set only once.
+// It will exist until it disappears.
+func (e *Editor) SetOverlayInstanceFlick(i *dmminstance.Instance) {
 	e.flickInstance = append(e.flickInstance, flickInstance{
 		time:     imgui.Time(),
 		instance: i,

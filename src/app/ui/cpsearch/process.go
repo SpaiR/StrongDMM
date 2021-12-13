@@ -171,8 +171,8 @@ func (s *Search) showJumpButtons() {
 func (s *Search) selectInstance(idx int) {
 	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
-	editor.MarkFlickTile(instance.Coord())
-	editor.MarkFlickInstance(instance)
+	editor.SetOverlayTileFlick(instance.Coord())
+	editor.SetOverlayInstanceFlick(instance)
 	s.app.ShowLayout(lnode.NameVariables, true)
 	s.app.DoEditInstance(instance)
 	s.focusedResultIdx = idx
@@ -187,8 +187,8 @@ func (s *Search) jumpTo(idx int) {
 	editor := s.app.CurrentEditor()
 
 	editor.FocusCamera(instance)
-	editor.MarkFlickTile(instance.Coord())
-	editor.MarkFlickInstance(instance)
+	editor.SetOverlayTileFlick(instance.Coord())
+	editor.SetOverlayInstanceFlick(instance)
 
 	s.focusedResultIdx = idx
 }

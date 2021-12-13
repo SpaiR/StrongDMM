@@ -1,13 +1,16 @@
 package tools
 
-import "sdmm/util"
+import (
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
+	"sdmm/util"
+)
 
 type tDelete struct {
 	tool
 
 	editor editor
 
-	editedTiles map[util.Point]bool
+	deletedTiles map[util.Point]bool
 }
 
 func (tDelete) Name() string {
@@ -16,17 +19,15 @@ func (tDelete) Name() string {
 
 func newDelete(editor editor) *tDelete {
 	return &tDelete{
-		editor:      editor,
-		editedTiles: make(map[util.Point]bool),
+		editor:       editor,
+		deletedTiles: make(map[util.Point]bool),
 	}
 }
 
 func (t *tDelete) process() {
-	for coord := range t.editedTiles {
+	for coord := range t.deletedTiles {
 		if t.AltBehaviour() {
-			t.editor.MarkDeletedTileV(coord, util.Color{}, overlayColorGold)
-		} else {
-			t.editor.MarkDeletedTile(coord)
+			t.editor.PushOverlayTile(coord, overlay.ColorToolDeleteAltTileFill, overlay.ColorToolDeleteAltTileBorder)
 		}
 	}
 }
@@ -40,19 +41,16 @@ func (t *tDelete) onStart(coord util.Point) {
 }
 
 func (t *tDelete) onMove(coord util.Point) {
-	if t.AltBehaviour() && !t.editedTiles[coord] {
-		t.editedTiles[coord] = true // Don't delete to the same tile twice
-
+	if t.AltBehaviour() && !t.deletedTiles[coord] {
+		t.deletedTiles[coord] = true // Don't delete to the same tile twice
 		t.editor.DeleteHoveredTile(false)
-
 		t.editor.UpdateCanvasByCoord(coord)
-		t.editor.MarkDeletedTile(coord)
 	}
 }
 
 func (t *tDelete) onStop(util.Point) {
-	if len(t.editedTiles) != 0 {
-		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
+	if len(t.deletedTiles) != 0 {
+		t.deletedTiles = make(map[util.Point]bool, len(t.deletedTiles))
 		go t.editor.CommitChanges("Delete Tiles")
 	}
 }

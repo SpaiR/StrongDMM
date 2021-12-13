@@ -3,33 +3,10 @@ package pmap
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dmmap/dmminstance"
-	"sdmm/imguiext/style"
 	"sdmm/util"
-)
-
-var (
-	oColEmpty = util.Color{}
-
-	oColToolAddTileFill      = util.MakeColor(1, 1, 1, 0.25)
-	oColToolAddTileBorder    = util.MakeColor(1, 1, 1, 1)
-	oColToolAddAltTileBorder = util.MakeColorFromVec4(style.ColorGold)
-
-	oColToolFillTileFill    = util.MakeColor(1, 1, 1, 0.25)
-	oColToolFillAltTileFill = util.MakeColorFromVec4(style.ColorGold.Minus(imgui.Vec4{W: 0.75}))
-
-	oColToolPickInstance = util.MakeColor(0, 1, 0, 1)
-
-	oColToolDeleteInstance      = util.MakeColor(1, 0, 0, 1)
-	oColToolDeleteAltTileFill   = util.MakeColor(1, 0, 0, 0.25)
-	oColToolDeleteAltTileBorder = util.MakeColorFromVec4(style.ColorGold)
-
-	oColEditTileBorder    = util.MakeColor(0, 1, 0, 1)
-	oColDeletedTileBorder = util.MakeColor(1, 0, 0, 1)
-
-	oColFlickTileFill = util.MakeColor(1, 1, 1, 1)
-	oColFlickInstance = util.MakeColor(0, 1, 0, 1)
 )
 
 const flickDurationSec = .5
@@ -58,30 +35,30 @@ func (p *PaneMap) processCanvasOverlayTools() {
 
 	switch p.tools.Selected().Name() {
 	case tools.TNAdd:
-		colTileFill = oColToolAddTileFill
+		colTileFill = overlay.ColorToolAddTileFill
 		if !p.tools.Selected().AltBehaviour() {
-			colTileBorder = oColToolAddTileBorder
+			colTileBorder = overlay.ColorToolAddTileBorder
 		} else {
-			colTileBorder = oColToolAddAltTileBorder
+			colTileBorder = overlay.ColorToolAddAltTileBorder
 		}
 	case tools.TNFill:
 		if !p.tools.Selected().AltBehaviour() {
-			colTileFill = oColToolFillTileFill
+			colTileFill = overlay.ColorToolFillTileFill
 		} else {
-			colTileFill = oColToolFillAltTileFill
+			colTileFill = overlay.ColorToolFillAltTileFill
 		}
 	case tools.TNPick:
-		colInstance = oColToolPickInstance
+		colInstance = overlay.ColorToolPickInstance
 	case tools.TNDelete:
 		if !p.tools.Selected().AltBehaviour() {
-			colInstance = oColToolDeleteInstance
+			colInstance = overlay.ColorToolDeleteInstance
 		} else {
-			colTileFill = oColToolDeleteAltTileFill
-			colTileBorder = oColToolDeleteAltTileBorder
+			colTileFill = overlay.ColorToolDeleteAltTileFill
+			colTileBorder = overlay.ColorToolDeleteAltTileBorder
 		}
 	}
 
-	if colInstance != oColEmpty {
+	if colInstance != overlay.ColorEmpty {
 		p.pushUnitHighlight(p.canvasState.HoveredInstance(), colInstance)
 	}
 	if !p.canvasState.HoverOutOfBounds() {
@@ -92,10 +69,10 @@ func (p *PaneMap) processCanvasOverlayTools() {
 func (p *PaneMap) processCanvasOverlayFlick() {
 	for idx, a := range p.editor.flickAreas {
 		delta := imgui.Time() - a.time
-		col := flickColor(oColFlickTileFill, delta)
+		col := flickColor(overlay.ColorFlickTileFill, delta)
 
 		if delta < flickDurationSec {
-			p.pushAreaHover(a.area, col, oColEmpty)
+			p.pushAreaHover(a.area, col, overlay.ColorEmpty)
 		} else {
 			p.editor.flickAreas = append(p.editor.flickAreas[:idx], p.editor.flickAreas[idx+1:]...)
 		}
@@ -103,7 +80,7 @@ func (p *PaneMap) processCanvasOverlayFlick() {
 
 	for idx, i := range p.editor.flickInstance {
 		delta := imgui.Time() - i.time
-		col := flickColor(oColFlickInstance, delta)
+		col := flickColor(overlay.ColorFlickInstance, delta)
 
 		if delta < flickDurationSec {
 			p.pushUnitHighlight(i.instance, col)

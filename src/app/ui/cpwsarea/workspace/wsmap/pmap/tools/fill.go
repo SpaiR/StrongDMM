@@ -3,6 +3,7 @@ package tools
 import (
 	"math"
 
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
 	"sdmm/util"
 )
 
@@ -34,9 +35,9 @@ func newFill(editor editor) *tFill {
 func (t *tFill) process() {
 	if t.active() {
 		if t.AltBehaviour() {
-			t.editor.MarkEditedAreaV(t.fillArea, util.Color{}, overlayColorGold)
+			t.editor.PushOverlayArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
 		} else {
-			t.editor.MarkEditedArea(t.fillArea)
+			t.editor.PushOverlayArea(t.fillArea, overlay.ColorToolFillTileFill, overlay.ColorToolFillTileBorder)
 		}
 	}
 }

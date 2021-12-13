@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
 	"sdmm/util"
 )
 
@@ -32,9 +33,9 @@ func newAdd(editor editor) *tAdd {
 func (t *tAdd) process() {
 	for coord := range t.editedTiles {
 		if t.AltBehaviour() {
-			t.editor.MarkEditedTileV(coord, util.Color{}, overlayColorGold)
+			t.editor.PushOverlayTile(coord, overlay.ColorToolAddAltTileFill, overlay.ColorToolAddAltTileBorder)
 		} else {
-			t.editor.MarkEditedTile(coord)
+			t.editor.PushOverlayTile(coord, overlay.ColorToolAddTileFill, overlay.ColorToolAddTileBorder)
 		}
 	}
 }
