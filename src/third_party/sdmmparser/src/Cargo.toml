@@ -16,7 +16,7 @@ png = "0.17.2"
 
 [dependencies.dreammaker]
 git = "https://github.com/SpaiR/SpacemanDMM"
-rev = "7498fd08c822d8a52d22baf9db46df3c16b80691"
+rev = "0ec49aa113d2107161e273fc8fd66322761d084c"
 package = "dreammaker"
 
 [profile.release]
