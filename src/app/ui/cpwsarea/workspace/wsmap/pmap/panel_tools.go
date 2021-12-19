@@ -21,6 +21,7 @@ var (
 	toolsOrder = []string{
 		tools.TNAdd,
 		tools.TNFill,
+		tools.TNSelect,
 		tSeparator,
 		tools.TNPick,
 		tools.TNDelete,
@@ -34,6 +35,10 @@ var (
 		tools.TNFill: {
 			icon: icon.FaBorderAll,
 			help: "Fill (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
+		},
+		tools.TNSelect: {
+			icon: icon.FaBorderStyle,
+			help: "Select (3)\nClick&Drag - Select the area / Move selection with visible objects inside",
 		},
 		tools.TNPick: {
 			icon: icon.FaEyeDropper,
@@ -123,4 +128,8 @@ func (p *PaneMap) selectAddTool() {
 
 func (p *PaneMap) selectFillTool() {
 	tools.SetSelected(tools.TNFill)
+}
+
+func (p *PaneMap) selectSelectTool() {
+	tools.SetSelected(tools.TNSelect)
 }

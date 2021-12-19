@@ -4,18 +4,14 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
-	"sdmm/imguiext/style"
 	"sdmm/util"
-)
-
-var (
-	overlayColorGold = util.MakeColorFromVec4(style.ColorGold)
 )
 
 // Tool is a basic interface for tools in the panel.
 type Tool interface {
 	Name() string
 
+	Stale() bool
 	AltBehaviour() bool
 	setAltBehaviour(bool)
 
@@ -34,6 +30,10 @@ type tool struct {
 	altBehaviour bool
 }
 
+func (t *tool) Stale() bool {
+	return true
+}
+
 func (t *tool) AltBehaviour() bool {
 	return t.altBehaviour
 }
@@ -42,16 +42,16 @@ func (t *tool) setAltBehaviour(altBehaviour bool) {
 	t.altBehaviour = altBehaviour
 }
 
-func (t *tool) process() {
+func (tool) process() {
 }
 
-func (t *tool) onStart(util.Point) {
+func (tool) onStart(util.Point) {
 }
 
-func (t *tool) onMove(util.Point) {
+func (tool) onMove(util.Point) {
 }
 
-func (t *tool) onStop(util.Point) {
+func (tool) onStop(util.Point) {
 }
 
 // A basic behaviour add.

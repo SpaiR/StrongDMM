@@ -18,6 +18,12 @@ func (p *PaneMap) addShortcuts() {
 		FirstKeyAlt: glfw.KeyKP2,
 		Action:      p.selectFillTool,
 	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:        "pmap#selectSelectTool",
+		FirstKey:    glfw.Key3,
+		FirstKeyAlt: glfw.KeyKP3,
+		Action:      p.selectSelectTool,
+	})
 
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:         "pmap#doToggleArea",

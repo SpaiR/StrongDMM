@@ -6,6 +6,7 @@ import (
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
@@ -70,15 +71,6 @@ func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top boo
 				sortedInstances[nextIdx] = instance
 
 				tile.Set(sortedInstances)
-
-				var commitMsg string
-				if top {
-					commitMsg = "Move to Top"
-				} else {
-					commitMsg = "Move to Bottom"
-				}
-
-				go e.CommitChanges(commitMsg)
 			}
 
 			return
@@ -91,7 +83,6 @@ func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
 	tile := e.pMap.dmm.GetTile(i.Coord())
 	tile.InstancesRemoveByInstance(i)
 	tile.InstancesRegenerate()
-	go e.CommitChanges("Delete Instance")
 }
 
 // DeleteInstancesByPrefab deletes from the map all instances from the provided prefab.
@@ -102,7 +93,6 @@ func (e *Editor) DeleteInstancesByPrefab(prefab *dmmprefab.Prefab) {
 		tile.InstancesRemoveByInstance(instance)
 		tile.InstancesRegenerate()
 	}
-	go e.CommitChanges("Delete Instances")
 }
 
 // ReplaceInstance replaces the provided instance with the provided prefab.
@@ -114,7 +104,6 @@ func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Pref
 		if instance.Id() == i.Id() {
 			if dm.IsPathBaseSame(instance.Prefab().Path(), prefab.Path()) {
 				instance.SetPrefab(prefab)
-				go e.CommitChanges("Replace Instance")
 			}
 			return
 		}
@@ -124,12 +113,20 @@ func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Pref
 // ResetInstance resets the provided instance to the initial state (no custom variables).
 func (e *Editor) ResetInstance(i *dmminstance.Instance) {
 	i.SetPrefab(dmmap.PrefabStorage.Initial(i.Prefab().Path()))
-	go e.CommitChanges("Reset Instance")
 }
 
-// UpdateCanvasByCoord updates the canvas for the provided point.
-func (e *Editor) UpdateCanvasByCoord(coord util.Point) {
-	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, e.pMap.activeLevel, []util.Point{coord})
+// UpdateCanvasByCoords updates the canvas for the provided coords.
+func (e *Editor) UpdateCanvasByCoords(coords []util.Point) {
+	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, e.pMap.activeLevel, coords)
+}
+
+// UpdateCanvasByTiles updates the canvas for the provided tiles.
+func (e *Editor) UpdateCanvasByTiles(tiles []dmmap.Tile) {
+	coords := make([]util.Point, 0, len(tiles))
+	for _, tile := range tiles {
+		coords = append(coords, tile.Coord)
+	}
+	e.UpdateCanvasByCoords(coords)
 }
 
 // SelectedPrefab returns a currently selected prefab.
@@ -138,39 +135,61 @@ func (e *Editor) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 }
 
 // CopyHoveredTile copies currently hovered tiles.
+// Respects a dm.PathsFilter state.
 func (e *Editor) CopyHoveredTile() {
 	tile := []util.Point{e.pMap.canvasState.LastHoveredTile()}
 	e.pMap.app.Clipboard().Copy(e.pMap.app.PathsFilter(), e.pMap.dmm, tile)
 }
 
 // PasteHoveredTile does a paste to the currently hovered tile.
+// Respects a dm.PathsFilter state.
 func (e *Editor) PasteHoveredTile() {
 	e.pMap.app.Clipboard().Paste(e.pMap.dmm, e.pMap.canvasState.LastHoveredTile())
-	go e.CommitChanges("Paste")
 }
 
 // CutHoveredTile does a cut (copy+delete) of the currently hovered tile.
+// Respects a dm.PathsFilter state.
 func (e *Editor) CutHoveredTile() {
 	e.CopyHoveredTile()
-	e.DeleteHoveredTile(false)
-	go e.CommitChanges("Cut Tile")
+	e.DeleteHoveredTile()
 }
 
 // DeleteHoveredTile deletes the last hovered by the mouse tile.
-func (e *Editor) DeleteHoveredTile(commit bool) {
-	tile := e.pMap.dmm.GetTile(e.pMap.canvasState.LastHoveredTile())
+// Respects a dm.PathsFilter state.
+func (e *Editor) DeleteHoveredTile() {
+	e.DeleteTile(e.pMap.canvasState.LastHoveredTile())
+}
 
+// DeleteTile deletes content of the tile with the provided coord.
+// Respects a dm.PathsFilter state.
+func (e *Editor) DeleteTile(coord util.Point) {
+	tile := e.pMap.dmm.GetTile(coord)
+	e.deleteTileContent(tile)
+	tile.InstancesRegenerate()
+}
+
+func (e *Editor) deleteTileContent(tile *dmmap.Tile) {
 	for _, instance := range tile.Instances() {
 		if e.pMap.app.PathsFilter().IsVisiblePath(instance.Prefab().Path()) {
 			tile.InstancesRemoveByPath(instance.Prefab().Path())
 		}
 	}
+}
+
+// ReplaceTile replaces content of the tile with the provided coord with provided prefabs.
+// Respects a dm.PathsFilter state.
+func (e *Editor) ReplaceTile(coord util.Point, prefabs dmmdata.Prefabs) {
+	tile := e.pMap.dmm.GetTile(coord)
+
+	e.deleteTileContent(tile)
+
+	for _, prefab := range prefabs {
+		if e.pMap.app.PathsFilter().IsVisiblePath(prefab.Path()) {
+			tile.InstancesAdd(prefab)
+		}
+	}
 
 	tile.InstancesRegenerate()
-
-	if commit {
-		go e.CommitChanges("Delete Tile")
-	}
 }
 
 // ReplacePrefab replaces all old prefabs on the map with the new one. Commits map changes.
@@ -182,7 +201,6 @@ func (e *Editor) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
 			}
 		}
 	}
-	go e.CommitChanges("Replace Prefab")
 }
 
 // PushOverlayTile pushes tile overlay for the next frame.
@@ -232,6 +250,11 @@ func (e *Editor) SetOverlayInstanceFlick(i *dmminstance.Instance) {
 
 // CommitChanges triggers a snapshot to commit changes and create a patch between two map states.
 func (e *Editor) CommitChanges(commitMsg string) {
+	go e.commitChanges(commitMsg)
+}
+
+// Used as a wrapper to do a stuff inside the goroutine.
+func (e *Editor) commitChanges(commitMsg string) {
 	stateId, tilesToUpdate := e.pMap.snapshot.Commit()
 
 	// Do not push command if there is no tiles to update.
@@ -248,13 +271,13 @@ func (e *Editor) CommitChanges(commitMsg string) {
 	e.pMap.app.CommandStorage().Push(command.Make(commitMsg, func() {
 		e.pMap.snapshot.GoTo(stateId - 1)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
-		e.pMap.dmm.SyncPrefabs()
+		e.pMap.dmm.PersistPrefabs()
 		e.pMap.app.SyncPrefabs()
 		e.pMap.app.SyncVarEditor()
 	}, func() {
 		e.pMap.snapshot.GoTo(stateId)
 		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
-		e.pMap.dmm.SyncPrefabs()
+		e.pMap.dmm.PersistPrefabs()
 		e.pMap.app.SyncPrefabs()
 		e.pMap.app.SyncVarEditor()
 	}))
@@ -272,6 +295,7 @@ func (e *Editor) FindInstancesByPrefabId(prefabId uint64) (result []*dmminstance
 	return result
 }
 
+// FocusCamera moves the camera in a way, so it will be centered on the instance.
 func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 	relPos := i.Coord()
 	absPos := util.Point{X: (relPos.X - 1) * -dmmap.WorldIconSize, Y: (relPos.Y - 1) * -dmmap.WorldIconSize, Z: relPos.Z}

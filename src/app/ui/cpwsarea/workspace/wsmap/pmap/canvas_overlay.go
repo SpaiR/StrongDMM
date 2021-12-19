@@ -27,6 +27,10 @@ func (p *PaneMap) processCanvasOverlay() {
 }
 
 func (p *PaneMap) processCanvasOverlayTools() {
+	if !p.tools.Selected().Stale() {
+		return
+	}
+
 	var (
 		colInstance   util.Color
 		colTileFill   util.Color
@@ -47,6 +51,8 @@ func (p *PaneMap) processCanvasOverlayTools() {
 		} else {
 			colTileFill = overlay.ColorToolFillAltTileFill
 		}
+	case tools.TNSelect:
+		colTileBorder = overlay.ColorToolSelectTileBorder
 	case tools.TNPick:
 		colInstance = overlay.ColorToolPickInstance
 	case tools.TNDelete:

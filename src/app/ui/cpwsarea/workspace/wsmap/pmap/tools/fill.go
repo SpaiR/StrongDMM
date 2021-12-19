@@ -20,6 +20,8 @@ type tFill struct {
 
 	start    util.Point
 	fillArea util.Bounds
+
+	dragging bool
 }
 
 func (tFill) Name() string {
@@ -30,6 +32,10 @@ func newFill(editor editor) *tFill {
 	return &tFill{
 		editor: editor,
 	}
+}
+
+func (t *tFill) Stale() bool {
+	return !t.dragging
 }
 
 func (t *tFill) process() {
@@ -44,6 +50,7 @@ func (t *tFill) process() {
 
 func (t *tFill) onStart(coord util.Point) {
 	if _, ok := t.editor.SelectedPrefab(); ok {
+		t.dragging = true
 		t.start = coord
 		t.onMove(coord)
 	}
@@ -80,6 +87,8 @@ func (t *tFill) onStop(util.Point) {
 
 	t.start = util.Point{}
 	t.fillArea = util.Bounds{}
+
+	t.dragging = false
 }
 
 func (t *tFill) active() bool {

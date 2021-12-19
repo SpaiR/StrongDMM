@@ -2,6 +2,7 @@ package tools
 
 import (
 	"sdmm/dmapi/dmmap"
+	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
@@ -10,6 +11,7 @@ import (
 const (
 	TNAdd    = "Add"
 	TNFill   = "Fill"
+	TNSelect = "Select"
 	TNPick   = "Pick"
 	TNDelete = "Delete"
 )
@@ -25,9 +27,13 @@ type canvasState interface {
 
 type editor interface {
 	Dmm() *dmmap.Dmm
-	UpdateCanvasByCoord(util.Point)
+
+	CommitChanges(commitMsg string)
+
+	UpdateCanvasByCoords([]util.Point)
+	UpdateCanvasByTiles([]dmmap.Tile)
+
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
-	CommitChanges(string)
 
 	PushOverlayTile(coord util.Point, colFill, colBorder util.Color)
 	PushOverlayArea(area util.Bounds, colFill, colBorder util.Color)
@@ -35,7 +41,10 @@ type editor interface {
 	SelectInstance(i *dmminstance.Instance)
 	DeleteInstance(i *dmminstance.Instance)
 
-	DeleteHoveredTile(commit bool)
+	ReplaceTile(coord util.Point, prefabs dmmdata.Prefabs)
+
+	DeleteHoveredTile()
+	DeleteTile(util.Point)
 	HoveredInstance() *dmminstance.Instance
 }
 
@@ -81,6 +90,7 @@ func New(editor editor) *Tools {
 	tools := map[string]Tool{
 		TNAdd:    newAdd(editor),
 		TNFill:   newFill(editor),
+		TNSelect: newSelect(editor),
 		TNPick:   newPick(editor),
 		TNDelete: newDelete(editor),
 	}

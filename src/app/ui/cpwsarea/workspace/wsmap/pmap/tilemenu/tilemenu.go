@@ -31,6 +31,9 @@ type App interface {
 
 type editor interface {
 	Dmm() *dmmap.Dmm
+
+	CommitChanges(string)
+
 	SelectInstance(i *dmminstance.Instance)
 	MoveInstanceToTop(i *dmminstance.Instance)
 	MoveInstanceToBottom(i *dmminstance.Instance)

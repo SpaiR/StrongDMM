@@ -163,6 +163,8 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	newPrefab := dmmap.PrefabStorage.Get(v.prefab.Path(), newVars)
 
 	v.app.CurrentEditor().ReplacePrefab(v.prefab, newPrefab)
+	v.app.CurrentEditor().CommitChanges("Replace Prefab")
+
 	v.app.DoSelectPrefab(newPrefab)
 
 	v.prefab = newPrefab

@@ -19,6 +19,9 @@ var (
 	ColorToolFillTileBorder    = ColorEmpty
 	ColorToolFillAltTileBorder = ColorEmpty
 
+	ColorToolSelectTileFill   = util.MakeColor(1, 1, 1, 0.25)
+	ColorToolSelectTileBorder = util.MakeColor(0, 1, 0, 1)
+
 	ColorToolPickInstance = util.MakeColor(0, 1, 0, 1)
 
 	ColorToolDeleteInstance      = util.MakeColor(1, 0, 0, 1)

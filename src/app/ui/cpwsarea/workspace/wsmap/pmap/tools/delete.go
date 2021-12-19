@@ -43,8 +43,8 @@ func (t *tDelete) onStart(coord util.Point) {
 func (t *tDelete) onMove(coord util.Point) {
 	if t.AltBehaviour() && !t.deletedTiles[coord] {
 		t.deletedTiles[coord] = true // Don't delete to the same tile twice
-		t.editor.DeleteHoveredTile(false)
-		t.editor.UpdateCanvasByCoord(coord)
+		t.editor.DeleteHoveredTile()
+		t.editor.UpdateCanvasByCoords([]util.Point{coord})
 	}
 }
 

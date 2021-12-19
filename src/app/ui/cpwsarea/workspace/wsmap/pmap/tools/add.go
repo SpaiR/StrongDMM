@@ -51,7 +51,7 @@ func (t *tAdd) onMove(coord util.Point) {
 		tile := t.editor.Dmm().GetTile(coord)
 		t.basicPrefabAdd(tile, prefab)
 
-		t.editor.UpdateCanvasByCoord(coord)
+		t.editor.UpdateCanvasByCoords([]util.Point{coord})
 	}
 }
 

@@ -7,6 +7,20 @@ type Point struct {
 	X, Y, Z int
 }
 
+func (p Point) Plus(point Point) (result Point) {
+	result.X = p.X + point.X
+	result.Y = p.Y + point.Y
+	result.Z = p.Z + point.Z
+	return result
+}
+
+func (p Point) Minus(point Point) (result Point) {
+	result.X = p.X - point.X
+	result.Y = p.Y - point.Y
+	result.Z = p.Z - point.Z
+	return result
+}
+
 func (p Point) Equals(x, y, z int) bool {
 	return p.X == x && p.Y == y && p.Z == z
 }

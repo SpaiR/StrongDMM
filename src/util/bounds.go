@@ -8,6 +8,14 @@ type Bounds struct {
 	X2, Y2 float32
 }
 
+func (b Bounds) Plus(x, y float32) (result Bounds) {
+	result.X1 = b.X1 + x
+	result.Y1 = b.Y1 + y
+	result.X2 = b.X2 + x
+	result.Y2 = b.Y2 + y
+	return result
+}
+
 // Contains returns true if the current Bounds contains received point.
 func (b Bounds) Contains(x, y float32) bool {
 	return b.ContainsV(Bounds{x, y, x, y})
