@@ -15,7 +15,7 @@ func (p *PaneMap) showStatusPanel() {
 		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", hoveredTiles.X, hoveredTiles.Y))
 	}
 
-	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !p.tools.Selected().AltBehaviour()) {
+	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !tools.Selected().AltBehaviour()) {
 		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
 			imgui.SameLine()
 			imgui.Text(hoveredInstance.Prefab().Path())

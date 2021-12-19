@@ -16,8 +16,6 @@ import (
 type tFill struct {
 	tool
 
-	editor editor
-
 	start    util.Point
 	fillArea util.Bounds
 
@@ -28,10 +26,8 @@ func (tFill) Name() string {
 	return TNFill
 }
 
-func newFill(editor editor) *tFill {
-	return &tFill{
-		editor: editor,
-	}
+func newFill() *tFill {
+	return &tFill{}
 }
 
 func (t *tFill) Stale() bool {
@@ -41,15 +37,15 @@ func (t *tFill) Stale() bool {
 func (t *tFill) process() {
 	if t.active() {
 		if t.AltBehaviour() {
-			t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
+			ed.OverlayPushArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
 		} else {
-			t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolFillTileFill, overlay.ColorToolFillTileBorder)
+			ed.OverlayPushArea(t.fillArea, overlay.ColorToolFillTileFill, overlay.ColorToolFillTileBorder)
 		}
 	}
 }
 
 func (t *tFill) onStart(coord util.Point) {
-	if _, ok := t.editor.SelectedPrefab(); ok {
+	if _, ok := ed.SelectedPrefab(); ok {
 		t.dragging = true
 		t.start = coord
 		t.onMove(coord)
@@ -73,16 +69,16 @@ func (t *tFill) onStop(util.Point) {
 	}
 
 	// Fill the area.
-	if prefab, ok := t.editor.SelectedPrefab(); ok {
+	if prefab, ok := ed.SelectedPrefab(); ok {
 		for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
 			for y := t.fillArea.Y1; y <= t.fillArea.Y2; y++ {
 				coord := util.Point{X: int(x), Y: int(y), Z: t.start.Z}
-				tile := t.editor.Dmm().GetTile(coord)
+				tile := ed.Dmm().GetTile(coord)
 				t.basicPrefabAdd(tile, prefab)
 			}
 		}
 
-		go t.editor.CommitChanges("Fill Atoms")
+		go ed.CommitChanges("Fill Atoms")
 	}
 
 	t.start = util.Point{}

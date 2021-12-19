@@ -6,18 +6,14 @@ import (
 
 type tPick struct {
 	tool
-
-	editor editor
 }
 
 func (tPick) Name() string {
 	return TNPick
 }
 
-func newPick(editor editor) *tPick {
-	return &tPick{
-		editor: editor,
-	}
+func newPick() *tPick {
+	return &tPick{}
 }
 
 func (tPick) AltBehaviour() bool {
@@ -25,7 +21,7 @@ func (tPick) AltBehaviour() bool {
 }
 
 func (t tPick) onStart(util.Point) {
-	if hoveredInstance := t.editor.HoveredInstance(); hoveredInstance != nil {
-		t.editor.InstanceSelect(hoveredInstance)
+	if hoveredInstance := ed.HoveredInstance(); hoveredInstance != nil {
+		ed.InstanceSelect(hoveredInstance)
 	}
 }

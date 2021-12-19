@@ -14,8 +14,6 @@ import (
 type tAdd struct {
 	tool
 
-	editor editor
-
 	editedTiles map[util.Point]bool
 }
 
@@ -23,9 +21,8 @@ func (tAdd) Name() string {
 	return TNAdd
 }
 
-func newAdd(editor editor) *tAdd {
+func newAdd() *tAdd {
 	return &tAdd{
-		editor:      editor,
 		editedTiles: make(map[util.Point]bool),
 	}
 }
@@ -33,9 +30,9 @@ func newAdd(editor editor) *tAdd {
 func (t *tAdd) process() {
 	for coord := range t.editedTiles {
 		if t.AltBehaviour() {
-			t.editor.OverlayPushTile(coord, overlay.ColorToolAddAltTileFill, overlay.ColorToolAddAltTileBorder)
+			ed.OverlayPushTile(coord, overlay.ColorToolAddAltTileFill, overlay.ColorToolAddAltTileBorder)
 		} else {
-			t.editor.OverlayPushTile(coord, overlay.ColorToolAddTileFill, overlay.ColorToolAddTileBorder)
+			ed.OverlayPushTile(coord, overlay.ColorToolAddTileFill, overlay.ColorToolAddTileBorder)
 		}
 	}
 }
@@ -45,19 +42,19 @@ func (t *tAdd) onStart(coord util.Point) {
 }
 
 func (t *tAdd) onMove(coord util.Point) {
-	if prefab, ok := t.editor.SelectedPrefab(); ok && !t.editedTiles[coord] {
+	if prefab, ok := ed.SelectedPrefab(); ok && !t.editedTiles[coord] {
 		t.editedTiles[coord] = true // Don't add to the same tile twice
 
-		tile := t.editor.Dmm().GetTile(coord)
+		tile := ed.Dmm().GetTile(coord)
 		t.basicPrefabAdd(tile, prefab)
 
-		t.editor.UpdateCanvasByCoords([]util.Point{coord})
+		ed.UpdateCanvasByCoords([]util.Point{coord})
 	}
 }
 
 func (t *tAdd) onStop(util.Point) {
 	if len(t.editedTiles) != 0 {
 		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
-		go t.editor.CommitChanges("Add Atoms")
+		go ed.CommitChanges("Add Atoms")
 	}
 }

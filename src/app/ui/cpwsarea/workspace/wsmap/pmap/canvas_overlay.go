@@ -17,7 +17,7 @@ func (p *PaneMap) processCanvasOverlay() {
 }
 
 func (p *PaneMap) processCanvasOverlayTools() {
-	if !p.tools.Selected().Stale() {
+	if !tools.Selected().Stale() {
 		return
 	}
 
@@ -27,16 +27,16 @@ func (p *PaneMap) processCanvasOverlayTools() {
 		colTileBorder util.Color
 	)
 
-	switch p.tools.Selected().Name() {
+	switch tools.Selected().Name() {
 	case tools.TNAdd:
 		colTileFill = overlay.ColorToolAddTileFill
-		if !p.tools.Selected().AltBehaviour() {
+		if !tools.Selected().AltBehaviour() {
 			colTileBorder = overlay.ColorToolAddTileBorder
 		} else {
 			colTileBorder = overlay.ColorToolAddAltTileBorder
 		}
 	case tools.TNFill:
-		if !p.tools.Selected().AltBehaviour() {
+		if !tools.Selected().AltBehaviour() {
 			colTileFill = overlay.ColorToolFillTileFill
 		} else {
 			colTileFill = overlay.ColorToolFillAltTileFill
@@ -46,7 +46,7 @@ func (p *PaneMap) processCanvasOverlayTools() {
 	case tools.TNPick:
 		colInstance = overlay.ColorToolPickInstance
 	case tools.TNDelete:
-		if !p.tools.Selected().AltBehaviour() {
+		if !tools.Selected().AltBehaviour() {
 			colInstance = overlay.ColorToolDeleteInstance
 		} else {
 			colTileFill = overlay.ColorToolDeleteAltTileFill

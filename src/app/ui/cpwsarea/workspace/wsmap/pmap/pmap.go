@@ -52,7 +52,6 @@ type PaneMap struct {
 	snapshot *dmmsnap.DmmSnap
 	editor   *editor.Editor
 
-	tools    *tools.Tools
 	tileMenu *tilemenu.TileMenu
 
 	canvas        *canvas.Canvas
@@ -133,7 +132,6 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.editor = editor.New(app, p, dmm)
 
 	p.tileMenu = tilemenu.New(app, p.editor)
-	p.tools = tools.New(p.editor)
 
 	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
@@ -146,8 +144,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvas.Render().SetUnitProcessor(p)
 	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
 
-	p.tools.SetCanvasState(p.canvasState)
-	p.tools.SetCanvasControl(p.canvasControl)
+	p.setupTools()
 
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
 	p.addShortcuts()
@@ -159,6 +156,7 @@ func (p *PaneMap) Process() {
 	// Enforce a focus to the current window if the canvas was touched.
 	if p.canvasControl.Touched() && !imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows) {
 		imgui.SetWindowFocus()
+		p.setupTools()
 	}
 
 	p.updateShortcutsState()
@@ -176,7 +174,8 @@ func (p *PaneMap) Process() {
 	p.processCanvasOverlay()
 	p.processCanvasHoveredInstance()
 
-	p.tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
+	tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
+
 	p.tileMenu.Process()
 
 	p.showCanvas()
@@ -194,6 +193,12 @@ func (p *PaneMap) Dispose() {
 	log.Println("[pmap] disposed")
 }
 
+func (p *PaneMap) setupTools() {
+	tools.SetEditor(p.editor)
+	tools.SetCanvasState(p.canvasState)
+	tools.SetCanvasControl(p.canvasControl)
+}
+
 func (p *PaneMap) showCanvas() {
 	texture := imgui.TextureID(p.canvas.Texture())
 	uvMin := imgui.Vec2{X: 0, Y: 1}
@@ -209,7 +214,7 @@ func (p *PaneMap) showCanvas() {
 
 func (p *PaneMap) mouseChangeCallback(x, y uint) {
 	p.updateCanvasMousePosition(int(x), int(y))
-	p.tools.OnMouseMove()
+	tools.OnMouseMove()
 }
 
 func (p *PaneMap) openTileMenu() {

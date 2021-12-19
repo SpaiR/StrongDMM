@@ -62,13 +62,13 @@ func (p *PaneMap) showToolsPanel() {
 			continue
 		}
 
-		tool := p.tools.Tools()[toolName]
+		tool := tools.Tools()[toolName]
 		desc := toolsDesc[toolName]
 
 		btn := w.Button(desc.icon, func() {
 			tools.SetSelected(toolName)
 		})
-		if p.tools.Selected() == tool {
+		if tools.Selected() == tool {
 			if tool.AltBehaviour() {
 				btn.Style(style.ButtonGold{}).TextColor(style.ColorBlack)
 			} else {
@@ -83,7 +83,7 @@ func (p *PaneMap) showToolsPanel() {
 
 func (p *PaneMap) processTempToolsMode() {
 	if !p.tmpIsInTemporalToolMode {
-		p.tmpLastSelectedToolName = p.tools.Selected().Name()
+		p.tmpLastSelectedToolName = tools.Selected().Name()
 	}
 
 	var inMode bool
@@ -109,7 +109,7 @@ func (p *PaneMap) processTempToolMode(key, altKey int, modeName string) bool {
 	isSelected := tools.IsSelected(modeName)
 
 	if isKeyPressed && !isSelected {
-		p.tmpPrevSelectedToolName = p.tools.Selected().Name()
+		p.tmpPrevSelectedToolName = tools.Selected().Name()
 		p.tmpIsInTemporalToolMode = true
 		tools.SetSelected(modeName)
 	} else if isKeyReleased && len(p.tmpPrevSelectedToolName) != 0 {

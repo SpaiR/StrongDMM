@@ -48,7 +48,26 @@ type editor interface {
 	HoveredInstance() *dmminstance.Instance
 }
 
-var selectedToolName = TNAdd
+var (
+	cc canvasControl
+	cs canvasState
+	ed editor
+
+	active   bool
+	oldCoord util.Point
+
+	tools = map[string]Tool{
+		TNAdd:    newAdd(),
+		TNFill:   newFill(),
+		TNSelect: newSelect(),
+		TNPick:   newPick(),
+		TNDelete: newDelete(),
+	}
+
+	selectedToolName = TNAdd
+
+	startedTool Tool
+)
 
 func SetSelected(toolName string) {
 	selectedToolName = toolName
@@ -58,85 +77,64 @@ func IsSelected(toolName string) bool {
 	return selectedToolName == toolName
 }
 
-type Tools struct {
-	canvasControl canvasControl
-	canvasState   canvasState
-
-	active   bool
-	oldCoord util.Point
-
-	tools map[string]Tool
-
-	startedTool Tool
+func SetEditor(editor editor) {
+	ed = editor
 }
 
-func (t *Tools) SetCanvasControl(canvasControl canvasControl) {
-	t.canvasControl = canvasControl
+func SetCanvasControl(canvasControl canvasControl) {
+	cc = canvasControl
 }
 
-func (t *Tools) SetCanvasState(canvasState canvasState) {
-	t.canvasState = canvasState
+func SetCanvasState(canvasState canvasState) {
+	cs = canvasState
 }
 
-func (t *Tools) Selected() Tool {
-	return t.tools[selectedToolName]
+func Selected() Tool {
+	return tools[selectedToolName]
 }
 
-func (t *Tools) Tools() map[string]Tool {
-	return t.tools
+func Tools() map[string]Tool {
+	return tools
 }
 
-func New(editor editor) *Tools {
-	tools := map[string]Tool{
-		TNAdd:    newAdd(editor),
-		TNFill:   newFill(editor),
-		TNSelect: newSelect(editor),
-		TNPick:   newPick(editor),
-		TNDelete: newDelete(editor),
-	}
-	return &Tools{
-		tools: tools,
-	}
-}
-
-func (t *Tools) Process(altBehaviour bool) {
-	if t.active && t.startedTool != t.Selected() {
-		t.startedTool.onStop(t.oldCoord)
+func Process(altBehaviour bool) {
+	if active && startedTool != Selected() {
+		startedTool.onStop(oldCoord)
 	}
 
-	t.Selected().process()
-	t.Selected().setAltBehaviour(altBehaviour)
-	t.processSelectedToolStart()
-	t.processSelectedToolsStop()
+	Selected().process()
+	Selected().setAltBehaviour(altBehaviour)
+	processSelectedToolStart()
+	processSelectedToolsStop()
 }
 
-func (t *Tools) OnMouseMove() {
-	t.processSelectedToolMove()
+func OnMouseMove() {
+	processSelectedToolMove()
 }
 
-func (t *Tools) processSelectedToolStart() {
-	if !t.canvasState.HoverOutOfBounds() {
-		if t.canvasControl.Dragging() && !t.active {
-			t.startedTool = t.Selected()
-			t.Selected().onStart(t.canvasState.HoveredTile())
-			t.active = true
+func processSelectedToolStart() {
+	if !cs.HoverOutOfBounds() {
+		if cc.Dragging() && !active {
+			startedTool = Selected()
+			Selected().onStart(cs.HoveredTile())
+			active = true
 		}
 	}
 }
 
-func (t *Tools) processSelectedToolMove() {
-	if !t.canvasState.HoverOutOfBounds() {
-		coord := t.canvasState.HoveredTile()
-		if coord != t.oldCoord && t.active {
-			t.Selected().onMove(coord)
+func processSelectedToolMove() {
+	if !cs.HoverOutOfBounds() {
+		coord := cs.HoveredTile()
+		if coord != oldCoord && active {
+			Selected().onMove(coord)
 		}
-		t.oldCoord = coord
+		oldCoord = coord
 	}
 }
 
-func (t *Tools) processSelectedToolsStop() {
-	if !t.canvasControl.Dragging() && t.active {
-		t.Selected().onStop(t.oldCoord)
-		t.active = false
+func processSelectedToolsStop() {
+	if !cc.Dragging() && active {
+		Selected().onStop(oldCoord)
+		active = false
 	}
 }

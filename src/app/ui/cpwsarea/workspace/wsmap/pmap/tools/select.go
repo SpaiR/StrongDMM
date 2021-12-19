@@ -18,8 +18,6 @@ const (
 type tSelect struct {
 	tool
 
-	editor editor
-
 	fillStart    util.Point
 	fillAreaInit util.Bounds
 	fillArea     util.Bounds
@@ -47,8 +45,8 @@ func (t *tSelect) Reset() {
 	t.prevTiles = nil
 }
 
-func newSelect(editor editor) *tSelect {
-	return &tSelect{editor: editor}
+func newSelect() *tSelect {
+	return &tSelect{}
 }
 
 func (t *tSelect) Stale() bool {
@@ -61,7 +59,7 @@ func (tSelect) AltBehaviour() bool {
 
 func (t *tSelect) process() {
 	if t.active() {
-		t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolSelectTileFill, overlay.ColorToolSelectTileBorder)
+		ed.OverlayPushArea(t.fillArea, overlay.ColorToolSelectTileFill, overlay.ColorToolSelectTileBorder)
 	}
 }
 
@@ -85,7 +83,7 @@ func (t *tSelect) startSelectArea(coord util.Point) {
 func (t *tSelect) startMoveArea(coord util.Point) {
 	if t.fillArea.Contains(float32(coord.X), float32(coord.Y)) {
 		t.startMovePoint = coord
-		t.initTiles = collectTiles(t.editor.Dmm(), t.fillArea, t.fillStart.Z)
+		t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 	} else {
 		t.mode = tSelectModeSelectArea
 		t.onStart(coord)
@@ -114,7 +112,7 @@ func (t *tSelect) selectArea(coord util.Point) {
 }
 
 func (t *tSelect) moveArea(coord util.Point) {
-	dmm := t.editor.Dmm()
+	dmm := ed.Dmm()
 
 	shift := coord.Minus(t.startMovePoint)
 	nextArea := t.fillAreaInit.Plus(float32(shift.X), float32(shift.Y))
@@ -130,13 +128,13 @@ func (t *tSelect) moveArea(coord util.Point) {
 	// Clear moved tiles (they're moved tho...)
 	for _, initTile := range t.initTiles {
 		updateCoords = append(updateCoords, initTile.Coord)
-		t.editor.TileDelete(initTile.Coord)
+		ed.TileDelete(initTile.Coord)
 	}
 
 	// Restore previous tiles content (tiles we've moved through)
 	for _, prevTile := range t.prevTiles {
 		updateCoords = append(updateCoords, prevTile.Coord)
-		t.editor.TileReplace(prevTile.Coord, prevTile.Instances().Prefabs())
+		ed.TileReplace(prevTile.Coord, prevTile.Instances().Prefabs())
 	}
 
 	// Move a content to a new place
@@ -151,10 +149,10 @@ func (t *tSelect) moveArea(coord util.Point) {
 		t.prevTiles = append(t.prevTiles, tile.Copy())
 		updateCoords = append(updateCoords, tile.Coord)
 
-		t.editor.TileReplace(nextTilePoint, initTile.Instances().Prefabs())
+		ed.TileReplace(nextTilePoint, initTile.Instances().Prefabs())
 	}
 
-	t.editor.UpdateCanvasByCoords(updateCoords)
+	ed.UpdateCanvasByCoords(updateCoords)
 }
 
 func (t *tSelect) onStop(util.Point) {
@@ -177,9 +175,9 @@ func (t *tSelect) stopSelectArea() {
 }
 
 func (t *tSelect) stopMoveArea() {
-	t.initTiles = collectTiles(t.editor.Dmm(), t.fillArea, t.fillStart.Z)
+	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 	t.fillAreaInit = t.fillArea
-	go t.editor.CommitChanges("Move Selected Area")
+	go ed.CommitChanges("Move Selected Area")
 }
 
 func (t *tSelect) active() bool {
