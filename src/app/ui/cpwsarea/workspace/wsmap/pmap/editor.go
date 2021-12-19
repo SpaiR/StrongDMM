@@ -1,6 +1,8 @@
 package pmap
 
 import (
+	"log"
+
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/layout/lnode"
@@ -144,7 +146,43 @@ func (e *Editor) CopyHoveredTile() {
 // PasteHoveredTile does a paste to the currently hovered tile.
 // Respects a dm.PathsFilter state.
 func (e *Editor) PasteHoveredTile() {
-	e.pMap.app.Clipboard().Paste(e.pMap.dmm, e.pMap.canvasState.LastHoveredTile())
+	pasteCoord := e.pMap.canvasState.LastHoveredTile()
+	pastedData := e.pMap.app.Clipboard().Buffer()
+
+	if len(pastedData.Buffer) == 0 {
+		return
+	}
+
+	log.Printf("[pmap] paste tiles from the clipboard buffer on the map: %v", pasteCoord)
+
+	anchor := pastedData.Buffer[0].Coord
+
+	for _, tileCopy := range pastedData.Buffer {
+		pos := util.Point{
+			X: pasteCoord.X + tileCopy.Coord.X - anchor.X,
+			Y: pasteCoord.Y + tileCopy.Coord.Y - anchor.Y,
+			Z: pasteCoord.Z,
+		}
+
+		if !e.Dmm().HasTile(pos) {
+			continue
+		}
+
+		tile := e.Dmm().GetTile(pos)
+		currTilePrefabs := tile.Instances().Prefabs()
+		newTilePrefabs := make(dmmdata.Prefabs, 0, len(currTilePrefabs))
+
+		for _, prefab := range currTilePrefabs {
+			if !pastedData.Filter.IsVisiblePath(prefab.Path()) {
+				newTilePrefabs = append(newTilePrefabs, prefab)
+			}
+		}
+
+		newTilePrefabs = append(newTilePrefabs, tileCopy.Instances().Prefabs()...)
+
+		tile.InstancesSet(newTilePrefabs.Sorted())
+		tile.InstancesRegenerate()
+	}
 }
 
 // CutHoveredTile does a cut (copy+delete) of the currently hovered tile.
