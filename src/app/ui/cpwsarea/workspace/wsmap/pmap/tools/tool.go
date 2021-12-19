@@ -23,6 +23,8 @@ type Tool interface {
 	onMove(coord util.Point)
 	// Goes when user releases the mouse button.
 	onStop(coord util.Point)
+	// Gees when the current tool is deselected.
+	onDeselect()
 }
 
 // Tool is a basic interface for tools in the panel.
@@ -52,6 +54,9 @@ func (tool) onMove(util.Point) {
 }
 
 func (tool) onStop(util.Point) {
+}
+
+func (tool) onDeselect() {
 }
 
 // A basic behaviour add.

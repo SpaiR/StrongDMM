@@ -180,6 +180,10 @@ func (t *tSelect) stopMoveArea() {
 	go ed.CommitChanges("Move Selected Area")
 }
 
+func (t *tSelect) onDeselect() {
+	t.Reset()
+}
+
 func (t *tSelect) active() bool {
 	return !t.fillStart.Equals(0, 0, 0)
 }

@@ -70,7 +70,10 @@ var (
 )
 
 func SetSelected(toolName string) {
-	selectedToolName = toolName
+	if selectedToolName != toolName {
+		tools[selectedToolName].onDeselect()
+		selectedToolName = toolName
+	}
 }
 
 func IsSelected(toolName string) bool {
