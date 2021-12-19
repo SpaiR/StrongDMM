@@ -26,6 +26,6 @@ func (tPick) AltBehaviour() bool {
 
 func (t tPick) onStart(util.Point) {
 	if hoveredInstance := t.editor.HoveredInstance(); hoveredInstance != nil {
-		t.editor.SelectInstance(hoveredInstance)
+		t.editor.InstanceSelect(hoveredInstance)
 	}
 }

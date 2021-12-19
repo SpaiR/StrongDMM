@@ -61,7 +61,7 @@ func (tSelect) AltBehaviour() bool {
 
 func (t *tSelect) process() {
 	if t.active() {
-		t.editor.PushOverlayArea(t.fillArea, overlay.ColorToolSelectTileFill, overlay.ColorToolSelectTileBorder)
+		t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolSelectTileFill, overlay.ColorToolSelectTileBorder)
 	}
 }
 
@@ -130,13 +130,13 @@ func (t *tSelect) moveArea(coord util.Point) {
 	// Clear moved tiles (they're moved tho...)
 	for _, initTile := range t.initTiles {
 		updateCoords = append(updateCoords, initTile.Coord)
-		t.editor.DeleteTile(initTile.Coord)
+		t.editor.TileDelete(initTile.Coord)
 	}
 
 	// Restore previous tiles content (tiles we've moved through)
 	for _, prevTile := range t.prevTiles {
 		updateCoords = append(updateCoords, prevTile.Coord)
-		t.editor.ReplaceTile(prevTile.Coord, prevTile.Instances().Prefabs())
+		t.editor.TileReplace(prevTile.Coord, prevTile.Instances().Prefabs())
 	}
 
 	// Move a content to a new place
@@ -151,7 +151,7 @@ func (t *tSelect) moveArea(coord util.Point) {
 		t.prevTiles = append(t.prevTiles, tile.Copy())
 		updateCoords = append(updateCoords, tile.Coord)
 
-		t.editor.ReplaceTile(nextTilePoint, initTile.Instances().Prefabs())
+		t.editor.TileReplace(nextTilePoint, initTile.Instances().Prefabs())
 	}
 
 	t.editor.UpdateCanvasByCoords(updateCoords)

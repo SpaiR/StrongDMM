@@ -53,7 +53,7 @@ func (s *Search) doSearch() {
 	s.Free()
 
 	log.Println("[cpsearch] searching for:", s.prefabId)
-	s.resultsAll = s.app.CurrentEditor().FindInstancesByPrefabId(prefabId)
+	s.resultsAll = s.app.CurrentEditor().InstancesFindByPrefabId(prefabId)
 	log.Println("[cpsearch] found search results:", len(s.resultsAll))
 
 	if len(s.resultsAll) > 0 {
@@ -171,8 +171,8 @@ func (s *Search) showJumpButtons() {
 func (s *Search) selectInstance(idx int) {
 	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
-	editor.SetOverlayTileFlick(instance.Coord())
-	editor.SetOverlayInstanceFlick(instance)
+	editor.OverlaySetTileFlick(instance.Coord())
+	editor.OverlaySetInstanceFlick(instance)
 	s.app.ShowLayout(lnode.NameVariables, true)
 	s.app.DoEditInstance(instance)
 	s.focusedResultIdx = idx
@@ -187,8 +187,8 @@ func (s *Search) jumpTo(idx int) {
 	editor := s.app.CurrentEditor()
 
 	editor.FocusCamera(instance)
-	editor.SetOverlayTileFlick(instance.Coord())
-	editor.SetOverlayInstanceFlick(instance)
+	editor.OverlaySetTileFlick(instance.Coord())
+	editor.OverlaySetInstanceFlick(instance)
 
 	s.focusedResultIdx = idx
 }

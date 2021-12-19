@@ -34,12 +34,12 @@ type editor interface {
 
 	CommitChanges(string)
 
-	SelectInstance(i *dmminstance.Instance)
-	MoveInstanceToTop(i *dmminstance.Instance)
-	MoveInstanceToBottom(i *dmminstance.Instance)
-	DeleteInstance(i *dmminstance.Instance)
-	ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab)
-	ResetInstance(i *dmminstance.Instance)
+	InstanceSelect(i *dmminstance.Instance)
+	InstanceMoveToTop(i *dmminstance.Instance)
+	InstanceMoveToBottom(i *dmminstance.Instance)
+	InstanceDelete(i *dmminstance.Instance)
+	InstanceReplace(i *dmminstance.Instance, prefab *dmmprefab.Prefab)
+	InstanceReset(i *dmminstance.Instance)
 }
 
 type TileMenu struct {

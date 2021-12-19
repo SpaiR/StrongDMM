@@ -27,7 +27,7 @@ func newDelete(editor editor) *tDelete {
 func (t *tDelete) process() {
 	for coord := range t.deletedTiles {
 		if t.AltBehaviour() {
-			t.editor.PushOverlayTile(coord, overlay.ColorToolDeleteAltTileFill, overlay.ColorToolDeleteAltTileBorder)
+			t.editor.OverlayPushTile(coord, overlay.ColorToolDeleteAltTileFill, overlay.ColorToolDeleteAltTileBorder)
 		}
 	}
 }
@@ -36,14 +36,15 @@ func (t *tDelete) onStart(coord util.Point) {
 	if t.AltBehaviour() {
 		t.onMove(coord)
 	} else if hoveredInstance := t.editor.HoveredInstance(); hoveredInstance != nil {
-		t.editor.DeleteInstance(hoveredInstance)
+		t.editor.InstanceDelete(hoveredInstance)
+		go t.editor.CommitChanges("Delete Instance")
 	}
 }
 
 func (t *tDelete) onMove(coord util.Point) {
 	if t.AltBehaviour() && !t.deletedTiles[coord] {
 		t.deletedTiles[coord] = true // Don't delete to the same tile twice
-		t.editor.DeleteHoveredTile()
+		t.editor.TileDeleteHovered()
 		t.editor.UpdateCanvasByCoords([]util.Point{coord})
 	}
 }

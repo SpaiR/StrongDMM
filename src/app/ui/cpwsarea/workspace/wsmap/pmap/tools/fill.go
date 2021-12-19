@@ -41,9 +41,9 @@ func (t *tFill) Stale() bool {
 func (t *tFill) process() {
 	if t.active() {
 		if t.AltBehaviour() {
-			t.editor.PushOverlayArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
+			t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
 		} else {
-			t.editor.PushOverlayArea(t.fillArea, overlay.ColorToolFillTileFill, overlay.ColorToolFillTileBorder)
+			t.editor.OverlayPushArea(t.fillArea, overlay.ColorToolFillTileFill, overlay.ColorToolFillTileBorder)
 		}
 	}
 }

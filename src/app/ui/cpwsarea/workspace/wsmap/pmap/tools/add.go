@@ -33,9 +33,9 @@ func newAdd(editor editor) *tAdd {
 func (t *tAdd) process() {
 	for coord := range t.editedTiles {
 		if t.AltBehaviour() {
-			t.editor.PushOverlayTile(coord, overlay.ColorToolAddAltTileFill, overlay.ColorToolAddAltTileBorder)
+			t.editor.OverlayPushTile(coord, overlay.ColorToolAddAltTileFill, overlay.ColorToolAddAltTileBorder)
 		} else {
-			t.editor.PushOverlayTile(coord, overlay.ColorToolAddTileFill, overlay.ColorToolAddTileBorder)
+			t.editor.OverlayPushTile(coord, overlay.ColorToolAddTileFill, overlay.ColorToolAddTileBorder)
 		}
 	}
 }

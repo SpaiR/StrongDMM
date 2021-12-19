@@ -35,16 +35,16 @@ type editor interface {
 
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
 
-	PushOverlayTile(coord util.Point, colFill, colBorder util.Color)
-	PushOverlayArea(area util.Bounds, colFill, colBorder util.Color)
+	OverlayPushTile(coord util.Point, colFill, colBorder util.Color)
+	OverlayPushArea(area util.Bounds, colFill, colBorder util.Color)
 
-	SelectInstance(i *dmminstance.Instance)
-	DeleteInstance(i *dmminstance.Instance)
+	InstanceSelect(i *dmminstance.Instance)
+	InstanceDelete(i *dmminstance.Instance)
 
-	ReplaceTile(coord util.Point, prefabs dmmdata.Prefabs)
+	TileReplace(coord util.Point, prefabs dmmdata.Prefabs)
 
-	DeleteHoveredTile()
-	DeleteTile(util.Point)
+	TileDeleteHovered()
+	TileDelete(util.Point)
 	HoveredInstance() *dmminstance.Instance
 }
 

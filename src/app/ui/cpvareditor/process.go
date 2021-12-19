@@ -87,8 +87,8 @@ func (v *VarEditor) showControls() {
 	if imgui.Button(icon.FaSearch) {
 		editor := v.app.CurrentEditor()
 		editor.FocusCamera(v.instance)
-		editor.SetOverlayTileFlick(v.instance.Coord())
-		editor.SetOverlayInstanceFlick(v.instance)
+		editor.OverlaySetTileFlick(v.instance.Coord())
+		editor.OverlaySetInstanceFlick(v.instance)
 	}
 	imgui.EndDisabled()
 
