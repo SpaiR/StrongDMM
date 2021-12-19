@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/app/ui/shortcut"
 )
 
@@ -23,6 +24,14 @@ func (p *PaneMap) addShortcuts() {
 		FirstKey:    glfw.Key3,
 		FirstKeyAlt: glfw.KeyKP3,
 		Action:      p.selectSelectTool,
+	})
+
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:        "pmap#doDeselectAll",
+		FirstKey:    glfw.KeyLeftControl,
+		FirstKeyAlt: glfw.KeyRightControl,
+		SecondKey:   glfw.KeyD,
+		Action:      p.DoDeselect,
 	})
 
 	p.shortcuts.Add(shortcut.Shortcut{
@@ -73,4 +82,8 @@ func (p *PaneMap) doToggleObject() {
 
 func (p *PaneMap) doToggleMob() {
 	p.app.PathsFilter().TogglePath("/mob")
+}
+
+func (p *PaneMap) DoDeselect() {
+	tools.Tools()[tools.TNSelect].OnDeselect()
 }

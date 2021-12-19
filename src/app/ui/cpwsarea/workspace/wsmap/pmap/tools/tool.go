@@ -15,6 +15,9 @@ type Tool interface {
 	AltBehaviour() bool
 	setAltBehaviour(bool)
 
+	// OnDeselect gees when the current tool is deselected.
+	OnDeselect()
+
 	// Goes every app cycle to handle stuff like pushing overlays etc.
 	process()
 	// Goes when user clicks on the map.
@@ -23,8 +26,6 @@ type Tool interface {
 	onMove(coord util.Point)
 	// Goes when user releases the mouse button.
 	onStop(coord util.Point)
-	// Gees when the current tool is deselected.
-	onDeselect()
 }
 
 // Tool is a basic interface for tools in the panel.
@@ -56,7 +57,7 @@ func (tool) onMove(util.Point) {
 func (tool) onStop(util.Point) {
 }
 
-func (tool) onDeselect() {
+func (tool) OnDeselect() {
 }
 
 // A basic behaviour add.

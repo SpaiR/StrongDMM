@@ -180,7 +180,7 @@ func (t *tSelect) stopMoveArea() {
 	go ed.CommitChanges("Move Selected Area")
 }
 
-func (t *tSelect) onDeselect() {
+func (t *tSelect) OnDeselect() {
 	t.Reset()
 }
 

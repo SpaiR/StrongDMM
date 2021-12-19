@@ -71,7 +71,7 @@ var (
 
 func SetSelected(toolName string) {
 	if selectedToolName != toolName {
-		tools[selectedToolName].onDeselect()
+		tools[selectedToolName].OnDeselect()
 		selectedToolName = toolName
 	}
 }

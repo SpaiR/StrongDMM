@@ -24,13 +24,14 @@ type app interface {
 	DoExit()
 
 	// Edit
-	DoUndo()   // Ctrl+Z
-	DoRedo()   // Ctrl+Shift+Z | Ctrl+Y
-	DoCopy()   // Ctrl+C
-	DoPaste()  // Ctrl+V
-	DoCut()    // Ctrl+X
-	DoDelete() // Delete
-	DoSearch() // Ctrl+F
+	DoUndo()     // Ctrl+Z
+	DoRedo()     // Ctrl+Shift+Z | Ctrl+Y
+	DoCopy()     // Ctrl+C
+	DoPaste()    // Ctrl+V
+	DoCut()      // Ctrl+X
+	DoDelete()   // Delete
+	DoSearch()   // Ctrl+F
+	DoDeselect() // Ctrl+D
 
 	// Window
 	DoResetLayout() // F5
@@ -139,6 +140,9 @@ func (m *Menu) Process() {
 			w.MenuItem("Delete", m.app.DoDelete).
 				Icon(icon.FaEraser).
 				Shortcut("Delete"),
+			w.MenuItem("Deselect", m.app.DoDeselect).
+				IconEmpty().
+				Shortcut("Ctrl+D"),
 			w.Separator(),
 			w.MenuItem("Search", m.app.DoSearch).
 				Icon(icon.FaSearch).

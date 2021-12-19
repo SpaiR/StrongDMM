@@ -199,6 +199,14 @@ func (a *app) DoDelete() {
 	}
 }
 
+// DoDeselect deselects currently selected area.
+func (a *app) DoDeselect() {
+	log.Println("[app] do deselect")
+	if ws, ok := a.activeWsMap(); ok {
+		ws.Map().DoDeselect()
+	}
+}
+
 // DoSearch searches for a currently selected prefab.
 func (a *app) DoSearch() {
 	log.Println("[app] do search")
