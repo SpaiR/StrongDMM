@@ -7,7 +7,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -149,7 +149,7 @@ func (a *app) Clipboard() *dmmclip.Clipboard {
 // CurrentEditor returns *pmap.Editor for the currently active map.
 // Panics when the method called without having the active map.
 // We are implying that there won't be any situations like that.
-func (a *app) CurrentEditor() *pmap.Editor {
+func (a *app) CurrentEditor() *editor.Editor {
 	if wsMap, ok := a.activeWsMap(); ok {
 		return wsMap.Map().Editor()
 	}

@@ -1,51 +1,116 @@
-package pmap
+package editor
 
 import (
 	"log"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/dmapi/dmmclip"
+	"sdmm/dmapi/dmmsnap"
 	"sdmm/util"
 )
 
 type Editor struct {
-	pMap *PaneMap
+	app  app
+	pMap attachedMap
 
-	flickAreas    []flickArea
-	flickInstance []flickInstance
+	dmm *dmmap.Dmm
+
+	flickAreas    []overlay.FlickArea
+	flickInstance []overlay.FlickInstance
+}
+
+func (e *Editor) SetFlickAreas(flickAreas []overlay.FlickArea) {
+	e.flickAreas = flickAreas
+}
+
+func (e *Editor) FlickAreas() []overlay.FlickArea {
+	return e.flickAreas
+}
+
+func (e *Editor) SetFlickInstance(flickInstance []overlay.FlickInstance) {
+	e.flickInstance = flickInstance
+}
+
+func (e *Editor) FlickInstance() []overlay.FlickInstance {
+	return e.flickInstance
+}
+
+type app interface {
+	DoSelectPrefab(prefab *dmmprefab.Prefab)
+	DoEditInstance(*dmminstance.Instance)
+
+	SelectedPrefab() (*dmmprefab.Prefab, bool)
+	HasSelectedPrefab() bool
+
+	AddMouseChangeCallback(cb func(uint, uint)) int
+	RemoveMouseChangeCallback(id int)
+
+	CommandStorage() *command.Storage
+	Clipboard() *dmmclip.Clipboard
+	PathsFilter() *dm.PathsFilter
+
+	ShowLayout(name string, focus bool)
+
+	SyncPrefabs()
+	SyncVarEditor()
+}
+
+type attachedMap interface {
+	ActiveLevel() int
+	Snapshot() *dmmsnap.DmmSnap
+
+	Size() imgui.Vec2
+
+	Canvas() *canvas.Canvas
+	CanvasState() *canvas.State
+	CanvasControl() *canvas.Control
+	CanvasOverlay() *canvas.Overlay
+
+	PushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color)
+}
+
+func New(app app, attachedMap attachedMap, dmm *dmmap.Dmm) *Editor {
+	return &Editor{
+		app:  app,
+		pMap: attachedMap,
+		dmm:  dmm,
+	}
 }
 
 // Dmm returns currently edited map.
 func (e *Editor) Dmm() *dmmap.Dmm {
-	return e.pMap.dmm
+	return e.dmm
 }
 
 // SelectInstance selects the provided instance to edit.
 func (e *Editor) SelectInstance(i *dmminstance.Instance) {
-	e.pMap.app.DoSelectPrefab(i.Prefab())
-	e.pMap.app.ShowLayout(lnode.NamePrefabs, false)
-	e.pMap.app.DoEditInstance(i)
-	e.pMap.app.ShowLayout(lnode.NameVariables, false)
+	e.app.DoSelectPrefab(i.Prefab())
+	e.app.ShowLayout(lnode.NamePrefabs, false)
+	e.app.DoEditInstance(i)
+	e.app.ShowLayout(lnode.NameVariables, false)
 }
 
 func (e *Editor) HoveredInstance() *dmminstance.Instance {
-	return e.pMap.canvasState.HoveredInstance()
+	return e.pMap.CanvasState().HoveredInstance()
 }
 
 // MoveInstanceToTop swaps the provided instance with the one which is upper.
 func (e *Editor) MoveInstanceToTop(i *dmminstance.Instance) {
-	e.moveInstance(e.pMap.dmm.GetTile(i.Coord()), i, true)
+	e.moveInstance(e.dmm.GetTile(i.Coord()), i, true)
 }
 
 // MoveInstanceToBottom swaps the provided instance with the one which is under.
 func (e *Editor) MoveInstanceToBottom(i *dmminstance.Instance) {
-	e.moveInstance(e.pMap.dmm.GetTile(i.Coord()), i, false)
+	e.moveInstance(e.dmm.GetTile(i.Coord()), i, false)
 }
 
 func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top bool) {
@@ -82,7 +147,7 @@ func (e *Editor) moveInstance(tile *dmmap.Tile, i *dmminstance.Instance, top boo
 
 // DeleteInstance deletes the provided instance from the map.
 func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
-	tile := e.pMap.dmm.GetTile(i.Coord())
+	tile := e.dmm.GetTile(i.Coord())
 	tile.InstancesRemoveByInstance(i)
 	tile.InstancesRegenerate()
 }
@@ -91,7 +156,7 @@ func (e *Editor) DeleteInstance(i *dmminstance.Instance) {
 func (e *Editor) DeleteInstancesByPrefab(prefab *dmmprefab.Prefab) {
 	instances := e.FindInstancesByPrefabId(prefab.Id())
 	for _, instance := range instances {
-		tile := e.pMap.dmm.GetTile(instance.Coord())
+		tile := e.dmm.GetTile(instance.Coord())
 		tile.InstancesRemoveByInstance(instance)
 		tile.InstancesRegenerate()
 	}
@@ -99,7 +164,7 @@ func (e *Editor) DeleteInstancesByPrefab(prefab *dmmprefab.Prefab) {
 
 // ReplaceInstance replaces the provided instance with the provided prefab.
 func (e *Editor) ReplaceInstance(i *dmminstance.Instance, prefab *dmmprefab.Prefab) {
-	tile := e.pMap.dmm.GetTile(i.Coord())
+	tile := e.dmm.GetTile(i.Coord())
 
 	instances := tile.Instances()
 	for _, instance := range instances {
@@ -119,7 +184,7 @@ func (e *Editor) ResetInstance(i *dmminstance.Instance) {
 
 // UpdateCanvasByCoords updates the canvas for the provided coords.
 func (e *Editor) UpdateCanvasByCoords(coords []util.Point) {
-	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, e.pMap.activeLevel, coords)
+	e.pMap.Canvas().Render().UpdateBucketV(e.dmm, e.pMap.ActiveLevel(), coords)
 }
 
 // UpdateCanvasByTiles updates the canvas for the provided tiles.
@@ -133,21 +198,21 @@ func (e *Editor) UpdateCanvasByTiles(tiles []dmmap.Tile) {
 
 // SelectedPrefab returns a currently selected prefab.
 func (e *Editor) SelectedPrefab() (*dmmprefab.Prefab, bool) {
-	return e.pMap.app.SelectedPrefab()
+	return e.app.SelectedPrefab()
 }
 
 // CopyHoveredTile copies currently hovered tiles.
 // Respects a dm.PathsFilter state.
 func (e *Editor) CopyHoveredTile() {
-	tile := []util.Point{e.pMap.canvasState.LastHoveredTile()}
-	e.pMap.app.Clipboard().Copy(e.pMap.app.PathsFilter(), e.pMap.dmm, tile)
+	tile := []util.Point{e.pMap.CanvasState().LastHoveredTile()}
+	e.app.Clipboard().Copy(e.app.PathsFilter(), e.dmm, tile)
 }
 
 // PasteHoveredTile does a paste to the currently hovered tile.
 // Respects a dm.PathsFilter state.
 func (e *Editor) PasteHoveredTile() {
-	pasteCoord := e.pMap.canvasState.LastHoveredTile()
-	pastedData := e.pMap.app.Clipboard().Buffer()
+	pasteCoord := e.pMap.CanvasState().LastHoveredTile()
+	pastedData := e.app.Clipboard().Buffer()
 
 	if len(pastedData.Buffer) == 0 {
 		return
@@ -195,20 +260,20 @@ func (e *Editor) CutHoveredTile() {
 // DeleteHoveredTile deletes the last hovered by the mouse tile.
 // Respects a dm.PathsFilter state.
 func (e *Editor) DeleteHoveredTile() {
-	e.DeleteTile(e.pMap.canvasState.LastHoveredTile())
+	e.DeleteTile(e.pMap.CanvasState().LastHoveredTile())
 }
 
 // DeleteTile deletes content of the tile with the provided coord.
 // Respects a dm.PathsFilter state.
 func (e *Editor) DeleteTile(coord util.Point) {
-	tile := e.pMap.dmm.GetTile(coord)
+	tile := e.dmm.GetTile(coord)
 	e.deleteTileContent(tile)
 	tile.InstancesRegenerate()
 }
 
 func (e *Editor) deleteTileContent(tile *dmmap.Tile) {
 	for _, instance := range tile.Instances() {
-		if e.pMap.app.PathsFilter().IsVisiblePath(instance.Prefab().Path()) {
+		if e.app.PathsFilter().IsVisiblePath(instance.Prefab().Path()) {
 			tile.InstancesRemoveByPath(instance.Prefab().Path())
 		}
 	}
@@ -217,12 +282,12 @@ func (e *Editor) deleteTileContent(tile *dmmap.Tile) {
 // ReplaceTile replaces content of the tile with the provided coord with provided prefabs.
 // Respects a dm.PathsFilter state.
 func (e *Editor) ReplaceTile(coord util.Point, prefabs dmmdata.Prefabs) {
-	tile := e.pMap.dmm.GetTile(coord)
+	tile := e.dmm.GetTile(coord)
 
 	e.deleteTileContent(tile)
 
 	for _, prefab := range prefabs {
-		if e.pMap.app.PathsFilter().IsVisiblePath(prefab.Path()) {
+		if e.app.PathsFilter().IsVisiblePath(prefab.Path()) {
 			tile.InstancesAdd(prefab)
 		}
 	}
@@ -232,7 +297,7 @@ func (e *Editor) ReplaceTile(coord util.Point, prefabs dmmdata.Prefabs) {
 
 // ReplacePrefab replaces all old prefabs on the map with the new one. Commits map changes.
 func (e *Editor) ReplacePrefab(oldPrefab, newPrefab *dmmprefab.Prefab) {
-	for _, tile := range e.pMap.dmm.Tiles {
+	for _, tile := range e.dmm.Tiles {
 		for _, instance := range tile.Instances() {
 			if instance.Prefab().Id() == oldPrefab.Id() {
 				instance.SetPrefab(newPrefab)
@@ -253,7 +318,7 @@ func (e *Editor) PushOverlayTile(coord util.Point, colFill, colBorder util.Color
 
 // PushOverlayArea pushes area overlay for the next frame.
 func (e *Editor) PushOverlayArea(area util.Bounds, colFill, colBorder util.Color) {
-	e.pMap.pushAreaHover(util.Bounds{
+	e.pMap.PushAreaHover(util.Bounds{
 		X1: (area.X1 - 1) * float32(dmmap.WorldIconSize),
 		Y1: (area.Y1 - 1) * float32(dmmap.WorldIconSize),
 		X2: (area.X2-1)*float32(dmmap.WorldIconSize) + float32(dmmap.WorldIconSize),
@@ -265,9 +330,9 @@ func (e *Editor) PushOverlayArea(area util.Bounds, colFill, colBorder util.Color
 // Unlike the PushOverlayTile or PushOverlayArea methods, flick overlay is set only once.
 // It will exist until it disappears.
 func (e *Editor) SetOverlayTileFlick(coord util.Point) {
-	e.flickAreas = append(e.flickAreas, flickArea{
-		time: imgui.Time(),
-		area: util.Bounds{
+	e.flickAreas = append(e.flickAreas, overlay.FlickArea{
+		Time: imgui.Time(),
+		Area: util.Bounds{
 			X1: float32((coord.X - 1) * dmmap.WorldIconSize),
 			Y1: float32((coord.Y - 1) * dmmap.WorldIconSize),
 			X2: float32((coord.X-1)*dmmap.WorldIconSize + dmmap.WorldIconSize),
@@ -280,9 +345,9 @@ func (e *Editor) SetOverlayTileFlick(coord util.Point) {
 // Unlike the PushOverlayTile or PushOverlayArea methods, flick overlay is set only once.
 // It will exist until it disappears.
 func (e *Editor) SetOverlayInstanceFlick(i *dmminstance.Instance) {
-	e.flickInstance = append(e.flickInstance, flickInstance{
-		time:     imgui.Time(),
-		instance: i,
+	e.flickInstance = append(e.flickInstance, overlay.FlickInstance{
+		Time:     imgui.Time(),
+		Instance: i,
 	})
 }
 
@@ -293,7 +358,7 @@ func (e *Editor) CommitChanges(commitMsg string) {
 
 // Used as a wrapper to do a stuff inside the goroutine.
 func (e *Editor) commitChanges(commitMsg string) {
-	stateId, tilesToUpdate := e.pMap.snapshot.Commit()
+	stateId, tilesToUpdate := e.pMap.Snapshot().Commit()
 
 	// Do not push command if there is no tiles to update.
 	if len(tilesToUpdate) == 0 {
@@ -301,29 +366,29 @@ func (e *Editor) commitChanges(commitMsg string) {
 	}
 
 	// Copy the value to pass it to the lambda.
-	activeLevel := e.pMap.activeLevel
+	activeLevel := e.pMap.ActiveLevel()
 
 	// Ensure that the user has updated visuals.
-	e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
+	e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
 
-	e.pMap.app.CommandStorage().Push(command.Make(commitMsg, func() {
-		e.pMap.snapshot.GoTo(stateId - 1)
-		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
-		e.pMap.dmm.PersistPrefabs()
-		e.pMap.app.SyncPrefabs()
-		e.pMap.app.SyncVarEditor()
+	e.app.CommandStorage().Push(command.Make(commitMsg, func() {
+		e.pMap.Snapshot().GoTo(stateId - 1)
+		e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
+		e.dmm.PersistPrefabs()
+		e.app.SyncPrefabs()
+		e.app.SyncVarEditor()
 	}, func() {
-		e.pMap.snapshot.GoTo(stateId)
-		e.pMap.canvas.Render().UpdateBucketV(e.pMap.dmm, activeLevel, tilesToUpdate)
-		e.pMap.dmm.PersistPrefabs()
-		e.pMap.app.SyncPrefabs()
-		e.pMap.app.SyncVarEditor()
+		e.pMap.Snapshot().GoTo(stateId)
+		e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
+		e.dmm.PersistPrefabs()
+		e.app.SyncPrefabs()
+		e.app.SyncVarEditor()
 	}))
 }
 
 // FindInstancesByPrefabId returns all instances from the current map with a corresponding prefab ID.
 func (e *Editor) FindInstancesByPrefabId(prefabId uint64) (result []*dmminstance.Instance) {
-	for _, tile := range e.pMap.dmm.Tiles {
+	for _, tile := range e.dmm.Tiles {
 		for _, instance := range tile.Instances() {
 			if instance.Prefab().Id() == prefabId {
 				result = append(result, instance)
@@ -338,7 +403,7 @@ func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 	relPos := i.Coord()
 	absPos := util.Point{X: (relPos.X - 1) * -dmmap.WorldIconSize, Y: (relPos.Y - 1) * -dmmap.WorldIconSize, Z: relPos.Z}
 
-	camera := e.pMap.canvas.Render().Camera()
-	camera.ShiftX = e.pMap.size.X/2/camera.Scale + float32(absPos.X)
-	camera.ShiftY = e.pMap.size.Y/2/camera.Scale + float32(absPos.Y)
+	camera := e.pMap.Canvas().Render().Camera()
+	camera.ShiftX = e.pMap.Size().X/2/camera.Scale + float32(absPos.X)
+	camera.ShiftY = e.pMap.Size().Y/2/camera.Scale + float32(absPos.Y)
 }

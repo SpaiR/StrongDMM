@@ -11,16 +11,6 @@ import (
 
 const flickDurationSec = .5
 
-type flickArea struct {
-	time float64
-	area util.Bounds
-}
-
-type flickInstance struct {
-	time     float64
-	instance *dmminstance.Instance
-}
-
 func (p *PaneMap) processCanvasOverlay() {
 	p.processCanvasOverlayTools()
 	p.processCanvasOverlayFlick()
@@ -65,38 +55,38 @@ func (p *PaneMap) processCanvasOverlayTools() {
 	}
 
 	if colInstance != overlay.ColorEmpty {
-		p.pushUnitHighlight(p.canvasState.HoveredInstance(), colInstance)
+		p.PushUnitHighlight(p.canvasState.HoveredInstance(), colInstance)
 	}
 	if !p.canvasState.HoverOutOfBounds() {
-		p.pushAreaHover(p.canvasState.HoveredTileBounds(), colTileFill, colTileBorder)
+		p.PushAreaHover(p.canvasState.HoveredTileBounds(), colTileFill, colTileBorder)
 	}
 }
 
 func (p *PaneMap) processCanvasOverlayFlick() {
-	for idx, a := range p.editor.flickAreas {
-		delta := imgui.Time() - a.time
+	for idx, a := range p.editor.FlickAreas() {
+		delta := imgui.Time() - a.Time
 		col := flickColor(overlay.ColorFlickTileFill, delta)
 
 		if delta < flickDurationSec {
-			p.pushAreaHover(a.area, col, overlay.ColorEmpty)
+			p.PushAreaHover(a.Area, col, overlay.ColorEmpty)
 		} else {
-			p.editor.flickAreas = append(p.editor.flickAreas[:idx], p.editor.flickAreas[idx+1:]...)
+			p.editor.SetFlickAreas(append(p.editor.FlickAreas()[:idx], p.editor.FlickAreas()[idx+1:]...))
 		}
 	}
 
-	for idx, i := range p.editor.flickInstance {
-		delta := imgui.Time() - i.time
+	for idx, i := range p.editor.FlickInstance() {
+		delta := imgui.Time() - i.Time
 		col := flickColor(overlay.ColorFlickInstance, delta)
 
 		if delta < flickDurationSec {
-			p.pushUnitHighlight(i.instance, col)
+			p.PushUnitHighlight(i.Instance, col)
 		} else {
-			p.editor.flickInstance = append(p.editor.flickInstance[:idx], p.editor.flickInstance[idx+1:]...)
+			p.editor.SetFlickInstance(append(p.editor.FlickInstance()[:idx], p.editor.FlickInstance()[idx+1:]...))
 		}
 	}
 }
 
-func (p *PaneMap) pushUnitHighlight(instance *dmminstance.Instance, color util.Color) {
+func (p *PaneMap) PushUnitHighlight(instance *dmminstance.Instance, color util.Color) {
 	if instance != nil {
 		p.canvasOverlay.PushUnit(canvas.HighlightUnit{
 			Id_:    instance.Id(),
@@ -105,7 +95,7 @@ func (p *PaneMap) pushUnitHighlight(instance *dmminstance.Instance, color util.C
 	}
 }
 
-func (p *PaneMap) pushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color) {
+func (p *PaneMap) PushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color) {
 	p.canvasOverlay.PushArea(canvas.OverlayArea{
 		Bounds_:      bounds,
 		FillColor_:   fillColor,

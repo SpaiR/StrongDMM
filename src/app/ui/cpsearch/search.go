@@ -4,14 +4,14 @@ import (
 	"log"
 	"strconv"
 
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
 
 type App interface {
-	CurrentEditor() *pmap.Editor
+	CurrentEditor() *editor.Editor
 	DoEditInstance(*dmminstance.Instance)
 	PointSize() float32
 	ShowLayout(name string, focus bool)

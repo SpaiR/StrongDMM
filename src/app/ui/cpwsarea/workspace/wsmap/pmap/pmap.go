@@ -6,6 +6,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/app/ui/shortcut"
@@ -49,7 +50,7 @@ type PaneMap struct {
 	shortcuts shortcut.Shortcuts
 
 	snapshot *dmmsnap.DmmSnap
-	editor   *Editor
+	editor   *editor.Editor
 
 	tools    *tools.Tools
 	tileMenu *tilemenu.TileMenu
@@ -76,7 +77,23 @@ type PaneMap struct {
 	tmpLastHoveredInstance *dmminstance.Instance
 }
 
-func (p *PaneMap) Editor() *Editor {
+func (p *PaneMap) Canvas() *canvas.Canvas {
+	return p.canvas
+}
+
+func (p *PaneMap) CanvasState() *canvas.State {
+	return p.canvasState
+}
+
+func (p *PaneMap) CanvasControl() *canvas.Control {
+	return p.canvasControl
+}
+
+func (p *PaneMap) CanvasOverlay() *canvas.Overlay {
+	return p.canvasOverlay
+}
+
+func (p *PaneMap) Editor() *editor.Editor {
 	return p.editor
 }
 
@@ -86,6 +103,18 @@ func (p *PaneMap) Dmm() *dmmap.Dmm {
 
 func (p *PaneMap) Focused() bool {
 	return p.focused
+}
+
+func (p *PaneMap) ActiveLevel() int {
+	return p.activeLevel
+}
+
+func (p *PaneMap) Size() imgui.Vec2 {
+	return p.size
+}
+
+func (p *PaneMap) Snapshot() *dmmsnap.DmmSnap {
+	return p.snapshot
 }
 
 func (p *PaneMap) SetShortcutsVisible(visible bool) {
@@ -101,7 +130,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.activeLevel = 1 // Every map has at least 1 z-level, so we point to it.
 
 	p.snapshot = dmmsnap.New(dmm)
-	p.editor = &Editor{pMap: p}
+	p.editor = editor.New(app, p, dmm)
 
 	p.tileMenu = tilemenu.New(app, p.editor)
 	p.tools = tools.New(p.editor)

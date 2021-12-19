@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"sdmm/app/config"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -16,7 +16,7 @@ import (
 
 type App interface {
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
-	CurrentEditor() *pmap.Editor
+	CurrentEditor() *editor.Editor
 	LoadedEnvironment() *dmenv.Dme
 
 	ConfigRegister(config.Config)
