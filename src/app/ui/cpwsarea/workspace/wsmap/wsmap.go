@@ -82,3 +82,11 @@ func (ws *WsMap) Border() bool {
 func (ws *WsMap) Focused() bool {
 	return ws.paneMap.Focused()
 }
+
+func (ws *WsMap) OnActivate() {
+	ws.paneMap.OnActivate()
+}
+
+func (ws *WsMap) OnDeactivate() {
+	ws.paneMap.OnDeactivate()
+}

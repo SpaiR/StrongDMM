@@ -157,7 +157,15 @@ func (w *WsArea) findEmptyWorkspaceIdx() int {
 
 func (w *WsArea) switchActiveWorkspace(activeWs workspace.Workspace) {
 	if w.activeWs != activeWs {
+		if w.activeWs != nil {
+			w.activeWs.OnDeactivate()
+		}
+
 		w.activeWs = activeWs
+
+		if w.activeWs != nil {
+			w.activeWs.OnActivate()
+		}
 
 		w.app.OnWorkspaceSwitched()
 

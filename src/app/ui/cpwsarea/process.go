@@ -8,6 +8,10 @@ import (
 )
 
 func (w *WsArea) Process() {
+	if len(w.workspaces) == 0 {
+		w.switchActiveWorkspace(nil)
+	}
+
 	cpFocused := imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
 
 	// Window of the component doesn't have a title bar, so we need to mock a focus behaviour.

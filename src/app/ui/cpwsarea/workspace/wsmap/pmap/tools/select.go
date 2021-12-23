@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"log"
 	"math"
 
 	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
@@ -43,6 +44,8 @@ func (t *tSelect) Reset() {
 
 	t.initTiles = nil
 	t.prevTiles = nil
+
+	log.Println("[tools] select tools reset")
 }
 
 func newSelect() *tSelect {
@@ -83,7 +86,6 @@ func (t *tSelect) startSelectArea(coord util.Point) {
 func (t *tSelect) startMoveArea(coord util.Point) {
 	if t.fillArea.Contains(float32(coord.X), float32(coord.Y)) {
 		t.startMovePoint = coord
-		t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 	} else {
 		t.mode = tSelectModeSelectArea
 		t.onStart(coord)
@@ -172,6 +174,7 @@ func (t *tSelect) onStop(util.Point) {
 
 func (t *tSelect) stopSelectArea() {
 	t.mode = tSelectModeMoveArea
+	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 }
 
 func (t *tSelect) stopMoveArea() {

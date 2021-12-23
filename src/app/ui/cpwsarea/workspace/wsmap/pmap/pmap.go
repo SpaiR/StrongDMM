@@ -144,7 +144,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvas.Render().SetUnitProcessor(p)
 	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
 
-	p.setupTools()
+	p.prepareTools() // Initial preparations for the newly created pane.
 
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
 	p.addShortcuts()
@@ -156,7 +156,6 @@ func (p *PaneMap) Process() {
 	// Enforce a focus to the current window if the canvas was touched.
 	if p.canvasControl.Touched() && !imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows) {
 		imgui.SetWindowFocus()
-		p.setupTools()
 	}
 
 	p.updateShortcutsState()
@@ -193,7 +192,7 @@ func (p *PaneMap) Dispose() {
 	log.Println("[pmap] disposed")
 }
 
-func (p *PaneMap) setupTools() {
+func (p *PaneMap) prepareTools() {
 	tools.SetEditor(p.editor)
 	tools.SetCanvasState(p.canvasState)
 	tools.SetCanvasControl(p.canvasControl)
@@ -233,4 +232,12 @@ func (p *PaneMap) updateShortcutsState() {
 	if imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows) {
 		p.shortcuts.SetVisible(true)
 	}
+}
+
+func (p *PaneMap) OnActivate() {
+	p.prepareTools()
+}
+
+func (p *PaneMap) OnDeactivate() {
+	tools.Selected().OnDeselect()
 }

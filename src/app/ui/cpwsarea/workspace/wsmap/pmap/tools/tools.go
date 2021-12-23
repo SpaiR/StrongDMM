@@ -1,6 +1,8 @@
 package tools
 
 import (
+	"log"
+
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -71,6 +73,7 @@ var (
 
 func SetSelected(toolName string) {
 	if selectedToolName != toolName {
+		log.Println("[tools] selecting:", toolName)
 		tools[selectedToolName].OnDeselect()
 		selectedToolName = toolName
 	}
@@ -113,6 +116,19 @@ func Process(altBehaviour bool) {
 
 func OnMouseMove() {
 	processSelectedToolMove()
+}
+
+func SelectedTiles() []util.Point {
+	if selectTool, ok := Selected().(*tSelect); ok {
+		if len(selectTool.initTiles) > 0 {
+			tiles := make([]util.Point, 0, len(selectTool.initTiles))
+			for _, tile := range selectTool.initTiles {
+				tiles = append(tiles, tile.Coord)
+			}
+			return tiles
+		}
+	}
+	return []util.Point{cs.HoveredTile()}
 }
 
 func processSelectedToolStart() {

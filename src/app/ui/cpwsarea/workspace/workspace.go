@@ -19,6 +19,8 @@ type Workspace interface {
 	Border() bool
 	SetIdx(idx int)
 	Focused() bool
+	OnActivate()
+	OnDeactivate()
 }
 
 type Base struct {
@@ -72,4 +74,10 @@ func (b *Base) SetIdx(idx int) {
 
 func (b *Base) Focused() bool {
 	return b.focused
+}
+
+func (*Base) OnActivate() {
+}
+
+func (*Base) OnDeactivate() {
 }

@@ -3,6 +3,7 @@ package editor
 import (
 	"log"
 
+	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
@@ -11,13 +12,14 @@ import (
 // TileCopyHovered copies currently hovered tiles.
 // Respects a dm.PathsFilter state.
 func (e *Editor) TileCopyHovered() {
-	tile := []util.Point{e.pMap.CanvasState().LastHoveredTile()}
-	e.app.Clipboard().Copy(e.app.PathsFilter(), e.dmm, tile)
+	e.app.Clipboard().Copy(e.app.PathsFilter(), e.dmm, tools.SelectedTiles())
 }
 
 // TilePasteHovered does a paste to the currently hovered tile.
 // Respects a dm.PathsFilter state.
 func (e *Editor) TilePasteHovered() {
+	tools.SetSelected(tools.TNSelect)
+
 	pasteCoord := e.pMap.CanvasState().LastHoveredTile()
 	pastedData := e.app.Clipboard().Buffer()
 
