@@ -16,7 +16,7 @@ func (e *Editor) TileCopySelected() {
 }
 
 // TilePasteSelected does a paste to the currently hovered tile.
-// Pasted tiles will be automatically selected by the tools.ToolSelect.
+// Pasted tiles will be automatically selected by the tools.ToolGrab.
 // Respects a dm.PathsFilter state.
 func (e *Editor) TilePasteSelected() {
 	pasteCoord := e.pMap.CanvasState().LastHoveredTile()
@@ -32,7 +32,7 @@ func (e *Editor) TilePasteSelected() {
 	anchor := pastedData.Buffer[0].Coord
 
 	// Select a "select" tool and reset its selection.
-	toolSelect := tools.SetSelected(tools.TNSelect).(*tools.ToolSelect)
+	toolSelect := tools.SetSelected(tools.TNGrab).(*tools.ToolGrab)
 	toolSelect.Reset()
 
 	// Var to store tiles with their new position.

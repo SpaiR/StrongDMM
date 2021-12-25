@@ -21,7 +21,7 @@ var (
 	toolsOrder = []string{
 		tools.TNAdd,
 		tools.TNFill,
-		tools.TNSelect,
+		tools.TNGrab,
 		tSeparator,
 		tools.TNPick,
 		tools.TNDelete,
@@ -30,23 +30,23 @@ var (
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
 			icon: icon.FaPlus,
-			help: "Add (1)\nClick - Place selected object\nAlt+Click - Place selected object with replace",
+			help: tools.TNAdd + " (1)\nClick - Place selected object\nAlt+Click - Place selected object with replace",
 		},
 		tools.TNFill: {
 			icon: icon.FaBorderAll,
-			help: "Fill (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
+			help: tools.TNFill + " (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
 		},
-		tools.TNSelect: {
+		tools.TNGrab: {
 			icon: icon.FaBorderStyle,
-			help: "Select (3)\nClick&Drag - Select the area / Move selection with visible objects inside",
+			help: tools.TNGrab + " (3)\nClick&Drag - Select the area / Move selection with visible objects inside",
 		},
 		tools.TNPick: {
 			icon: icon.FaEyeDropper,
-			help: "Pick (Hold S)\nClick - Pick hovered object",
+			help: tools.TNPick + " (Hold S)\nClick - Pick hovered object",
 		},
 		tools.TNDelete: {
 			icon: icon.FaEraser,
-			help: "Delete (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
+			help: tools.TNDelete + " (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
 		},
 	}
 )
@@ -131,5 +131,5 @@ func (p *PaneMap) selectFillTool() {
 }
 
 func (p *PaneMap) selectSelectTool() {
-	tools.SetSelected(tools.TNSelect)
+	tools.SetSelected(tools.TNGrab)
 }

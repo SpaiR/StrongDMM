@@ -85,5 +85,5 @@ func (p *PaneMap) doToggleMob() {
 }
 
 func (p *PaneMap) DoDeselect() {
-	tools.Tools()[tools.TNSelect].OnDeselect()
+	tools.Tools()[tools.TNGrab].OnDeselect()
 }

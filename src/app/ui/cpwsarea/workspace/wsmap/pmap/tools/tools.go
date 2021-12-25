@@ -13,7 +13,7 @@ import (
 const (
 	TNAdd    = "Add"
 	TNFill   = "Fill"
-	TNSelect = "Select"
+	TNGrab   = "Grab"
 	TNPick   = "Pick"
 	TNDelete = "Delete"
 )
@@ -61,7 +61,7 @@ var (
 	tools = map[string]Tool{
 		TNAdd:    newAdd(),
 		TNFill:   newFill(),
-		TNSelect: newSelect(),
+		TNGrab:   newGrab(),
 		TNPick:   newPick(),
 		TNDelete: newDelete(),
 	}
@@ -120,7 +120,7 @@ func OnMouseMove() {
 }
 
 func SelectedTiles() []util.Point {
-	if selectTool, ok := Selected().(*ToolSelect); ok {
+	if selectTool, ok := Selected().(*ToolGrab); ok {
 		if len(selectTool.initTiles) > 0 {
 			tiles := make([]util.Point, 0, len(selectTool.initTiles))
 			for _, tile := range selectTool.initTiles {

@@ -41,7 +41,7 @@ func (p *PaneMap) processCanvasOverlayTools() {
 		} else {
 			colTileFill = overlay.ColorToolFillAltTileFill
 		}
-	case tools.TNSelect:
+	case tools.TNGrab:
 		colTileBorder = overlay.ColorToolSelectTileBorder
 	case tools.TNPick:
 		colInstance = overlay.ColorToolPickInstance
