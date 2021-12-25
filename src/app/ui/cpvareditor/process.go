@@ -3,6 +3,7 @@ package cpvareditor
 import (
 	"fmt"
 	"log"
+	"sdmm/app/ui/shortcut"
 	"sort"
 	"strings"
 
@@ -97,13 +98,13 @@ func (v *VarEditor) showControls() {
 	imgui.Button(icon.FaCog)
 	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {
 		cfg := v.config()
-		if imgui.MenuItemV("Show modified only", "Ctrl+1", cfg.ShowModified, true) {
+		if imgui.MenuItemV("Show modified only", shortcut.KeyCmdName()+"+1", cfg.ShowModified, true) {
 			v.doToggleShowModified()
 		}
-		if imgui.MenuItemV("Show types", "Ctrl+2", cfg.ShowByType, true) {
+		if imgui.MenuItemV("Show types", shortcut.KeyCmdName()+"+2", cfg.ShowByType, true) {
 			v.doToggleShowByType()
 		}
-		if imgui.MenuItemV("Show pins", "Ctrl+3", cfg.ShowPins, true) {
+		if imgui.MenuItemV("Show pins", shortcut.KeyCmdName()+"+3", cfg.ShowPins, true) {
 			v.doToggleShowPins()
 		}
 		imgui.EndPopup()

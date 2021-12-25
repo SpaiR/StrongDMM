@@ -3,6 +3,7 @@ package tilemenu
 import (
 	"fmt"
 	"log"
+	"sdmm/app/ui/shortcut"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
@@ -34,22 +35,22 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Undo", t.app.DoUndo).
 			Icon(icon.FaUndo).
 			Enabled(t.app.CommandStorage().HasUndo()).
-			Shortcut("Ctrl+Z"),
+			Shortcut(shortcut.KeyCmdName() + "+Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
 			Icon(icon.FaRedo).
 			Enabled(t.app.CommandStorage().HasRedo()).
-			Shortcut("Ctrl+Shift+Z"),
+			Shortcut(shortcut.KeyCmdName() + "+Shift+Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
 			Icon(icon.FaCopy).
-			Shortcut("Ctrl+C"),
+			Shortcut(shortcut.KeyCmdName() + "+C"),
 		w.MenuItem("Paste", t.app.DoPaste).
 			Icon(icon.FaPaste).
 			Enabled(t.app.Clipboard().HasData()).
-			Shortcut("Ctrl+V"),
+			Shortcut(shortcut.KeyCmdName() + "+V"),
 		w.MenuItem("Cut", t.app.DoCut).
 			Icon(icon.FaCut).
-			Shortcut("Ctrl+X"),
+			Shortcut(shortcut.KeyCmdName() + "+X"),
 		w.MenuItem("Delete", t.app.DoDelete).
 			Icon(icon.FaEraser).
 			Shortcut("Delete"),

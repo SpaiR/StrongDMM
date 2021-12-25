@@ -16,25 +16,25 @@ type app interface {
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
 	DoClearRecentEnvironments()
-	DoOpenMap() // Ctrl+O
+	DoOpenMap()
 	DoOpenMapByPath(path string)
 	DoClearRecentMaps()
-	DoSave() // Ctrl+S
+	DoSave()
 	DoOpenPreferences()
 	DoExit()
 
 	// Edit
-	DoUndo()     // Ctrl+Z
-	DoRedo()     // Ctrl+Shift+Z | Ctrl+Y
-	DoCopy()     // Ctrl+C
-	DoPaste()    // Ctrl+V
-	DoCut()      // Ctrl+X
-	DoDelete()   // Delete
-	DoSearch()   // Ctrl+F
-	DoDeselect() // Ctrl+D
+	DoUndo()
+	DoRedo()
+	DoCopy()
+	DoPaste()
+	DoCut()
+	DoDelete()
+	DoSearch()
+	DoDeselect()
 
 	// Window
-	DoResetLayout() // F5
+	DoResetLayout()
 
 	// Help
 	DoOpenLogs()
@@ -89,7 +89,7 @@ func (m *Menu) Process() {
 			w.MenuItem("Open Map...", m.app.DoOpenMap).
 				Icon(icon.FaFolderOpen).
 				Enabled(m.app.HasLoadedEnvironment()).
-				Shortcut("Ctrl+O"),
+				Shortcut(shortcut.KeyCmdName() + "+O"),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
 					for _, recentMap := range m.app.RecentMapsByLoadedEnvironment() {
@@ -108,7 +108,7 @@ func (m *Menu) Process() {
 			w.MenuItem("Save", m.app.DoSave).
 				Icon(icon.FaSave).
 				Enabled(m.app.HasActiveMap()).
-				Shortcut("Ctrl+S"),
+				Shortcut(shortcut.KeyCmdName() + "+S"),
 			w.Separator(),
 			w.MenuItem("Preferences", m.app.DoOpenPreferences).
 				Icon(icon.FaWrench),
@@ -121,33 +121,33 @@ func (m *Menu) Process() {
 			w.MenuItem("Undo", m.app.DoUndo).
 				Icon(icon.FaUndo).
 				Enabled(m.app.CommandStorage().HasUndo()).
-				Shortcut("Ctrl+Z"),
+				Shortcut(shortcut.KeyCmdName() + "+Z"),
 			w.MenuItem("Redo", m.app.DoRedo).
 				Icon(icon.FaRedo).
 				Enabled(m.app.CommandStorage().HasRedo()).
-				Shortcut("Ctrl+Shift+Z"),
+				Shortcut(shortcut.KeyCmdName() + "+Shift+Z"),
 			w.Separator(),
 			w.MenuItem("Copy", m.app.DoCopy).
 				Icon(icon.FaCopy).
-				Shortcut("Ctrl+C"),
+				Shortcut(shortcut.KeyCmdName() + "+C"),
 			w.MenuItem("Paste", m.app.DoPaste).
 				Icon(icon.FaPaste).
 				Enabled(m.app.Clipboard().HasData()).
-				Shortcut("Ctrl+V"),
+				Shortcut(shortcut.KeyCmdName() + "+V"),
 			w.MenuItem("Cut", m.app.DoCut).
 				Icon(icon.FaCut).
-				Shortcut("Ctrl+X"),
+				Shortcut(shortcut.KeyCmdName() + "+X"),
 			w.MenuItem("Delete", m.app.DoDelete).
 				Icon(icon.FaEraser).
 				Shortcut("Delete"),
 			w.MenuItem("Deselect", m.app.DoDeselect).
 				IconEmpty().
-				Shortcut("Ctrl+D"),
+				Shortcut(shortcut.KeyCmdName() + "+D"),
 			w.Separator(),
 			w.MenuItem("Search", m.app.DoSearch).
 				Icon(icon.FaSearch).
 				Enabled(m.app.HasActiveMap()).
-				Shortcut("Ctrl+F"),
+				Shortcut(shortcut.KeyCmdName() + "+F"),
 		}),
 
 		w.Menu("Options", w.Layout{
@@ -155,22 +155,22 @@ func (m *Menu) Process() {
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isAreaToggled()).
-				Shortcut("Ctrl+1"),
+				Shortcut(shortcut.KeyCmdName() + "+1"),
 			w.MenuItem("Toggle Turf", m.doToggleTurf).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isTurfToggled()).
-				Shortcut("Ctrl+2"),
+				Shortcut(shortcut.KeyCmdName() + "+2"),
 			w.MenuItem("Toggle Object", m.doToggleObject).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isObjectToggled()).
-				Shortcut("Ctrl+3"),
+				Shortcut(shortcut.KeyCmdName() + "+3"),
 			w.MenuItem("Toggle Mob", m.doToggleMob).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
-				Shortcut("Ctrl+4"),
+				Shortcut(shortcut.KeyCmdName() + "+4"),
 		}),
 
 		w.Menu("Window", w.Layout{
