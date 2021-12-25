@@ -45,7 +45,7 @@ type editor interface {
 
 	TileReplace(coord util.Point, prefabs dmmdata.Prefabs)
 
-	TileDeleteHovered()
+	TileDeleteSelected()
 	TileDelete(util.Point)
 	HoveredInstance() *dmminstance.Instance
 }
@@ -71,12 +71,13 @@ var (
 	startedTool Tool
 )
 
-func SetSelected(toolName string) {
+func SetSelected(toolName string) Tool {
 	if selectedToolName != toolName {
 		log.Println("[tools] selecting:", toolName)
 		tools[selectedToolName].OnDeselect()
 		selectedToolName = toolName
 	}
+	return Selected()
 }
 
 func IsSelected(toolName string) bool {
@@ -119,7 +120,7 @@ func OnMouseMove() {
 }
 
 func SelectedTiles() []util.Point {
-	if selectTool, ok := Selected().(*tSelect); ok {
+	if selectTool, ok := Selected().(*ToolSelect); ok {
 		if len(selectTool.initTiles) > 0 {
 			tiles := make([]util.Point, 0, len(selectTool.initTiles))
 			for _, tile := range selectTool.initTiles {

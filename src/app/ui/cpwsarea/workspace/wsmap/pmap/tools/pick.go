@@ -4,23 +4,24 @@ import (
 	"sdmm/util"
 )
 
-type tPick struct {
+// ToolPick can be used to select a hovered object instance.
+type ToolPick struct {
 	tool
 }
 
-func (tPick) Name() string {
+func (ToolPick) Name() string {
 	return TNPick
 }
 
-func newPick() *tPick {
-	return &tPick{}
+func newPick() *ToolPick {
+	return &ToolPick{}
 }
 
-func (tPick) AltBehaviour() bool {
+func (ToolPick) AltBehaviour() bool {
 	return false
 }
 
-func (t tPick) onStart(util.Point) {
+func (t ToolPick) onStart(util.Point) {
 	if hoveredInstance := ed.HoveredInstance(); hoveredInstance != nil {
 		ed.InstanceSelect(hoveredInstance)
 	}

@@ -16,7 +16,15 @@ const (
 	tSelectModeMoveArea
 )
 
-type tSelect struct {
+// ToolSelect can be used to select a specific tiles area and to manipulate the selected area state.
+// Tool works in two modes:
+//  1. Select the area
+//  2. Move the area
+// The first one is available when no area selected or user selects the area outside the currently selected.
+// The second mode is activated automatically when dragging mouse on the currently selected area.
+//
+// Copy/Paste operations will automatically use selected area for them.
+type ToolSelect struct {
 	tool
 
 	fillStart    util.Point
@@ -33,14 +41,14 @@ type tSelect struct {
 	mode tSelectMode
 }
 
-func (tSelect) Name() string {
+func (ToolSelect) Name() string {
 	return TNSelect
 }
 
-func (t *tSelect) Reset() {
+func (t *ToolSelect) Reset() {
 	t.fillStart = util.Point{}
 	t.fillAreaInit = util.Bounds{}
-	t.fillArea = util.Bounds{}
+	t.fillArea = util.Bounds{X1: math.MaxFloat32, Y1: math.MaxFloat32}
 
 	t.initTiles = nil
 	t.prevTiles = nil
@@ -48,25 +56,43 @@ func (t *tSelect) Reset() {
 	log.Println("[tools] select tools reset")
 }
 
-func newSelect() *tSelect {
-	return &tSelect{}
+func newSelect() *ToolSelect {
+	return &ToolSelect{
+		fillArea: util.Bounds{X1: math.MaxFloat32, Y1: math.MaxFloat32},
+	}
 }
 
-func (t *tSelect) Stale() bool {
+func (t *ToolSelect) Stale() bool {
 	return !t.dragging
 }
 
-func (tSelect) AltBehaviour() bool {
+func (ToolSelect) AltBehaviour() bool {
 	return false
 }
 
-func (t *tSelect) process() {
+func (t *ToolSelect) SelectArea(tiles []util.Point) {
+	t.fillStart = tiles[0]
+	for _, tile := range tiles {
+		t.selectArea(float64(t.fillArea.X1), float64(t.fillArea.Y1), float64(t.fillArea.X2), float64(t.fillArea.Y2), tile)
+	}
+	t.stopMoveArea()
+}
+
+func (t *ToolSelect) PreSelectArea(tiles []util.Point) {
+	for _, tile := range tiles {
+		if ed.Dmm().HasTile(tile) {
+			t.prevTiles = append(t.prevTiles, ed.Dmm().GetTile(tile).Copy())
+		}
+	}
+}
+
+func (t *ToolSelect) process() {
 	if t.active() {
 		ed.OverlayPushArea(t.fillArea, overlay.ColorToolSelectTileFill, overlay.ColorToolSelectTileBorder)
 	}
 }
 
-func (t *tSelect) onStart(coord util.Point) {
+func (t *ToolSelect) onStart(coord util.Point) {
 	t.dragging = true
 
 	switch t.mode {
@@ -77,13 +103,13 @@ func (t *tSelect) onStart(coord util.Point) {
 	}
 }
 
-func (t *tSelect) startSelectArea(coord util.Point) {
+func (t *ToolSelect) startSelectArea(coord util.Point) {
 	t.Reset()
 	t.fillStart = coord
 	t.onMove(coord)
 }
 
-func (t *tSelect) startMoveArea(coord util.Point) {
+func (t *ToolSelect) startMoveArea(coord util.Point) {
 	if t.fillArea.Contains(float32(coord.X), float32(coord.Y)) {
 		t.startMovePoint = coord
 	} else {
@@ -92,28 +118,29 @@ func (t *tSelect) startMoveArea(coord util.Point) {
 	}
 }
 
-func (t *tSelect) onMove(coord util.Point) {
+func (t *ToolSelect) onMove(coord util.Point) {
 	if !t.active() {
 		return
 	}
 
 	switch t.mode {
 	case tSelectModeSelectArea:
-		t.selectArea(coord)
+		x, y := float64(t.fillStart.X), float64(t.fillStart.Y)
+		t.selectArea(x, y, x, y, coord)
 	case tSelectModeMoveArea:
 		t.moveArea(coord)
 	}
 }
 
-func (t *tSelect) selectArea(coord util.Point) {
-	t.fillArea.X1 = float32(math.Min(float64(t.fillStart.X), float64(coord.X)))
-	t.fillArea.Y1 = float32(math.Min(float64(t.fillStart.Y), float64(coord.Y)))
-	t.fillArea.X2 = float32(math.Max(float64(t.fillStart.X), float64(coord.X)))
-	t.fillArea.Y2 = float32(math.Max(float64(t.fillStart.Y), float64(coord.Y)))
+func (t *ToolSelect) selectArea(minX, minY, maxX, maxY float64, coord util.Point) {
+	t.fillArea.X1 = float32(math.Min(minX, float64(coord.X)))
+	t.fillArea.Y1 = float32(math.Min(minY, float64(coord.Y)))
+	t.fillArea.X2 = float32(math.Max(maxX, float64(coord.X)))
+	t.fillArea.Y2 = float32(math.Max(maxY, float64(coord.Y)))
 	t.fillAreaInit = t.fillArea
 }
 
-func (t *tSelect) moveArea(coord util.Point) {
+func (t *ToolSelect) moveArea(coord util.Point) {
 	dmm := ed.Dmm()
 
 	shift := coord.Minus(t.startMovePoint)
@@ -157,7 +184,7 @@ func (t *tSelect) moveArea(coord util.Point) {
 	ed.UpdateCanvasByCoords(updateCoords)
 }
 
-func (t *tSelect) onStop(util.Point) {
+func (t *ToolSelect) onStop(util.Point) {
 	if !t.active() {
 		return
 	}
@@ -172,22 +199,22 @@ func (t *tSelect) onStop(util.Point) {
 	t.dragging = false
 }
 
-func (t *tSelect) stopSelectArea() {
+func (t *ToolSelect) stopSelectArea() {
 	t.mode = tSelectModeMoveArea
 	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 }
 
-func (t *tSelect) stopMoveArea() {
+func (t *ToolSelect) stopMoveArea() {
 	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 	t.fillAreaInit = t.fillArea
 	go ed.CommitChanges("Move Selected Area")
 }
 
-func (t *tSelect) OnDeselect() {
+func (t *ToolSelect) OnDeselect() {
 	t.Reset()
 }
 
-func (t *tSelect) active() bool {
+func (t *ToolSelect) active() bool {
 	return !t.fillStart.Equals(0, 0, 0)
 }
 

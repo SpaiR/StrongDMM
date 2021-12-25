@@ -58,7 +58,10 @@ func (c *Clipboard) Copy(pathsFilter *dm.PathsFilter, dmm *dmmap.Dmm, tiles []ut
 		c.pasteData.Buffer = append(c.pasteData.Buffer, tile)
 	}
 
-	sort.Slice(c.pasteData.Buffer, func(i, j int) bool {
+	sort.SliceStable(c.pasteData.Buffer, func(i, j int) bool {
+		return c.pasteData.Buffer[i].Coord.Y < c.pasteData.Buffer[j].Coord.Y
+	})
+	sort.SliceStable(c.pasteData.Buffer, func(i, j int) bool {
 		return c.pasteData.Buffer[i].Coord.X < c.pasteData.Buffer[j].Coord.X
 	})
 }

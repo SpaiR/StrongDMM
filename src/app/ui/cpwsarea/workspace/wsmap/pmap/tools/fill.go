@@ -7,13 +7,13 @@ import (
 	"sdmm/util"
 )
 
-// Fill tool can be used to add prefabs to the map by filling the provided area.
+// ToolFill can be used to add prefabs to the map by filling the provided area.
 // During mouse moving when the tool is active it will mark the area to fill.
 // On stop the tool will fill the area a user has made.
 //
 // Default: obj place on top, area and turfs are replaced.
 // Alternative: obj replaced, area and turfs are placed on top.
-type tFill struct {
+type ToolFill struct {
 	tool
 
 	start    util.Point
@@ -22,19 +22,19 @@ type tFill struct {
 	dragging bool
 }
 
-func (tFill) Name() string {
+func (ToolFill) Name() string {
 	return TNFill
 }
 
-func newFill() *tFill {
-	return &tFill{}
+func newFill() *ToolFill {
+	return &ToolFill{}
 }
 
-func (t *tFill) Stale() bool {
+func (t *ToolFill) Stale() bool {
 	return !t.dragging
 }
 
-func (t *tFill) process() {
+func (t *ToolFill) process() {
 	if t.active() {
 		if t.AltBehaviour() {
 			ed.OverlayPushArea(t.fillArea, overlay.ColorToolFillAltTileFill, overlay.ColorToolFillAltTileBorder)
@@ -44,7 +44,7 @@ func (t *tFill) process() {
 	}
 }
 
-func (t *tFill) onStart(coord util.Point) {
+func (t *ToolFill) onStart(coord util.Point) {
 	if _, ok := ed.SelectedPrefab(); ok {
 		t.dragging = true
 		t.start = coord
@@ -52,7 +52,7 @@ func (t *tFill) onStart(coord util.Point) {
 	}
 }
 
-func (t *tFill) onMove(coord util.Point) {
+func (t *ToolFill) onMove(coord util.Point) {
 	if !t.active() {
 		return
 	}
@@ -63,7 +63,7 @@ func (t *tFill) onMove(coord util.Point) {
 	t.fillArea.Y2 = float32(math.Max(float64(t.start.Y), float64(coord.Y)))
 }
 
-func (t *tFill) onStop(util.Point) {
+func (t *ToolFill) onStop(util.Point) {
 	if !t.active() {
 		return
 	}
@@ -87,6 +87,6 @@ func (t *tFill) onStop(util.Point) {
 	t.dragging = false
 }
 
-func (t *tFill) active() bool {
+func (t *ToolFill) active() bool {
 	return !t.start.Equals(0, 0, 0)
 }

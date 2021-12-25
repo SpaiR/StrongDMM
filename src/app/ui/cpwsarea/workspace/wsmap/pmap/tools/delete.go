@@ -5,23 +5,25 @@ import (
 	"sdmm/util"
 )
 
-type tDelete struct {
+// ToolDelete can be used to delete a hovered object instance.
+// It has an alt behaviour which is able to delete all instances on the tile.
+type ToolDelete struct {
 	tool
 
 	deletedTiles map[util.Point]bool
 }
 
-func (tDelete) Name() string {
+func (ToolDelete) Name() string {
 	return TNDelete
 }
 
-func newDelete() *tDelete {
-	return &tDelete{
+func newDelete() *ToolDelete {
+	return &ToolDelete{
 		deletedTiles: make(map[util.Point]bool),
 	}
 }
 
-func (t *tDelete) process() {
+func (t *ToolDelete) process() {
 	for coord := range t.deletedTiles {
 		if t.AltBehaviour() {
 			ed.OverlayPushTile(coord, overlay.ColorToolDeleteAltTileFill, overlay.ColorToolDeleteAltTileBorder)
@@ -29,7 +31,7 @@ func (t *tDelete) process() {
 	}
 }
 
-func (t *tDelete) onStart(coord util.Point) {
+func (t *ToolDelete) onStart(coord util.Point) {
 	if t.AltBehaviour() {
 		t.onMove(coord)
 	} else if hoveredInstance := ed.HoveredInstance(); hoveredInstance != nil {
@@ -38,15 +40,15 @@ func (t *tDelete) onStart(coord util.Point) {
 	}
 }
 
-func (t *tDelete) onMove(coord util.Point) {
+func (t *ToolDelete) onMove(coord util.Point) {
 	if t.AltBehaviour() && !t.deletedTiles[coord] {
 		t.deletedTiles[coord] = true // Don't delete to the same tile twice
-		ed.TileDeleteHovered()
+		ed.TileDeleteSelected()
 		ed.UpdateCanvasByCoords([]util.Point{coord})
 	}
 }
 
-func (t *tDelete) onStop(util.Point) {
+func (t *ToolDelete) onStop(util.Point) {
 	if len(t.deletedTiles) != 0 {
 		t.deletedTiles = make(map[util.Point]bool, len(t.deletedTiles))
 		go ed.CommitChanges("Delete Tiles")

@@ -9,17 +9,16 @@ import (
 	"sdmm/util"
 )
 
-// TileCopyHovered copies currently hovered tiles.
+// TileCopySelected copies currently selected tiles.
 // Respects a dm.PathsFilter state.
-func (e *Editor) TileCopyHovered() {
+func (e *Editor) TileCopySelected() {
 	e.app.Clipboard().Copy(e.app.PathsFilter(), e.dmm, tools.SelectedTiles())
 }
 
-// TilePasteHovered does a paste to the currently hovered tile.
+// TilePasteSelected does a paste to the currently hovered tile.
+// Pasted tiles will be automatically selected by the tools.ToolSelect.
 // Respects a dm.PathsFilter state.
-func (e *Editor) TilePasteHovered() {
-	tools.SetSelected(tools.TNSelect)
-
+func (e *Editor) TilePasteSelected() {
 	pasteCoord := e.pMap.CanvasState().LastHoveredTile()
 	pastedData := e.app.Clipboard().Buffer()
 
@@ -29,8 +28,18 @@ func (e *Editor) TilePasteHovered() {
 
 	log.Printf("[pmap] paste tiles from the clipboard buffer on the map: %v", pasteCoord)
 
+	// Fill copied tiles from the bottom-left tile.
 	anchor := pastedData.Buffer[0].Coord
 
+	// Select a "select" tool and reset its selection.
+	toolSelect := tools.SetSelected(tools.TNSelect).(*tools.ToolSelect)
+	toolSelect.Reset()
+
+	// Var to store tiles with their new position.
+	tilesToPaste := make(map[util.Point]dmmap.Tile)
+
+	// Calculate tiles positions.
+	var tilesToSelect []util.Point
 	for _, tileCopy := range pastedData.Buffer {
 		pos := util.Point{
 			X: pasteCoord.X + tileCopy.Coord.X - anchor.X,
@@ -42,34 +51,50 @@ func (e *Editor) TilePasteHovered() {
 			continue
 		}
 
+		tilesToSelect = append(tilesToSelect, pos)
+		tilesToPaste[pos] = tileCopy
+	}
+
+	// Pre-select tiles we will paste onto.
+	toolSelect.PreSelectArea(tilesToSelect)
+
+	for pos, tileCopy := range tilesToPaste {
 		tile := e.Dmm().GetTile(pos)
+
 		currTilePrefabs := tile.Instances().Prefabs()
 		newTilePrefabs := make(dmmdata.Prefabs, 0, len(currTilePrefabs))
 
+		// Keep instances which are not filtered out.
 		for _, prefab := range currTilePrefabs {
 			if !pastedData.Filter.IsVisiblePath(prefab.Path()) {
 				newTilePrefabs = append(newTilePrefabs, prefab)
 			}
 		}
 
+		// And append copied instances.
 		newTilePrefabs = append(newTilePrefabs, tileCopy.Instances().Prefabs()...)
 
 		tile.InstancesSet(newTilePrefabs.Sorted())
 		tile.InstancesRegenerate()
 	}
+
+	// Select tiles we've pasted.
+	toolSelect.SelectArea(tilesToSelect)
 }
 
-// TileCutHovered does a cut (copy+delete) of the currently hovered tile.
+// TileCutSelected does a cut (copy+delete) of the currently hovered tile.
 // Respects a dm.PathsFilter state.
-func (e *Editor) TileCutHovered() {
-	e.TileCopyHovered()
-	e.TileDeleteHovered()
+func (e *Editor) TileCutSelected() {
+	e.TileCopySelected()
+	e.TileDeleteSelected()
 }
 
-// TileDeleteHovered deletes the last hovered by the mouse tile.
+// TileDeleteSelected deletes the last hovered by the mouse tile.
 // Respects a dm.PathsFilter state.
-func (e *Editor) TileDeleteHovered() {
-	e.TileDelete(e.pMap.CanvasState().LastHoveredTile())
+func (e *Editor) TileDeleteSelected() {
+	for _, tile := range tools.SelectedTiles() {
+		e.TileDelete(tile)
+	}
 }
 
 // TileDelete deletes content of the tile with the provided coord.

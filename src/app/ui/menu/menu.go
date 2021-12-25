@@ -151,7 +151,7 @@ func (m *Menu) Process() {
 		}),
 
 		w.Menu("Options", w.Layout{
-			w.MenuItem("Toggle Area", m.doToggleTurf).
+			w.MenuItem("Toggle Area", m.doToggleArea).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isAreaToggled()).

@@ -23,8 +23,7 @@ type Dmm struct {
 }
 
 func (d *Dmm) HasTile(coord util.Point) bool {
-	idx := d.tileIndex(coord.X, coord.Y, coord.Z)
-	return idx >= 0 && idx < len(d.Tiles)
+	return coord.X > 0 && coord.Y > 0 && coord.Z > 0 && coord.X <= d.MaxX && coord.Y <= d.MaxY && coord.Z <= d.MaxZ
 }
 
 func (d *Dmm) GetTile(coord util.Point) *Tile {

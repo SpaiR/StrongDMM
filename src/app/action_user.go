@@ -168,7 +168,7 @@ func (a *app) DoOpenLogs() {
 func (a *app) DoCopy() {
 	log.Println("[app] do copy")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.Map().Editor().TileCopyHovered()
+		ws.Map().Editor().TileCopySelected()
 	}
 }
 
@@ -176,7 +176,7 @@ func (a *app) DoCopy() {
 func (a *app) DoPaste() {
 	log.Println("[app] do paste")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.Map().Editor().TilePasteHovered()
+		ws.Map().Editor().TilePasteSelected()
 		ws.Map().Editor().CommitChanges("Paste Tile")
 	}
 }
@@ -185,7 +185,7 @@ func (a *app) DoPaste() {
 func (a *app) DoCut() {
 	log.Println("[app] do cut")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.Map().Editor().TileCutHovered()
+		ws.Map().Editor().TileCutSelected()
 		ws.Map().Editor().CommitChanges("Cut Tile")
 	}
 }
@@ -194,7 +194,7 @@ func (a *app) DoCut() {
 func (a *app) DoDelete() {
 	log.Println("[app] do delete")
 	if ws, ok := a.activeWsMap(); ok {
-		ws.Map().Editor().TileDeleteHovered()
+		ws.Map().Editor().TileDeleteSelected()
 		ws.Map().Editor().CommitChanges("Delete Tile")
 	}
 }
