@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
@@ -172,6 +173,11 @@ func (a *app) SyncPrefabs() {
 // SyncVarEditor syncs the variable editor state. Needed to ensure we edit an object which is exists.
 func (a *app) SyncVarEditor() {
 	a.layout.VarEditor.Sync()
+}
+
+// MultiZRendering returns true if a multi-z rendering enabled.
+func (a *app) MultiZRendering() bool {
+	return render.MultiZRendering
 }
 
 // MirrorCanvasCamera returns true if maps sync their camera.

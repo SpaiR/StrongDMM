@@ -1,9 +1,12 @@
 package pmap
 
 import (
+	"fmt"
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
+	"sdmm/app/ui/shortcut"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
@@ -91,20 +94,20 @@ func (p *PaneMap) showTools() {
 func (p *PaneMap) showLevelButtons() {
 	imgui.BeginDisabledV(p.dmm.MaxZ == 1)
 
-	imgui.BeginDisabledV(p.activeLevel == 1)
+	imgui.BeginDisabledV(!p.hasPreviousLevel())
 	imgui.SameLine()
 	if imgui.Button(icon.FaArrowDown) {
-		p.activeLevel--
+		p.doPreviousLevel()
 	}
-	imguiext.SetItemHoveredTooltip("Previous z-level")
+	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Previous z-level (%s+Down)", shortcut.KeyCmdName()))
 	imgui.EndDisabled()
 
-	imgui.BeginDisabledV(p.activeLevel == p.dmm.MaxZ)
+	imgui.BeginDisabledV(!p.hasNextLevel())
 	imgui.SameLine()
 	if imgui.Button(icon.FaArrowUp) {
-		p.activeLevel++
+		p.doNextLevel()
 	}
-	imguiext.SetItemHoveredTooltip("Next z-level")
+	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Next z-level (%s+Up)", shortcut.KeyCmdName()))
 	imgui.EndDisabled()
 
 	imgui.EndDisabled()
@@ -161,4 +164,26 @@ func (p *PaneMap) selectFillTool() {
 
 func (p *PaneMap) selectSelectTool() {
 	tools.SetSelected(tools.TNGrab)
+}
+
+func (p *PaneMap) doPreviousLevel() {
+	if p.hasPreviousLevel() {
+		p.activeLevel--
+		log.Println("[pmap] active level switched to previous:", p.activeLevel)
+	}
+}
+
+func (p *PaneMap) doNextLevel() {
+	if p.hasNextLevel() {
+		p.activeLevel++
+		log.Println("[pmap] active level switched to next:", p.activeLevel)
+	}
+}
+
+func (p *PaneMap) hasPreviousLevel() bool {
+	return p.activeLevel > 1
+}
+
+func (p *PaneMap) hasNextLevel() bool {
+	return p.activeLevel < p.dmm.MaxZ
 }

@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 
@@ -223,7 +224,12 @@ func (a *app) DoSearch() {
 	a.ShowLayout(lnode.NameSearch, true)
 }
 
-// DoMirrorCanvasCamera toggle mode of mirroring canvas camera.
+// DoMultiZRendering toggles multi-z rendering.
+func (a *app) DoMultiZRendering() {
+	render.MultiZRendering = !render.MultiZRendering
+}
+
+// DoMirrorCanvasCamera toggles mode of mirroring canvas camera.
 func (a *app) DoMirrorCanvasCamera() {
 	pmap.MirrorCanvasCamera = !pmap.MirrorCanvasCamera
 }

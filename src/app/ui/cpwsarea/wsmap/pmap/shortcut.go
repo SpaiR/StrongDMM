@@ -66,6 +66,23 @@ func (p *PaneMap) addShortcuts() {
 		SecondKeyAlt: glfw.KeyKP4,
 		Action:       p.doToggleMob,
 	})
+
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:        "pmap#doPreviousLevel",
+		FirstKey:    shortcut.KeyLeftCmd(),
+		FirstKeyAlt: shortcut.KeyRightCmd(),
+		SecondKey:   glfw.KeyDown,
+		Action:      p.doPreviousLevel,
+		IsEnabled:   p.hasPreviousLevel,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:        "pmap#doNextLevel",
+		FirstKey:    shortcut.KeyLeftCmd(),
+		FirstKeyAlt: shortcut.KeyRightCmd(),
+		SecondKey:   glfw.KeyUp,
+		Action:      p.doNextLevel,
+		IsEnabled:   p.hasNextLevel,
+	})
 }
 
 func (p *PaneMap) doToggleArea() {

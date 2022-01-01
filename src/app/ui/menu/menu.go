@@ -35,6 +35,7 @@ type app interface {
 	DoDeselect()
 
 	// Options
+	DoMultiZRendering()
 	DoMirrorCanvasCamera()
 
 	// Window
@@ -57,6 +58,7 @@ type app interface {
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
 
+	MultiZRendering() bool
 	MirrorCanvasCamera() bool
 }
 
@@ -181,6 +183,11 @@ func (m *Menu) Process() {
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
 				Shortcut(shortcut.KeyCmdName() + "+4"),
+			w.Separator(),
+			w.MenuItem("Multi-Z Rendering", m.app.DoMultiZRendering).
+				IconEmpty().
+				Selected(m.app.MultiZRendering()).
+				Shortcut(shortcut.KeyCmdName() + "+0"),
 			w.Separator(),
 			w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).
 				IconEmpty().

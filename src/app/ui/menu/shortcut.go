@@ -97,6 +97,15 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
+		Name:         "menu#DoMultiZRendering",
+		FirstKey:     shortcut.KeyLeftCmd(),
+		FirstKeyAlt:  shortcut.KeyRightCmd(),
+		SecondKey:    glfw.Key0,
+		SecondKeyAlt: glfw.KeyKP0,
+		Action:       m.app.DoMultiZRendering,
+	})
+
+	m.shortcuts.Add(shortcut.Shortcut{
 		Name:     "menu#DoResetLayout",
 		FirstKey: glfw.KeyF5,
 		Action:   m.app.DoResetLayout,
