@@ -71,6 +71,7 @@ func (ws *WsMap) NameReadable() string {
 
 func (ws *WsMap) PreProcess() {
 	ws.paneMap.SetShortcutsVisible(false)
+	ws.processCanvasCameraMirror()
 }
 
 func (ws *WsMap) Process() {
@@ -91,5 +92,18 @@ func (ws *WsMap) OnFocusChange(focused bool) {
 		ws.paneMap.OnActivate()
 	} else {
 		ws.paneMap.OnDeactivate()
+	}
+}
+
+func (ws *WsMap) processCanvasCameraMirror() {
+	if !pmap.MirrorCanvasCamera || pmap.ActiveCamera == nil {
+		return
+	}
+
+	if camera := ws.paneMap.Canvas().Render().Camera(); camera != pmap.ActiveCamera {
+		camera.ShiftX = pmap.ActiveCamera.ShiftX
+		camera.ShiftY = pmap.ActiveCamera.ShiftY
+		camera.Level = pmap.ActiveCamera.Level
+		camera.Scale = pmap.ActiveCamera.Scale
 	}
 }

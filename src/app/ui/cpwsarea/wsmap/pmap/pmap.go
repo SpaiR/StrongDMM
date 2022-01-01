@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"log"
+	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/tilemenu"
@@ -40,6 +41,11 @@ type App interface {
 	SyncPrefabs()
 	SyncVarEditor()
 }
+
+var (
+	MirrorCanvasCamera bool
+	ActiveCamera       *render.Camera
+)
 
 type PaneMap struct {
 	app App
@@ -183,6 +189,7 @@ func (p *PaneMap) Process() {
 }
 
 func (p *PaneMap) Dispose() {
+	p.checkActiveCamera()
 	p.canvas.Dispose()
 	p.app.RemoveMouseChangeCallback(p.mouseChangeCbId)
 	p.tileMenu.Dispose()
@@ -234,6 +241,8 @@ func (p *PaneMap) updateShortcutsState() {
 }
 
 func (p *PaneMap) OnActivate() {
+	log.Println("[pmap] pane activated:", p.dmm.Name)
+	ActiveCamera = p.canvas.Render().Camera()
 	p.prepareTools()
 	p.focused = true
 }
@@ -241,4 +250,13 @@ func (p *PaneMap) OnActivate() {
 func (p *PaneMap) OnDeactivate() {
 	p.focused = false
 	tools.Selected().OnDeselect()
+	p.checkActiveCamera()
+	log.Println("[pmap] pane deactivated:", p.dmm.Name)
+}
+
+func (p *PaneMap) checkActiveCamera() {
+	if ActiveCamera == p.canvas.Render().Camera() {
+		ActiveCamera = nil
+		log.Println("[pmap] active camera cleared:", p.dmm.Name)
+	}
 }

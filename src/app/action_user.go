@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
@@ -220,4 +221,9 @@ func (a *app) DoSearch() {
 		a.DoSearchPrefab(prefabId)
 	}
 	a.ShowLayout(lnode.NameSearch, true)
+}
+
+// DoMirrorCanvasCamera toggle mode of mirroring canvas camera.
+func (a *app) DoMirrorCanvasCamera() {
+	pmap.MirrorCanvasCamera = !pmap.MirrorCanvasCamera
 }

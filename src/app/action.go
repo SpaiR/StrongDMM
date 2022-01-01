@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"github.com/SpaiR/imgui-go"
@@ -171,6 +172,11 @@ func (a *app) SyncPrefabs() {
 // SyncVarEditor syncs the variable editor state. Needed to ensure we edit an object which is exists.
 func (a *app) SyncVarEditor() {
 	a.layout.VarEditor.Sync()
+}
+
+// MirrorCanvasCamera returns true if maps sync their camera.
+func (a *app) MirrorCanvasCamera() bool {
+	return pmap.MirrorCanvasCamera
 }
 
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {

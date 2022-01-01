@@ -34,6 +34,9 @@ type app interface {
 	DoSearch()
 	DoDeselect()
 
+	// Options
+	DoMirrorCanvasCamera()
+
 	// Window
 	DoResetLayout()
 
@@ -53,6 +56,8 @@ type app interface {
 	PathsFilter() *dm.PathsFilter
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
+
+	MirrorCanvasCamera() bool
 }
 
 type Menu struct {
@@ -176,6 +181,10 @@ func (m *Menu) Process() {
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
 				Shortcut(shortcut.KeyCmdName() + "+4"),
+			w.Separator(),
+			w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).
+				IconEmpty().
+				Selected(m.app.MirrorCanvasCamera()),
 		}),
 
 		w.Menu("Window", w.Layout{
