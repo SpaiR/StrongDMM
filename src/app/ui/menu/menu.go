@@ -163,22 +163,22 @@ func (m *Menu) Process() {
 		}),
 
 		w.Menu("Options", w.Layout{
-			w.MenuItem("Toggle Area", m.doToggleArea).
+			w.MenuItem("Show Area", m.doToggleArea).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isAreaToggled()).
 				Shortcut(shortcut.KeyCmdName() + "+1"),
-			w.MenuItem("Toggle Turf", m.doToggleTurf).
+			w.MenuItem("Show Turf", m.doToggleTurf).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isTurfToggled()).
 				Shortcut(shortcut.KeyCmdName() + "+2"),
-			w.MenuItem("Toggle Object", m.doToggleObject).
+			w.MenuItem("Show Object", m.doToggleObject).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isObjectToggled()).
 				Shortcut(shortcut.KeyCmdName() + "+3"),
-			w.MenuItem("Toggle Mob", m.doToggleMob).
+			w.MenuItem("Show Mob", m.doToggleMob).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
@@ -188,7 +188,6 @@ func (m *Menu) Process() {
 				IconEmpty().
 				Selected(m.app.MultiZRendering()).
 				Shortcut(shortcut.KeyCmdName() + "+0"),
-			w.Separator(),
 			w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).
 				IconEmpty().
 				Selected(m.app.MirrorCanvasCamera()),
