@@ -56,9 +56,11 @@ var (
 
 func (p *PaneMap) showToolsPanel() {
 	p.showTools()
-	imgui.SameLine()
-	imgui.TextDisabled("|")
-	p.showLevelButtons()
+	if p.dmm.MaxZ != 1 {
+		imgui.SameLine()
+		imgui.TextDisabled("|")
+		p.showLevelButtons()
+	}
 }
 
 func (p *PaneMap) showTools() {
@@ -92,8 +94,6 @@ func (p *PaneMap) showTools() {
 }
 
 func (p *PaneMap) showLevelButtons() {
-	imgui.BeginDisabledV(p.dmm.MaxZ == 1)
-
 	imgui.BeginDisabledV(!p.hasPreviousLevel())
 	imgui.SameLine()
 	if imgui.Button(icon.FaArrowDown) {
@@ -108,8 +108,6 @@ func (p *PaneMap) showLevelButtons() {
 		p.doNextLevel()
 	}
 	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Next z-level (%s+Up)", shortcut.KeyCmdName()))
-	imgui.EndDisabled()
-
 	imgui.EndDisabled()
 }
 

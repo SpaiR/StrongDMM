@@ -27,7 +27,6 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 	}
 
 	r.batchLevel(r.camera.Level, viewBounds, true) // Draw currently visible level.
-
 	r.overlay.FlushUnits()
 }
 
