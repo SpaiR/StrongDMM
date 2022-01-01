@@ -2,7 +2,7 @@ package pmap
 
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
 )
 

@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/workspace"
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
@@ -15,6 +16,11 @@ import (
 	File similar to action.go, but contains methods triggered by user. (ex. when button clicked)
 	Such methods have a "Do" prefix, and they are logged excessively.
 */
+
+func (a *app) DoNewWorkspace() {
+	log.Println("[app] new workspace...")
+	a.layout.WsArea.AddEmptyWorkspace()
+}
 
 // DoOpenEnvironment opens environment, which user need to select in file dialog.
 func (a *app) DoOpenEnvironment() {
@@ -69,9 +75,9 @@ func (a *app) DoOpenMapByPath(path string) {
 }
 
 // DoOpenMapByPathV same as DoOpenMapByPath by map will be opened inside the concrete workspace with the provided index.
-func (a *app) DoOpenMapByPathV(path string, workspaceIdx int) {
-	log.Printf("[app] open map with workspace index [%d] by path: [%s]", workspaceIdx, path)
-	a.openMapV(path, workspaceIdx)
+func (a *app) DoOpenMapByPathV(path string, workspace *workspace.Workspace) {
+	log.Printf("[app] open map with workspace id [%s] by path: [%s]", workspace.Id(), path)
+	a.openMapV(path, workspace)
 }
 
 // DoClearRecentMaps clears recently opened maps.

@@ -133,7 +133,7 @@ func (v *VarEditor) filterVarNameHint() string {
 }
 
 const (
-	varsTableFlags = imgui.TableFlagsResizable | imgui.TableFlagsBordersInner
+	varsTableFlags = imgui.TableFlagsResizable | imgui.TableFlagsBordersInner | imgui.TableFlagsNoSavedSettings
 	varsInputFlags = imgui.InputTextFlagsAutoSelectAll | imgui.InputTextFlagsEnterReturnsTrue | imgui.InputTextFlagsCtrlEnterForNewLine
 )
 

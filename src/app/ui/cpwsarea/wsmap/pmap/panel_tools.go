@@ -3,7 +3,7 @@ package pmap
 import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"

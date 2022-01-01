@@ -2,9 +2,9 @@ package cpvareditor
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"sdmm/app/config"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"

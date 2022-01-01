@@ -2,9 +2,9 @@ package pmap
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )

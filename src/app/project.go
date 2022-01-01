@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sdmm/app/ui/cpwsarea/workspace"
 	"time"
 
 	"sdmm/dmapi/dmenv"
@@ -56,10 +57,10 @@ func (a *app) openEnvironment(path string) {
 }
 
 func (a *app) openMap(path string) {
-	a.openMapV(path, -1)
+	a.openMapV(path, nil)
 }
 
-func (a *app) openMapV(path string, workspaceIdx int) {
+func (a *app) openMapV(path string, workspace *workspace.Workspace) {
 	log.Printf("[app] opening map [%s]...", path)
 
 	start := time.Now()
@@ -76,7 +77,7 @@ func (a *app) openMapV(path string, workspaceIdx int) {
 	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
 	a.ConfigSaveV(cfg)
 
-	if a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspaceIdx) {
+	if a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspace) {
 		a.layout.Prefabs.Sync()
 	}
 	a.layout.Search.Free()

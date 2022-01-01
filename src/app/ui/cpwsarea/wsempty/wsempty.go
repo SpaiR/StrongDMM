@@ -2,49 +2,54 @@ package wsempty
 
 import (
 	"fmt"
-	"strings"
-	"time"
-
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dmapi/dmenv"
-	"sdmm/imguiext/icon"
+	"strings"
 )
 
 type App interface {
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
+
 	DoSelectMapFile() (string, error)
-	DoOpenMapByPathV(path string, workspaceIdx int)
+
 	HasLoadedEnvironment() bool
+	LoadedEnvironment() *dmenv.Dme
+
 	RecentEnvironments() []string
 	RecentMapsByLoadedEnvironment() []string
-	LoadedEnvironment() *dmenv.Dme
 }
 
 type WsEmpty struct {
-	workspace.Base
+	workspace.Content
 
-	app  App
-	name string
+	app App
+
+	onOpenMapByPath func(string)
 }
 
 func New(app App) *WsEmpty {
-	name := fmt.Sprint("New##workspace_empty_", time.Now().Nanosecond())
-	ws := &WsEmpty{app: app, name: name}
-	ws.Workspace = ws
-	return ws
+	return &WsEmpty{app: app}
 }
 
 func (ws *WsEmpty) Name() string {
-	return icon.FaFile + " " + ws.name
+	return "Workspace"
 }
 
-func (ws *WsEmpty) NameReadable() string {
-	return "New"
+func (ws *WsEmpty) Title() string {
+	return "Workspace"
 }
 
-func (ws *WsEmpty) ShowContent() {
+func (ws *WsEmpty) SetOnOpenMapByPath(f func(string)) {
+	ws.onOpenMapByPath = f
+}
+
+func (ws *WsEmpty) Process() {
+	ws.showContent()
+}
+
+func (ws *WsEmpty) showContent() {
 	if !ws.app.HasLoadedEnvironment() {
 		ws.showEnvironmentsControl()
 	} else {
@@ -74,7 +79,7 @@ func (ws *WsEmpty) showMapsControl() {
 	imgui.Separator()
 	if imgui.Button("Open Map...") {
 		if file, err := ws.app.DoSelectMapFile(); err == nil {
-			ws.app.DoOpenMapByPathV(file, ws.Idx())
+			ws.onOpenMapByPath(file)
 		}
 	}
 	imgui.Separator()
@@ -84,7 +89,7 @@ func (ws *WsEmpty) showMapsControl() {
 		imgui.Text("Recent Maps:")
 		for _, mapPath := range ws.app.RecentMapsByLoadedEnvironment() {
 			if imgui.SmallButton(sanitizeMapPath(ws.app.LoadedEnvironment().RootDir, mapPath)) {
-				ws.app.DoOpenMapByPathV(mapPath, ws.Idx())
+				ws.onOpenMapByPath(mapPath)
 			}
 		}
 	}

@@ -8,26 +8,28 @@ import (
 )
 
 type WsPrefs struct {
-	workspace.Base
+	workspace.Content
 
 	prefs Prefs
 }
 
 func New(prefs Prefs) *WsPrefs {
-	ws := &WsPrefs{prefs: prefs}
-	ws.Workspace = ws
-	return ws
+	return &WsPrefs{prefs: prefs}
 }
 
 func (ws *WsPrefs) Name() string {
 	return icon.FaWrench + " Preferences"
 }
 
-func (ws *WsPrefs) NameReadable() string {
+func (ws *WsPrefs) Title() string {
 	return "Preferences"
 }
 
-func (ws *WsPrefs) ShowContent() {
+func (ws *WsPrefs) Process() {
+	ws.showContent()
+}
+
+func (ws *WsPrefs) showContent() {
 	for _, group := range prefsGroupOrder {
 		imgui.Text(string(group))
 		imgui.Separator()

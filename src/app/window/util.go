@@ -18,6 +18,15 @@ func (w *Window) RemoveMouseChangeCallback(id int) {
 
 var laterJobs []func()
 
+// RunLater queues provided job to be run in the next frame.
 func RunLater(job func()) {
 	laterJobs = append(laterJobs, job)
+}
+
+var repeatJobs []func()
+
+// RunRepeat stores provided job in a separate slice to run it in all other frames.
+// Unlike the RunLater job will be executed all the time until the application shut down.
+func RunRepeat(job func()) {
+	repeatJobs = append(repeatJobs, job)
 }

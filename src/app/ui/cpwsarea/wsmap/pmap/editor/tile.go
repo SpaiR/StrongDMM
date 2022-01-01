@@ -2,8 +2,8 @@ package editor
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"

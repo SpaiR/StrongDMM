@@ -13,6 +13,7 @@ import (
 //goland:noinspection GoCommentStart
 type app interface {
 	// File
+	DoNewWorkspace()
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
 	DoClearRecentEnvironments()
@@ -69,6 +70,10 @@ func New(app app) *Menu {
 func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
+			w.MenuItem("New Workspace", m.app.DoNewWorkspace).
+				Icon(icon.FaFile).
+				Shortcut(shortcut.KeyCmdName() + "+N"),
+			w.Separator(),
 			w.MenuItem("Open Environment...", m.app.DoOpenEnvironment).
 				Icon(icon.FaFolderOpen),
 			w.Menu("Recent Environments", w.Layout{

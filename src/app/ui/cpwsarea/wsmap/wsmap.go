@@ -2,11 +2,11 @@ package wsmap
 
 import (
 	"fmt"
+	"github.com/SpaiR/imgui-go"
 	"log"
-
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/workspace"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmsave"
 )
@@ -18,7 +18,7 @@ type App interface {
 }
 
 type WsMap struct {
-	workspace.Base
+	workspace.Content
 
 	app App
 
@@ -26,14 +26,10 @@ type WsMap struct {
 }
 
 func New(app App, dmm *dmmap.Dmm) *WsMap {
-	ws := &WsMap{
+	return &WsMap{
+		app:     app,
 		paneMap: pmap.New(app, dmm),
 	}
-
-	ws.Workspace = ws
-	ws.app = app
-
-	return ws
 }
 
 func (ws *WsMap) Map() *pmap.PaneMap {
@@ -50,12 +46,23 @@ func (ws *WsMap) CommandStackId() string {
 	return ws.paneMap.Dmm().Path.Absolute
 }
 
+func (WsMap) Ini() workspace.Ini {
+	return workspace.Ini{
+		WindowFlags: imgui.WindowFlagsNoScrollbar | imgui.WindowFlagsNoBringToFrontOnFocus,
+		NoPadding:   true,
+	}
+}
+
 func (ws *WsMap) Name() string {
 	visibleName := ws.paneMap.Dmm().Name
 	if ws.app.CommandStorage().IsModified(ws.CommandStackId()) {
 		visibleName = "* " + visibleName
 	}
 	return fmt.Sprint(visibleName, "###workspace_map_", ws.paneMap.Dmm().Path.Absolute)
+}
+
+func (ws *WsMap) Title() string {
+	return ws.paneMap.Dmm().Name
 }
 
 func (ws *WsMap) NameReadable() string {
@@ -66,7 +73,7 @@ func (ws *WsMap) PreProcess() {
 	ws.paneMap.SetShortcutsVisible(false)
 }
 
-func (ws *WsMap) ShowContent() {
+func (ws *WsMap) Process() {
 	ws.paneMap.Process()
 }
 
@@ -75,18 +82,14 @@ func (ws *WsMap) Dispose() {
 	log.Println("[wsmap] map workspace disposed:", ws.Name())
 }
 
-func (ws *WsMap) Border() bool {
-	return false
-}
-
 func (ws *WsMap) Focused() bool {
 	return ws.paneMap.Focused()
 }
 
-func (ws *WsMap) OnActivate() {
-	ws.paneMap.OnActivate()
-}
-
-func (ws *WsMap) OnDeactivate() {
-	ws.paneMap.OnDeactivate()
+func (ws *WsMap) OnFocusChange(focused bool) {
+	if focused {
+		ws.paneMap.OnActivate()
+	} else {
+		ws.paneMap.OnDeactivate()
+	}
 }

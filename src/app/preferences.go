@@ -2,18 +2,17 @@ package app
 
 import (
 	"log"
-
-	"sdmm/app/ui/cpwsarea/workspace/wsprefs"
+	wsprefs2 "sdmm/app/ui/cpwsarea/wsprefs"
 )
 
-func (a *app) makePreferences() wsprefs.Prefs {
-	prefs := wsprefs.MakePrefs()
-	prefs.Add(wsprefs.GPInterface, a.makeScalePreference())
+func (a *app) makePreferences() wsprefs2.Prefs {
+	prefs := wsprefs2.MakePrefs()
+	prefs.Add(wsprefs2.GPInterface, a.makeScalePreference())
 	return prefs
 }
 
-func (a *app) makeScalePreference() wsprefs.IntPref {
-	scale := wsprefs.NewIntPref()
+func (a *app) makeScalePreference() wsprefs2.IntPref {
+	scale := wsprefs2.NewIntPref()
 	scale.Name = "Scale"
 	scale.Desc = "Controls the interface scale."
 	scale.Label = "%##preference_scale"

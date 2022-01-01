@@ -2,9 +2,9 @@ package pmap
 
 import (
 	"fmt"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 )
 
 func (p *PaneMap) showStatusPanel() {

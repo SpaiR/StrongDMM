@@ -104,7 +104,11 @@ func (l *Layout) showEnvironmentNode() {
 }
 
 func (l *Layout) showWorkspaceAreaNode() {
-	l.wrapNodeV(lnode.NameWorkspaceArea, int(l.centerNodeId), false, false, false, l.WsArea.Process)
+	l.wrapNodeV(lnode.NameWorkspaceArea, int(l.centerNodeId), func() {
+		l.WsArea.Process(int(l.centerNodeId))
+	}, wrapCfg{
+		noWindow: true,
+	})
 }
 
 func (l *Layout) showPrefabsNode() {
@@ -129,14 +133,15 @@ const (
 func (l *Layout) updateNodes() {
 	dockSpaceId := imgui.DockSpaceOverViewportV(imgui.MainViewport(), imgui.DockNodeFlagsNone)
 
+	// We only need a center node ID for sure.
+	l.centerNodeId = int32(dockSpaceId)
+
 	if !l.app.IsLayoutReset() {
 		return
 	}
 
 	imgui.DockBuilderRemoveNode(dockSpaceId)
 	imgui.DockBuilderAddNodeV(dockSpaceId, imgui.DockNodeFlagsDockSpace)
-
-	l.centerNodeId = int32(dockSpaceId)
 
 	size := imgui.MainViewport().Size()
 
@@ -151,17 +156,28 @@ func (l *Layout) updateNodes() {
 }
 
 func (l *Layout) wrapNode(id string, nodeId int, content func()) {
-	l.wrapNodeV(id, nodeId, true, true, false, content)
+	l.wrapNodeV(id, nodeId, content, wrapCfg{})
 }
 
 const defaultWindowFlags = imgui.WindowFlagsNone
 
-func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar, closable bool, content func()) {
+type wrapCfg struct {
+	noWindow  bool
+	noPadding bool
+}
+
+func (l *Layout) wrapNodeV(id string, nodeId int, content func(), cfg wrapCfg) {
+	// Just show the content.
+	if cfg.noWindow {
+		content()
+		return
+	}
+
 	if l.app.IsLayoutReset() {
 		imgui.DockBuilderDockWindow(id, nodeId)
 	}
 
-	if !addPadding {
+	if cfg.noPadding {
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
 
@@ -173,36 +189,22 @@ func (l *Layout) wrapNodeV(id string, nodeId int, addPadding, showTabBar, closab
 	}
 
 	if imgui.BeginV(id, nil, defaultWindowFlags) {
-		if !addPadding {
+		if cfg.noPadding {
 			imgui.PopStyleVar()
 		}
 		if imgui.IsWindowDocked() {
-			l.tweakWindowNode(showTabBar, closable)
+			l.tweakWindowNode()
 		}
 		content()
-	} else if !addPadding {
+	} else if cfg.noPadding {
 		imgui.PopStyleVar()
 	}
 	imgui.End()
 }
 
 // Tweak window node flags and nodes ordering.
-func (l *Layout) tweakWindowNode(showTabBar bool, closable bool) {
+func (l *Layout) tweakWindowNode() {
 	if dockNode := imgui.DockBuilderGetNode(imgui.GetWindowDockID()); dockNode != 0 {
-		var flags imgui.DockNodeFlags
-
-		if !closable {
-			flags |= imgui.DockNodeFlagsNoCloseButton
-		}
-
-		if !showTabBar {
-			flags |= imgui.DockNodeFlagsNoTabBar
-		} else {
-			flags |= imgui.DockNodeFlagsNoWindowMenuButton
-		}
-
-		dockNode.SetLocalFlags(int(flags))
-
 		if !l.initialized {
 			dockNode.ExtSelectFirstTab() // Ensure that after the launch windows will be selected properly
 		}

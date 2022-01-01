@@ -3,8 +3,8 @@ package editor
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"

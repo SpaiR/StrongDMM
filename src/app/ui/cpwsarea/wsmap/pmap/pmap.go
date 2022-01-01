@@ -2,13 +2,13 @@ package pmap
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/tilemenu"
+	"sdmm/app/ui/cpwsarea/wsmap/tools"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/canvas"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tilemenu"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/tools"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
@@ -16,7 +16,6 @@ import (
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmmsnap"
-	"sdmm/imguiext"
 	"sdmm/imguiext/style"
 )
 
@@ -65,6 +64,8 @@ type PaneMap struct {
 	// Properties for the pane.
 	pos, size imgui.Vec2
 	focused   bool
+
+	panelBottomSize imgui.Vec2
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
@@ -144,8 +145,6 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.canvas.Render().SetUnitProcessor(p)
 	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
 
-	p.prepareTools() // Initial preparations for the newly created pane.
-
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
 	p.addShortcuts()
 
@@ -161,7 +160,8 @@ func (p *PaneMap) Process() {
 	p.updateShortcutsState()
 
 	// Update properties.
-	p.pos, p.size = imgui.WindowPos(), imgui.WindowSize()
+	p.pos = imgui.WindowPos().Plus(imgui.WindowContentRegionMin())
+	p.size = imgui.WindowSize()
 	p.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
 
 	p.canvas.Render().Camera().Level = p.activeLevel // Update the canvas camera visible level.
@@ -173,13 +173,11 @@ func (p *PaneMap) Process() {
 	p.processCanvasOverlay()
 	p.processCanvasHoveredInstance()
 
-	tools.Process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
-
 	p.tileMenu.Process()
 
 	p.showCanvas()
-	p.showPanel("canvasTools", pPosTop, p.showToolsPanel)
-	p.showPanel("canvasStatus", pPosBottom, p.showStatusPanel)
+	p.showPanel("canvasTool_"+p.dmm.Name, pPosTop, p.showToolsPanel)
+	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
 
 	p.processTempToolsMode()
 }
@@ -236,8 +234,10 @@ func (p *PaneMap) updateShortcutsState() {
 
 func (p *PaneMap) OnActivate() {
 	p.prepareTools()
+	p.focused = true
 }
 
 func (p *PaneMap) OnDeactivate() {
+	p.focused = false
 	tools.Selected().OnDeselect()
 }

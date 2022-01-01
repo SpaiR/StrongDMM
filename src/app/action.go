@@ -3,11 +3,11 @@ package app
 import (
 	"fmt"
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
@@ -89,11 +89,8 @@ func (a *app) HasLoadedEnvironment() bool {
 
 // HasActiveMap returns true if there is any active map at the moment.
 func (a *app) HasActiveMap() bool {
-	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
-		_, ok := activeWs.(*wsmap.WsMap)
-		return ok
-	}
-	return false
+	_, ok := a.activeWsMap()
+	return ok
 }
 
 // UpdateTitle updates title in the application system window.
@@ -109,6 +106,8 @@ func (a *app) UpdateTitle() {
 		} else {
 			title = fmt.Sprintf("%s - %s", envTitle, Title)
 		}
+	} else if wsTitle != "" {
+		title = fmt.Sprintf("[%s] - %s", wsTitle, Title)
 	} else {
 		title = Title
 	}
@@ -175,8 +174,8 @@ func (a *app) SyncVarEditor() {
 }
 
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
-	if activeWs := a.layout.WsArea.ActiveWorkspace(); activeWs != nil {
-		if activeWs, ok := activeWs.(*wsmap.WsMap); ok {
+	if wsMapActive := a.layout.WsArea.ActiveWorkspace(); wsMapActive != nil {
+		if activeWs, ok := wsMapActive.Content().(*wsmap.WsMap); ok {
 			return activeWs, ok
 		}
 	}

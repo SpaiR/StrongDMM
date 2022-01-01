@@ -7,6 +7,14 @@ import (
 
 func (m *Menu) addShortcuts() {
 	m.shortcuts.Add(shortcut.Shortcut{
+		Name:        "menu#DoNewWorkspace",
+		FirstKey:    shortcut.KeyLeftCmd(),
+		FirstKeyAlt: shortcut.KeyRightCmd(),
+		SecondKey:   glfw.KeyN,
+		Action:      m.app.DoNewWorkspace,
+	})
+
+	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoOpenMap",
 		FirstKey:    shortcut.KeyLeftCmd(),
 		FirstKeyAlt: shortcut.KeyRightCmd(),

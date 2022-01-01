@@ -29,14 +29,21 @@ func (w *Window) startFrame() {
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	platform.NewImGuiGLFWFrame()
 	imgui.NewFrame()
-	w.runLaterJobs()
+	runLaterJobs()
+	runRepeatJobs()
 }
 
-func (w *Window) runLaterJobs() {
+func runLaterJobs() {
 	for _, job := range laterJobs {
 		job()
 	}
 	laterJobs = nil
+}
+
+func runRepeatJobs() {
+	for _, job := range repeatJobs {
+		job()
+	}
 }
 
 func (w *Window) endFrame() {

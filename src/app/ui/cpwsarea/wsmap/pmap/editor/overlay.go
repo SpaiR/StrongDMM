@@ -2,7 +2,7 @@ package editor
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/overlay"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"

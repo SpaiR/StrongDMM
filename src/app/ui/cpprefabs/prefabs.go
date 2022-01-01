@@ -2,8 +2,8 @@ package cpprefabs
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )

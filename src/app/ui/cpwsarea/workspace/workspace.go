@@ -1,83 +1,85 @@
 package workspace
 
 import (
-	"github.com/SpaiR/imgui-go"
-	"sdmm/app/command"
+	"fmt"
+	"time"
 )
 
-type Workspace interface {
-	CommandStackId() string
-	Name() string
-	NameReadable() string
-	PreProcess()
-	Process()
-	ShowContent()
-	WantClose() bool
-	Dispose()
-	Select(bool)
-	IsDoSelect() bool
-	Border() bool
-	SetIdx(idx int)
-	Focused() bool
-	OnActivate()
-	OnDeactivate()
+type Workspace struct {
+	id string
+
+	triggerFocus bool
+
+	content content
 }
 
-type Base struct {
-	Workspace
-
-	isDoSelect bool
-	idx        int
-
-	focused bool
+func (ws *Workspace) TriggerFocus() bool {
+	return ws.triggerFocus
 }
 
-func (*Base) PreProcess() {
-	// do nothing
+func (ws *Workspace) SetTriggerFocus(triggerFocus bool) {
+	ws.triggerFocus = triggerFocus
 }
 
-func (b *Base) Process() {
-	b.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
-	b.Workspace.ShowContent()
+//goland:noinspection GoExportedFuncWithUnexportedType
+func (ws *Workspace) Content() content {
+	return ws.content
 }
 
-func (*Base) CommandStackId() string {
-	return command.NullSpaceStackId
+func (ws *Workspace) SetContent(cnt content) {
+	ws.content = cnt
 }
 
-func (*Base) WantClose() bool {
-	return true
+func New(cnt content) *Workspace {
+	return &Workspace{content: cnt}
 }
 
-func (*Base) Dispose() {
+func (ws *Workspace) String() string {
+	return ws.Id()
 }
 
-func (b *Base) Select(value bool) {
-	b.isDoSelect = value
+func (ws *Workspace) Name() string {
+	return ws.content.Name()
 }
 
-func (b *Base) IsDoSelect() bool {
-	return b.isDoSelect
+func (ws *Workspace) Title() string {
+	return ws.content.Title()
 }
 
-func (*Base) Border() bool {
-	return true
+var workspaceCount uint64
+
+func (ws *Workspace) Id() string {
+	if ws.id == "" {
+		ws.id = fmt.Sprint("workspace_", time.Now().Nanosecond(), "_", workspaceCount)
+		workspaceCount++
+	}
+	return ws.id
 }
 
-func (b *Base) Idx() int {
-	return b.idx
+func (ws *Workspace) Dispose() {
+	ws.content.Dispose()
 }
 
-func (b *Base) SetIdx(idx int) {
-	b.idx = idx
+func (ws *Workspace) CommandStackId() string {
+	return ws.content.CommandStackId()
 }
 
-func (b *Base) Focused() bool {
-	return b.focused
+func (ws *Workspace) OnFocusChange(focused bool) {
+	ws.content.OnFocusChange(focused)
 }
 
-func (*Base) OnActivate() {
+func (ws *Workspace) PreProcess() {
+	ws.content.PreProcess()
 }
 
-func (*Base) OnDeactivate() {
+func (ws *Workspace) Process() {
+	ws.content.Process()
+}
+
+func (ws *Workspace) PostProcess() {
+	ws.content.PostProcess()
+}
+
+func (ws *Workspace) Focused() bool {
+	return ws.content.Focused()
 }

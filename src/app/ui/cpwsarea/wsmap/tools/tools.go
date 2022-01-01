@@ -2,6 +2,8 @@ package tools
 
 import (
 	"log"
+	"sdmm/app/window"
+	"sdmm/imguiext"
 
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
@@ -17,6 +19,12 @@ const (
 	TNPick   = "Pick"
 	TNDelete = "Delete"
 )
+
+func init() {
+	window.RunRepeat(func() {
+		process(imguiext.IsAltDown()) // Enable tools alt-behaviour when Alt button is down.
+	})
+}
 
 type canvasControl interface {
 	Dragging() bool
@@ -104,7 +112,7 @@ func Tools() map[string]Tool {
 	return tools
 }
 
-func Process(altBehaviour bool) {
+func process(altBehaviour bool) {
 	if active && startedTool != Selected() {
 		startedTool.onStop(oldCoord)
 	}
@@ -133,8 +141,8 @@ func SelectedTiles() []util.Point {
 }
 
 func processSelectedToolStart() {
-	if !cs.HoverOutOfBounds() {
-		if cc.Dragging() && !active {
+	if cs != nil && !cs.HoverOutOfBounds() {
+		if cc != nil && cc.Dragging() && !active {
 			startedTool = Selected()
 			Selected().onStart(cs.HoveredTile())
 			active = true
@@ -143,7 +151,7 @@ func processSelectedToolStart() {
 }
 
 func processSelectedToolMove() {
-	if !cs.HoverOutOfBounds() {
+	if cs != nil && !cs.HoverOutOfBounds() {
 		coord := cs.HoveredTile()
 		if coord != oldCoord && active {
 			Selected().onMove(coord)
@@ -153,7 +161,7 @@ func processSelectedToolMove() {
 }
 
 func processSelectedToolsStop() {
-	if !cc.Dragging() && active {
+	if cc != nil && !cc.Dragging() && active {
 		Selected().onStop(oldCoord)
 		active = false
 	}

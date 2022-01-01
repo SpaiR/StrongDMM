@@ -2,9 +2,9 @@ package cpsearch
 
 import (
 	"log"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"strconv"
 
-	"sdmm/app/ui/cpwsarea/workspace/wsmap/pmap/editor"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
