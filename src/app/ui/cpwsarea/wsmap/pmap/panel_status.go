@@ -11,8 +11,12 @@ func (p *PaneMap) showStatusPanel() {
 	if p.canvasState.HoverOutOfBounds() {
 		imgui.Text("[out of bounds]")
 	} else {
-		hoveredTiles := p.canvasState.HoveredTile()
-		imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", hoveredTiles.X, hoveredTiles.Y))
+		t := p.canvasState.HoveredTile()
+		if p.dmm.MaxZ > 1 {
+			imgui.Text(fmt.Sprintf("[X:%03d Y:%03d Z:%d]", t.X, t.Y, t.Z))
+		} else {
+			imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", t.X, t.Y))
+		}
 	}
 
 	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !tools.Selected().AltBehaviour()) {

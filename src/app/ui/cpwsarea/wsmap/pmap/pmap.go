@@ -170,7 +170,7 @@ func (p *PaneMap) Process() {
 	p.size = imgui.WindowSize()
 	p.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
 
-	p.canvas.Render().Camera().Level = p.activeLevel // Update the canvas camera visible level.
+	p.canvas.Render().SetActiveLevel(p.dmm, p.activeLevel)
 
 	p.canvasControl.Process(p.size)
 	p.canvas.Process(p.size)

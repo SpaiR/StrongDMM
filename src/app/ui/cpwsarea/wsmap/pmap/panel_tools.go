@@ -52,6 +52,13 @@ var (
 )
 
 func (p *PaneMap) showToolsPanel() {
+	p.showTools()
+	imgui.SameLine()
+	imgui.TextDisabled("|")
+	p.showLevelButtons()
+}
+
+func (p *PaneMap) showTools() {
 	for idx, toolName := range toolsOrder {
 		if idx > 0 || idx < len(toolsOrder)-1 {
 			imgui.SameLine()
@@ -79,6 +86,28 @@ func (p *PaneMap) showToolsPanel() {
 
 		imguiext.SetItemHoveredTooltip(desc.help)
 	}
+}
+
+func (p *PaneMap) showLevelButtons() {
+	imgui.BeginDisabledV(p.dmm.MaxZ == 1)
+
+	imgui.BeginDisabledV(p.activeLevel == 1)
+	imgui.SameLine()
+	if imgui.Button(icon.FaArrowDown) {
+		p.activeLevel--
+	}
+	imguiext.SetItemHoveredTooltip("Previous z-level")
+	imgui.EndDisabled()
+
+	imgui.BeginDisabledV(p.activeLevel == p.dmm.MaxZ)
+	imgui.SameLine()
+	if imgui.Button(icon.FaArrowUp) {
+		p.activeLevel++
+	}
+	imguiext.SetItemHoveredTooltip("Next z-level")
+	imgui.EndDisabled()
+
+	imgui.EndDisabled()
 }
 
 func (p *PaneMap) processTempToolsMode() {

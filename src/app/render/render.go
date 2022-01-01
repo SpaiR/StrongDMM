@@ -37,6 +37,13 @@ func (r *Render) SetOverlay(state overlay) {
 	r.overlay = state
 }
 
+func (r *Render) SetActiveLevel(dmm *dmmap.Dmm, activeLevel int) {
+	r.camera.Level = activeLevel
+	if r.bucket.Level(activeLevel) == nil { // Ensure level exists
+		r.UpdateBucket(dmm, activeLevel)
+	}
+}
+
 // UpdateBucketV will update the bucket data by the provided level.
 func (r *Render) UpdateBucketV(dmm *dmmap.Dmm, level int, tilesToUpdate []util.Point) {
 	r.bucket.UpdateLevel(dmm, level, tilesToUpdate)
