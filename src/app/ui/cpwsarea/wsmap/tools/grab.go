@@ -71,6 +71,10 @@ func (ToolGrab) AltBehaviour() bool {
 }
 
 func (t *ToolGrab) SelectArea(tiles []util.Point) {
+	if len(tiles) == 0 {
+		return
+	}
+
 	t.fillStart = tiles[0]
 	for _, tile := range tiles {
 		t.selectArea(float64(t.fillArea.X1), float64(t.fillArea.Y1), float64(t.fillArea.X2), float64(t.fillArea.Y2), tile)
@@ -194,6 +198,7 @@ func (t *ToolGrab) onStop(util.Point) {
 		t.stopSelectArea()
 	case tSelectModeMoveArea:
 		t.stopMoveArea()
+		go ed.CommitChanges("Move Grabbed Area")
 	}
 
 	t.dragging = false
@@ -207,7 +212,6 @@ func (t *ToolGrab) stopSelectArea() {
 func (t *ToolGrab) stopMoveArea() {
 	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
 	t.fillAreaInit = t.fillArea
-	go ed.CommitChanges("Move Grabbed Area")
 }
 
 func (t *ToolGrab) OnDeselect() {

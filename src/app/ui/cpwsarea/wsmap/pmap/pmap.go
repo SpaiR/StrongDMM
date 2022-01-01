@@ -191,6 +191,7 @@ func (p *PaneMap) Dispose() {
 }
 
 func (p *PaneMap) prepareTools() {
+	log.Println("[pmap] preparing tools:", p.dmm.Name)
 	tools.SetEditor(p.editor)
 	tools.SetCanvasState(p.canvasState)
 	tools.SetCanvasControl(p.canvasControl)
