@@ -53,7 +53,7 @@ func parse(file *os.File) (*DmmData, error) {
 
 		// Functions:
 		flushCurrPrefab = func() {
-			currData = append(currData, dmmprefab.New(0, currPath, currVariables.ToImmutable()))
+			currData = append(currData, dmmprefab.New(dmmprefab.IdNone, currPath, currVariables.ToImmutable()))
 			currPath = ""
 			currVariables = &dmvars.MutableVariables{}
 		}

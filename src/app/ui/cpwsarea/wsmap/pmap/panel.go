@@ -9,25 +9,39 @@ const (
 
 	panelFlags = imgui.WindowFlagsNoResize | imgui.WindowFlagsAlwaysAutoResize |
 		imgui.WindowFlagsNoTitleBar | imgui.WindowFlagsNoMove |
-		imgui.WindowFlagsNoSavedSettings | imgui.WindowFlagsNoDocking
+		imgui.WindowFlagsNoSavedSettings | imgui.WindowFlagsNoDocking | imgui.WindowFlagsNoFocusOnAppearing
 )
 
 type panelPos int
 
 const (
 	pPosTop panelPos = iota
+	pPosRightBottom
 	pPosBottom
 )
 
 func (p *PaneMap) showPanel(id string, panelPos panelPos, content func()) {
+	p.showPanelV(id, panelPos, true, content)
+}
+
+func (p *PaneMap) showPanelV(id string, panelPos panelPos, visible bool, content func()) {
+	if !visible {
+		return
+	}
+
 	var pos, size imgui.Vec2
 
 	switch panelPos {
 	case pPosTop:
 		pos = p.pos.Plus(imgui.Vec2{X: panelPadding, Y: panelPadding})
 		size = imgui.Vec2{X: p.size.X - panelPadding*2}
+	case pPosRightBottom:
+		x := imgui.ContentRegionAvail().X - p.panelRightBottomSize.X - panelPadding
+		y := imgui.ContentRegionAvail().Y - p.panelRightBottomSize.Y - p.panelBottomSize.Y - panelPadding*2
+		pos = p.pos.Plus(imgui.Vec2{X: x, Y: y})
 	case pPosBottom:
-		pos = p.pos.Plus(imgui.Vec2{X: panelPadding, Y: imgui.ContentRegionAvail().Y - p.panelBottomSize.Y - panelPadding})
+		y := imgui.ContentRegionAvail().Y - p.panelBottomSize.Y - panelPadding
+		pos = p.pos.Plus(imgui.Vec2{X: panelPadding, Y: y})
 		size = imgui.Vec2{X: p.size.X - panelPadding*2}
 	}
 
@@ -44,7 +58,10 @@ func (p *PaneMap) showPanel(id string, panelPos panelPos, content func()) {
 
 		content()
 
-		if panelPos == pPosBottom {
+		switch panelPos {
+		case pPosRightBottom:
+			p.panelRightBottomSize = imgui.WindowSize()
+		case pPosBottom:
 			p.panelBottomSize = imgui.WindowSize()
 		}
 	} else {

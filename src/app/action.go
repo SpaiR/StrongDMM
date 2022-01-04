@@ -7,6 +7,7 @@ import (
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/dmapi/dmmap/dmminstance"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
@@ -56,6 +57,18 @@ func (a *app) SelectedPrefab() (*dmmprefab.Prefab, bool) {
 // HasSelectedPrefab returns true, if the application has a globally selected prefab.
 func (a *app) HasSelectedPrefab() bool {
 	_, ok := a.SelectedPrefab()
+	return ok
+}
+
+// SelectedInstance returns currently selected instance.
+// Selected instance is taken from the cpvareditor.VarEditor panel.
+func (a *app) SelectedInstance() (*dmminstance.Instance, bool) {
+	return a.layout.VarEditor.EditedInstance()
+}
+
+// HasSelectedInstance returns true, if the application has a globally selected instance.
+func (a *app) HasSelectedInstance() bool {
+	_, ok := a.SelectedInstance()
 	return ok
 }
 

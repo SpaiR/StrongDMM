@@ -99,6 +99,13 @@ func (v *VarEditor) EditPrefab(prefab *dmmprefab.Prefab) {
 	v.setup(prefab)
 }
 
+func (v *VarEditor) EditedInstance() (*dmminstance.Instance, bool) {
+	if v.instance != nil {
+		return v.instance, true
+	}
+	return nil, false
+}
+
 func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 	v.prefab = prefab
 	v.variablesNames = collectVariablesNames(prefab.Vars())
@@ -176,7 +183,7 @@ func (v *VarEditor) resetSession() {
 	v.variablesNames = nil
 	v.variablesPaths = nil
 	v.variablesNamesByPaths = nil
-	v.sessionPrefabId = 0
+	v.sessionPrefabId = dmmprefab.IdNone
 	v.sessionEditMode = emPrefab
 	v.instance = nil
 	v.prefab = nil

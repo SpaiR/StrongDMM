@@ -1,17 +1,17 @@
 package pmap
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"log"
+	"sdmm/app/command"
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/tilemenu"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
-
-	"github.com/SpaiR/imgui-go"
-	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -23,11 +23,16 @@ import (
 type App interface {
 	tilemenu.App
 
+	LoadedEnvironment() *dmenv.Dme
+
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
 	DoEditInstance(*dmminstance.Instance)
 
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
+	SelectedInstance() (*dmminstance.Instance, bool)
+
 	HasSelectedPrefab() bool
+	HasSelectedInstance() bool
 
 	AddMouseChangeCallback(cb func(uint, uint)) int
 	RemoveMouseChangeCallback(id int)
@@ -40,6 +45,8 @@ type App interface {
 
 	SyncPrefabs()
 	SyncVarEditor()
+
+	PointSize() float32
 }
 
 var (
@@ -59,6 +66,8 @@ type PaneMap struct {
 
 	tileMenu *tilemenu.TileMenu
 
+	quickEdit *panelQuickEdit
+
 	canvas        *canvas.Canvas
 	canvasState   *canvas.State
 	canvasControl *canvas.Control
@@ -71,7 +80,8 @@ type PaneMap struct {
 	pos, size imgui.Vec2
 	focused   bool
 
-	panelBottomSize imgui.Vec2
+	panelRightBottomSize imgui.Vec2
+	panelBottomSize      imgui.Vec2
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
@@ -140,6 +150,8 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 
 	p.tileMenu = tilemenu.New(app, p.editor)
 
+	p.quickEdit = &panelQuickEdit{app: app, editor: p.editor}
+
 	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
 	p.canvasControl = canvas.NewControl()
@@ -183,6 +195,12 @@ func (p *PaneMap) Process() {
 
 	p.showCanvas()
 	p.showPanel("canvasTool_"+p.dmm.Name, pPosTop, p.showToolsPanel)
+	p.showPanelV(
+		"quickEdit_"+p.dmm.Name,
+		pPosRightBottom,
+		p.app.HasSelectedInstance(),
+		p.quickEdit.process,
+	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
 
 	p.processTempToolsMode()
