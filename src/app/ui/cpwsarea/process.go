@@ -10,15 +10,20 @@ func (w *WsArea) Process(dockId int) {
 		w.switchActiveWorkspace(nil)
 	}
 
-	for idx, ws := range w.workspaces {
+	var workspacesToClose []*workspace.Workspace
+	for _, ws := range w.workspaces {
 		ws.PreProcess()
 
 		// When the window of the workspace is closed we need to dispose its content as well.
 		if !w.showWorkspaceWindow(dockId, ws) {
-			w.closeWorkspaceByIdx(idx)
+			workspacesToClose = append(workspacesToClose, ws)
 		}
 
 		ws.PostProcess()
+	}
+
+	for _, ws := range workspacesToClose {
+		w.closeWorkspace(ws)
 	}
 }
 
