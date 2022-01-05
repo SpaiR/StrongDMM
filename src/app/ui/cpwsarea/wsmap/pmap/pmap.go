@@ -79,6 +79,7 @@ type PaneMap struct {
 	// Properties for the pane.
 	pos, size imgui.Vec2
 	focused   bool
+	active    bool
 
 	panelRightBottomSize imgui.Vec2
 	panelBottomSize      imgui.Vec2
@@ -198,7 +199,7 @@ func (p *PaneMap) Process() {
 	p.showPanelV(
 		"quickEdit_"+p.dmm.Name,
 		pPosRightBottom,
-		p.app.HasSelectedInstance(),
+		p.active && p.app.HasSelectedInstance(),
 		p.quickEdit.process,
 	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
@@ -262,11 +263,13 @@ func (p *PaneMap) OnActivate() {
 	log.Println("[pmap] pane activated:", p.dmm.Name)
 	ActiveCamera = p.canvas.Render().Camera()
 	p.prepareTools()
+	p.active = true
 	p.focused = true
 }
 
 func (p *PaneMap) OnDeactivate() {
 	p.focused = false
+	p.active = false
 	tools.Selected().OnDeselect()
 	p.checkActiveCamera()
 	log.Println("[pmap] pane deactivated:", p.dmm.Name)
