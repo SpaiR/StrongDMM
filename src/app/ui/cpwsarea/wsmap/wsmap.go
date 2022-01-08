@@ -96,14 +96,15 @@ func (ws *WsMap) OnFocusChange(focused bool) {
 }
 
 func (ws *WsMap) processCanvasCameraMirror() {
-	if !pmap.MirrorCanvasCamera || pmap.ActiveCamera == nil {
+	if !pmap.MirrorCanvasCamera || pmap.ActiveCamera() == nil {
 		return
 	}
 
-	if camera := ws.paneMap.Canvas().Render().Camera(); camera != pmap.ActiveCamera {
-		camera.ShiftX = pmap.ActiveCamera.ShiftX
-		camera.ShiftY = pmap.ActiveCamera.ShiftY
-		camera.Level = pmap.ActiveCamera.Level
-		camera.Scale = pmap.ActiveCamera.Scale
+	activeCamera := pmap.ActiveCamera()
+	if camera := ws.paneMap.Canvas().Render().Camera(); camera != activeCamera {
+		camera.ShiftX = activeCamera.ShiftX
+		camera.ShiftY = activeCamera.ShiftY
+		camera.Level = activeCamera.Level
+		camera.Scale = activeCamera.Scale
 	}
 }

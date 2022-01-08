@@ -51,8 +51,19 @@ type App interface {
 
 var (
 	MirrorCanvasCamera bool
-	ActiveCamera       *render.Camera
+
+	// Used to do a camera mirroring.
+	activeCamera *render.Camera
+	// To persist a previous active pane.
+	// Mostly for cases when we switch between panes. At that moment activePane is nil.
+	lastActivePane *PaneMap
+	// Used to do syncs, which require accessing to the currently active pane.
+	activePane *PaneMap
 )
+
+func ActiveCamera() *render.Camera {
+	return activeCamera
+}
 
 type PaneMap struct {
 	app App
@@ -86,10 +97,6 @@ type PaneMap struct {
 
 	// The value of the Z-level with which the user is currently working.
 	activeLevel int
-
-	tmpIsInTemporalToolMode bool
-	tmpLastSelectedToolName string
-	tmpPrevSelectedToolName string
 
 	tmpLastHoveredInstance *dmminstance.Instance
 }
@@ -203,16 +210,20 @@ func (p *PaneMap) Process() {
 		p.quickEdit.process,
 	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
-
-	p.processTempToolsMode()
 }
 
 func (p *PaneMap) Dispose() {
-	p.updateActiveCamera()
+	if p == lastActivePane {
+		lastActivePane = nil
+	}
+
+	p.syncActiveCamera()
+	p.syncActivePane()
 	p.canvas.Dispose()
 	p.app.RemoveMouseChangeCallback(p.mouseChangeCbId)
 	p.tileMenu.Dispose()
 	p.shortcuts.Dispose()
+
 	log.Println("[pmap] disposed")
 }
 
@@ -261,7 +272,9 @@ func (p *PaneMap) updateShortcutsState() {
 
 func (p *PaneMap) OnActivate() {
 	log.Println("[pmap] pane activated:", p.dmm.Name)
-	ActiveCamera = p.canvas.Render().Camera()
+	activeCamera = p.canvas.Render().Camera()
+	activePane = p
+	lastActivePane = p
 	p.prepareTools()
 	p.active = true
 	p.focused = true
@@ -271,13 +284,21 @@ func (p *PaneMap) OnDeactivate() {
 	p.focused = false
 	p.active = false
 	tools.Selected().OnDeselect()
-	p.updateActiveCamera()
+	p.syncActiveCamera()
+	p.syncActivePane()
 	log.Println("[pmap] pane deactivated:", p.dmm.Name)
 }
 
-func (p *PaneMap) updateActiveCamera() {
-	if ActiveCamera == p.canvas.Render().Camera() {
-		ActiveCamera = nil
+func (p *PaneMap) syncActiveCamera() {
+	if activeCamera == p.canvas.Render().Camera() {
+		activeCamera = nil
 		log.Println("[pmap] active camera cleared:", p.dmm.Name)
+	}
+}
+
+func (p *PaneMap) syncActivePane() {
+	if activePane == p {
+		activePane = nil
+		log.Println("[pmap] active pane cleared:", p.dmm.Name)
 	}
 }

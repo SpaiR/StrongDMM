@@ -3,7 +3,6 @@ package pmap
 import (
 	"fmt"
 	"github.com/SpaiR/imgui-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
@@ -109,59 +108,6 @@ func (p *PaneMap) showLevelButtons() {
 	}
 	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Next z-level (%s+Up)", shortcut.KeyCmdName()))
 	imgui.EndDisabled()
-}
-
-func (p *PaneMap) processTempToolsMode() {
-	if !p.tmpIsInTemporalToolMode {
-		p.tmpLastSelectedToolName = tools.Selected().Name()
-	}
-
-	var inMode bool
-	inMode = inMode || p.processTempToolMode(int(glfw.KeyS), -1, tools.TNPick)
-	inMode = inMode || p.processTempToolMode(int(glfw.KeyD), -1, tools.TNDelete)
-
-	if p.tmpIsInTemporalToolMode && !inMode {
-		tools.SetSelected(p.tmpLastSelectedToolName)
-		p.tmpLastSelectedToolName = ""
-		p.tmpIsInTemporalToolMode = false
-	}
-}
-
-func (p *PaneMap) processTempToolMode(key, altKey int, modeName string) bool {
-	// Ignore presses when Dear ImGui inputs are in charge or actual shortcuts are invisible.
-	if !p.shortcuts.Visible() {
-		return false
-	}
-
-	isKeyPressed := imgui.IsKeyPressedV(key, false) || imgui.IsKeyPressedV(altKey, false)
-	isKeyReleased := imgui.IsKeyReleased(key) || imgui.IsKeyReleased(altKey)
-	isKeyDown := imgui.IsKeyDown(key) || imgui.IsKeyDown(altKey)
-	isSelected := tools.IsSelected(modeName)
-
-	if isKeyPressed && !isSelected {
-		p.tmpPrevSelectedToolName = tools.Selected().Name()
-		p.tmpIsInTemporalToolMode = true
-		tools.SetSelected(modeName)
-	} else if isKeyReleased && len(p.tmpPrevSelectedToolName) != 0 {
-		if isSelected {
-			tools.SetSelected(p.tmpPrevSelectedToolName)
-		}
-		p.tmpPrevSelectedToolName = ""
-	}
-
-	return isKeyDown
-}
-
-func (p *PaneMap) selectAddTool() {
-	tools.SetSelected(tools.TNAdd)
-}
-
-func (p *PaneMap) selectFillTool() {
-	tools.SetSelected(tools.TNFill)
-}
-
-func (p *PaneMap) selectSelectTool() {
-	tools.SetSelected(tools.TNGrab)
 }
 
 func (p *PaneMap) doPreviousLevel() {

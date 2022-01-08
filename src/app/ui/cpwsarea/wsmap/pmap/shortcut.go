@@ -11,19 +11,19 @@ func (p *PaneMap) addShortcuts() {
 		Name:        "pmap#selectAddTool",
 		FirstKey:    glfw.Key1,
 		FirstKeyAlt: glfw.KeyKP1,
-		Action:      p.selectAddTool,
+		Action:      selectAddTool,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#selectFillTool",
 		FirstKey:    glfw.Key2,
 		FirstKeyAlt: glfw.KeyKP2,
-		Action:      p.selectFillTool,
+		Action:      selectFillTool,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#selectSelectTool",
 		FirstKey:    glfw.Key3,
 		FirstKeyAlt: glfw.KeyKP3,
-		Action:      p.selectSelectTool,
+		Action:      selectSelectTool,
 	})
 
 	p.shortcuts.Add(shortcut.Shortcut{
