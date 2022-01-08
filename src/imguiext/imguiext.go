@@ -34,3 +34,7 @@ func IsAltDown() bool {
 func IsShiftDown() bool {
 	return imgui.IsKeyDown(int(glfw.KeyLeftShift)) || imgui.IsKeyDown(int(glfw.KeyRightShift))
 }
+
+func IsCtrlDown() bool {
+	return imgui.IsKeyDown(int(glfw.KeyLeftControl)) || imgui.IsKeyDown(int(glfw.KeyRightControl))
+}

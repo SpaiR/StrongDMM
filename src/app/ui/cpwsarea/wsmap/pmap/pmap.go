@@ -4,6 +4,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/command"
+	"sdmm/app/prefs"
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
@@ -22,6 +23,8 @@ import (
 
 type App interface {
 	tilemenu.App
+
+	Prefs() prefs.Prefs
 
 	LoadedEnvironment() *dmenv.Dme
 

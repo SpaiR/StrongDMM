@@ -14,6 +14,7 @@ import (
 type App interface {
 	wsempty.App
 	wsmap.App
+	wsprefs.App
 
 	DoOpenMapByPathV(mapPath string, workspace *workspace.Workspace)
 
@@ -51,7 +52,7 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 			return
 		}
 	}
-	w.addWorkspace(workspace.New(wsprefs.New(prefsView)))
+	w.addWorkspace(workspace.New(wsprefs.New(w.app, prefsView)))
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {

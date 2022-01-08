@@ -1,6 +1,9 @@
 package app
 
-import "log"
+import (
+	"log"
+	"sdmm/app/prefs"
+)
 
 const (
 	preferencesConfigName    = "preferences"
@@ -9,7 +12,7 @@ const (
 
 type preferencesConfig struct {
 	Version uint
-	Scale   int
+	prefs.Prefs
 }
 
 func (preferencesConfig) Name() string {
@@ -24,7 +27,12 @@ func (preferencesConfig) TryMigrate(_ map[string]interface{}) (result map[string
 func (a *app) loadPreferencesConfig() {
 	a.ConfigRegister(&preferencesConfig{
 		Version: preferencesConfigVersion,
-		Scale:   100,
+
+		Prefs: prefs.Prefs{
+			Interface: prefs.Interface{
+				Scale: 100,
+			},
+		},
 	})
 }
 

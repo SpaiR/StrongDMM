@@ -26,3 +26,14 @@ func NewIntPref() IntPref {
 		StepFast: 10,
 	}
 }
+
+type BoolPref struct {
+	basePref
+
+	FGet func() bool
+	FSet func(bool)
+}
+
+func NewBoolPref() BoolPref {
+	return BoolPref{}
+}

@@ -7,14 +7,23 @@ import (
 	"sdmm/imguiext/icon"
 )
 
+type App interface {
+	PointSize() float32
+}
+
 type WsPrefs struct {
 	workspace.Content
+
+	app App
 
 	prefs Prefs
 }
 
-func New(prefs Prefs) *WsPrefs {
-	return &WsPrefs{prefs: prefs}
+func New(app App, prefs Prefs) *WsPrefs {
+	return &WsPrefs{
+		prefs: prefs,
+		app:   app,
+	}
 }
 
 func (ws *WsPrefs) Name() string {
@@ -30,12 +39,18 @@ func (ws *WsPrefs) Process() {
 }
 
 func (ws *WsPrefs) showContent() {
-	for _, group := range prefsGroupOrder {
+	for idx, group := range prefsGroupOrder {
+		if idx > 0 {
+			imgui.NewLine()
+		}
 		imgui.Text(string(group))
 		imgui.Separator()
 		for _, pref := range ws.prefs[group] {
 			if pref, ok := pref.(IntPref); ok {
 				showIntPref(pref)
+			}
+			if pref, ok := pref.(BoolPref); ok {
+				showBoolPref(pref, ws.app.PointSize())
 			}
 		}
 	}
@@ -53,5 +68,34 @@ func showIntPref(pref IntPref) {
 		if int(v) != pref.FGet() {
 			pref.FSet(int(v))
 		}
+	}
+}
+
+func showBoolPref(pref BoolPref, pointSize float32) {
+	fToggle := func() {
+		pref.FSet(!pref.FGet())
+	}
+
+	imgui.TextWrapped(pref.Name)
+
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: pointSize, Y: pointSize})
+	v := pref.FGet()
+	if imgui.Checkbox(pref.Label, &v) {
+		fToggle()
+	}
+	imgui.PopStyleVar()
+
+	imgui.SameLine()
+
+	imgui.PushTextWrapPos()
+	imgui.TextDisabled(pref.Desc)
+	imgui.PopTextWrapPos()
+
+	if imgui.IsItemHovered() {
+		imgui.SetMouseCursor(imgui.MouseCursorHand)
+	}
+
+	if imgui.IsItemClicked() {
+		fToggle()
 	}
 }

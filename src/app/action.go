@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"sdmm/app/prefs"
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
@@ -196,6 +197,11 @@ func (a *app) MultiZRendering() bool {
 // MirrorCanvasCamera returns true if maps sync their camera.
 func (a *app) MirrorCanvasCamera() bool {
 	return pmap.MirrorCanvasCamera
+}
+
+// Prefs returns current application preferences.
+func (a *app) Prefs() prefs.Prefs {
+	return a.preferencesConfig().Prefs
 }
 
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {

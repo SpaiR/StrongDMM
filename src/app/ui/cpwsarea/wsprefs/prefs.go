@@ -4,9 +4,13 @@ type PrefGroup string
 
 const (
 	GPInterface PrefGroup = "Interface Options"
+	GPControls  PrefGroup = "Controls Options"
 )
 
-var prefsGroupOrder = []PrefGroup{GPInterface}
+var prefsGroupOrder = []PrefGroup{
+	GPInterface,
+	GPControls,
+}
 
 type Prefs map[PrefGroup][]interface{}
 
