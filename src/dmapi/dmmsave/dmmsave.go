@@ -12,7 +12,7 @@ func Save(dmm *dmmap.Dmm, cfg Config) {
 }
 
 func SaveV(dmm *dmmap.Dmm, path string, cfg Config) {
-	log.Println("[dmmsave] save started [" + path + "]...")
+	log.Printf("[dmmsave] save started [%s]...", path)
 
 	sp, err := makeSaveProcess(cfg, dmm, path)
 	if err != nil {

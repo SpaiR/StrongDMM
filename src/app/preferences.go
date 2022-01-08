@@ -7,11 +7,11 @@ import (
 )
 
 func (a *app) makePreferences() wsprefs.Prefs {
-	prefs := wsprefs.MakePrefs()
-	prefs.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
-	prefs.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
-	prefs.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
-	return prefs
+	p := wsprefs.MakePrefs()
+	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
+	p.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
+	return p
 }
 
 func (a *app) makePreferenceInterfaceScale() wsprefs.IntPref {

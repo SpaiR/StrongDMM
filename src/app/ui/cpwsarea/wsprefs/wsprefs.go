@@ -64,10 +64,9 @@ func (ws *WsPrefs) showContent() {
 func showIntPref(pref IntPref) {
 	imgui.TextWrapped(pref.Name)
 
-	showHelp(pref.Help)
-
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
+	showHelp(pref.Help)
 	imgui.PopTextWrapPos()
 
 	v := int32(pref.FGet())
@@ -85,8 +84,6 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 
 	imgui.TextWrapped(pref.Name)
 
-	showHelp(pref.Help)
-
 	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: pointSize, Y: pointSize})
 	v := pref.FGet()
 	if imgui.Checkbox(pref.Label, &v) {
@@ -98,6 +95,7 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
+	showHelp(pref.Help)
 	imgui.PopTextWrapPos()
 
 	if imgui.IsItemHovered() {
@@ -112,10 +110,9 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 func showOptionPref(pref OptionPref) {
 	imgui.TextWrapped(pref.Name)
 
-	showHelp(pref.Help)
-
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
+	showHelp(pref.Help)
 	imgui.PopTextWrapPos()
 
 	if imgui.BeginCombo(pref.Label, pref.FGet()) {
