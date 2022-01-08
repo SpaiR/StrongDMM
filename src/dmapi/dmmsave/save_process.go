@@ -10,6 +10,7 @@ import (
 )
 
 type saveProcess struct {
+	cfg        Config
 	dmm        *dmmap.Dmm
 	initial    *dmmdata.DmmData
 	output     *dmmdata.DmmData
@@ -17,7 +18,7 @@ type saveProcess struct {
 	unusedKeys map[dmmdata.Key]bool
 }
 
-func makeSaveProcess(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
+func makeSaveProcess(cfg Config, dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 	initial, err := dmmdata.New(dmm.Backup)
 	if err != nil {
 		log.Println("[dmmsave] unable to read map backup:", dmm.Backup)
@@ -26,7 +27,7 @@ func makeSaveProcess(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 
 	output := &dmmdata.DmmData{
 		Filepath:   path,
-		IsTgm:      initial.IsTgm,
+		IsTgm:      detectIsTgm(cfg.Format, initial.IsTgm),
 		LineBreak:  initial.LineBreak,
 		KeyLength:  initial.KeyLength,
 		MaxX:       initial.MaxX,
@@ -44,12 +45,24 @@ func makeSaveProcess(dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 	}
 
 	return &saveProcess{
+		cfg,
 		dmm,
 		initial,
 		output,
 		keygen.New(output),
 		unusedKeys,
 	}, nil
+}
+
+func detectIsTgm(saveFormat Format, isInitialTGM bool) bool {
+	switch saveFormat {
+	case FormatInitial:
+		return isInitialTGM
+	case FormatTGM:
+		return true
+	default:
+		return false
+	}
 }
 
 // Go through the dmm tiles and try to find a key in the initial map with the same content.

@@ -8,7 +8,6 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/dmapi/dmmap"
-	"sdmm/dmapi/dmmsave"
 )
 
 type App interface {
@@ -34,12 +33,6 @@ func New(app App, dmm *dmmap.Dmm) *WsMap {
 
 func (ws *WsMap) Map() *pmap.PaneMap {
 	return ws.paneMap
-}
-
-func (ws *WsMap) Save() {
-	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
-	dmmsave.Save(ws.paneMap.Dmm())
-	ws.app.CommandStorage().ForceBalance(ws.CommandStackId())
 }
 
 func (ws *WsMap) CommandStackId() string {

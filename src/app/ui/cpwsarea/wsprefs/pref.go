@@ -6,6 +6,7 @@ type basePref struct {
 	Name  string
 	Desc  string
 	Label string
+	Help  string
 }
 
 type IntPref struct {
@@ -18,7 +19,7 @@ type IntPref struct {
 	Step, StepFast int
 }
 
-func NewIntPref() IntPref {
+func MakeIntPref() IntPref {
 	return IntPref{
 		Min:      math.MinInt,
 		Max:      math.MaxInt,
@@ -34,6 +35,19 @@ type BoolPref struct {
 	FSet func(bool)
 }
 
-func NewBoolPref() BoolPref {
+func MakeBoolPref() BoolPref {
 	return BoolPref{}
+}
+
+type OptionPref struct {
+	basePref
+
+	FGet func() string
+	FSet func(string)
+
+	Options []string
+}
+
+func MakeOptionPref() OptionPref {
+	return OptionPref{}
 }

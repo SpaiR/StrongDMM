@@ -46,18 +46,25 @@ func (ws *WsPrefs) showContent() {
 		imgui.Text(string(group))
 		imgui.Separator()
 		for _, pref := range ws.prefs[group] {
+			imgui.PushID(string(group))
 			if pref, ok := pref.(IntPref); ok {
 				showIntPref(pref)
 			}
 			if pref, ok := pref.(BoolPref); ok {
 				showBoolPref(pref, ws.app.PointSize())
 			}
+			if pref, ok := pref.(OptionPref); ok {
+				showOptionPref(pref)
+			}
+			imgui.PopID()
 		}
 	}
 }
 
 func showIntPref(pref IntPref) {
 	imgui.TextWrapped(pref.Name)
+
+	showHelp(pref.Help)
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
@@ -78,6 +85,8 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 
 	imgui.TextWrapped(pref.Name)
 
+	showHelp(pref.Help)
+
 	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: pointSize, Y: pointSize})
 	v := pref.FGet()
 	if imgui.Checkbox(pref.Label, &v) {
@@ -97,5 +106,32 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 
 	if imgui.IsItemClicked() {
 		fToggle()
+	}
+}
+
+func showOptionPref(pref OptionPref) {
+	imgui.TextWrapped(pref.Name)
+
+	showHelp(pref.Help)
+
+	imgui.PushTextWrapPos()
+	imgui.TextDisabled(pref.Desc)
+	imgui.PopTextWrapPos()
+
+	if imgui.BeginCombo(pref.Label, pref.FGet()) {
+		for _, option := range pref.Options {
+			if imgui.SelectableV(option, option == pref.FGet(), imgui.SelectableFlagsNone, imgui.Vec2{}) {
+				pref.FSet(option)
+			}
+		}
+		imgui.EndCombo()
+	}
+}
+
+func showHelp(helpText string) {
+	if helpText != "" {
+		imgui.SameLine()
+		imgui.TextDisabled(icon.FaQuestionCircle)
+		imguiext.SetItemHoveredTooltip(helpText)
 	}
 }

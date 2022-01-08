@@ -7,14 +7,14 @@ import (
 	"sdmm/util"
 )
 
-func Save(dmm *dmmap.Dmm) {
-	SaveV(dmm, dmm.Path.Absolute)
+func Save(dmm *dmmap.Dmm, cfg Config) {
+	SaveV(dmm, dmm.Path.Absolute, cfg)
 }
 
-func SaveV(dmm *dmmap.Dmm, path string) {
+func SaveV(dmm *dmmap.Dmm, path string, cfg Config) {
 	log.Println("[dmmsave] save started [" + path + "]...")
 
-	sp, err := makeSaveProcess(dmm, path)
+	sp, err := makeSaveProcess(cfg, dmm, path)
 	if err != nil {
 		log.Println("[dmmsave] unable to start save process")
 		util.ShowErrorDialog("Unable to start save process")

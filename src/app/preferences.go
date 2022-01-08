@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsprefs"
 )
 
@@ -9,14 +10,15 @@ func (a *app) makePreferences() wsprefs.Prefs {
 	prefs := wsprefs.MakePrefs()
 	prefs.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
 	prefs.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
+	prefs.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
 	return prefs
 }
 
 func (a *app) makePreferenceInterfaceScale() wsprefs.IntPref {
-	p := wsprefs.NewIntPref()
-	p.Name = "Interface Scale"
+	p := wsprefs.MakeIntPref()
+	p.Name = "Scale"
 	p.Desc = "Controls the interface scale."
-	p.Label = "%##preference_scale"
+	p.Label = "%##scale"
 	p.Min = 50
 	p.Max = 250
 
@@ -35,7 +37,7 @@ func (a *app) makePreferenceInterfaceScale() wsprefs.IntPref {
 }
 
 func (a *app) makePreferenceControlsAltScrollBehaviour() wsprefs.BoolPref {
-	p := wsprefs.NewBoolPref()
+	p := wsprefs.MakeBoolPref()
 	p.Name = "Alternative Scroll Behavior"
 	p.Desc = "When enabled, scrolling will do panning. Zoom will be available if a Space key pressed."
 	p.Label = "##alternative_scroll_behavior"
@@ -49,6 +51,28 @@ func (a *app) makePreferenceControlsAltScrollBehaviour() wsprefs.BoolPref {
 		cfg.Prefs.Controls.AltScrollBehaviour = value
 		a.ConfigSaveV(cfg)
 	}
+
+	return p
+}
+
+func (a *app) makePreferenceSaveFormat() wsprefs.OptionPref {
+	p := wsprefs.MakeOptionPref()
+	p.Name = "Format"
+	p.Desc = "Controls the format used by the editor to save the map."
+	p.Label = "##format"
+
+	p.FGet = func() string {
+		return a.preferencesConfig().Prefs.Save.Format
+	}
+	p.FSet = func(value string) {
+		log.Println("[app] preferences changing, [save#format] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Save.Format = value
+		a.ConfigSaveV(cfg)
+	}
+
+	p.Options = prefs.SaveFormats
+	p.Help = prefs.SaveFormatHelp
 
 	return p
 }

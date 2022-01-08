@@ -32,6 +32,9 @@ func (a *app) loadPreferencesConfig() {
 			Interface: prefs.Interface{
 				Scale: 100,
 			},
+			Save: prefs.Save{
+				Format: prefs.SaveFormatInitial,
+			},
 		},
 	})
 }
