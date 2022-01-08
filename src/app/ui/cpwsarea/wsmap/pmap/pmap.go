@@ -208,7 +208,7 @@ func (p *PaneMap) Process() {
 }
 
 func (p *PaneMap) Dispose() {
-	p.checkActiveCamera()
+	p.updateActiveCamera()
 	p.canvas.Dispose()
 	p.app.RemoveMouseChangeCallback(p.mouseChangeCbId)
 	p.tileMenu.Dispose()
@@ -271,11 +271,11 @@ func (p *PaneMap) OnDeactivate() {
 	p.focused = false
 	p.active = false
 	tools.Selected().OnDeselect()
-	p.checkActiveCamera()
+	p.updateActiveCamera()
 	log.Println("[pmap] pane deactivated:", p.dmm.Name)
 }
 
-func (p *PaneMap) checkActiveCamera() {
+func (p *PaneMap) updateActiveCamera() {
 	if ActiveCamera == p.canvas.Render().Camera() {
 		ActiveCamera = nil
 		log.Println("[pmap] active camera cleared:", p.dmm.Name)
