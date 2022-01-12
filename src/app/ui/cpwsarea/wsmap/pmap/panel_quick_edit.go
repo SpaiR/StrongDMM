@@ -38,7 +38,7 @@ func (p *panelQuickEdit) showNudgeOption(label, nudgeVarName string, instance *d
 	if imgui.DragInt("##"+nudgeVarName+p.editor.Dmm().Name, &value) {
 		origPrefab := instance.Prefab()
 
-		newVars := p.setVar(origPrefab, nudgeVarName, strconv.Itoa(int(value)))
+		newVars := dmvars.Set(origPrefab.Vars(), nudgeVarName, strconv.Itoa(int(value)))
 		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
 		instance.SetPrefab(newPrefab)
 
@@ -46,19 +46,19 @@ func (p *panelQuickEdit) showNudgeOption(label, nudgeVarName string, instance *d
 	}
 
 	if imgui.IsItemDeactivatedAfterEdit() {
+		p.sanitizeInstanceVar(instance, nudgeVarName, "0")
 		dmmap.PrefabStorage.Put(instance.Prefab())
 		p.editor.InstanceSelect(instance)
 		go p.editor.CommitChanges(label)
 	}
 }
 
-func (p *panelQuickEdit) setVar(prefab *dmmprefab.Prefab, varName, varValue string) (newVars *dmvars.Variables) {
-	if p.initialVarValue(prefab.Path(), varName) == varValue {
-		newVars = dmvars.Delete(prefab.Vars(), varValue)
-	} else {
-		newVars = dmvars.Set(prefab.Vars(), varName, varValue)
+func (p *panelQuickEdit) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {
+	vars := instance.Prefab().Vars()
+	if p.initialVarValue(instance.Prefab().Path(), varName) == vars.ValueV(varName, defaultValue) {
+		vars = dmvars.Delete(vars, varName)
+		instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, instance.Prefab().Path(), vars))
 	}
-	return newVars
 }
 
 func (p *panelQuickEdit) initialVarValue(path, varName string) string {
