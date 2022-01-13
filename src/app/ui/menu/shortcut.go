@@ -8,16 +8,16 @@ import (
 func (m *Menu) addShortcuts() {
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoNewWorkspace",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyN,
 		Action:      m.app.DoNewWorkspace,
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoOpenMap",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyO,
 		Action:      m.app.DoOpenMap,
 		IsEnabled:   m.app.HasLoadedEnvironment,
@@ -25,8 +25,8 @@ func (m *Menu) addShortcuts() {
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoSave",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyS,
 		Action:      m.app.DoSave,
 		IsEnabled:   m.app.HasActiveMap,
@@ -34,8 +34,8 @@ func (m *Menu) addShortcuts() {
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoUndo",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyZ,
 		Action:      m.app.DoUndo,
 		IsEnabled:   m.app.CommandStorage().HasUndo,
@@ -43,8 +43,8 @@ func (m *Menu) addShortcuts() {
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:         "menu#DoRedo",
-		FirstKey:     shortcut.KeyLeftCmd(),
-		FirstKeyAlt:  shortcut.KeyRightCmd(),
+		FirstKey:     shortcut.KeyModLeft(),
+		FirstKeyAlt:  shortcut.KeyModRight(),
 		SecondKey:    glfw.KeyLeftShift,
 		SecondKeyAlt: glfw.KeyRightShift,
 		ThirdKey:     glfw.KeyZ,
@@ -53,8 +53,8 @@ func (m *Menu) addShortcuts() {
 	})
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoRedo",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyY,
 		Action:      m.app.DoRedo,
 		IsEnabled:   m.app.CommandStorage().HasRedo,
@@ -62,23 +62,23 @@ func (m *Menu) addShortcuts() {
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoCopy",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyC,
 		Action:      m.app.DoCopy,
 	})
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoPaste",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyV,
 		Action:      m.app.DoPaste,
 		IsEnabled:   m.app.Clipboard().HasData,
 	})
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoCut",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyX,
 		Action:      m.app.DoCut,
 	})
@@ -89,8 +89,8 @@ func (m *Menu) addShortcuts() {
 	})
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoSearch",
-		FirstKey:    shortcut.KeyLeftCmd(),
-		FirstKeyAlt: shortcut.KeyRightCmd(),
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyF,
 		Action:      m.app.DoSearch,
 		IsEnabled:   m.app.HasActiveMap,
@@ -98,8 +98,8 @@ func (m *Menu) addShortcuts() {
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:         "menu#DoMultiZRendering",
-		FirstKey:     shortcut.KeyLeftCmd(),
-		FirstKeyAlt:  shortcut.KeyRightCmd(),
+		FirstKey:     shortcut.KeyModLeft(),
+		FirstKeyAlt:  shortcut.KeyModRight(),
 		SecondKey:    glfw.Key0,
 		SecondKeyAlt: glfw.KeyKP0,
 		Action:       m.app.DoMultiZRendering,

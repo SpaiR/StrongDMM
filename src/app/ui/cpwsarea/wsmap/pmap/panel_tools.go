@@ -98,7 +98,10 @@ func (p *PaneMap) showLevelButtons() {
 	if imgui.Button(icon.FaArrowDown) {
 		p.doPreviousLevel()
 	}
-	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Previous z-level (%s+Down)", shortcut.KeyCmdName()))
+	imguiext.SetItemHoveredTooltip(fmt.Sprintf(
+		"Previous z-level (%s)",
+		shortcut.Combine(shortcut.KeyModName(), "Down"),
+	))
 	imgui.EndDisabled()
 
 	imgui.BeginDisabledV(!p.hasNextLevel())
@@ -106,7 +109,10 @@ func (p *PaneMap) showLevelButtons() {
 	if imgui.Button(icon.FaArrowUp) {
 		p.doNextLevel()
 	}
-	imguiext.SetItemHoveredTooltip(fmt.Sprintf("Next z-level (%s+Up)", shortcut.KeyCmdName()))
+	imguiext.SetItemHoveredTooltip(fmt.Sprintf(
+		"Next z-level (%s)",
+		shortcut.Combine(shortcut.KeyModName(), "Up"),
+	))
 	imgui.EndDisabled()
 }
 

@@ -35,22 +35,22 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Undo", t.app.DoUndo).
 			Icon(icon.FaUndo).
 			Enabled(t.app.CommandStorage().HasUndo()).
-			Shortcut(shortcut.KeyCmdName() + "+Z"),
+			Shortcut(shortcut.KeyModName(), "Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
 			Icon(icon.FaRedo).
 			Enabled(t.app.CommandStorage().HasRedo()).
-			Shortcut(shortcut.KeyCmdName() + "+Shift+Z"),
+			Shortcut(shortcut.KeyModName(), "Shift", "Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
 			Icon(icon.FaCopy).
-			Shortcut(shortcut.KeyCmdName() + "+C"),
+			Shortcut(shortcut.KeyModName(), "C"),
 		w.MenuItem("Paste", t.app.DoPaste).
 			Icon(icon.FaPaste).
 			Enabled(t.app.Clipboard().HasData()).
-			Shortcut(shortcut.KeyCmdName() + "+V"),
+			Shortcut(shortcut.KeyModName(), "V"),
 		w.MenuItem("Cut", t.app.DoCut).
 			Icon(icon.FaCut).
-			Shortcut(shortcut.KeyCmdName() + "+X"),
+			Shortcut(shortcut.KeyModName(), "X"),
 		w.MenuItem("Delete", t.app.DoDelete).
 			Icon(icon.FaEraser).
 			Shortcut("Delete"),

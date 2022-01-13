@@ -2,6 +2,7 @@ package widget
 
 import (
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/shortcut"
 	"sdmm/imguiext/style"
 )
 
@@ -17,8 +18,8 @@ type menuItemWidget struct {
 	onClick  func()
 }
 
-func (m *menuItemWidget) Shortcut(shortcut string) *menuItemWidget {
-	m.shortcut = shortcut
+func (m *menuItemWidget) Shortcut(keys ...string) *menuItemWidget {
+	m.shortcut = shortcut.Combine(keys...)
 	return m
 }
 

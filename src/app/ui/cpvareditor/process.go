@@ -98,15 +98,22 @@ func (v *VarEditor) showControls() {
 	imgui.Button(icon.FaCog)
 	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {
 		cfg := v.config()
-		if imgui.MenuItemV("Show modified only", shortcut.KeyCmdName()+"+1", cfg.ShowModified, true) {
-			v.doToggleShowModified()
-		}
-		if imgui.MenuItemV("Show types", shortcut.KeyCmdName()+"+2", cfg.ShowByType, true) {
-			v.doToggleShowByType()
-		}
-		if imgui.MenuItemV("Show pins", shortcut.KeyCmdName()+"+3", cfg.ShowPins, true) {
-			v.doToggleShowPins()
-		}
+
+		w.Layout{
+			w.MenuItem("Show modified only", v.doToggleShowModified).
+				Selected(cfg.ShowModified).
+				Enabled(true).
+				Shortcut(shortcut.KeyModName(), "1"),
+			w.MenuItem("Show types", v.doToggleShowByType).
+				Selected(cfg.ShowByType).
+				Enabled(true).
+				Shortcut(shortcut.KeyModName(), "2"),
+			w.MenuItem("Show pins", v.doToggleShowPins).
+				Selected(cfg.ShowPins).
+				Enabled(true).
+				Shortcut(shortcut.KeyModName(), "3"),
+		}.Build()
+
 		imgui.EndPopup()
 	}
 

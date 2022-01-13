@@ -3,25 +3,30 @@ package shortcut
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"runtime"
+	"strings"
 )
+
+func Combine(keys ...string) string {
+	return strings.Join(keys, "+")
+}
 
 var isDarwin = runtime.GOOS == "darwin"
 
-func KeyCmdName() string {
+func KeyModName() string {
 	if isDarwin {
 		return "Cmd"
 	}
 	return "Ctrl"
 }
 
-func KeyLeftCmd() glfw.Key {
+func KeyModLeft() glfw.Key {
 	if isDarwin {
 		return glfw.KeyLeftSuper
 	}
 	return glfw.KeyLeftControl
 }
 
-func KeyRightCmd() glfw.Key {
+func KeyModRight() glfw.Key {
 	if isDarwin {
 		return glfw.KeyRightSuper
 	}
