@@ -2,7 +2,7 @@ package dm
 
 import "strings"
 
-// IsPath returns true orig path is the same type of the provided.
+// IsPath returns true if the orig path is the same type of the provided.
 func IsPath(orig, path string) bool {
 	return strings.HasPrefix(orig, path)
 }
@@ -34,4 +34,9 @@ func PathBase(p string) string {
 // Example: /obj/item/weapon -> weapon
 func PathLast(p string) string {
 	return p[strings.LastIndex(p, "/")+1:]
+}
+
+// IsMovable returns true if the provided path is a "movable" type.
+func IsMovable(path string) bool {
+	return IsPath(path, "/obj") || IsPath(path, "/mob") || IsPath(path, "/atom/movable")
 }
