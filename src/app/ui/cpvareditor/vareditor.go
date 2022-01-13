@@ -100,7 +100,7 @@ func (v *VarEditor) EditPrefab(prefab *dmmprefab.Prefab) {
 }
 
 func (v *VarEditor) EditedInstance() (*dmminstance.Instance, bool) {
-	if v.instance != nil {
+	if v.instance != nil && v.sessionEditMode == emInstance {
 		return v.instance, true
 	}
 	return nil, false
