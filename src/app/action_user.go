@@ -89,6 +89,16 @@ func (a *app) DoClearRecentMaps() {
 	a.ConfigSave()
 }
 
+// DoClose closes currently active workspace.
+func (a *app) DoClose() {
+	a.layout.WsArea.Close()
+}
+
+// DoCloseAll closes all opened workspaces.
+func (a *app) DoCloseAll() {
+	a.layout.WsArea.CloseAll()
+}
+
 // DoSave saves current active map.
 func (a *app) DoSave() {
 	log.Println("[app] do save")

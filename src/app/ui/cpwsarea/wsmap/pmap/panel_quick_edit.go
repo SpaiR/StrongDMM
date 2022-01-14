@@ -58,7 +58,7 @@ func (p *panelQuickEdit) showNudgeOption(label, nudgeVarName string, instance *d
 
 // GUI slider works by changing the value in a range of [1, maxDirs].
 // While it goes like "1, 2, 3, 4" we need to actually have "1, 2, 4, 8".
-// Maps below help to properly convert a "relative" value to the "real" one.
+// Vars below help to properly convert a "relative" value to the "real" one.
 var (
 	_relativeIndexToDir = map[int32]int{
 		1: dm.DirNorth,
@@ -95,8 +95,8 @@ func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
 	if imgui.SliderIntV(label, &value, 1, maxDirs, fmt.Sprint(dir), imgui.SliderFlagsNone) {
 		origPrefab := instance.Prefab()
 
-		newDir := _relativeIndexToDir[value]
-		newVars := dmvars.Set(origPrefab.Vars(), "dir", strconv.Itoa(newDir))
+		newDir := strconv.Itoa(_relativeIndexToDir[value])
+		newVars := dmvars.Set(origPrefab.Vars(), "dir", newDir)
 		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
 		instance.SetPrefab(newPrefab)
 

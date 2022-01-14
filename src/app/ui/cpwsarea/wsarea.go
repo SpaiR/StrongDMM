@@ -71,6 +71,20 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
 	return true
 }
 
+func (w *WsArea) Close() {
+	if w.activeWs != nil {
+		w.closeWorkspace(w.activeWs)
+	}
+}
+
+func (w *WsArea) CloseAll() {
+	workspaces := make([]*workspace.Workspace, len(w.workspaces))
+	copy(workspaces, w.workspaces)
+	for _, ws := range workspaces {
+		w.closeWorkspace(ws)
+	}
+}
+
 func (w *WsArea) WorkspaceTitle() string {
 	if w.activeWs != nil {
 		return w.activeWs.Title()

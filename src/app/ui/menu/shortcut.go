@@ -33,6 +33,23 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
+		Name:        "menu#DoClose",
+		FirstKey:    shortcut.KeyModLeft(),
+		FirstKeyAlt: shortcut.KeyModRight(),
+		SecondKey:   glfw.KeyW,
+		Action:      m.app.DoClose,
+	})
+	m.shortcuts.Add(shortcut.Shortcut{
+		Name:         "menu#DoCloseAll",
+		FirstKey:     shortcut.KeyModLeft(),
+		FirstKeyAlt:  shortcut.KeyModRight(),
+		SecondKey:    glfw.KeyLeftShift,
+		SecondKeyAlt: glfw.KeyRightShift,
+		ThirdKey:     glfw.KeyW,
+		Action:       m.app.DoCloseAll,
+	})
+
+	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoUndo",
 		FirstKey:    shortcut.KeyModLeft(),
 		FirstKeyAlt: shortcut.KeyModRight(),

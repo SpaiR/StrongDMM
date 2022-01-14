@@ -20,6 +20,8 @@ type app interface {
 	DoOpenMap()
 	DoOpenMapByPath(path string)
 	DoClearRecentMaps()
+	DoClose()
+	DoCloseAll()
 	DoSave()
 	DoOpenPreferences()
 	DoExit()
@@ -116,6 +118,11 @@ func (m *Menu) Process() {
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(m.app.HasLoadedEnvironment() && len(m.app.RecentMapsByLoadedEnvironment()) != 0),
+			w.Separator(),
+			w.MenuItem("Close", m.app.DoClose).
+				Shortcut(shortcut.KeyModName(), "W"),
+			w.MenuItem("Close All", m.app.DoCloseAll).
+				Shortcut(shortcut.KeyModName(), "Shift", "W"),
 			w.Separator(),
 			w.MenuItem("Save", m.app.DoSave).
 				Icon(icon.FaSave).
