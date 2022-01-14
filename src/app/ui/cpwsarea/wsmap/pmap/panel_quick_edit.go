@@ -3,6 +3,7 @@ package pmap
 import (
 	"fmt"
 	"github.com/SpaiR/imgui-go"
+	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
@@ -26,14 +27,29 @@ func (p *panelQuickEdit) process() {
 	}
 
 	imgui.BeginDisabledV(!dm.IsMovable(selectedInstance.Prefab().Path()))
-	p.showNudgeOption("Nudge X", "pixel_x", selectedInstance)
-	p.showNudgeOption("Nudge Y", "pixel_y", selectedInstance)
+	p.showNudgeOption("Nudge X", true, selectedInstance)
+	p.showNudgeOption("Nudge Y", false, selectedInstance)
 	imgui.EndDisabled()
 
 	p.showDirOption(selectedInstance)
 }
 
-func (p *panelQuickEdit) showNudgeOption(label, nudgeVarName string, instance *dmminstance.Instance) {
+func (p *panelQuickEdit) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
+	var nudgeVarName string
+	if p.app.Prefs().Save.NudgeMode == prefs.SaveNudgeModePixel {
+		if xAxis {
+			nudgeVarName = "pixel_x"
+		} else {
+			nudgeVarName = "pixel_y"
+		}
+	} else {
+		if xAxis {
+			nudgeVarName = "step_x"
+		} else {
+			nudgeVarName = "step_y"
+		}
+	}
+
 	pixelX := instance.Prefab().Vars().IntV(nudgeVarName, 0)
 	value := int32(pixelX)
 

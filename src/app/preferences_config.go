@@ -33,7 +33,8 @@ func (a *app) loadPreferencesConfig() {
 				Scale: 100,
 			},
 			Save: prefs.Save{
-				Format: prefs.SaveFormatInitial,
+				Format:    prefs.SaveFormatInitial,
+				NudgeMode: prefs.SaveNudgeModePixel,
 			},
 		},
 	})

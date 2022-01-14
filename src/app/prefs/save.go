@@ -16,3 +16,13 @@ var SaveFormats = []string{
 	SaveFormatTGM,
 	SaveFormatDM,
 }
+
+const (
+	SaveNudgeModePixel = "pixel_x/pixel_y"
+	SaveNudgeModeStep  = "step_x/step_y"
+)
+
+var SaveNudgeModes = []string{
+	SaveNudgeModePixel,
+	SaveNudgeModeStep,
+}

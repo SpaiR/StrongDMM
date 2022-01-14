@@ -5,6 +5,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
+	"sdmm/imguiext/style"
 )
 
 type App interface {
@@ -43,9 +44,12 @@ func (ws *WsPrefs) showContent() {
 		if idx > 0 {
 			imgui.NewLine()
 		}
-		imgui.Text(string(group))
+		imgui.TextColored(style.ColorGold, string(group))
 		imgui.Separator()
-		for _, pref := range ws.prefs[group] {
+		for idx, pref := range ws.prefs[group] {
+			if idx > 0 {
+				imgui.NewLine()
+			}
 			imgui.PushID(string(group))
 			if pref, ok := pref.(IntPref); ok {
 				showIntPref(pref)

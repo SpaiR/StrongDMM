@@ -11,6 +11,7 @@ func (a *app) makePreferences() wsprefs.Prefs {
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
 	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
 	p.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
+	p.Add(wsprefs.GPSave, a.makePreferenceSaveNudgeMode())
 	return p
 }
 
@@ -73,6 +74,27 @@ func (a *app) makePreferenceSaveFormat() wsprefs.OptionPref {
 
 	p.Options = prefs.SaveFormats
 	p.Help = prefs.SaveFormatHelp
+
+	return p
+}
+
+func (a *app) makePreferenceSaveNudgeMode() wsprefs.OptionPref {
+	p := wsprefs.MakeOptionPref()
+	p.Name = "Nudge Mode"
+	p.Desc = "Controls which variables will be changed during the nudge."
+	p.Label = "##nudge_mode"
+
+	p.FGet = func() string {
+		return a.preferencesConfig().Prefs.Save.NudgeMode
+	}
+	p.FSet = func(value string) {
+		log.Println("[app] preferences changing, [save#nudge_mode] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Save.NudgeMode = value
+		a.ConfigSaveV(cfg)
+	}
+
+	p.Options = prefs.SaveNudgeModes
 
 	return p
 }
