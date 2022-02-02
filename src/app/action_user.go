@@ -237,9 +237,11 @@ func (a *app) DoSearch() {
 // DoMultiZRendering toggles multi-z rendering.
 func (a *app) DoMultiZRendering() {
 	render.MultiZRendering = !render.MultiZRendering
+	log.Println("[app] do multiZ rendering:", render.MultiZRendering)
 }
 
 // DoMirrorCanvasCamera toggles mode of mirroring canvas camera.
 func (a *app) DoMirrorCanvasCamera() {
 	pmap.MirrorCanvasCamera = !pmap.MirrorCanvasCamera
+	log.Println("[app] do mirror canvas camera:", pmap.MirrorCanvasCamera)
 }
