@@ -21,8 +21,9 @@ func (ws *WsMap) Save() {
 		saveFormat = dmmsave.FormatDM
 	}
 
-	dmmsave.Save(ws.paneMap.Dmm(), dmmsave.Config{
-		Format: saveFormat,
+	dmmsave.Save(ws.app.LoadedEnvironment(), ws.paneMap.Dmm(), dmmsave.Config{
+		Format:            saveFormat,
+		SanitizeVariables: savePrefs.SanitizeVariables,
 	})
 
 	ws.app.CommandStorage().ForceBalance(ws.CommandStackId())

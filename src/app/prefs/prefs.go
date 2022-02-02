@@ -15,6 +15,7 @@ type Controls struct {
 }
 
 type Save struct {
-	Format    string
-	NudgeMode string
+	Format            string
+	NudgeMode         string
+	SanitizeVariables bool
 }

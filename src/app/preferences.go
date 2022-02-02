@@ -11,6 +11,7 @@ func (a *app) makePreferences() wsprefs.Prefs {
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
 	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
 	p.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
+	p.Add(wsprefs.GPSave, a.makePreferenceSaveSanitizeVariables())
 	p.Add(wsprefs.GPSave, a.makePreferenceSaveNudgeMode())
 	return p
 }
@@ -74,6 +75,25 @@ func (a *app) makePreferenceSaveFormat() wsprefs.OptionPref {
 
 	p.Options = prefs.SaveFormats
 	p.Help = prefs.SaveFormatHelp
+
+	return p
+}
+
+func (a *app) makePreferenceSaveSanitizeVariables() wsprefs.BoolPref {
+	p := wsprefs.MakeBoolPref()
+	p.Name = "Sanitize Variables"
+	p.Desc = "Enables sanitizing for variables which are declared on the map, but has the same value as initial."
+	p.Label = "##sanitize_variables"
+
+	p.FGet = func() bool {
+		return a.preferencesConfig().Prefs.Save.SanitizeVariables
+	}
+	p.FSet = func(value bool) {
+		log.Println("[app] preferences changing, [save#sanitize_variables] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Save.SanitizeVariables = value
+		a.ConfigSaveV(cfg)
+	}
 
 	return p
 }

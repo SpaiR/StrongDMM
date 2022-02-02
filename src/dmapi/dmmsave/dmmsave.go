@@ -2,26 +2,29 @@ package dmmsave
 
 import (
 	"log"
+	"sdmm/dmapi/dmenv"
 
 	"sdmm/dmapi/dmmap"
 	"sdmm/util"
 )
 
-func Save(dmm *dmmap.Dmm, cfg Config) {
-	SaveV(dmm, dmm.Path.Absolute, cfg)
+func Save(dme *dmenv.Dme, dmm *dmmap.Dmm, cfg Config) {
+	SaveV(dme, dmm, dmm.Path.Absolute, cfg)
 }
 
-func SaveV(dmm *dmmap.Dmm, path string, cfg Config) {
+func SaveV(dme *dmenv.Dme, dmm *dmmap.Dmm, path string, cfg Config) {
 	log.Printf("[dmmsave] save started [%s]...", path)
 
-	sp, err := makeSaveProcess(cfg, dmm, path)
+	sp, err := makeSaveProcess(cfg, dme, dmm, path)
 	if err != nil {
 		log.Println("[dmmsave] unable to start save process")
 		util.ShowErrorDialog("Unable to start save process")
 		return
 	}
 
-	// TODO: Add map sanitizing
+	if cfg.SanitizeVariables {
+		sp.sanitizeVariables()
+	}
 
 	sp.handleReusedKeys()
 	if err = sp.handleLocationsWithoutKeys(); err != nil {

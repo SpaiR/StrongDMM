@@ -2,6 +2,8 @@ package dmmsave
 
 import (
 	"log"
+	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmvars"
 
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
@@ -11,6 +13,7 @@ import (
 
 type saveProcess struct {
 	cfg        Config
+	dme        *dmenv.Dme
 	dmm        *dmmap.Dmm
 	initial    *dmmdata.DmmData
 	output     *dmmdata.DmmData
@@ -18,7 +21,7 @@ type saveProcess struct {
 	unusedKeys map[dmmdata.Key]bool
 }
 
-func makeSaveProcess(cfg Config, dmm *dmmap.Dmm, path string) (*saveProcess, error) {
+func makeSaveProcess(cfg Config, dme *dmenv.Dme, dmm *dmmap.Dmm, path string) (*saveProcess, error) {
 	initial, err := dmmdata.New(dmm.Backup)
 	if err != nil {
 		log.Println("[dmmsave] unable to read map backup:", dmm.Backup)
@@ -46,6 +49,7 @@ func makeSaveProcess(cfg Config, dmm *dmmap.Dmm, path string) (*saveProcess, err
 
 	return &saveProcess{
 		cfg,
+		dme,
 		dmm,
 		initial,
 		output,
@@ -62,6 +66,37 @@ func detectIsTgm(saveFormat Format, isInitialTGM bool) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+func (sp *saveProcess) sanitizeVariables() {
+	log.Println("[dmmsave] sanitizing variables...")
+
+	for _, tile := range sp.dmm.Tiles {
+		for _, instance := range tile.Instances() {
+			prefab := instance.Prefab()
+			if prefab.Vars().Len() == 0 {
+				continue
+			}
+
+			obj := sp.dme.Objects[prefab.Path()]
+			vars := prefab.Vars()
+
+			for _, varName := range prefab.Vars().Iterate() {
+				origValue, _ := obj.Vars.Value(varName)
+				prefValue, _ := prefab.Vars().Value(varName)
+
+				if origValue == prefValue {
+					log.Println("[dmmsave] delete variable:", varName)
+					vars = dmvars.Delete(vars, varName)
+				}
+			}
+
+			if prefab.Vars().Len() != vars.Len() {
+				instance.SetPrefab(dmmap.PrefabStorage.Get(prefab.Path(), vars))
+				log.Printf("[dmmsave] instance sanitized: [%d#%s]", instance.Id(), prefab.Path())
+			}
+		}
 	}
 }
 

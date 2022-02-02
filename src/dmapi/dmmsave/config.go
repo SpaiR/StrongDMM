@@ -10,4 +10,6 @@ const (
 
 type Config struct {
 	Format Format
+
+	SanitizeVariables bool
 }
