@@ -3,6 +3,7 @@ package dmmsave
 import (
 	"log"
 	"sdmm/dmapi/dmenv"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
 
 	"sdmm/dmapi/dmmap"
@@ -22,6 +23,10 @@ type saveProcess struct {
 }
 
 func makeSaveProcess(cfg Config, dme *dmenv.Dme, dmm *dmmap.Dmm, path string) (*saveProcess, error) {
+	// Copy the dmm to avoid unneeded modifications.
+	dmmCopy := dmm.Copy()
+	dmm = &dmmCopy
+
 	initial, err := dmmdata.New(dmm.Backup)
 	if err != nil {
 		log.Println("[dmmsave] unable to read map backup:", dmm.Backup)
@@ -93,7 +98,7 @@ func (sp *saveProcess) sanitizeVariables() {
 			}
 
 			if prefab.Vars().Len() != vars.Len() {
-				instance.SetPrefab(dmmap.PrefabStorage.Get(prefab.Path(), vars))
+				instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, prefab.Path(), vars))
 				log.Printf("[dmmsave] instance sanitized: [%d#%s]", instance.Id(), prefab.Path())
 			}
 		}

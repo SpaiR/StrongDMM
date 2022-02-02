@@ -22,6 +22,25 @@ type Dmm struct {
 	Backup string
 }
 
+func (d *Dmm) Copy() Dmm {
+	dmm := Dmm{}
+	dmm.Name = d.Name
+	dmm.Path = d.Path
+	dmm.MaxX = d.MaxX
+	dmm.MaxY = d.MaxY
+	dmm.MaxZ = d.MaxZ
+	dmm.Backup = d.Backup
+
+	// Do a deep copy for tiles
+	dmm.Tiles = make([]*Tile, 0, len(d.Tiles))
+	for _, t := range d.Tiles {
+		tile := t.Copy()
+		dmm.Tiles = append(dmm.Tiles, &tile)
+	}
+
+	return dmm
+}
+
 func (d *Dmm) HasTile(coord util.Point) bool {
 	return coord.X > 0 && coord.Y > 0 && coord.Z > 0 && coord.X <= d.MaxX && coord.Y <= d.MaxY && coord.Z <= d.MaxZ
 }
