@@ -83,6 +83,43 @@ func (p *PaneMap) addShortcuts() {
 		Action:      p.doNextLevel,
 		IsEnabled:   p.hasNextLevel,
 	})
+
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doMoveCameraUp",
+		FirstKey: glfw.KeyUp,
+		Action:   p.doMoveCameraUp,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doMoveCameraDown",
+		FirstKey: glfw.KeyDown,
+		Action:   p.doMoveCameraDown,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doMoveCameraLeft",
+		FirstKey: glfw.KeyLeft,
+		Action:   p.doMoveCameraLeft,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doMoveCameraRight",
+		FirstKey: glfw.KeyRight,
+		Action:   p.doMoveCameraRight,
+	})
+
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doZoomIn",
+		FirstKey: glfw.KeyEqual,
+		Action:   p.doZoomIn,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doZoomIn",
+		FirstKey: glfw.KeyKPEqual,
+		Action:   p.doZoomIn,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doZoomOut",
+		FirstKey: glfw.KeyMinus,
+		Action:   p.doZoomOut,
+	})
 }
 
 func (p *PaneMap) doToggleArea() {
@@ -103,4 +140,42 @@ func (p *PaneMap) doToggleMob() {
 
 func (p *PaneMap) DoDeselect() {
 	tools.Tools()[tools.TNGrab].OnDeselect()
+}
+
+func (p *PaneMap) doMoveCameraUp() {
+	p.translateCanvas(0, p.calcManualCanvasTranslateShift())
+}
+
+func (p *PaneMap) doMoveCameraDown() {
+	p.translateCanvas(0, -p.calcManualCanvasTranslateShift())
+}
+
+func (p *PaneMap) doMoveCameraLeft() {
+	p.translateCanvas(p.calcManualCanvasTranslateShift(), 0)
+}
+
+func (p *PaneMap) doMoveCameraRight() {
+	p.translateCanvas(-p.calcManualCanvasTranslateShift(), 0)
+}
+
+func (p *PaneMap) doZoomIn() {
+	camera := p.canvas.Render().Camera()
+
+	scale := camera.Scale * -scaleFactor
+
+	offsetX := (p.size.X - p.size.X/2) / scale / 2
+	offsetY := (p.size.Y - p.size.Y/2) / scale / 2
+
+	camera.Translate(offsetX, offsetY)
+	camera.Zoom(true, scaleFactor)
+}
+
+func (p *PaneMap) doZoomOut() {
+	camera := p.canvas.Render().Camera()
+
+	offsetX := (p.size.X - p.size.X/2) / camera.Scale / 2
+	offsetY := (p.size.Y - p.size.Y/2) / camera.Scale / 2
+
+	camera.Translate(offsetX, offsetY)
+	camera.Zoom(false, scaleFactor)
 }

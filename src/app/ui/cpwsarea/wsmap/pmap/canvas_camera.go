@@ -59,6 +59,10 @@ func (p *PaneMap) processCameraZoom() {
 	camera.Zoom(zoomIn, scaleFactor)
 }
 
+func (p *PaneMap) calcManualCanvasTranslateShift() float32 {
+	return p.calcManualCanvasTranslateShiftV(1)
+}
+
 func (p *PaneMap) calcManualCanvasTranslateShiftV(mod float32) float32 {
 	value := mod * float32(dmmap.WorldIconSize)
 	if imguiext.IsShiftDown() {
