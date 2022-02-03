@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
 )
@@ -123,42 +124,53 @@ func (p *PaneMap) addShortcuts() {
 }
 
 func (p *PaneMap) doToggleArea() {
+	log.Println("[pmap] do toggle /area")
 	p.app.PathsFilter().TogglePath("/area")
 }
 
 func (p *PaneMap) doToggleTurf() {
+	log.Println("[pmap] do toggle /turf")
 	p.app.PathsFilter().TogglePath("/turf")
 }
 
 func (p *PaneMap) doToggleObject() {
+	log.Println("[pmap] do toggle /obj")
 	p.app.PathsFilter().TogglePath("/obj")
 }
 
 func (p *PaneMap) doToggleMob() {
+	log.Println("[pmap] do toggle /mob")
 	p.app.PathsFilter().TogglePath("/mob")
 }
 
 func (p *PaneMap) DoDeselect() {
+	log.Println("[pmap] do deselect")
 	tools.Tools()[tools.TNGrab].OnDeselect()
 }
 
 func (p *PaneMap) doMoveCameraUp() {
+	log.Println("[pmap] do move camera up")
 	p.translateCanvas(0, p.calcManualCanvasTranslateShift())
 }
 
 func (p *PaneMap) doMoveCameraDown() {
+	log.Println("[pmap] do move camera down")
 	p.translateCanvas(0, -p.calcManualCanvasTranslateShift())
 }
 
 func (p *PaneMap) doMoveCameraLeft() {
+	log.Println("[pmap] do move camera left")
 	p.translateCanvas(p.calcManualCanvasTranslateShift(), 0)
 }
 
 func (p *PaneMap) doMoveCameraRight() {
+	log.Println("[pmap] do move camera right")
 	p.translateCanvas(-p.calcManualCanvasTranslateShift(), 0)
 }
 
 func (p *PaneMap) doZoomIn() {
+	log.Println("[pmap] do zoom in")
+
 	camera := p.canvas.Render().Camera()
 
 	scale := camera.Scale * -scaleFactor
@@ -171,6 +183,8 @@ func (p *PaneMap) doZoomIn() {
 }
 
 func (p *PaneMap) doZoomOut() {
+	log.Println("[pmap] do zoom out")
+
 	camera := p.canvas.Render().Camera()
 
 	offsetX := (p.size.X - p.size.X/2) / camera.Scale / 2
