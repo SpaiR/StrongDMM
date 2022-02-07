@@ -20,16 +20,19 @@ func (e *Editor) commitChanges(commitMsg string) {
 	activeLevel := e.pMap.ActiveLevel()
 
 	// Ensure that the user has updated visuals.
+	e.updateAreasZones()
 	e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
 
 	e.app.CommandStorage().Push(command.Make(commitMsg, func() {
 		e.pMap.Snapshot().GoTo(stateId - 1)
+		e.updateAreasZones()
 		e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
 		e.dmm.PersistPrefabs()
 		e.app.SyncPrefabs()
 		e.app.SyncVarEditor()
 	}, func() {
 		e.pMap.Snapshot().GoTo(stateId)
+		e.updateAreasZones()
 		e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
 		e.dmm.PersistPrefabs()
 		e.app.SyncPrefabs()

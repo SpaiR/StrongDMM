@@ -22,6 +22,8 @@ type Editor struct {
 
 	flickAreas    []overlay.FlickArea
 	flickInstance []overlay.FlickInstance
+
+	areasZones []AreaZone
 }
 
 func (e *Editor) SetFlickAreas(flickAreas []overlay.FlickArea) {
@@ -38,6 +40,10 @@ func (e *Editor) SetFlickInstance(flickInstance []overlay.FlickInstance) {
 
 func (e *Editor) FlickInstance() []overlay.FlickInstance {
 	return e.flickInstance
+}
+
+func (e *Editor) AreasZones() []AreaZone {
+	return e.areasZones
 }
 
 type app interface {
@@ -71,11 +77,13 @@ type attachedMap interface {
 }
 
 func New(app app, attachedMap attachedMap, dmm *dmmap.Dmm) *Editor {
-	return &Editor{
+	e := &Editor{
 		app:  app,
 		pMap: attachedMap,
 		dmm:  dmm,
 	}
+	e.updateAreasZones()
+	return e
 }
 
 // Dmm returns currently edited map.

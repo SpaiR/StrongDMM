@@ -53,7 +53,8 @@ type App interface {
 }
 
 var (
-	MirrorCanvasCamera bool
+	MirrorCanvasCamera   bool
+	AreaBordersRendering = true
 
 	// Used to do a camera mirroring.
 	activeCamera *render.Camera

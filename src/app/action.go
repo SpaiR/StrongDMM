@@ -189,6 +189,11 @@ func (a *app) SyncVarEditor() {
 	a.layout.VarEditor.Sync()
 }
 
+// AreaBordersRendering returns true if an area borders rendering enabled.
+func (a *app) AreaBordersRendering() bool {
+	return pmap.AreaBordersRendering
+}
+
 // MultiZRendering returns true if a multi-z rendering enabled.
 func (a *app) MultiZRendering() bool {
 	return render.MultiZRendering

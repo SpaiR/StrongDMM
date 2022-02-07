@@ -5,6 +5,8 @@ import (
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
+	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
 )
@@ -14,6 +16,7 @@ const flickDurationSec = .5
 func (p *PaneMap) processCanvasOverlay() {
 	p.processCanvasOverlayTools()
 	p.processCanvasOverlayFlick()
+	p.processCanvasOverlayAreasZones()
 }
 
 func (p *PaneMap) processCanvasOverlayTools() {
@@ -82,6 +85,46 @@ func (p *PaneMap) processCanvasOverlayFlick() {
 			p.PushUnitHighlight(i.Instance, col)
 		} else {
 			p.editor.SetFlickInstance(append(p.editor.FlickInstance()[:idx], p.editor.FlickInstance()[idx+1:]...))
+		}
+	}
+}
+
+func (p *PaneMap) processCanvasOverlayAreasZones() {
+	if !AreaBordersRendering {
+		return
+	}
+
+	for _, areaZone := range p.editor.AreasZones() {
+		for _, areaBorder := range areaZone.Borders {
+			// Ignore area zones on other z-levels
+			if areaBorder.Coord.Z != p.activeLevel {
+				continue
+			}
+
+			var borders []util.Bounds
+
+			iconSize := float32(dmmap.WorldIconSize)
+
+			x := float32(areaBorder.Coord.X-1) * iconSize
+			y := float32(areaBorder.Coord.Y-1) * iconSize
+
+			if areaBorder.Dirs&dm.DirNorth != 0 {
+				borders = append(borders, util.Bounds{X1: x, Y1: y + iconSize, X2: x + iconSize, Y2: y + iconSize})
+			}
+			if areaBorder.Dirs&dm.DirEast != 0 {
+				borders = append(borders, util.Bounds{X1: x + iconSize, Y1: y, X2: x + iconSize, Y2: y + iconSize})
+			}
+			if areaBorder.Dirs&dm.DirSouth != 0 {
+				borders = append(borders, util.Bounds{X1: x, Y1: y, X2: x + iconSize, Y2: y})
+			}
+			if areaBorder.Dirs&dm.DirWest != 0 {
+				borders = append(borders, util.Bounds{X1: x, Y1: y, X2: x, Y2: y + iconSize})
+			}
+
+			p.canvasOverlay.PushAreaBorder(canvas.OverlayAreaBorder{
+				Borders_: borders,
+				Color_:   overlay.ColorAreaBorder,
+			})
 		}
 	}
 }

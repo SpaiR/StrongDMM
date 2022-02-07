@@ -24,8 +24,9 @@ func (o OverlayArea) BorderColor() util.Color {
 }
 
 type Overlay struct {
-	areas []render.OverlayArea
-	units map[uint64]render.HighlightUnit
+	areas        []render.OverlayArea
+	units        map[uint64]render.HighlightUnit
+	areasBorders []render.AreaBorder
 }
 
 func NewOverlay() *Overlay {
@@ -71,4 +72,29 @@ func (h HighlightUnit) Id() uint64 {
 
 func (h HighlightUnit) Color() util.Color {
 	return h.Color_
+}
+
+type OverlayAreaBorder struct {
+	Borders_ []util.Bounds
+	Color_   util.Color
+}
+
+func (o OverlayAreaBorder) Borders() []util.Bounds {
+	return o.Borders_
+}
+
+func (o OverlayAreaBorder) Color() util.Color {
+	return o.Color_
+}
+
+func (o *Overlay) PushAreaBorder(areaBorder OverlayAreaBorder) {
+	o.areasBorders = append(o.areasBorders, areaBorder)
+}
+
+func (o *Overlay) AreasBorders() []render.AreaBorder {
+	return o.areasBorders
+}
+
+func (o *Overlay) FlushAreasBorders() {
+	o.areasBorders = o.areasBorders[:0]
 }

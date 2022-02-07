@@ -30,4 +30,6 @@ var (
 
 	ColorFlickTileFill = util.MakeColor(1, 1, 1, 1)
 	ColorFlickInstance = util.MakeColor(0, 1, 0, 1)
+
+	ColorAreaBorder = util.MakeColor(1, 1, 1, 1)
 )

@@ -71,6 +71,7 @@ func (r *Render) prepare() {
 func (r *Render) draw(width, height float32) {
 	r.batchBucketUnits(r.viewportBounds(width, height))
 	//r.batchChunksVisuals()
+	r.batchOverlayAreasBorders()
 	r.batchOverlayAreas()
 	brush.Draw(width, height, r.camera.ShiftX, r.camera.ShiftY, r.camera.Scale)
 }

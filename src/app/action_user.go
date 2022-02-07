@@ -234,6 +234,12 @@ func (a *app) DoSearch() {
 	a.ShowLayout(lnode.NameSearch, true)
 }
 
+// DoAreaBorders toggles area borders rendering.
+func (a *app) DoAreaBorders() {
+	pmap.AreaBordersRendering = !pmap.AreaBordersRendering
+	log.Println("[app] do area borders:", pmap.AreaBordersRendering)
+}
+
 // DoMultiZRendering toggles multi-z rendering.
 func (a *app) DoMultiZRendering() {
 	render.MultiZRendering = !render.MultiZRendering

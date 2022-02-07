@@ -37,6 +37,7 @@ type app interface {
 	DoDeselect()
 
 	// Options
+	DoAreaBorders()
 	DoMultiZRendering()
 	DoMirrorCanvasCamera()
 
@@ -60,6 +61,7 @@ type app interface {
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
 
+	AreaBordersRendering() bool
 	MultiZRendering() bool
 	MirrorCanvasCamera() bool
 }
@@ -191,6 +193,9 @@ func (m *Menu) Process() {
 				Selected(m.isMobToggled()).
 				Shortcut(shortcut.KeyModName(), "4"),
 			w.Separator(),
+			w.MenuItem("Area Borders", m.app.DoAreaBorders).
+				IconEmpty().
+				Selected(m.app.AreaBordersRendering()),
 			w.MenuItem("Multi-Z Rendering", m.app.DoMultiZRendering).
 				IconEmpty().
 				Selected(m.app.MultiZRendering()).
