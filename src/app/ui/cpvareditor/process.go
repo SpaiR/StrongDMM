@@ -16,7 +16,7 @@ import (
 )
 
 func (v *VarEditor) Process() {
-	v.shortcuts.SetVisible(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
+	v.shortcuts.SetVisibleIfFocused()
 
 	if len(v.variablesNames) == 0 {
 		imgui.TextDisabled("No Instance/Prefab Selected")

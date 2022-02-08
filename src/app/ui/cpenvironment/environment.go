@@ -2,6 +2,8 @@ package cpenvironment
 
 import (
 	"log"
+	"sdmm/app/ui/shortcut"
+	"sdmm/dmapi/dm"
 	"strings"
 
 	"sdmm/dmapi/dmenv"
@@ -15,6 +17,7 @@ type App interface {
 	DoSearchPrefab(prefabId uint64)
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
+	PathsFilter() *dm.PathsFilter
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -23,6 +26,10 @@ const newTreeNodesLimit = 25
 
 type Environment struct {
 	app App
+
+	shortcuts shortcut.Shortcuts
+
+	typesFilterEnabled bool
 
 	treeId uint
 
@@ -39,6 +46,7 @@ type Environment struct {
 }
 
 func (e *Environment) Init(app App) {
+	e.addShortcuts()
 	e.app = app
 	e.treeNodes = make(map[string]*treeNode)
 }
@@ -108,5 +116,10 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 }
 
 func (e *Environment) iconSize() float32 {
-	return 16 * e.app.PointSize()
+	return 18 * e.app.PointSize()
+}
+
+func (e *Environment) doToggleTypesFilter() {
+	e.typesFilterEnabled = !e.typesFilterEnabled
+	log.Println("[cpenvironment] do toggle types filter:", e.typesFilterEnabled)
 }

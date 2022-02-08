@@ -99,7 +99,7 @@ func (a *app) initialize() {
 	a.shortcutsEnabled = true
 
 	a.commandStorage = command.NewStorage()
-	a.pathsFilter = dm.NewPathsFilter()
+	a.pathsFilter = dm.NewPathsFilterEmpty()
 	a.clipboard = dmmclip.New()
 
 	a.menu = menu.New(a)

@@ -2,6 +2,7 @@ package cpenvironment
 
 import (
 	"fmt"
+	"sdmm/imguiext/style"
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
@@ -12,6 +13,8 @@ import (
 )
 
 func (e *Environment) Process() {
+	e.shortcuts.SetVisibleIfFocused()
+
 	if e.app.LoadedEnvironment() == nil {
 		imgui.TextDisabled("No Environment Loaded")
 	} else {
@@ -28,12 +31,29 @@ func (e *Environment) showControls() {
 	}
 	imguiext.SetItemHoveredTooltip("Collapse All")
 	imgui.SameLine()
+	e.showTypesFilterButton()
+	imgui.SameLine()
 	w.InputTextWithHint("##filter", "Filter", &e.filter).
 		ButtonClear().
 		Width(-1).
 		OnChange(e.doFilter).
 		Build()
 	imgui.Separator()
+}
+
+func (e *Environment) showTypesFilterButton() {
+	var bStyle w.ButtonStyle
+
+	if !e.typesFilterEnabled {
+		bStyle = style.ButtonDefault{}
+	} else {
+		bStyle = style.ButtonGreen{}
+	}
+
+	w.Button(icon.FaEye, e.doToggleTypesFilter).
+		Tooltip("Types Filter (F)").
+		Style(bStyle).
+		Build()
 }
 
 func (e *Environment) showTree() {
@@ -56,7 +76,9 @@ func (e *Environment) showFilteredNodes() {
 	for clipper.Step() {
 		for i := clipper.DisplayStart; i < clipper.DisplayEnd; i++ {
 			node := e.filteredTreeNodes[i]
-			e.showIcon(node)
+			if e.showAttachment(node) {
+				imgui.SameLine()
+			}
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)
@@ -76,7 +98,9 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		return
 	}
 
-	e.showIcon(node)
+	if e.showAttachment(node) {
+		imgui.SameLine()
+	}
 
 	if len(object.DirectChildren) == 0 {
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
@@ -135,6 +159,23 @@ func (e *Environment) scrollToSelectedPath(node *treeNode) {
 	if e.tmpDoSelectPath && e.selectedPath == node.orig.Path {
 		e.tmpDoSelectPath = false
 		imgui.SetScrollHereY(.5)
+	}
+}
+
+func (e *Environment) showAttachment(node *treeNode) bool {
+	if e.typesFilterEnabled {
+		e.showVisibilityCheckbox(node)
+		return true
+	} else {
+		e.showIcon(node)
+		return false
+	}
+}
+
+func (e *Environment) showVisibilityCheckbox(node *treeNode) {
+	value := e.app.PathsFilter().IsVisiblePath(node.orig.Path)
+	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
+		e.app.PathsFilter().TogglePath(node.orig.Path)
 	}
 }
 

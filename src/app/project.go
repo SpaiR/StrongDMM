@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/dmapi/dm"
 	"time"
 
 	"sdmm/dmapi/dmenv"
@@ -33,6 +34,11 @@ func (a *app) openEnvironment(path string) {
 	cfg.AddProject(path)
 	a.ConfigSaveV(cfg)
 
+	// Configure paths filter to access a newly opened environment.
+	a.pathsFilter = dm.NewPathsFilter(func(path string) []string {
+		return env.Objects[path].DirectChildren
+	})
+
 	a.loadedEnvironment = env
 	a.layout.Prefabs.Free()
 	a.layout.Search.Free()
@@ -41,7 +47,6 @@ func (a *app) openEnvironment(path string) {
 	a.layout.VarEditor.Free()
 
 	a.commandStorage.Free()
-	a.pathsFilter.Free()
 	a.clipboard.Free()
 
 	dmicon.Cache.Free()

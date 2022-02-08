@@ -14,7 +14,7 @@ import (
 )
 
 func (s *Search) Process() {
-	s.shortcuts.SetVisible(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
+	s.shortcuts.SetVisibleIfFocused()
 
 	s.showControls()
 	imgui.Separator()

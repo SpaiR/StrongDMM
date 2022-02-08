@@ -36,4 +36,6 @@ const (
 	FaBorderAll      = "\uf84c"
 	FaBorderStyle    = "\uf853"
 	FaQuestionCircle = "\uf059"
+	FaGlasses        = "\uf530"
+	FaEye            = "\uf06e"
 )

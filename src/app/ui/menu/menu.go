@@ -192,6 +192,9 @@ func (m *Menu) Process() {
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
 				Shortcut(shortcut.KeyModName(), "4"),
+			w.MenuItem("Show All", m.doShowAll).
+				IconEmpty().
+				Enabled(m.app.HasLoadedEnvironment()),
 			w.Separator(),
 			w.MenuItem("Area Borders", m.app.DoAreaBorders).
 				IconEmpty().
@@ -231,6 +234,10 @@ func (m *Menu) doToggleObject() {
 
 func (m *Menu) doToggleMob() {
 	m.app.PathsFilter().TogglePath("/mob")
+}
+
+func (m *Menu) doShowAll() {
+	m.app.PathsFilter().Clear()
 }
 
 func (m *Menu) isAreaToggled() bool {
