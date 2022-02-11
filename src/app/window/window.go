@@ -17,6 +17,8 @@ const fps int = 60
 type application interface {
 	Process()
 	PostProcess()
+	CloseCheck()
+	IsClosed() bool
 	LayoutIniPath() string
 }
 

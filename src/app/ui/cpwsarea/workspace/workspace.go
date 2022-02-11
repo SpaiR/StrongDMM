@@ -83,3 +83,7 @@ func (ws *Workspace) PostProcess() {
 func (ws *Workspace) Focused() bool {
 	return ws.content.Focused()
 }
+
+func (ws *Workspace) Save() bool {
+	return ws.Content().Save()
+}

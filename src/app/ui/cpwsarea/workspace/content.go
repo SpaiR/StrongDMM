@@ -19,6 +19,7 @@ type content interface {
 	Process()
 	PostProcess()
 
+	Save() bool
 	CommandStackId() string
 	Ini() Ini
 
@@ -57,6 +58,10 @@ func (Content) Process() {
 
 func (Content) PostProcess() {
 	// do nothing
+}
+
+func (Content) Save() bool {
+	return false
 }
 
 func (Content) CommandStackId() string {

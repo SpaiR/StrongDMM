@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sdmm/app/ui/dialog"
 	"time"
 
 	"github.com/SpaiR/imgui-go"
@@ -73,6 +74,10 @@ type app struct {
 	tmpWindowCond  imgui.Condition
 	tmpUpdateScale bool
 
+	// ...omae wa mou shindeiru...
+	// Should be modified only in the CloseCheck method. Ensures we made everything before the closing.
+	closed bool
+
 	shortcutsEnabled bool
 
 	loadedEnvironment *dmenv.Dme
@@ -121,12 +126,25 @@ func (a *app) Process() {
 
 	a.menu.Process()
 	a.layout.Process()
+
+	dialog.Process()
 }
 
 func (a *app) PostProcess() {
 	a.checkShouldClose()
 	a.checkUpdateScale()
 	a.dropTmpState()
+}
+
+func (a *app) CloseCheck() {
+	log.Println("[app] run close check")
+	a.layout.WsArea.CloseAllMaps(func(closed bool) {
+		a.closed = closed
+	})
+}
+
+func (a *app) IsClosed() bool {
+	return a.closed
 }
 
 func (a *app) LayoutIniPath() string {

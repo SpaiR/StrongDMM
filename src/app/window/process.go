@@ -12,7 +12,12 @@ import (
 func (w *Window) Process() {
 	ticker := time.NewTicker(time.Second / time.Duration(fps))
 
-	for !w.handle.ShouldClose() {
+	for !w.application.IsClosed() {
+		// Override window closing behaviour to enforce our checks.
+		if w.handle.ShouldClose() {
+			w.application.CloseCheck()
+			w.handle.SetShouldClose(false)
+		}
 		w.runFrame()
 		<-ticker.C
 	}

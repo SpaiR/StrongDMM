@@ -67,7 +67,11 @@ func (s *Storage) Push(command Command) {
 }
 
 func (s *Storage) Undo() {
-	if stack, ok := s.commandStacks[s.currentStackId]; ok {
+	s.UndoV(s.currentStackId)
+}
+
+func (s *Storage) UndoV(id string) {
+	if stack, ok := s.commandStacks[id]; ok {
 		logStackAction(stack, "undo")
 
 		if len(stack.undo) == 0 {
@@ -75,17 +79,25 @@ func (s *Storage) Undo() {
 			return
 		}
 
-		var command Command
-		command, stack.undo = stack.undo[len(stack.undo)-1], stack.undo[:len(stack.undo)-1]
-		stack.redo = append(stack.redo, command.Run())
-		stack.balance--
+		s.undo(stack)
 	} else {
 		logNoStackAvailable("undo")
 	}
 }
 
+func (s *Storage) undo(stack *commandStack) {
+	var command Command
+	command, stack.undo = stack.undo[len(stack.undo)-1], stack.undo[:len(stack.undo)-1]
+	stack.redo = append(stack.redo, command.Run())
+	stack.balance--
+}
+
 func (s *Storage) Redo() {
-	if stack, ok := s.commandStacks[s.currentStackId]; ok {
+	s.RedoV(s.currentStackId)
+}
+
+func (s *Storage) RedoV(id string) {
+	if stack, ok := s.commandStacks[id]; ok {
 		logStackAction(stack, "redo")
 
 		if len(stack.redo) == 0 {
@@ -93,13 +105,17 @@ func (s *Storage) Redo() {
 			return
 		}
 
-		var command Command
-		command, stack.redo = stack.redo[len(stack.redo)-1], stack.redo[:len(stack.redo)-1]
-		stack.undo = append(stack.undo, command.Run())
-		stack.balance++
+		s.redo(stack)
 	} else {
 		logNoStackAvailable("redo")
 	}
+}
+
+func (s *Storage) redo(stack *commandStack) {
+	var command Command
+	command, stack.redo = stack.redo[len(stack.redo)-1], stack.redo[:len(stack.redo)-1]
+	stack.undo = append(stack.undo, command.Run())
+	stack.balance++
 }
 
 func (s *Storage) HasUndo() bool {
@@ -141,6 +157,27 @@ func (s *Storage) ForceBalance(id string) {
 		logStackAction(stack, "force balance")
 		stack.balance = 0
 		stack.balanceCommandId = stack.appliedCommandId()
+	}
+}
+
+func (s *Storage) Balance(id string) {
+	if id == NullSpaceStackId {
+		log.Println("[command] skipping balance for:", id)
+		return
+	}
+
+	if stack, ok := s.commandStacks[id]; ok {
+		logStackAction(stack, "balance")
+
+		for {
+			if stack.balance == 0 {
+				break
+			} else if stack.balance > 0 {
+				s.undo(stack)
+			} else if stack.balance < 0 {
+				s.redo(stack)
+			}
+		}
 	}
 }
 

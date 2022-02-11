@@ -1,11 +1,13 @@
 package cpwsarea
 
 import (
+	"fmt"
 	"log"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsempty"
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsprefs"
+	"sdmm/app/ui/dialog"
 
 	"sdmm/app/command"
 	"sdmm/dmapi/dmmap"
@@ -41,7 +43,7 @@ func (w *WsArea) Init(app App) {
 }
 
 func (w *WsArea) Free() {
-	w.closeAllMaps()
+	w.closeWorkspaces(w.findMapWorkspaces())
 	log.Println("[cpwsarea] workspace area free")
 }
 
@@ -73,16 +75,17 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
 
 func (w *WsArea) Close() {
 	if w.activeWs != nil {
-		w.closeWorkspace(w.activeWs)
+		w.closeWorkspaceGently(w.activeWs)
 	}
 }
 
 func (w *WsArea) CloseAll() {
-	workspaces := make([]*workspace.Workspace, len(w.workspaces))
-	copy(workspaces, w.workspaces)
-	for _, ws := range workspaces {
-		w.closeWorkspace(ws)
-	}
+	w.closeWorkspacesGently(w.workspaces)
+}
+
+func (w *WsArea) CloseAllMaps(callback func(closed bool)) {
+	log.Println("[cpwsarea] closing all maps...")
+	w.closeWorkspacesGentlyV(w.findMapWorkspaces(), callback)
 }
 
 func (w *WsArea) WorkspaceTitle() string {
@@ -94,19 +97,6 @@ func (w *WsArea) WorkspaceTitle() string {
 
 func (w *WsArea) ActiveWorkspace() *workspace.Workspace {
 	return w.activeWs
-}
-
-func (w *WsArea) closeAllMaps() {
-	workspaces := make([]*workspace.Workspace, len(w.workspaces))
-	copy(workspaces, w.workspaces)
-	for _, ws := range workspaces {
-		if _, ok := ws.Content().(*wsmap.WsMap); ok {
-			w.closeWorkspace(ws)
-		}
-	}
-	if w.findEmptyWorkspaceIdx() == -1 {
-		w.AddEmptyWorkspace()
-	}
 }
 
 func (w *WsArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Workspace, bool) {
@@ -127,6 +117,118 @@ func (w *WsArea) addWorkspace(ws *workspace.Workspace) {
 func (w *WsArea) addWorkspaceV(ws *workspace.Workspace, idx int) {
 	w.workspaces = append(w.workspaces[:idx], append([]*workspace.Workspace{ws}, w.workspaces[idx:]...)...)
 	log.Printf("[cpwsarea] workspace opened in index [%d]: %s", idx, ws.Name())
+}
+
+func (w *WsArea) closeWorkspacesGently(wsToClose []*workspace.Workspace) {
+	w.closeWorkspacesGentlyV(wsToClose, nil)
+}
+
+func (w *WsArea) closeWorkspacesGentlyV(wsToClose []*workspace.Workspace, callback func(closed bool)) {
+	var unsavedWorkspaces []*workspace.Workspace
+	for _, ws := range wsToClose {
+		if w.isWorkspaceUnsaved(ws) {
+			unsavedWorkspaces = append(unsavedWorkspaces, ws)
+		}
+	}
+
+	if len(unsavedWorkspaces) == 0 {
+		w.closeWorkspaces(wsToClose)
+		callback(true)
+		return
+	}
+
+	var dType dialog.TypeConfirmation
+	if len(unsavedWorkspaces) > 1 {
+		dType = makeSaveMultipleWorkspacesDialogType(unsavedWorkspaces)
+	} else {
+		dType = makeSaveSingleWorkspaceDialogType(unsavedWorkspaces[0])
+	}
+
+	dType.ActionYes = func() {
+		for _, ws := range unsavedWorkspaces {
+			ws.Save()
+		}
+		w.closeWorkspaces(wsToClose)
+		if callback != nil {
+			callback(true)
+		}
+	}
+	dType.ActionNo = func() {
+		for _, ws := range unsavedWorkspaces {
+			w.app.CommandStorage().Balance(ws.CommandStackId())
+		}
+		w.closeWorkspaces(wsToClose)
+		if callback != nil {
+			callback(true)
+		}
+	}
+	dType.ActionCancel = func() {
+		if callback != nil {
+			callback(false)
+		}
+	}
+
+	dialog.Open(dType)
+}
+
+func (w *WsArea) closeWorkspaces(wsToClose []*workspace.Workspace) {
+	workspaces := make([]*workspace.Workspace, len(wsToClose))
+	copy(workspaces, wsToClose)
+	for _, ws := range workspaces {
+		w.closeWorkspace(ws)
+	}
+}
+
+func (w *WsArea) closeWorkspaceGently(ws *workspace.Workspace) {
+	w.closeWorkspaceGentlyV(ws, nil)
+}
+
+func (w *WsArea) closeWorkspaceGentlyV(ws *workspace.Workspace, callback func(closed bool)) {
+	if !w.isWorkspaceUnsaved(ws) {
+		w.closeWorkspace(ws)
+		return
+	}
+
+	dType := makeSaveSingleWorkspaceDialogType(ws)
+	dType.ActionYes = func() {
+		ws.Save()
+		w.closeWorkspace(ws)
+		if callback != nil {
+			callback(true)
+		}
+	}
+	dType.ActionNo = func() {
+		w.app.CommandStorage().Balance(ws.CommandStackId())
+		w.closeWorkspace(ws)
+		if callback != nil {
+			callback(true)
+		}
+	}
+	dType.ActionCancel = func() {
+		if callback != nil {
+			callback(false)
+		}
+	}
+
+	dialog.Open(dType)
+}
+
+func makeSaveSingleWorkspaceDialogType(ws *workspace.Workspace) dialog.TypeConfirmation {
+	return dialog.TypeConfirmation{
+		Title:    "Save Workspace?",
+		Question: fmt.Sprintf("Workspace \"%s\" has been modified. Save changes?", ws.Title()),
+	}
+}
+
+func makeSaveMultipleWorkspacesDialogType(workspaces []*workspace.Workspace) dialog.TypeConfirmation {
+	var wsNames string
+	for _, ws := range workspaces {
+		wsNames += " - " + ws.Title() + "\n"
+	}
+	return dialog.TypeConfirmation{
+		Title:    "Save All Workspaces?",
+		Question: fmt.Sprintf("You have multiple unsaved workspaces:\n%sSave changes?", wsNames),
+	}
 }
 
 func (w *WsArea) closeWorkspace(ws *workspace.Workspace) {
@@ -174,6 +276,16 @@ func (w *WsArea) findEmptyWorkspaceIdx() int {
 	return -1
 }
 
+func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {
+	var workspaces []*workspace.Workspace
+	for _, ws := range w.workspaces {
+		if _, ok := ws.Content().(*wsmap.WsMap); ok {
+			workspaces = append(workspaces, ws)
+		}
+	}
+	return workspaces
+}
+
 func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
 	if w.activeWs != activeWs || (activeWs != nil && w.activeWsContentId != activeWs.Content().Id()) {
 		log.Println("[wsarea] switch active workspace:", activeWs)
@@ -206,4 +318,8 @@ func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
 			w.app.CommandStorage().SetStack(w.activeWs.CommandStackId())
 		}
 	}
+}
+
+func (w *WsArea) isWorkspaceUnsaved(ws *workspace.Workspace) bool {
+	return w.app.CommandStorage().IsModified(ws.CommandStackId())
 }

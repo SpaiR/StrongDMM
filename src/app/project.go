@@ -18,6 +18,14 @@ import (
 )
 
 func (a *app) openEnvironment(path string) {
+	a.layout.WsArea.CloseAllMaps(func(closed bool) {
+		if closed {
+			a.forceOpenEnvironment(path)
+		}
+	})
+}
+
+func (a *app) forceOpenEnvironment(path string) {
 	log.Printf("[app] opening environment [%s]...", path)
 
 	start := time.Now()

@@ -6,7 +6,7 @@ import (
 	"sdmm/dmapi/dmmsave"
 )
 
-func (ws *WsMap) Save() {
+func (ws *WsMap) Save() bool {
 	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
 
 	savePrefs := ws.app.Prefs().Save
@@ -27,4 +27,5 @@ func (ws *WsMap) Save() {
 	})
 
 	ws.app.CommandStorage().ForceBalance(ws.CommandStackId())
+	return true
 }

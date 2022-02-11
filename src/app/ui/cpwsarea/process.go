@@ -23,7 +23,7 @@ func (w *WsArea) Process(dockId int) {
 	}
 
 	for _, ws := range workspacesToClose {
-		w.closeWorkspace(ws)
+		w.closeWorkspaceGently(ws)
 	}
 }
 
