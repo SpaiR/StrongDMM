@@ -3,12 +3,15 @@ package cpwsarea
 import (
 	"fmt"
 	"log"
+	"sdmm/app/config"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wschangelog"
 	"sdmm/app/ui/cpwsarea/wsempty"
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsprefs"
 	"sdmm/app/ui/dialog"
+	"sdmm/rsc"
+	"sdmm/util"
 
 	"sdmm/app/command"
 	"sdmm/dmapi/dmmap"
@@ -26,6 +29,10 @@ type App interface {
 	IsLayoutReset() bool
 
 	PointSize() float32
+
+	ConfigRegister(config.Config)
+	ConfigFind(name string) config.Config
+	ConfigSaveV(config.Config)
 }
 
 type WsArea struct {
@@ -42,7 +49,11 @@ type WsArea struct {
 
 func (w *WsArea) Init(app App) {
 	w.app = app
+	w.loadConfig()
 	w.AddEmptyWorkspace()
+	if w.isChangelogHashModified() {
+		w.OpenChangelog()
+	}
 }
 
 func (w *WsArea) Free() {
@@ -67,7 +78,7 @@ func (w *WsArea) OpenChangelog() {
 			return
 		}
 	}
-	w.addWorkspace(workspace.New(wschangelog.New(w.app)))
+	w.addWorkspace(workspace.New(wschangelog.New()))
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
@@ -335,4 +346,13 @@ func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
 
 func (w *WsArea) isWorkspaceUnsaved(ws *workspace.Workspace) bool {
 	return w.app.CommandStorage().IsModified(ws.CommandStackId())
+}
+
+func (w *WsArea) isChangelogHashModified() bool {
+	if hash := util.Djb2(rsc.Changelog); hash != w.config().LastChangelogHash {
+		w.config().LastChangelogHash = hash
+		w.app.ConfigSaveV(w.config())
+		return true
+	}
+	return false
 }

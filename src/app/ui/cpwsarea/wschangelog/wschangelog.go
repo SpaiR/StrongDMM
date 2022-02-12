@@ -7,17 +7,12 @@ import (
 	"sdmm/rsc"
 )
 
-type App interface {
-}
-
 type WsChangelog struct {
 	workspace.Content
-
-	app App
 }
 
-func New(app App) *WsChangelog {
-	return &WsChangelog{app: app}
+func New() *WsChangelog {
+	return &WsChangelog{}
 }
 
 func (ws *WsChangelog) Name() string {
