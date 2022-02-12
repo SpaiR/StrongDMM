@@ -1,3 +1,10 @@
+# v1.9.1 (2021-07-14)
+Features:
+ * DM parser updated: SpacemanDMM suite v1.7.
+
+Fixes:
+ * Logs collecting for Windows.
+
 # v1.9.0 (2020-10-06)
 Features:
  * Multiple instances of the editor are now can be opened.
