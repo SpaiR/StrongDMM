@@ -38,4 +38,5 @@ const (
 	FaQuestionCircle = "\uf059"
 	FaGlasses        = "\uf530"
 	FaEye            = "\uf06e"
+	FaClipboardList  = "\uf46d"
 )

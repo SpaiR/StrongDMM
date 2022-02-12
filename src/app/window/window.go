@@ -4,11 +4,11 @@ import (
 	"image"
 	"log"
 	"runtime"
+	"sdmm/rsc"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"sdmm/assets"
 	"sdmm/platform"
 )
 
@@ -57,7 +57,7 @@ func New(application application) *Window {
 	platform.InitImGuiGL()
 	platform.MouseChangeCallback = w.mouseChangeCallback
 
-	AppLogoTexture = platform.CreateTexture(assets.EditorIcon().RGBA())
+	AppLogoTexture = platform.CreateTexture(rsc.EditorIcon().RGBA())
 
 	return &w
 }
@@ -112,7 +112,7 @@ func (w *Window) setupGlfw() {
 
 	log.Println("[window] native window created")
 
-	window.SetIcon([]image.Image{assets.EditorIcon().RGBA()})
+	window.SetIcon([]image.Image{rsc.EditorIcon().RGBA()})
 	window.MakeContextCurrent()
 
 	glfw.SwapInterval(glfw.True)

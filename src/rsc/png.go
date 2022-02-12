@@ -1,4 +1,4 @@
-package assets
+package rsc
 
 import (
 	"bytes"
@@ -8,21 +8,6 @@ import (
 	_ "image/png"
 	"log"
 )
-
-var (
-	//go:embed font/Ruda-Bold.ttf
-	fontTTF []byte
-	//go:embed font/font-awesome-solid-900.ttf
-	fontIconsTTF []byte
-)
-
-func FontTTF() []byte {
-	return fontTTF
-}
-
-func FontIconsTTF() []byte {
-	return fontIconsTTF
-}
 
 var (
 	//go:embed png/editor_texture_atlas.png

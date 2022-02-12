@@ -26,6 +26,7 @@ import (
 const (
 	Title   = "StrongDMM"
 	Version = "2.0.0.alpha"
+	GitHub  = "https://github.com/SpaiR/StrongDMM"
 
 	LogsTtlDays    = 3
 	BackupsTtlDays = 3

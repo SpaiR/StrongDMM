@@ -174,11 +174,31 @@ func (a *app) DoResetLayout() {
 	a.resetLayout()
 }
 
+// DoOpenChangelog opens "changelog" workspace.
+func (a *app) DoOpenChangelog() {
+	log.Println("[app] open changelog")
+	a.layout.WsArea.OpenChangelog()
+}
+
+// DoOpenAbout opens "about" window.
+func (a *app) DoOpenAbout() {
+	log.Println("[app] open about")
+	a.openAboutWindow()
+}
+
 // DoOpenLogs opens the logs folder.
 func (a *app) DoOpenLogs() {
 	log.Println("[app] open logs dir:", a.logDir)
 	if err := open.Run(a.logDir); err != nil {
 		log.Println("[app] unable to open log dir:", err)
+	}
+}
+
+// DoOpenSourceCode opens GitHub with a source code for the editor.
+func (a *app) DoOpenSourceCode() {
+	log.Println("[app] open source code:", GitHub)
+	if err := open.Run(GitHub); err != nil {
+		log.Println("[app] unable to open GitHub:", err)
 	}
 }
 

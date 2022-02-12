@@ -18,6 +18,10 @@ func (t TypeConfirmation) Name() string {
 	return t.Title
 }
 
+func (TypeConfirmation) HasCloseButton() bool {
+	return false
+}
+
 func (t TypeConfirmation) Process() {
 	w.Layout{
 		w.Text(t.Question),

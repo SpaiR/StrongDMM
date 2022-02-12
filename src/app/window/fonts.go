@@ -2,8 +2,8 @@ package window
 
 import (
 	"github.com/SpaiR/imgui-go"
-	"sdmm/assets"
 	"sdmm/imguiext/icon"
+	"sdmm/rsc"
 )
 
 const (
@@ -26,7 +26,7 @@ func (w *Window) configureFonts() {
 
 func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.FontConfig) (font imgui.Font) {
 	font = atlas.AddFontFromMemoryTTFV(
-		assets.FontTTF(),
+		rsc.FontTTF(),
 		size*w.pointSize,
 		config,
 		atlas.GlyphRangesCyrillic(),
@@ -41,7 +41,7 @@ func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.Fo
 	glyphsBuilder.Add(icon.FaMin, icon.FaMax)
 
 	atlas.AddFontFromMemoryTTFV(
-		assets.FontIconsTTF(),
+		rsc.FontIconsTTF(),
 		iconSize,
 		config,
 		glyphsBuilder.Build().GlyphRanges,

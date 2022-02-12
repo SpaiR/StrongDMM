@@ -8,7 +8,10 @@ import (
 type Type interface {
 	Name() string
 	Process()
+	HasCloseButton() bool
 }
+
+const popupFlags = imgui.WindowFlagsAlwaysAutoResize | imgui.WindowFlagsNoSavedSettings
 
 var opened []Type
 
@@ -19,7 +22,15 @@ func Process() {
 			imgui.OpenPopup(dialog.Name())
 		}
 
-		if imgui.BeginPopupModalV(dialog.Name(), nil, imgui.WindowFlagsAlwaysAutoResize|imgui.WindowFlagsNoSavedSettings) {
+		var isOpen bool
+		if dialog.HasCloseButton() {
+			open := true
+			isOpen = imgui.BeginPopupModalV(dialog.Name(), &open, popupFlags)
+		} else {
+			isOpen = imgui.BeginPopupModalV(dialog.Name(), nil, popupFlags)
+		}
+
+		if isOpen {
 			dialog.Process()
 			imgui.EndPopup()
 		}

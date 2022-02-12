@@ -13,6 +13,10 @@ func (t TypeInformation) Name() string {
 	return t.Title
 }
 
+func (TypeInformation) HasCloseButton() bool {
+	return false
+}
+
 func (t TypeInformation) Process() {
 	imgui.Text(t.Information)
 	imgui.Separator()

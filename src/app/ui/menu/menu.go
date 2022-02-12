@@ -45,7 +45,10 @@ type app interface {
 	DoResetLayout()
 
 	// Help
+	DoOpenChangelog()
+	DoOpenAbout()
 	DoOpenLogs()
+	DoOpenSourceCode()
 
 	// Helpers
 
@@ -214,6 +217,13 @@ func (m *Menu) Process() {
 		}),
 
 		w.Menu("Help", w.Layout{
+			w.MenuItem("Changelog", m.app.DoOpenChangelog).
+				Icon(icon.FaClipboardList),
+			w.MenuItem("About", m.app.DoOpenAbout).
+				IconEmpty(),
+			w.MenuItem("Source Code", m.app.DoOpenSourceCode).
+				IconEmpty(),
+			w.Separator(),
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
 				IconEmpty(),
 		}),

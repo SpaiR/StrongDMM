@@ -4,14 +4,13 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"image/color"
 	"sdmm/app/window"
-	"sdmm/imguiext/style"
 )
 
 const logoSize = 250
 
 var (
 	logoColor        = imgui.Packed(color.RGBA{R: 200, G: 200, B: 200, A: 75})
-	logoColorHovered = style.ColorWhitePacked
+	logoColorHovered = imgui.Packed(color.RGBA{R: 200, G: 200, B: 200, A: 125})
 )
 
 // Show application logo in the center of the window.

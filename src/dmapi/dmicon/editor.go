@@ -1,8 +1,8 @@
 package dmicon
 
 import (
-	"sdmm/assets"
 	"sdmm/platform"
+	"sdmm/rsc"
 )
 
 var (
@@ -10,7 +10,7 @@ var (
 )
 
 func initEditorSprites() {
-	atlas := assets.EditorTextureAtlas()
+	atlas := rsc.EditorTextureAtlas()
 	img := atlas.RGBA()
 
 	dmi := &Dmi{

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/app/ui/cpwsarea/wschangelog"
 	"sdmm/app/ui/cpwsarea/wsempty"
 	"sdmm/app/ui/cpwsarea/wsmap"
 	"sdmm/app/ui/cpwsarea/wsprefs"
@@ -57,6 +58,16 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 		}
 	}
 	w.addWorkspace(workspace.New(wsprefs.New(w.app, prefsView)))
+}
+
+func (w *WsArea) OpenChangelog() {
+	for _, ws := range w.workspaces {
+		if _, ok := ws.Content().(*wschangelog.WsChangelog); ok {
+			ws.SetTriggerFocus(true)
+			return
+		}
+	}
+	w.addWorkspace(workspace.New(wschangelog.New(w.app)))
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
