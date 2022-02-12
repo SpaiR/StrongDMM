@@ -1,0 +1,52 @@
+name: CI
+on: [ push, pull_request ]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        include:
+          - os: ubuntu-latest
+            rust-target: stable-x86_64-unknown-linux-gnu
+          - os: windows-latest
+            rust-target: stable-x86_64-pc-windows-gnu
+          - os: macos-latest
+            rust-target: stable-x86_64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    name: Build - ${{ matrix.os }}
+    steps:
+      - if: matrix.os == 'ubuntu-latest'
+        name: Dependecies (Linux)
+        run: |
+          sudo apt clean
+          sudo apt update
+          sudo apt install xorg-dev libgtk-3-dev
+
+      - name: Setup Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.5
+
+      - name: Setup Rust
+        run: |
+          rustup install ${{ matrix.rust-target }}
+          rustup default ${{ matrix.rust-target }}
+
+      - name: Setup Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Repostiry
+        uses: actions/checkout@v2
+
+      - name: Cache Build Files
+        uses: actions/cache@v2
+        with:
+          path: |
+            src/third_party/sdmmparser/src/target
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+      - name: Build
+        run: task build

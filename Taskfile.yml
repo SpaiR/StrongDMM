@@ -1,0 +1,28 @@
+version: 3
+
+vars:
+  APP_NAME: StrongDMM
+  BIN_EXT:
+    sh: echo '{{if eq OS "windows"}}.exe{{end}}'
+  BIN_NAME:
+    sh: echo '{{.APP_NAME}}-{{OS}}{{.BIN_EXT}}'
+
+tasks:
+  run:
+    deps:
+      - build-sdmmparser
+    dir: src
+    cmds:
+      - go run .
+
+  build:
+    deps:
+      - build-sdmmparser
+    dir: src
+    cmds:
+      - go build -trimpath -ldflags="-s -w" -o "{{.BIN_NAME}}" .
+
+  build-sdmmparser:
+    dir: src/third_party/sdmmparser/src
+    cmds:
+      - cargo build --release
