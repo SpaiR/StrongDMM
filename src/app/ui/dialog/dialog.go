@@ -19,7 +19,7 @@ func Process() {
 			imgui.OpenPopup(dialog.Name())
 		}
 
-		if imgui.BeginPopupModalV(dialog.Name(), nil, imgui.WindowFlagsAlwaysAutoResize) {
+		if imgui.BeginPopupModalV(dialog.Name(), nil, imgui.WindowFlagsAlwaysAutoResize|imgui.WindowFlagsNoSavedSettings) {
 			dialog.Process()
 			imgui.EndPopup()
 		}

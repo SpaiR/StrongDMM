@@ -8,6 +8,7 @@ import (
 func (w *WsArea) Process(dockId int) {
 	if len(w.workspaces) == 0 {
 		w.switchActiveWorkspace(nil)
+		w.showAppLogo(dockId)
 	}
 
 	var workspacesToClose []*workspace.Workspace

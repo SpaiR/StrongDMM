@@ -23,6 +23,8 @@ type App interface {
 	OnWorkspaceSwitched()
 	CommandStorage() *command.Storage
 	IsLayoutReset() bool
+
+	PointSize() float32
 }
 
 type WsArea struct {

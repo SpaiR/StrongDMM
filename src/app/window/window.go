@@ -14,6 +14,9 @@ import (
 
 const fps int = 60
 
+// AppLogoTexture is a texture pointer to the application logo.
+var AppLogoTexture uint32
+
 type application interface {
 	Process()
 	PostProcess()
@@ -53,6 +56,8 @@ func New(application application) *Window {
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 	platform.MouseChangeCallback = w.mouseChangeCallback
+
+	AppLogoTexture = platform.CreateTexture(assets.EditorIcon().RGBA())
 
 	return &w
 }
