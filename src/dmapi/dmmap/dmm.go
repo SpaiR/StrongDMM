@@ -3,6 +3,7 @@ package dmmap
 import (
 	"log"
 	"path/filepath"
+	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap/dmmdata"
@@ -70,8 +71,9 @@ func (d *Dmm) tileIndex(x, y, z int) int {
 	return d.MaxX*d.MaxY*(z-1) + d.MaxX*(y-1) + (x - 1)
 }
 
-func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
-	dmm := Dmm{
+func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
+	unknownPrefabs = make(map[string]*dmmprefab.Prefab)
+	dmm = &Dmm{
 		Name:  filepath.Base(data.Filepath),
 		Path:  newDmmPath(dme.RootDir, data),
 		Tiles: make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
@@ -96,6 +98,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 						tile.InstancesAdd(PrefabStorage.Put(prefab))
 					} else {
 						log.Println("[dmmap] unknown prefab:", prefab.Path())
+						unknownPrefabs[prefab.Path()] = prefab
 					}
 				}
 
@@ -104,7 +107,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) *Dmm {
 		}
 	}
 
-	return &dmm
+	return dmm, unknownPrefabs
 }
 
 // PersistPrefabs persists all prefabs from instances on the current map.

@@ -60,7 +60,7 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
-	if wsMap, ok := w.mapWorkspace(dmm.Path); ok {
+	if wsMap, ok := w.findMapWorkspace(dmm.Path); ok {
 		wsMap.SetTriggerFocus(true)
 		return false
 	}
@@ -99,17 +99,6 @@ func (w *WsArea) WorkspaceTitle() string {
 
 func (w *WsArea) ActiveWorkspace() *workspace.Workspace {
 	return w.activeWs
-}
-
-func (w *WsArea) mapWorkspace(path dmmap.DmmPath) (*workspace.Workspace, bool) {
-	for _, ws := range w.workspaces {
-		if wsCnt, ok := ws.Content().(*wsmap.WsMap); ok {
-			if wsCnt.Map().Dmm().Path == path {
-				return ws, true
-			}
-		}
-	}
-	return nil, false
 }
 
 func (w *WsArea) addWorkspace(ws *workspace.Workspace) {
@@ -276,6 +265,17 @@ func (w *WsArea) findEmptyWorkspaceIdx() int {
 		}
 	}
 	return -1
+}
+
+func (w *WsArea) findMapWorkspace(path dmmap.DmmPath) (*workspace.Workspace, bool) {
+	for _, ws := range w.workspaces {
+		if wsCnt, ok := ws.Content().(*wsmap.WsMap); ok {
+			if wsCnt.Map().Dmm().Path == path {
+				return ws, true
+			}
+		}
+	}
+	return nil, false
 }
 
 func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {

@@ -1,12 +1,14 @@
 package app
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/app/ui/dialog"
 	"sdmm/dmapi/dm"
 	"time"
 
@@ -90,8 +92,26 @@ func (a *app) openMapV(path string, workspace *workspace.Workspace) {
 	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
 	a.ConfigSaveV(cfg)
 
-	if a.layout.WsArea.OpenMap(dmmap.New(a.loadedEnvironment, data, a.backupMap(path)), workspace) {
+	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
+	if a.layout.WsArea.OpenMap(dmm, workspace) {
 		a.layout.Prefabs.Sync()
+
+		// TODO: processing for unknown prefabs
+		if len(unknownPrefabs) != 0 {
+			var prefabsNames string
+			for path := range unknownPrefabs {
+				prefabsNames += " - " + path + "\n"
+			}
+
+			dialog.Open(dialog.TypeInformation{
+				Title: "Unknown Types [WIP]",
+				Information: fmt.Sprintf(
+					"There are unknown types on the map: %s\n"+
+						"Types below will be discarded on save:\n"+
+						"%s", dmm.Name, prefabsNames,
+				),
+			})
+		}
 	}
 	a.layout.Search.Free()
 
