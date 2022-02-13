@@ -34,7 +34,7 @@ jobs:
         name: Update chocolatey/mingw (Windows)
         shell: msys2 {0}
         run: |
-          cp -rf /c/msys64/mingw64 /c/ProgramData/Chocolatey/lib/mingw/tools/install
+          cp -nrv /c/msys64/mingw64 /c/ProgramData/Chocolatey/lib/mingw/tools/install
 
       - name: Setup Golang
         uses: actions/setup-go@v2
