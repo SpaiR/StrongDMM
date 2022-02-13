@@ -3,7 +3,7 @@ package rsc
 import _ "embed"
 
 var (
-	//go:embed font/Ruda-Bold.ttf
+	//go:embed font/Inter-Medium.ttf
 	fontTTF []byte
 	//go:embed font/font-awesome-solid-900.ttf
 	fontIconsTTF []byte
