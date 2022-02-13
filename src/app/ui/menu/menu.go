@@ -138,7 +138,8 @@ func (m *Menu) Process() {
 				Icon(icon.FaWrench),
 			w.Separator(),
 			w.MenuItem("Exit", m.app.DoExit).
-				IconEmpty(),
+				IconEmpty().
+				Shortcut(shortcut.Combine(shortcut.KeyModName(), "Q")),
 		}),
 
 		w.Menu("Edit", w.Layout{
