@@ -6,10 +6,13 @@ vars:
     sh: echo '{{if eq OS "windows"}}.exe{{end}}'
   BIN_NAME:
     sh: echo '{{.APP_NAME}}{{.BIN_EXT}}'
-  EXTLD_FLAGS:
-    sh: echo '{{if eq OS "windows"}}-static{{end}}'
-  LD_FLAGS: -extldflags={{.EXTLD_FLAGS}} -s -w
-  BUILD_FLAGS: -trimpath -ldflags="{{.LD_FLAGS}}" -o "../dst/{{.BIN_NAME}}"
+  BIN_DST: ../dst/{{.BIN_NAME}}
+  LD_FLAGS_WINDOWS:
+    sh: echo '{{if eq OS "windows"}}-H windowsgui{{end}}'
+  LD_FLAGS: -s -w {{.LD_FLAGS_WINDOWS}}
+  BUILD_TAGS:
+    sh: echo '{{if eq OS "windows"}}imguifreetype{{end}}'
+  BUILD_ARGS: -trimpath -tags="{{.BUILD_TAGS}}" -ldflags="{{.LD_FLAGS}}"
 
 tasks:
   run:
@@ -17,14 +20,14 @@ tasks:
       - build-sdmmparser
     dir: src
     cmds:
-      - go run .
+      - go run {{.BUILD_ARGS}} .
 
   build:
     deps:
       - build-sdmmparser
     dir: src
     cmds:
-      - go build {{.BUILD_FLAGS}} .
+      - go build {{.BUILD_ARGS}} -o "{{.BIN_DST}}" .
 
   build-sdmmparser:
     dir: src/third_party/sdmmparser/src
