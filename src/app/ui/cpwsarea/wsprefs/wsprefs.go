@@ -3,9 +3,10 @@ package wsprefs
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
+	"sdmm/app/window"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
-	"sdmm/imguiext/style"
+	"sdmm/imguiext/markdown"
 )
 
 type App interface {
@@ -44,8 +45,10 @@ func (ws *WsPrefs) showContent() {
 		if idx > 0 {
 			imgui.NewLine()
 		}
-		imgui.TextColored(style.ColorGold, string(group))
+
+		markdown.ShowHeader(string(group), window.FontH2)
 		imgui.Separator()
+
 		for idx, pref := range ws.prefs[group] {
 			if idx > 0 {
 				imgui.NewLine()
@@ -66,7 +69,7 @@ func (ws *WsPrefs) showContent() {
 }
 
 func showIntPref(pref IntPref) {
-	imgui.TextWrapped(pref.Name)
+	markdown.ShowHeader(pref.Name, window.FontH3)
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
@@ -86,7 +89,7 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 		pref.FSet(!pref.FGet())
 	}
 
-	imgui.TextWrapped(pref.Name)
+	markdown.ShowHeader(pref.Name, window.FontH3)
 
 	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: pointSize, Y: pointSize})
 	v := pref.FGet()
@@ -112,7 +115,7 @@ func showBoolPref(pref BoolPref, pointSize float32) {
 }
 
 func showOptionPref(pref OptionPref) {
-	imgui.TextWrapped(pref.Name)
+	markdown.ShowHeader(pref.Name, window.FontH3)
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
