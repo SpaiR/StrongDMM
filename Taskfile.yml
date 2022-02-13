@@ -5,7 +5,7 @@ vars:
   BIN_EXT:
     sh: echo '{{if eq OS "windows"}}.exe{{end}}'
   BIN_NAME:
-    sh: echo '{{.APP_NAME}}-{{OS}}{{.BIN_EXT}}'
+    sh: echo '{{.APP_NAME}}{{.BIN_EXT}}'
 
 tasks:
   run:
@@ -20,7 +20,7 @@ tasks:
       - build-sdmmparser
     dir: src
     cmds:
-      - go build -trimpath -ldflags="-s -w" -o "{{.BIN_NAME}}" .
+      - go build -trimpath -ldflags="-s -w" -o "../dst/{{.BIN_NAME}}" .
 
   build-sdmmparser:
     dir: src/third_party/sdmmparser/src
