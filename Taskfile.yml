@@ -6,6 +6,10 @@ vars:
     sh: echo '{{if eq OS "windows"}}.exe{{end}}'
   BIN_NAME:
     sh: echo '{{.APP_NAME}}{{.BIN_EXT}}'
+  EXTLD_FLAGS:
+    sh: echo '{{if eq OS "windows"}}-static{{end}}'
+  LD_FLAGS: -extldflags={{.EXTLD_FLAGS}} -s -w
+  BUILD_FLAGS: -trimpath -ldflags="{{.LD_FLAGS}}" -o "../dst/{{.BIN_NAME}}"
 
 tasks:
   run:
@@ -20,7 +24,7 @@ tasks:
       - build-sdmmparser
     dir: src
     cmds:
-      - go build -trimpath -ldflags="-s -w" -o "../dst/{{.BIN_NAME}}" .
+      - go build {{.BUILD_FLAGS}} .
 
   build-sdmmparser:
     dir: src/third_party/sdmmparser/src
