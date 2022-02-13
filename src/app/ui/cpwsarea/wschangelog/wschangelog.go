@@ -1,11 +1,19 @@
 package wschangelog
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/imguiext/icon"
+	"sdmm/imguiext/markdown"
 	"sdmm/rsc"
 )
+
+var (
+	parsedChangelog markdown.Markdown
+)
+
+func init() {
+	parsedChangelog = markdown.Parse(rsc.Changelog)
+}
 
 type WsChangelog struct {
 	workspace.Content
@@ -28,5 +36,5 @@ func (ws *WsChangelog) Process() {
 }
 
 func (ws *WsChangelog) showContent() {
-	imgui.Text(rsc.Changelog)
+	markdown.Show(parsedChangelog)
 }

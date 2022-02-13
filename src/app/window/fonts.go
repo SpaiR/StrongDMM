@@ -8,6 +8,18 @@ import (
 
 const (
 	fontSizeDefault = 16
+
+	fontSizeH1 = 32
+	fontSizeH2 = 24
+	fontSizeH3 = 19
+)
+
+var (
+	FontDefault imgui.Font
+
+	FontH1 imgui.Font
+	FontH2 imgui.Font
+	FontH3 imgui.Font
 )
 
 func (w *Window) configureFonts() {
@@ -19,9 +31,12 @@ func (w *Window) configureFonts() {
 	fontAtlas := imgui.CurrentIO().Fonts()
 	fontAtlas.Clear()
 
-	font := w.createFont(fontSizeDefault, fontAtlas, fontConfig)
+	FontDefault = w.createFont(fontSizeDefault, fontAtlas, fontConfig)
+	FontH1 = w.createFont(fontSizeH1, fontAtlas, fontConfig)
+	FontH2 = w.createFont(fontSizeH2, fontAtlas, fontConfig)
+	FontH3 = w.createFont(fontSizeH3, fontAtlas, fontConfig)
 
-	imgui.CurrentIO().SetFontDefault(font)
+	imgui.CurrentIO().SetFontDefault(FontDefault)
 }
 
 func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.FontConfig) (font imgui.Font) {
