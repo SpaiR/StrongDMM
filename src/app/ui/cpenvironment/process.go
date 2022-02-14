@@ -103,6 +103,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 	}
 
 	if len(object.DirectChildren) == 0 {
+		imgui.AlignTextToFramePadding()
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
 		e.doSelectOnClick(node)
 		e.showNodeMenu(node)
@@ -111,6 +112,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		if e.isPartOfSelectedPath(node) {
 			imgui.SetNextItemOpen(true, imgui.ConditionAlways)
 		}
+		imgui.AlignTextToFramePadding()
 		if imgui.TreeNodeV(node.name, e.nodeFlags(node, false)) {
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)

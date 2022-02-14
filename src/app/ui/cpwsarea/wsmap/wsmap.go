@@ -5,15 +5,19 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/command"
+	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 )
 
 type App interface {
 	pmap.App
 
+	LoadedEnvironment() *dmenv.Dme
 	CommandStorage() *command.Storage
+	Prefs() prefs.Prefs
 }
 
 type WsMap struct {

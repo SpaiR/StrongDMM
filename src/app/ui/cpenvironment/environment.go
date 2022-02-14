@@ -1,6 +1,7 @@
 package cpenvironment
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
@@ -116,7 +117,7 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 }
 
 func (e *Environment) iconSize() float32 {
-	return 18 * e.app.PointSize()
+	return imgui.FrameHeight()
 }
 
 func (e *Environment) doCollapseAll() {

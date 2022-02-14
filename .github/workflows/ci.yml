@@ -1,17 +1,27 @@
 name: CI
 on: [ push, pull_request ]
+env:
+  GO_VERSION: 1.17.5
 jobs:
   golangci:
     name: Lint
     runs-on: ubuntu-latest
+    env:
+      LINT_VERSION: v1.44.0
     steps:
+      - name: Setup Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
       - name: Checkout Repostiry
         uses: actions/checkout@v2
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.44.0
+          version: ${{ env.LINT_VERSION }}
+          skip-go-installation: true
           working-directory: src
 
   build:
@@ -52,7 +62,7 @@ jobs:
       - name: Setup Golang
         uses: actions/setup-go@v2
         with:
-          go-version: 1.17.5
+          go-version: ${{ env.GO_VERSION }}
 
       - name: Setup Rust
         run: |
