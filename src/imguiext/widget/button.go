@@ -11,6 +11,8 @@ type ButtonStyle interface {
 type ButtonWidget struct {
 	label       string
 	tooltip     string
+	round       bool
+	mouseCursor imgui.MouseCursorID
 	size        imgui.Vec2
 	textColor   imgui.Vec4
 	normalColor imgui.Vec4
@@ -26,6 +28,16 @@ func (b *ButtonWidget) Tooltip(tooltip string) *ButtonWidget {
 
 func (b *ButtonWidget) Size(size imgui.Vec2) *ButtonWidget {
 	b.size = size
+	return b
+}
+
+func (b *ButtonWidget) Round(round bool) *ButtonWidget {
+	b.round = round
+	return b
+}
+
+func (b *ButtonWidget) Mouse(mouse imgui.MouseCursorID) *ButtonWidget {
+	b.mouseCursor = mouse
 	return b
 }
 
@@ -62,6 +74,9 @@ func (b *ButtonWidget) CalcSize() (size imgui.Vec2) {
 }
 
 func (b *ButtonWidget) Build() {
+	if b.round {
+		imgui.PushStyleVarFloat(imgui.StyleVarFrameRounding, 12)
+	}
 	imgui.PushStyleColor(imgui.StyleColorText, b.textColor)
 	imgui.PushStyleColor(imgui.StyleColorButton, b.normalColor)
 	imgui.PushStyleColor(imgui.StyleColorButtonActive, b.activeColor)
@@ -71,8 +86,12 @@ func (b *ButtonWidget) Build() {
 	}
 	if b.tooltip != "" && imgui.IsItemHovered() {
 		imgui.SetTooltip(b.tooltip)
+		imgui.SetMouseCursor(b.mouseCursor)
 	}
 	imgui.PopStyleColorV(4)
+	if b.round {
+		imgui.PopStyleVar()
+	}
 }
 
 func Button(label string, onClick func()) *ButtonWidget {
@@ -80,6 +99,7 @@ func Button(label string, onClick func()) *ButtonWidget {
 		label:       label,
 		tooltip:     "",
 		size:        imgui.Vec2{},
+		mouseCursor: imgui.MouseCursorArrow,
 		textColor:   imgui.CurrentStyle().Color(imgui.StyleColorText),
 		normalColor: imgui.CurrentStyle().Color(imgui.StyleColorButton),
 		activeColor: imgui.CurrentStyle().Color(imgui.StyleColorButtonActive),

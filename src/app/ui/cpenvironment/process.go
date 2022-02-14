@@ -7,7 +7,6 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmenv"
-	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 )
@@ -26,10 +25,10 @@ func (e *Environment) Process() {
 }
 
 func (e *Environment) showControls() {
-	if imgui.Button(icon.FaMinus) {
-		e.tmpDoCollapseAll = true
-	}
-	imguiext.SetItemHoveredTooltip("Collapse All")
+	w.Button(icon.FaMinus, e.doCollapseAll).
+		Tooltip("Collapse All").
+		Round(true).
+		Build()
 	imgui.SameLine()
 	e.showTypesFilterButton()
 	imgui.SameLine()
@@ -52,6 +51,7 @@ func (e *Environment) showTypesFilterButton() {
 
 	w.Button(icon.FaEye, e.doToggleTypesFilter).
 		Tooltip("Types Filter (F)").
+		Round(true).
 		Style(bStyle).
 		Build()
 }

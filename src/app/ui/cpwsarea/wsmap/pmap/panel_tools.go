@@ -78,7 +78,7 @@ func (p *PaneMap) showTools() {
 
 		btn := w.Button(desc.icon, func() {
 			tools.SetSelected(toolName)
-		})
+		}).Round(true)
 		if tools.Selected() == tool {
 			if tool.AltBehaviour() {
 				btn.Style(style.ButtonGold{}).TextColor(style.ColorBlack)

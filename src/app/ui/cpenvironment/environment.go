@@ -119,6 +119,11 @@ func (e *Environment) iconSize() float32 {
 	return 18 * e.app.PointSize()
 }
 
+func (e *Environment) doCollapseAll() {
+	log.Println("[cpenvironment] do collapse all")
+	e.tmpDoCollapseAll = true
+}
+
 func (e *Environment) doToggleTypesFilter() {
 	e.typesFilterEnabled = !e.typesFilterEnabled
 	log.Println("[cpenvironment] do toggle types filter:", e.typesFilterEnabled)

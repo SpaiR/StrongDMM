@@ -174,5 +174,5 @@ func getSprite(i *dmmprefab.Prefab) *dmicon.Sprite {
 }
 
 func (t *TileMenu) iconSize() float32 {
-	return 16 * t.app.PointSize()
+	return imgui.FrameHeight() - imgui.CurrentStyle().FramePadding().Y
 }

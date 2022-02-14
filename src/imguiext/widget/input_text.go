@@ -1,6 +1,8 @@
 package widget
 
-import "github.com/SpaiR/imgui-go"
+import (
+	"github.com/SpaiR/imgui-go"
+)
 
 type inputTextWidget struct {
 	inputTextFunc func() bool
@@ -47,12 +49,13 @@ func (i *inputTextWidget) OnDeactivatedAfterEdit(onDeactivatedAfterEdit func()) 
 
 func (i *inputTextWidget) Build() {
 	widgetWidth := i.width
+	frameRounding := imgui.CurrentStyle().FrameRounding()
 
 	if i.button != nil && widgetWidth != 0 {
 		if widgetWidth == -1 {
-			widgetWidth = -i.button.CalcSize().X
+			widgetWidth = -i.button.CalcSize().X + frameRounding
 		} else {
-			widgetWidth -= i.button.CalcSize().X
+			widgetWidth -= i.button.CalcSize().X + frameRounding
 		}
 	}
 
@@ -61,7 +64,8 @@ func (i *inputTextWidget) Build() {
 	}
 
 	if i.button != nil {
-		imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{Y: imgui.CurrentStyle().ItemSpacing().Y})
+		// Shift input over the button to remove the gap between two widgets.
+		imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{X: -frameRounding, Y: imgui.CurrentStyle().ItemSpacing().Y})
 	}
 
 	if i.inputTextFunc() && i.onChange != nil {
