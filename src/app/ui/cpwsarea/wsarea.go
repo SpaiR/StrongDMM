@@ -263,6 +263,12 @@ func (w *WsArea) AddEmptyWorkspace() {
 	w.addWorkspace(ws)
 }
 
+func (w *WsArea) AddEmptyWorkspaceIfNone() {
+	if w.findEmptyWorkspaceIdx() == -1 {
+		w.AddEmptyWorkspace()
+	}
+}
+
 func (w *WsArea) openMapByPath(ws *workspace.Workspace) func(string) {
 	return func(mapPath string) {
 		w.app.DoOpenMapByPathV(mapPath, ws)
@@ -297,6 +303,15 @@ func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {
 		}
 	}
 	return workspaces
+}
+
+func (w *WsArea) findEmptyWorkspaceIdx() int {
+	for idx, ws := range w.workspaces {
+		if _, ok := ws.Content().(*wsempty.WsEmpty); ok {
+			return idx
+		}
+	}
+	return -1
 }
 
 func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {

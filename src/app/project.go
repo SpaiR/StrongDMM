@@ -64,6 +64,7 @@ func (a *app) forceOpenEnvironment(path string) {
 	dmmap.PrefabStorage.Free()
 	dmmap.Init(env)
 
+	a.layout.WsArea.AddEmptyWorkspaceIfNone()
 	a.UpdateTitle()
 
 	runtime.GC()
