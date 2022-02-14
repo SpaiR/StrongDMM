@@ -8,11 +8,9 @@ vars:
     sh: echo '{{.APP_NAME}}{{.BIN_EXT}}'
   BIN_DST: ../dst/{{.BIN_NAME}}
   LD_FLAGS_WINDOWS:
-    sh: echo '{{if eq OS "windows"}}-H windowsgui{{end}}'
+    sh: echo '{{if eq OS "windows"}}-H windowsgui -extldflags=-static{{end}}'
   LD_FLAGS: -s -w {{.LD_FLAGS_WINDOWS}}
-  BUILD_TAGS:
-    sh: echo '{{if eq OS "windows"}}imguifreetype{{end}}'
-  BUILD_ARGS: -trimpath -tags="{{.BUILD_TAGS}}" -ldflags="{{.LD_FLAGS}}"
+  BUILD_ARGS: -trimpath -ldflags="{{.LD_FLAGS}}"
 
 tasks:
   run:
