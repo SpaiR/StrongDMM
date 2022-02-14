@@ -144,3 +144,7 @@ func (s *Splitter) splitter() bool {
 
 	return imgui.SplitterBehavior(bbMin, bbMax, imgui.GetID(s.id), axis, &s.sz1, &s.sz2, splitterMinSize, splitterMinSize)
 }
+
+func windowPadding() imgui.Vec2 {
+	return imgui.CurrentStyle().WindowPadding()
+}

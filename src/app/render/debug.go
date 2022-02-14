@@ -2,14 +2,14 @@ package render
 
 import (
 	"math/rand"
-
 	"sdmm/app/render/brush"
 	"sdmm/util"
 )
 
-var chunkColors map[util.Bounds]util.Color
+var chunkColors map[util.Bounds]util.Color //nolint:unused
 
 // Debug method to render chunks borders.
+//nolint:unused
 func (r *Render) batchChunksVisuals() {
 	if chunkColors == nil {
 		println("[debug] CHUNKS VISUALISATION ENABLED!")

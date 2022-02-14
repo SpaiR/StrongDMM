@@ -1,6 +1,19 @@
 name: CI
 on: [ push, pull_request ]
 jobs:
+  golangci:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repostiry
+        uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.44.0
+          working-directory: src
+
   build:
     strategy:
       fail-fast: false

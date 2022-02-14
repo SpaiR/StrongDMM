@@ -26,7 +26,7 @@ func (m *menuWidget) Icon(icon string) *menuWidget {
 }
 
 func (m *menuWidget) IconEmpty() *menuWidget {
-	m.icon = miHolderEmptyIcon
+	m.icon = mHolderEmptyIcon
 	return m
 }
 

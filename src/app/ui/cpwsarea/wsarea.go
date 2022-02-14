@@ -38,8 +38,6 @@ type App interface {
 type WsArea struct {
 	app App
 
-	focused bool
-
 	activeWs *workspace.Workspace
 
 	activeWsContentId string
@@ -274,15 +272,6 @@ func (w *WsArea) openMapByPath(ws *workspace.Workspace) func(string) {
 func (w *WsArea) findWorkspaceIdx(ws *workspace.Workspace) int {
 	for idx, lws := range w.workspaces {
 		if lws == ws {
-			return idx
-		}
-	}
-	return -1
-}
-
-func (w *WsArea) findEmptyWorkspaceIdx() int {
-	for idx, ws := range w.workspaces {
-		if _, ok := ws.Content().(*wsempty.WsEmpty); ok {
 			return idx
 		}
 	}

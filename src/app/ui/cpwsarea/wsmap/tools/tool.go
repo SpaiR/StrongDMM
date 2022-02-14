@@ -48,6 +48,7 @@ func (t *tool) setAltBehaviour(altBehaviour bool) {
 func (tool) process() {
 }
 
+//nolint:unused
 func (tool) onStart(util.Point) {
 }
 

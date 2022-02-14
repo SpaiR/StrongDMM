@@ -94,7 +94,7 @@ func (e *Environment) showPathBranch(t string) {
 
 func (e *Environment) showBranch0(object *dmenv.Object) {
 	node, ok := e.newTreeNode(object)
-	if ok != true {
+	if !ok {
 		return
 	}
 

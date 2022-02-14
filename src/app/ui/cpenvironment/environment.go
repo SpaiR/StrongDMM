@@ -105,7 +105,7 @@ func (e *Environment) filterPathBranch(t string) {
 
 func (e *Environment) filterBranch0(object *dmenv.Object) {
 	if strings.Contains(object.Path, e.filter) {
-		if node, ok := e.newTreeNode(object); ok == true {
+		if node, ok := e.newTreeNode(object); ok {
 			e.filteredTreeNodes = append(e.filteredTreeNodes, node)
 		}
 	}

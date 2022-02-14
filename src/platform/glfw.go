@@ -124,7 +124,7 @@ func updateTime(io *imgui.IO) {
 	if deltaTime > 0 {
 		io.SetDeltaTime(float32(currentTime - deltaTime))
 	} else {
-		io.SetDeltaTime(1 / 60)
+		io.SetDeltaTime(1.0 / 60.0)
 	}
 	deltaTime = currentTime
 }

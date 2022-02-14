@@ -241,7 +241,7 @@ func (a *app) resetLayout() {
 func (a *app) deleteOldLogs() {
 	logsCount := 0
 	_ = filepath.Walk(a.logDir, func(path string, info os.FileInfo, _ error) error {
-		if time.Now().Sub(info.ModTime()).Hours()/24 > LogsTtlDays {
+		if time.Since(info.ModTime()).Hours()/24 > LogsTtlDays {
 			_ = os.Remove(path)
 			logsCount++
 		}
@@ -257,7 +257,7 @@ func (a *app) deleteOldLogs() {
 func (a *app) deleteOldBackups() {
 	backupsCount := 0
 	_ = filepath.Walk(a.backupDir, func(path string, info os.FileInfo, _ error) error {
-		if info != nil && !info.IsDir() && time.Now().Sub(info.ModTime()).Hours()/24 > BackupsTtlDays {
+		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > BackupsTtlDays {
 			_ = os.Remove(path)
 			backupsCount++
 		}
