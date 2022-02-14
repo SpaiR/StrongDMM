@@ -142,7 +142,6 @@ func (w *Window) setupImGui() {
 	io.SetIniFilename(w.application.LayoutIniPath())
 	io.SetConfigFlags(imgui.ConfigFlagsDockingEnable)
 
-	// TODO: Proper theming
 	w.setDefaultTheme()
 }
 

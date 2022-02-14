@@ -118,9 +118,6 @@ func (a *app) initialize() {
 }
 
 func (a *app) Process() {
-	// FIXME: Remove
-	//imgui.ShowDemoWindow(nil)
-
 	if a.shortcutsEnabled {
 		shortcut.Process()
 	}
