@@ -2,7 +2,6 @@ package cpprefabs
 
 import (
 	"fmt"
-
 	"github.com/SpaiR/imgui-go"
 	w "sdmm/imguiext/widget"
 )
@@ -15,30 +14,29 @@ func (p *Prefabs) Process() {
 
 	for _, node := range p.nodes {
 		isSelected := node.orig.Id() == p.selectedId
-
-		if imgui.SelectableV(
-			fmt.Sprintf("##prefab_%d", node.orig.Id()),
-			isSelected,
-			imgui.SelectableFlagsNone,
-			imgui.Vec2{Y: p.iconSize()},
-		) {
-			p.doSelect(node)
-		}
+		cursor := imgui.CursorPos()
 
 		if isSelected && p.tmpDoScrollToPrefab {
 			imgui.SetScrollHereY(.5)
 			p.tmpDoScrollToPrefab = false
 		}
 
-		p.showContextMenu(node)
+		if node.visHeight != 0 {
+			if imgui.SelectableV(
+				fmt.Sprintf("##prefab_%d", node.orig.Id()),
+				isSelected,
+				imgui.SelectableFlagsNone,
+				imgui.Vec2{Y: node.visHeight},
+			) {
+				p.doSelect(node)
+			}
 
-		imgui.SameLine()
-		imgui.IndentV(p.textIndent())
-		imgui.Text(node.name)
-		imgui.UnindentV(p.textIndent())
+			p.showContextMenu(node)
+		}
 
-		imgui.SameLine()
-		imgui.IndentV(p.iconIndent())
+		imgui.SetCursorPos(cursor)
+
+		imgui.BeginGroup()
 		w.Image(imgui.TextureID(node.sprite.Texture()), p.iconSize(), p.iconSize()).
 			Uv(
 				imgui.Vec2{
@@ -52,6 +50,15 @@ func (p *Prefabs) Process() {
 			).
 			TintColor(node.color).
 			Build()
-		imgui.UnindentV(p.iconIndent())
+
+		imgui.SameLine()
+
+		imgui.BeginGroup()
+		imgui.Text(node.name)
+		imgui.EndGroup()
+
+		imgui.EndGroup()
+
+		node.visHeight = imgui.ItemRectMax().Y - imgui.ItemRectMin().Y
 	}
 }

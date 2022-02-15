@@ -15,10 +15,11 @@ import (
 )
 
 type prefabNode struct {
-	name   string
-	orig   *dmmprefab.Prefab
-	sprite *dmicon.Sprite
-	color  imgui.Vec4
+	name      string
+	orig      *dmmprefab.Prefab
+	sprite    *dmicon.Sprite
+	color     imgui.Vec4
+	visHeight float32
 }
 
 func newPrefabNodes(prefabs dmmdata.Prefabs) []*prefabNode {
