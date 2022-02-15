@@ -33,6 +33,7 @@ type canvasControl interface {
 type canvasState interface {
 	HoverOutOfBounds() bool
 	HoveredTile() util.Point
+	LastHoveredTile() util.Point
 }
 
 type editor interface {
@@ -137,7 +138,7 @@ func SelectedTiles() []util.Point {
 			return tiles
 		}
 	}
-	return []util.Point{cs.HoveredTile()}
+	return []util.Point{cs.LastHoveredTile()}
 }
 
 func processSelectedToolStart() {
