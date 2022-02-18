@@ -9,6 +9,7 @@ import (
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/env"
 
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
@@ -118,14 +119,14 @@ func (a *app) UpdateTitle() {
 	title := ""
 	if envTitle != "" {
 		if wsTitle != "" {
-			title = fmt.Sprintf("%s [%s] - %s", envTitle, wsTitle, Title)
+			title = fmt.Sprintf("%s [%s] - %s", envTitle, wsTitle, env.Title)
 		} else {
-			title = fmt.Sprintf("%s - %s", envTitle, Title)
+			title = fmt.Sprintf("%s - %s", envTitle, env.Title)
 		}
 	} else if wsTitle != "" {
-		title = fmt.Sprintf("[%s] - %s", wsTitle, Title)
+		title = fmt.Sprintf("[%s] - %s", wsTitle, env.Title)
 	} else {
-		title = Title
+		title = env.Title
 	}
 
 	a.masterWindow.Handle().SetTitle(title)

@@ -1,7 +1,7 @@
 package icon
 
 /*
-https://fontawesome.com/icons?d=gallery&m=free
+https://fontawesome.com/v5/search?m=free
 https://raw.githubusercontent.com/juliettef/IconFontCppHeaders/8cac2b5d9cfc566d3fa90bf6820a95e3c5ed5478/IconsFontAwesome5.h
 */
 
@@ -39,4 +39,5 @@ const (
 	FaGlasses        = "\uf530"
 	FaEye            = "\uf06e"
 	FaClipboardList  = "\uf46d"
+	FaArrowCircleUp  = "\uf0aa"
 )

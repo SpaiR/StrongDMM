@@ -1,0 +1,11 @@
+{
+  "name": "StrongDMM",
+  "version": "v2.0.0.alpha",
+  "forceUpdate": false,
+  "description": "Short release description goes here...",
+  "downloadLinks": {
+    "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-x86_64-pc-windows-gnu.exe",
+    "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-x86_64-unknown-linux-gnu",
+    "macOS": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-x86_64-apple-darwin"
+  }
+}

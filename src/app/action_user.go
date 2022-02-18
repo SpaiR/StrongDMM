@@ -5,6 +5,8 @@ import (
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
+	"sdmm/app/window"
+	"sdmm/env"
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
@@ -196,8 +198,8 @@ func (a *app) DoOpenLogs() {
 
 // DoOpenSourceCode opens GitHub with a source code for the editor.
 func (a *app) DoOpenSourceCode() {
-	log.Println("[app] open source code:", GitHub)
-	if err := open.Run(GitHub); err != nil {
+	log.Println("[app] open source code:", env.GitHub)
+	if err := open.Run(env.GitHub); err != nil {
 		log.Println("[app] unable to open GitHub:", err)
 	}
 }
@@ -270,4 +272,16 @@ func (a *app) DoMultiZRendering() {
 func (a *app) DoMirrorCanvasCamera() {
 	pmap.MirrorCanvasCamera = !pmap.MirrorCanvasCamera
 	log.Println("[app] do mirror canvas camera:", pmap.MirrorCanvasCamera)
+}
+
+// DoSelfUpdate starts the process of a self update.
+func (a *app) DoSelfUpdate() {
+	log.Println("[app] do self update")
+	a.selfUpdate()
+}
+
+// DoRestart restarts the application.
+func (a *app) DoRestart() {
+	log.Println("[app] do restart")
+	window.Restart()
 }

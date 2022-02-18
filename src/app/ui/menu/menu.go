@@ -50,6 +50,10 @@ type app interface {
 	DoOpenLogs()
 	DoOpenSourceCode()
 
+	// Other
+	DoSelfUpdate()
+	DoRestart()
+
 	// Helpers
 
 	RecentEnvironments() []string
@@ -69,10 +73,24 @@ type app interface {
 	MirrorCanvasCamera() bool
 }
 
+type upStatus int
+
+const (
+	upStatusNone upStatus = iota
+	upStatusAvailable
+	upStatusUpdating
+	upStatusUpdated
+	upStatusError
+)
+
 type Menu struct {
 	app app
 
 	shortcuts shortcut.Shortcuts
+
+	updateStatus      upStatus
+	updateVersion     string
+	updateDescription string
 }
 
 func New(app app) *Menu {
@@ -228,7 +246,31 @@ func (m *Menu) Process() {
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
 				IconEmpty(),
 		}),
+
+		w.Custom(func() {
+			if m.updateStatus != upStatusNone {
+				m.showUpdateMenu()
+			}
+		}),
 	}).Build()
+}
+
+func (m *Menu) SetUpdateAvailable(version, description string) {
+	m.updateStatus = upStatusAvailable
+	m.updateVersion = version
+	m.updateDescription = description
+}
+
+func (m *Menu) SetUpdating() {
+	m.updateStatus = upStatusUpdating
+}
+
+func (m *Menu) SetUpdated() {
+	m.updateStatus = upStatusUpdated
+}
+
+func (m *Menu) SetUpdateError() {
+	m.updateStatus = upStatusError
 }
 
 func (m *Menu) doToggleArea() {

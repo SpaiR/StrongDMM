@@ -71,11 +71,3 @@ func (p *Prefabs) doSelect(node *prefabNode) {
 func (p *Prefabs) iconSize() float32 {
 	return 32 * p.app.PointSize()
 }
-
-func (p *Prefabs) textIndent() float32 {
-	return 36 * p.app.PointSize()
-}
-
-func (p *Prefabs) iconIndent() float32 {
-	return 1 * p.app.PointSize()
-}

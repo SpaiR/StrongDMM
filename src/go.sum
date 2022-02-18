@@ -11,6 +11,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210307203918-211ecac01a39 h1:2qFWhzDGB9
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20210307203918-211ecac01a39/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/mathgl v1.0.0 h1:t9DznWJlXxxjeeKLIdovCOVJQk/GzDEL7h/h+Ro2B68=
 github.com/go-gl/mathgl v1.0.0/go.mod h1:yhpkQzEiH9yPyxDUGzkmgScbaBVlhC06qodikEM0ZwQ=
+github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf h1:WfD7VjIE6z8dIvMsI4/s+1qr5EL+zoIGev1BQj1eoJ8=
+github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf/go.mod h1:hyb9oH7vZsitZCiBt0ZvifOrB+qc8PS5IiilCIb87rg=
 github.com/mazznoer/csscolorparser v0.1.1 h1:+cEJ/okx0DXYTzFmvZpXUYhNnD14YOG9U3NkfEupqnw=
 github.com/mazznoer/csscolorparser v0.1.1/go.mod h1:Aj22+L/rYN/Y6bj3bYqO3N6g1dtdHtGfQ32xZ5PJQic=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

@@ -27,8 +27,10 @@ var (
 	ColorGreen2Darker  = intHsl2col(109, 85, 31)
 
 	ColorGreen3        = intHsl2col(103, 100, 49)
-	ColorGreen3Lighter = intHsl2col(103, 100, 39)
-	ColorGreen3Darker  = intHsl2col(103, 100, 59)
+	ColorGreen3Lighter = intHsl2col(103, 100, 59)
+	ColorGreen3Darker  = intHsl2col(103, 100, 39)
+
+	ColorTransparent = imgui.Vec4{W: 0}
 
 	ColorWhitePacked = imgui.Packed(color.RGBA{R: 255, G: 255, B: 255, A: 255})
 )

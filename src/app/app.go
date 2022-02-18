@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"sdmm/app/ui/dialog"
+	"sdmm/env"
 	"time"
 
 	"github.com/SpaiR/imgui-go"
@@ -24,19 +25,15 @@ import (
 )
 
 const (
-	Title   = "StrongDMM"
-	Version = "2.0.0.alpha"
-	GitHub  = "https://github.com/SpaiR/StrongDMM"
-
-	LogsTtlDays    = 3
-	BackupsTtlDays = 3
+	ttlDaysLogs    = 14
+	ttlDaysBackups = 3
 )
 
 func Start() {
 	internalDir := getOrCreateInternalDir()
 	logDir := initializeLogger(internalDir)
 
-	log.Printf("%s, v%s", Title, Version)
+	log.Printf("%s, %s", env.Title, env.Version)
 	log.Println("[app] starting")
 	log.Println("[app] internal dir:", internalDir)
 	log.Println("[app] log dir:", logDir)
@@ -115,6 +112,8 @@ func (a *app) initialize() {
 	a.updateLayoutState()
 
 	a.UpdateTitle()
+
+	go a.checkForUpdates()
 }
 
 func (a *app) Process() {
@@ -241,7 +240,7 @@ func (a *app) resetLayout() {
 func (a *app) deleteOldLogs() {
 	logsCount := 0
 	_ = filepath.Walk(a.logDir, func(path string, info os.FileInfo, _ error) error {
-		if time.Since(info.ModTime()).Hours()/24 > LogsTtlDays {
+		if time.Since(info.ModTime()).Hours()/24 > ttlDaysLogs {
 			_ = os.Remove(path)
 			logsCount++
 		}
@@ -257,7 +256,7 @@ func (a *app) deleteOldLogs() {
 func (a *app) deleteOldBackups() {
 	backupsCount := 0
 	_ = filepath.Walk(a.backupDir, func(path string, info os.FileInfo, _ error) error {
-		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > BackupsTtlDays {
+		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > ttlDaysBackups {
 			_ = os.Remove(path)
 			backupsCount++
 		}

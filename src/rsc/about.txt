@@ -1,4 +1,4 @@
-StrongDMM v%VERSION%
+StrongDMM %VERSION%
 Copyright (C) 2019-2022, SpaiR
 
 This program comes with ABSOLUTELY NO WARRANTY. This is free software,
