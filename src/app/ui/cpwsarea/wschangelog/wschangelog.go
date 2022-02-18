@@ -11,10 +11,6 @@ var (
 	parsedChangelog markdown.Markdown
 )
 
-func init() {
-	parsedChangelog = markdown.Parse(rsc.Changelog)
-}
-
 type WsChangelog struct {
 	workspace.Content
 }
@@ -36,5 +32,8 @@ func (ws *WsChangelog) Process() {
 }
 
 func (ws *WsChangelog) showContent() {
+	if parsedChangelog.IsEmpty() {
+		parsedChangelog = markdown.Parse(rsc.Changelog)
+	}
 	markdown.Show(parsedChangelog)
 }

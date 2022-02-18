@@ -27,6 +27,10 @@ type Markdown struct {
 	Entries []Entry
 }
 
+func (m Markdown) IsEmpty() bool {
+	return len(m.Entries) == 0
+}
+
 var (
 	blocks = map[string]Block{
 		"# ":   H1,

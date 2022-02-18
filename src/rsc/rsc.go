@@ -7,8 +7,7 @@ import (
 
 var (
 	//go:embed about.txt
-	aboutTxt string
-	//go:embed changelog.md
+	aboutTxt  string
 	Changelog string
 )
 
