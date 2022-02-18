@@ -1,16 +1,17 @@
 version: 3
 
+includes:
+  task_win:
+    taskfile: ./Taskfile_windows.yml
+    optional: true
+
 vars:
   GIT_VERSION:
     sh: git describe --tags --always
   GIT_REV:
     sh: git rev-parse --short HEAD
   APP_NAME: StrongDMM
-  BIN_EXT:
-    sh: echo '{{if eq OS "windows"}}.exe{{end}}'
-  BIN_NAME:
-    sh: echo '{{.APP_NAME}}{{.BIN_EXT}}'
-  BIN_DST: ../dst/{{.BIN_NAME}}
+  BIN_DST: ../dst/{{.APP_NAME}}{{exeExt}}
   BUILD_VARS: -X sdmm/env.Version={{.GIT_VERSION}} -X sdmm/env.Revision={{.GIT_REV}}
   LD_FLAGS_WINDOWS:
     sh: echo '{{if eq OS "windows"}}-H windowsgui -extldflags=-static{{end}}'

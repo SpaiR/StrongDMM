@@ -1,0 +1,18 @@
+version: 3
+
+vars:
+  GOVERSIONINFO_VERSION: v1.4.0
+  GIT_VERSION:
+    sh: git describe --tags --always
+
+tasks:
+  install_goversioninfo:
+    cmds:
+      - go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@{{.GOVERSIONINFO_VERSION}}
+
+  gen_syso:
+    deps:
+      - install_goversioninfo
+    dir: src
+    cmds:
+      - goversioninfo -64 -platform-specific=true -file-version="{{.GIT_VERSION}}" -product-version="{{.GIT_VERSION}}"

@@ -71,6 +71,10 @@ jobs:
             src/third_party/sdmmparser/src/target
           key: build-files-${{ matrix.os }}
 
+      - if: matrix.os == 'windows-latest'
+        name: Pre Build (Windows)
+        run: task task_win:gen_syso
+
       - name: Build
         run: task build
 
