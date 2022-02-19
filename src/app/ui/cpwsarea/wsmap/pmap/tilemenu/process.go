@@ -28,6 +28,9 @@ func (t *TileMenu) Process() {
 	} else {
 		t.close()
 	}
+	if !imgui.IsWindowHovered() && imgui.IsMouseClicked(imgui.MouseButtonMiddle) {
+		t.close()
+	}
 }
 
 func (t *TileMenu) showControls() {
