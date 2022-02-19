@@ -1,84 +1,123 @@
-# Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) ![CI Build](https://github.com/SpaiR/StrongDMM/workflows/CI%20Build/badge.svg)
+# Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Github All Releases](https://img.shields.io/github/downloads/SpaiR/StrongDMM/total.svg?logo=github)](https://github.com/SpaiR/StrongDMM/releases) ![CI](https://github.com/SpaiR/StrongDMM/workflows/CI/badge.svg)
 
 <p align="center">
   <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe">
-    <img src="http://img.shields.io/badge/Download%20For%20Windows-0078D7?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/Download%20For%20Windows-0078D7?style=for-the-badge" alt="Windows Link"/>
   </a>
   <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher">
-    <img src="http://img.shields.io/badge/Download%20For%20Linux-E95420?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/Download%20For%20Linux-E95420?style=for-the-badge" alt="Linux Link"/>
   </a>
 </p>
 
-<img align="right" width="150" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-logo.png">
+<img align="right" width="150" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-logo.png" alt="StrongDMM Logo">
 
-StrongDMM is an alternative yet robust map editor for BYOND. 
+StrongDMM is an alternative yet robust map editor for BYOND.
 
-It was built with idea to create a more flexible, fast and extensible tool, than BYOND built-in map editor. The editor has same features DM has, but provides much more and improves general map editing experience.
+It was built with the idea to create a more flexible, fast and extensible tool, than BYOND built-in map editor. The
+editor has same features DM has, but provides much more and improves general map editing experience.
 
 ## Features
-
 The editor provides a bunch of new features:
- * TGM support with built in map merger (no need to use external scripts and pre-commit hooks);
- * Almost instant environment open;
- * Custom layers filter;
- * Built-in screenshot tool;
- * Smooth zoom-in/zoom-out;
- * Robust "Search&Replace";
- * Improved shortcuts;
+
+* TGM support with built-in map merger (no need to use external scripts and pre-commit hooks);
+* Almost instant environment open;
+* Custom layers filter;
+* ~~Built-in screenshot tool;~~
+* Smooth zoom-in/zoom-out;
+* Robust "Search";
+* Improved shortcuts;
  * Robust variables editor and variables preview;
  * Optional variables sanitizing;
 
 ...and a lot more...
 
 <p align="center">
-  <img width="450" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-example.png">
+  <img width="450" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-example.png" alt="StrongDMM Example">
 </p>
 
 ## How to Use
-The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up to date version of the editor.
+
+The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up-to-date version of the
+editor.
 
 **Download links:**
+
 * [Windows](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe)
 * [Linux](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher)
 
-You are also able to download the editor manually. Go to the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
+You are also able to download the editor manually. Go to
+the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
 page and download zip for your OS.
 
-## Usage FAQ
-**Q.** Launcher downloaded the latest version and nothing happens.<br>
-**A.** Start the launcher as an administrator, check your username doesn't contains any non-latin chars.
-
-**Q.** I'm experiencing an eternal environment parsing. What to do?<br>
-**A.** Start the editor (launcher or a proper script file) **as an administrator**.
+## FAQ
 
 **Q.** How to move the map?<br>
-**A.** ~~Use zoom-in/zoom-out.~~ Drag and drop while holding down the **middle mouse button**. 
-Or by holding the **space bar** in combination with the **left mouse button**. Or **arrow keys**.
+**A.** ~~Use zoom-in/zoom-out.~~ Drag the pan with the **middle mouse button**. Or by holding a **space key**.
+Alternatively you can use **arrow keys**.
+
+**Q.** How to zoom?<br>
+**A.** Scroll your mouse or use **+/- keys** on the keyboard.
 
 **Q.** How to change a save format?<br>
-**A.** In the menu bar: `File->Preferences...` and change the format you would like to use.
+**A.** In the menu bar: `File->Preferences...` and change to the format you need.
 
-**Q.** The editor went crush. Where I can find the error logs?<br>
-**A.** In your user home dir: `.strongdmm/logs`.
+**Q.** The editor crushed. Where I can find logs?<br>
+**A.** Menu button: `Help->Open Logs Folder`.
 
 ## How to Build
-**Pre-requests:** [JDK 11](https://adoptopenjdk.net/?variant=openjdk11&jvmVariant=hotspot) or higher, latest
-[Rust](https://www.rust-lang.org/) to compile `sdmmparser`
 
-#### Editor:
-- **Build:** `gradlew clean build`
-- **Run:** `gradlew runShadow`
-- **Auto-format (for linter)**: `gradlew formatKotlin`
+There are two steps to build the application:
 
-#### sdmmparser (Optional):
-- **Build**: `cargo build`
-- To build a release (optimized) version just add `--release` flag in the end of the command.
+1. Build **sdmmparser** library;
+2. Build the editor.
+
+**sdmmparser** is a rust library based on [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser. It is
+compiled to a `staticlib`. You can find it by path: `src/third_party/sdmmparser/src`.
+
+### Pre-requests
+
+* [Go](https://go.dev/): version **1.17.5** or higher
+* [Rust](https://www.rust-lang.org/): version **1.58.1** or higher
+* (Optional) [Task](https://taskfile.dev): to run build scripts
+
+#### For Windows
+
+Ensure your Rust configured to use `stable-x86_64-pc-windows-gnu` toolchain. That requirement is based on the thing,
+that Go can't use MSVC to do builds. Thus, it won't link with libraries built using anything but GNU.
+
+The easiest way to get GNU compiler is to install MinGW. This could be done with many ways: chocolatey package, msys2
+etc.
+
+#### For Linux
+
+You would probably need to add dependencies to build GUI apps: `sudo apt install xorg-dev libgtk-3-dev`.
+
+### Steps
+
+#### Using Task
+
+Task is a cross-platform alternative for Make. Its scripts are described in the `Taskfile.yml`.
+
+With installed Task you can basically do:
+
+* `task build`: to build sdmmparser + the editor (result will be in the `dst` dir)
+* `task run`: to run the editor (will do a compilation under the hood)
+
+#### Manually
+
+1. The important part is to build **sdmmparser** library.<br>
+   Go to the `src/third_party/sdmmparser/src` directory and run the command: `cargo build --release`.<br>
+   If you don't modify **sdmmparser** you can do that step only once.
+2. In the `src` dir you can do:
+    * `go build .`: to build the editor (executable will be in the `src` dir with the name `sdmm.exe`/`sdmm`)
+    * `go run .`: to run the editor
 
 ## Credits
-StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made by [SpaceManiac](https://github.com/SpaceManiac).<br>
-The application icon is designed by [Clément "Topy"](https://github.com/clement-or).<br>
-The editor took some initial ideas from [FastDMM](https://github.com/monster860/FastDMM) made by [monster860](https://github.com/monster860)
-and later supported by [/tg/station](https://github.com/tgstation/FastDMM).
+
+StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made
+by [SpaceManiac](https://github.com/SpaceManiac). <br>
+The application icon is designed by [Clément "Topy"](https://github.com/clement-or).
 
 ## License
+
 See the LICENSE file for license rights and limitations (GPL-3.0).
