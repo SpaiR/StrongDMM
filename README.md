@@ -1,13 +1,19 @@
 # Strong Dream Map Maker &middot; [![GitHub release](https://img.shields.io/github/release/SpaiR/StrongDMM.svg?label=StrongDMM)](https://github.com/SpaiR/StrongDMM/releases/latest) [![Github All Releases](https://img.shields.io/github/downloads/SpaiR/StrongDMM/total.svg?logo=github)](https://github.com/SpaiR/StrongDMM/releases) ![CI](https://github.com/SpaiR/StrongDMM/workflows/CI/badge.svg)
 
+<p align="center"><b>Download StrongDMM</b></p>
 <p align="center">
-  <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe">
-    <img src="https://img.shields.io/badge/Download%20For%20Windows-0078D7?style=for-the-badge" alt="Windows Link"/>
+  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-windows.zip">
+    <img src="https://img.shields.io/badge/WINDOWS-00A4EF?style=for-the-badge" alt="Windows download link"/>
   </a>
-  <a href="https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher">
-    <img src="https://img.shields.io/badge/Download%20For%20Linux-E95420?style=for-the-badge" alt="Linux Link"/>
+  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-linux.zip">
+    <img src="https://img.shields.io/badge/⠀LINUX⠀-E95420?style=for-the-badge" alt="Linux download link"/>
+  </a>
+  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-macos.zip">
+    <img src="https://img.shields.io/badge/⠀MACOS⠀-555555?style=for-the-badge" alt="macOS download ink"/>
   </a>
 </p>
+
+---
 
 <img align="right" width="150" src="https://raw.githubusercontent.com/SpaiR/StrongDMM/master/docs/sdmm-logo.png" alt="StrongDMM Logo">
 
@@ -37,19 +43,24 @@ The editor provides a bunch of new features:
 
 ## How to Use
 
-The recommended way is to use `sdmmlauncher`. Launcher will ensure that you are using the up-to-date version of the
-editor.
+StrongDMM is a single executable, which doesn't require any installation.
+You can download it by any of the provided link and start it right away. 
 
-**Download links:**
+**Download Links:**
 
-* [Windows](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher.exe)
-* [Linux](https://github.com/SpaiR/sdmmlauncher/releases/latest/download/sdmmlauncher)
+* [Windows](https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-windows.zip)
+* [Linux](https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-linux.zip)
+* [macOS](https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-macos.zip)
 
-You are also able to download the editor manually. Go to
-the [release](https://github.com/SpaiR/StrongDMM/releases/latest)
-page and download zip for your OS.
+[Release](https://github.com/SpaiR/StrongDMM/releases/latest) page contains all distributed files. It also has `sha256` hashes info for every executable for validation purposes.
 
 ## FAQ
+
+**Q.** How to uninstall the editor?<br>
+**A.** StrongDMM does't have any installation. Thus, no specific "uninstall" required as well. Delete the execuable and, if you want to remove editor data, its directory on OS.
+
+**Q.** Where do I find editor data?<br>
+**A.** For Windows: `C:\Users\USER\AppData\Roaming\StrongDMM`, for Linux/macOS: `~/.strongdmm`.
 
 **Q.** How to move the map?<br>
 **A.** ~~Use zoom-in/zoom-out.~~ Drag the pan with the **middle mouse button**. Or by holding a **space key**.
