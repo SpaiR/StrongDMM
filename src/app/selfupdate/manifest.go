@@ -40,7 +40,7 @@ func ParseManifest(data []byte) (manifest Manifest, err error) {
 }
 
 func replaceVersionPlaceholder(url *string, version string) {
-	*url = strings.Replace(*url, placeholderVersion, version, 1)
+	*url = strings.ReplaceAll(*url, placeholderVersion, version)
 }
 
 func FetchRemoteManifest() (Manifest, error) {

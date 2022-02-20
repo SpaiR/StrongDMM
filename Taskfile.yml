@@ -37,3 +37,26 @@ tasks:
     dir: src/third_party/sdmmparser/src
     cmds:
       - cargo build --release
+
+  release-files-unzip:
+    dir: dst
+    cmds:
+      - mkdir -p bin archive
+      - cp Windows/StrongDMM.exe bin/strongdmm-{{.GIT_VERSION}}-x86_64-pc-windows-gnu.exe
+      - cp Linux/StrongDMM bin/strongdmm-{{.GIT_VERSION}}-x86_64-unknown-linux-gnu
+      - cp macOS/StrongDMM bin/strongdmm-{{.GIT_VERSION}}-x86_64-apple-darwin
+      - zip -rj archive/strongdmm-windows.zip Windows
+      - zip -rj archive/strongdmm-linux.zip Linux
+      - zip -rj archive/strongdmm-macos.zip macOS
+
+  release-files-hash:
+    dir: dst/bin
+    cmds:
+      - sha256sum ./strongdmm-{{.GIT_VERSION}}-x86_64-pc-windows-gnu.exe | tee -a "strongdmm-{{.GIT_VERSION}}-x86_64-pc-windows-gnu.exe.sha256"
+      - sha256sum ./strongdmm-{{.GIT_VERSION}}-x86_64-unknown-linux-gnu | tee -a "strongdmm-{{.GIT_VERSION}}-x86_64-unknown-linux-gnu.sha256"
+      - sha256sum ./strongdmm-{{.GIT_VERSION}}-x86_64-apple-darwin | tee -a "strongdmm-{{.GIT_VERSION}}-x86_64-apple-darwin.sha256"
+
+  release-files:
+    cmds:
+      - task: release-files-unzip
+      - task: release-files-hash
