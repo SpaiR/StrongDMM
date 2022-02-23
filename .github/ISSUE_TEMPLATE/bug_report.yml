@@ -13,17 +13,25 @@ body:
     validations:
       required: true
   - type: textarea
-    id: what-happened
+    id: how-did-it-happen
     attributes:
       label: Reproduction
       description: How did you manage to make the error happen?
       placeholder: How did you do it?
-      value: "1. Run StrongDMM v2.0.0.alpha"
+      value: "1. Run StrongDMM"
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: What version of StrongDMM did you use?
+      value: "2.0.0.alpha"
     validations:
       required: true
   - type: textarea
     id: logs
     attributes:
       label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      description: Please copy and paste any relevant log output. The logs can be found with `Help -> Open Logs Folder`. This will be automatically formatted into code, so no need for backticks.
       render: shell
