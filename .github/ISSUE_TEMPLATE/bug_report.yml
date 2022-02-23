@@ -4,6 +4,13 @@ title: "Bug: "
 labels: ["bug"]
 body:
   - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: What version of StrongDMM did you use?
+    validations:
+      required: true
+  - type: textarea
     id: what-happened
     attributes:
       label: What happened?
@@ -19,14 +26,6 @@ body:
       description: How did you manage to make the error happen?
       placeholder: How did you do it?
       value: "1. Run StrongDMM"
-    validations:
-      required: true
-  - type: textarea
-    id: version
-    attributes:
-      label: Version
-      description: What version of StrongDMM did you use?
-      value: "2.0.0.alpha"
     validations:
       required: true
   - type: textarea
