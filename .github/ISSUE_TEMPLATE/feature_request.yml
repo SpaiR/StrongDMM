@@ -3,10 +3,19 @@ description: Suggest an idea for this project
 title: "Feature Request: "
 labels: ["enhancement"]
 body:
-  - type: markdown
-    id: feature-request
+  - type: textarea
+    id: problem-to-solve
     attributes:
-      label: Feature Request
-      description: What new feature do you want to request?
+      label: Problem to be solved
+      description: Present a concise description of the problem to be addressed by this feature request
     validations:
       required: true
+  - type: textarea
+    id: suggest-solution
+    attributes:
+      label: Sugest a solution
+      description: A concise description of your preferred solution
+  - type: markdown
+    id: additional-info
+    attributes:
+      value: Post additional information or images if you need so.
