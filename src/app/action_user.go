@@ -8,12 +8,13 @@ import (
 	"sdmm/app/window"
 	"sdmm/env"
 
-	"github.com/skratchdot/open-golang/open"
-	"github.com/sqweek/dialog"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+
+	"github.com/skratchdot/open-golang/open"
+	"github.com/sqweek/dialog"
 )
 
 /*
@@ -50,6 +51,12 @@ func (a *app) DoClearRecentEnvironments() {
 	log.Println("[app] clear recent environments")
 	a.projectConfig().ClearProjects()
 	a.ConfigSave()
+}
+
+// DoCreateMapFile opens dialog window to create a new map file.
+func (a *app) DoOpenCreateMap() {
+	log.Println("[app] opening new map creator...")
+	a.layout.WsArea.OpenNewMap(nil)
 }
 
 // DoSelectMapFile opens dialog window to select a map file.

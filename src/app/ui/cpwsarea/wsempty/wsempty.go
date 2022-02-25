@@ -2,16 +2,18 @@ package wsempty
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dmapi/dmenv"
 	"strings"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
 
+	DoOpenCreateMap()
 	DoSelectMapFile() (string, error)
 
 	HasLoadedEnvironment() bool
@@ -77,6 +79,9 @@ func (ws *WsEmpty) showEnvironmentsControl() {
 func (ws *WsEmpty) showMapsControl() {
 	imgui.Text(fmt.Sprint("Environment: ", ws.app.LoadedEnvironment().RootFile))
 	imgui.Separator()
+	if imgui.Button("New Map...") {
+		ws.app.DoOpenCreateMap()
+	}
 	if imgui.Button("Open Map...") {
 		if file, err := ws.app.DoSelectMapFile(); err == nil {
 			ws.onOpenMapByPath(file)
