@@ -108,9 +108,10 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		}),
 		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
 			Icon(icon.FaEyeDropper).
-			Shortcut("Shift+LMB"),
+			Shortcut("S"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)).
-			Icon(icon.FaEraser),
+			Icon(icon.FaEraser).
+			Shortcut("D"),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
 			IconEmpty().
 			Enabled(t.app.HasSelectedPrefab()),
