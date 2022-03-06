@@ -56,6 +56,12 @@ You can download it by any of the provided link and start it right away.
 
 ## FAQ
 
+**Q.** My anti-virus software detects something suspicious in the editor binaries. It it ok?<br>
+**A.** Yes. It's a false positive reaction to the way how Golang (development language) creates binaries. Don't download executables from unverified sources. If you have any concerns, than validate your executables with `sha256` hashes available on the [release](https://github.com/SpaiR/StrongDMM/releases/latest) page. Read more: https://go.dev/doc/faq#virus
+
+**Q.** But how can I trust executables on the release page?<br>
+**A.** Executables are built in the [CI](https://github.com/SpaiR/StrongDMM/actions/workflows/ci.yml) pipeline. You can verify the process by yourself or build executables manually from a source code.
+
 **Q.** How to uninstall the editor?<br>
 **A.** StrongDMM does't have any installation. Thus, no specific "uninstall" required as well. Delete the execuable and, if you want to remove editor data, its directory on OS.
 
