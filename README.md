@@ -54,6 +54,17 @@ You can download it by any of the provided link and start it right away.
 
 [Release](https://github.com/SpaiR/StrongDMM/releases/latest) page contains all distributed files. It also has `sha256` hashes info for every executable for validation purposes.
 
+## Support
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P5BF17Q)
+
+StrongDMM developed without any monitization in mind. The main motivation is an enthusiasm to do a cool stuff.<br>
+Your support can show your gratefulness and will motivate the project further development.
+
+Also, if you want something specific to be implemented in the editor, it's possible to focus on your needs.<br>
+Feel free to reach me out with my public contacts to discuss details:
+* [E-Mail](despsolver@gmail.com)
+* [Discord](https://discordapp.com/users/153940096389742592)
+
 ## FAQ
 
 **Q.** My anti-virus software detects something suspicious in the editor binaries. It it ok?<br>
