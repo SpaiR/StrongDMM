@@ -1,7 +1,9 @@
 package app
 
 import (
+	"errors"
 	"log"
+	"os"
 
 	"sdmm/util/slice"
 )
@@ -50,10 +52,38 @@ func (cfg *projectConfig) ClearMapsByProject(projectPath string) {
 }
 
 func (a *app) loadProjectConfig() {
-	a.ConfigRegister(&projectConfig{
+	config := &projectConfig{
 		Version:       projectConfigVersion,
 		MapsByProject: make(map[string][]string),
-	})
+	}
+
+	a.ConfigRegister(config)
+
+	// Cleanup projects paths
+	var pathsToRemove []string
+	for _, projectPath := range config.Projects {
+		if _, err := os.Stat(projectPath); errors.Is(err, os.ErrNotExist) {
+			pathsToRemove = append(pathsToRemove, projectPath)
+		}
+	}
+	for _, path := range pathsToRemove {
+		config.Projects = slice.StrRemove(config.Projects, path)
+		log.Println("[app] config cleanup, removed project path:", path)
+	}
+
+	// Cleanup maps paths
+	for projectPath, mapPaths := range config.MapsByProject {
+		pathsToRemove = nil
+		for _, mapPath := range mapPaths {
+			if _, err := os.Stat(mapPath); errors.Is(err, os.ErrNotExist) {
+				pathsToRemove = append(pathsToRemove, mapPath)
+			}
+		}
+		for _, path := range pathsToRemove {
+			config.MapsByProject[projectPath] = slice.StrRemove(config.MapsByProject[projectPath], path)
+			log.Println("[app] config cleanup, removed map path:", path)
+		}
+	}
 }
 
 func (a *app) projectConfig() *projectConfig {
