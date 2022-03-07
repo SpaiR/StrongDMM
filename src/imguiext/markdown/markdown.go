@@ -93,9 +93,7 @@ func Parse(text string) (markdown Markdown) {
 		}
 	}
 
-	for _, entry := range entries {
-		markdown.Entries = append(markdown.Entries, entry)
-	}
+	markdown.Entries = append(markdown.Entries, entries...)
 
 	return markdown
 }

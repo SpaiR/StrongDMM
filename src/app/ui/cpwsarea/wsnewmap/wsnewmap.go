@@ -4,7 +4,6 @@ import (
 	"log"
 	"math"
 	"path/filepath"
-	"sdmm/app/command"
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/window"
@@ -12,6 +11,8 @@ import (
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/markdown"
+	"sdmm/imguiext/style"
+	w "sdmm/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/sqweek/dialog"
@@ -19,12 +20,7 @@ import (
 
 type App interface {
 	LoadedEnvironment() *dmenv.Dme
-
-	CommandStorage() *command.Storage
 	Prefs() prefs.Prefs
-
-	DoOpenMapByPath(path string)
-	DoClose()
 }
 
 type WsNewMap struct {
@@ -36,135 +32,99 @@ type WsNewMap struct {
 	mapHeight int // y
 	mapZDepth int // z
 
-	multiZType string
+	format string
 
-	newMapMetaFile string
+	onOpenMapByPath func(string)
 }
 
 func New(app App) *WsNewMap {
+	format := app.Prefs().Save.Format
+	if format == prefs.SaveFormatInitial { // Enforce TGM usage.
+		format = prefs.SaveFormatTGM
+	}
+
 	return &WsNewMap{
 		app: app,
 
-		mapWidth:       1,
-		mapHeight:      1,
-		mapZDepth:      1,
-		multiZType:     Default,
-		newMapMetaFile: "",
+		mapWidth:  1,
+		mapHeight: 1,
+		mapZDepth: 1,
+
+		format: format,
 	}
 }
 
 func (ws *WsNewMap) Name() string {
-	return icon.FaPlus + " New Map"
-}
-
-func (ws *WsNewMap) Title() string {
 	return "New Map"
 }
 
-func (ws *WsNewMap) Process() {
-	ws.showContent()
+func (ws *WsNewMap) Title() string {
+	return ws.Name()
 }
 
-func (ws *WsNewMap) showContent() {
-	// Header
-	markdown.ShowHeader("Create a new Map", window.FontH2)
-	imgui.Separator()
-	imgui.NewLine()
+func (ws *WsNewMap) SetOnOpenMapByPath(f func(string)) {
+	ws.onOpenMapByPath = f
+}
 
-	// Width Height
-	markdown.ShowHeader("Width (X)", window.FontH3)
+func (ws *WsNewMap) Process() {
+	ws.showInput("Width (X)", "The width of the map in tiles.", &ws.mapWidth)
+	imgui.NewLine()
+	ws.showInput("Height (Y)", "The height of the map in tiles.", &ws.mapHeight)
+	imgui.NewLine()
+	ws.showInput("Levels (Z)", "Z-Height of the map.", &ws.mapZDepth)
+	imgui.NewLine()
+	ws.showFormatButton()
+	imgui.NewLine()
+	ws.showSaveButton()
+}
+
+func (ws *WsNewMap) showInput(label, desc string, value *int) {
+	markdown.ShowHeader(label, window.FontH3)
 
 	imgui.PushTextWrapPos()
-	imgui.TextDisabled("The width of the map. Minimum is 1.")
+	imgui.TextDisabled(desc)
 	imgui.PopTextWrapPos()
 
-	vwidth := int32(ws.mapWidth)
-	if imguiext.InputIntClamp("##map_width", &vwidth, 1, math.MaxInt32, 1, 1) {
-		if int(vwidth) != ws.mapWidth {
-			ws.mapWidth = int(vwidth)
-		}
+	v := int32(*value)
+	if imguiext.InputIntClamp("##"+label, &v, 1, math.MaxInt32, 1, 25) {
+		*value = int(v)
 	}
-	imgui.NewLine()
+}
 
-	markdown.ShowHeader("Height (Y)", window.FontH3)
+func (ws *WsNewMap) showFormatButton() {
+	markdown.ShowHeader("Format", window.FontH3)
 
 	imgui.PushTextWrapPos()
-	imgui.TextDisabled("The height of the map. Minimum is 1.")
-	imgui.PopTextWrapPos()
-
-	vheight := int32(ws.mapHeight)
-	if imguiext.InputIntClamp("##map_height", &vheight, 1, math.MaxInt32, 1, 1) {
-		if int(vheight) != ws.mapHeight {
-			ws.mapHeight = int(vheight)
-		}
-	}
-	imgui.NewLine()
-
-	markdown.ShowHeader("Z Levels", window.FontH3)
-
-	imgui.PushTextWrapPos()
-	imgui.TextDisabled("Z-Height of the map.")
-	imgui.PopTextWrapPos()
-
-	vzdepth := int32(ws.mapZDepth)
-	if imguiext.InputIntClamp("##map_zheight", &vzdepth, 1, math.MaxInt32, 1, 1) {
-		if int(vzdepth) != ws.mapZDepth {
-			ws.mapZDepth = int(vzdepth)
-		}
-	}
-	imgui.NewLine()
-
-	// MultiZ: Select types
-	markdown.ShowHeader("MultiZ Type", window.FontH3)
-
-	imgui.PushTextWrapPos()
-	imgui.TextDisabled("Select what kind of MultiZ you want.")
+	imgui.TextDisabled("A format to save the map.")
 	imgui.SameLine()
 	imgui.TextDisabled(icon.FaQuestionCircle)
-	imguiext.SetItemHoveredTooltip("Default - Single file containing multiple z levels.\nMulti File Z Level - Allows tg-like multi file z level creation (Not Implemented!!).")
+	imguiext.SetItemHoveredTooltip(`TGM - a custom map format made by TG, helps to make map file more readable and reduce merge conflicts
+DM - a default map format used by the DM map editor`)
 	imgui.PopTextWrapPos()
 
-	if imgui.BeginCombo("##map_multiztype", ws.multiZType) {
-		for _, option := range ZTypes {
-			if option == "Multi File Z Level" {
-				// not implemented
-				continue
-			}
-			if imgui.SelectableV(option, option == ws.multiZType, imgui.SelectableFlagsNone, imgui.Vec2{}) {
-				ws.multiZType = option
-			}
+	if imgui.BeginCombo("##format", ws.format) {
+		if imgui.SelectableV(prefs.SaveFormatTGM, prefs.SaveFormatTGM == ws.format, imgui.SelectableFlagsNone, imgui.Vec2{}) {
+			ws.format = prefs.SaveFormatTGM
+		}
+		if imgui.SelectableV(prefs.SaveFormatDM, prefs.SaveFormatDM == ws.format, imgui.SelectableFlagsNone, imgui.Vec2{}) {
+			ws.format = prefs.SaveFormatDM
 		}
 		imgui.EndCombo()
 	}
-	imgui.NewLine()
+}
 
-	// MultiZ: Multiple file using tg json map format (TO BE IMPLEMENTED)
-	// if ws.multiZType == MultiFile_Z {
-	// 	markdown.ShowHeader("Save location (.json)", window.FontH3)
-
-	// 	imgui.PushTextWrapPos()
-	// 	imgui.TextDisabled("Where should this save the multifile meta information.")
-	// 	imgui.PopTextWrapPos()
-	// 	if imgui.Button("Save as...") {
-	// 		// this doesnt create a file
-	// 	}
-
-	// 	imgui.NewLine()
-	// }
-
-	imgui.Separator()
-	markdown.ShowHeader("Create a new map!", window.FontH3)
-
-	if imgui.Button("Save as...") {
-		ws.tryCreateMap()
-	}
+func (ws *WsNewMap) showSaveButton() {
+	w.Button("Create...", ws.tryCreateMap).
+		Style(style.ButtonGreen{}).
+		Icon(icon.FaSave).
+		Build()
 }
 
 func (ws *WsNewMap) dmmSaveLocation() (string, error) {
-	log.Println("[wsnewmap] saving map file...")
+	log.Println("[wsnewmap] creating map file...")
 	return dialog.
 		File().
-		Title("Save Map").
+		Title("New Map").
 		Filter(".dmm").
 		SetStartDir(ws.app.LoadedEnvironment().RootDir).
 		Save()
@@ -173,27 +133,16 @@ func (ws *WsNewMap) dmmSaveLocation() (string, error) {
 func (ws *WsNewMap) tryCreateMap() {
 	log.Println("[wsnewmap] trying to create a new map with X:", ws.mapWidth, "| Y:", ws.mapHeight, "| Z:", ws.mapZDepth)
 
-	// width height cannot be invalid surely <- clueless
-	if ws.multiZType == MultiFile_Z && len(ws.newMapMetaFile) > 0 {
-		log.Println("[wsnewmap] map meta path is nil or blank")
-		// dialog.Open(dialog.type{
-		//  idk how to make this not clash
-		// })
-		return
-	}
-
-	// save
 	if file, err := ws.dmmSaveLocation(); err == nil {
 		if filepath.Ext(file) != ".dmm" {
 			file = file + ".dmm"
 		}
-		log.Println("[wsnewmap] saving map to:", file)
-		if ws.SaveNewMap(file) {
-			// open
-			ws.app.DoOpenMapByPath(file)
-			// close us
-			ws.app.DoClose()
-			return
-		}
+
+		log.Println("[wsnewmap] saving new map to:", file)
+
+		ws.save(file)
+		ws.onOpenMapByPath(file)
+	} else {
+		log.Println("[wsnewmap] unable to get new map save location:", err)
 	}
 }

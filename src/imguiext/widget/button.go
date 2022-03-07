@@ -9,6 +9,7 @@ type ButtonStyle interface {
 }
 
 type ButtonWidget struct {
+	icon        string
 	label       string
 	tooltip     string
 	round       bool
@@ -19,6 +20,11 @@ type ButtonWidget struct {
 	activeColor imgui.Vec4
 	hoverColor  imgui.Vec4
 	onClick     func()
+}
+
+func (b *ButtonWidget) Icon(icon string) *ButtonWidget {
+	b.icon = icon
+	return b
 }
 
 func (b *ButtonWidget) Tooltip(tooltip string) *ButtonWidget {
@@ -74,6 +80,11 @@ func (b *ButtonWidget) CalcSize() (size imgui.Vec2) {
 }
 
 func (b *ButtonWidget) Build() {
+	label := b.label
+	if len(b.icon) > 0 {
+		label = b.icon + " " + label
+	}
+
 	if b.round {
 		imgui.PushStyleVarFloat(imgui.StyleVarFrameRounding, 12)
 	}
@@ -81,7 +92,7 @@ func (b *ButtonWidget) Build() {
 	imgui.PushStyleColor(imgui.StyleColorButton, b.normalColor)
 	imgui.PushStyleColor(imgui.StyleColorButtonActive, b.activeColor)
 	imgui.PushStyleColor(imgui.StyleColorButtonHovered, b.hoverColor)
-	if imgui.ButtonV(b.label, b.size) && b.onClick != nil {
+	if imgui.ButtonV(label, b.size) && b.onClick != nil {
 		b.onClick()
 	}
 	if b.tooltip != "" && imgui.IsItemHovered() {
@@ -96,6 +107,7 @@ func (b *ButtonWidget) Build() {
 
 func Button(label string, onClick func()) *ButtonWidget {
 	return &ButtonWidget{
+		icon:        "",
 		label:       label,
 		tooltip:     "",
 		size:        imgui.Vec2{},

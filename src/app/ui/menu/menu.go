@@ -17,7 +17,7 @@ type app interface {
 	DoOpenEnvironment()
 	DoOpenEnvironmentByPath(path string)
 	DoClearRecentEnvironments()
-	DoOpenCreateMap()
+	DoNewMap()
 	DoOpenMap()
 	DoOpenMapByPath(path string)
 	DoClearRecentMaps()
@@ -124,8 +124,8 @@ func (m *Menu) Process() {
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentEnvironments()) != 0),
 			w.Separator(),
-			w.MenuItem("Create Map...", m.app.DoOpenCreateMap).
-				Icon(icon.FaPlus).
+			w.MenuItem("New Map", m.app.DoNewMap).
+				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()),
 			w.MenuItem("Open Map...", m.app.DoOpenMap).
 				Icon(icon.FaFolderOpen).

@@ -13,6 +13,7 @@ type content interface {
 	Title() string
 
 	Focused() bool
+	Closed() bool
 	OnFocusChange(focused bool)
 
 	PreProcess()
@@ -28,6 +29,12 @@ type content interface {
 
 type Content struct {
 	id string
+
+	closed bool
+}
+
+func (c *Content) Close() {
+	c.closed = true
 }
 
 var contentCount uint64
@@ -42,6 +49,10 @@ func (c *Content) Id() string {
 
 func (Content) Focused() bool {
 	return imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+}
+
+func (c *Content) Closed() bool {
+	return c.closed
 }
 
 func (Content) OnFocusChange(bool) {

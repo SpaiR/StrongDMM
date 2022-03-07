@@ -53,10 +53,10 @@ func (a *app) DoClearRecentEnvironments() {
 	a.ConfigSave()
 }
 
-// DoCreateMapFile opens dialog window to create a new map file.
-func (a *app) DoOpenCreateMap() {
+// DoNewMap opens dialog window to create a new map file.
+func (a *app) DoNewMap() {
 	log.Println("[app] opening new map creator...")
-	a.layout.WsArea.OpenNewMap(nil)
+	a.layout.WsArea.OpenNewMap()
 }
 
 // DoSelectMapFile opens dialog window to select a map file.

@@ -84,6 +84,10 @@ func (ws *Workspace) Focused() bool {
 	return ws.content.Focused()
 }
 
+func (ws *Workspace) Closed() bool {
+	return ws.content.Closed()
+}
+
 func (ws *Workspace) Save() bool {
 	return ws.Content().Save()
 }

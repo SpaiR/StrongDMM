@@ -10,9 +10,12 @@ import (
 var (
 	WorldIconSize int
 
-	// Tiles should have at least one area and one turf.
-	// Those vars will store them to ensure that the tile has a proper content.
-	baseArea, baseTurf *dmmprefab.Prefab
+	/*
+		Tiles should have at least one area and one turf.
+		Those vars will store them to ensure that the tile has a proper content.
+	*/
+	BaseArea *dmmprefab.Prefab
+	BaseTurf *dmmprefab.Prefab
 
 	environment *dmenv.Dme
 )
@@ -24,8 +27,8 @@ func Init(dme *dmenv.Dme) {
 
 	baseAreaPath, _ := dme.Objects["/world"].Vars.Value("area")
 	baseTurfPath, _ := dme.Objects["/world"].Vars.Value("turf")
-	baseArea = PrefabStorage.Initial(baseAreaPath)
-	baseTurf = PrefabStorage.Initial(baseTurfPath)
+	BaseArea = PrefabStorage.Initial(baseAreaPath)
+	BaseTurf = PrefabStorage.Initial(baseTurfPath)
 
 	log.Println("[dmmap] initialized with:", dme.RootFile)
 	log.Println("[dmmap] base area:", baseAreaPath)
