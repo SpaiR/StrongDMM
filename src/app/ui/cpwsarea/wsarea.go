@@ -22,6 +22,7 @@ type App interface {
 	wsempty.App
 	wsmap.App
 	wsprefs.App
+	wsnewmap.App
 
 	DoOpenMapByPathV(mapPath string, workspace *workspace.Workspace)
 	DoOpenMapByPath(path string)

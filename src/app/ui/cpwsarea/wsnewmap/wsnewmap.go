@@ -21,6 +21,7 @@ import (
 type App interface {
 	LoadedEnvironment() *dmenv.Dme
 	Prefs() prefs.Prefs
+	FocusApplicationWindow()
 }
 
 type WsNewMap struct {
@@ -134,6 +135,8 @@ func (ws *WsNewMap) tryCreateMap() {
 	log.Println("[wsnewmap] trying to create a new map with X:", ws.mapWidth, "| Y:", ws.mapHeight, "| Z:", ws.mapZDepth)
 
 	if file, err := ws.dmmSaveLocation(); err == nil {
+		ws.app.FocusApplicationWindow() // After a system dialog has been opened we need to return the focus.
+
 		if filepath.Ext(file) != ".dmm" {
 			file = file + ".dmm"
 		}
