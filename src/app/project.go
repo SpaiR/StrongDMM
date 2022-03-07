@@ -20,6 +20,8 @@ import (
 )
 
 func (a *app) openEnvironment(path string) {
+	// NewMap workspaces depend on the opened environment, so we close them too.
+	a.layout.WsArea.CloseAllNewMaps()
 	a.layout.WsArea.CloseAllMaps(func(closed bool) {
 		if closed {
 			a.forceOpenEnvironment(path)

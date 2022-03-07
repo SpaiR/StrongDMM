@@ -210,6 +210,11 @@ func (a *app) Prefs() prefs.Prefs {
 	return a.preferencesConfig().Prefs
 }
 
+// FocusApplicationWindow explicitly moves an OS focus to the current application window.
+func (a *app) FocusApplicationWindow() {
+	a.masterWindow.Handle().Focus()
+}
+
 func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
 	if wsMapActive := a.layout.WsArea.ActiveWorkspace(); wsMapActive != nil {
 		if activeWs, ok := wsMapActive.Content().(*wsmap.WsMap); ok {

@@ -66,9 +66,9 @@ func (t *Tile) InstancesRegenerate() {
 		}
 	}
 	if !hasArea {
-		t.InstancesAdd(baseArea)
+		t.InstancesAdd(BaseArea)
 	}
 	if !hasTurf {
-		t.InstancesAdd(baseTurf)
+		t.InstancesAdd(BaseTurf)
 	}
 }

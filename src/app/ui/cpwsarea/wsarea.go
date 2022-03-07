@@ -8,6 +8,7 @@ import (
 	"sdmm/app/ui/cpwsarea/wschangelog"
 	"sdmm/app/ui/cpwsarea/wsempty"
 	"sdmm/app/ui/cpwsarea/wsmap"
+	"sdmm/app/ui/cpwsarea/wsnewmap"
 	"sdmm/app/ui/cpwsarea/wsprefs"
 	"sdmm/app/ui/dialog"
 	"sdmm/rsc"
@@ -21,8 +22,12 @@ type App interface {
 	wsempty.App
 	wsmap.App
 	wsprefs.App
+	wsnewmap.App
 
 	DoOpenMapByPathV(mapPath string, workspace *workspace.Workspace)
+	DoOpenMapByPath(path string)
+
+	DoClose()
 
 	OnWorkspaceSwitched()
 	CommandStorage() *command.Storage
@@ -56,6 +61,7 @@ func (w *WsArea) Init(app App) {
 
 func (w *WsArea) Free() {
 	w.closeWorkspaces(w.findMapWorkspaces())
+	w.closeWorkspaces(w.findNewMapWorkspaces()) // close new map creation as well
 	log.Println("[cpwsarea] workspace area free")
 }
 
@@ -77,6 +83,21 @@ func (w *WsArea) OpenChangelog() {
 		}
 	}
 	w.addWorkspace(workspace.New(wschangelog.New()))
+}
+
+func (w *WsArea) OpenNewMap() {
+	for _, ws := range w.workspaces {
+		if _, ok := ws.Content().(*wsnewmap.WsNewMap); ok {
+			ws.SetTriggerFocus(true)
+			return
+		}
+	}
+
+	wsCnt := wsnewmap.New(w.app)
+	ws := workspace.New(wsCnt)
+	wsCnt.SetOnOpenMapByPath(w.openMapByPath(ws))
+
+	w.addWorkspace(ws)
 }
 
 func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
@@ -108,6 +129,11 @@ func (w *WsArea) CloseAll() {
 func (w *WsArea) CloseAllMaps(callback func(closed bool)) {
 	log.Println("[cpwsarea] closing all maps...")
 	w.closeWorkspacesGentlyV(w.findMapWorkspaces(), callback)
+}
+
+func (w *WsArea) CloseAllNewMaps() {
+	log.Println("[cpwsarea] closing all new maps...")
+	w.closeWorkspaces(w.findNewMapWorkspaces())
 }
 
 func (w *WsArea) WorkspaceTitle() string {
@@ -144,7 +170,9 @@ func (w *WsArea) closeWorkspacesGentlyV(wsToClose []*workspace.Workspace, callba
 
 	if len(unsavedWorkspaces) == 0 {
 		w.closeWorkspaces(wsToClose)
-		callback(true)
+		if callback != nil {
+			callback(true)
+		}
 		return
 	}
 
@@ -299,6 +327,16 @@ func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {
 	var workspaces []*workspace.Workspace
 	for _, ws := range w.workspaces {
 		if _, ok := ws.Content().(*wsmap.WsMap); ok {
+			workspaces = append(workspaces, ws)
+		}
+	}
+	return workspaces
+}
+
+func (w *WsArea) findNewMapWorkspaces() []*workspace.Workspace {
+	var workspaces []*workspace.Workspace
+	for _, ws := range w.workspaces {
+		if _, ok := ws.Content().(*wsnewmap.WsNewMap); ok {
 			workspaces = append(workspaces, ws)
 		}
 	}

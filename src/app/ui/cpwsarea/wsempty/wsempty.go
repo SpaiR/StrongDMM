@@ -2,10 +2,11 @@ package wsempty
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dmapi/dmenv"
 	"strings"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

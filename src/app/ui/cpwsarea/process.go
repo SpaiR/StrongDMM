@@ -63,5 +63,5 @@ func (w *WsArea) showWorkspaceWindow(dockId int, ws *workspace.Workspace) bool {
 
 	imgui.End()
 
-	return open
+	return open || ws.Closed()
 }
