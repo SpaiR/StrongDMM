@@ -4,7 +4,8 @@
 This version is not a simple update, but a full rewrite from scratch. So, the "alpha" suffix means what it means.<br>
 Some features may be absent, some bugs may exist. Feel free to post founded issues on GitHub.
  
- * Fix shortcuts helpers for a context menu. @Arthur-Holiday
+ * Added an option to create new maps. The button can be found in menu: File->New Map. @LetterN
+ * Fixed shortcuts helpers for a context menu. @Arthur-Holiday
 
 ---
 
