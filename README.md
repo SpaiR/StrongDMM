@@ -57,7 +57,7 @@ You can download it by any of the provided link and start it right away.
 ## Support
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P5BF17Q)
 
-StrongDMM developed without any monitization in mind. The main motivation is an enthusiasm to do a cool stuff.<br>
+StrongDMM developed without any monetization in mind. The main motivation is an enthusiasm to do a cool stuff.<br>
 Your support can show your gratefulness and will motivate the project further development.
 
 Also, if you want something specific to be implemented in the editor, it's possible to focus on your needs.<br>
@@ -67,14 +67,14 @@ Feel free to reach me out with my public contacts to discuss details:
 
 ## FAQ
 
-**Q.** My anti-virus software detects something suspicious in the editor binaries. It it ok?<br>
-**A.** Yes. It's a false positive reaction to the way how Golang (development language) creates binaries. Don't download executables from unverified sources. If you have any concerns, than validate your executables with `sha256` hashes available on the [release](https://github.com/SpaiR/StrongDMM/releases/latest) page. Read more: https://go.dev/doc/faq#virus
+**Q.** My antivirus software detects something suspicious in the editor binaries. Is it ok?<br>
+**A.** Yes. It's a false positive reaction to the way how Golang (development language) creates binaries. Don't download executables from unverified sources. If you have any concerns, then validate your executables with `sha256` hashes available on the [release](https://github.com/SpaiR/StrongDMM/releases/latest) page. Read more: https://go.dev/doc/faq#virus
 
 **Q.** But how can I trust executables on the release page?<br>
 **A.** Executables are built in the [CI](https://github.com/SpaiR/StrongDMM/actions/workflows/ci.yml) pipeline. You can verify the process by yourself or build executables manually from a source code.
 
 **Q.** How to uninstall the editor?<br>
-**A.** StrongDMM does't have any installation. Thus, no specific "uninstall" required as well. Delete the execuable and, if you want to remove editor data, its directory on OS.
+**A.** StrongDMM doesn't have any installation. Thus, no specific "uninstall" required as well. Delete the executable and, if you want to remove editor data, its directory on OS.
 
 **Q.** Where do I find editor data?<br>
 **A.** For Windows: `C:\Users\USER\AppData\Roaming\StrongDMM`, for Linux/macOS: `~/.strongdmm`.
