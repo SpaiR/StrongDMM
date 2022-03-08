@@ -245,7 +245,7 @@ func (m *Menu) Process() {
 			w.MenuItem("About", m.app.DoOpenAbout).
 				IconEmpty(),
 			w.MenuItem("Source Code", m.app.DoOpenSourceCode).
-				IconEmpty(),
+				Icon(icon.GitHub),
 			w.Separator(),
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
 				IconEmpty(),
