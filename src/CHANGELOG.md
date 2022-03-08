@@ -8,6 +8,7 @@ Feel free to make any sort of donation. Your support will motivate to do more co
 ### Improvements and Fixes
  * Added an option to create new maps. The button can be found in menu: File->New Map. @LetterN
  * Fixed shortcuts helpers for a context menu. @Arthur-Holiday
+ * Fixed crush for Linux while opening environment.
 
 ---
 
