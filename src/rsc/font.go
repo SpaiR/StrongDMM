@@ -5,7 +5,7 @@ import _ "embed"
 var (
 	//go:embed font/Inter-Medium.ttf
 	fontTTF []byte
-	//go:embed font/font-awesome-solid-900.ttf
+	//go:embed font/icomoon.ttf
 	fontIconsTTF []byte
 )
 

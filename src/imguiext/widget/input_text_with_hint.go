@@ -15,7 +15,7 @@ func (i *inputTextWithHintWidget) ButtonClear() *inputTextWithHintWidget {
 	fClear := func() {
 		*i.text = ""
 	}
-	i.Button(Button(icon.FaTimes+"##"+i.label, fClear).
+	i.Button(Button(icon.Clear+"##"+i.label, fClear).
 		TextColor(imgui.CurrentStyle().Color(imgui.StyleColorTextDisabled)).
 		Style(style.ButtonFrame{}),
 	)

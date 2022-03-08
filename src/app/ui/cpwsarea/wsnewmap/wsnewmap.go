@@ -98,7 +98,7 @@ func (ws *WsNewMap) showFormatButton() {
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled("A format to save the map.")
 	imgui.SameLine()
-	imgui.TextDisabled(icon.FaQuestionCircle)
+	imgui.TextDisabled(icon.Help)
 	imguiext.SetItemHoveredTooltip(`TGM - a custom map format made by TG, helps to make map file more readable and reduce merge conflicts
 DM - a default map format used by the DM map editor`)
 	imgui.PopTextWrapPos()
@@ -117,7 +117,7 @@ DM - a default map format used by the DM map editor`)
 func (ws *WsNewMap) showSaveButton() {
 	w.Button("Create...", ws.tryCreateMap).
 		Style(style.ButtonGreen{}).
-		Icon(icon.FaSave).
+		Icon(icon.Save).
 		Build()
 }
 

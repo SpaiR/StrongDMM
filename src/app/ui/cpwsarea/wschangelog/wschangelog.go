@@ -20,7 +20,7 @@ func New() *WsChangelog {
 }
 
 func (ws *WsChangelog) Name() string {
-	return icon.FaClipboardList + " Changelog"
+	return icon.ClipboardMultiple + " Changelog"
 }
 
 func (ws *WsChangelog) Title() string {

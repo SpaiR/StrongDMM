@@ -31,23 +31,23 @@ var (
 
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
-			icon: icon.FaPlus,
+			icon: icon.Add,
 			help: tools.TNAdd + " (1)\nClick - Place selected object\nAlt+Click - Place selected object with replace",
 		},
 		tools.TNFill: {
-			icon: icon.FaBorderAll,
+			icon: icon.BorderAll,
 			help: tools.TNFill + " (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
 		},
 		tools.TNGrab: {
-			icon: icon.FaBorderStyle,
+			icon: icon.BorderStyle,
 			help: tools.TNGrab + " (3)\nClick&Drag - Select the area / Move selection with visible objects inside",
 		},
 		tools.TNPick: {
-			icon: icon.FaEyeDropper,
+			icon: icon.EyeDropper,
 			help: tools.TNPick + " (Hold S)\nClick - Pick hovered object",
 		},
 		tools.TNDelete: {
-			icon: icon.FaEraser,
+			icon: icon.Eraser,
 			help: tools.TNDelete + " (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
 		},
 	}
@@ -96,7 +96,7 @@ func (p *PaneMap) showLevelButtons() {
 	imgui.BeginDisabledV(!p.hasPreviousLevel())
 	imgui.SameLine()
 
-	w.Button(icon.FaArrowDown, p.doPreviousLevel).
+	w.Button(icon.ArrowDownward, p.doPreviousLevel).
 		Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
 		Round(true).
 		Build()
@@ -106,7 +106,7 @@ func (p *PaneMap) showLevelButtons() {
 	imgui.BeginDisabledV(!p.hasNextLevel())
 	imgui.SameLine()
 
-	w.Button(icon.FaArrowUp, p.doNextLevel).
+	w.Button(icon.ArrowUpward, p.doNextLevel).
 		Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
 		Round(true).
 		Build()

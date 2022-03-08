@@ -38,24 +38,26 @@ func (w *Window) configureFonts() {
 }
 
 func (w *Window) createFont(size float32, atlas imgui.FontAtlas, config imgui.FontConfig) (font imgui.Font) {
+	fontSize := size * w.pointSize
+
 	font = atlas.AddFontFromMemoryTTFV(
 		rsc.FontTTF(),
-		size*w.pointSize,
+		fontSize,
 		config,
 		atlas.GlyphRangesCyrillic(),
 	)
 
-	iconSize := (size - 2) * w.pointSize
-
 	config.SetMergeMode(true)
-	config.SetGlyphMaxAdvanceX(iconSize)
+	config.SetPixelSnapH(true)
+	config.SetGlyphOffsetY(2)
+	config.SetGlyphMaxAdvanceX(fontSize)
 
 	glyphsBuilder := imgui.GlyphRangesBuilder{}
-	glyphsBuilder.Add(icon.FaMin, icon.FaMax)
+	glyphsBuilder.Add(icon.RangeMin, icon.RangeMax)
 
 	atlas.AddFontFromMemoryTTFV(
 		rsc.FontIconsTTF(),
-		iconSize,
+		fontSize,
 		config,
 		glyphsBuilder.Build().GlyphRanges,
 	)

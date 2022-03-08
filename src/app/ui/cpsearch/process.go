@@ -107,14 +107,14 @@ func (s *Search) showResult(idx int) {
 	imgui.TextDisabled("|")
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(icon.FaSearch+"##jump_to_", instance.Id())) {
+	if imgui.Button(fmt.Sprint(icon.Search+"##jump_to_", instance.Id())) {
 		s.jumpTo(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Jump To")
 
 	imgui.SameLine()
 
-	if imgui.Button(fmt.Sprint(icon.FaEyeDropper+"##select_", instance.Id())) {
+	if imgui.Button(fmt.Sprint(icon.EyeDropper+"##select_", instance.Id())) {
 		s.selectInstance(idx)
 	}
 	imguiext.SetItemHoveredTooltip("Select")
@@ -123,7 +123,7 @@ func (s *Search) showResult(idx int) {
 }
 
 func (s *Search) showFilterButton() {
-	imgui.Button(icon.FaFilter)
+	imgui.Button(icon.FilterAlt)
 
 	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
 		imgui.Text("Bounds")
@@ -157,12 +157,12 @@ func (s *Search) inputBoundWidth() float32 {
 }
 
 func (s *Search) showJumpButtons() {
-	if imgui.Button(icon.FaArrowUp) {
+	if imgui.Button(icon.ArrowUpward) {
 		s.jumpToUp()
 	}
 	imguiext.SetItemHoveredTooltip("Previous Result (Shift+F3)")
 	imgui.SameLine()
-	if imgui.Button(icon.FaArrowDown) {
+	if imgui.Button(icon.ArrowDownward) {
 		s.jumpToDown()
 	}
 	imguiext.SetItemHoveredTooltip("Next Result (F3)")

@@ -1,43 +1,37 @@
 package icon
 
-/*
-https://fontawesome.com/v5/search?m=free
-https://raw.githubusercontent.com/juliettef/IconFontCppHeaders/8cac2b5d9cfc566d3fa90bf6820a95e3c5ed5478/IconsFontAwesome5.h
-*/
-
 const (
-	FaMin rune = 0xe005
-	FaMax rune = 0xf8ff
+	RangeMin rune = 0xe900
+	RangeMax rune = 0xe91b
 )
 
 const (
-	FaMinus          = "\uf068"
-	FaPlus           = "\uf067"
-	FaEyeDropper     = "\uf1fb"
-	FaEraser         = "\uf12d"
-	FaCopy           = "\uf0c5"
-	FaPaste          = "\uf0ea"
-	FaCut            = "\uf0c4"
-	FaSearch         = "\uf002"
-	FaTrash          = "\uf1f8"
-	FaPlusSquare     = "\uf0fe"
-	FaUndo           = "\uf0e2"
-	FaRedo           = "\uf01e"
-	FaArrowUp        = "\uf062"
-	FaArrowDown      = "\uf063"
-	FaSave           = "\uf0c7"
-	FaFolderOpen     = "\uf07c"
-	FaWrench         = "\uf0ad"
-	FaWindowRestore  = "\uf2d2"
-	FaFile           = "\uf15b"
-	FaFilter         = "\uf0b0"
-	FaTimes          = "\uf00d"
-	FaCog            = "\uf013"
-	FaBorderAll      = "\uf84c"
-	FaBorderStyle    = "\uf853"
-	FaQuestionCircle = "\uf059"
-	FaGlasses        = "\uf530"
-	FaEye            = "\uf06e"
-	FaClipboardList  = "\uf46d"
-	FaArrowCircleUp  = "\uf0aa"
+	ClipboardMultiple = "\ue900"
+	Cog               = "\ue901"
+	WindowRestore     = "\ue902"
+	Wrench            = "\ue903"
+	FolderOpen        = "\ue904"
+	Eraser            = "\ue905"
+	EyeDropper        = "\ue906"
+	Add               = "\ue907"
+	Remove            = "\ue908"
+	AddBox            = "\ue909"
+	Clear             = "\ue90a"
+	ContentCopy       = "\ue90b"
+	ContentCut        = "\ue90c"
+	ContentPaste      = "\ue90d"
+	Redo              = "\ue90e"
+	Save              = "\ue90f"
+	Undo              = "\ue910"
+	BorderAll         = "\ue911"
+	BorderStyle       = "\ue912"
+	File              = "\ue913"
+	Eye               = "\ue914"
+	ArrowUpward       = "\ue915"
+	ArrowDownward     = "\ue916"
+	Delete            = "\ue917"
+	Help              = "\ue918"
+	Search            = "\ue919"
+	SystemUpdate      = "\ue91a"
+	FilterAlt         = "\ue91b"
 )

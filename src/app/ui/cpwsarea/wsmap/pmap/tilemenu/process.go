@@ -36,26 +36,26 @@ func (t *TileMenu) Process() {
 func (t *TileMenu) showControls() {
 	w.Layout{
 		w.MenuItem("Undo", t.app.DoUndo).
-			Icon(icon.FaUndo).
+			Icon(icon.Undo).
 			Enabled(t.app.CommandStorage().HasUndo()).
 			Shortcut(shortcut.KeyModName(), "Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
-			Icon(icon.FaRedo).
+			Icon(icon.Redo).
 			Enabled(t.app.CommandStorage().HasRedo()).
 			Shortcut(shortcut.KeyModName(), "Shift", "Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
-			Icon(icon.FaCopy).
+			Icon(icon.ContentCopy).
 			Shortcut(shortcut.KeyModName(), "C"),
 		w.MenuItem("Paste", t.app.DoPaste).
-			Icon(icon.FaPaste).
+			Icon(icon.ContentPaste).
 			Enabled(t.app.Clipboard().HasData()).
 			Shortcut(shortcut.KeyModName(), "V"),
 		w.MenuItem("Cut", t.app.DoCut).
-			Icon(icon.FaCut).
+			Icon(icon.ContentCut).
 			Shortcut(shortcut.KeyModName(), "X"),
 		w.MenuItem("Delete", t.app.DoDelete).
-			Icon(icon.FaEraser).
+			Icon(icon.Eraser).
 			Shortcut("Delete"),
 		w.Separator(),
 		w.Custom(func() {
@@ -99,18 +99,18 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
 					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)).
-						Icon(icon.FaArrowUp),
+						Icon(icon.ArrowUpward),
 					w.MenuItem(fmt.Sprint("Move to Bottom##move_to_bottom_", idx), t.doMoveToBottom(i)).
-						Icon(icon.FaArrowDown),
+						Icon(icon.ArrowDownward),
 					w.Separator(),
 				}.Build()
 			}
 		}),
 		w.MenuItem(fmt.Sprint("Select##select_", idx), t.doSelect(i)).
-			Icon(icon.FaEyeDropper).
+			Icon(icon.EyeDropper).
 			Shortcut("S"),
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)).
-			Icon(icon.FaEraser).
+			Icon(icon.Eraser).
 			Shortcut("D"),
 		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
 			IconEmpty().

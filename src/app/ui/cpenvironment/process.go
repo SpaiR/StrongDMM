@@ -25,7 +25,7 @@ func (e *Environment) Process() {
 }
 
 func (e *Environment) showControls() {
-	w.Button(icon.FaMinus, e.doCollapseAll).
+	w.Button(icon.Remove, e.doCollapseAll).
 		Tooltip("Collapse All").
 		Round(true).
 		Build()
@@ -49,7 +49,7 @@ func (e *Environment) showTypesFilterButton() {
 		bStyle = style.ButtonGreen{}
 	}
 
-	w.Button(icon.FaEye, e.doToggleTypesFilter).
+	w.Button(icon.Eye, e.doToggleTypesFilter).
 		Tooltip("Types Filter (F)").
 		Round(true).
 		Style(bStyle).

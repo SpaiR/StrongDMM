@@ -15,7 +15,7 @@ func (e *Environment) showNodeMenu(n *treeNode) {
 	if imgui.BeginPopupContextItemV(fmt.Sprint("environment_node_menu_", n.orig.Path), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
 			w.MenuItem("Find on Map", e.doFindOnMap(n)).
-				Icon(icon.FaSearch).
+				Icon(icon.Search).
 				Enabled(e.app.HasActiveMap()),
 		}.Build()
 		imgui.EndPopup()

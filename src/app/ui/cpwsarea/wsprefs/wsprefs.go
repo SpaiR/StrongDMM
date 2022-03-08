@@ -29,7 +29,7 @@ func New(app App, prefs Prefs) *WsPrefs {
 }
 
 func (ws *WsPrefs) Name() string {
-	return icon.FaWrench + " Preferences"
+	return icon.Wrench + " Preferences"
 }
 
 func (ws *WsPrefs) Title() string {
@@ -135,7 +135,7 @@ func showOptionPref(pref OptionPref) {
 func showHelp(helpText string) {
 	if helpText != "" {
 		imgui.SameLine()
-		imgui.TextDisabled(icon.FaQuestionCircle)
+		imgui.TextDisabled(icon.Help)
 		imguiext.SetItemHoveredTooltip(helpText)
 	}
 }

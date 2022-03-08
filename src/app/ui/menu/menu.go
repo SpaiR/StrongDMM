@@ -104,11 +104,11 @@ func (m *Menu) Process() {
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
 			w.MenuItem("New Workspace", m.app.DoNewWorkspace).
-				Icon(icon.FaFile).
+				Icon(icon.File).
 				Shortcut(shortcut.KeyModName(), "N"),
 			w.Separator(),
 			w.MenuItem("Open Environment...", m.app.DoOpenEnvironment).
-				Icon(icon.FaFolderOpen),
+				Icon(icon.FolderOpen),
 			w.Menu("Recent Environments", w.Layout{
 				w.Custom(func() {
 					for _, recentEnvironment := range m.app.RecentEnvironments() {
@@ -119,7 +119,7 @@ func (m *Menu) Process() {
 					w.Layout{
 						w.Separator(),
 						w.MenuItem("Clear Recent Environments", m.app.DoClearRecentEnvironments).
-							Icon(icon.FaTrash),
+							Icon(icon.Delete),
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentEnvironments()) != 0),
@@ -128,7 +128,7 @@ func (m *Menu) Process() {
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()),
 			w.MenuItem("Open Map...", m.app.DoOpenMap).
-				Icon(icon.FaFolderOpen).
+				Icon(icon.FolderOpen).
 				Enabled(m.app.HasLoadedEnvironment()).
 				Shortcut(shortcut.KeyModName(), "O"),
 			w.Menu("Recent Maps", w.Layout{
@@ -141,7 +141,7 @@ func (m *Menu) Process() {
 					w.Layout{
 						w.Separator(),
 						w.MenuItem("Clear Recent Maps", m.app.DoClearRecentMaps).
-							Icon(icon.FaTrash),
+							Icon(icon.Delete),
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(m.app.HasLoadedEnvironment() && len(m.app.RecentMapsByLoadedEnvironment()) != 0),
@@ -152,12 +152,12 @@ func (m *Menu) Process() {
 				Shortcut(shortcut.KeyModName(), "Shift", "W"),
 			w.Separator(),
 			w.MenuItem("Save", m.app.DoSave).
-				Icon(icon.FaSave).
+				Icon(icon.Save).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(shortcut.KeyModName(), "S"),
 			w.Separator(),
 			w.MenuItem("Preferences", m.app.DoOpenPreferences).
-				Icon(icon.FaWrench),
+				Icon(icon.Wrench),
 			w.Separator(),
 			w.MenuItem("Exit", m.app.DoExit).
 				IconEmpty().
@@ -166,33 +166,33 @@ func (m *Menu) Process() {
 
 		w.Menu("Edit", w.Layout{
 			w.MenuItem("Undo", m.app.DoUndo).
-				Icon(icon.FaUndo).
+				Icon(icon.Undo).
 				Enabled(m.app.CommandStorage().HasUndo()).
 				Shortcut(shortcut.KeyModName(), "Z"),
 			w.MenuItem("Redo", m.app.DoRedo).
-				Icon(icon.FaRedo).
+				Icon(icon.Redo).
 				Enabled(m.app.CommandStorage().HasRedo()).
 				Shortcut(shortcut.KeyModName(), "Shift", "Z"),
 			w.Separator(),
 			w.MenuItem("Copy", m.app.DoCopy).
-				Icon(icon.FaCopy).
+				Icon(icon.ContentCopy).
 				Shortcut(shortcut.KeyModName(), "C"),
 			w.MenuItem("Paste", m.app.DoPaste).
-				Icon(icon.FaPaste).
+				Icon(icon.ContentPaste).
 				Enabled(m.app.Clipboard().HasData()).
 				Shortcut(shortcut.KeyModName(), "V"),
 			w.MenuItem("Cut", m.app.DoCut).
-				Icon(icon.FaCut).
+				Icon(icon.ContentCut).
 				Shortcut(shortcut.KeyModName(), "X"),
 			w.MenuItem("Delete", m.app.DoDelete).
-				Icon(icon.FaEraser).
+				Icon(icon.Eraser).
 				Shortcut("Delete"),
 			w.MenuItem("Deselect", m.app.DoDeselect).
 				IconEmpty().
 				Shortcut(shortcut.KeyModName(), "D"),
 			w.Separator(),
 			w.MenuItem("Search", m.app.DoSearch).
-				Icon(icon.FaSearch).
+				Icon(icon.Search).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(shortcut.KeyModName(), "F"),
 		}),
@@ -236,12 +236,12 @@ func (m *Menu) Process() {
 
 		w.Menu("Window", w.Layout{
 			w.MenuItem("Reset Layout", m.app.DoResetLayout).Shortcut("F5").
-				Icon(icon.FaWindowRestore),
+				Icon(icon.WindowRestore),
 		}),
 
 		w.Menu("Help", w.Layout{
 			w.MenuItem("Changelog", m.app.DoOpenChangelog).
-				Icon(icon.FaClipboardList),
+				Icon(icon.ClipboardMultiple),
 			w.MenuItem("About", m.app.DoOpenAbout).
 				IconEmpty(),
 			w.MenuItem("Source Code", m.app.DoOpenSourceCode).

@@ -19,18 +19,18 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 	if imgui.BeginPopupContextItemV(fmt.Sprintf("context_menu_%d", node.orig.Id()), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
 			w.MenuItem("Copy ID", p.doCopyId(node)).
-				Icon(icon.FaCopy),
+				Icon(icon.ContentCopy),
 			w.MenuItem("Copy Type", p.doCopyType(node)).
-				Icon(icon.FaCopy),
+				Icon(icon.ContentCopy),
 			w.Separator(),
 			w.MenuItem("Find on Map", p.doFindOnMap(node)).
-				Icon(icon.FaSearch).
+				Icon(icon.Search).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
 			w.MenuItem("New", p.doNew(node)).
-				Icon(icon.FaPlusSquare),
+				Icon(icon.AddBox),
 			w.MenuItem("Delete", p.doDelete(node)).
-				Icon(icon.FaEraser),
+				Icon(icon.Eraser),
 			w.Separator(),
 			w.MenuItem("Generate icon states", p.doGenerateIconStates(node)).
 				IconEmpty(),

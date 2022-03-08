@@ -85,7 +85,7 @@ func (v *VarEditor) showPrefabModeButton() {
 
 func (v *VarEditor) showControls() {
 	imgui.BeginDisabledV(v.sessionEditMode == emPrefab)
-	w.Button(icon.FaSearch, func() {
+	w.Button(icon.Search, func() {
 		editor := v.app.CurrentEditor()
 		editor.FocusCamera(v.instance)
 		editor.OverlaySetTileFlick(v.instance.Coord())
@@ -95,7 +95,7 @@ func (v *VarEditor) showControls() {
 
 	imgui.SameLine()
 
-	w.Button(icon.FaCog, nil).
+	w.Button(icon.Cog, nil).
 		Round(true).
 		Build()
 
@@ -250,7 +250,7 @@ func (v *VarEditor) showVarInput(varName string) {
 
 	var resetBtn *w.ButtonWidget
 	if isModified {
-		resetBtn = w.Button(icon.FaUndo+"##"+varName, func() {
+		resetBtn = w.Button(icon.Undo+"##"+varName, func() {
 			v.setCurrentVariable(varName, initialValue)
 		}).Tooltip(initialValue).Style(style.ButtonFrame{})
 	}
