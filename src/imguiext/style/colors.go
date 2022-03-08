@@ -18,9 +18,9 @@ var (
 	ColorRedLighter = intHsl2col(4, 60, 57)
 	ColorRedDarker  = intHsl2col(4, 60, 37)
 
-	ColorFireCoral        = intHsl2col(357, 100, 63)
-	ColorFireCoralLighter = intHsl2col(357, 100, 73)
-	ColorFireCoralDarker  = intHsl2col(357, 100, 53)
+	ColorFireCoral        = intHsl2col(360, 50, 50)
+	ColorFireCoralLighter = intHsl2col(360, 50, 60)
+	ColorFireCoralDarker  = intHsl2col(360, 50, 40)
 
 	ColorGreen1        = intHsl2col(112, 89, 28)
 	ColorGreen1Lighter = intHsl2col(112, 89, 38)
