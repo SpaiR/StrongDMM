@@ -6,7 +6,6 @@ import (
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
-	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
@@ -54,22 +53,25 @@ var (
 )
 
 func (p *PaneMap) showToolsPanel() {
-	p.showTools()
+	w.Layout{
+		p.layoutTools(),
+	}.Build()
 	if p.dmm.MaxZ != 1 {
 		imgui.SameLine()
-		imgui.TextDisabled("|")
-		p.showLevelButtons()
+		w.Layout{
+			p.layoutLevels(),
+		}.BuildV(w.AlignRight)
 	}
 }
 
-func (p *PaneMap) showTools() {
+func (p *PaneMap) layoutTools() (layout w.Layout) {
 	for idx, toolName := range toolsOrder {
 		if idx > 0 || idx < len(toolsOrder)-1 {
-			imgui.SameLine()
+			layout = append(layout, w.SameLine())
 		}
 
 		if toolName == tSeparator {
-			imgui.TextDisabled("|")
+			layout = append(layout, w.TextDisabled("|"))
 			continue
 		}
 
@@ -78,7 +80,8 @@ func (p *PaneMap) showTools() {
 
 		btn := w.Button(desc.icon, func() {
 			tools.SetSelected(toolName)
-		}).Round(true)
+		}).Round(true).Tooltip(desc.help)
+
 		if tools.Selected() == tool {
 			if tool.AltBehaviour() {
 				btn.Style(style.ButtonGold{}).TextColor(style.ColorBlack)
@@ -86,32 +89,26 @@ func (p *PaneMap) showTools() {
 				btn.Style(style.ButtonGreen{})
 			}
 		}
-		btn.Build()
 
-		imguiext.SetItemHoveredTooltip(desc.help)
+		layout = append(layout, btn)
 	}
+	return layout
 }
 
-func (p *PaneMap) showLevelButtons() {
-	imgui.BeginDisabledV(!p.hasPreviousLevel())
-	imgui.SameLine()
-
-	w.Button(icon.ArrowDownward, p.doPreviousLevel).
-		Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
-		Round(true).
-		Build()
-
-	imgui.EndDisabled()
-
-	imgui.BeginDisabledV(!p.hasNextLevel())
-	imgui.SameLine()
-
-	w.Button(icon.ArrowUpward, p.doNextLevel).
-		Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
-		Round(true).
-		Build()
-
-	imgui.EndDisabled()
+func (p *PaneMap) layoutLevels() (layout w.Layout) {
+	return w.Layout{
+		w.Disabled(!p.hasPreviousLevel(), w.Layout{
+			w.Button(icon.ArrowDownward, p.doPreviousLevel).
+				Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
+				Round(true),
+		}),
+		w.SameLine(),
+		w.Disabled(!p.hasNextLevel(), w.Layout{
+			w.Button(icon.ArrowUpward, p.doNextLevel).
+				Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
+				Round(true),
+		}),
+	}
 }
 
 func (p *PaneMap) doPreviousLevel() {
