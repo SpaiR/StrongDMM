@@ -10,7 +10,7 @@ require (
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/mazznoer/csscolorparser v0.1.1
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	github.com/sqweek/dialog v0.0.0-20200911184034-8a3d98e8211d
+	github.com/sqweek/dialog v0.0.0-20220227145630-7a1c9e333fcf
 )
 
 require (
