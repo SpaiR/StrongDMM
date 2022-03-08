@@ -1,13 +1,16 @@
 package menu
 
 import (
+	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmclip"
 	"sdmm/imguiext/icon"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+	"sdmm/rsc"
 )
 
 //goland:noinspection GoCommentStart
@@ -50,6 +53,7 @@ type app interface {
 	DoOpenAbout()
 	DoOpenLogs()
 	DoOpenSourceCode()
+	DoOpenSupport()
 
 	// Other
 	DoSelfUpdate()
@@ -249,6 +253,12 @@ func (m *Menu) Process() {
 			w.Separator(),
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
 				IconEmpty(),
+			w.Separator(),
+			w.Button("Support", m.app.DoOpenSupport).
+				Size(imgui.Vec2{X: -1}).
+				Style(style.ButtonFireCoral{}).
+				Tooltip(rsc.SupportTxt).
+				Icon(icon.KoFi),
 		}),
 
 		w.Custom(func() {

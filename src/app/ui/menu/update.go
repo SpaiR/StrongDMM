@@ -11,10 +11,10 @@ import (
 var loadingDotTypes = []string{".", "..", "...", "...."}
 
 func (m *Menu) showUpdateMenu() {
-	imgui.PushStyleColor(imgui.StyleColorText, imgui.CurrentStyle().Color(imgui.StyleColorCheckMark))
-	imgui.PushStyleColor(imgui.StyleColorButton, style.ColorTransparent)
-	w.Button(icon.SystemUpdate, nil).Build()
-	imgui.PopStyleColorV(2)
+	w.Button(icon.SystemUpdate, nil).
+		Style(style.ButtonFrame{}).
+		TextColor(imgui.CurrentStyle().Color(imgui.StyleColorCheckMark)).
+		Build()
 
 	imguiext.SetItemHoveredTooltip("New update available!")
 

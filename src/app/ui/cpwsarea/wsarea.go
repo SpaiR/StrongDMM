@@ -23,6 +23,7 @@ type App interface {
 	wsmap.App
 	wsprefs.App
 	wsnewmap.App
+	wschangelog.App
 
 	DoOpenMapByPathV(mapPath string, workspace *workspace.Workspace)
 	DoOpenMapByPath(path string)
@@ -82,7 +83,7 @@ func (w *WsArea) OpenChangelog() {
 			return
 		}
 	}
-	w.addWorkspace(workspace.New(wschangelog.New()))
+	w.addWorkspace(workspace.New(wschangelog.New(w.app)))
 }
 
 func (w *WsArea) OpenNewMap() {
@@ -391,7 +392,7 @@ func (w *WsArea) isWorkspaceUnsaved(ws *workspace.Workspace) bool {
 }
 
 func (w *WsArea) isChangelogHashModified() bool {
-	if hash := util.Djb2(rsc.Changelog); hash != w.config().LastChangelogHash {
+	if hash := util.Djb2(rsc.ChangelogMd); hash != w.config().LastChangelogHash {
 		w.config().LastChangelogHash = hash
 		w.app.ConfigSaveV(w.config())
 		return true

@@ -211,6 +211,14 @@ func (a *app) DoOpenSourceCode() {
 	}
 }
 
+// DoOpenSupport opens support page.
+func (a *app) DoOpenSupport() {
+	log.Println("[app] open source code:", env.Support)
+	if err := open.Run(env.Support); err != nil {
+		log.Println("[app] unable to open support page:", err)
+	}
+}
+
 // DoCopy copies currently selected (hovered) tiles to the global clipboard.
 func (a *app) DoCopy() {
 	log.Println("[app] do copy")

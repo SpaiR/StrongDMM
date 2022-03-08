@@ -93,3 +93,18 @@ func (ButtonFrame) ActiveColor() imgui.Vec4 {
 func (ButtonFrame) HoverColor() imgui.Vec4 {
 	return imgui.CurrentStyle().Color(imgui.StyleColorFrameBgHovered)
 }
+
+type ButtonFireCoral struct {
+}
+
+func (ButtonFireCoral) NormalColor() imgui.Vec4 {
+	return ColorFireCoral
+}
+
+func (ButtonFireCoral) ActiveColor() imgui.Vec4 {
+	return ColorFireCoralDarker
+}
+
+func (ButtonFireCoral) HoverColor() imgui.Vec4 {
+	return ColorFireCoralLighter
+}

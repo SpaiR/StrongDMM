@@ -7,8 +7,11 @@ import (
 
 var (
 	//go:embed about.txt
-	aboutTxt  string
-	Changelog string
+	aboutTxt string
+	//go:embed support.txt
+	SupportTxt string
+
+	ChangelogMd string
 )
 
 func AboutTxt(version, revision string) string {

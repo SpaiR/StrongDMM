@@ -2,7 +2,7 @@ package icon
 
 const (
 	RangeMin rune = 0xe900
-	RangeMax rune = 0xe91c
+	RangeMax rune = 0xe91d
 )
 
 const (
@@ -35,4 +35,5 @@ const (
 	SystemUpdate      = "\ue91a"
 	FilterAlt         = "\ue91b"
 	GitHub            = "\ue91c"
+	KoFi              = "\ue91d"
 )
