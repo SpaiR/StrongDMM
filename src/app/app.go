@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/matishsiao/goInfo"
 	"io"
 	"log"
 	"math/rand"
@@ -34,6 +35,16 @@ func Start() {
 	logDir := initializeLogger(internalDir)
 
 	log.Printf("%s, %s", env.Title, env.Version)
+
+	if osInfo, err := goInfo.GetInfo(); err == nil {
+		log.Println("Kernel:", osInfo.Kernel)
+		log.Println("Core:", osInfo.Core)
+		log.Println("Platform:", osInfo.Platform)
+		log.Println("OS:", osInfo.OS)
+		log.Println("CPUs:", osInfo.CPUs)
+		log.Println("Runtime:", runtime.Version())
+	}
+
 	log.Println("[app] starting")
 	log.Println("[app] internal dir:", internalDir)
 	log.Println("[app] log dir:", logDir)
