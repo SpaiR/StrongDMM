@@ -1,4 +1,4 @@
-# WIP.alpha
+# v2.1.0.alpha
 
 ### Support the Project!
 If you like StrongDMM and really want to show that to the author, you can now do that!
