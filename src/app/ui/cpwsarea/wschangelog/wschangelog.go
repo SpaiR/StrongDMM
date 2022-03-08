@@ -61,10 +61,7 @@ func (ws *WsChangelog) showContent() {
 				markdown.ShowHeader("StrongDMM Changelog", window.FontH3)
 			}),
 			w.Separator(),
-			w.TextWrapped("Found an issue? Please report it to the bugtracker. " +
-				"Any sort of help is appreciated! " +
-				"If you have ideas to improve the editor, share them as well."),
-			w.TextWrapped("If you like StrongDMM, feel free to Star the project on GitHub!"),
+			w.TextWrapped(rsc.ChangelogHeaderTxt),
 			w.NewLine(),
 			w.Button("Open Source Code", ws.app.DoOpenSourceCode).
 				Icon(icon.GitHub),

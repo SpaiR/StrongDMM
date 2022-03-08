@@ -6,10 +6,12 @@ import (
 )
 
 var (
-	//go:embed about.txt
+	//go:embed txt/about.txt
 	aboutTxt string
-	//go:embed support.txt
+	//go:embed txt/support.txt
 	SupportTxt string
+	//go:embed txt/changelog-header.txt
+	ChangelogHeaderTxt string
 
 	ChangelogMd string
 )
