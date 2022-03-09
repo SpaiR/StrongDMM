@@ -151,8 +151,10 @@ func (m *Menu) Process() {
 			}).IconEmpty().Enabled(m.app.HasLoadedEnvironment() && len(m.app.RecentMapsByLoadedEnvironment()) != 0),
 			w.Separator(),
 			w.MenuItem("Close", m.app.DoClose).
+				IconEmpty().
 				Shortcut(shortcut.KeyModName(), "W"),
 			w.MenuItem("Close All", m.app.DoCloseAll).
+				IconEmpty().
 				Shortcut(shortcut.KeyModName(), "Shift", "W"),
 			w.Separator(),
 			w.MenuItem("Save", m.app.DoSave).
