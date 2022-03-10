@@ -13,7 +13,7 @@ var loadingDotTypes = []string{".", "..", "...", "...."}
 func (m *Menu) showUpdateMenu() {
 	w.Button(icon.SystemUpdate, nil).
 		Style(style.ButtonFrame{}).
-		TextColor(imgui.CurrentStyle().Color(imgui.StyleColorCheckMark)).
+		TextColor(style.ColorGreen1Lighter).
 		Build()
 
 	imguiext.SetItemHoveredTooltip("New update available!")
