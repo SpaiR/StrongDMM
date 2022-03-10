@@ -1,9 +1,9 @@
 # v2.1.0.alpha
 
-### Support the Project!
-If you like StrongDMM and really want to show that to the author, you can now do that!
-Appropriate links to a support page can be found in the editor and official GitHub page.
-Feel free to make any sort of donation. Your support will motivate to do more cool stuff!
+### Support StrongDMM!
+If you like StrongDMM and really want to show that to the author, now you can do that!
+Appropriate links to the support page can be found in the editor and official GitHub page.
+Feel free to make any sort of donation. Your support will motivate further StrongDMM development!
 
 ### Improvements and Fixes
  * Added an option to create new maps. The button can be found in menu: File->New Map; @LetterN

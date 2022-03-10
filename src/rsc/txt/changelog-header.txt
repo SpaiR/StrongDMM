@@ -1,2 +1,2 @@
 Found an issue? Please report it to the bugtracker. Any sort of help is appreciated! If you have ideas to improve the editor, share them as well.
-If you like StrongDMM, feel free to Star the project on GitHub! You can also support further StrongDMM development with any form of donations.
+If you like StrongDMM, feel free to Star the project on GitHub!
