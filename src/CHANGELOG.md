@@ -8,7 +8,7 @@ Feel free to make any sort of donation. Your support will motivate further Stron
 ### Improvements and Fixes
  * Added an option to create new maps. The button can be found in menu: File->New Map; @LetterN
  * Minor GUI improvements;
- * Fixed shortcuts helpers for a context menu @Arthur-Holiday
+ * Fixed shortcuts helpers for a context menu; @Arthur-Holiday
  * Fixed crush for Linux while opening environment.
 
 ---

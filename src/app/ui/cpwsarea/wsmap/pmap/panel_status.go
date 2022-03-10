@@ -30,7 +30,7 @@ func (p *PaneMap) layoutStatus() (layout w.Layout) {
 		layout = append(layout, w.TextFrame(fmt.Sprintf("X:%03d Y:%03d", t.X, t.Y)))
 	}
 
-	layout = append(layout, w.Tooltip(w.Text("Coordinates of the mouse")))
+	layout = append(layout, w.Tooltip(w.Text("Tile coordinates of the mouse")))
 
 	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !tools.Selected().AltBehaviour()) {
 		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
