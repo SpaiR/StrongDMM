@@ -17,7 +17,13 @@ func (w *textFrameWidget) Build() {
 	if w.width != 0 {
 		w.buttonWidget.size = imgui.Vec2{X: w.width}
 	}
-	w.buttonWidget.Build()
+	col := imgui.CurrentStyle().Color(imgui.StyleColorButton)
+	col.W = .5
+	w.buttonWidget.
+		NormalColor(col).
+		ActiveColor(col).
+		HoverColor(col).
+		Build()
 }
 
 func (w *textFrameWidget) CalcSize() imgui.Vec2 {
@@ -26,9 +32,6 @@ func (w *textFrameWidget) CalcSize() imgui.Vec2 {
 
 func TextFrame(text string) *textFrameWidget {
 	return &textFrameWidget{
-		buttonWidget: Button(text, nil).
-			NormalColor(imgui.CurrentStyle().Color(imgui.StyleColorFrameBg)).
-			ActiveColor(imgui.CurrentStyle().Color(imgui.StyleColorFrameBg)).
-			HoverColor(imgui.CurrentStyle().Color(imgui.StyleColorFrameBg)),
+		buttonWidget: Button(text, nil),
 	}
 }

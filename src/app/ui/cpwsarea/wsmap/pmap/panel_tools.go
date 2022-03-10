@@ -9,8 +9,8 @@ import (
 )
 
 type toolDesc struct {
-	icon string
-	help string
+	btnIcon string
+	tooltip w.Layout
 }
 
 const tSeparator = "toolsSeparator"
@@ -27,24 +27,59 @@ var (
 
 	toolsDesc = map[string]toolDesc{
 		tools.TNAdd: {
-			icon: icon.Add,
-			help: tools.TNAdd + " (1)\nClick - Place selected object\nAlt+Click - Place selected object with replace",
+			btnIcon: icon.Add,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNAdd),
+				w.SameLine(),
+				w.TextFrame("1"),
+				w.Separator(),
+				w.Text("Click - Place selected object\nAlt+Click - Place selected object with replace"),
+			},
 		},
 		tools.TNFill: {
-			icon: icon.BorderAll,
-			help: tools.TNFill + " (2)\nClick&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace",
+			btnIcon: icon.BorderAll,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNFill),
+				w.SameLine(),
+				w.TextFrame("2"),
+				w.Separator(),
+				w.Text("Click&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace"),
+			},
 		},
 		tools.TNGrab: {
-			icon: icon.BorderStyle,
-			help: tools.TNGrab + " (3)\nClick&Drag - Select the area / Move selection with visible objects inside",
+			btnIcon: icon.BorderStyle,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNGrab),
+				w.SameLine(),
+				w.TextFrame("3"),
+				w.Separator(),
+				w.Text("Click&Drag - Select the area / Move selection with visible objects inside"),
+			},
 		},
 		tools.TNPick: {
-			icon: icon.EyeDropper,
-			help: tools.TNPick + " (Hold S)\nClick - Pick hovered object",
+			btnIcon: icon.EyeDropper,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNPick),
+				w.SameLine(),
+				w.TextFrame("Hold S"),
+				w.Separator(),
+				w.Text("Click - Pick hovered object"),
+			},
 		},
 		tools.TNDelete: {
-			icon: icon.Eraser,
-			help: tools.TNDelete + " (Hold D)\nClick - Delete hovered object\nAlt+Click - Delete tile",
+			btnIcon: icon.Eraser,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNDelete),
+				w.SameLine(),
+				w.TextFrame("Hold D"),
+				w.Separator(),
+				w.Text("Click - Delete hovered object\nAlt+Click - Delete tile"),
+			},
 		},
 	}
 )
@@ -55,6 +90,8 @@ func (p *PaneMap) showToolsPanel() {
 
 func (p *PaneMap) layoutTools() (layout w.Layout) {
 	for idx, toolName := range toolsOrder {
+		var toolName = toolName // Closure (hello, js)
+
 		if idx > 0 || idx < len(toolsOrder)-1 {
 			layout = append(layout, w.SameLine())
 		}
@@ -67,9 +104,9 @@ func (p *PaneMap) layoutTools() (layout w.Layout) {
 		tool := tools.Tools()[toolName]
 		desc := toolsDesc[toolName]
 
-		btn := w.Button(desc.icon, func() {
+		btn := w.Button(desc.btnIcon, func() {
 			tools.SetSelected(toolName)
-		}).Round(true).Tooltip(desc.help)
+		}).Round(true)
 
 		if tools.Selected() == tool {
 			if tool.AltBehaviour() {
@@ -79,7 +116,7 @@ func (p *PaneMap) layoutTools() (layout w.Layout) {
 			}
 		}
 
-		layout = append(layout, btn)
+		layout = append(layout, btn, w.Tooltip(desc.tooltip))
 	}
 	return layout
 }

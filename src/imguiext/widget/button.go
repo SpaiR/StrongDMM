@@ -22,87 +22,102 @@ type ButtonWidget struct {
 	onClick     func()
 }
 
-func (b *ButtonWidget) Icon(icon string) *ButtonWidget {
-	b.icon = icon
-	return b
+func (w *ButtonWidget) Icon(icon string) *ButtonWidget {
+	w.icon = icon
+	return w
 }
 
-func (b *ButtonWidget) Tooltip(tooltip string) *ButtonWidget {
-	b.tooltip = tooltip
-	return b
+func (w *ButtonWidget) Tooltip(tooltip string) *ButtonWidget {
+	w.tooltip = tooltip
+	return w
 }
 
-func (b *ButtonWidget) Size(size imgui.Vec2) *ButtonWidget {
-	b.size = size
-	return b
+func (w *ButtonWidget) Size(size imgui.Vec2) *ButtonWidget {
+	w.size = size
+	return w
 }
 
-func (b *ButtonWidget) Round(round bool) *ButtonWidget {
-	b.round = round
-	return b
+func (w *ButtonWidget) Round(round bool) *ButtonWidget {
+	w.round = round
+	return w
 }
 
-func (b *ButtonWidget) Mouse(mouse imgui.MouseCursorID) *ButtonWidget {
-	b.mouseCursor = mouse
-	return b
+func (w *ButtonWidget) Mouse(mouse imgui.MouseCursorID) *ButtonWidget {
+	w.mouseCursor = mouse
+	return w
 }
 
-func (b *ButtonWidget) Style(style ButtonStyle) *ButtonWidget {
-	return b.NormalColor(style.NormalColor()).
+func (w *ButtonWidget) Style(style ButtonStyle) *ButtonWidget {
+	return w.NormalColor(style.NormalColor()).
 		ActiveColor(style.ActiveColor()).
 		HoverColor(style.HoverColor())
 }
 
-func (b *ButtonWidget) TextColor(color imgui.Vec4) *ButtonWidget {
-	b.textColor = color
-	return b
+func (w *ButtonWidget) TextColor(color imgui.Vec4) *ButtonWidget {
+	w.textColor = color
+	return w
 }
 
-func (b *ButtonWidget) NormalColor(color imgui.Vec4) *ButtonWidget {
-	b.normalColor = color
-	return b
+func (w *ButtonWidget) NormalColor(color imgui.Vec4) *ButtonWidget {
+	w.normalColor = color
+	return w
 }
 
-func (b *ButtonWidget) ActiveColor(color imgui.Vec4) *ButtonWidget {
-	b.activeColor = color
-	return b
+func (w *ButtonWidget) ActiveColor(color imgui.Vec4) *ButtonWidget {
+	w.activeColor = color
+	return w
 }
 
-func (b *ButtonWidget) HoverColor(color imgui.Vec4) *ButtonWidget {
-	b.hoverColor = color
-	return b
+func (w *ButtonWidget) HoverColor(color imgui.Vec4) *ButtonWidget {
+	w.hoverColor = color
+	return w
 }
 
-func (b *ButtonWidget) CalcSize() (size imgui.Vec2) {
-	labelSize := imgui.CalcTextSize(b.label, true, -1)
+func (w *ButtonWidget) CalcSize() (size imgui.Vec2) {
+	labelSize := imgui.CalcTextSize(w.label, true, -1)
 	padding := imgui.CurrentStyle().FramePadding()
-	return size.Plus(labelSize).Plus(b.size).Plus(padding.Times(2))
+	return size.Plus(labelSize).Plus(w.size).Plus(padding.Times(2))
 }
 
-func (b *ButtonWidget) Build() {
-	label := b.label
-	if len(b.icon) > 0 {
-		label = b.icon + " " + label
+func (w *ButtonWidget) Build() {
+	label := w.label
+	if len(w.icon) > 0 {
+		label = w.icon + " " + label
 	}
 
-	if b.round {
+	if w.round {
 		imgui.PushStyleVarFloat(imgui.StyleVarFrameRounding, 12)
 	}
-	imgui.PushStyleColor(imgui.StyleColorText, b.textColor)
-	imgui.PushStyleColor(imgui.StyleColorButton, b.normalColor)
-	imgui.PushStyleColor(imgui.StyleColorButtonActive, b.activeColor)
-	imgui.PushStyleColor(imgui.StyleColorButtonHovered, b.hoverColor)
-	if imgui.ButtonV(label, b.size) && b.onClick != nil {
-		b.onClick()
+
+	var styleCounter int
+	var emptyVec4 imgui.Vec4
+	if w.textColor != emptyVec4 {
+		imgui.PushStyleColor(imgui.StyleColorText, w.textColor)
+		styleCounter++
 	}
-	if b.tooltip != "" && imgui.IsItemHovered() {
-		imgui.SetTooltip(b.tooltip)
+	if w.normalColor != emptyVec4 {
+		imgui.PushStyleColor(imgui.StyleColorButton, w.normalColor)
+		styleCounter++
+	}
+	if w.activeColor != emptyVec4 {
+		imgui.PushStyleColor(imgui.StyleColorButtonActive, w.activeColor)
+		styleCounter++
+	}
+	if w.hoverColor != emptyVec4 {
+		imgui.PushStyleColor(imgui.StyleColorButtonHovered, w.hoverColor)
+		styleCounter++
+	}
+	if imgui.ButtonV(label, w.size) && w.onClick != nil {
+		w.onClick()
+	}
+	if w.tooltip != "" && imgui.IsItemHovered() {
+		imgui.SetTooltip(w.tooltip)
 	}
 	if imgui.IsItemHovered() {
-		imgui.SetMouseCursor(b.mouseCursor)
+		imgui.SetMouseCursor(w.mouseCursor)
 	}
-	imgui.PopStyleColorV(4)
-	if b.round {
+	imgui.PopStyleColorV(styleCounter)
+	if w.round {
 		imgui.PopStyleVar()
 	}
 }
@@ -114,10 +129,6 @@ func Button(label string, onClick func()) *ButtonWidget {
 		tooltip:     "",
 		size:        imgui.Vec2{},
 		mouseCursor: imgui.MouseCursorArrow,
-		textColor:   imgui.CurrentStyle().Color(imgui.StyleColorText),
-		normalColor: imgui.CurrentStyle().Color(imgui.StyleColorButton),
-		activeColor: imgui.CurrentStyle().Color(imgui.StyleColorButtonActive),
-		hoverColor:  imgui.CurrentStyle().Color(imgui.StyleColorButtonHovered),
 		onClick:     onClick,
 	}
 }
