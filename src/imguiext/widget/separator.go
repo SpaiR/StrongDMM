@@ -4,7 +4,7 @@ import "github.com/SpaiR/imgui-go"
 
 type separatorWidget struct{}
 
-func (s *separatorWidget) Build() {
+func (separatorWidget) Build() {
 	imgui.Separator()
 }
 

@@ -3,26 +3,62 @@ package pmap
 import (
 	"fmt"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
-
-	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/shortcut"
+	"sdmm/imguiext/icon"
+	w "sdmm/imguiext/widget"
 )
 
 func (p *PaneMap) showStatusPanel() {
+	w.Layout{
+		p.layoutStatus(),
+		w.SameLine(),
+		w.Custom(func() {
+			if p.dmm.MaxZ != 1 {
+				w.Layout{
+					p.layoutLevels(),
+				}.BuildV(w.AlignRight)
+			}
+		}),
+	}.Build()
+}
+
+func (p *PaneMap) layoutStatus() (layout w.Layout) {
 	if p.canvasState.HoverOutOfBounds() {
-		imgui.Text("[out of bounds]")
+		layout = append(layout, w.TextFrame("out of bounds"))
 	} else {
 		t := p.canvasState.HoveredTile()
-		if p.dmm.MaxZ > 1 {
-			imgui.Text(fmt.Sprintf("[X:%03d Y:%03d Z:%d]", t.X, t.Y, t.Z))
-		} else {
-			imgui.Text(fmt.Sprintf("[X:%03d Y:%03d]", t.X, t.Y))
-		}
+		layout = append(layout, w.TextFrame(fmt.Sprintf("X:%03d Y:%03d", t.X, t.Y)))
 	}
+
+	layout = append(layout, w.Tooltip(w.Text("Coordinates of the mouse")))
 
 	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !tools.Selected().AltBehaviour()) {
 		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
-			imgui.SameLine()
-			imgui.Text(hoveredInstance.Prefab().Path())
+			layout = append(layout, w.Layout{
+				w.SameLine(),
+				w.TextFrame(hoveredInstance.Prefab().Path()),
+			})
 		}
+	}
+
+	return layout
+}
+
+func (p *PaneMap) layoutLevels() (layout w.Layout) {
+	return w.Layout{
+		w.TextFrame(fmt.Sprintf("Z:%d", p.activeLevel)),
+		w.Tooltip(w.Text("Current Z-level")).OnHover(true),
+		w.SameLine(),
+		w.Disabled(!p.hasPreviousLevel(), w.Layout{
+			w.Button(icon.ArrowDownward, p.doPreviousLevel).
+				Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
+				Round(true),
+		}),
+		w.SameLine(),
+		w.Disabled(!p.hasNextLevel(), w.Layout{
+			w.Button(icon.ArrowUpward, p.doNextLevel).
+				Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
+				Round(true),
+		}),
 	}
 }

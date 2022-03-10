@@ -1,11 +1,8 @@
 package pmap
 
 import (
-	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
-	"sdmm/app/ui/shortcut"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
@@ -53,15 +50,7 @@ var (
 )
 
 func (p *PaneMap) showToolsPanel() {
-	w.Layout{
-		p.layoutTools(),
-	}.Build()
-	if p.dmm.MaxZ != 1 {
-		imgui.SameLine()
-		w.Layout{
-			p.layoutLevels(),
-		}.BuildV(w.AlignRight)
-	}
+	p.layoutTools().Build()
 }
 
 func (p *PaneMap) layoutTools() (layout w.Layout) {
@@ -93,22 +82,6 @@ func (p *PaneMap) layoutTools() (layout w.Layout) {
 		layout = append(layout, btn)
 	}
 	return layout
-}
-
-func (p *PaneMap) layoutLevels() (layout w.Layout) {
-	return w.Layout{
-		w.Disabled(!p.hasPreviousLevel(), w.Layout{
-			w.Button(icon.ArrowDownward, p.doPreviousLevel).
-				Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
-				Round(true),
-		}),
-		w.SameLine(),
-		w.Disabled(!p.hasNextLevel(), w.Layout{
-			w.Button(icon.ArrowUpward, p.doNextLevel).
-				Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
-				Round(true),
-		}),
-	}
 }
 
 func (p *PaneMap) doPreviousLevel() {

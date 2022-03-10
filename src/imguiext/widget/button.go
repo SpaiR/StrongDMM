@@ -97,6 +97,8 @@ func (b *ButtonWidget) Build() {
 	}
 	if b.tooltip != "" && imgui.IsItemHovered() {
 		imgui.SetTooltip(b.tooltip)
+	}
+	if imgui.IsItemHovered() {
 		imgui.SetMouseCursor(b.mouseCursor)
 	}
 	imgui.PopStyleColorV(4)

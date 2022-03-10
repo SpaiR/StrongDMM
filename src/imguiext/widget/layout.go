@@ -44,11 +44,11 @@ func (layout Layout) BuildV(align LayoutAlign) {
 	if indent != 0 {
 		imgui.IndentV(indent)
 	}
-	imgui.BeginGroup()
+	//imgui.BeginGroup()
 	for _, w := range layout {
 		w.Build()
 	}
-	imgui.EndGroup()
+	//imgui.EndGroup()
 	if indent != 0 {
 		imgui.UnindentV(indent)
 	}
