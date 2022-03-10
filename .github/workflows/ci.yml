@@ -7,7 +7,7 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     env:
-      LINT_VERSION: v1.44.0
+      LINT_VERSION: v1.44.2
     steps:
       - name: Setup Golang
         uses: actions/setup-go@v2
