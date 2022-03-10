@@ -3,7 +3,7 @@ package pmap
 import (
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
-	"sdmm/imguiext/icon"
+	"sdmm/imguiext/icon" //nolint
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
