@@ -29,7 +29,9 @@ func (a *app) checkForUpdates() {
 
 	a.menu.SetUpdateAvailable(manifest.Version, manifest.Description)
 
-	if remoteManifest.ForceUpdate {
+	// Do force update only if we're using a concrete editor version.
+	//goland:noinspection GoBoolExpressions
+	if remoteManifest.ForceUpdate && env.Version != env.Undefined {
 		a.selfUpdate()
 	}
 }

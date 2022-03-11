@@ -11,8 +11,6 @@ Feel free to make any sort of donation. Your support will motivate further Stron
  * Fixed shortcuts helpers for a context menu; @Arthur-Holiday
  * Fixed crush for Linux while opening environment.
 
----
-
 # v2.0.0.alpha
 
 ### Disclaimer!
