@@ -99,12 +99,6 @@ jobs:
       - name: Checkout Repostiry
         uses: actions/checkout@v2
 
-      - name: Generate Changelog
-        id: changelog
-        uses: metcalfc/changelog-generator@v1.0.0
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Download Release Files
         uses: actions/download-artifact@v2
         with:
@@ -118,7 +112,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          body: ${{ steps.changelog.outputs.changelog }}
           draft: true
           prerelease: false
           files: |
