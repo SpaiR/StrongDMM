@@ -36,7 +36,7 @@ func (p *panelQuickEdit) process() {
 
 func (p *panelQuickEdit) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
 	var nudgeVarName string
-	if p.app.Prefs().Save.NudgeMode == prefs.SaveNudgeModePixel {
+	if p.app.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixel {
 		if xAxis {
 			nudgeVarName = "pixel_x"
 		} else {

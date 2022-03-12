@@ -10,9 +10,9 @@ func (a *app) makePreferences() wsprefs.Prefs {
 	p := wsprefs.MakePrefs()
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
 	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
-	p.Add(wsprefs.GPSave, a.makePreferenceSaveFormat())
-	p.Add(wsprefs.GPSave, a.makePreferenceSaveSanitizeVariables())
-	p.Add(wsprefs.GPSave, a.makePreferenceSaveNudgeMode())
+	p.Add(wsprefs.GPEditor, a.makePreferenceEditorFormat())
+	p.Add(wsprefs.GPEditor, a.makePreferenceEditorSanitizeVariables())
+	p.Add(wsprefs.GPEditor, a.makePreferenceEditorNudgeMode())
 	return p
 }
 
@@ -57,19 +57,19 @@ func (a *app) makePreferenceControlsAltScrollBehaviour() wsprefs.BoolPref {
 	return p
 }
 
-func (a *app) makePreferenceSaveFormat() wsprefs.OptionPref {
+func (a *app) makePreferenceEditorFormat() wsprefs.OptionPref {
 	p := wsprefs.MakeOptionPref()
-	p.Name = "Format"
+	p.Name = "Save Format"
 	p.Desc = "Controls the format used by the editor to save the map."
-	p.Label = "##format"
+	p.Label = "##save_format"
 
 	p.FGet = func() string {
-		return a.preferencesConfig().Prefs.Save.Format
+		return a.preferencesConfig().Prefs.Editor.SaveFormat
 	}
 	p.FSet = func(value string) {
-		log.Println("[app] preferences changing, [save#format] to:", value)
+		log.Println("[app] preferences changing, [editor#save_format] to:", value)
 		cfg := a.preferencesConfig()
-		cfg.Prefs.Save.Format = value
+		cfg.Prefs.Editor.SaveFormat = value
 		a.ConfigSaveV(cfg)
 	}
 
@@ -79,38 +79,38 @@ func (a *app) makePreferenceSaveFormat() wsprefs.OptionPref {
 	return p
 }
 
-func (a *app) makePreferenceSaveSanitizeVariables() wsprefs.BoolPref {
+func (a *app) makePreferenceEditorSanitizeVariables() wsprefs.BoolPref {
 	p := wsprefs.MakeBoolPref()
 	p.Name = "Sanitize Variables"
 	p.Desc = "Enables sanitizing for variables which are declared on the map, but has the same value as initial."
 	p.Label = "##sanitize_variables"
 
 	p.FGet = func() bool {
-		return a.preferencesConfig().Prefs.Save.SanitizeVariables
+		return a.preferencesConfig().Prefs.Editor.SanitizeVariables
 	}
 	p.FSet = func(value bool) {
-		log.Println("[app] preferences changing, [save#sanitize_variables] to:", value)
+		log.Println("[app] preferences changing, [editor#sanitize_variables] to:", value)
 		cfg := a.preferencesConfig()
-		cfg.Prefs.Save.SanitizeVariables = value
+		cfg.Prefs.Editor.SanitizeVariables = value
 		a.ConfigSaveV(cfg)
 	}
 
 	return p
 }
 
-func (a *app) makePreferenceSaveNudgeMode() wsprefs.OptionPref {
+func (a *app) makePreferenceEditorNudgeMode() wsprefs.OptionPref {
 	p := wsprefs.MakeOptionPref()
 	p.Name = "Nudge Mode"
 	p.Desc = "Controls which variables will be changed during the nudge."
 	p.Label = "##nudge_mode"
 
 	p.FGet = func() string {
-		return a.preferencesConfig().Prefs.Save.NudgeMode
+		return a.preferencesConfig().Prefs.Editor.NudgeMode
 	}
 	p.FSet = func(value string) {
-		log.Println("[app] preferences changing, [save#nudge_mode] to:", value)
+		log.Println("[app] preferences changing, [editor#nudge_mode] to:", value)
 		cfg := a.preferencesConfig()
-		cfg.Prefs.Save.NudgeMode = value
+		cfg.Prefs.Editor.NudgeMode = value
 		a.ConfigSaveV(cfg)
 	}
 

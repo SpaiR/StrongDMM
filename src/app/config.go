@@ -25,6 +25,7 @@ func (a *app) ConfigRegister(cfg config.Config) {
 	} else {
 		// Try to do a migration. The result var will be a nil, if there is nothing to migrate.
 		if result, migrated := cfg.TryMigrate(rawCfg); migrated {
+			log.Println("[app] migrated config:", configFilePath)
 			config.SaveV(configFilePath, result)
 		}
 

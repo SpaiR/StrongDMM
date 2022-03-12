@@ -3,7 +3,7 @@ package prefs
 type Prefs struct {
 	Interface Interface
 	Controls  Controls
-	Save      Save
+	Editor    Editor
 }
 
 type Interface struct {
@@ -14,8 +14,8 @@ type Controls struct {
 	AltScrollBehaviour bool
 }
 
-type Save struct {
-	Format            string
+type Editor struct {
+	SaveFormat        string
 	NudgeMode         string
 	SanitizeVariables bool
 }

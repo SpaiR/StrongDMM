@@ -9,10 +9,10 @@ import (
 func (ws *WsMap) Save() bool {
 	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
 
-	savePrefs := ws.app.Prefs().Save
+	editorPrefs := ws.app.Prefs().Editor
 
 	var saveFormat dmmsave.Format
-	switch savePrefs.Format {
+	switch editorPrefs.SaveFormat {
 	case prefs.SaveFormatInitial:
 		saveFormat = dmmsave.FormatInitial
 	case prefs.SaveFormatTGM:
@@ -23,7 +23,7 @@ func (ws *WsMap) Save() bool {
 
 	dmmsave.Save(ws.app.LoadedEnvironment(), ws.paneMap.Dmm(), dmmsave.Config{
 		Format:            saveFormat,
-		SanitizeVariables: savePrefs.SanitizeVariables,
+		SanitizeVariables: editorPrefs.SanitizeVariables,
 	})
 
 	ws.app.CommandStorage().ForceBalance(ws.CommandStackId())

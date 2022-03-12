@@ -7,7 +7,7 @@ import (
 
 const (
 	preferencesConfigName    = "preferences"
-	preferencesConfigVersion = 1
+	preferencesConfigVersion = 2
 )
 
 type preferencesConfig struct {
@@ -19,9 +19,22 @@ func (preferencesConfig) Name() string {
 	return preferencesConfigName
 }
 
-func (preferencesConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
-	// nothing to do. yet...
-	return nil, migrated
+func (preferencesConfig) TryMigrate(cfg map[string]interface{}) (result map[string]interface{}, migrated bool) {
+	result = cfg
+
+	if uint(result["Version"].(float64)) == 1 {
+		result["Editor"] = result["Save"]
+		delete(result, "Save")
+
+		editorPrefs := result["Editor"].(map[string]interface{})
+		editorPrefs["Save Format"] = editorPrefs["Format"]
+		delete(editorPrefs, "Format")
+
+		result["Version"] = 2
+		migrated = true
+	}
+
+	return result, migrated
 }
 
 func (a *app) loadPreferencesConfig() {
@@ -32,9 +45,9 @@ func (a *app) loadPreferencesConfig() {
 			Interface: prefs.Interface{
 				Scale: 100,
 			},
-			Save: prefs.Save{
-				Format:    prefs.SaveFormatInitial,
-				NudgeMode: prefs.SaveNudgeModePixel,
+			Editor: prefs.Editor{
+				SaveFormat: prefs.SaveFormatInitial,
+				NudgeMode:  prefs.SaveNudgeModePixel,
 			},
 		},
 	})
