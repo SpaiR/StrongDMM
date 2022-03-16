@@ -90,7 +90,7 @@ func (v *VarEditor) showControls() {
 		editor.FocusCamera(v.instance)
 		editor.OverlaySetTileFlick(v.instance.Coord())
 		editor.OverlaySetInstanceFlick(v.instance)
-	}).Round(true).Build()
+	}).Tooltip("Find Instance").Round(true).Build()
 	imgui.EndDisabled()
 
 	imgui.SameLine()

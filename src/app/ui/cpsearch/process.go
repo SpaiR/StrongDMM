@@ -30,7 +30,7 @@ func (s *Search) Process() {
 }
 
 func (s *Search) showControls() {
-	if imgui.Button("Search") {
+	if imgui.Button(icon.Search) {
 		s.doSearch()
 	}
 	imgui.SameLine()
