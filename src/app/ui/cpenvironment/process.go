@@ -49,11 +49,17 @@ func (e *Environment) showTypesFilterButton() {
 		bStyle = style.ButtonGreen{}
 	}
 
-	w.Button(icon.Eye, e.doToggleTypesFilter).
-		Tooltip("Types Filter (F)").
-		Round(true).
-		Style(bStyle).
-		Build()
+	w.Layout{
+		w.Button(icon.Eye, e.doToggleTypesFilter).
+			Round(true).
+			Style(bStyle),
+		w.Tooltip(
+			w.AlignTextToFramePadding(),
+			w.Text("Types Filter"),
+			w.SameLine(),
+			w.TextFrame("F"),
+		),
+	}.Build()
 }
 
 func (e *Environment) showTree() {

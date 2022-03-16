@@ -1,3 +1,8 @@
+# v2.2.0.alpha (WIP)
+
+### Improvements and Fixes
+ * Minor GUI improvements.
+
 # v2.1.0.alpha
 
 ### Support StrongDMM!
