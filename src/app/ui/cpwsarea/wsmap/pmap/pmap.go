@@ -48,8 +48,6 @@ type App interface {
 
 	SyncPrefabs()
 	SyncVarEditor()
-
-	PointSize() float32
 }
 
 var (

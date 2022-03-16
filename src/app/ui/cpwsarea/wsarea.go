@@ -21,7 +21,6 @@ import (
 type App interface {
 	wsempty.App
 	wsmap.App
-	wsprefs.App
 	wsnewmap.App
 	wschangelog.App
 
@@ -33,8 +32,6 @@ type App interface {
 	OnWorkspaceSwitched()
 	CommandStorage() *command.Storage
 	IsLayoutReset() bool
-
-	PointSize() float32
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
@@ -73,7 +70,7 @@ func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
 			return
 		}
 	}
-	w.addWorkspace(workspace.New(wsprefs.New(w.app, prefsView)))
+	w.addWorkspace(workspace.New(wsprefs.New(prefsView)))
 }
 
 func (w *WsArea) OpenChangelog() {

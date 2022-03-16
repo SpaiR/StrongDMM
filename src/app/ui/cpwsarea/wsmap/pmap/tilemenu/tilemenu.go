@@ -20,8 +20,6 @@ type App interface {
 	DoCut()
 	DoDelete()
 
-	PointSize() float32
-
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
 

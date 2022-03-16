@@ -12,7 +12,6 @@ import (
 
 type App interface {
 	LoadedEnvironment() *dmenv.Dme
-	PointSize() float32
 	DoSelectPrefabByPath(string)
 	DoEditPrefabByPath(string)
 	DoSearchPrefab(prefabId uint64)

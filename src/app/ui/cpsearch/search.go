@@ -13,7 +13,6 @@ import (
 type App interface {
 	CurrentEditor() *editor.Editor
 	DoEditInstance(*dmminstance.Instance)
-	PointSize() float32
 	ShowLayout(name string, focus bool)
 }
 

@@ -31,14 +31,6 @@ func (a *app) IsLayoutReset() bool {
 	return a.tmpWindowCond == imgui.ConditionAlways
 }
 
-// PointSize returns application point size.
-// Point size is a value which helps to scale the application GUI.
-// For 100% scale points size will be 1. For 200% it will be 2.
-// So we multiply all the application sizes (like the font size) to the point size and get sort of DPI support.
-func (a *app) PointSize() float32 {
-	return a.masterWindow.PointSize()
-}
-
 // AddMouseChangeCallback adds a new mouse change callback and returns its ID.
 // ID could be used to remove callback in the future.
 func (a *app) AddMouseChangeCallback(cb func(uint, uint)) (callbackId int) {

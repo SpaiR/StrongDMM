@@ -16,8 +16,6 @@ var (
 )
 
 type App interface {
-	PointSize() float32
-
 	DoOpenSourceCode()
 	DoOpenSupport()
 }
@@ -51,7 +49,7 @@ func (ws *WsChangelog) showContent() {
 		parsedChangelog = markdown.Parse(rsc.ChangelogMd)
 	}
 
-	logoSize := 100 * ws.app.PointSize()
+	logoSize := 100 * window.PointSize()
 
 	w.Layout{
 		w.Image(imgui.TextureID(window.AppLogoTexture), logoSize, logoSize),

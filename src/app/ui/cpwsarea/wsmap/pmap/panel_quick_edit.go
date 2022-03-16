@@ -5,6 +5,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/app/window"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap"
@@ -53,7 +54,7 @@ func (p *panelQuickEdit) showNudgeOption(label string, xAxis bool, instance *dmm
 	pixelX := instance.Prefab().Vars().IntV(nudgeVarName, 0)
 	value := int32(pixelX)
 
-	imgui.SetNextItemWidth(p.app.PointSize() * 50)
+	imgui.SetNextItemWidth(window.PointSize() * 50)
 	if imgui.DragInt(label+"##"+nudgeVarName+p.editor.Dmm().Name, &value) {
 		origPrefab := instance.Prefab()
 
@@ -107,7 +108,7 @@ func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
 
 	label := fmt.Sprint("Dir##dir_", p.editor.Dmm().Name)
 
-	imgui.SetNextItemWidth(p.app.PointSize() * 50)
+	imgui.SetNextItemWidth(window.PointSize() * 50)
 	if imgui.SliderIntV(label, &value, 1, maxDirs, fmt.Sprint(dir), imgui.SliderFlagsNone) {
 		origPrefab := instance.Prefab()
 

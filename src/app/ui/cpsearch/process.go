@@ -3,6 +3,7 @@ package cpsearch
 import (
 	"fmt"
 	"log"
+	"sdmm/app/window"
 	"strconv"
 
 	"github.com/SpaiR/imgui-go"
@@ -153,7 +154,7 @@ func (s *Search) inputBound(label string, v *int32) {
 }
 
 func (s *Search) inputBoundWidth() float32 {
-	return s.app.PointSize() * 75
+	return window.PointSize() * 75
 }
 
 func (s *Search) showJumpButtons() {

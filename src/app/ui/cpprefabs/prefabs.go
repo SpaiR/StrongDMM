@@ -3,13 +3,13 @@ package cpprefabs
 import (
 	"log"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/app/window"
 
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 )
 
 type App interface {
-	PointSize() float32
 	DoSelectPrefab(*dmmprefab.Prefab)
 	DoEditPrefab(prefab *dmmprefab.Prefab)
 	DoSearchPrefab(prefabId uint64)
@@ -69,5 +69,5 @@ func (p *Prefabs) doSelect(node *prefabNode) {
 }
 
 func (p *Prefabs) iconSize() float32 {
-	return 32 * p.app.PointSize()
+	return 32 * window.PointSize()
 }

@@ -21,7 +21,7 @@ func (w *WsArea) showAppLogo(dockId int) {
 		winSize := imgui.WindowSize()
 		winPos := imgui.WindowPos()
 
-		size := imgui.Vec2{X: logoSize * w.app.PointSize(), Y: logoSize * w.app.PointSize()}
+		size := imgui.Vec2{X: logoSize * window.PointSize(), Y: logoSize * window.PointSize()}
 		pos := winPos.Plus(winSize.Minus(size).Times(.5))
 
 		imgui.SetCursorScreenPos(pos)

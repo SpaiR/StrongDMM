@@ -25,6 +25,10 @@ type application interface {
 	LayoutIniPath() string
 }
 
+var (
+	pointSize float32 = 1
+)
+
 type Window struct {
 	handle *glfw.Window
 
@@ -32,8 +36,6 @@ type Window struct {
 
 	mouseChangeCallbackId int
 	mouseChangeCallbacks  map[int]func(uint, uint)
-
-	pointSize float32
 }
 
 func (w *Window) Handle() *glfw.Window {
@@ -43,7 +45,7 @@ func (w *Window) Handle() *glfw.Window {
 func New(application application) *Window {
 	log.Println("[window] creating native window")
 
-	w := Window{application: application, pointSize: 1}
+	w := Window{application: application}
 	w.mouseChangeCallbacks = make(map[int]func(uint, uint))
 
 	log.Println("[window] setting up glfw")
@@ -76,13 +78,13 @@ func (w *Window) Dispose() {
 	w.disposeGlfw()
 }
 
-func (w *Window) PointSize() float32 {
-	return w.pointSize
+func PointSize() float32 {
+	return pointSize
 }
 
-func (w *Window) SetPointSize(pointSize float32) {
-	w.pointSize = pointSize
-	w.configureFonts()
+func SetPointSize(ps float32) {
+	pointSize = ps
+	configureFonts()
 	platform.UpdateFontsTexture()
 }
 

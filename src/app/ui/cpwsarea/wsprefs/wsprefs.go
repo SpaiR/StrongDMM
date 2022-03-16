@@ -9,22 +9,15 @@ import (
 	"sdmm/imguiext/markdown"
 )
 
-type App interface {
-	PointSize() float32
-}
-
 type WsPrefs struct {
 	workspace.Content
-
-	app App
 
 	prefs Prefs
 }
 
-func New(app App, prefs Prefs) *WsPrefs {
+func New(prefs Prefs) *WsPrefs {
 	return &WsPrefs{
 		prefs: prefs,
-		app:   app,
 	}
 }
 
@@ -58,7 +51,7 @@ func (ws *WsPrefs) showContent() {
 				showIntPref(pref)
 			}
 			if pref, ok := pref.(BoolPref); ok {
-				showBoolPref(pref, ws.app.PointSize())
+				showBoolPref(pref)
 			}
 			if pref, ok := pref.(OptionPref); ok {
 				showOptionPref(pref)
@@ -84,14 +77,14 @@ func showIntPref(pref IntPref) {
 	}
 }
 
-func showBoolPref(pref BoolPref, pointSize float32) {
+func showBoolPref(pref BoolPref) {
 	fToggle := func() {
 		pref.FSet(!pref.FGet())
 	}
 
 	markdown.ShowHeader(pref.Name, window.FontH3)
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: pointSize, Y: pointSize})
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: window.PointSize(), Y: window.PointSize()})
 	v := pref.FGet()
 	if imgui.Checkbox(pref.Label, &v) {
 		fToggle()

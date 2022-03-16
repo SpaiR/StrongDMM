@@ -222,7 +222,7 @@ func (a *app) dropTmpState() {
 }
 
 func (a *app) updateScale() {
-	a.masterWindow.SetPointSize(float32(a.preferencesConfig().Prefs.Interface.Scale) / 100)
+	window.SetPointSize(float32(a.preferencesConfig().Prefs.Interface.Scale) / 100)
 }
 
 // Checks the version of the layout in the user config data and the app itself.
