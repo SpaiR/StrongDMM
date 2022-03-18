@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.1.0.alpha",
+  "version": "v2.2.0.alpha",
   "forceUpdate": true,
-  "description": "* Option to create new maps\n* Minor GUI improvements and fixes",
+  "description": "* Settings to change map size\n* Adjustable framerate\n* Fixes for editing flow\n* Minor GUI improvements and fixes",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
