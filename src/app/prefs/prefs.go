@@ -8,6 +8,7 @@ type Prefs struct {
 
 type Interface struct {
 	Scale int
+	Fps   int
 }
 
 type Controls struct {

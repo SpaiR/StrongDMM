@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"sdmm/app/prefs"
+	"sdmm/app/window"
 )
 
 const (
@@ -40,19 +41,24 @@ func (preferencesConfig) TryMigrate(cfg map[string]interface{}) (result map[stri
 }
 
 func (a *app) loadPreferencesConfig() {
-	a.ConfigRegister(&preferencesConfig{
+	cfg := &preferencesConfig{
 		Version: preferencesConfigVersion,
 
 		Prefs: prefs.Prefs{
 			Interface: prefs.Interface{
 				Scale: 100,
+				Fps:   60,
 			},
 			Editor: prefs.Editor{
 				SaveFormat: prefs.SaveFormatInitial,
 				NudgeMode:  prefs.SaveNudgeModePixel,
 			},
 		},
-	})
+	}
+
+	a.ConfigRegister(cfg)
+
+	window.SetFps(cfg.Prefs.Interface.Fps)
 }
 
 func (a *app) preferencesConfig() *preferencesConfig {

@@ -12,10 +12,10 @@ import (
 	"sdmm/platform"
 )
 
-const fps int = 60
-
-// AppLogoTexture is a texture pointer to the application logo.
-var AppLogoTexture uint32
+var (
+	// AppLogoTexture is a texture pointer to the application logo.
+	AppLogoTexture uint32
+)
 
 type application interface {
 	Process()
@@ -86,6 +86,11 @@ func SetPointSize(ps float32) {
 	pointSize = ps
 	configureFonts()
 	platform.UpdateFontsTexture()
+}
+
+func SetFps(value int) {
+	log.Println("[window] set fps:", value)
+	ticker = newTicker(value)
 }
 
 func (w *Window) setupGlfw() {

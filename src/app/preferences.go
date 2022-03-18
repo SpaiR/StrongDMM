@@ -2,17 +2,42 @@ package app
 
 import (
 	"log"
+	"math"
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsprefs"
+	"sdmm/app/window"
 )
 
 func (a *app) makePreferences() wsprefs.Prefs {
 	p := wsprefs.MakePrefs()
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
+	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceFps())
 	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorFormat())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorSanitizeVariables())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorNudgeMode())
+	return p
+}
+
+func (a *app) makePreferenceInterfaceFps() wsprefs.IntPref {
+	p := wsprefs.MakeIntPref()
+	p.Name = "Fps"
+	p.Desc = "Controls the application framerate."
+	p.Label = "##fps"
+	p.Min = 30
+	p.Max = math.MaxInt
+
+	p.FGet = func() int {
+		return a.preferencesConfig().Prefs.Interface.Fps
+	}
+	p.FSet = func(value int) {
+		log.Println("[app] preferences changing, [interface#fps] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Interface.Fps = value
+		a.ConfigSaveV(cfg)
+		window.SetFps(value)
+	}
+
 	return p
 }
 

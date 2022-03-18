@@ -9,9 +9,13 @@ import (
 	"sdmm/platform"
 )
 
-func (w *Window) Process() {
-	ticker := time.NewTicker(time.Second / time.Duration(fps))
+var ticker = newTicker(60)
 
+func newTicker(fps int) *time.Ticker {
+	return time.NewTicker(time.Second / time.Duration(fps))
+}
+
+func (w *Window) Process() {
 	for !w.application.IsClosed() {
 		// Override window closing behaviour to enforce our checks.
 		if w.handle.ShouldClose() {
