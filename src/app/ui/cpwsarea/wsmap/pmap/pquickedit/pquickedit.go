@@ -1,4 +1,4 @@
-package pmap
+package pquickedit
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -16,12 +17,25 @@ import (
 	"strconv"
 )
 
-type panelQuickEdit struct {
+type App interface {
+	Prefs() prefs.Prefs
+	LoadedEnvironment() *dmenv.Dme
+	SelectedInstance() (*dmminstance.Instance, bool)
+}
+
+type Panel struct {
 	app    App
 	editor *editor.Editor
 }
 
-func (p *panelQuickEdit) process() {
+func New(app App, editor *editor.Editor) *Panel {
+	return &Panel{
+		app:    app,
+		editor: editor,
+	}
+}
+
+func (p *Panel) Process() {
 	selectedInstance, ok := p.app.SelectedInstance()
 	if !ok {
 		return
@@ -35,7 +49,7 @@ func (p *panelQuickEdit) process() {
 	p.showDirOption(selectedInstance)
 }
 
-func (p *panelQuickEdit) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
+func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
 	var nudgeVarName string
 	if p.app.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixel {
 		if xAxis {
@@ -99,7 +113,7 @@ var (
 	}
 )
 
-func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
+func (p *Panel) showDirOption(instance *dmminstance.Instance) {
 	dir := instance.Prefab().Vars().IntV("dir", 0)
 	value := _dirToRelativeIndex[dir]
 	maxDirs := p.getIconMaxDirs(instance.Prefab().Vars())
@@ -130,7 +144,7 @@ func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
 	imgui.EndDisabled()
 }
 
-func (p *panelQuickEdit) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {
+func (p *Panel) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {
 	vars := instance.Prefab().Vars()
 	if p.initialVarValue(instance.Prefab().Path(), varName) == vars.ValueV(varName, defaultValue) {
 		vars = dmvars.Delete(vars, varName)
@@ -138,11 +152,11 @@ func (p *panelQuickEdit) sanitizeInstanceVar(instance *dmminstance.Instance, var
 	}
 }
 
-func (p *panelQuickEdit) initialVarValue(path, varName string) string {
+func (p *Panel) initialVarValue(path, varName string) string {
 	return p.app.LoadedEnvironment().Objects[path].Vars.ValueV(varName, dmvars.NullValue)
 }
 
-func (p *panelQuickEdit) getIconMaxDirs(vars *dmvars.Variables) int32 {
+func (p *Panel) getIconMaxDirs(vars *dmvars.Variables) int32 {
 	icon := vars.TextV("icon", "")
 	iconState := vars.TextV("icon_state", "")
 	state, err := dmicon.Cache.GetState(icon, iconState)
