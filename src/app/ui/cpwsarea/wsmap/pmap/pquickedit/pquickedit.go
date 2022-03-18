@@ -1,12 +1,12 @@
-package pmap
+package pquickedit
 
 import (
 	"fmt"
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/prefs"
-	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -16,26 +16,47 @@ import (
 	"strconv"
 )
 
-type panelQuickEdit struct {
-	app    App
-	editor *editor.Editor
+type App interface {
+	Prefs() prefs.Prefs
+	LoadedEnvironment() *dmenv.Dme
+	SelectedInstance() (*dmminstance.Instance, bool)
 }
 
-func (p *panelQuickEdit) process() {
-	selectedInstance, ok := p.app.SelectedInstance()
-	if !ok {
-		return
-	}
+type editor interface {
+	Dmm() *dmmap.Dmm
+	CommitChanges(string)
+	InstanceSelect(i *dmminstance.Instance)
+	UpdateCanvasByCoords([]util.Point)
+}
 
-	imgui.BeginDisabledV(!dm.IsMovable(selectedInstance.Prefab().Path()))
-	p.showNudgeOption("Nudge X", true, selectedInstance)
-	p.showNudgeOption("Nudge Y", false, selectedInstance)
+type Panel struct {
+	app    App
+	editor editor
+}
+
+func New(app App, editor editor) *Panel {
+	return &Panel{
+		app:    app,
+		editor: editor,
+	}
+}
+
+func (p *Panel) Process() {
+	if selectedInstance, ok := p.app.SelectedInstance(); ok {
+		p.ProcessV(selectedInstance)
+	}
+}
+
+func (p *Panel) ProcessV(instance *dmminstance.Instance) {
+	imgui.BeginDisabledV(!dm.IsMovable(instance.Prefab().Path()))
+	p.showNudgeOption("Nudge X", true, instance)
+	p.showNudgeOption("Nudge Y", false, instance)
 	imgui.EndDisabled()
 
-	p.showDirOption(selectedInstance)
+	p.showDirOption(instance)
 }
 
-func (p *panelQuickEdit) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
+func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
 	var nudgeVarName string
 	if p.app.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixel {
 		if xAxis {
@@ -99,7 +120,7 @@ var (
 	}
 )
 
-func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
+func (p *Panel) showDirOption(instance *dmminstance.Instance) {
 	dir := instance.Prefab().Vars().IntV("dir", 0)
 	value := _dirToRelativeIndex[dir]
 	maxDirs := p.getIconMaxDirs(instance.Prefab().Vars())
@@ -130,7 +151,7 @@ func (p *panelQuickEdit) showDirOption(instance *dmminstance.Instance) {
 	imgui.EndDisabled()
 }
 
-func (p *panelQuickEdit) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {
+func (p *Panel) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {
 	vars := instance.Prefab().Vars()
 	if p.initialVarValue(instance.Prefab().Path(), varName) == vars.ValueV(varName, defaultValue) {
 		vars = dmvars.Delete(vars, varName)
@@ -138,11 +159,11 @@ func (p *panelQuickEdit) sanitizeInstanceVar(instance *dmminstance.Instance, var
 	}
 }
 
-func (p *panelQuickEdit) initialVarValue(path, varName string) string {
+func (p *Panel) initialVarValue(path, varName string) string {
 	return p.app.LoadedEnvironment().Objects[path].Vars.ValueV(varName, dmvars.NullValue)
 }
 
-func (p *panelQuickEdit) getIconMaxDirs(vars *dmvars.Variables) int32 {
+func (p *Panel) getIconMaxDirs(vars *dmvars.Variables) int32 {
 	icon := vars.TextV("icon", "")
 	iconState := vars.TextV("icon_state", "")
 	state, err := dmicon.Cache.GetState(icon, iconState)

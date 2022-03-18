@@ -96,6 +96,12 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 
 	return w.Layout{
 		w.Custom(func() {
+			if t.app.Prefs().Controls.QuickEditContextMenu {
+				t.pQuickEdit.ProcessV(i)
+				imgui.Separator()
+			}
+		}),
+		w.Custom(func() {
 			if dm.IsPath(p.Path(), "/obj") || dm.IsPath(p.Path(), "/mob") {
 				w.Layout{
 					w.MenuItem(fmt.Sprint("Move to Top##move_to_top_", idx), t.doMoveToTop(i)).

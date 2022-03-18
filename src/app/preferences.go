@@ -13,6 +13,8 @@ func (a *app) makePreferences() wsprefs.Prefs {
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
 	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceFps())
 	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditContextMenu())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditMapPane())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorFormat())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorSanitizeVariables())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorNudgeMode())
@@ -76,6 +78,44 @@ func (a *app) makePreferenceControlsAltScrollBehaviour() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [controls#alternative_scroll_behaviour] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Controls.AltScrollBehaviour = value
+		a.ConfigSaveV(cfg)
+	}
+
+	return p
+}
+
+func (a *app) makePreferenceControlsQuickEditContextMenu() wsprefs.BoolPref {
+	p := wsprefs.MakeBoolPref()
+	p.Name = "Quick Edit: Tile Context Menu"
+	p.Desc = "Controls whether Quick Edit should be shown in the tile context menu."
+	p.Label = "##quick_edit:tile_context_menu"
+
+	p.FGet = func() bool {
+		return a.preferencesConfig().Prefs.Controls.QuickEditContextMenu
+	}
+	p.FSet = func(value bool) {
+		log.Println("[app] preferences changing, [controls#quick_edit:tile_context_menu] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Controls.QuickEditContextMenu = value
+		a.ConfigSaveV(cfg)
+	}
+
+	return p
+}
+
+func (a *app) makePreferenceControlsQuickEditMapPane() wsprefs.BoolPref {
+	p := wsprefs.MakeBoolPref()
+	p.Name = "Quick Edit: Map Pane"
+	p.Desc = "Controls whether Quick Edit should be shown on the map pane."
+	p.Label = "##quick_edit:map_pane"
+
+	p.FGet = func() bool {
+		return a.preferencesConfig().Prefs.Controls.QuickEditMapPane
+	}
+	p.FSet = func(value bool) {
+		log.Println("[app] preferences changing, [controls#quick_edit:map_pane] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Controls.QuickEditMapPane = value
 		a.ConfigSaveV(cfg)
 	}
 

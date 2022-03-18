@@ -8,6 +8,7 @@ import (
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/pquickedit"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/psettings"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/tilemenu"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
@@ -24,6 +25,7 @@ import (
 
 type App interface {
 	tilemenu.App
+	pquickedit.App
 
 	Prefs() prefs.Prefs
 
@@ -80,7 +82,7 @@ type PaneMap struct {
 
 	tileMenu *tilemenu.TileMenu
 
-	pQuickEdit *panelQuickEdit
+	pQuickEdit *pquickedit.Panel
 	pSettings  *psettings.Panel
 
 	showSettings bool
@@ -170,7 +172,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 
 	p.tileMenu = tilemenu.New(app, p.editor)
 
-	p.pQuickEdit = &panelQuickEdit{app: app, editor: p.editor}
+	p.pQuickEdit = pquickedit.New(app, p.editor)
 	p.pSettings = psettings.New(p.editor)
 
 	p.canvas = canvas.New()
@@ -220,8 +222,8 @@ func (p *PaneMap) Process() {
 	p.showPanelV(
 		"quickEdit_"+p.dmm.Name,
 		pPosRightBottom,
-		p.active && p.app.HasSelectedInstance(),
-		p.pQuickEdit.process,
+		p.app.Prefs().Controls.QuickEditMapPane && p.active && p.app.HasSelectedInstance(),
+		p.pQuickEdit.Process,
 	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
 }
