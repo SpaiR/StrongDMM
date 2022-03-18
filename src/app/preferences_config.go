@@ -23,11 +23,13 @@ func (preferencesConfig) TryMigrate(cfg map[string]interface{}) (result map[stri
 	result = cfg
 
 	if uint(result["Version"].(float64)) == 1 {
+		log.Println("[app] migrating [preferences] config:", 2)
+
 		result["Editor"] = result["Save"]
 		delete(result, "Save")
 
 		editorPrefs := result["Editor"].(map[string]interface{})
-		editorPrefs["Save Format"] = editorPrefs["Format"]
+		editorPrefs["SaveFormat"] = editorPrefs["Format"]
 		delete(editorPrefs, "Format")
 
 		result["Version"] = 2
