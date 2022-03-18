@@ -3,7 +3,10 @@ package tilemenu
 import (
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
+	"sdmm/app/prefs"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/pquickedit"
 	"sdmm/app/ui/shortcut"
+	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
@@ -25,6 +28,11 @@ type App interface {
 
 	HasSelectedPrefab() bool
 	SelectedPrefab() (*dmmprefab.Prefab, bool)
+
+	SelectedInstance() (*dmminstance.Instance, bool)
+
+	Prefs() prefs.Prefs
+	LoadedEnvironment() *dmenv.Dme
 }
 
 type editor interface {
@@ -38,6 +46,8 @@ type editor interface {
 	InstanceDelete(i *dmminstance.Instance)
 	InstanceReplace(i *dmminstance.Instance, prefab *dmmprefab.Prefab)
 	InstanceReset(i *dmminstance.Instance)
+
+	UpdateCanvasByCoords([]util.Point)
 }
 
 type TileMenu struct {
@@ -49,10 +59,12 @@ type TileMenu struct {
 	opened bool
 
 	tile *dmmap.Tile
+
+	pQuickEdit *pquickedit.Panel
 }
 
 func New(app App, editor editor) *TileMenu {
-	t := &TileMenu{app: app, editor: editor}
+	t := &TileMenu{app: app, editor: editor, pQuickEdit: pquickedit.New(app, editor)}
 	t.addShortcuts()
 	return t
 }

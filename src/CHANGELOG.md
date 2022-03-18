@@ -4,8 +4,9 @@
  * Added an option to change map size. To do that open a new "Settings" menu, available under the cog button in the top-right corner of the opened map pane;
  * It's now possible to interact with the map window without first having to manually tab in. Specifically for: select instance -> change a var -> select another instance;
  * Added a preference to adjust the application framerate;
- * Minor GUI improvements;
- * Fixed attempting to pick/delete item pixel shifted off map does not work.
+ * Added preferences to control Quick Edit menu appearance: it can be shown in the tile context menu or on the map pane;
+ * Fixed attempting to pick/delete item pixel shifted off map does not work;
+ * Minor GUI improvements.
 
 # v2.1.0.alpha
 

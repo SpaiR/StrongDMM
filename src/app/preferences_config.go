@@ -49,6 +49,9 @@ func (a *app) loadPreferencesConfig() {
 				Scale: 100,
 				Fps:   60,
 			},
+			Controls: prefs.Controls{
+				QuickEditMapPane: true,
+			},
 			Editor: prefs.Editor{
 				SaveFormat: prefs.SaveFormatInitial,
 				NudgeMode:  prefs.SaveNudgeModePixel,

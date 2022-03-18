@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/SpaiR/imgui-go"
 	"sdmm/app/prefs"
-	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
@@ -23,12 +22,19 @@ type App interface {
 	SelectedInstance() (*dmminstance.Instance, bool)
 }
 
-type Panel struct {
-	app    App
-	editor *editor.Editor
+type editor interface {
+	Dmm() *dmmap.Dmm
+	CommitChanges(string)
+	InstanceSelect(i *dmminstance.Instance)
+	UpdateCanvasByCoords([]util.Point)
 }
 
-func New(app App, editor *editor.Editor) *Panel {
+type Panel struct {
+	app    App
+	editor editor
+}
+
+func New(app App, editor editor) *Panel {
 	return &Panel{
 		app:    app,
 		editor: editor,
@@ -36,17 +42,18 @@ func New(app App, editor *editor.Editor) *Panel {
 }
 
 func (p *Panel) Process() {
-	selectedInstance, ok := p.app.SelectedInstance()
-	if !ok {
-		return
+	if selectedInstance, ok := p.app.SelectedInstance(); ok {
+		p.ProcessV(selectedInstance)
 	}
+}
 
-	imgui.BeginDisabledV(!dm.IsMovable(selectedInstance.Prefab().Path()))
-	p.showNudgeOption("Nudge X", true, selectedInstance)
-	p.showNudgeOption("Nudge Y", false, selectedInstance)
+func (p *Panel) ProcessV(instance *dmminstance.Instance) {
+	imgui.BeginDisabledV(!dm.IsMovable(instance.Prefab().Path()))
+	p.showNudgeOption("Nudge X", true, instance)
+	p.showNudgeOption("Nudge Y", false, instance)
 	imgui.EndDisabled()
 
-	p.showDirOption(selectedInstance)
+	p.showDirOption(instance)
 }
 
 func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {

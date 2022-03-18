@@ -222,7 +222,7 @@ func (p *PaneMap) Process() {
 	p.showPanelV(
 		"quickEdit_"+p.dmm.Name,
 		pPosRightBottom,
-		p.active && p.app.HasSelectedInstance(),
+		p.app.Prefs().Controls.QuickEditMapPane && p.active && p.app.HasSelectedInstance(),
 		p.pQuickEdit.Process,
 	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)

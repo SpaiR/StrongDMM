@@ -12,7 +12,9 @@ type Interface struct {
 }
 
 type Controls struct {
-	AltScrollBehaviour bool
+	AltScrollBehaviour   bool
+	QuickEditContextMenu bool
+	QuickEditMapPane     bool
 }
 
 type Editor struct {
