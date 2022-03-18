@@ -142,23 +142,25 @@ func SelectedTiles() []util.Point {
 }
 
 func processSelectedToolStart() {
-	if cs != nil && !cs.HoverOutOfBounds() {
-		if cc != nil && cc.Dragging() && !active {
-			startedTool = Selected()
-			Selected().onStart(cs.HoveredTile())
-			active = true
-		}
+	if cs == nil || cc == nil || cs.HoverOutOfBounds() && !Selected().IgnoreBounds() {
+		return
+	}
+	if cc.Dragging() && !active {
+		startedTool = Selected()
+		Selected().onStart(cs.HoveredTile())
+		active = true
 	}
 }
 
 func processSelectedToolMove() {
-	if cs != nil && !cs.HoverOutOfBounds() {
-		coord := cs.HoveredTile()
-		if coord != oldCoord && active {
-			Selected().onMove(coord)
-		}
-		oldCoord = coord
+	if cs == nil || cs.HoverOutOfBounds() && !Selected().IgnoreBounds() {
+		return
 	}
+	coord := cs.HoveredTile()
+	if coord != oldCoord && active {
+		Selected().onMove(coord)
+	}
+	oldCoord = coord
 }
 
 func processSelectedToolsStop() {

@@ -11,6 +11,7 @@ import (
 type Tool interface {
 	Name() string
 
+	IgnoreBounds() bool
 	Stale() bool
 	AltBehaviour() bool
 	setAltBehaviour(bool)
@@ -33,7 +34,11 @@ type tool struct {
 	altBehaviour bool
 }
 
-func (t *tool) Stale() bool {
+func (tool) IgnoreBounds() bool {
+	return false
+}
+
+func (tool) Stale() bool {
 	return true
 }
 

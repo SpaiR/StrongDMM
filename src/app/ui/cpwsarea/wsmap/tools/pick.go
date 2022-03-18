@@ -17,6 +17,10 @@ func newPick() *ToolPick {
 	return &ToolPick{}
 }
 
+func (ToolPick) IgnoreBounds() bool {
+	return true
+}
+
 func (ToolPick) AltBehaviour() bool {
 	return false
 }

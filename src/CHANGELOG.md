@@ -1,9 +1,10 @@
-# v2.2.0.alpha (WIP)
+# v2.2.0.alpha
 
 ### Improvements and Fixes
  * Added an option to change map size. To do that open a new "Settings" menu, available under the cog button in the top-right corner of the opened map pane;
- * It's now possible to interact with the map window without first having to manually tab in. To support flow like: select instance -> change a var -> select another instance;
- * Minor GUI improvements.
+ * It's now possible to interact with the map window without first having to manually tab in. Specifically for: select instance -> change a var -> select another instance;
+ * Minor GUI improvements;
+ * Fixed attempting to pick/delete item pixel shifted off map does not work.
 
 # v2.1.0.alpha
 
