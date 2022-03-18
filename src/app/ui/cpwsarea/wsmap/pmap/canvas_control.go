@@ -18,7 +18,7 @@ func (p *PaneMap) updateCanvasMousePosition(mouseX, mouseY int) {
 	relMouseY = canvasHeight - relMouseY
 
 	// Transformed coordinates with respect of camera scale and shift.
-	camera := p.canvas.Render().Camera()
+	camera := p.canvas.Render().Camera
 	relMouseX = relMouseX/camera.Scale - (camera.ShiftX)
 	relMouseY = relMouseY/camera.Scale - (camera.ShiftY)
 

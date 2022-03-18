@@ -5,14 +5,20 @@ import "github.com/SpaiR/imgui-go"
 type Layout []widget
 
 func (layout Layout) Build() {
-	layout.BuildV(AlignLeft)
+	if align, ok := layout[0].(LayoutAlign); ok {
+		layout.BuildV(align)
+	} else {
+		layout.BuildV(AlignLeft)
+	}
 }
 
 func (layout Layout) CalcSize() (size imgui.Vec2) {
+	_, hasAlign := layout[0].(LayoutAlign)
+
 	for idx, w := range layout {
 		if r, ok := w.(region); ok {
 			size = size.Plus(r.CalcSize())
-			if idx > 0 {
+			if hasAlign && idx > 1 || !hasAlign && idx > 0 {
 				size = size.Plus(imgui.CurrentStyle().ItemSpacing())
 			}
 		}
@@ -21,6 +27,10 @@ func (layout Layout) CalcSize() (size imgui.Vec2) {
 }
 
 type LayoutAlign int
+
+func (LayoutAlign) Build() {
+	// mock widget behaviour
+}
 
 type region interface {
 	CalcSize() imgui.Vec2
@@ -44,11 +54,9 @@ func (layout Layout) BuildV(align LayoutAlign) {
 	if indent != 0 {
 		imgui.IndentV(indent)
 	}
-	//imgui.BeginGroup()
 	for _, w := range layout {
 		w.Build()
 	}
-	//imgui.EndGroup()
 	if indent != 0 {
 		imgui.UnindentV(indent)
 	}

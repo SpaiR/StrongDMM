@@ -98,7 +98,7 @@ func (ws *WsMap) processCanvasCameraMirror() {
 	}
 
 	activeCamera := pmap.ActiveCamera()
-	if camera := ws.paneMap.Canvas().Render().Camera(); camera != activeCamera {
+	if camera := ws.paneMap.Canvas().Render().Camera; camera != activeCamera {
 		camera.ShiftX = activeCamera.ShiftX
 		camera.ShiftY = activeCamera.ShiftY
 		camera.Level = activeCamera.Level

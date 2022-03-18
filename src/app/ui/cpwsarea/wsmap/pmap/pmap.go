@@ -8,6 +8,7 @@ import (
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/app/ui/cpwsarea/wsmap/pmap/psettings"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/tilemenu"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
@@ -79,7 +80,10 @@ type PaneMap struct {
 
 	tileMenu *tilemenu.TileMenu
 
-	quickEdit *panelQuickEdit
+	pQuickEdit *panelQuickEdit
+	pSettings  *psettings.Panel
+
+	showSettings bool
 
 	canvas        *canvas.Canvas
 	canvasState   *canvas.State
@@ -94,6 +98,8 @@ type PaneMap struct {
 	focused   bool
 	active    bool
 
+	panelTopSize         imgui.Vec2
+	panelRightTopSize    imgui.Vec2
 	panelRightBottomSize imgui.Vec2
 	panelBottomSize      imgui.Vec2
 
@@ -135,6 +141,10 @@ func (p *PaneMap) ActiveLevel() int {
 	return p.activeLevel
 }
 
+func (p *PaneMap) SetActiveLevel(activeLevel int) {
+	p.activeLevel = activeLevel
+}
+
 func (p *PaneMap) Size() imgui.Vec2 {
 	return p.size
 }
@@ -160,7 +170,8 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 
 	p.tileMenu = tilemenu.New(app, p.editor)
 
-	p.quickEdit = &panelQuickEdit{app: app, editor: p.editor}
+	p.pQuickEdit = &panelQuickEdit{app: app, editor: p.editor}
+	p.pSettings = psettings.New(p.editor)
 
 	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)
@@ -205,11 +216,12 @@ func (p *PaneMap) Process() {
 
 	p.showCanvas()
 	p.showPanel("canvasTool_"+p.dmm.Name, pPosTop, p.showToolsPanel)
+	p.showPanelV("settings_"+p.dmm.Name, pPosRightTop, p.showSettings, p.pSettings.Process)
 	p.showPanelV(
 		"quickEdit_"+p.dmm.Name,
 		pPosRightBottom,
 		p.active && p.app.HasSelectedInstance(),
-		p.quickEdit.process,
+		p.pQuickEdit.process,
 	)
 	p.showPanel("canvasStat_"+p.dmm.Name, pPosBottom, p.showStatusPanel)
 }
@@ -274,7 +286,7 @@ func (p *PaneMap) updateShortcutsState() {
 
 func (p *PaneMap) OnActivate() {
 	log.Println("[pmap] pane activated:", p.dmm.Name)
-	activeCamera = p.canvas.Render().Camera()
+	activeCamera = p.canvas.Render().Camera
 	activePane = p
 	lastActivePane = p
 	p.prepareTools()
@@ -292,7 +304,7 @@ func (p *PaneMap) OnDeactivate() {
 }
 
 func (p *PaneMap) syncActiveCamera() {
-	if activeCamera == p.canvas.Render().Camera() {
+	if activeCamera == p.canvas.Render().Camera {
 		activeCamera = nil
 		log.Println("[pmap] active camera cleared:", p.dmm.Name)
 	}
@@ -303,4 +315,22 @@ func (p *PaneMap) syncActivePane() {
 		activePane = nil
 		log.Println("[pmap] active pane cleared:", p.dmm.Name)
 	}
+}
+
+// Fully reloads a canvas for the current pane. Does a full re-initialization of the renderer.
+// Needed when changing global parts of the map, like the map size etc.
+func (p *PaneMap) reloadCanvas() {
+	oldCamera := p.canvas.Render().Camera // To keep current camera position
+	p.canvas = canvas.New()
+	p.canvas.Render().Camera = oldCamera
+	p.canvas.Render().SetOverlay(p.canvasOverlay)
+	p.canvas.Render().SetUnitProcessor(p)
+	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
+	p.canvasState.SetMaxX(p.dmm.MaxX)
+	p.canvasState.SetMaxY(p.dmm.MaxY)
+}
+
+func (p *PaneMap) OnMapSizeChange() {
+	p.reloadCanvas()
+	p.pSettings.DropSessionMapSize()
 }

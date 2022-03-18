@@ -171,7 +171,7 @@ func (p *PaneMap) doMoveCameraRight() {
 func (p *PaneMap) doZoomIn() {
 	log.Println("[pmap] do zoom in")
 
-	camera := p.canvas.Render().Camera()
+	camera := p.canvas.Render().Camera
 
 	scale := camera.Scale * -scaleFactor
 
@@ -185,7 +185,7 @@ func (p *PaneMap) doZoomIn() {
 func (p *PaneMap) doZoomOut() {
 	log.Println("[pmap] do zoom out")
 
-	camera := p.canvas.Render().Camera()
+	camera := p.canvas.Render().Camera
 
 	offsetX := (p.size.X - p.size.X/2) / camera.Scale / 2
 	offsetY := (p.size.Y - p.size.Y/2) / camera.Scale / 2

@@ -17,8 +17,8 @@ type unitProcessor interface {
 }
 
 func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
-	if MultiZRendering && r.camera.Level > 1 {
-		for level := 1; level < r.camera.Level; level++ {
+	if MultiZRendering && r.Camera.Level > 1 {
+		for level := 1; level < r.Camera.Level; level++ {
 			r.batchLevel(level, viewBounds, false) // Draw everything below.
 		}
 
@@ -26,7 +26,7 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 		brush.RectFilled(viewBounds.X1, viewBounds.Y1, viewBounds.X2, viewBounds.Y2, multiZShadow)
 	}
 
-	r.batchLevel(r.camera.Level, viewBounds, true) // Draw currently visible level.
+	r.batchLevel(r.Camera.Level, viewBounds, true) // Draw currently visible level.
 	r.overlay.FlushUnits()
 }
 

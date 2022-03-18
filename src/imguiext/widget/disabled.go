@@ -17,7 +17,7 @@ func (s *disabledWidget) CalcSize() (size imgui.Vec2) {
 	return s.layout.CalcSize()
 }
 
-func Disabled(disabled bool, layout Layout) *disabledWidget {
+func Disabled(disabled bool, layout ...widget) *disabledWidget {
 	return &disabledWidget{
 		disabled,
 		layout,

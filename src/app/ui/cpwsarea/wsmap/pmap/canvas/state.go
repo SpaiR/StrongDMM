@@ -18,6 +18,14 @@ type State struct {
 	maxX, maxY int
 }
 
+func (s *State) SetMaxX(maxX int) {
+	s.maxX = maxX
+}
+
+func (s *State) SetMaxY(maxY int) {
+	s.maxY = maxY
+}
+
 func (s *State) SetHoveredInstance(hoveredInstance *dmminstance.Instance) {
 	s.hoveredInstance = hoveredInstance
 }

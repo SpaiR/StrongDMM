@@ -64,6 +64,8 @@ type app interface {
 
 type attachedMap interface {
 	ActiveLevel() int
+	SetActiveLevel(int)
+
 	Snapshot() *dmmsnap.DmmSnap
 
 	Size() imgui.Vec2
@@ -74,6 +76,8 @@ type attachedMap interface {
 	CanvasOverlay() *canvas.Overlay
 
 	PushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color)
+
+	OnMapSizeChange()
 }
 
 func New(app app, attachedMap attachedMap, dmm *dmmap.Dmm) *Editor {
@@ -131,7 +135,7 @@ func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 	relPos := i.Coord()
 	absPos := util.Point{X: (relPos.X - 1) * -dmmap.WorldIconSize, Y: (relPos.Y - 1) * -dmmap.WorldIconSize, Z: relPos.Z}
 
-	camera := e.pMap.Canvas().Render().Camera()
+	camera := e.pMap.Canvas().Render().Camera
 	camera.ShiftX = e.pMap.Size().X/2/camera.Scale + float32(absPos.X)
 	camera.ShiftY = e.pMap.Size().Y/2/camera.Scale + float32(absPos.Y)
 }
