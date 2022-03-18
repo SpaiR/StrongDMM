@@ -46,7 +46,7 @@ func processTempToolMode(key, altKey int, modeName string) bool {
 		} else if lastActivePane != nil {
 			p = lastActivePane
 		}
-		if p != nil && !p.shortcuts.Visible() {
+		if p != nil && !(p.canvasControl.Active() || p.shortcuts.Visible()) {
 			return false
 		}
 	}
