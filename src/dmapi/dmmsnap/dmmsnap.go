@@ -31,6 +31,18 @@ func New(current *dmmap.Dmm) *DmmSnap {
 	return s
 }
 
+func (d *DmmSnap) Sync() {
+	d.syncInitialWithCurrent()
+}
+
+func (d *DmmSnap) Initial() *dmmap.Dmm {
+	return d.initial
+}
+
+func (d *DmmSnap) Current() *dmmap.Dmm {
+	return d.current
+}
+
 // Commit creates a patch with the map changes between two snapshot states.
 // stateId is an integer value, which can be used in the future to iterate snapshot to the specific state.
 func (d *DmmSnap) Commit() (int, []util.Point) {

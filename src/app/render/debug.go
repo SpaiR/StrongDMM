@@ -16,7 +16,7 @@ func (r *Render) batchChunksVisuals() {
 		chunkColors = make(map[util.Bounds]util.Color)
 	}
 
-	visibleLevel := r.bucket.Level(r.camera.Level)
+	visibleLevel := r.bucket.Level(r.Camera.Level)
 
 	for _, c := range visibleLevel.Chunks {
 		var chunkColor util.Color

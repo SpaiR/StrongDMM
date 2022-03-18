@@ -85,10 +85,17 @@ var (
 )
 
 func (p *PaneMap) showToolsPanel() {
-	p.layoutTools().Build()
+	w.Layout{
+		p.panelToolsLayoutTools(),
+		w.SameLine(),
+		w.Layout{
+			w.AlignRight,
+			p.panelToolsLayoutSettings(),
+		},
+	}.Build()
 }
 
-func (p *PaneMap) layoutTools() (layout w.Layout) {
+func (p *PaneMap) panelToolsLayoutTools() (layout w.Layout) {
 	for idx, toolName := range toolsOrder {
 		var toolName = toolName // Closure (hello, js)
 
@@ -119,6 +126,26 @@ func (p *PaneMap) layoutTools() (layout w.Layout) {
 		layout = append(layout, btn, w.Tooltip(desc.tooltip))
 	}
 	return layout
+}
+
+func (p *PaneMap) panelToolsLayoutSettings() w.Layout {
+	var bntStyle w.ButtonStyle
+	if p.showSettings {
+		bntStyle = style.ButtonGreen{}
+	} else {
+		bntStyle = style.ButtonDefault{}
+	}
+	return w.Layout{
+		w.Button(icon.Cog, p.doToggleSettings).
+			Tooltip("Settings").
+			Style(bntStyle).
+			Round(true),
+	}
+}
+
+func (p *PaneMap) doToggleSettings() {
+	log.Println("[pmap] toggle settings:")
+	p.showSettings = !p.showSettings
 }
 
 func (p *PaneMap) doPreviousLevel() {

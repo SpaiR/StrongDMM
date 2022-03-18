@@ -9,7 +9,7 @@ import (
 )
 
 type Render struct {
-	camera *Camera
+	Camera *Camera
 
 	bucket *bucket.Bucket
 
@@ -17,14 +17,10 @@ type Render struct {
 	unitProcessor unitProcessor
 }
 
-func (r *Render) Camera() *Camera {
-	return r.camera
-}
-
 func New() *Render {
 	brush.TryInit()
 	return &Render{
-		camera: newCamera(),
+		Camera: newCamera(),
 		bucket: bucket.New(),
 	}
 }
@@ -38,7 +34,7 @@ func (r *Render) SetOverlay(state overlay) {
 }
 
 func (r *Render) SetActiveLevel(dmm *dmmap.Dmm, activeLevel int) {
-	r.camera.Level = activeLevel
+	r.Camera.Level = activeLevel
 	if r.bucket.Level(activeLevel) == nil { // Ensure level exists
 		r.UpdateBucket(dmm, activeLevel)
 	}
@@ -73,7 +69,7 @@ func (r *Render) draw(width, height float32) {
 	//r.batchChunksVisuals()
 	r.batchOverlayAreasBorders()
 	r.batchOverlayAreas()
-	brush.Draw(width, height, r.camera.ShiftX, r.camera.ShiftY, r.camera.Scale)
+	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
 }
 
 // Clean OpenGL state after rendering.
@@ -83,11 +79,11 @@ func (r *Render) cleanup() {
 
 func (r *Render) viewportBounds(width, height float32) util.Bounds {
 	// Get transformed bounds of the map, so we can ignore out of bounds units.
-	w := width / r.camera.Scale
-	h := height / r.camera.Scale
+	w := width / r.Camera.Scale
+	h := height / r.Camera.Scale
 
-	x1 := -r.camera.ShiftX
-	y1 := -r.camera.ShiftY
+	x1 := -r.Camera.ShiftX
+	y1 := -r.Camera.ShiftY
 	x2 := x1 + w
 	y2 := y1 + h
 

@@ -10,19 +10,19 @@ import (
 
 func (p *PaneMap) showStatusPanel() {
 	w.Layout{
-		p.layoutStatus(),
+		p.panelStatusLayoutStatus(),
 		w.SameLine(),
 		w.Custom(func() {
 			if p.dmm.MaxZ != 1 {
 				w.Layout{
-					p.layoutLevels(),
+					p.panelStatusLayoutLevels(),
 				}.BuildV(w.AlignRight)
 			}
 		}),
 	}.Build()
 }
 
-func (p *PaneMap) layoutStatus() (layout w.Layout) {
+func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
 	if p.canvasState.HoverOutOfBounds() {
 		layout = append(layout, w.TextFrame("out of bounds"))
 	} else {
@@ -44,7 +44,7 @@ func (p *PaneMap) layoutStatus() (layout w.Layout) {
 	return layout
 }
 
-func (p *PaneMap) layoutLevels() (layout w.Layout) {
+func (p *PaneMap) panelStatusLayoutLevels() (layout w.Layout) {
 	return w.Layout{
 		w.TextFrame(fmt.Sprintf("Z:%d", p.activeLevel)),
 		w.Tooltip(w.Text("Current Z-level")).OnHover(true),

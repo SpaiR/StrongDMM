@@ -38,9 +38,9 @@ func makeSaveProcess(cfg Config, dme *dmenv.Dme, dmm *dmmap.Dmm, path string) (*
 		IsTgm:      detectIsTgm(cfg.Format, initial.IsTgm),
 		LineBreak:  initial.LineBreak,
 		KeyLength:  initial.KeyLength,
-		MaxX:       initial.MaxX,
-		MaxY:       initial.MaxY,
-		MaxZ:       initial.MaxZ,
+		MaxX:       dmm.MaxX,
+		MaxY:       dmm.MaxY,
+		MaxZ:       dmm.MaxZ,
 		Dictionary: make(dmmdata.DataDictionary),
 		Grid:       make(dmmdata.DataGrid),
 	}

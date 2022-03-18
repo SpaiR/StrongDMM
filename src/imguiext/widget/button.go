@@ -74,7 +74,11 @@ func (w *ButtonWidget) HoverColor(color imgui.Vec4) *ButtonWidget {
 }
 
 func (w *ButtonWidget) CalcSize() (size imgui.Vec2) {
-	labelSize := imgui.CalcTextSize(w.label, true, -1)
+	label := w.label
+	if len(w.icon) > 0 {
+		label = w.icon + " " + label
+	}
+	labelSize := imgui.CalcTextSize(label, true, -1)
 	padding := imgui.CurrentStyle().FramePadding()
 	return size.Plus(labelSize).Plus(w.size).Plus(padding.Times(2))
 }

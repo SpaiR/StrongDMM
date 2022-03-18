@@ -1,6 +1,7 @@
 # v2.2.0.alpha (WIP)
 
 ### Improvements and Fixes
+ * Added an option to change map size. To do that open a new "Settings" menu, available under the cog button in the top-right corner of the opened map pane;
  * Minor GUI improvements.
 
 # v2.1.0.alpha

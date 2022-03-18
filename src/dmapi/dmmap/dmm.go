@@ -62,13 +62,44 @@ func (d *Dmm) IsInstanceExist(instanceId uint64) bool {
 	return false
 }
 
+func (d *Dmm) SetMapSize(maxX, maxY, maxZ int) {
+	newTiles := make([]*Tile, maxX*maxY*maxZ)
+
+	for z := 1; z <= maxZ; z++ {
+		for y := 1; y <= maxY; y++ {
+			for x := 1; x <= maxX; x++ {
+				coord := util.Point{X: x, Y: y, Z: z}
+				tileIndex := tileIndex(maxX, maxY, x, y, z)
+				if d.HasTile(coord) {
+					newTiles[tileIndex] = d.GetTile(util.Point{X: x, Y: y, Z: z})
+				} else {
+					// Fill an empty tile with basic prefabs.
+					newTiles[tileIndex] = &Tile{
+						Coord:     coord,
+						instances: InstancesFromPrefabs(coord, dmmdata.Prefabs{BaseTurf, BaseArea}),
+					}
+				}
+			}
+		}
+	}
+
+	d.Tiles = newTiles
+	d.MaxX = maxX
+	d.MaxY = maxY
+	d.MaxZ = maxZ
+}
+
 func (d *Dmm) setTile(x, y, z int, tile *Tile) {
 	d.Tiles[d.tileIndex(x, y, z)] = tile
 }
 
-// We store all tiles in the 1d-array, so we need to calculate tile position in it.
 func (d *Dmm) tileIndex(x, y, z int) int {
-	return d.MaxX*d.MaxY*(z-1) + d.MaxX*(y-1) + (x - 1)
+	return tileIndex(d.MaxX, d.MaxY, x, y, z)
+}
+
+// We store all tiles in the 1d-array, so we need to calculate tile position in it.
+func tileIndex(maxX, maxY, x, y, z int) int {
+	return maxX*maxY*(z-1) + maxX*(y-1) + (x - 1)
 }
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {

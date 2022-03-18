@@ -27,7 +27,7 @@ func (p *PaneMap) processCameraZoom() {
 		return
 	}
 
-	camera := p.canvas.Render().Camera()
+	camera := p.canvas.Render().Camera
 	_, mouseWheel := imgui.CurrentIO().MouseWheel()
 
 	// Support for alternative scroll behaviour.
@@ -72,6 +72,6 @@ func (p *PaneMap) calcManualCanvasTranslateShiftV(mod float32) float32 {
 }
 
 func (p *PaneMap) translateCanvas(shiftX, shiftY float32) {
-	camera := p.canvas.Render().Camera()
+	camera := p.canvas.Render().Camera
 	camera.Translate(shiftX/camera.Scale, -shiftY/camera.Scale)
 }

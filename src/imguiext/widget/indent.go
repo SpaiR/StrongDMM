@@ -13,7 +13,7 @@ func (w *indentWidget) Build() {
 	imgui.UnindentV(w.indent)
 }
 
-func Indent(indent float32, content Layout) *indentWidget {
+func Indent(indent float32, content ...widget) *indentWidget {
 	return &indentWidget{
 		indent:  indent,
 		content: content,
