@@ -9,6 +9,10 @@ import (
 	"sdmm/app/window"
 )
 
+type Color struct {
+	R, G, B, A float32
+}
+
 type Canvas struct {
 	render *render.Render
 
@@ -16,6 +20,8 @@ type Canvas struct {
 
 	frameBuffer uint32
 	texture     uint32
+
+	ClearColor Color
 }
 
 func (c *Canvas) Texture() uint32 {
@@ -24,6 +30,14 @@ func (c *Canvas) Texture() uint32 {
 
 func (c *Canvas) Render() *render.Render {
 	return c.render
+}
+
+func (c *Canvas) ReadPixels() []byte {
+	var pixels = make([]byte, int(c.width*c.height*4))
+	gl.BindTexture(gl.TEXTURE_2D, c.Texture())
+	gl.GetTexImage(gl.TEXTURE_2D, 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(pixels))
+	gl.BindTexture(gl.TEXTURE_2D, 0)
+	return pixels
 }
 
 func (c *Canvas) Dispose() {
@@ -38,7 +52,7 @@ func (c *Canvas) Dispose() {
 }
 
 func New() *Canvas {
-	c := &Canvas{render: render.New()}
+	c := &Canvas{render: render.New(), ClearColor: Color{.25, .25, .5, 1}}
 	gl.GenFramebuffers(1, &c.frameBuffer)
 	return c
 }
@@ -47,7 +61,7 @@ func (c *Canvas) Process(size imgui.Vec2) {
 	c.updateCanvasTexture(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, c.frameBuffer)
 	gl.Viewport(0, 0, int32(size.X), int32(size.Y))
-	gl.ClearColor(.25, .25, .5, 1)
+	gl.ClearColor(c.ClearColor.R, c.ClearColor.G, c.ClearColor.B, c.ClearColor.A)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	c.render.Draw(size.X, size.Y)
 	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
