@@ -28,7 +28,7 @@ The editor provides a bunch of new features:
 * TGM support with built-in map merger (no need to use external scripts and pre-commit hooks);
 * Almost instant environment open;
 * Custom layers filter;
-* ~~Built-in screenshot tool;~~
+* Built-in screenshot tool;
 * Smooth zoom-in/zoom-out;
 * Robust "Search";
 * Improved shortcuts;

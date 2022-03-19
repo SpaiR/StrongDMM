@@ -26,6 +26,7 @@ import (
 type App interface {
 	tilemenu.App
 	pquickedit.App
+	psettings.App
 
 	Prefs() prefs.Prefs
 
@@ -173,7 +174,7 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 	p.tileMenu = tilemenu.New(app, p.editor)
 
 	p.pQuickEdit = pquickedit.New(app, p.editor)
-	p.pSettings = psettings.New(p.editor)
+	p.pSettings = psettings.New(app, p.editor)
 
 	p.canvas = canvas.New()
 	p.canvasState = canvas.NewState(dmm.MaxX, dmm.MaxY, dmmap.WorldIconSize)

@@ -46,6 +46,10 @@ func (e *Editor) AreasZones() []AreaZone {
 	return e.areasZones
 }
 
+func (e *Editor) ActiveLevel() int {
+	return e.pMap.ActiveLevel()
+}
+
 type app interface {
 	DoSelectPrefab(prefab *dmmprefab.Prefab)
 	DoEditInstance(*dmminstance.Instance)

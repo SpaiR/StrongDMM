@@ -1,3 +1,10 @@
+# v2.3.0.alpha
+
+### Screenshots!
+Tool to make maps screenshots is available. You can find it in the new settings menu for every map specifically.
+To create a screenshot select a directory where you want to create it and press an appropriate button.
+Resulted image will respect filtered types and multi-z rendering if enabled.
+
 # v2.2.0.alpha
 
 ### Improvements and Fixes

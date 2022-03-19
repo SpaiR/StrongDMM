@@ -1,6 +1,10 @@
 package util
 
-import "github.com/sqweek/dialog"
+import (
+	"github.com/sqweek/dialog"
+	"image"
+	"image/color"
+)
 
 // Djb2 is hashing method implemented by spec: http://www.cse.yorku.ca/~oz/hash.html
 func Djb2(str string) uint64 {
@@ -23,4 +27,24 @@ func ShowErrorDialogV(title, msg string) {
 	b := dialog.MsgBuilder{Msg: msg}
 	b.Title(title)
 	b.Error()
+}
+
+// PixelsToRGBA creates an RGBA image from provided raw pixels.
+func PixelsToRGBA(pixels []byte, w, h int) *image.RGBA {
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			pos := 4 * ((h-1-y)*w + x)
+			r := pixels[pos] & 0xff
+			g := pixels[pos+1] & 0xff
+			b := pixels[pos+2] & 0xff
+			a := pixels[pos+3] & 0xff
+			if a != 0 {
+				img.Set(x, y, color.RGBA{R: r, G: g, B: b, A: a})
+			}
+		}
+	}
+
+	return img
 }

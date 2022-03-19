@@ -27,7 +27,10 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 	}
 
 	r.batchLevel(r.Camera.Level, viewBounds, true) // Draw currently visible level.
-	r.overlay.FlushUnits()
+
+	if r.overlay != nil {
+		r.overlay.FlushUnits()
+	}
 }
 
 func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight bool) {
@@ -49,7 +52,7 @@ func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight
 					continue
 				}
 				// Process unit
-				if !r.unitProcessor.ProcessUnit(u) {
+				if r.unitProcessor != nil && !r.unitProcessor.ProcessUnit(u) {
 					continue
 				}
 
@@ -69,6 +72,9 @@ func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight
 }
 
 func (r *Render) batchUnitHighlight(u unit.Unit) {
+	if r.overlay == nil {
+		return
+	}
 	if highlight := r.overlay.Units()[u.Instance().Id()]; highlight != nil {
 		r, g, b, a := highlight.Color().RGBA()
 		brush.RectTexturedV(
