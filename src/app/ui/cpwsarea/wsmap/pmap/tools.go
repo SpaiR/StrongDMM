@@ -28,6 +28,7 @@ func processTempToolsMode() {
 	var inMode bool
 	inMode = inMode || processTempToolMode(int(glfw.KeyS), -1, tools.TNPick)
 	inMode = inMode || processTempToolMode(int(glfw.KeyD), -1, tools.TNDelete)
+	inMode = inMode || processTempToolMode(int(glfw.KeyR), -1, tools.TNReplace)
 
 	if tmpToolIsInTemporalMode && !inMode {
 		log.Println("[pmap] select before-tmp tool:", tmpToolLastSelectedName)

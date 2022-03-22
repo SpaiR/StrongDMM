@@ -5,6 +5,10 @@ Tool to make maps screenshots is available. You can find it in the new settings 
 To create a screenshot select a directory where you want to create it and press an appropriate button.
 Resulted image will respect filtered types and multi-z rendering if enabled.
 
+### Replace Tool!
+"Replace" tool has been added. When enabled, it wll replace the clicked hovered instance with the selected prefab.
+Tool has a quick shortcut to toggle: hold R key.
+
 # v2.2.0.alpha
 
 ### Improvements and Fixes

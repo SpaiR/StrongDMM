@@ -55,6 +55,8 @@ func (p *PaneMap) processCanvasOverlayTools() {
 			colTileFill = overlay.ColorToolDeleteAltTileFill
 			colTileBorder = overlay.ColorToolDeleteAltTileBorder
 		}
+	case tools.TNReplace:
+		colInstance = overlay.ColorToolReplaceInstance
 	}
 
 	if colInstance != overlay.ColorEmpty {

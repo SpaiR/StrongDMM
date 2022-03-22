@@ -28,6 +28,8 @@ var (
 	ColorToolDeleteAltTileFill   = util.MakeColor(1, 0, 0, 0.25)
 	ColorToolDeleteAltTileBorder = util.MakeColorFromVec4(style.ColorGold)
 
+	ColorToolReplaceInstance = util.MakeColor(0, 1, 0, 1)
+
 	ColorFlickTileFill = util.MakeColor(1, 1, 1, 1)
 	ColorFlickInstance = util.MakeColor(0, 1, 0, 1)
 

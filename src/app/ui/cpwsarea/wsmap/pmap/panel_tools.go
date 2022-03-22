@@ -23,6 +23,7 @@ var (
 		tSeparator,
 		tools.TNPick,
 		tools.TNDelete,
+		tools.TNReplace,
 	}
 
 	toolsDesc = map[string]toolDesc{
@@ -34,7 +35,7 @@ var (
 				w.SameLine(),
 				w.TextFrame("1"),
 				w.Separator(),
-				w.Text("Click - Place selected object\nAlt+Click - Place selected object with replace"),
+				w.Text("Place the selected object\nAlt: place the selected object with replace"),
 			},
 		},
 		tools.TNFill: {
@@ -45,7 +46,7 @@ var (
 				w.SameLine(),
 				w.TextFrame("2"),
 				w.Separator(),
-				w.Text("Click&Drag - Fill the area with select object\nAlt+Click&Drag - Fill selected area with select object with replace"),
+				w.Text("Fill the area with the selected object\nAlt: fill the selected area with the selected object with replace"),
 			},
 		},
 		tools.TNGrab: {
@@ -56,7 +57,7 @@ var (
 				w.SameLine(),
 				w.TextFrame("3"),
 				w.Separator(),
-				w.Text("Click&Drag - Select the area / Move selection with visible objects inside"),
+				w.Text("Select the area / Move the selection with visible objects inside"),
 			},
 		},
 		tools.TNPick: {
@@ -67,7 +68,7 @@ var (
 				w.SameLine(),
 				w.TextFrame("Hold S"),
 				w.Separator(),
-				w.Text("Click - Pick hovered object"),
+				w.Text("Pick the hovered instance"),
 			},
 		},
 		tools.TNDelete: {
@@ -78,7 +79,18 @@ var (
 				w.SameLine(),
 				w.TextFrame("Hold D"),
 				w.Separator(),
-				w.Text("Click - Delete hovered object\nAlt+Click - Delete tile"),
+				w.Text("Delete the hovered instance\nAlt: delete the whole tile"),
+			},
+		},
+		tools.TNReplace: {
+			btnIcon: icon.Repeat,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNReplace),
+				w.SameLine(),
+				w.TextFrame("Hold R"),
+				w.Separator(),
+				w.Text("Replace the hovered instance with the selected object"),
 			},
 		},
 	}
