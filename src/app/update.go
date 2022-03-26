@@ -6,11 +6,16 @@ import (
 	"sdmm/app/selfupdate"
 	"sdmm/env"
 	"sdmm/req"
+	"sdmm/util/slice"
 )
 
 var remoteManifest selfupdate.Manifest
 
 func (a *app) checkForUpdates() {
+	a.checkForUpdatesV(false)
+}
+
+func (a *app) checkForUpdatesV(forceAvailable bool) {
 	log.Println("[app] checking for self updates...")
 
 	manifest, err := selfupdate.FetchRemoteManifest()
@@ -25,6 +30,11 @@ func (a *app) checkForUpdates() {
 		log.Println("[app] application is up to date!")
 		return
 	}
+	if slice.StrContains(a.config().UpdateIgnore, manifest.Version) && !forceAvailable {
+		log.Println("[app] ignore update:", manifest.Version)
+		return
+	}
+
 	log.Println("[app] new update available:", manifest.Version)
 
 	a.menu.SetUpdateAvailable(manifest.Version, manifest.Description)

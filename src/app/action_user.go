@@ -5,13 +5,13 @@ import (
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
-	"sdmm/app/window"
-	"sdmm/env"
-
 	"sdmm/app/ui/layout/lnode"
+	"sdmm/app/window"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
+	"sdmm/env"
+	"sdmm/util/slice"
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
@@ -299,4 +299,17 @@ func (a *app) DoSelfUpdate() {
 func (a *app) DoRestart() {
 	log.Println("[app] do restart")
 	window.Restart()
+}
+
+// DoIgnoreUpdate adds currently available update to to ignore list.
+func (a *app) DoIgnoreUpdate() {
+	log.Println("[app] do ignore update:", remoteManifest.Version)
+	a.config().UpdateIgnore = slice.StrPushUnique(a.config().UpdateIgnore, remoteManifest.Version)
+	a.ConfigSaveV(a.config())
+}
+
+// DoCheckForUpdate checks for available update.
+func (a *app) DoCheckForUpdate() {
+	log.Println("[app] do check for update")
+	a.checkForUpdatesV(true)
 }

@@ -107,6 +107,7 @@ func (a *app) initialize() {
 	a.deleteOldLogs()
 	a.deleteOldBackups()
 
+	a.loadConfig()
 	a.loadProjectConfig()
 	a.loadPreferencesConfig()
 

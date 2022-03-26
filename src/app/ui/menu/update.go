@@ -2,6 +2,7 @@ package menu
 
 import (
 	"github.com/SpaiR/imgui-go"
+	"log"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
@@ -50,10 +51,20 @@ func (m *Menu) showUpdateLayout() {
 		w.Button("Update", m.app.DoSelfUpdate).
 			Style(style.ButtonGreen{}),
 		w.SameLine(),
-		w.Button("Hide", m.hideUpdateButton),
+		w.Button("Hide", m.doHideUpdateButton),
+		w.SameLine(),
+		w.Button("Ignore", m.doIgnoreUpdate).
+			Style(style.ButtonRed{}),
 	}.Build()
 }
 
-func (m *Menu) hideUpdateButton() {
+func (m *Menu) doHideUpdateButton() {
+	log.Println("[menu] do hide update")
 	m.updateStatus = upStatusNone
+}
+
+func (m *Menu) doIgnoreUpdate() {
+	log.Println("[menu] do ignore update")
+	m.doHideUpdateButton()
+	m.app.DoIgnoreUpdate()
 }
