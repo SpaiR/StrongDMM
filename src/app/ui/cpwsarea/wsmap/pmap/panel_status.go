@@ -32,7 +32,7 @@ func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
 
 	layout = append(layout, w.Tooltip(w.Text("Tile coordinates of the mouse")))
 
-	if tools.IsSelected(tools.TNPick) || (tools.IsSelected(tools.TNDelete) && !tools.Selected().AltBehaviour()) {
+	if isQuickToolToggled() && !tools.Selected().AltBehaviour() {
 		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
 			layout = append(layout, w.Layout{
 				w.SameLine(),
@@ -42,6 +42,10 @@ func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
 	}
 
 	return layout
+}
+
+func isQuickToolToggled() bool {
+	return tools.IsSelected(tools.TNPick) || tools.IsSelected(tools.TNDelete) || tools.IsSelected(tools.TNReplace)
 }
 
 func (p *PaneMap) panelStatusLayoutLevels() (layout w.Layout) {

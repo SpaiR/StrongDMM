@@ -308,8 +308,8 @@ func (a *app) DoIgnoreUpdate() {
 	a.ConfigSaveV(a.config())
 }
 
-// DoCheckForUpdate checks for available update.
-func (a *app) DoCheckForUpdate() {
-	log.Println("[app] do check for update")
+// DoCheckForUpdates checks for available update.
+func (a *app) DoCheckForUpdates() {
+	log.Println("[app] do check for updates")
 	a.checkForUpdatesV(true)
 }

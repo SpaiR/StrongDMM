@@ -53,7 +53,7 @@ type app interface {
 	DoOpenAbout()
 	DoOpenLogs()
 	DoOpenSourceCode()
-	DoCheckForUpdate()
+	DoCheckForUpdates()
 	DoOpenSupport()
 
 	// Other
@@ -254,7 +254,7 @@ func (m *Menu) Process() {
 				IconEmpty(),
 			w.MenuItem("Source Code", m.app.DoOpenSourceCode).
 				Icon(icon.GitHub),
-			w.MenuItem("Check for Update", m.app.DoCheckForUpdate).
+			w.MenuItem("Check for Updates", m.app.DoCheckForUpdates).
 				Icon(icon.SystemUpdate),
 			w.Separator(),
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
