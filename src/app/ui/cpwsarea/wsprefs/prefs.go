@@ -3,15 +3,17 @@ package wsprefs
 type PrefGroup string
 
 const (
-	GPInterface PrefGroup = "Interface"
-	GPControls  PrefGroup = "Controls"
-	GPEditor    PrefGroup = "Editor"
+	GPEditor      PrefGroup = "Editor"
+	GPControls    PrefGroup = "Controls"
+	GPInterface   PrefGroup = "Interface"
+	GPApplication PrefGroup = "Application"
 )
 
 var prefsGroupOrder = []PrefGroup{
-	GPInterface,
-	GPControls,
 	GPEditor,
+	GPControls,
+	GPInterface,
+	GPApplication,
 }
 
 type Prefs map[PrefGroup][]interface{}

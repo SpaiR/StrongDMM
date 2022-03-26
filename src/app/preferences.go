@@ -10,14 +10,15 @@ import (
 
 func (a *app) makePreferences() wsprefs.Prefs {
 	p := wsprefs.MakePrefs()
-	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
-	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceFps())
-	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
-	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditContextMenu())
-	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditMapPane())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorFormat())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorSanitizeVariables())
 	p.Add(wsprefs.GPEditor, a.makePreferenceEditorNudgeMode())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsAltScrollBehaviour())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditContextMenu())
+	p.Add(wsprefs.GPControls, a.makePreferenceControlsQuickEditMapPane())
+	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceScale())
+	p.Add(wsprefs.GPInterface, a.makePreferenceInterfaceFps())
+	p.Add(wsprefs.GPApplication, a.makePreferenceApplicationCheckForUpdates())
 	return p
 }
 
@@ -180,6 +181,25 @@ func (a *app) makePreferenceEditorNudgeMode() wsprefs.OptionPref {
 	}
 
 	p.Options = prefs.SaveNudgeModes
+
+	return p
+}
+
+func (a *app) makePreferenceApplicationCheckForUpdates() wsprefs.BoolPref {
+	p := wsprefs.MakeBoolPref()
+	p.Name = "Check for Updates"
+	p.Desc = "When enabled, the editor will always check for updates on startup."
+	p.Label = "##check_for_updates"
+
+	p.FGet = func() bool {
+		return a.preferencesConfig().Prefs.Application.CheckForUpdates
+	}
+	p.FSet = func(value bool) {
+		log.Println("[app] preferences changing, [application#check_for_updates] to:", value)
+		cfg := a.preferencesConfig()
+		cfg.Prefs.Application.CheckForUpdates = value
+		a.ConfigSaveV(cfg)
+	}
 
 	return p
 }

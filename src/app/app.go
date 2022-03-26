@@ -125,7 +125,9 @@ func (a *app) initialize() {
 
 	a.UpdateTitle()
 
-	go a.checkForUpdates()
+	if a.preferencesConfig().Application.CheckForUpdates {
+		go a.checkForUpdates()
+	}
 }
 
 func (a *app) Process() {

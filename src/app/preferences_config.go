@@ -56,6 +56,9 @@ func (a *app) loadPreferencesConfig() {
 				SaveFormat: prefs.SaveFormatInitial,
 				NudgeMode:  prefs.SaveNudgeModePixel,
 			},
+			Application: prefs.Application{
+				CheckForUpdates: true,
+			},
 		},
 	}
 

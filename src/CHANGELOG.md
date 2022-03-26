@@ -11,7 +11,8 @@ Tool has a quick shortcut to toggle: hold R key.
 
 ### Improvements and Fixes
  * Fixed self-update for Windows when StrongDMM executable was not on the C drive;
- * Unnecessary updates can now be ignored.
+ * Unnecessary updates can now be ignored;
+ * Added a preference to disable self-update check on startup. (Unrecommended)
 
 # v2.2.0.alpha
 

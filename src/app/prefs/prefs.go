@@ -1,9 +1,10 @@
 package prefs
 
 type Prefs struct {
-	Interface Interface
-	Controls  Controls
-	Editor    Editor
+	Editor      Editor
+	Controls    Controls
+	Interface   Interface
+	Application Application
 }
 
 type Interface struct {
@@ -21,4 +22,8 @@ type Editor struct {
 	SaveFormat        string
 	NudgeMode         string
 	SanitizeVariables bool
+}
+
+type Application struct {
+	CheckForUpdates bool
 }
