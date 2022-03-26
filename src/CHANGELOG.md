@@ -9,6 +9,9 @@ Resulted image will respect filtered types and multi-z rendering if enabled.
 "Replace" tool has been added. When enabled, it wll replace the clicked hovered instance with the selected prefab.
 Tool has a quick shortcut to toggle: hold R key.
 
+### Improvements and Fixes
+ * Fixed self-update for Windows when StrongDMM executable was not on the C drive.
+
 # v2.2.0.alpha
 
 ### Improvements and Fixes
