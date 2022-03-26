@@ -118,8 +118,9 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 		w.MenuItem(fmt.Sprint("Delete##delete_", idx), t.doDelete(i)).
 			Icon(icon.Eraser).
 			Shortcut("D"),
-		w.MenuItem(fmt.Sprint("Replace With Selected##replace_with_selected_", idx), t.doReplaceWithSelected(i)).
-			IconEmpty().
+		w.MenuItem(fmt.Sprint("Replace##replace_", idx), t.doReplace(i)).
+			Icon(icon.Repeat).
+			Shortcut("R").
 			Enabled(t.app.HasSelectedPrefab()),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), t.doResetToDefault(i)).
 			IconEmpty(),
@@ -157,7 +158,7 @@ func (t *TileMenu) doDelete(i *dmminstance.Instance) func() {
 	}
 }
 
-func (t *TileMenu) doReplaceWithSelected(i *dmminstance.Instance) func() {
+func (t *TileMenu) doReplace(i *dmminstance.Instance) func() {
 	return func() {
 		if prefab, ok := t.app.SelectedPrefab(); ok {
 			log.Printf("[tilemenu] do replace instance[%s] with [%s]: %d", i.Prefab().Path(), prefab.Path(), i.Id())
