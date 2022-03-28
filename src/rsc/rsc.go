@@ -16,8 +16,6 @@ var (
 	ChangelogMd string
 )
 
-func AboutTxt(version, revision string) string {
-	txt := strings.Replace(aboutTxt, "%VERSION%", version, 1)
-	txt = strings.Replace(txt, "%REVISION%", revision, 1)
-	return txt
+func AboutTxt(version string) string {
+	return strings.Replace(aboutTxt, "%VERSION%", version, 1)
 }

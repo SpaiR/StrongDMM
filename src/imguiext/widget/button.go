@@ -13,6 +13,7 @@ type ButtonWidget struct {
 	label       string
 	tooltip     string
 	round       bool
+	small       bool
 	mouseCursor imgui.MouseCursorID
 	size        imgui.Vec2
 	textColor   imgui.Vec4
@@ -39,6 +40,11 @@ func (w *ButtonWidget) Size(size imgui.Vec2) *ButtonWidget {
 
 func (w *ButtonWidget) Round(round bool) *ButtonWidget {
 	w.round = round
+	return w
+}
+
+func (w *ButtonWidget) Small(small bool) *ButtonWidget {
+	w.small = small
 	return w
 }
 
@@ -111,7 +117,13 @@ func (w *ButtonWidget) Build() {
 		imgui.PushStyleColor(imgui.StyleColorButtonHovered, w.hoverColor)
 		styleCounter++
 	}
-	if imgui.ButtonV(label, w.size) && w.onClick != nil {
+	var flag bool
+	if w.small {
+		flag = imgui.SmallButton(label)
+	} else {
+		flag = imgui.ButtonV(label, w.size)
+	}
+	if flag && w.onClick != nil {
 		w.onClick()
 	}
 	if w.tooltip != "" && imgui.IsItemHovered() {

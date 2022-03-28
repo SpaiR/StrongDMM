@@ -250,14 +250,14 @@ func (m *Menu) Process() {
 		w.Menu("Help", w.Layout{
 			w.MenuItem("Changelog", m.app.DoOpenChangelog).
 				Icon(icon.ClipboardMultiple),
-			w.MenuItem("About", m.app.DoOpenAbout).
-				IconEmpty(),
 			w.MenuItem("Source Code", m.app.DoOpenSourceCode).
 				Icon(icon.GitHub),
 			w.MenuItem("Check for Updates", m.app.DoCheckForUpdates).
 				Icon(icon.SystemUpdate),
 			w.Separator(),
 			w.MenuItem("Open Logs Folder", m.app.DoOpenLogs).
+				IconEmpty(),
+			w.MenuItem("About", m.app.DoOpenAbout).
 				IconEmpty(),
 			w.Separator(),
 			w.Button("Support", m.app.DoOpenSupport).
