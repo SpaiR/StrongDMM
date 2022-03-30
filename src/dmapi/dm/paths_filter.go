@@ -48,7 +48,7 @@ func (p *PathsFilter) IsVisiblePath(path string) bool {
 
 func (p *PathsFilter) HasHiddenChildPath(path string) bool {
 	for filteredPath := range p.filteredPaths {
-		if strings.Contains(filteredPath, path) {
+		if strings.HasPrefix(filteredPath, path) {
 			return true
 		}
 	}

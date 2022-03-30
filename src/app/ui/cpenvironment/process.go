@@ -186,9 +186,8 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 
 	var hasHiddenChildPath bool
 	if value {
-		if hasHiddenChildPath = e.app.PathsFilter().HasHiddenChildPath(node.orig.Path); hasHiddenChildPath {
-			value = false
-		}
+		hasHiddenChildPath = e.app.PathsFilter().HasHiddenChildPath(node.orig.Path)
+		value = !hasHiddenChildPath
 	}
 
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
