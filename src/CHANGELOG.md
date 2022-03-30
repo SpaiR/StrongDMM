@@ -1,3 +1,8 @@
+# v2.4.0.alpha
+
+### Improvements and Fixes
+ * While filtering child types in the environment tree, there will be a dash symbol when the node is visible.
+
 # v2.3.0.alpha
 
 ### Screenshots!

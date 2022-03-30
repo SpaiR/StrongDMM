@@ -182,8 +182,31 @@ func (e *Environment) showAttachment(node *treeNode) bool {
 
 func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 	value := e.app.PathsFilter().IsVisiblePath(node.orig.Path)
+	vOrig := value
+
+	var hasHiddenChildPath bool
+	if value {
+		if hasHiddenChildPath = e.app.PathsFilter().HasHiddenChildPath(node.orig.Path); hasHiddenChildPath {
+			value = false
+		}
+	}
+
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
 		e.app.PathsFilter().TogglePath(node.orig.Path)
+	}
+
+	// Show a dash symbol, if the node has any hidden child.
+	if vOrig && hasHiddenChildPath {
+		iMin := imgui.ItemRectMin()
+		iMax := imgui.ItemRectMax()
+		iWidth := iMax.X - iMin.X
+		iHeight := iMax.Y - iMin.Y
+		mPadding := iWidth * .1  // height
+		mHeight := iHeight * .15 // left/right padding
+		mMinY := iMin.Y + iHeight/2 - mHeight/2
+		mMaxY := iMin.Y + iHeight/2 + mHeight/2
+		col := imgui.PackedColorFromVec4(imgui.CurrentStyle().Color(imgui.StyleColorCheckMark))
+		imgui.WindowDrawList().AddRectFilled(imgui.Vec2{X: iMin.X + mPadding, Y: mMinY}, imgui.Vec2{X: iMax.X - mPadding, Y: mMaxY}, col)
 	}
 }
 

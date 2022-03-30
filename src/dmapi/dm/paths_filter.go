@@ -2,6 +2,7 @@ package dm
 
 import (
 	"log"
+	"strings"
 )
 
 type PathsFilter struct {
@@ -45,18 +46,27 @@ func (p *PathsFilter) IsVisiblePath(path string) bool {
 	return !p.IsHiddenPath(path)
 }
 
+func (p *PathsFilter) HasHiddenChildPath(path string) bool {
+	for filteredPath := range p.filteredPaths {
+		if strings.Contains(filteredPath, path) {
+			return true
+		}
+	}
+	return false
+}
+
 func (p *PathsFilter) TogglePath(path string) {
 	p.togglePath(path, p.IsVisiblePath(path))
 	log.Printf("[dm] toggle [%s] path: [%t]", path, p.IsVisiblePath(path))
 }
 
 func (p *PathsFilter) togglePath(path string, isFilteredOut bool) {
+	for _, directChild := range p.findDirectChildren(path) {
+		p.togglePath(directChild, isFilteredOut)
+	}
 	if isFilteredOut {
 		p.filteredPaths[path] = true
 	} else {
 		delete(p.filteredPaths, path)
-	}
-	for _, directChild := range p.findDirectChildren(path) {
-		p.togglePath(directChild, isFilteredOut)
 	}
 }
