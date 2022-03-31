@@ -2,15 +2,15 @@ package tilemenu
 
 import (
 	"fmt"
+	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/ui/shortcut"
-
-	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/imguiext/icon"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )
@@ -35,6 +35,8 @@ func (t *TileMenu) Process() {
 
 func (t *TileMenu) showControls() {
 	w.Layout{
+		w.TextColored(t.tile.Coord.String(), style.ColorGold),
+		w.Separator(),
 		w.MenuItem("Undo", t.app.DoUndo).
 			Icon(icon.Undo).
 			Enabled(t.app.CommandStorage().HasUndo()).
