@@ -2,11 +2,11 @@ package app
 
 import (
 	"fmt"
+	"github.com/skratchdot/open-golang/open"
 	"log"
 	"sdmm/app/ui/dialog"
 	"sdmm/env"
 	w "sdmm/imguiext/widget"
-	"sdmm/platform"
 	"sdmm/rsc"
 )
 
@@ -27,9 +27,11 @@ func (a *app) openAboutWindow() {
 			w.SameLine(),
 			w.Button(env.Revision, func() {
 				link := fmt.Sprintf("%s/tree/%s", env.GitHub, env.Revision)
-				log.Println("[app] copy revision link:", link)
-				platform.SetClipboard(link) // open in browser doesn't work for some reason
-			}).Tooltip("Copy link to clipboard").Small(true),
+				log.Println("[app] do open revision link:", link)
+				if err := open.Run(link); err != nil {
+					log.Println("[app] unable to open revision link:", err)
+				}
+			}).Small(true),
 		},
 	})
 }
