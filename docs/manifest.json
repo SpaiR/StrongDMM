@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.3.0.alpha",
+  "version": "v2.4.0.alpha",
   "forceUpdate": true,
-  "description": "* Screenshots functionality\n* Replace tool\n* Minor improvements and fixes",
+  "description": "* Minor improvements and fixes",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
