@@ -10,7 +10,6 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/imguiext/icon"
-	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
 )
@@ -35,7 +34,7 @@ func (t *TileMenu) Process() {
 
 func (t *TileMenu) showControls() {
 	w.Layout{
-		w.TextColored(t.tile.Coord.String(), style.ColorGold),
+		w.MenuItem(t.tile.Coord.String(), nil).Icon(icon.Help).Enabled(false),
 		w.Separator(),
 		w.MenuItem("Undo", t.app.DoUndo).
 			Icon(icon.Undo).
