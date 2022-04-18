@@ -14,7 +14,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - name: Checkout Repostiry
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: golangci-lint
@@ -60,7 +60,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout Repostiry
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: Cache Build Files
@@ -95,7 +95,7 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout Repostiry
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: Download Release Files

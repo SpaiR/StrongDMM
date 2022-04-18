@@ -104,7 +104,7 @@ compiled to a `staticlib`. You can find it by path: `src/third_party/sdmmparser/
 
 ### Pre-requests
 
-* [Go](https://go.dev/): version **1.17.5** or higher
+* [Go](https://go.dev/): version **1.17** or higher
 * [Rust](https://www.rust-lang.org/): version **1.58.1** or higher
 * (Optional) [Task](https://taskfile.dev): to run build scripts
 
