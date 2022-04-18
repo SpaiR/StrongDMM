@@ -21,7 +21,7 @@ func (vareditorConfig) Name() string {
 	return configName
 }
 
-func (vareditorConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (vareditorConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
 	// do nothing. yet...
 	return nil, migrated
 }

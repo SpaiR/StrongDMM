@@ -16,12 +16,12 @@ var prefsGroupOrder = []PrefGroup{
 	GPApplication,
 }
 
-type Prefs map[PrefGroup][]interface{}
+type Prefs map[PrefGroup][]any
 
 func MakePrefs() Prefs {
-	return make(map[PrefGroup][]interface{})
+	return make(Prefs)
 }
 
-func (p Prefs) Add(group PrefGroup, pref interface{}) {
+func (p Prefs) Add(group PrefGroup, pref any) {
 	p[group] = append(p[group], pref)
 }

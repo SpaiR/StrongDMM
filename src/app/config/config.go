@@ -9,14 +9,14 @@ import (
 
 type Config interface {
 	Name() string
-	TryMigrate(rawCfg map[string]interface{}) (result map[string]interface{}, migrated bool)
+	TryMigrate(rawCfg map[string]any) (result map[string]any, migrated bool)
 }
 
 func Save(filepath string, cfg Config) {
 	SaveV(filepath, cfg)
 }
 
-func SaveV(filepath string, cfg interface{}) {
+func SaveV(filepath string, cfg any) {
 	log.Println("[config] saving:", filepath)
 	f, err := os.Create(filepath)
 	if err != nil {
@@ -36,7 +36,7 @@ func Load(filepath string, cfg Config) error {
 	return LoadV(filepath, cfg)
 }
 
-func LoadV(filepath string, cfg interface{}) error {
+func LoadV(filepath string, cfg any) error {
 	log.Println("[config] reading:", filepath)
 	f, err := os.Open(filepath)
 	if err != nil {

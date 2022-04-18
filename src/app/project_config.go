@@ -24,7 +24,7 @@ func (projectConfig) Name() string {
 	return projectConfigName
 }
 
-func (cfg *projectConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (cfg *projectConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
 	// do nothing. yet...
 	return nil, migrated
 }

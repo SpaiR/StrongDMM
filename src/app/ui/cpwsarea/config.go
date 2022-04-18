@@ -19,7 +19,7 @@ func (cpwsareaConfig) Name() string {
 	return configName
 }
 
-func (cpwsareaConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (cpwsareaConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
 	// do nothing. yet...
 	return nil, migrated
 }

@@ -20,7 +20,7 @@ func (preferencesConfig) Name() string {
 	return preferencesConfigName
 }
 
-func (preferencesConfig) TryMigrate(cfg map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (preferencesConfig) TryMigrate(cfg map[string]any) (result map[string]any, migrated bool) {
 	result = cfg
 
 	if uint(result["Version"].(float64)) == 1 {
@@ -29,7 +29,7 @@ func (preferencesConfig) TryMigrate(cfg map[string]interface{}) (result map[stri
 		result["Editor"] = result["Save"]
 		delete(result, "Save")
 
-		editorPrefs := result["Editor"].(map[string]interface{})
+		editorPrefs := result["Editor"].(map[string]any)
 		editorPrefs["SaveFormat"] = editorPrefs["Format"]
 		delete(editorPrefs, "Format")
 

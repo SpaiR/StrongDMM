@@ -17,7 +17,7 @@ func (appConfig) Name() string {
 	return configName
 }
 
-func (appConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (appConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
 	// do nothing. yet...
 	return nil, migrated
 }

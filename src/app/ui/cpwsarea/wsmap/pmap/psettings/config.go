@@ -20,7 +20,7 @@ func (psettingsConfig) Name() string {
 	return configName
 }
 
-func (psettingsConfig) TryMigrate(_ map[string]interface{}) (result map[string]interface{}, migrated bool) {
+func (psettingsConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
 	// do nothing. yet...
 	return nil, migrated
 }

@@ -18,7 +18,7 @@ func (a *app) ConfigRegister(cfg config.Config) {
 	log.Printf("[app] registering config [%s] by path [%s]...", cfg.Name(), configFilePath)
 
 	// Load a raw configuration data.
-	rawCfg := make(map[string]interface{})
+	rawCfg := make(map[string]any)
 	err := config.LoadV(configFilePath, &rawCfg)
 	if err != nil {
 		log.Println("[app] unable to load config:", cfg.Name()) // Highly likely doesn't exist.
