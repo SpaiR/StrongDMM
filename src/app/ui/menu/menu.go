@@ -27,6 +27,7 @@ type app interface {
 	DoClose()
 	DoCloseAll()
 	DoSave()
+	DoSaveAll()
 	DoOpenPreferences()
 	DoExit()
 
@@ -163,6 +164,10 @@ func (m *Menu) Process() {
 				Icon(icon.Save).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(shortcut.KeyModName(), "S"),
+			w.MenuItem("Save All", m.app.DoSaveAll).
+				Icon(icon.Save).
+				Enabled(m.app.HasActiveMap()).
+				Shortcut(shortcut.KeyModName(), "Shift", "S"),
 			w.Separator(),
 			w.MenuItem("Preferences", m.app.DoOpenPreferences).
 				Icon(icon.Wrench),

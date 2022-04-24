@@ -116,6 +116,14 @@ func (a *app) DoSave() {
 	}
 }
 
+// DoSaveAll saves all active maps.
+func (a *app) DoSaveAll() {
+	log.Println("[app] do save all")
+	for _, ws := range a.layout.WsArea.MapWorkspaces() {
+		ws.Save()
+	}
+}
+
 // DoOpenPreferences opens preferences tab.
 func (a *app) DoOpenPreferences() {
 	log.Println("[app] open preferences")

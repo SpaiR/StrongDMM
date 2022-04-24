@@ -145,6 +145,10 @@ func (w *WsArea) ActiveWorkspace() *workspace.Workspace {
 	return w.activeWs
 }
 
+func (w *WsArea) MapWorkspaces() []*workspace.Workspace {
+	return w.findMapWorkspaces()
+}
+
 func (w *WsArea) addWorkspace(ws *workspace.Workspace) {
 	w.addWorkspaceV(ws, len(w.workspaces))
 }

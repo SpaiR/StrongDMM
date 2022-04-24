@@ -1,3 +1,5 @@
+ * Added a "Save All" action.
+
 # v2.4.0.alpha
 
 ### Improvements and Fixes

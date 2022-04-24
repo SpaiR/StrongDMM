@@ -31,6 +31,16 @@ func (m *Menu) addShortcuts() {
 		Action:      m.app.DoSave,
 		IsEnabled:   m.app.HasActiveMap,
 	})
+	m.shortcuts.Add(shortcut.Shortcut{
+		Name:         "menu#DoSaveAll",
+		FirstKey:     shortcut.KeyModLeft(),
+		FirstKeyAlt:  shortcut.KeyModRight(),
+		SecondKey:    glfw.KeyLeftShift,
+		SecondKeyAlt: glfw.KeyRightShift,
+		ThirdKey:     glfw.KeyS,
+		Action:       m.app.DoSaveAll,
+		IsEnabled:    m.app.HasActiveMap,
+	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:        "menu#DoClose",
