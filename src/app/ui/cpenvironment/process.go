@@ -154,7 +154,6 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 			e.showNodeMenu(node)
 		}
 	}
-
 }
 
 func (e *Environment) doSelectOnClick(node *treeNode) {
