@@ -1,5 +1,5 @@
 name: CI
-on: [ push ]
+on: [ push, pull_request ]
 env:
   GO_VERSION: 1.18.1
 jobs:
