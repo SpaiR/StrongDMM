@@ -2,13 +2,15 @@ package cpenvironment
 
 import (
 	"fmt"
+	"sdmm/app/window"
 	"sdmm/imguiext/style"
 	"strings"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmenv"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (e *Environment) Process() {
@@ -108,6 +110,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: ((e.iconSize() * window.PointSize()) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
@@ -128,7 +131,9 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 				imgui.StateStorage().SetAllInt(0)
 			}
 			for _, childPath := range object.DirectChildren {
+				imgui.PopStyleVar()
 				e.showBranch0(e.app.LoadedEnvironment().Objects[childPath])
+				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: e.iconSize()})
 			}
 			imgui.TreePop()
 		} else {
@@ -136,6 +141,8 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 			e.showNodeMenu(node)
 		}
 	}
+
+	imgui.PopStyleVar()
 }
 
 func (e *Environment) doSelectOnClick(node *treeNode) {
@@ -211,7 +218,7 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := e.iconSize()
+	iconSize := e.iconSize() * window.PointSize()
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
 }

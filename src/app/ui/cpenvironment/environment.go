@@ -1,11 +1,12 @@
 package cpenvironment
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"log"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"strings"
+
+	"github.com/SpaiR/imgui-go"
 
 	"sdmm/dmapi/dmenv"
 )
