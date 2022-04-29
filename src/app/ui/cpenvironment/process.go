@@ -133,7 +133,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 			for _, childPath := range object.DirectChildren {
 				imgui.PopStyleVar()
 				e.showBranch0(e.app.LoadedEnvironment().Objects[childPath])
-				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: e.iconSize()})
+				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: 0})
 			}
 			imgui.TreePop()
 		} else {
