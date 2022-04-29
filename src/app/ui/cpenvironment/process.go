@@ -2,7 +2,6 @@ package cpenvironment
 
 import (
 	"fmt"
-	"sdmm/app/window"
 	"sdmm/imguiext/style"
 	"strings"
 
@@ -65,7 +64,7 @@ func (e *Environment) showTypesFilterButton() {
 }
 
 func (e *Environment) showTree() {
-	if imgui.BeginChild(fmt.Sprintf("environment_tree_[%d]", e.treeId)) {
+	if imgui.BeginChildV(fmt.Sprintf("environment_tree_[%d]", e.treeId), imgui.Vec2{X: 0, Y: -imgui.FrameHeightWithSpacing()}, false, 0) {
 		if len(e.filter) == 0 {
 			e.showPathBranch("/area")
 			e.showPathBranch("/turf")
@@ -76,6 +75,12 @@ func (e *Environment) showTree() {
 		}
 	}
 	imgui.EndChild()
+
+	if !e.typesFilterEnabled {
+		imgui.PushItemWidth(imgui.ContentRegionAvail().X)
+		imgui.SliderInt("Scale", &e.iconsScale, 100, 300)
+		imgui.PopItemWidth()
+	}
 }
 
 func (e *Environment) showFilteredNodes() {
@@ -110,10 +115,16 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: ((e.iconSize() * window.PointSize()) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+	if e.typesFilterEnabled {
+		imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: imgui.CurrentStyle().FramePadding().Y})
+	} else {
+		imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+	}
+
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
+		imgui.PopStyleVar()
 		e.doSelectOnClick(node)
 		e.showNodeMenu(node)
 		e.scrollToSelectedPath(node)
@@ -121,8 +132,12 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		if e.isPartOfSelectedPath(node) {
 			imgui.SetNextItemOpen(true, imgui.ConditionAlways)
 		}
+
 		imgui.AlignTextToFramePadding()
-		if imgui.TreeNodeV(node.name, e.nodeFlags(node, false)) {
+		opened := imgui.TreeNodeV(node.name, e.nodeFlags(node, false))
+		imgui.PopStyleVar()
+
+		if opened {
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)
 			e.scrollToSelectedPath(node)
@@ -131,9 +146,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 				imgui.StateStorage().SetAllInt(0)
 			}
 			for _, childPath := range object.DirectChildren {
-				imgui.PopStyleVar()
 				e.showBranch0(e.app.LoadedEnvironment().Objects[childPath])
-				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: 0, Y: 0})
 			}
 			imgui.TreePop()
 		} else {
@@ -142,7 +155,6 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		}
 	}
 
-	imgui.PopStyleVar()
 }
 
 func (e *Environment) doSelectOnClick(node *treeNode) {
@@ -218,7 +230,7 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := e.iconSize() * window.PointSize()
+	iconSize := e.iconSize() * (float32(e.iconsScale) / 100)
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
 }

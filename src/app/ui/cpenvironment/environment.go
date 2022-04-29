@@ -36,6 +36,7 @@ type Environment struct {
 
 	treeNodes         map[string]*treeNode
 	filteredTreeNodes []*treeNode
+	iconsScale        int32
 
 	filter       string
 	selectedPath string
@@ -50,6 +51,7 @@ func (e *Environment) Init(app App) {
 	e.addShortcuts()
 	e.app = app
 	e.treeNodes = make(map[string]*treeNode)
+	e.iconsScale = 100
 }
 
 func (e *Environment) Free() {
