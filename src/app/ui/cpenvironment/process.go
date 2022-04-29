@@ -64,7 +64,13 @@ func (e *Environment) showTypesFilterButton() {
 }
 
 func (e *Environment) showTree() {
-	if imgui.BeginChildV(fmt.Sprintf("environment_tree_[%d]", e.treeId), imgui.Vec2{X: 0, Y: -imgui.FrameHeightWithSpacing()}, false, 0) {
+	var bottomPadding float32
+
+	if !e.typesFilterEnabled {
+		bottomPadding = -imgui.FrameHeightWithSpacing()
+	}
+
+	if imgui.BeginChildV(fmt.Sprintf("environment_tree_[%d]", e.treeId), imgui.Vec2{X: 0, Y: bottomPadding}, false, 0) {
 		if len(e.filter) == 0 {
 			e.showPathBranch("/area")
 			e.showPathBranch("/turf")
