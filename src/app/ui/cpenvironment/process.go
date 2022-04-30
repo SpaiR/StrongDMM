@@ -98,7 +98,17 @@ func (e *Environment) showFilteredNodes() {
 			if e.showAttachment(node) {
 				imgui.SameLine()
 			}
+
+			if e.typesFilterEnabled {
+				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: imgui.CurrentStyle().FramePadding().Y})
+			} else {
+				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+			}
+
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
+
+			imgui.PopStyleVar()
+
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)
 		}
