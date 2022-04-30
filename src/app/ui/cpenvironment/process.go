@@ -102,12 +102,7 @@ func (e *Environment) showFilteredNodes() {
 				imgui.SameLine()
 			}
 
-			if e.typesFilterEnabled {
-				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: imgui.CurrentStyle().FramePadding().Y})
-			} else {
-				imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
-			}
-
+			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
 
 			imgui.PopStyleVar()
@@ -134,11 +129,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
-	if e.typesFilterEnabled {
-		imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: imgui.CurrentStyle().FramePadding().Y})
-	} else {
-		imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
-	}
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
 
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
@@ -227,9 +218,12 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 		value = !hasHiddenChildPath
 	}
 
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.iconsScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
 		e.app.PathsFilter().TogglePath(node.orig.Path)
 	}
+
+	imgui.PopStyleVar()
 
 	// Show a dash symbol, if the node has any hidden child.
 	if vOrig && hasHiddenChildPath {
