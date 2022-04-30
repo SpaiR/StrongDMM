@@ -72,7 +72,7 @@ func (e *Environment) showSettingsButton() {
 	}.Build()
 
 	if imgui.BeginPopupContextItemV("environment_settings", imgui.PopupFlagsMouseButtonLeft) {
-		imgui.SliderInt("Nodes Scale", &e.nodesScale, 100, 300)
+		imgui.SliderInt("Icon Size", &e.nodesScale, 100, 300)
 
 		imgui.EndPopup()
 	}
