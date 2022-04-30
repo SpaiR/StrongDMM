@@ -33,6 +33,8 @@ func (e *Environment) showControls() {
 	imgui.SameLine()
 	e.showTypesFilterButton()
 	imgui.SameLine()
+	e.showSettingsButton()
+	imgui.SameLine()
 	w.InputTextWithHint("##filter", "Filter", &e.filter).
 		ButtonClear().
 		Width(-1).
@@ -63,14 +65,21 @@ func (e *Environment) showTypesFilterButton() {
 	}.Build()
 }
 
-func (e *Environment) showTree() {
-	var bottomPadding float32
+func (e *Environment) showSettingsButton() {
+	w.Layout{
+		w.Button(icon.Cog, nil).
+			Round(true),
+	}.Build()
 
-	if !e.typesFilterEnabled {
-		bottomPadding = -imgui.FrameHeightWithSpacing()
+	if imgui.BeginPopupContextItemV("environment_settings", imgui.PopupFlagsMouseButtonLeft) {
+		imgui.SliderInt("Icons Scale", &e.iconsScale, 100, 300)
+
+		imgui.EndPopup()
 	}
+}
 
-	if imgui.BeginChildV(fmt.Sprintf("environment_tree_[%d]", e.treeId), imgui.Vec2{X: 0, Y: bottomPadding}, false, 0) {
+func (e *Environment) showTree() {
+	if imgui.BeginChild(fmt.Sprintf("environment_tree_[%d]", e.treeId)) {
 		if len(e.filter) == 0 {
 			e.showPathBranch("/area")
 			e.showPathBranch("/turf")
@@ -81,12 +90,6 @@ func (e *Environment) showTree() {
 		}
 	}
 	imgui.EndChild()
-
-	if !e.typesFilterEnabled {
-		imgui.PushItemWidth(imgui.ContentRegionAvail().X)
-		imgui.SliderInt("Scale", &e.iconsScale, 100, 300)
-		imgui.PopItemWidth()
-	}
 }
 
 func (e *Environment) showFilteredNodes() {
