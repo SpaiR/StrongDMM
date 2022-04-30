@@ -102,7 +102,7 @@ func (e *Environment) showFilteredNodes() {
 				imgui.SameLine()
 			}
 
-			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.nodesScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
 
 			imgui.PopStyleVar()
@@ -129,7 +129,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.nodesScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
 
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
@@ -218,7 +218,7 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 		value = !hasHiddenChildPath
 	}
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: imgui.CurrentStyle().FramePadding().X, Y: ((e.iconSize() * (float32(e.nodesScale) / 100)) - (imgui.CalcTextSize(node.name, false, 0).Y)) / 2})
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
 		e.app.PathsFilter().TogglePath(node.orig.Path)
 	}
@@ -245,4 +245,18 @@ func (e *Environment) showIcon(node *treeNode) {
 	iconSize := e.iconSize() * (float32(e.nodesScale) / 100)
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
+}
+
+func (e *Environment) calculateTreeNodePadding(nodeName string) imgui.Vec2 {
+	x := imgui.CurrentStyle().FramePadding().X
+
+	scaledIconSize := e.iconSize() * (float32(e.nodesScale) / 100)
+	textSize := imgui.CalcTextSize(nodeName, false, 0).Y
+
+	y := (scaledIconSize - textSize) / 2
+
+	return imgui.Vec2{
+		X: x,
+		Y: y,
+	}
 }
