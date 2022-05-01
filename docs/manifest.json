@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.4.0.alpha",
+  "version": "v2.5.0.alpha",
   "forceUpdate": true,
-  "description": "* Minor improvements and fixes",
+  "description": "* Icon scale for the environment tree\n* Save All action\n* Mouse wheel action for Quick Edit\n* Search by type",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
