@@ -1,10 +1,10 @@
 package app
 
 import (
-	"math"
-	"sdmm/app/prefs"
+	"math"           //nolint
+	"sdmm/app/prefs" //nolint
 	"sdmm/app/ui/cpwsarea/wsprefs"
-	"sdmm/app/window"
+	"sdmm/app/window" //nolint
 )
 
 func (a *app) makePreferences() wsprefs.Prefs {
