@@ -2,12 +2,14 @@ package app
 
 import (
 	"fmt"
-	"github.com/skratchdot/open-golang/open"
 	"log"
+
 	"sdmm/app/ui/dialog"
 	"sdmm/env"
 	w "sdmm/imguiext/widget"
 	"sdmm/rsc"
+
+	"github.com/skratchdot/open-golang/open"
 )
 
 var aboutText string

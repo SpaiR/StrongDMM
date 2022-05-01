@@ -1,8 +1,8 @@
 package pmap
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"log"
+
 	"sdmm/app/command"
 	"sdmm/app/prefs"
 	"sdmm/app/render"
@@ -21,6 +21,8 @@ import (
 	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/imguiext/style"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

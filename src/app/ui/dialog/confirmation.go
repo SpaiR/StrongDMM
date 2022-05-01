@@ -1,9 +1,10 @@
 package dialog
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type TypeConfirmation struct {

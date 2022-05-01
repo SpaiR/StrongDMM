@@ -1,7 +1,6 @@
 package editor
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
@@ -12,6 +11,8 @@ import (
 	"sdmm/dmapi/dmmclip"
 	"sdmm/dmapi/dmmsnap"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type Editor struct {

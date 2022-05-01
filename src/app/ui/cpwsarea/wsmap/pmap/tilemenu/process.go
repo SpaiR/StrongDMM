@@ -2,8 +2,8 @@ package tilemenu
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"log"
+
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
@@ -12,6 +12,8 @@ import (
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (t *TileMenu) Process() {

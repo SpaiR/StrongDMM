@@ -2,8 +2,9 @@ package cpenvironment
 
 import (
 	"fmt"
-	"sdmm/imguiext/style"
 	"strings"
+
+	"sdmm/imguiext/style"
 
 	"sdmm/dmapi/dmenv"
 	"sdmm/imguiext/icon"

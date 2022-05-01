@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+
 	"sdmm/app/prefs"
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/wsmap"
@@ -11,13 +12,14 @@ import (
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/env"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmclip"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 /*

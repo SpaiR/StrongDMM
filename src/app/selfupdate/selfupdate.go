@@ -3,6 +3,7 @@ package selfupdate
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/inconshreveable/go-update"
 )
 

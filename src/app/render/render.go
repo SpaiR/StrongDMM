@@ -1,11 +1,12 @@
 package render
 
 import (
-	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/app/render/brush"
 	"sdmm/app/render/bucket"
 	"sdmm/dmapi/dmmap"
 	"sdmm/util"
+
+	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
 type Render struct {

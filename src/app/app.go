@@ -1,18 +1,19 @@
 package app
 
 import (
-	"github.com/matishsiao/goInfo"
 	"io"
 	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"runtime"
-	"sdmm/app/ui/dialog"
-	"sdmm/env"
 	"time"
 
-	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/dialog"
+	"sdmm/env"
+
+	"github.com/matishsiao/goInfo"
+
 	"sdmm/app/command"
 	"sdmm/app/config"
 	"sdmm/app/render/brush"
@@ -23,6 +24,8 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmclip"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 const (

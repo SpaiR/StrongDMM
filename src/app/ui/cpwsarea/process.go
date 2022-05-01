@@ -1,8 +1,9 @@
 package cpwsarea
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (w *WsArea) Process(dockId int) {

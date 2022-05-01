@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (e *Environment) showNodeMenu(n *treeNode) {

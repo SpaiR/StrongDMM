@@ -2,9 +2,11 @@ package workspace
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
-	"sdmm/app/command"
 	"time"
+
+	"sdmm/app/command"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type content interface {

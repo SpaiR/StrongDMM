@@ -1,8 +1,9 @@
 package dialog
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"log"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type Type interface {

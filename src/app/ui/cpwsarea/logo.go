@@ -1,9 +1,11 @@
 package cpwsarea
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"image/color"
+
 	"sdmm/app/window"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 const logoSize = 250

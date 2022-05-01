@@ -1,7 +1,6 @@
 package pmap
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
@@ -9,6 +8,8 @@ import (
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 const flickDurationSec = .5

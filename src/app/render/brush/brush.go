@@ -3,8 +3,9 @@ package brush
 import (
 	"log"
 
-	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/platform"
+
+	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
 var (

@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"runtime"
+
 	"sdmm/app/selfupdate"
 	"sdmm/env"
 	"sdmm/req"

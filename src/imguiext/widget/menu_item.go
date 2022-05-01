@@ -1,9 +1,10 @@
 package widget
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/shortcut"
 	"sdmm/imguiext/style"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 // Placeholder to check if there is an empty icon for the menuItem.

@@ -1,9 +1,10 @@
 package widget
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type inputTextWithHintWidget struct {

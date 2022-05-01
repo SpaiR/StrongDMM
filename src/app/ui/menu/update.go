@@ -1,12 +1,14 @@
 package menu
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"log"
+
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 var loadingDotTypes = []string{".", "..", "...", "...."}

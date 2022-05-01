@@ -1,7 +1,6 @@
 package tilemenu
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/pquickedit"
@@ -12,6 +11,8 @@ import (
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmmclip"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

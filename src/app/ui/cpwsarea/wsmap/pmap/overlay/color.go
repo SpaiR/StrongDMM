@@ -1,9 +1,10 @@
 package overlay
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/imguiext/style"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 var (

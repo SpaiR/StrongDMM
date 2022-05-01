@@ -8,10 +8,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/go-gl/gl/v3.3-core/gl"
 	"sdmm/dmapi/dm"
 	"sdmm/platform"
 	"sdmm/third_party/sdmmparser"
+
+	"github.com/go-gl/gl/v3.3-core/gl"
 )
 
 type Dmi struct {

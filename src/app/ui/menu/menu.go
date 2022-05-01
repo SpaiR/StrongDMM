@@ -1,7 +1,6 @@
 package menu
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/command"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
@@ -11,6 +10,8 @@ import (
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/rsc"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 //goland:noinspection GoCommentStart

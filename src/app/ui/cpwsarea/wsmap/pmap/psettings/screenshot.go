@@ -2,11 +2,11 @@ package psettings
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
-	"github.com/sqweek/dialog"
 	"image/png"
 	"log"
 	"os"
+	"time"
+
 	"sdmm/app/render/bucket/level/chunk/unit"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	appdialog "sdmm/app/ui/dialog"
@@ -15,7 +15,9 @@ import (
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/util"
-	"time"
+
+	"github.com/SpaiR/imgui-go"
+	"github.com/sqweek/dialog"
 )
 
 type sessionScreenshot struct {

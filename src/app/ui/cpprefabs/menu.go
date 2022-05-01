@@ -5,7 +5,6 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
@@ -13,6 +12,8 @@ import (
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
 	"sdmm/platform"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (p *Prefabs) showContextMenu(node *prefabNode) {

@@ -2,6 +2,7 @@ package render
 
 import (
 	"math/rand"
+
 	"sdmm/app/render/brush"
 	"sdmm/util"
 )

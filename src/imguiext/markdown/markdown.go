@@ -2,9 +2,11 @@ package markdown
 
 import (
 	"bufio"
-	"github.com/SpaiR/imgui-go"
-	"sdmm/app/window"
 	"strings"
+
+	"sdmm/app/window"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type Block int

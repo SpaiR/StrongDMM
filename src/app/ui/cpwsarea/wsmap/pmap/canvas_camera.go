@@ -1,10 +1,11 @@
 package pmap
 
 import (
-	"github.com/SpaiR/imgui-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext"
+
+	"github.com/SpaiR/imgui-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 const scaleFactor float32 = 1.5

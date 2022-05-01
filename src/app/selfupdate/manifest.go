@@ -3,9 +3,10 @@ package selfupdate
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"sdmm/env"
 	"sdmm/req"
-	"strings"
 )
 
 type Manifest struct {

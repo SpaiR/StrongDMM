@@ -2,14 +2,16 @@ package wsmap
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"log"
+
 	"sdmm/app/command"
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmap"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

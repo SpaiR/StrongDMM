@@ -1,8 +1,9 @@
 package shortcut
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"log"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 var shortcutId uint64

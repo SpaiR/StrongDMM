@@ -3,16 +3,18 @@ package cpvareditor
 import (
 	"fmt"
 	"log"
-	"sdmm/app/ui/shortcut"
 	"sort"
 	"strings"
 
-	"github.com/SpaiR/imgui-go"
+	"sdmm/app/ui/shortcut"
+
 	"sdmm/dmapi/dmvars"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/util/slice"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (v *VarEditor) Process() {

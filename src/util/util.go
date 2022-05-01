@@ -1,9 +1,10 @@
 package util
 
 import (
-	"github.com/sqweek/dialog"
 	"image"
 	"image/color"
+
+	"github.com/sqweek/dialog"
 )
 
 // Djb2 is hashing method implemented by spec: http://www.cse.yorku.ca/~oz/hash.html

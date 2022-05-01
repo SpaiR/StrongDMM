@@ -2,12 +2,14 @@ package psettings
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
 	"log"
 	"math"
+
 	"sdmm/imguiext"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 const (

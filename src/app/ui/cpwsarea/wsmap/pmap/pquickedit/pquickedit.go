@@ -2,7 +2,9 @@ package pquickedit
 
 import (
 	"fmt"
-	"github.com/SpaiR/imgui-go"
+	"strconv"
+	"time"
+
 	"sdmm/app/prefs"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
@@ -13,8 +15,8 @@ import (
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/dmapi/dmvars"
 	"sdmm/util"
-	"strconv"
-	"time"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

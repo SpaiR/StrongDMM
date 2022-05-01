@@ -1,11 +1,13 @@
 package pmap
 
 import (
-	"github.com/SpaiR/imgui-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"log"
+
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/window"
+
+	"github.com/SpaiR/imgui-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func init() {

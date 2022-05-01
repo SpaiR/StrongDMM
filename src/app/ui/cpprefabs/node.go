@@ -4,7 +4,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap"
@@ -12,6 +11,8 @@ import (
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmvars"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type prefabNode struct {

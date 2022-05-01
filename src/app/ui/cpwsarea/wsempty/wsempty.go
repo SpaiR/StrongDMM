@@ -2,9 +2,10 @@ package wsempty
 
 import (
 	"fmt"
+	"strings"
+
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/dmapi/dmenv"
-	"strings"
 
 	"github.com/SpaiR/imgui-go"
 )

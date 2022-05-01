@@ -1,9 +1,10 @@
 package window
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/imguiext/icon"
 	"sdmm/rsc"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 const (

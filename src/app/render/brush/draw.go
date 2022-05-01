@@ -1,9 +1,10 @@
 package brush
 
 import (
+	"sdmm/platform"
+
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/mathgl/mgl32"
-	"sdmm/platform"
 )
 
 func Draw(w, h, x, y, z float32) {

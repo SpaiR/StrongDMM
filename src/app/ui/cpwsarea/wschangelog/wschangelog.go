@@ -1,7 +1,6 @@
 package wschangelog
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/window"
 	"sdmm/imguiext/icon"
@@ -9,6 +8,8 @@ import (
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/rsc"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 var (

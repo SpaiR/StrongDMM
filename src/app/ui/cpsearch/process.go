@@ -3,15 +3,17 @@ package cpsearch
 import (
 	"fmt"
 	"log"
-	"sdmm/app/window"
 	"strconv"
 
-	"github.com/SpaiR/imgui-go"
+	"sdmm/app/window"
+
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (s *Search) Process() {

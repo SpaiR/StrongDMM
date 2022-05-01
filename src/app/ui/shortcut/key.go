@@ -1,9 +1,10 @@
 package shortcut
 
 import (
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"runtime"
 	"strings"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func Combine(keys ...string) string {

@@ -4,6 +4,7 @@ import (
 	"log"
 	"math"
 	"path/filepath"
+
 	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/window"

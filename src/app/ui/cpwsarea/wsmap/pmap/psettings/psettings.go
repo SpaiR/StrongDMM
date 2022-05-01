@@ -1,11 +1,12 @@
 package psettings
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/config"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmmap"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type App interface {

@@ -1,8 +1,9 @@
 package cpvareditor
 
 import (
-	"github.com/go-gl/glfw/v3.3/glfw"
 	"sdmm/app/ui/shortcut"
+
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func (v *VarEditor) addShortcuts() {

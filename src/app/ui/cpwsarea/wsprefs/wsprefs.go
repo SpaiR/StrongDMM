@@ -1,12 +1,13 @@
 package wsprefs
 
 import (
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/window"
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/markdown"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type WsPrefs struct {

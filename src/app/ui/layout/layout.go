@@ -3,7 +3,6 @@ package layout
 import (
 	"log"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/app/config"
 	"sdmm/app/ui/cpenvironment"
 	"sdmm/app/ui/cpprefabs"
@@ -12,6 +11,8 @@ import (
 	"sdmm/app/ui/cpwsarea"
 	"sdmm/app/ui/layout/lnode"
 	"sdmm/util/slice"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 type app interface {
