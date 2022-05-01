@@ -1,9 +1,8 @@
-package app
+package prefs
 
 import (
 	"log"
 
-	"sdmm/app/prefs"
 	"sdmm/app/ui/cpwsarea/wsprefs"
 )
 
@@ -70,8 +69,8 @@ func (p optionPrefPrefab) make() any {
 		}
 	}
 
-	pref.Options = prefs.SaveFormats
-	pref.Help = prefs.SaveFormatHelp
+	pref.Options = SaveFormats
+	pref.Help = SaveFormatHelp
 
 	return pref
 }

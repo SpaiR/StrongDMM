@@ -127,6 +127,11 @@ func (a *app) UpdateTitle() {
 	log.Println("[app] title updated:", title)
 }
 
+// UpdateScale updates scale of the application.
+func (a *app) UpdateScale() {
+	a.tmpUpdateScale = true
+}
+
 // OnWorkspaceSwitched called when the app workspace is switched.
 func (a *app) OnWorkspaceSwitched() {
 	a.UpdateTitle()

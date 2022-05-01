@@ -1,14 +1,17 @@
-package app
+package prefs
 
 import (
-	"math" //nolint
+	"math"
 
-	"sdmm/app/prefs" //nolint
 	"sdmm/app/ui/cpwsarea/wsprefs"
-	"sdmm/app/window" //nolint
+	"sdmm/app/window"
 )
 
-func (a *app) makePreferences() wsprefs.Prefs {
+type App interface {
+	UpdateScale()
+}
+
+func Make(app App, prefs *Prefs) wsprefs.Prefs {
 	p := wsprefs.MakePrefs()
 
 	var preferencesPrefabs = map[wsprefs.PrefGroup][]prefPrefab{
@@ -17,22 +20,22 @@ func (a *app) makePreferences() wsprefs.Prefs {
 				name:    "Save Format",
 				desc:    "Controls the format used by the editor to save the map.",
 				label:   "##save_format",
-				value:   &a.preferencesConfig().Prefs.Editor.SaveFormat,
-				options: prefs.SaveFormats,
-				help:    prefs.SaveFormatHelp,
+				value:   &prefs.Editor.SaveFormat,
+				options: SaveFormats,
+				help:    SaveFormatHelp,
 			},
 			boolPrefPrefab{
 				name:  "Sanitize Variables",
 				desc:  "Enables sanitizing for variables which are declared on the map, but has the same value as initial.",
 				label: "##sanitize_variables",
-				value: &a.preferencesConfig().Prefs.Editor.SanitizeVariables,
+				value: &prefs.Editor.SanitizeVariables,
 			},
 			optionPrefPrefab{
 				name:    "Nudge Mode",
 				desc:    "Controls which variables will be changed during the nudge.",
 				label:   "##nudge_mode",
-				value:   &a.preferencesConfig().Prefs.Editor.NudgeMode,
-				options: prefs.SaveNudgeModes,
+				value:   &prefs.Editor.NudgeMode,
+				options: SaveNudgeModes,
 			},
 		},
 
@@ -41,19 +44,19 @@ func (a *app) makePreferences() wsprefs.Prefs {
 				name:  "Alternative Scroll Behavior",
 				desc:  "When enabled, scrolling will do panning. Zoom will be available if a Space key pressed.",
 				label: "##alternative_scroll_behavior",
-				value: &a.preferencesConfig().Prefs.Controls.AltScrollBehaviour,
+				value: &prefs.Controls.AltScrollBehaviour,
 			},
 			boolPrefPrefab{
 				name:  "Quick Edit: Tile Context Menu",
 				desc:  "Controls whether Quick Edit should be shown in the tile context menu.",
 				label: "##quick_edit:tile_context_menu",
-				value: &a.preferencesConfig().Prefs.Controls.QuickEditContextMenu,
+				value: &prefs.Controls.QuickEditContextMenu,
 			},
 			boolPrefPrefab{
 				name:  "Quick Edit: Map Pane",
 				desc:  "Controls whether Quick Edit should be shown on the map pane.",
 				label: "##quick_edit:map_pane",
-				value: &a.preferencesConfig().Prefs.Controls.QuickEditMapPane,
+				value: &prefs.Controls.QuickEditMapPane,
 			},
 		},
 
@@ -64,9 +67,9 @@ func (a *app) makePreferences() wsprefs.Prefs {
 				label: "%##scale",
 				min:   50,
 				max:   250,
-				value: &a.preferencesConfig().Prefs.Interface.Scale,
+				value: &prefs.Interface.Scale,
 				post: func(int) {
-					a.tmpUpdateScale = true
+					app.UpdateScale()
 				},
 			},
 			intPrefPrefab{
@@ -75,7 +78,7 @@ func (a *app) makePreferences() wsprefs.Prefs {
 				label: "##fps",
 				min:   30,
 				max:   math.MaxInt,
-				value: &a.preferencesConfig().Prefs.Interface.Fps,
+				value: &prefs.Interface.Fps,
 				post:  window.SetFps,
 			},
 		},
@@ -85,7 +88,7 @@ func (a *app) makePreferences() wsprefs.Prefs {
 				name:  "Check for Updates",
 				desc:  "When enabled, the editor will always check for updates on startup.",
 				label: "##check_for_updates",
-				value: &a.preferencesConfig().Prefs.Application.CheckForUpdates,
+				value: &prefs.Application.CheckForUpdates,
 			},
 		},
 	}

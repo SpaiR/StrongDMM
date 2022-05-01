@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 
+	"sdmm/app/prefs"
 	"sdmm/app/render"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap"
@@ -126,7 +127,7 @@ func (a *app) DoSaveAll() {
 // DoOpenPreferences opens preferences tab.
 func (a *app) DoOpenPreferences() {
 	log.Println("[app] open preferences")
-	a.layout.OpenPreferences(a.makePreferences())
+	a.layout.OpenPreferences(prefs.Make(a, &a.preferencesConfig().Prefs))
 }
 
 // DoSelectPrefab globally selects provided prefab in the app.
