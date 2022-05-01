@@ -1,7 +1,8 @@
 package app
 
 import (
-	"math"           //nolint
+	"math" //nolint
+
 	"sdmm/app/prefs" //nolint
 	"sdmm/app/ui/cpwsarea/wsprefs"
 	"sdmm/app/window" //nolint

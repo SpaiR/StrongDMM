@@ -2,6 +2,7 @@ package app
 
 import (
 	"log"
+
 	"sdmm/app/prefs"
 	"sdmm/app/window"
 )
