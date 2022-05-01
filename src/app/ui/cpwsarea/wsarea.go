@@ -35,7 +35,6 @@ type App interface {
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
-	ConfigSaveV(config.Config)
 }
 
 type WsArea struct {
@@ -395,7 +394,6 @@ func (w *WsArea) isWorkspaceUnsaved(ws *workspace.Workspace) bool {
 func (w *WsArea) isChangelogHashModified() bool {
 	if hash := util.Djb2(rsc.ChangelogMd); hash != w.config().LastChangelogHash {
 		w.config().LastChangelogHash = hash
-		w.app.ConfigSaveV(w.config())
 		return true
 	}
 	return false

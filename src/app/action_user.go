@@ -50,7 +50,6 @@ func (a *app) DoOpenEnvironmentByPath(path string) {
 func (a *app) DoClearRecentEnvironments() {
 	log.Println("[app] clear recent environments")
 	a.projectConfig().ClearProjects()
-	a.ConfigSave()
 }
 
 // DoNewMap opens dialog window to create a new map file.
@@ -95,7 +94,6 @@ func (a *app) DoOpenMapByPathV(path string, workspace *workspace.Workspace) {
 func (a *app) DoClearRecentMaps() {
 	log.Println("[app] clear recent maps")
 	a.projectConfig().ClearMapsByProject(a.loadedEnvironment.RootFile)
-	a.ConfigSave()
 }
 
 // DoClose closes currently active workspace.
@@ -313,7 +311,6 @@ func (a *app) DoRestart() {
 func (a *app) DoIgnoreUpdate() {
 	log.Println("[app] do ignore update:", remoteManifest.Version)
 	a.config().UpdateIgnore = slice.StrPushUnique(a.config().UpdateIgnore, remoteManifest.Version)
-	a.ConfigSaveV(a.config())
 }
 
 // DoCheckForUpdates checks for available update.

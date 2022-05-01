@@ -44,7 +44,6 @@ func (a *app) forceOpenEnvironment(path string) {
 
 	cfg := a.projectConfig()
 	cfg.AddProject(path)
-	a.ConfigSaveV(cfg)
 
 	// Configure paths filter to access a newly opened environment.
 	a.pathsFilter = dm.NewPathsFilter(func(path string) []string {
@@ -93,7 +92,6 @@ func (a *app) openMapV(path string, workspace *workspace.Workspace) {
 
 	cfg := a.projectConfig()
 	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
-	a.ConfigSaveV(cfg)
 
 	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
 	if a.layout.WsArea.OpenMap(dmm, workspace) {

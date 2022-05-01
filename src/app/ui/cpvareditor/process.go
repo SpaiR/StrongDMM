@@ -230,8 +230,6 @@ func (v *VarEditor) showVarPin(varName string) {
 
 		sort.Strings(cfg.PinnedVarNames)
 		sort.Strings(v.variablesNames)
-
-		v.app.ConfigSaveV(cfg)
 	}
 }
 

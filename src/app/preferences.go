@@ -37,7 +37,6 @@ func (a *app) makePreferenceInterfaceFps() wsprefs.IntPref {
 		log.Println("[app] preferences changing, [interface#fps] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Interface.Fps = value
-		a.ConfigSaveV(cfg)
 		window.SetFps(value)
 	}
 
@@ -59,7 +58,6 @@ func (a *app) makePreferenceInterfaceScale() wsprefs.IntPref {
 		log.Println("[app] preferences changing, [interface#scale] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Interface.Scale = value
-		a.ConfigSaveV(cfg)
 		a.tmpUpdateScale = true
 	}
 
@@ -79,7 +77,6 @@ func (a *app) makePreferenceControlsAltScrollBehaviour() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [controls#alternative_scroll_behaviour] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Controls.AltScrollBehaviour = value
-		a.ConfigSaveV(cfg)
 	}
 
 	return p
@@ -98,7 +95,6 @@ func (a *app) makePreferenceControlsQuickEditContextMenu() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [controls#quick_edit:tile_context_menu] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Controls.QuickEditContextMenu = value
-		a.ConfigSaveV(cfg)
 	}
 
 	return p
@@ -117,7 +113,6 @@ func (a *app) makePreferenceControlsQuickEditMapPane() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [controls#quick_edit:map_pane] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Controls.QuickEditMapPane = value
-		a.ConfigSaveV(cfg)
 	}
 
 	return p
@@ -136,7 +131,6 @@ func (a *app) makePreferenceEditorFormat() wsprefs.OptionPref {
 		log.Println("[app] preferences changing, [editor#save_format] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Editor.SaveFormat = value
-		a.ConfigSaveV(cfg)
 	}
 
 	p.Options = prefs.SaveFormats
@@ -158,7 +152,6 @@ func (a *app) makePreferenceEditorSanitizeVariables() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [editor#sanitize_variables] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Editor.SanitizeVariables = value
-		a.ConfigSaveV(cfg)
 	}
 
 	return p
@@ -177,7 +170,6 @@ func (a *app) makePreferenceEditorNudgeMode() wsprefs.OptionPref {
 		log.Println("[app] preferences changing, [editor#nudge_mode] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Editor.NudgeMode = value
-		a.ConfigSaveV(cfg)
 	}
 
 	p.Options = prefs.SaveNudgeModes
@@ -198,7 +190,6 @@ func (a *app) makePreferenceApplicationCheckForUpdates() wsprefs.BoolPref {
 		log.Println("[app] preferences changing, [application#check_for_updates] to:", value)
 		cfg := a.preferencesConfig()
 		cfg.Prefs.Application.CheckForUpdates = value
-		a.ConfigSaveV(cfg)
 	}
 
 	return p

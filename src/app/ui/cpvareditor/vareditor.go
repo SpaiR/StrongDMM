@@ -21,7 +21,6 @@ type App interface {
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
-	ConfigSaveV(config.Config)
 }
 
 type editMode int
@@ -201,20 +200,17 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 func (v *VarEditor) doToggleShowModified() {
 	cfg := v.config()
 	cfg.ShowModified = !cfg.ShowModified
-	v.app.ConfigSaveV(cfg)
 	log.Println("[cpvareditor] toggle 'showModified':", cfg.ShowModified)
 }
 
 func (v *VarEditor) doToggleShowByType() {
 	cfg := v.config()
 	cfg.ShowByType = !cfg.ShowByType
-	v.app.ConfigSaveV(cfg)
 	log.Println("[cpvareditor] toggle 'showByType':", cfg.ShowByType)
 }
 
 func (v *VarEditor) doToggleShowPins() {
 	cfg := v.config()
 	cfg.ShowPins = !cfg.ShowPins
-	v.app.ConfigSaveV(cfg)
 	log.Println("[cpvareditor] toggle 'showPins':", cfg.ShowPins)
 }

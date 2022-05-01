@@ -23,7 +23,6 @@ type App interface {
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
-	ConfigSaveV(config.Config)
 }
 
 // Only 25 nodes can be loaded per one process tick.

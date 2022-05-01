@@ -12,7 +12,6 @@ type App interface {
 	PathsFilter() *dm.PathsFilter
 
 	ConfigRegister(config.Config)
-	ConfigSaveV(config.Config)
 }
 
 type editor interface {

@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"sdmm/app/config"
 )
@@ -41,14 +42,25 @@ func (a *app) ConfigRegister(cfg config.Config) {
 	log.Println("[app] config registered:", cfg.Name())
 }
 
-func (a *app) ConfigSave() {
+const backgroundSavePeriod = time.Minute * 3
+
+func (a *app) runBackgroundConfigSave() {
+	log.Printf("[app] background configuration save every [%s]!", backgroundSavePeriod)
+	go func() {
+		for range time.Tick(backgroundSavePeriod) {
+			a.configSave()
+		}
+	}()
+}
+
+func (a *app) configSave() {
 	_ = os.MkdirAll(a.configDir, os.ModePerm)
 	for _, cfg := range a.configs {
-		a.ConfigSaveV(cfg)
+		a.configSaveV(cfg)
 	}
 }
 
-func (a *app) ConfigSaveV(cfg config.Config) {
+func (a *app) configSaveV(cfg config.Config) {
 	config.Save(configFilePath(a.configDir, cfg.Name()), cfg)
 }
 

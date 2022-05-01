@@ -111,6 +111,8 @@ func (a *app) initialize() {
 	a.loadProjectConfig()
 	a.loadPreferencesConfig()
 
+	a.runBackgroundConfigSave()
+
 	a.shortcutsEnabled = true
 
 	a.commandStorage = command.NewStorage()
@@ -164,7 +166,7 @@ func (a *app) LayoutIniPath() string {
 
 func (a *app) dispose() {
 	brush.Dispose()
-	a.ConfigSave()
+	a.configSave()
 	a.masterWindow.Dispose()
 }
 

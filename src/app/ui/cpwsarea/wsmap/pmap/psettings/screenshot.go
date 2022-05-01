@@ -33,10 +33,6 @@ func (p *Panel) showScreenshot() {
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
 
-		if imgui.IsItemDeactivatedAfterEdit() {
-			p.app.ConfigSaveV(cfg)
-		}
-
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
 			createBtnLabel = "Creating" + []string{".", "..", "...", "...."}[int(imgui.Time()/.25)&3] + "###create"
@@ -90,7 +86,6 @@ func (p *Panel) selectScreenshotDir() {
 		Browse(); err == nil {
 		log.Println("[psettings] screenshot directory selected:", dir)
 		cfg.ScreenshotDir = dir
-		p.app.ConfigSaveV(cfg)
 	}
 }
 

@@ -23,7 +23,6 @@ type app interface {
 
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
-	ConfigSaveV(config.Config)
 
 	IsLayoutReset() bool
 }
@@ -86,7 +85,6 @@ func (l *Layout) CheckLayoutState() bool {
 func (l *Layout) SyncLayoutState() {
 	cfg := l.config()
 	cfg.State = configState
-	l.app.ConfigSaveV(cfg)
 	log.Println("[layout] layout state updated:", configState)
 }
 
