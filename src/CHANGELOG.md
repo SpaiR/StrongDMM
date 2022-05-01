@@ -1,4 +1,5 @@
- * Added a "Save All" action.
+ * Added a "Save All" action;
+ * Added icon scale slider for the environment panel; @igorsaux
 
 # v2.4.0.alpha
 
@@ -67,7 +68,7 @@ Thus, you'll see and edit both of them at the same time. Try it with "Mirror Can
 ### New editing experience!
 The biggest problem of the default DM editor is the way how variables are edited. To do that you need to open a modal dialog.<br>
 Which is pretty annoying when you need to change a lot of stuff. The previous StrongDMM version repeated that approach.<br>
-It had more features, yet the problem has not been solved.
+It had more features, yet the issue has not been solved.
 
 Version 2 introduces a totally new approach: variables are always available! Without additional dialogs!<br>
 You can select a prefab or a specific instance and modify their state right away.<br>
@@ -81,7 +82,7 @@ The new approach is simple and straightforward! Hover tools icons to see their t
 ## Other Improvements
  * Multi-Z rendering is a thing. If one map file contains multiple z-levels, you can see on the upper level what happens on the lower.
  * Auto-update is a part of the editor. This means, that sdmmlauncher is unneeded and deprecated.
- * Types filter has been integrated in the environment tree. To enable it use the "eye" button or "F" hotkey, when the tree is focused.
+ * Types filter has been integrated in the environment tree. To enable it uses the "eye" button or "F" hotkey, when the tree is focused.
  * The editor won't do keys re-arrangement on save.
  * New search window with redesigned search results. You can use "Ctrl+F" to do a quick search.
  * Quick Edit window for nudges and dirs. In the bottom-right corner of the canvas you can find a panel, to modify those vars faster.
