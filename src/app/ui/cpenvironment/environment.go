@@ -2,6 +2,7 @@ package cpenvironment
 
 import (
 	"log"
+	"sdmm/app/config"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"strings"
@@ -19,6 +20,10 @@ type App interface {
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
 	PathsFilter() *dm.PathsFilter
+
+	ConfigRegister(config.Config)
+	ConfigFind(name string) config.Config
+	ConfigSaveV(config.Config)
 }
 
 // Only 25 nodes can be loaded per one process tick.
@@ -36,7 +41,6 @@ type Environment struct {
 
 	treeNodes         map[string]*treeNode
 	filteredTreeNodes []*treeNode
-	nodesScale        int32
 
 	filter       string
 	selectedPath string
@@ -48,10 +52,10 @@ type Environment struct {
 }
 
 func (e *Environment) Init(app App) {
-	e.addShortcuts()
 	e.app = app
+	e.addShortcuts()
+	e.loadConfig()
 	e.treeNodes = make(map[string]*treeNode)
-	e.nodesScale = 100
 }
 
 func (e *Environment) Free() {
@@ -119,7 +123,7 @@ func (e *Environment) filterBranch0(object *dmenv.Object) {
 }
 
 func (e *Environment) iconSize() float32 {
-	return imgui.FrameHeight()
+	return imgui.FrameHeight() * (float32(e.config().NodeScale) / 100)
 }
 
 func (e *Environment) doCollapseAll() {

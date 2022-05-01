@@ -72,8 +72,10 @@ func (e *Environment) showSettingsButton() {
 	}.Build()
 
 	if imgui.BeginPopupContextItemV("environment_settings", imgui.PopupFlagsMouseButtonLeft) {
-		imgui.SliderInt("Icon Size", &e.nodesScale, 100, 300)
-
+		imgui.AlignTextToFramePadding()
+		imgui.Text("Icon Size")
+		imgui.SameLine()
+		imgui.SliderInt("##icon_size", &e.config().NodeScale, 50, 300)
 		imgui.EndPopup()
 	}
 }
@@ -102,7 +104,7 @@ func (e *Environment) showFilteredNodes() {
 				imgui.SameLine()
 			}
 
-			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
+			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calcTreeNodePadding(node.name))
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
 
 			imgui.PopStyleVar()
@@ -129,7 +131,7 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calcTreeNodePadding(node.name))
 
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
@@ -218,7 +220,7 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 		value = !hasHiddenChildPath
 	}
 
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calcTreeNodePadding(node.name))
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
 		e.app.PathsFilter().TogglePath(node.orig.Path)
 	}
@@ -242,19 +244,14 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := e.iconSize() * (float32(e.nodesScale) / 100)
-	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
+	w.Image(imgui.TextureID(s.Texture()), e.iconSize(), e.iconSize()).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
 }
 
-func (e *Environment) calculateTreeNodePadding(nodeName string) imgui.Vec2 {
+func (e *Environment) calcTreeNodePadding(nodeName string) imgui.Vec2 {
 	x := imgui.CurrentStyle().FramePadding().X
-
-	scaledIconSize := e.iconSize() * (float32(e.nodesScale) / 100)
 	textSize := imgui.CalcTextSize(nodeName, false, 0).Y
-
-	y := (scaledIconSize - textSize) / 2
-
+	y := (e.iconSize() - textSize) / 2
 	return imgui.Vec2{
 		X: x,
 		Y: y,
