@@ -5,10 +5,11 @@ import (
 	"sdmm/imguiext/style"
 	"strings"
 
-	"github.com/SpaiR/imgui-go"
 	"sdmm/dmapi/dmenv"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (e *Environment) Process() {
@@ -31,6 +32,8 @@ func (e *Environment) showControls() {
 		Build()
 	imgui.SameLine()
 	e.showTypesFilterButton()
+	imgui.SameLine()
+	e.showSettingsButton()
 	imgui.SameLine()
 	w.InputTextWithHint("##filter", "Filter", &e.filter).
 		ButtonClear().
@@ -62,6 +65,19 @@ func (e *Environment) showTypesFilterButton() {
 	}.Build()
 }
 
+func (e *Environment) showSettingsButton() {
+	w.Layout{
+		w.Button(icon.Cog, nil).
+			Round(true),
+	}.Build()
+
+	if imgui.BeginPopupContextItemV("environment_settings", imgui.PopupFlagsMouseButtonLeft) {
+		imgui.SliderInt("Icon Size", &e.nodesScale, 100, 300)
+
+		imgui.EndPopup()
+	}
+}
+
 func (e *Environment) showTree() {
 	if imgui.BeginChild(fmt.Sprintf("environment_tree_[%d]", e.treeId)) {
 		if len(e.filter) == 0 {
@@ -85,7 +101,12 @@ func (e *Environment) showFilteredNodes() {
 			if e.showAttachment(node) {
 				imgui.SameLine()
 			}
+
+			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
 			imgui.TreeNodeV(node.orig.Path, e.nodeFlags(node, true))
+
+			imgui.PopStyleVar()
+
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)
 		}
@@ -108,9 +129,12 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		imgui.SameLine()
 	}
 
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
+
 	if len(object.DirectChildren) == 0 {
 		imgui.AlignTextToFramePadding()
 		imgui.TreeNodeV(node.name, e.nodeFlags(node, true))
+		imgui.PopStyleVar()
 		e.doSelectOnClick(node)
 		e.showNodeMenu(node)
 		e.scrollToSelectedPath(node)
@@ -118,8 +142,12 @@ func (e *Environment) showBranch0(object *dmenv.Object) {
 		if e.isPartOfSelectedPath(node) {
 			imgui.SetNextItemOpen(true, imgui.ConditionAlways)
 		}
+
 		imgui.AlignTextToFramePadding()
-		if imgui.TreeNodeV(node.name, e.nodeFlags(node, false)) {
+		opened := imgui.TreeNodeV(node.name, e.nodeFlags(node, false))
+		imgui.PopStyleVar()
+
+		if opened {
 			e.doSelectOnClick(node)
 			e.showNodeMenu(node)
 			e.scrollToSelectedPath(node)
@@ -190,9 +218,12 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 		value = !hasHiddenChildPath
 	}
 
+	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calculateTreeNodePadding(node.name))
 	if imgui.Checkbox(fmt.Sprint("##node_visibility_", node.orig.Path), &value) {
 		e.app.PathsFilter().TogglePath(node.orig.Path)
 	}
+
+	imgui.PopStyleVar()
 
 	// Show a dash symbol, if the node has any hidden child.
 	if vOrig && hasHiddenChildPath {
@@ -211,7 +242,21 @@ func (e *Environment) showVisibilityCheckbox(node *treeNode) {
 
 func (e *Environment) showIcon(node *treeNode) {
 	s := node.sprite
-	iconSize := e.iconSize()
+	iconSize := e.iconSize() * (float32(e.nodesScale) / 100)
 	w.Image(imgui.TextureID(s.Texture()), iconSize, iconSize).Uv(imgui.Vec2{X: s.U1, Y: s.V1}, imgui.Vec2{X: s.U2, Y: s.V2}).Build()
 	imgui.SameLine()
+}
+
+func (e *Environment) calculateTreeNodePadding(nodeName string) imgui.Vec2 {
+	x := imgui.CurrentStyle().FramePadding().X
+
+	scaledIconSize := e.iconSize() * (float32(e.nodesScale) / 100)
+	textSize := imgui.CalcTextSize(nodeName, false, 0).Y
+
+	y := (scaledIconSize - textSize) / 2
+
+	return imgui.Vec2{
+		X: x,
+		Y: y,
+	}
 }
