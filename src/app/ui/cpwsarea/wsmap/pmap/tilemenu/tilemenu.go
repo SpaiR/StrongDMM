@@ -24,6 +24,11 @@ type App interface {
 	DoCut()
 	DoDelete()
 
+	DoSearchPrefab(prefabId uint64)
+	DoSearchPrefabByPath(path string)
+
+	ShowLayout(name string, focus bool)
+
 	CommandStorage() *command.Storage
 	Clipboard() *dmmclip.Clipboard
 

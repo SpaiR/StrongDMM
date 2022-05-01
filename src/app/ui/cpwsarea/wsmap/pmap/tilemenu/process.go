@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"sdmm/app/ui/layout/lnode"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
@@ -127,6 +128,11 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 			Enabled(t.app.HasSelectedPrefab()),
 		w.MenuItem(fmt.Sprint("Reset to Default##reset_to_default_", idx), t.doResetToDefault(i)).
 			IconEmpty(),
+		w.Separator(),
+		w.MenuItem(fmt.Sprint("Search by Type##search_by_type_", idx), t.doSearchByType(i)).
+			Icon(icon.Search),
+		w.MenuItem(fmt.Sprint("Search by Prefab ID##search_by_prefab_id_", idx), t.doSearchByPrefabID(i)).
+			Icon(icon.Search),
 	}
 }
 
@@ -176,6 +182,22 @@ func (t *TileMenu) doResetToDefault(i *dmminstance.Instance) func() {
 		log.Printf("[tilemenu] do reset instance[%s] to default: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceReset(i)
 		t.editor.CommitChanges("Reset Instance")
+	}
+}
+
+func (t *TileMenu) doSearchByType(i *dmminstance.Instance) func() {
+	return func() {
+		log.Println("[tilemenu] do search prefab by type:", i.Prefab().Path())
+		t.app.ShowLayout(lnode.NameSearch, true)
+		t.app.DoSearchPrefabByPath(i.Prefab().Path())
+	}
+}
+
+func (t *TileMenu) doSearchByPrefabID(i *dmminstance.Instance) func() {
+	return func() {
+		log.Println("[tilemenu] do search prefab by ID:", i.Prefab().Id())
+		t.app.ShowLayout(lnode.NameSearch, true)
+		t.app.DoSearchPrefab(i.Prefab().Id())
 	}
 }
 

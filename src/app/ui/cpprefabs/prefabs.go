@@ -14,6 +14,7 @@ type App interface {
 	DoSelectPrefab(*dmmprefab.Prefab)
 	DoEditPrefab(prefab *dmmprefab.Prefab)
 	DoSearchPrefab(prefabId uint64)
+	DoSearchPrefabByPath(path string)
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
 	CurrentEditor() *editor.Editor

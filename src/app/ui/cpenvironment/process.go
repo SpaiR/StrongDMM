@@ -69,7 +69,8 @@ func (e *Environment) showTypesFilterButton() {
 func (e *Environment) showSettingsButton() {
 	w.Layout{
 		w.Button(icon.Cog, nil).
-			Round(true),
+			Round(true).
+			Tooltip("Settings"),
 	}.Build()
 
 	if imgui.BeginPopupContextItemV("environment_settings", imgui.PopupFlagsMouseButtonLeft) {

@@ -1,6 +1,10 @@
+### Improvements and Fixes
  * Added a "Save All" action;
  * Added icon scale slider for the environment panel; @igorsaux
- * Options in Quick Edit panel (nudge/dir) now can be edited with a mouse wheel.
+ * Options in Quick Edit panel (nudge/dir) now can be edited with a mouse wheel;
+ * Search feature now supports searching by types;
+ * Actions to search by type or prefab ID were added to the tile context menu;
+ * Minor GUI improvements to a search.
 
 # v2.4.0.alpha
 

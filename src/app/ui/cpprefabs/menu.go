@@ -19,12 +19,10 @@ import (
 func (p *Prefabs) showContextMenu(node *prefabNode) {
 	if imgui.BeginPopupContextItemV(fmt.Sprintf("context_menu_%d", node.orig.Id()), imgui.PopupFlagsMouseButtonRight) {
 		w.Layout{
-			w.MenuItem("Copy ID", p.doCopyId(node)).
-				Icon(icon.ContentCopy),
-			w.MenuItem("Copy Type", p.doCopyType(node)).
-				Icon(icon.ContentCopy),
-			w.Separator(),
-			w.MenuItem("Find on Map", p.doFindOnMap(node)).
+			w.MenuItem("Search by Type", p.doSearchByTypeOnMap(node)).
+				Icon(icon.Search).
+				Enabled(p.app.HasActiveMap()),
+			w.MenuItem("Search by Prefab ID", p.doSearchByIdOnMap(node)).
 				Icon(icon.Search).
 				Enabled(p.app.HasActiveMap()),
 			w.Separator(),
@@ -37,6 +35,11 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 				IconEmpty(),
 			w.MenuItem("Generate directions", p.doGenerateDirections(node)).
 				IconEmpty(),
+			w.Separator(),
+			w.MenuItem("Copy Type", p.doCopyType(node)).
+				Icon(icon.ContentCopy),
+			w.MenuItem("Copy Prefab ID", p.doCopyId(node)).
+				Icon(icon.ContentCopy),
 		}.Build()
 		imgui.EndPopup()
 	}
@@ -56,9 +59,17 @@ func (*Prefabs) doCopyType(node *prefabNode) func() {
 	}
 }
 
-func (p *Prefabs) doFindOnMap(node *prefabNode) func() {
+func (p *Prefabs) doSearchByTypeOnMap(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do find prefab on map:", node.orig.Id())
+		log.Println("[cpprefabs] do search prefab by type on map:", node.orig.Path())
+		p.app.ShowLayout(lnode.NameSearch, true)
+		p.app.DoSearchPrefabByPath(node.orig.Path())
+	}
+}
+
+func (p *Prefabs) doSearchByIdOnMap(node *prefabNode) func() {
+	return func() {
+		log.Println("[cpprefabs] do search prefab by ID on map:", node.orig.Id())
 		p.app.ShowLayout(lnode.NameSearch, true)
 		p.app.DoSearchPrefab(node.orig.Id())
 	}

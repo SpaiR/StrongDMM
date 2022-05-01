@@ -99,6 +99,7 @@ func (v *VarEditor) showControls() {
 
 	w.Button(icon.Cog, nil).
 		Round(true).
+		Tooltip("Settings").
 		Build()
 
 	if imgui.BeginPopupContextItemV("var_editor_filter", imgui.PopupFlagsMouseButtonLeft) {

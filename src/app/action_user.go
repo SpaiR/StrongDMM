@@ -161,10 +161,16 @@ func (a *app) DoEditPrefabByPath(path string) {
 	a.DoEditPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
-// DoSearchPrefab does a search of the provided prefab ID with selecting of the search window.
+// DoSearchPrefab does a search of the provided prefab ID.
 func (a *app) DoSearchPrefab(prefabId uint64) {
 	log.Println("[app] search prefab id:", prefabId)
 	a.layout.Search.Search(prefabId)
+}
+
+// DoSearchPrefabByPath does a search of the provided prefab path.
+func (a *app) DoSearchPrefabByPath(path string) {
+	log.Println("[app] search prefab path:", path)
+	a.layout.Search.SearchByPath(path)
 }
 
 // DoExit exits the app.

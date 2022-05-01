@@ -24,6 +24,7 @@ type Search struct {
 
 	prefabId string
 
+	selectedResultIdx    int
 	focusedResultIdx     int
 	lastFocusedResultIdx int
 
@@ -37,12 +38,14 @@ type Search struct {
 func (s *Search) Init(app App) {
 	s.addShortcuts()
 	s.app = app
+	s.selectedResultIdx = -1
 	s.focusedResultIdx = -1
 	s.lastFocusedResultIdx = -1
 }
 
 func (s *Search) Free() {
 	s.resultsAll = s.resultsAll[:0]
+	s.selectedResultIdx = -1
 	s.focusedResultIdx = -1
 	s.lastFocusedResultIdx = -1
 	s.doResetFilter()
@@ -55,6 +58,11 @@ func (s *Search) Sync() {
 
 func (s *Search) Search(prefabId uint64) {
 	s.prefabId = strconv.FormatUint(prefabId, 10)
+	s.doSearch()
+}
+
+func (s *Search) SearchByPath(path string) {
+	s.prefabId = path
 	s.doSearch()
 }
 

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-
-	"sdmm/app/window"
+	"strings"
 
 	"sdmm/app/ui/layout/lnode"
-	"sdmm/imguiext"
+	"sdmm/app/window"
+	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
@@ -27,19 +27,25 @@ func (s *Search) Process() {
 	}
 
 	s.showResultsControls()
-	imgui.Separator()
-	s.showResults()
+	if imgui.BeginChild("results") {
+		s.showResults()
+		imgui.EndChild()
+	}
 }
 
 func (s *Search) showControls() {
-	if imgui.Button(icon.Search) {
-		s.doSearch()
-	}
-	imgui.SameLine()
-	w.InputTextWithHint("##search", "Prefab ID", &s.prefabId).
-		ButtonClear().
-		Width(-1).
-		Build()
+	w.Layout{
+		w.Button(icon.Search, s.doSearch).
+			Round(true).
+			Tooltip("Search"),
+		w.SameLine(),
+		w.InputTextWithHint("##search", "Type or Prefab ID", &s.prefabId).
+			ButtonClear().
+			Width(-1).
+			OnDeactivatedAfterEdit(func() {
+				s.doSearch()
+			}),
+	}.Build()
 }
 
 func (s *Search) doSearch() {
@@ -48,20 +54,23 @@ func (s *Search) doSearch() {
 		return
 	}
 
-	prefabId, err := strconv.ParseUint(s.prefabId, 10, 64)
-	if err != nil {
-		return
-	}
-
 	s.Free()
 
 	log.Println("[cpsearch] searching for:", s.prefabId)
-	s.resultsAll = s.app.CurrentEditor().InstancesFindByPrefabId(prefabId)
-	log.Println("[cpsearch] found search results:", len(s.resultsAll))
 
-	if len(s.resultsAll) > 0 {
-		s.jumpTo(0)
+	if strings.HasPrefix(s.prefabId, "/") {
+		for _, prefab := range dmmap.PrefabStorage.GetAllByPath(s.prefabId) {
+			s.resultsAll = append(s.resultsAll, s.app.CurrentEditor().InstancesFindByPrefabId(prefab.Id())...)
+		}
+	} else {
+		prefabId, err := strconv.ParseUint(s.prefabId, 10, 64)
+		if err != nil {
+			return
+		}
+		s.resultsAll = s.app.CurrentEditor().InstancesFindByPrefabId(prefabId)
 	}
+
+	log.Println("[cpsearch] found search results:", len(s.resultsAll))
 }
 
 func (s *Search) showResultsControls() {
@@ -73,60 +82,53 @@ func (s *Search) showResultsControls() {
 	imgui.SameLine()
 	imgui.TextDisabled("|")
 	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("%d/%d", s.focusedResultIdx+1, len(s.results())))
+	imgui.Text(fmt.Sprintf("%d/%d", s.selectedResultIdx+1, len(s.results())))
 }
+
+const resultsTableFlags = imgui.TableFlagsBordersInner | imgui.TableFlagsResizable | imgui.TableFlagsNoSavedSettings
 
 func (s *Search) showResults() {
-	if imgui.BeginChild("search_results") {
-		var clipper imgui.ListClipper
-		clipper.Begin(len(s.results()))
-		for clipper.Step() {
-			for idx := clipper.DisplayStart; idx < clipper.DisplayEnd; idx++ {
-				if idx == s.focusedResultIdx && idx != s.lastFocusedResultIdx {
-					imgui.SetScrollHereY(0)
-					s.lastFocusedResultIdx = s.focusedResultIdx
-				}
-				s.showResult(idx)
+	if imgui.BeginTableV("search_result", 2, resultsTableFlags, imgui.Vec2{}, 0) {
+		for idx, instance := range s.results() {
+			if idx == s.focusedResultIdx && idx != s.lastFocusedResultIdx {
+				imgui.SetScrollHereY(0)
+				s.lastFocusedResultIdx = s.focusedResultIdx
 			}
+
+			imgui.TableNextColumn()
+
+			selected := idx == s.selectedResultIdx
+			if selected {
+				imgui.PushStyleColor(imgui.StyleColorText, style.ColorGold)
+			}
+			imgui.AlignTextToFramePadding()
+			imgui.Text(fmt.Sprintf("X:%03d Y:%03d Z:%d", instance.Coord().X, instance.Coord().Y, instance.Coord().Z))
+			if selected {
+				imgui.PopStyleColor()
+			}
+
+			imgui.TableNextColumn()
+
+			w.Layout{
+				w.Button(fmt.Sprint(icon.Search+"##jump_to_", instance.Id()), func() {
+					s.jumpTo(idx, false)
+				}).Round(true).Tooltip("Jump To"),
+				w.SameLine(),
+				w.Button(fmt.Sprint(icon.EyeDropper+"##select_", instance.Id()), func() {
+					s.selectInstance(idx)
+				}).Round(true).Tooltip("Select"),
+			}.Build()
 		}
 
-		imgui.EndChild()
+		imgui.EndTable()
 	}
-}
-
-func (s *Search) showResult(idx int) {
-	instance := s.results()[idx]
-	focused := idx == s.focusedResultIdx
-
-	if focused {
-		imgui.PushStyleColor(imgui.StyleColorText, style.ColorGold)
-	}
-	imgui.Text(fmt.Sprintf("X:%03d Y:%03d Z:%d", instance.Coord().X, instance.Coord().Y, instance.Coord().Z))
-	if focused {
-		imgui.PopStyleColor()
-	}
-
-	imgui.SameLine()
-	imgui.TextDisabled("|")
-	imgui.SameLine()
-
-	if imgui.Button(fmt.Sprint(icon.Search+"##jump_to_", instance.Id())) {
-		s.jumpTo(idx)
-	}
-	imguiext.SetItemHoveredTooltip("Jump To")
-
-	imgui.SameLine()
-
-	if imgui.Button(fmt.Sprint(icon.EyeDropper+"##select_", instance.Id())) {
-		s.selectInstance(idx)
-	}
-	imguiext.SetItemHoveredTooltip("Select")
-
-	imgui.Separator()
 }
 
 func (s *Search) showFilterButton() {
-	imgui.Button(icon.FilterAlt)
+	w.Button(icon.FilterAlt, nil).
+		Round(true).
+		Tooltip("Filter").
+		Build()
 
 	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
 		imgui.Text("Bounds")
@@ -160,15 +162,15 @@ func (s *Search) inputBoundWidth() float32 {
 }
 
 func (s *Search) showJumpButtons() {
-	if imgui.Button(icon.ArrowUpward) {
-		s.jumpToUp()
-	}
-	imguiext.SetItemHoveredTooltip("Previous Result (Shift+F3)")
-	imgui.SameLine()
-	if imgui.Button(icon.ArrowDownward) {
-		s.jumpToDown()
-	}
-	imguiext.SetItemHoveredTooltip("Next Result (F3)")
+	w.Layout{
+		w.Button(icon.ArrowUpward, s.jumpToUp).
+			Round(true).
+			Tooltip("Previous Result (Shift+F3)"),
+		w.SameLine(),
+		w.Button(icon.ArrowDownward, s.jumpToDown).
+			Round(true).
+			Tooltip("Next Result (F3)"),
+	}.Build()
 }
 
 func (s *Search) selectInstance(idx int) {
@@ -178,10 +180,10 @@ func (s *Search) selectInstance(idx int) {
 	editor.OverlaySetInstanceFlick(instance)
 	s.app.ShowLayout(lnode.NameVariables, true)
 	s.app.DoEditInstance(instance)
-	s.focusedResultIdx = idx
+	s.selectedResultIdx = idx
 }
 
-func (s *Search) jumpTo(idx int) {
+func (s *Search) jumpTo(idx int, focus bool) {
 	if idx < 0 || idx >= len(s.results()) {
 		return
 	}
@@ -193,21 +195,25 @@ func (s *Search) jumpTo(idx int) {
 	editor.OverlaySetTileFlick(instance.Coord())
 	editor.OverlaySetInstanceFlick(instance)
 
-	s.focusedResultIdx = idx
+	s.selectedResultIdx = idx
+
+	if focus {
+		s.focusedResultIdx = idx
+	}
 }
 
 func (s *Search) jumpToUp() {
-	idx := s.focusedResultIdx - 1
+	idx := s.selectedResultIdx - 1
 	if idx < 0 {
 		idx = len(s.results()) - 1
 	}
-	s.jumpTo(idx)
+	s.jumpTo(idx, true)
 }
 
 func (s *Search) jumpToDown() {
-	idx := s.focusedResultIdx + 1
+	idx := s.selectedResultIdx + 1
 	if idx >= len(s.results()) {
 		idx = 0
 	}
-	s.jumpTo(idx)
+	s.jumpTo(idx, true)
 }
