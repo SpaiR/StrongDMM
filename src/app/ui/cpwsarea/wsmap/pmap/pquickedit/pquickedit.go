@@ -14,6 +14,7 @@ import (
 	"sdmm/dmapi/dmvars"
 	"sdmm/util"
 	"strconv"
+	"time"
 )
 
 type App interface {
@@ -32,6 +33,9 @@ type editor interface {
 type Panel struct {
 	app    App
 	editor editor
+
+	// Usable for modify by scroll.
+	lastScrollEdit int64
 }
 
 func New(app App, editor editor) *Panel {
@@ -75,8 +79,7 @@ func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.
 	pixelX := instance.Prefab().Vars().IntV(nudgeVarName, 0)
 	value := int32(pixelX)
 
-	imgui.SetNextItemWidth(window.PointSize() * 50)
-	if imgui.DragInt(label+"##"+nudgeVarName+p.editor.Dmm().Name, &value) {
+	onChange := func() {
 		origPrefab := instance.Prefab()
 
 		newVars := dmvars.Set(origPrefab.Vars(), nudgeVarName, strconv.Itoa(int(value)))
@@ -85,12 +88,35 @@ func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.
 
 		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
 	}
-
-	if imgui.IsItemDeactivatedAfterEdit() {
+	applyChange := func() {
 		p.sanitizeInstanceVar(instance, nudgeVarName, "0")
 		dmmap.PrefabStorage.Put(instance.Prefab())
 		p.editor.InstanceSelect(instance)
 		go p.editor.CommitChanges("Quick Edit: " + label)
+	}
+
+	imgui.SetNextItemWidth(window.PointSize() * 50)
+	if imgui.DragInt(label+"##"+nudgeVarName+p.editor.Dmm().Name, &value) {
+		onChange()
+	}
+
+	if imgui.IsItemDeactivatedAfterEdit() {
+		applyChange()
+	}
+
+	if _, mouseWheel := imgui.CurrentIO().MouseWheel(); mouseWheel != 0 && imgui.IsItemHovered() {
+		if mouseWheel > 0 {
+			value += 1
+		} else {
+			value -= 1
+		}
+		onChange()
+		p.lastScrollEdit = time.Now().UnixMilli()
+	}
+
+	if p.isScrollEdit() {
+		p.lastScrollEdit = 0
+		applyChange()
 	}
 }
 
@@ -129,8 +155,7 @@ func (p *Panel) showDirOption(instance *dmminstance.Instance) {
 
 	label := fmt.Sprint("Dir##dir_", p.editor.Dmm().Name)
 
-	imgui.SetNextItemWidth(window.PointSize() * 50)
-	if imgui.SliderIntV(label, &value, 1, maxDirs, fmt.Sprint(dir), imgui.SliderFlagsNone) {
+	onChange := func() {
 		origPrefab := instance.Prefab()
 
 		newDir := strconv.Itoa(_relativeIndexToDir[value])
@@ -140,15 +165,48 @@ func (p *Panel) showDirOption(instance *dmminstance.Instance) {
 
 		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
 	}
-
-	if imgui.IsItemDeactivatedAfterEdit() {
+	applyChange := func() {
 		p.sanitizeInstanceVar(instance, "dir", "0")
 		dmmap.PrefabStorage.Put(instance.Prefab())
 		p.editor.InstanceSelect(instance)
 		go p.editor.CommitChanges("Quick Edit: Dir")
 	}
 
+	imgui.SetNextItemWidth(window.PointSize() * 50)
+	if imgui.SliderIntV(label, &value, 1, maxDirs, fmt.Sprint(dir), imgui.SliderFlagsNone) {
+		onChange()
+	}
+
+	if imgui.IsItemDeactivatedAfterEdit() {
+		applyChange()
+	}
+
+	if _, mouseWheel := imgui.CurrentIO().MouseWheel(); mouseWheel != 0 && imgui.IsItemHovered() {
+		initial := value
+		if mouseWheel > 0 && value < maxDirs {
+			value += 1
+		}
+		if mouseWheel < 0 && value > 1 {
+			value -= 1
+		}
+		if initial != value {
+			onChange()
+			p.lastScrollEdit = time.Now().UnixMilli()
+		}
+	}
+
+	if p.isScrollEdit() {
+		p.lastScrollEdit = 0
+		applyChange()
+	}
+
 	imgui.EndDisabled()
+}
+
+// Assume that any edition is applicable after a 500ms timeout.
+// Thus, we won't create a new prefab for every mouse wheel scroll.
+func (p *Panel) isScrollEdit() bool {
+	return p.lastScrollEdit != 0 && time.Since(time.UnixMilli(p.lastScrollEdit)).Milliseconds() > 500
 }
 
 func (p *Panel) sanitizeInstanceVar(instance *dmminstance.Instance, varName, defaultValue string) {

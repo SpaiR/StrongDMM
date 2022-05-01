@@ -1,5 +1,6 @@
  * Added a "Save All" action;
  * Added icon scale slider for the environment panel; @igorsaux
+ * Options in Quick Edit panel (nudge/dir) now can be edited with a mouse wheel.
 
 # v2.4.0.alpha
 
