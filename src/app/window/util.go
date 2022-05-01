@@ -13,7 +13,6 @@ func (w *Window) AddMouseChangeCallback(cb func(uint, uint)) (callbackId int) {
 func (w *Window) RemoveMouseChangeCallback(id int) {
 	delete(w.mouseChangeCallbacks, id)
 	log.Println("[window] mouse change callback deleted:", id)
-
 }
 
 var laterJobs []func()

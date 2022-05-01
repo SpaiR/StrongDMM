@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	// Calculated tiers with regard to 'a~' and 'a~~' keys
+	// Calculated tiers with regard to 'a~' and 'a~~' keys.
 	realTier1limit = tier1limit
 	realTier2limit = tier1limit + tier2limit + 1
 	realTier3limit = realTier2limit + tier3limit + 1

@@ -12,7 +12,7 @@ func IsPathBaseSame(p1, p2 string) bool {
 	return PathBase(p1) == PathBase(p2)
 }
 
-// PathWeight let us sort the content by the path weight. Basically: /obj->/turf->/area
+// PathWeight let us sort the content by the path weight. Basically: /obj->/turf->/area.
 func PathWeight(p string) int {
 	if IsPath(p, "/area") {
 		return 3
@@ -24,14 +24,14 @@ func PathWeight(p string) int {
 }
 
 // PathBase returns the base of the provided path.
-// Example: /obj/item/weapon -> /obj
+// Example: /obj/item/weapon -> /obj.
 func PathBase(p string) string {
 	separatorIdx := strings.Index(p[1:], "/") + 1
 	return p[:separatorIdx]
 }
 
-// PathLast returns the last part of the path (basically, a name of the type)
-// Example: /obj/item/weapon -> weapon
+// PathLast returns the last part of the path (basically, a name of the type).
+// Example: /obj/item/weapon -> weapon.
 func PathLast(p string) string {
 	return p[strings.LastIndex(p, "/")+1:]
 }

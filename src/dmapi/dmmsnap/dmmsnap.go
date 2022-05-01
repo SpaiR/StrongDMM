@@ -101,7 +101,7 @@ func (d *DmmSnap) Commit() (int, []util.Point) {
 	return d.stateId, tilesToUpdate
 }
 
-// GoTo will update DmmSnap state by applying spe
+// GoTo will update DmmSnap state by applying patches.
 func (d *DmmSnap) GoTo(stateId int) {
 	log.Println("[snapshot] changing snapshot state to:", stateId)
 	d.goTo(stateId, patchFull)

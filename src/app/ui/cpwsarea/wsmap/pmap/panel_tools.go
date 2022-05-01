@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
-	"sdmm/imguiext/icon" //nolint
+	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 )
