@@ -64,6 +64,7 @@ func InitImGuiGLFW() {
 	io.KeyMap(imgui.KeyBackspace, int(glfw.KeyBackspace))
 	io.KeyMap(imgui.KeySpace, int(glfw.KeySpace))
 	io.KeyMap(imgui.KeyEnter, int(glfw.KeyEnter))
+	io.KeyMap(imgui.KeyKeyPadEnter, int(glfw.KeyKPEnter))
 	io.KeyMap(imgui.KeyEscape, int(glfw.KeyEscape))
 	io.KeyMap(imgui.KeyA, int(glfw.KeyA))
 	io.KeyMap(imgui.KeyC, int(glfw.KeyC))
