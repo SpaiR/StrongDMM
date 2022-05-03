@@ -1,3 +1,8 @@
+# v2.5.1.alpha
+
+### Fixes
+ * Keypad "enter" key didn't work. @igorsaux
+
 # v2.5.0.alpha
 
 ### Improvements and Fixes
