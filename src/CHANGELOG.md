@@ -1,3 +1,8 @@
+# v2.5.2.alpha
+
+### Fixes
+ * Fixed "option" preference wrong options. @KIBORG04
+
 # v2.5.1.alpha
 
 ### Fixes
