@@ -69,8 +69,8 @@ func (p optionPrefPrefab) make() any {
 		}
 	}
 
-	pref.Options = SaveFormats
-	pref.Help = SaveFormatHelp
+	pref.Options = p.options
+	pref.Help = p.help
 
 	return pref
 }
