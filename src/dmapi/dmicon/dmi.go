@@ -41,6 +41,8 @@ func (d *Dmi) State(state string) (*State, error) {
 }
 
 func New(path string) (*Dmi, error) {
+	log.Printf("[dmicon] creating new: [%s]...", path)
+
 	iconMetadata, err := sdmmparser.ParseIconMetadata(path)
 	if err != nil {
 		log.Printf("[dmicon] unable to parse icon metadata [%s]: %s", path, err)
@@ -83,6 +85,8 @@ func New(path string) (*Dmi, error) {
 
 		dmi.States[state.Name] = dmiState
 	}
+
+	log.Printf("[dmicon] created: [%s]", path)
 
 	return dmi, nil
 }
