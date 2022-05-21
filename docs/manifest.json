@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.5.2.alpha",
+  "version": "v2.5.3.alpha",
   "forceUpdate": true,
-  "description": "* Minor preferences fix",
+  "description": "* Fixes and maintenance updates",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
