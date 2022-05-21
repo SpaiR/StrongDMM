@@ -40,7 +40,9 @@ fn parse(path: &str) -> Option<String> {
             for text_chunk in &reader.info().compressed_latin1_text {
                 if text_chunk.keyword.eq("Description") {
                     return text_chunk.get_text().map_or(None, |info| {
-                        Some(meta2json(Metadata::meta_from_str(info.as_str())))
+                        Metadata::meta_from_str(info.as_str()).map_or(None, |metadata| {
+                            Some(meta2json(metadata))
+                        })
                     });
                 }
             }
@@ -60,7 +62,7 @@ fn meta2json(metadata: Metadata) -> String {
                 Dirs::Four => 4,
                 Dirs::Eight => 8,
             },
-            frames: state.frames.len() as u32,
+            frames: state.frames.count() as u32,
         });
     }
 
