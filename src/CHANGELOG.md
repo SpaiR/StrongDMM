@@ -1,3 +1,9 @@
+# v2.5.3.alpha
+
+### Fixes
+ * Fixed rare crashes when deleting instances;
+ * Updated build dependencies. [maintenance]
+
 # v2.5.2.alpha
 
 ### Fixes
