@@ -7,7 +7,7 @@ jobs:
     name: Lint
     runs-on: macos-latest
     env:
-      LINT_VERSION: v1.45.2
+      LINT_VERSION: v1.46.2
     steps:
       - name: Setup Golang
         uses: actions/setup-go@v2
@@ -42,7 +42,7 @@ jobs:
     name: Build - ${{ matrix.os }}
     steps:
       - if: matrix.os == 'ubuntu-latest'
-        name: Dependecies (Linux)
+        name: Dependencies (Linux)
         run: |
           sudo apt clean
           sudo apt update
