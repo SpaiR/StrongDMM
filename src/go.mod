@@ -11,7 +11,7 @@ require (
 	github.com/matishsiao/goInfo v0.0.0-20210923090445-da2e3fa8d45f
 	github.com/mazznoer/csscolorparser v0.1.2
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	github.com/sqweek/dialog v0.0.0-20220227145630-7a1c9e333fcf
+	github.com/sqweek/dialog v0.0.0-20220504154117-be45b268883a
 )
 
 require (
