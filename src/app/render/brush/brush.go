@@ -96,7 +96,7 @@ func initAttributes() {
 	var offset int32
 	for idx, attr := range attrsList.attrs {
 		gl.EnableVertexAttribArray(uint32(idx))
-		gl.VertexAttribPointer(uint32(idx), attr.size, attr.xtype, attr.normalized, attrsList.stride, gl.PtrOffset(int(offset)))
+		gl.VertexAttribPointerWithOffset(uint32(idx), attr.size, attr.xtype, attr.normalized, attrsList.stride, uintptr(offset))
 		offset += attr.size * attr.xtypeSize
 	}
 

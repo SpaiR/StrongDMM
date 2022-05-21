@@ -37,9 +37,9 @@ func Draw(w, h, x, y, z float32) {
 
 		switch c.mode {
 		case mtRect:
-			gl.DrawElements(gl.TRIANGLES, c.len, gl.UNSIGNED_INT, gl.PtrOffset(c.offset))
+			gl.DrawElementsWithOffset(gl.TRIANGLES, c.len, gl.UNSIGNED_INT, uintptr(c.offset))
 		case mtLine:
-			gl.DrawElements(gl.LINES, c.len, gl.UNSIGNED_INT, gl.PtrOffset(c.offset))
+			gl.DrawElementsWithOffset(gl.LINES, c.len, gl.UNSIGNED_INT, uintptr(c.offset))
 		}
 	}
 
