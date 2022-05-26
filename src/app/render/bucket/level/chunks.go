@@ -23,6 +23,13 @@ func generateChunks(maxX, maxY, iconSize int) map[util.Point]*chunk.Chunk {
 	// Variables below help to find start points for those areas.
 	var nextX, nextY int
 
+	createChunk := func(x1, y1, x2, y2 float32) *chunk.Chunk {
+		c := chunk.New(x1, y1, x2, y2, float32(iconSize))
+		nextX = int(c.MapBounds.X2) + 1
+		nextY = int(c.MapBounds.Y2) + 1
+		return c
+	}
+
 	generateAxis := func(x, xRange int) {
 		nextY = 0 // Reset for every new Y axis.
 		for y := 1; y <= maxY; y++ {
@@ -31,16 +38,14 @@ func generateChunks(maxX, maxY, iconSize int) map[util.Point]*chunk.Chunk {
 			if y%(chunk.Size+1) == 0 {
 				chunkCreated = true
 				x1, y1, x2, y2 := chunkBounds(x, y, xRange, chunk.Size)
-				c := chunk.New(x1, y1, x2, y2, float32(iconSize))
-				nextX = int(c.MapBounds.X2) + 1
-				nextY = int(c.MapBounds.Y2) + 1
+				c := createChunk(x1, y1, x2, y2)
 				chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
 			}
 		}
 		if !chunkCreated {
 			chunkCreated = true
 			x1, y1, x2, y2 := chunkBounds(x, maxY, xRange, maxY-nextY)
-			c := chunk.New(x1, y1, x2, y2, float32(iconSize))
+			c := createChunk(x1, y1, x2, y2)
 			chunks[util.Point{X: int(c.MapBounds.X1), Y: int(c.MapBounds.Y1)}] = c
 		}
 	}

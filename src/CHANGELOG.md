@@ -1,3 +1,8 @@
+# v2.5.4.alpha
+
+Fixed crashes when modifying maps with specific sizes. The issue was connected with internal chunks generation.<br>
+For maps with axis sizes less than a chunk size they were generated improperly.
+
 # v2.5.3.alpha
 
 ### Fixes
@@ -6,13 +11,11 @@
 
 # v2.5.2.alpha
 
-### Fixes
- * Fixed "option" preference wrong options. @KIBORG04
+Fixed "option" preference wrong options. @KIBORG04
 
 # v2.5.1.alpha
 
-### Fixes
- * Keypad "enter" key didn't work. @igorsaux
+Fixed keypad "enter" key didn't work. @igorsaux
 
 # v2.5.0.alpha
 
