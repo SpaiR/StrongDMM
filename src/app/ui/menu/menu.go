@@ -18,12 +18,10 @@ import (
 type app interface {
 	// File
 	DoNewWorkspace()
-	DoOpenEnvironment()
-	DoOpenEnvironmentByPath(path string)
+	DoOpen()
+	DoLoadResource(path string)
 	DoClearRecentEnvironments()
 	DoNewMap()
-	DoOpenMap()
-	DoOpenMapByPath(path string)
 	DoClearRecentMaps()
 	DoClose()
 	DoCloseAll()
@@ -67,6 +65,7 @@ type app interface {
 
 	RecentEnvironments() []string
 	RecentMapsByLoadedEnvironment() []string
+	RecentMaps() []string
 
 	LoadedEnvironment() *dmenv.Dme
 	HasLoadedEnvironment() bool
@@ -115,13 +114,14 @@ func (m *Menu) Process() {
 				Icon(icon.File).
 				Shortcut(shortcut.KeyModName(), "N"),
 			w.Separator(),
-			w.MenuItem("Open Environment...", m.app.DoOpenEnvironment).
-				Icon(icon.FolderOpen),
+			w.MenuItem("Open...", m.app.DoOpen).
+				Icon(icon.FolderOpen).
+				Shortcut(shortcut.KeyModName(), "O"),
 			w.Menu("Recent Environments", w.Layout{
 				w.Custom(func() {
 					for _, recentEnvironment := range m.app.RecentEnvironments() {
 						w.MenuItem(recentEnvironment, func() {
-							m.app.DoOpenEnvironmentByPath(recentEnvironment)
+							m.app.DoLoadResource(recentEnvironment)
 						}).IconEmpty().Build()
 					}
 					w.Layout{
@@ -131,19 +131,11 @@ func (m *Menu) Process() {
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentEnvironments()) != 0),
-			w.Separator(),
-			w.MenuItem("New Map", m.app.DoNewMap).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()),
-			w.MenuItem("Open Map...", m.app.DoOpenMap).
-				Icon(icon.FolderOpen).
-				Enabled(m.app.HasLoadedEnvironment()).
-				Shortcut(shortcut.KeyModName(), "O"),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
-					for _, recentMap := range m.app.RecentMapsByLoadedEnvironment() {
+					for _, recentMap := range m.app.RecentMaps() {
 						w.MenuItem(recentMap, func() {
-							m.app.DoOpenMapByPath(recentMap)
+							m.app.DoLoadResource(recentMap)
 						}).IconEmpty().Build()
 					}
 					w.Layout{
@@ -152,7 +144,11 @@ func (m *Menu) Process() {
 							Icon(icon.Delete),
 					}.Build()
 				}),
-			}).IconEmpty().Enabled(m.app.HasLoadedEnvironment() && len(m.app.RecentMapsByLoadedEnvironment()) != 0),
+			}).IconEmpty().Enabled(len(m.app.RecentMaps()) != 0),
+			w.Separator(),
+			w.MenuItem("New Map", m.app.DoNewMap).
+				IconEmpty().
+				Enabled(m.app.HasLoadedEnvironment()),
 			w.Separator(),
 			w.MenuItem("Close", m.app.DoClose).
 				IconEmpty().

@@ -16,12 +16,11 @@ func (m *Menu) addShortcuts() {
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
-		Name:        "menu#DoOpenMap",
+		Name:        "menu#DoOpen",
 		FirstKey:    shortcut.KeyModLeft(),
 		FirstKeyAlt: shortcut.KeyModRight(),
 		SecondKey:   glfw.KeyO,
-		Action:      m.app.DoOpenMap,
-		IsEnabled:   m.app.HasLoadedEnvironment,
+		Action:      m.app.DoOpen,
 	})
 
 	m.shortcuts.Add(shortcut.Shortcut{

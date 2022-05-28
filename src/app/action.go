@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"sdmm/app/prefs"
 	"sdmm/app/render"
@@ -77,6 +79,36 @@ func (a *app) RecentEnvironments() []string {
 // for the environment path.
 func (a *app) RecentMapsByEnvironment() map[string][]string {
 	return a.projectConfig().MapsByProject
+}
+
+// RecentMaps returns recent maps from all environments.
+func (a *app) RecentMaps() (recentMaps []string) {
+	for _, recentEnvironment := range a.RecentEnvironments() {
+		for _, mapPath := range a.RecentMapsByEnvironment()[recentEnvironment] {
+			recentMaps = append(recentMaps, mapPath)
+		}
+	}
+	return recentMaps
+}
+
+// AvailableMaps returns all maps available for the currently loaded environment.
+func (a *app) AvailableMaps() (availableMaps []string) {
+	if !a.HasLoadedEnvironment() {
+		return availableMaps
+	}
+
+	err := filepath.Walk(a.LoadedEnvironment().RootDir, func(path string, f os.FileInfo, err error) error {
+		if filepath.Ext(path) == ".dmm" {
+			availableMaps = append(availableMaps, path)
+		}
+		return err
+	})
+
+	if err != nil {
+		log.Println("[app] unable to find available maps:", err)
+	}
+
+	return availableMaps
 }
 
 // RecentMapsByLoadedEnvironment returns a slice with paths to recently opened maps

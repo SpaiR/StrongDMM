@@ -29,23 +29,42 @@ func (a *app) DoNewWorkspace() {
 	a.layout.WsArea.AddEmptyWorkspace()
 }
 
-// DoOpenEnvironment opens environment, which user need to select in file dialog.
-func (a *app) DoOpenEnvironment() {
-	log.Println("[app] selecting environment to open...")
+// DoOpen opens environment, which user need to select in file dialog.
+func (a *app) DoOpen() {
+	a.DoOpenV(nil)
+}
+
+// DoOpenV opens environment, which user need to select in file dialog.
+// Verbose version which handle opening in a specific workspace. Helpful to open maps
+func (a *app) DoOpenV(ws *workspace.Workspace) {
+	log.Println("[app] selecting resource to load...")
+
+	startDir := ""
+	if a.HasLoadedEnvironment() {
+		startDir = a.loadedEnvironment.RootDir
+	}
+
 	if file, err := dialog.
 		File().
-		Title("Open Environment").
-		Filter("*.dme", "dme").
+		Title("Open").
+		Filter("Resource", "dme", "dmm").
+		SetStartDir(startDir).
 		Load(); err == nil {
-		log.Println("[app] environment to open selected:", file)
-		a.openEnvironment(file)
+		log.Println("[app] resource to load selected:", file)
+		a.DoLoadResourceV(file, ws)
 	}
 }
 
-// DoOpenEnvironmentByPath opens environment by provided path.
-func (a *app) DoOpenEnvironmentByPath(path string) {
-	log.Println("[app] open environment by path:", path)
-	a.openEnvironment(path)
+// DoLoadResource opens environment by provided path.
+func (a *app) DoLoadResource(path string) {
+	a.DoLoadResourceV(path, nil)
+}
+
+// DoLoadResourceV opens environment by provided path.
+// Verbose version which handle opening in a specific workspace. Helpful to open maps
+func (a *app) DoLoadResourceV(path string, ws *workspace.Workspace) {
+	log.Println("[app] load resource by path:", path)
+	a.loadResource(path, ws)
 }
 
 // DoClearRecentEnvironments clears recently opened environments.
@@ -60,42 +79,31 @@ func (a *app) DoNewMap() {
 	a.layout.WsArea.OpenNewMap()
 }
 
-// DoSelectMapFile opens dialog window to select a map file.
-func (a *app) DoSelectMapFile() (string, error) {
-	log.Println("[app] selecting map file...")
-	return dialog.
-		File().
-		Title("Open Map").
-		Filter("*.dmm", "dmm").
-		SetStartDir(a.loadedEnvironment.RootDir).
-		Load()
-}
-
-// DoOpenMap opens map, which user need to select in file dialog.
-func (a *app) DoOpenMap() {
-	log.Println("[app] selecting map to open...")
-	if file, err := a.DoSelectMapFile(); err == nil {
-		log.Println("[app] map to open selected:", file)
-		a.openMap(file)
-	}
-}
-
-// DoOpenMapByPath opens map by provided path.
-func (a *app) DoOpenMapByPath(path string) {
-	log.Println("[app] open map by path:", path)
-	a.openMap(path)
-}
-
-// DoOpenMapByPathV same as DoOpenMapByPath by map will be opened inside the concrete workspace with the provided index.
-func (a *app) DoOpenMapByPathV(path string, workspace *workspace.Workspace) {
-	log.Printf("[app] open map with workspace id [%s] by path: [%s]", workspace.Id(), path)
-	a.openMapV(path, workspace)
-}
-
 // DoClearRecentMaps clears recently opened maps.
 func (a *app) DoClearRecentMaps() {
 	log.Println("[app] clear recent maps")
-	a.projectConfig().ClearMapsByProject(a.loadedEnvironment.RootFile)
+	a.projectConfig().ClearMaps()
+}
+
+// DoRemoveRecentMaps removes specific recent maps
+func (a *app) DoRemoveRecentMaps(recentMaps []string) {
+	log.Println("[app] do remove recent maps:", recentMaps)
+	recentMaps = append(make([]string, 0, len(recentMaps)), recentMaps...)
+	for _, recentMap := range recentMaps {
+		a.projectConfig().RemoveMap(recentMap)
+	}
+}
+
+// DoRemoveRecentEnvironment removes specific recent environment.
+func (a *app) DoRemoveRecentEnvironment(envPath string) {
+	log.Println("[app] remove recent environment:", envPath)
+	a.projectConfig().RemoveEnvironment(envPath)
+}
+
+// DoRemoveRecentMap removes specific recent map.
+func (a *app) DoRemoveRecentMap(mapPath string) {
+	log.Println("[app] remove recent map:", mapPath)
+	a.projectConfig().RemoveMap(mapPath)
 }
 
 // DoClose closes currently active workspace.

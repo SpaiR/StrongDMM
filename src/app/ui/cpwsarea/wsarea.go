@@ -25,9 +25,6 @@ type App interface {
 	wsnewmap.App
 	wschangelog.App
 
-	DoOpenMapByPathV(mapPath string, workspace *workspace.Workspace)
-	DoOpenMapByPath(path string)
-
 	DoClose()
 
 	OnWorkspaceSwitched()
@@ -93,7 +90,6 @@ func (w *WsArea) OpenNewMap() {
 
 	wsCnt := wsnewmap.New(w.app)
 	ws := workspace.New(wsCnt)
-	wsCnt.SetOnOpenMapByPath(w.openMapByPath(ws))
 
 	w.addWorkspace(ws)
 }
@@ -289,19 +285,12 @@ func (w *WsArea) closeWorkspaceByIdx(idx int) {
 func (w *WsArea) AddEmptyWorkspace() {
 	wsCnt := wsempty.New(w.app)
 	ws := workspace.New(wsCnt)
-	wsCnt.SetOnOpenMapByPath(w.openMapByPath(ws))
 	w.addWorkspace(ws)
 }
 
 func (w *WsArea) AddEmptyWorkspaceIfNone() {
 	if w.findEmptyWorkspaceIdx() == -1 {
 		w.AddEmptyWorkspace()
-	}
-}
-
-func (w *WsArea) openMapByPath(ws *workspace.Workspace) func(string) {
-	return func(mapPath string) {
-		w.app.DoOpenMapByPathV(mapPath, ws)
 	}
 }
 

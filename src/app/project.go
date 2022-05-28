@@ -20,17 +20,81 @@ import (
 	"sdmm/util"
 )
 
-func (a *app) openEnvironment(path string) {
+// Universal method to open any editor resource.
+// If it gets a map file, then the code will try to find an environment to open it.
+func (a *app) loadResource(path string, ws *workspace.Workspace) {
+	if filepath.Ext(path) == ".dme" {
+		a.loadEnvironment(path)
+		return
+	}
+
+	if filepath.Ext(path) != ".dmm" {
+		log.Println("[app] invalid resource to load:", path)
+		return
+	}
+
+	environmentPath, err := findEnvironmentFileFromBase(path)
+
+	if a.HasLoadedEnvironment() && a.LoadedEnvironment().RootFile == environmentPath {
+		a.loadMapV(path, ws)
+		return
+	}
+
+	if err == nil {
+		a.loadEnvironmentV(environmentPath, func() {
+			a.loadMapV(path, ws)
+		})
+	} else {
+		log.Println("[app] unable to find environment from file:", path)
+		dialog.Open(dialog.TypeInformation{
+			Title: "No dme found!",
+			Information: "Can't find an environment file.\n" +
+				"Please, ensure it can be accessed or open manually.\n" +
+				path,
+		})
+	}
+}
+
+// Goes through all parents starting from the current file location and look for a ".dme" file
+func findEnvironmentFileFromBase(path string) (string, error) {
+	for {
+		dir := filepath.Dir(path)
+
+		if dir == path {
+			return "", fmt.Errorf("unable to find environment")
+		}
+
+		files, err := ioutil.ReadDir(dir)
+		if err != nil {
+			log.Println("[app] unable to read dir while looking for environment:", err)
+			return "", fmt.Errorf("unable to read dir: "+dir, err)
+		}
+
+		for _, file := range files {
+			if filepath.Ext(file.Name()) == ".dme" {
+				return filepath.Join(dir, file.Name()), nil
+			}
+		}
+
+		path = filepath.Dir(path)
+	}
+}
+
+func (a *app) loadEnvironment(path string) {
+	a.loadEnvironmentV(path, nil)
+}
+
+func (a *app) loadEnvironmentV(path string, callback func()) {
 	// NewMap workspaces depend on the opened environment, so we close them too.
 	a.layout.WsArea.CloseAllNewMaps()
 	a.layout.WsArea.CloseAllMaps(func(closed bool) {
 		if closed {
-			a.forceOpenEnvironment(path)
+			a.forceLoadEnvironment(path, callback)
 		}
 	})
 }
 
-func (a *app) forceOpenEnvironment(path string) {
+func (a *app) forceLoadEnvironment(path string, callback func()) {
 	log.Printf("[app] opening environment [%s]...", path)
 
 	start := time.Now()
@@ -72,13 +136,17 @@ func (a *app) forceOpenEnvironment(path string) {
 	runtime.GC()
 
 	log.Println("[app] environment opened:", path)
+
+	if callback != nil {
+		callback()
+	}
 }
 
-func (a *app) openMap(path string) {
-	a.openMapV(path, nil)
+func (a *app) loadMap(path string) {
+	a.loadMapV(path, nil)
 }
 
-func (a *app) openMapV(path string, workspace *workspace.Workspace) {
+func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
 	log.Printf("[app] opening map [%s]...", path)
 
 	start := time.Now()

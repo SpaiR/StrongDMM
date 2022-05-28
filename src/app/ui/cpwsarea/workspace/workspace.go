@@ -28,10 +28,13 @@ func (ws *Workspace) Content() content {
 
 func (ws *Workspace) SetContent(cnt content) {
 	ws.content = cnt
+	cnt.setRoot(ws)
 }
 
 func New(cnt content) *Workspace {
-	return &Workspace{content: cnt}
+	ws := &Workspace{content: cnt}
+	cnt.setRoot(ws)
+	return ws
 }
 
 func (ws *Workspace) String() string {

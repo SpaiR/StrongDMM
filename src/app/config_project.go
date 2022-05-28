@@ -46,9 +46,25 @@ func (cfg *projectConfig) AddMapByProject(projectPath string, mapPath string) {
 	log.Printf("[app] added map by project [%s]: %s", projectPath, mapPath)
 }
 
-func (cfg *projectConfig) ClearMapsByProject(projectPath string) {
-	cfg.MapsByProject[projectPath] = nil
-	log.Printf("[app] cleared maps by project [%s]", projectPath)
+func (cfg *projectConfig) ClearMaps() {
+	cfg.MapsByProject = make(map[string][]string)
+	log.Println("[app] cleared maps by project")
+}
+
+func (cfg *projectConfig) RemoveEnvironment(envPath string) {
+	cfg.Projects = slice.StrRemove(cfg.Projects, envPath)
+}
+
+func (cfg *projectConfig) RemoveMap(mapPathToRemove string) {
+	for projectPath, mapPaths := range cfg.MapsByProject {
+		for _, mapPath := range mapPaths {
+			if mapPath == mapPathToRemove {
+				cfg.MapsByProject[projectPath] = slice.StrRemove(cfg.MapsByProject[projectPath], mapPath)
+				log.Printf("[app] removed map [%s] by project: [%s]", mapPath, projectPath)
+				return
+			}
+		}
+	}
 }
 
 func (a *app) loadProjectConfig() {

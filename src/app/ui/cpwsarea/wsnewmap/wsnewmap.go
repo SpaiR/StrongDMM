@@ -23,6 +23,7 @@ type App interface {
 	LoadedEnvironment() *dmenv.Dme
 	Prefs() prefs.Prefs
 	FocusApplicationWindow()
+	DoLoadResourceV(string, *workspace.Workspace)
 }
 
 type WsNewMap struct {
@@ -35,8 +36,6 @@ type WsNewMap struct {
 	mapZDepth int // z
 
 	format string
-
-	onOpenMapByPath func(string)
 }
 
 func New(app App) *WsNewMap {
@@ -62,10 +61,6 @@ func (ws *WsNewMap) Name() string {
 
 func (ws *WsNewMap) Title() string {
 	return ws.Name()
-}
-
-func (ws *WsNewMap) SetOnOpenMapByPath(f func(string)) {
-	ws.onOpenMapByPath = f
 }
 
 func (ws *WsNewMap) Process() {
@@ -145,7 +140,7 @@ func (ws *WsNewMap) tryCreateMap() {
 		log.Println("[wsnewmap] saving new map to:", file)
 
 		ws.save(file)
-		ws.onOpenMapByPath(file)
+		ws.app.DoLoadResourceV(file, ws.Root())
 	} else {
 		log.Println("[wsnewmap] unable to get new map save location:", err)
 	}
