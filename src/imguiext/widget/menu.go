@@ -55,17 +55,14 @@ func (m *menuWidget) Build() {
 	}
 
 	if imgui.BeginMenuV(label, m.enabled) {
-		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
-			imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
-		}
 		if m.layout != nil {
 			m.layout.Build()
 		}
 		imgui.EndMenu()
-	} else {
-		if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
-			imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
-		}
+	}
+
+	if len(m.icon) != 0 && m.icon != miHolderEmptyIcon {
+		imgui.WindowDrawList().AddText(iconPos, iconCol, m.icon)
 	}
 }
 

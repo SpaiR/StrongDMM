@@ -20,7 +20,6 @@ type app interface {
 	DoNewWorkspace()
 	DoOpen()
 	DoLoadResource(path string)
-	DoClearRecentEnvironments()
 	DoClearRecentMaps()
 	DoCloseEnvironment()
 	DoClose()
@@ -64,7 +63,6 @@ type app interface {
 
 	// Helpers
 
-	RecentEnvironments() []string
 	RecentMapsByLoadedEnvironment() []string
 	RecentMaps() []string
 
@@ -118,20 +116,6 @@ func (m *Menu) Process() {
 			w.MenuItem("Open...", m.app.DoOpen).
 				Icon(icon.FolderOpen).
 				Shortcut(shortcut.KeyModName(), "O"),
-			w.Menu("Recent Environments", w.Layout{
-				w.Custom(func() {
-					for _, recentEnvironment := range m.app.RecentEnvironments() {
-						w.MenuItem(recentEnvironment, func() {
-							m.app.DoLoadResource(recentEnvironment)
-						}).IconEmpty().Build()
-					}
-					w.Layout{
-						w.Separator(),
-						w.MenuItem("Clear Recent Environments", m.app.DoClearRecentEnvironments).
-							Icon(icon.Delete),
-					}.Build()
-				}),
-			}).IconEmpty().Enabled(len(m.app.RecentEnvironments()) != 0),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
 					for _, recentMap := range m.app.RecentMaps() {
@@ -145,7 +129,7 @@ func (m *Menu) Process() {
 							Icon(icon.Delete),
 					}.Build()
 				}),
-			}).IconEmpty().Enabled(len(m.app.RecentMaps()) != 0),
+			}).Icon(icon.AccessTime).Enabled(len(m.app.RecentMaps()) != 0),
 			w.MenuItem("Close Environment", m.app.DoCloseEnvironment).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()),

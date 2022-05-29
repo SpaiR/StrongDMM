@@ -37,4 +37,5 @@ const (
 	GitHub            = "\ue91c"
 	KoFi              = "\ue91d"
 	Repeat            = "\ue91e"
+	AccessTime        = "\ue91f"
 )
