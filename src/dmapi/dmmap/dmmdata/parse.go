@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"math"
-	"os"
 	"strconv"
 
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
@@ -13,12 +11,24 @@ import (
 	"sdmm/util"
 )
 
+func max(a, b int) int {
+	if a >= b {
+		return a
+	}
+	return b
+}
+
+type namedReader interface {
+	io.Reader
+	Name() string
+}
+
 /**
 A slightly modified algorithm made on rust:
 https://raw.githubusercontent.com/SpaceManiac/SpacemanDMM/5e51421/src/tools/dmm/read.rs
 Unlike the original one, doesn't care about storing keys as base52 number and uses a simple string for that.
 */
-func parse(file *os.File) (*DmmData, error) {
+func parse(file namedReader) (*DmmData, error) {
 	r := bufio.NewReader(file)
 
 	var (
@@ -30,7 +40,7 @@ func parse(file *os.File) (*DmmData, error) {
 			LineBreak:  "\n",
 		}
 
-		firstRune = true
+		lineNo = 1
 
 		inCommentLine  bool
 		commentTrigger bool
@@ -38,9 +48,8 @@ func parse(file *os.File) (*DmmData, error) {
 		inKeyBlock     bool
 		inDataBlock    bool
 		inVarEditBlock bool
-		afterDataBlock bool
+		afterDataBlock = true
 		escaping       bool
-		skipWhitespace bool
 
 		currData      Prefabs
 		currPath      = ""
@@ -48,8 +57,7 @@ func parse(file *os.File) (*DmmData, error) {
 		currVar       = make([]rune, 0)
 		currDatum     = make([]rune, 0)
 
-		currKey       []rune
-		currKeyLength = 0
+		currKey []rune
 
 		// Functions:
 		flushCurrPrefab = func() {
@@ -66,6 +74,11 @@ func parse(file *os.File) (*DmmData, error) {
 			currVar = currVar[:0]
 			currDatum = currDatum[:0]
 		}
+		lineErr = func(msg string, args ...any) (*DmmData, error) {
+			args = append([]any{1}, args...)
+			args[0] = lineNo
+			return nil, fmt.Errorf("at line %d: "+msg, args...)
+		}
 	)
 
 	for {
@@ -77,22 +90,36 @@ func parse(file *os.File) (*DmmData, error) {
 			}
 		} else {
 			if c == '\n' || c == '\r' {
+				if c == '\n' {
+					lineNo++
+				} else {
+					dmmData.LineBreak = "\r\n"
+				}
 				inCommentLine = false
 				commentTrigger = false
 				continue
 			} else if inCommentLine {
 				continue
-			} else if c == '\t' {
+			} else if c == ' ' || c == '\t' {
+				if commentTrigger {
+					return lineErr("expected comment or type, got whitespace")
+				}
+				if inQuoteBlock {
+					if c == '\t' {
+						currDatum = append(currDatum, '\\', 't')
+					} else {
+						currDatum = append(currDatum, c)
+					}
+				}
 				continue
 			}
 
 			if c == '/' && !inQuoteBlock {
 				if commentTrigger {
 					inCommentLine = true
-					// If the first rune and it's a comment, then we make an assumption that it's a TGM format.
-					if firstRune {
+					// If the first line and it's a comment, then we make an assumption that it's a TGM format.
+					if lineNo == 1 {
 						dmmData.IsTgm = true
-						firstRune = false
 					}
 					continue
 				} else {
@@ -105,25 +132,15 @@ func parse(file *os.File) (*DmmData, error) {
 			if inDataBlock {
 				if inVarEditBlock {
 					if inQuoteBlock {
-						if c == '\\' {
-							currDatum = append(currDatum, c)
-							escaping = true
-						} else if escaping {
-							currDatum = append(currDatum, c)
+						currDatum = append(currDatum, c)
+						if escaping {
 							escaping = false
+						} else if c == '\\' {
+							escaping = true
 						} else if c == '"' {
-							currDatum = append(currDatum, c)
 							inQuoteBlock = false
-						} else {
-							currDatum = append(currDatum, c)
 						}
 					} else {
-						if skipWhitespace && c == ' ' {
-							skipWhitespace = false
-							continue
-						}
-						skipWhitespace = false
-
 						if c == '"' {
 							currDatum = append(currDatum, c)
 							inQuoteBlock = true
@@ -131,15 +148,8 @@ func parse(file *os.File) (*DmmData, error) {
 							currVar = make([]rune, len(currDatum))
 							copy(currVar, currDatum)
 							currDatum = currDatum[:0]
-							length := len(currVar)
-							for length > 0 && currVar[length-1] == ' ' {
-								length -= 1
-							}
-							currVar = currVar[:length]
-							skipWhitespace = true
 						} else if c == ';' {
 							flushCurrVariable()
-							skipWhitespace = true
 						} else if c == '}' {
 							if len(currVar) > 0 {
 								flushCurrVariable()
@@ -167,7 +177,6 @@ func parse(file *os.File) (*DmmData, error) {
 					data := make(Prefabs, len(currData))
 					copy(data, currData)
 					currData = currData[:0]
-					currKeyLength = 0
 					dmmData.Dictionary[key] = data
 					inDataBlock = false
 					afterDataBlock = true
@@ -177,22 +186,28 @@ func parse(file *os.File) (*DmmData, error) {
 			} else if inKeyBlock {
 				if c == '"' {
 					inKeyBlock = false
-					dmmData.KeyLength = currKeyLength
+					if dmmData.KeyLength != len(currKey) {
+						if dmmData.KeyLength == 0 {
+							dmmData.KeyLength = len(currKey)
+						} else {
+							return lineErr("inconsistent key length: %d vs %d", dmmData.KeyLength, len(currKey))
+						}
+					}
 				} else {
-					currKeyLength += 1
 					currKey = append(currKey, c)
 				}
 			} else if c == '"' {
+				if !afterDataBlock {
+					return lineErr("failed to start a data block")
+				}
 				inKeyBlock = true
 				afterDataBlock = false
 			} else if c == '(' {
 				if afterDataBlock {
 					currKey = currKey[:0]
-					currKeyLength = 0
 					break
 				} else {
 					inDataBlock = true
-					afterDataBlock = false
 				}
 			}
 		}
@@ -215,7 +230,19 @@ func parse(file *os.File) (*DmmData, error) {
 
 		inCoordBlock = true
 		inMapString  = false
-		adjustY      = true
+
+		finishLine = func() error {
+			if len(currKey) != 0 {
+				_, err := lineErr("extra characters at EOL [%s]", string(currKey))
+				return err
+			}
+			if currX != baseX {
+				currY++
+				dmmData.MaxX = max(dmmData.MaxX, currX-1)
+				currX = baseX
+			}
+			return nil
+		}
 	)
 
 	for {
@@ -231,64 +258,62 @@ func parse(file *os.File) (*DmmData, error) {
 					if readingAxis == X {
 						currX = currNum
 						currNum = 0
-						dmmData.MaxX = int(math.Max(float64(dmmData.MaxX), float64(currX)))
 						baseX = currX
 						readingAxis = Y
 					} else if readingAxis == Y {
 						currY = currNum
 						currNum = 0
-						dmmData.MaxY = int(math.Max(float64(dmmData.MaxY), float64(currY)))
 						readingAxis = Z
 					} else {
-						return nil, fmt.Errorf("incorrect number of axis [%d]", readingAxis)
+						return lineErr("incorrect number of axis [%d]", readingAxis)
 					}
 				} else if c == ')' {
 					if readingAxis != Z {
-						return nil, fmt.Errorf("incorrect reading axis [%d] (expected %d)", readingAxis, Z)
+						return lineErr("incorrect reading axis [%d] (expected %d)", readingAxis, Z)
 					}
 					currZ = currNum
 					currNum = 0
-					dmmData.MaxZ = int(math.Max(float64(dmmData.MaxZ), float64(currZ)))
+					dmmData.MaxZ = max(dmmData.MaxZ, currZ)
 					inCoordBlock = false
 					readingAxis = X
 				} else {
-					x, _ := strconv.ParseInt(string(c), 10, 16)
+					x, err := strconv.ParseInt(string(c), 10, 16)
+					if err != nil {
+						return lineErr("%w", err)
+					}
 					currNum = 10*currNum + int(x)
 				}
 			} else if inMapString {
 				if c == '"' {
+					if err := finishLine(); err != nil {
+						return nil, err
+					}
 					inMapString = false
-					adjustY = true
-					currY -= 1
+					dmmData.MaxY = max(dmmData.MaxY, currY-1)
 				} else if c == '\r' {
 					dmmData.LineBreak = "\r\n" // Windows line break for sure.
 				} else if c == '\n' {
-					if adjustY {
-						adjustY = false
-					} else {
-						currY += 1
+					if err := finishLine(); err != nil {
+						return nil, err
 					}
-					currX = baseX
+					lineNo++
 				} else {
-					currKeyLength += 1
 					currKey = append(currKey, c)
-					if currKeyLength == dmmData.KeyLength {
-						currKeyLength = 0
+					if len(currKey) == dmmData.KeyLength {
 						dmmData.Grid[util.Point{X: currX, Y: currY, Z: currZ}] = Key(currKey)
 						currKey = currKey[:0]
-						dmmData.MaxX = int(math.Max(float64(dmmData.MaxX), float64(currX)))
-						currX += 1
+						currX++
 					}
 				}
 			} else if c == '(' {
 				inCoordBlock = true
 			} else if c == '"' {
 				inMapString = true
+			} else if c == '\n' {
+				lineNo++
 			}
 		}
 	}
-
-	dmmData.MaxY = int(math.Max(float64(dmmData.MaxY), float64(currY)))
 
 	// Make Y axis to go from bottom to top
 	reversedGrid := make(DataGrid, len(dmmData.Grid))
