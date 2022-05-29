@@ -49,7 +49,7 @@ var (
 	splitter = layout.NewSplitter(
 		"splitter",
 		window.PointSizePtr(),
-		.35,
+		.4,
 		false,
 		false,
 	)
@@ -134,10 +134,10 @@ func (ws *WsEmpty) showContent() {
 		imgui.NewLine()
 
 		splitter.Draw(
+			ws.showAvailableMaps,
 			func() {
 				ws.showRecentMaps(ws.app.RecentMapsByLoadedEnvironment(), true)
 			},
-			ws.showAvailableMaps,
 		)
 	}
 }
