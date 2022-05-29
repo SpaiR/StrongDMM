@@ -78,6 +78,17 @@ func (a *app) DoClearRecentEnvironments() {
 	a.projectConfig().ClearProjects()
 }
 
+// DoCloseEnvironment closes currently opened environment.
+func (a *app) DoCloseEnvironment() {
+	log.Println("[app] closing environment")
+	a.closeEnvironmentV(func(closed bool) {
+		if closed {
+			a.freeEnvironmentResources()
+			a.layout.WsArea.AddEmptyWorkspaceIfNone()
+		}
+	})
+}
+
 // DoCreateMap opens dialog window to create a new map file.
 func (a *app) DoCreateMap() {
 	log.Println("[app] opening create map...")

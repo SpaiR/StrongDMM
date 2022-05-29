@@ -48,7 +48,7 @@ type WsArea struct {
 func (w *WsArea) Init(app App) {
 	w.app = app
 	w.loadConfig()
-	w.AddEmptyWorkspace()
+	w.AddEmptyWorkspaceIfNone()
 	if w.isChangelogHashModified() {
 		w.OpenChangelog()
 	}
@@ -56,7 +56,7 @@ func (w *WsArea) Init(app App) {
 
 func (w *WsArea) Free() {
 	w.closeWorkspaces(w.findMapWorkspaces())
-	w.closeWorkspaces(w.findNewMapWorkspaces()) // close new map creation as well
+	w.closeWorkspaces(w.findCreateMapWorkspaces()) // close new map creation as well
 	log.Println("[cpwsarea] workspace area free")
 }
 
@@ -125,9 +125,9 @@ func (w *WsArea) CloseAllMaps(callback func(closed bool)) {
 	w.closeWorkspacesGentlyV(w.findMapWorkspaces(), callback)
 }
 
-func (w *WsArea) CloseAllNewMaps() {
+func (w *WsArea) CloseAllCreateMaps() {
 	log.Println("[cpwsarea] closing all new maps...")
-	w.closeWorkspaces(w.findNewMapWorkspaces())
+	w.closeWorkspaces(w.findCreateMapWorkspaces())
 }
 
 func (w *WsArea) WorkspaceTitle() string {
@@ -324,7 +324,7 @@ func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {
 	return workspaces
 }
 
-func (w *WsArea) findNewMapWorkspaces() []*workspace.Workspace {
+func (w *WsArea) findCreateMapWorkspaces() []*workspace.Workspace {
 	var workspaces []*workspace.Workspace
 	for _, ws := range w.workspaces {
 		if _, ok := ws.Content().(*wscreatemap.WsCreateMap); ok {

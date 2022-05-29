@@ -86,9 +86,7 @@ func (a *app) loadEnvironment(path string) {
 }
 
 func (a *app) loadEnvironmentV(path string, callback func()) {
-	// NewMap workspaces depend on the opened environment, so we close them too.
-	a.layout.WsArea.CloseAllNewMaps()
-	a.layout.WsArea.CloseAllMaps(func(closed bool) {
+	a.closeEnvironmentV(func(closed bool) {
 		if closed {
 			a.forceLoadEnvironment(path, callback)
 		}
@@ -108,27 +106,13 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 	}
 	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
-	cfg := a.projectConfig()
-	cfg.AddProject(path)
+	a.freeEnvironmentResources()
 
-	// Configure paths filter to access a newly opened environment.
-	a.pathsFilter = dm.NewPathsFilter(func(path string) []string {
-		return env.Objects[path].DirectChildren
-	})
-
+	a.projectConfig().AddProject(path)
 	a.loadedEnvironment = env
-	a.layout.Prefabs.Free()
-	a.layout.Search.Free()
-	a.layout.Environment.Free()
-	a.layout.WsArea.Free()
-	a.layout.VarEditor.Free()
+	a.pathsFilter = newPathsFilter(env)
 
-	a.commandStorage.Free()
-	a.clipboard.Free()
-
-	dmicon.Cache.Free()
 	dmicon.Cache.SetRootDirPath(env.RootDir)
-	dmmap.PrefabStorage.Free()
 	dmmap.Init(env)
 
 	a.layout.WsArea.AddEmptyWorkspaceIfNone()
@@ -141,6 +125,13 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 	if callback != nil {
 		callback()
 	}
+}
+
+// Configure paths filter to access a newly opened environment.
+func newPathsFilter(env *dmenv.Dme) *dm.PathsFilter {
+	return dm.NewPathsFilter(func(path string) []string {
+		return env.Objects[path].DirectChildren
+	})
 }
 
 func (a *app) loadMap(path string) {
@@ -195,6 +186,45 @@ func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
 	runtime.GC()
 
 	log.Println("[app] map opened:", path)
+}
+
+func (a *app) closeEnvironment() {
+	a.closeEnvironmentV(nil)
+}
+func (a *app) closeEnvironmentV(callback func(bool)) {
+	// NewMap workspaces depend on the opened environment, so we close them too.
+	a.layout.WsArea.CloseAllCreateMaps()
+	a.layout.WsArea.CloseAllMaps(func(closed bool) {
+		if callback != nil {
+			callback(closed)
+		}
+	})
+}
+
+// Frees all resources connected with opened environment.
+func (a *app) freeEnvironmentResources() {
+	log.Println("[app] free environment resources...")
+
+	a.pathsFilter = dm.NewPathsFilterEmpty()
+
+	a.layout.Prefabs.Free()
+	a.layout.Search.Free()
+	a.layout.Environment.Free()
+	a.layout.WsArea.Free()
+	a.layout.VarEditor.Free()
+
+	a.commandStorage.Free()
+	a.clipboard.Free()
+
+	dmicon.Cache.Free()
+	dmmap.PrefabStorage.Free()
+	dmmap.Free()
+
+	a.loadedEnvironment = nil
+
+	a.UpdateTitle()
+
+	log.Println("[app] environment resources free!")
 }
 
 func (a *app) environmentName() string {

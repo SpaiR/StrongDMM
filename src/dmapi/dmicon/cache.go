@@ -20,6 +20,7 @@ func (i *IconsCache) Free() {
 		dmi.free()
 	}
 	log.Printf("[dmicon] cache free; [%d] icons disposed", len(i.icons))
+	i.rootDirPath = ""
 	i.icons = make(map[string]*Dmi)
 }
 

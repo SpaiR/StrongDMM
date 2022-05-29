@@ -34,3 +34,10 @@ func Init(dme *dmenv.Dme) {
 	log.Println("[dmmap] base area:", baseAreaPath)
 	log.Println("[dmmap] base turf:", baseTurfPath)
 }
+
+func Free() {
+	environment = nil
+	WorldIconSize = 0
+	BaseArea = nil
+	BaseTurf = nil
+}

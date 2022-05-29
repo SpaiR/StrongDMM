@@ -22,6 +22,7 @@ type app interface {
 	DoLoadResource(path string)
 	DoClearRecentEnvironments()
 	DoClearRecentMaps()
+	DoCloseEnvironment()
 	DoClose()
 	DoCloseAll()
 	DoSave()
@@ -145,6 +146,9 @@ func (m *Menu) Process() {
 					}.Build()
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentMaps()) != 0),
+			w.MenuItem("Close Environment", m.app.DoCloseEnvironment).
+				IconEmpty().
+				Enabled(m.app.HasLoadedEnvironment()),
 			w.Separator(),
 			w.MenuItem("Close", m.app.DoClose).
 				IconEmpty().
