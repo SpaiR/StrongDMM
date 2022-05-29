@@ -10,7 +10,7 @@ import (
 
 func (p *Prefabs) Process() {
 	if len(p.nodes) == 0 {
-		imgui.TextDisabled("No Prefab Selected")
+		imgui.TextDisabled("No prefab selected")
 		return
 	}
 

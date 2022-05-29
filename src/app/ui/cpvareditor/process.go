@@ -21,7 +21,7 @@ func (v *VarEditor) Process() {
 	v.shortcuts.SetVisibleIfFocused()
 
 	if len(v.variablesNames) == 0 {
-		imgui.TextDisabled("No Instance/Prefab Selected")
+		imgui.TextDisabled("No instance/prefab selected")
 		return
 	}
 

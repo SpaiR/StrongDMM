@@ -17,7 +17,7 @@ func (e *Environment) Process() {
 	e.shortcuts.SetVisibleIfFocused()
 
 	if e.app.LoadedEnvironment() == nil {
-		imgui.TextDisabled("No Environment Loaded")
+		imgui.TextDisabled("No environment loaded")
 	} else {
 		e.process()
 		e.showControls()
