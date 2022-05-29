@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/overlay"
+	"sdmm/dmapi/dmmap/dmmdata"
 
 	"sdmm/dmapi/dmmap"
 	"sdmm/util"
@@ -33,7 +34,7 @@ type ToolGrab struct {
 	fillArea     util.Bounds
 
 	initTiles []dmmap.Tile
-	prevTiles []dmmap.Tile
+	prevTiles map[util.Point]dmmdata.Prefabs
 
 	startMovePoint util.Point
 
@@ -84,9 +85,10 @@ func (t *ToolGrab) SelectArea(tiles []util.Point) {
 }
 
 func (t *ToolGrab) PreSelectArea(tiles []util.Point) {
+	t.prevTiles = make(map[util.Point]dmmdata.Prefabs, len(tiles))
 	for _, tile := range tiles {
 		if ed.Dmm().HasTile(tile) {
-			t.prevTiles = append(t.prevTiles, ed.Dmm().GetTile(tile).Copy())
+			t.prevTiles[tile] = ed.Dmm().GetTile(tile).Instances().Prefabs().Copy()
 		}
 	}
 }
@@ -166,9 +168,9 @@ func (t *ToolGrab) moveArea(coord util.Point) {
 	}
 
 	// Restore previous tiles content (tiles we've moved through)
-	for _, prevTile := range t.prevTiles {
-		updateCoords = append(updateCoords, prevTile.Coord)
-		ed.TileReplace(prevTile.Coord, prevTile.Instances().Prefabs())
+	for tile, prevTile := range t.prevTiles {
+		updateCoords = append(updateCoords, tile)
+		ed.TileReplace(tile, prevTile)
 	}
 
 	// Move a content to a new place
@@ -180,7 +182,9 @@ func (t *ToolGrab) moveArea(coord util.Point) {
 		}
 
 		tile := dmm.GetTile(nextTilePoint)
-		t.prevTiles = append(t.prevTiles, tile.Copy())
+		if _, ok := t.prevTiles[tile.Coord]; !ok {
+			t.prevTiles[tile.Coord] = tile.Instances().Prefabs().Copy()
+		}
 		updateCoords = append(updateCoords, tile.Coord)
 
 		ed.TileReplace(nextTilePoint, initTile.Instances().Prefabs())
@@ -208,6 +212,7 @@ func (t *ToolGrab) onStop(util.Point) {
 func (t *ToolGrab) stopSelectArea() {
 	t.mode = tSelectModeMoveArea
 	t.initTiles = collectTiles(ed.Dmm(), t.fillArea, t.fillStart.Z)
+	t.prevTiles = make(map[util.Point]dmmdata.Prefabs)
 }
 
 func (t *ToolGrab) stopMoveArea() {
