@@ -11,7 +11,9 @@ import (
 
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/dialog"
+	"sdmm/app/window"
 	"sdmm/dmapi/dm"
+	w "sdmm/imguiext/widget"
 	"sdmm/util/slice"
 
 	"sdmm/dmapi/dmenv"
@@ -19,6 +21,8 @@ import (
 	"sdmm/dmapi/dmmap"
 	"sdmm/dmapi/dmmap/dmmdata"
 	"sdmm/util"
+
+	"github.com/SpaiR/imgui-go"
 )
 
 func (a *app) loadResource(path string) {
@@ -106,34 +110,73 @@ func (a *app) loadEnvironmentV(path string, callback func()) {
 func (a *app) forceLoadEnvironment(path string, callback func()) {
 	log.Printf("[app] opening environment [%s]...", path)
 
-	start := time.Now()
-	log.Printf("[app] parsing environment: [%s]...", path)
-	env, err := dmenv.New(path)
-	if err != nil {
-		log.Println("[app] unable to open environment:", err)
-		util.ShowErrorDialog("Unable to open environment: " + path)
-		return
+	afterLoad := func(env *dmenv.Dme) {
+		a.freeEnvironmentResources()
+
+		a.projectConfig().AddProject(path)
+		a.loadedEnvironment = env
+		a.pathsFilter = newPathsFilter(env)
+
+		dmicon.Cache.SetRootDirPath(env.RootDir)
+		dmmap.Init(env)
+
+		a.layout.WsArea.AddEmptyWorkspaceIfNone()
+		a.UpdateTitle()
+
+		runtime.GC()
+
+		log.Println("[app] environment opened:", path)
+
+		if callback != nil {
+			callback()
+		}
 	}
-	log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
-	a.freeEnvironmentResources()
+	go func() {
+		dlg := makeLoadingDialog(path)
+		dialog.Open(dlg)
 
-	a.projectConfig().AddProject(path)
-	a.loadedEnvironment = env
-	a.pathsFilter = newPathsFilter(env)
+		start := time.Now()
+		log.Printf("[app] parsing environment: [%s]...", path)
 
-	dmicon.Cache.SetRootDirPath(env.RootDir)
-	dmmap.Init(env)
+		env, err := dmenv.New(path)
 
-	a.layout.WsArea.AddEmptyWorkspaceIfNone()
-	a.UpdateTitle()
+		if err != nil {
+			log.Println("[app] unable to open environment:", err)
+			dialog.Close(dlg)
+			dialog.Open(dialog.TypeInformation{
+				Title:       "Error!",
+				Information: "Unable to open environment: " + path,
+			})
+			return
+		}
 
-	runtime.GC()
+		log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
-	log.Println("[app] environment opened:", path)
+		dialog.Close(dlg)
 
-	if callback != nil {
-		callback()
+		window.RunLater(func() {
+			afterLoad(env)
+		})
+	}()
+}
+
+func makeLoadingDialog(path string) dialog.Type {
+	start := time.Now()
+	return dialog.TypeCustom{
+		Title: "Loading",
+		Layout: w.Layout{
+			w.Text(path),
+			w.Custom(func() {
+				passed := fmt.Sprint(time.Since(start).Round(time.Second))
+
+				width := imgui.WindowWidth()
+				textW := imgui.CalcTextSize(passed, false, 0).X
+
+				imgui.SetCursorPos(imgui.Vec2{X: (width - textW) * .5, Y: imgui.CursorPosY()})
+				imgui.Text(passed)
+			}),
+		},
 	}
 }
 
