@@ -95,6 +95,7 @@ func (a *app) RecentMapsByLoadedEnvironment() (recentMaps []string) {
 }
 
 // AvailableMaps returns all maps available for the currently loaded environment.
+// Commonly is a blocking operation, so it must be called rarely.
 func (a *app) AvailableMaps() (availableMaps []string) {
 	if !a.HasLoadedEnvironment() {
 		return availableMaps

@@ -21,15 +21,15 @@ type content interface {
 	Closed() bool
 	OnFocusChange(focused bool)
 
+	Initialize()
 	PreProcess()
 	Process()
 	PostProcess()
+	Dispose()
 
 	Save() bool
 	CommandStackId() string
 	Ini() Ini
-
-	Dispose()
 }
 
 type Content struct {
@@ -74,6 +74,10 @@ func (Content) OnFocusChange(bool) {
 	// do nothing
 }
 
+func (Content) Initialize() {
+	// do nothing
+}
+
 func (Content) PreProcess() {
 	// do nothing
 }
@@ -83,6 +87,10 @@ func (Content) Process() {
 }
 
 func (Content) PostProcess() {
+	// do nothing
+}
+
+func (Content) Dispose() {
 	// do nothing
 }
 
@@ -96,8 +104,4 @@ func (Content) CommandStackId() string {
 
 func (Content) Ini() Ini {
 	return Ini{}
-}
-
-func (Content) Dispose() {
-	// do nothing
 }

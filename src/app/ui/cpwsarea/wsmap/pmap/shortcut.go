@@ -5,6 +5,7 @@ import (
 
 	"sdmm/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/app/ui/shortcut"
+	"sdmm/platform"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -31,40 +32,40 @@ func (p *PaneMap) addShortcuts() {
 
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#doDeselectAll",
-		FirstKey:    shortcut.KeyModLeft(),
-		FirstKeyAlt: shortcut.KeyModRight(),
+		FirstKey:    platform.KeyModLeft(),
+		FirstKeyAlt: platform.KeyModRight(),
 		SecondKey:   glfw.KeyD,
 		Action:      p.DoDeselect,
 	})
 
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:         "pmap#doToggleArea",
-		FirstKey:     shortcut.KeyModLeft(),
-		FirstKeyAlt:  shortcut.KeyModRight(),
+		FirstKey:     platform.KeyModLeft(),
+		FirstKeyAlt:  platform.KeyModRight(),
 		SecondKey:    glfw.Key1,
 		SecondKeyAlt: glfw.KeyKP1,
 		Action:       p.doToggleArea,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:         "pmap#doToggleTurf",
-		FirstKey:     shortcut.KeyModLeft(),
-		FirstKeyAlt:  shortcut.KeyModRight(),
+		FirstKey:     platform.KeyModLeft(),
+		FirstKeyAlt:  platform.KeyModRight(),
 		SecondKey:    glfw.Key2,
 		SecondKeyAlt: glfw.KeyKP2,
 		Action:       p.doToggleTurf,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:         "pmap#doToggleObject",
-		FirstKey:     shortcut.KeyModLeft(),
-		FirstKeyAlt:  shortcut.KeyModRight(),
+		FirstKey:     platform.KeyModLeft(),
+		FirstKeyAlt:  platform.KeyModRight(),
 		SecondKey:    glfw.Key3,
 		SecondKeyAlt: glfw.KeyKP3,
 		Action:       p.doToggleObject,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:         "pmap#doToggleMob",
-		FirstKey:     shortcut.KeyModLeft(),
-		FirstKeyAlt:  shortcut.KeyModRight(),
+		FirstKey:     platform.KeyModLeft(),
+		FirstKeyAlt:  platform.KeyModRight(),
 		SecondKey:    glfw.Key4,
 		SecondKeyAlt: glfw.KeyKP4,
 		Action:       p.doToggleMob,
@@ -72,16 +73,16 @@ func (p *PaneMap) addShortcuts() {
 
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#doPreviousLevel",
-		FirstKey:    shortcut.KeyModLeft(),
-		FirstKeyAlt: shortcut.KeyModRight(),
+		FirstKey:    platform.KeyModLeft(),
+		FirstKeyAlt: platform.KeyModRight(),
 		SecondKey:   glfw.KeyDown,
 		Action:      p.doPreviousLevel,
 		IsEnabled:   p.hasPreviousLevel,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#doNextLevel",
-		FirstKey:    shortcut.KeyModLeft(),
-		FirstKeyAlt: shortcut.KeyModRight(),
+		FirstKey:    platform.KeyModLeft(),
+		FirstKeyAlt: platform.KeyModRight(),
 		SecondKey:   glfw.KeyUp,
 		Action:      p.doNextLevel,
 		IsEnabled:   p.hasNextLevel,

@@ -150,6 +150,7 @@ func (w *WsArea) addWorkspace(ws *workspace.Workspace) {
 }
 
 func (w *WsArea) addWorkspaceV(ws *workspace.Workspace, idx int) {
+	ws.Initialize()
 	w.workspaces = append(w.workspaces[:idx], append([]*workspace.Workspace{ws}, w.workspaces[idx:]...)...)
 	log.Printf("[cpwsarea] workspace opened in index [%d]: %s", idx, ws.Name())
 }

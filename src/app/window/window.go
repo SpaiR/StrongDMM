@@ -84,6 +84,10 @@ func PointSize() float32 {
 	return pointSize
 }
 
+func PointSizePtr() *float32 {
+	return &pointSize
+}
+
 func SetPointSize(ps float32) {
 	pointSize = ps
 	configureFonts()

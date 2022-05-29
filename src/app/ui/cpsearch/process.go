@@ -29,8 +29,8 @@ func (s *Search) Process() {
 	s.showResultsControls()
 	if imgui.BeginChild("results") {
 		s.showResults()
-		imgui.EndChild()
 	}
+	imgui.EndChild()
 }
 
 func (s *Search) showControls() {

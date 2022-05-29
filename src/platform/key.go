@@ -1,15 +1,10 @@
-package shortcut
+package platform
 
 import (
 	"runtime"
-	"strings"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
-
-func Combine(keys ...string) string {
-	return strings.Join(keys, "+")
-}
 
 var isDarwin = runtime.GOOS == "darwin"
 

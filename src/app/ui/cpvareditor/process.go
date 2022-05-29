@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"sdmm/app/ui/shortcut"
+	"sdmm/platform"
 
 	"sdmm/dmapi/dmvars"
 	"sdmm/imguiext/icon"
@@ -109,15 +109,15 @@ func (v *VarEditor) showControls() {
 			w.MenuItem("Show modified only", v.doToggleShowModified).
 				Selected(cfg.ShowModified).
 				Enabled(true).
-				Shortcut(shortcut.KeyModName(), "1"),
+				Shortcut(platform.KeyModName(), "1"),
 			w.MenuItem("Show types", v.doToggleShowByType).
 				Selected(cfg.ShowByType).
 				Enabled(true).
-				Shortcut(shortcut.KeyModName(), "2"),
+				Shortcut(platform.KeyModName(), "2"),
 			w.MenuItem("Show pins", v.doToggleShowPins).
 				Selected(cfg.ShowPins).
 				Enabled(true).
-				Shortcut(shortcut.KeyModName(), "3"),
+				Shortcut(platform.KeyModName(), "3"),
 		}.Build()
 
 		imgui.EndPopup()

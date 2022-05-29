@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strings"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -114,4 +115,8 @@ func Process() {
 			shortcut.Action()
 		}
 	}
+}
+
+func Combine(keys ...string) string {
+	return strings.Join(keys, "+")
 }

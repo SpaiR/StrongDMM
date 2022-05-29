@@ -27,6 +27,9 @@ func (ws *Workspace) Content() content {
 }
 
 func (ws *Workspace) SetContent(cnt content) {
+	if ws.content != nil {
+		ws.content.Dispose()
+	}
 	ws.content = cnt
 	cnt.setRoot(ws)
 }
@@ -59,16 +62,16 @@ func (ws *Workspace) Id() string {
 	return ws.id
 }
 
-func (ws *Workspace) Dispose() {
-	ws.content.Dispose()
-}
-
 func (ws *Workspace) CommandStackId() string {
 	return ws.content.CommandStackId()
 }
 
 func (ws *Workspace) OnFocusChange(focused bool) {
 	ws.content.OnFocusChange(focused)
+}
+
+func (ws *Workspace) Initialize() {
+	ws.content.Initialize()
 }
 
 func (ws *Workspace) PreProcess() {
@@ -81,6 +84,10 @@ func (ws *Workspace) Process() {
 
 func (ws *Workspace) PostProcess() {
 	ws.content.PostProcess()
+}
+
+func (ws *Workspace) Dispose() {
+	ws.content.Dispose()
 }
 
 func (ws *Workspace) Focused() bool {

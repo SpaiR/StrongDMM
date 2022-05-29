@@ -5,13 +5,13 @@ import (
 	"log"
 
 	"sdmm/app/ui/layout/lnode"
-	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmicon"
 	"sdmm/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/dmapi/dmmap/dmminstance"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
+	"sdmm/platform"
 	"sdmm/util"
 
 	"github.com/SpaiR/imgui-go"
@@ -42,22 +42,22 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Undo", t.app.DoUndo).
 			Icon(icon.Undo).
 			Enabled(t.app.CommandStorage().HasUndo()).
-			Shortcut(shortcut.KeyModName(), "Z"),
+			Shortcut(platform.KeyModName(), "Z"),
 		w.MenuItem("Redo", t.app.DoRedo).
 			Icon(icon.Redo).
 			Enabled(t.app.CommandStorage().HasRedo()).
-			Shortcut(shortcut.KeyModName(), "Shift", "Z"),
+			Shortcut(platform.KeyModName(), "Shift", "Z"),
 		w.Separator(),
 		w.MenuItem("Copy", t.app.DoCopy).
 			Icon(icon.ContentCopy).
-			Shortcut(shortcut.KeyModName(), "C"),
+			Shortcut(platform.KeyModName(), "C"),
 		w.MenuItem("Paste", t.app.DoPaste).
 			Icon(icon.ContentPaste).
 			Enabled(t.app.Clipboard().HasData()).
-			Shortcut(shortcut.KeyModName(), "V"),
+			Shortcut(platform.KeyModName(), "V"),
 		w.MenuItem("Cut", t.app.DoCut).
 			Icon(icon.ContentCut).
-			Shortcut(shortcut.KeyModName(), "X"),
+			Shortcut(platform.KeyModName(), "X"),
 		w.MenuItem("Delete", t.app.DoDelete).
 			Icon(icon.Eraser).
 			Shortcut("Delete"),

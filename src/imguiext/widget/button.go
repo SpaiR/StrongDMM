@@ -148,6 +148,12 @@ func (w *ButtonWidget) Build() {
 		flag = imgui.ButtonV(label, w.size)
 	}
 
+	imgui.PopStyleColorV(styleCounter)
+
+	if w.round {
+		imgui.PopStyleVar()
+	}
+
 	if flag && w.onClick != nil {
 		w.onClick()
 	}
@@ -158,12 +164,6 @@ func (w *ButtonWidget) Build() {
 
 	if imgui.IsItemHovered() {
 		imgui.SetMouseCursor(w.mouseCursor)
-	}
-
-	imgui.PopStyleColorV(styleCounter)
-
-	if w.round {
-		imgui.PopStyleVar()
 	}
 }
 

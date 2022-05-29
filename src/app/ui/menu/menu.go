@@ -9,6 +9,7 @@ import (
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
+	"sdmm/platform"
 	"sdmm/rsc"
 
 	"github.com/SpaiR/imgui-go"
@@ -111,11 +112,11 @@ func (m *Menu) Process() {
 		w.Menu("File", w.Layout{
 			w.MenuItem("New Workspace", m.app.DoNewWorkspace).
 				Icon(icon.File).
-				Shortcut(shortcut.KeyModName(), "N"),
+				Shortcut(platform.KeyModName(), "N"),
 			w.Separator(),
 			w.MenuItem("Open...", m.app.DoOpen).
 				Icon(icon.FolderOpen).
-				Shortcut(shortcut.KeyModName(), "O"),
+				Shortcut(platform.KeyModName(), "O"),
 			w.Menu("Recent Maps", w.Layout{
 				w.Custom(func() {
 					for _, recentMap := range m.app.RecentMaps() {
@@ -136,59 +137,59 @@ func (m *Menu) Process() {
 			w.Separator(),
 			w.MenuItem("Close", m.app.DoClose).
 				IconEmpty().
-				Shortcut(shortcut.KeyModName(), "W"),
+				Shortcut(platform.KeyModName(), "W"),
 			w.MenuItem("Close All", m.app.DoCloseAll).
 				IconEmpty().
-				Shortcut(shortcut.KeyModName(), "Shift", "W"),
+				Shortcut(platform.KeyModName(), "Shift", "W"),
 			w.Separator(),
 			w.MenuItem("Save", m.app.DoSave).
 				Icon(icon.Save).
 				Enabled(m.app.HasActiveMap()).
-				Shortcut(shortcut.KeyModName(), "S"),
+				Shortcut(platform.KeyModName(), "S"),
 			w.MenuItem("Save All", m.app.DoSaveAll).
 				Icon(icon.Save).
 				Enabled(m.app.HasActiveMap()).
-				Shortcut(shortcut.KeyModName(), "Shift", "S"),
+				Shortcut(platform.KeyModName(), "Shift", "S"),
 			w.Separator(),
 			w.MenuItem("Preferences", m.app.DoOpenPreferences).
 				Icon(icon.Wrench),
 			w.Separator(),
 			w.MenuItem("Exit", m.app.DoExit).
 				IconEmpty().
-				Shortcut(shortcut.Combine(shortcut.KeyModName(), "Q")),
+				Shortcut(shortcut.Combine(platform.KeyModName(), "Q")),
 		}),
 
 		w.Menu("Edit", w.Layout{
 			w.MenuItem("Undo", m.app.DoUndo).
 				Icon(icon.Undo).
 				Enabled(m.app.CommandStorage().HasUndo()).
-				Shortcut(shortcut.KeyModName(), "Z"),
+				Shortcut(platform.KeyModName(), "Z"),
 			w.MenuItem("Redo", m.app.DoRedo).
 				Icon(icon.Redo).
 				Enabled(m.app.CommandStorage().HasRedo()).
-				Shortcut(shortcut.KeyModName(), "Shift", "Z"),
+				Shortcut(platform.KeyModName(), "Shift", "Z"),
 			w.Separator(),
 			w.MenuItem("Copy", m.app.DoCopy).
 				Icon(icon.ContentCopy).
-				Shortcut(shortcut.KeyModName(), "C"),
+				Shortcut(platform.KeyModName(), "C"),
 			w.MenuItem("Paste", m.app.DoPaste).
 				Icon(icon.ContentPaste).
 				Enabled(m.app.Clipboard().HasData()).
-				Shortcut(shortcut.KeyModName(), "V"),
+				Shortcut(platform.KeyModName(), "V"),
 			w.MenuItem("Cut", m.app.DoCut).
 				Icon(icon.ContentCut).
-				Shortcut(shortcut.KeyModName(), "X"),
+				Shortcut(platform.KeyModName(), "X"),
 			w.MenuItem("Delete", m.app.DoDelete).
 				Icon(icon.Eraser).
 				Shortcut("Delete"),
 			w.MenuItem("Deselect", m.app.DoDeselect).
 				IconEmpty().
-				Shortcut(shortcut.KeyModName(), "D"),
+				Shortcut(platform.KeyModName(), "D"),
 			w.Separator(),
 			w.MenuItem("Search", m.app.DoSearch).
 				Icon(icon.Search).
 				Enabled(m.app.HasActiveMap()).
-				Shortcut(shortcut.KeyModName(), "F"),
+				Shortcut(platform.KeyModName(), "F"),
 			w.Separator(),
 			w.MenuItem("Create Map", m.app.DoCreateMap).
 				IconEmpty().
@@ -200,22 +201,22 @@ func (m *Menu) Process() {
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isAreaToggled()).
-				Shortcut(shortcut.KeyModName(), "1"),
+				Shortcut(platform.KeyModName(), "1"),
 			w.MenuItem("Show Turf", m.doToggleTurf).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isTurfToggled()).
-				Shortcut(shortcut.KeyModName(), "2"),
+				Shortcut(platform.KeyModName(), "2"),
 			w.MenuItem("Show Object", m.doToggleObject).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isObjectToggled()).
-				Shortcut(shortcut.KeyModName(), "3"),
+				Shortcut(platform.KeyModName(), "3"),
 			w.MenuItem("Show Mob", m.doToggleMob).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
 				Selected(m.isMobToggled()).
-				Shortcut(shortcut.KeyModName(), "4"),
+				Shortcut(platform.KeyModName(), "4"),
 			w.MenuItem("Show All", m.doShowAll).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()),
@@ -226,7 +227,7 @@ func (m *Menu) Process() {
 			w.MenuItem("Multi-Z Rendering", m.app.DoMultiZRendering).
 				IconEmpty().
 				Selected(m.app.MultiZRendering()).
-				Shortcut(shortcut.KeyModName(), "0"),
+				Shortcut(platform.KeyModName(), "0"),
 			w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).
 				IconEmpty().
 				Selected(m.app.MirrorCanvasCamera()),

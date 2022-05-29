@@ -7,6 +7,7 @@ import (
 	"sdmm/app/ui/shortcut"
 	"sdmm/imguiext/icon"
 	w "sdmm/imguiext/widget"
+	"sdmm/platform"
 )
 
 func (p *PaneMap) showStatusPanel() {
@@ -56,13 +57,13 @@ func (p *PaneMap) panelStatusLayoutLevels() (layout w.Layout) {
 		w.SameLine(),
 		w.Disabled(!p.hasPreviousLevel(), w.Layout{
 			w.Button(icon.ArrowDownward, p.doPreviousLevel).
-				Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Down"))).
+				Tooltip(fmt.Sprintf("Previous z-level (%s)", shortcut.Combine(platform.KeyModName(), "Down"))).
 				Round(true),
 		}),
 		w.SameLine(),
 		w.Disabled(!p.hasNextLevel(), w.Layout{
 			w.Button(icon.ArrowUpward, p.doNextLevel).
-				Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(shortcut.KeyModName(), "Up"))).
+				Tooltip(fmt.Sprintf("Next z-level (%s)", shortcut.Combine(platform.KeyModName(), "Up"))).
 				Round(true),
 		}),
 	}

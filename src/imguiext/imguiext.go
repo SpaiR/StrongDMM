@@ -1,6 +1,8 @@
 package imguiext
 
 import (
+	"sdmm/platform"
+
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -37,4 +39,8 @@ func IsShiftDown() bool {
 
 func IsCtrlDown() bool {
 	return imgui.IsKeyDown(int(glfw.KeyLeftControl)) || imgui.IsKeyDown(int(glfw.KeyRightControl))
+}
+
+func IsModDown() bool {
+	return imgui.IsKeyDown(int(platform.KeyModLeft())) || imgui.IsKeyDown(int(platform.KeyModRight()))
 }
