@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"sdmm/app/prefs"
 	"sdmm/app/render"
@@ -75,17 +76,19 @@ func (a *app) RecentEnvironments() []string {
 	return a.projectConfig().Projects
 }
 
-// RecentMapsByEnvironment returns a map with key as an environment path and value as a slice of maps opened
-// for the environment path.
-func (a *app) RecentMapsByEnvironment() map[string][]string {
-	return a.projectConfig().MapsByProject
+// RecentMaps returns recent maps from all environments.
+func (a *app) RecentMaps() []string {
+	return a.projectConfig().Maps
 }
 
-// RecentMaps returns recent maps from all environments.
-func (a *app) RecentMaps() (recentMaps []string) {
-	for _, recentEnvironment := range a.RecentEnvironments() {
-		for _, mapPath := range a.RecentMapsByEnvironment()[recentEnvironment] {
-			recentMaps = append(recentMaps, mapPath)
+// RecentMapsByLoadedEnvironment returns a slice with paths to recently opened maps
+// by the currently loaded environment.
+func (a *app) RecentMapsByLoadedEnvironment() (recentMaps []string) {
+	if a.HasLoadedEnvironment() {
+		for _, mapPath := range a.RecentMaps() {
+			if strings.Contains(mapPath, a.loadedEnvironment.RootDir) {
+				recentMaps = append(recentMaps, mapPath)
+			}
 		}
 	}
 	return recentMaps
@@ -109,15 +112,6 @@ func (a *app) AvailableMaps() (availableMaps []string) {
 	}
 
 	return availableMaps
-}
-
-// RecentMapsByLoadedEnvironment returns a slice with paths to recently opened maps
-// by the currently loaded environment.
-func (a *app) RecentMapsByLoadedEnvironment() []string {
-	if a.HasLoadedEnvironment() {
-		return a.RecentMapsByEnvironment()[a.loadedEnvironment.RootFile]
-	}
-	return nil
 }
 
 // LoadedEnvironment returns currently loaded environment.

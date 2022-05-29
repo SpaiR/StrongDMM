@@ -164,7 +164,7 @@ func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
 	if slice.StrContains(a.AvailableMaps(), path) {
 		log.Println("[app] adding map path to the recent:", path)
 		cfg := a.projectConfig()
-		cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
+		cfg.AddMap(path)
 	} else {
 		log.Println("[app] ignoring map path add to the recent, since it's an outside resource")
 	}

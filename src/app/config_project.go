@@ -10,23 +10,41 @@ import (
 
 const (
 	projectConfigName    = "project"
-	projectConfigVersion = 1
+	projectConfigVersion = 2
 )
 
 type projectConfig struct {
 	Version uint
 
-	Projects      []string
-	MapsByProject map[string][]string
+	Projects []string
+	Maps     []string
 }
 
 func (projectConfig) Name() string {
 	return projectConfigName
 }
 
-func (cfg *projectConfig) TryMigrate(_ map[string]any) (result map[string]any, migrated bool) {
-	// do nothing. yet...
-	return nil, migrated
+func (projectConfig) TryMigrate(cfg map[string]any) (result map[string]any, migrated bool) {
+	result = cfg
+
+	if uint(result["Version"].(float64)) == 1 {
+		log.Println("[app] migrating [project] config:", 2)
+
+		mapsByProject := result["MapsByProject"].(map[string]any)
+		var maps []string
+		for projectPath := range mapsByProject {
+			for _, mapPath := range mapsByProject[projectPath].([]interface{}) {
+				maps = append(maps, mapPath.(string))
+			}
+		}
+		result["Maps"] = maps
+		delete(result, "MapsByProject")
+
+		result["Version"] = 2
+		migrated = true
+	}
+
+	return result, migrated
 }
 
 func (cfg *projectConfig) AddProject(projectPath string) {
@@ -39,38 +57,28 @@ func (cfg *projectConfig) ClearProjects() {
 	log.Println("[app] cleared projects")
 }
 
-func (cfg *projectConfig) AddMapByProject(projectPath string, mapPath string) {
-	maps := cfg.MapsByProject[projectPath]
-	maps = slice.StrPushUnique(maps, mapPath)
-	cfg.MapsByProject[projectPath] = maps
-	log.Printf("[app] added map by project [%s]: %s", projectPath, mapPath)
+func (cfg *projectConfig) AddMap(mapPath string) {
+	cfg.Maps = slice.StrPushUnique(cfg.Maps, mapPath)
+	log.Println("[app] added map:", mapPath)
 }
 
 func (cfg *projectConfig) ClearMaps() {
-	cfg.MapsByProject = make(map[string][]string)
-	log.Println("[app] cleared maps by project")
+	cfg.Maps = nil
+	log.Println("[app] cleared maps")
 }
 
 func (cfg *projectConfig) RemoveEnvironment(envPath string) {
 	cfg.Projects = slice.StrRemove(cfg.Projects, envPath)
 }
 
-func (cfg *projectConfig) RemoveMap(mapPathToRemove string) {
-	for projectPath, mapPaths := range cfg.MapsByProject {
-		for _, mapPath := range mapPaths {
-			if mapPath == mapPathToRemove {
-				cfg.MapsByProject[projectPath] = slice.StrRemove(cfg.MapsByProject[projectPath], mapPath)
-				log.Printf("[app] removed map [%s] by project: [%s]", mapPath, projectPath)
-				return
-			}
-		}
-	}
+func (cfg *projectConfig) RemoveMap(mapPath string) {
+	cfg.Maps = slice.StrRemove(cfg.Maps, mapPath)
+	log.Println("[app] removed map:", mapPath)
 }
 
 func (a *app) loadProjectConfig() {
 	config := &projectConfig{
-		Version:       projectConfigVersion,
-		MapsByProject: make(map[string][]string),
+		Version: projectConfigVersion,
 	}
 
 	a.ConfigRegister(config)
@@ -88,15 +96,13 @@ func (a *app) loadProjectConfig() {
 	}
 
 	// Cleanup maps paths
-	for projectPath, mapPaths := range config.MapsByProject {
-		pathsToRemove = nil
-		for _, mapPath := range mapPaths {
-			if _, err := os.Stat(mapPath); errors.Is(err, os.ErrNotExist) {
-				pathsToRemove = append(pathsToRemove, mapPath)
-			}
+	pathsToRemove = nil
+	for _, mapPath := range config.Maps {
+		if _, err := os.Stat(mapPath); errors.Is(err, os.ErrNotExist) {
+			pathsToRemove = append(pathsToRemove, mapPath)
 		}
 		for _, path := range pathsToRemove {
-			config.MapsByProject[projectPath] = slice.StrRemove(config.MapsByProject[projectPath], path)
+			config.Maps = slice.StrRemove(config.Maps, path)
 			log.Println("[app] config cleanup, removed map path:", path)
 		}
 	}
