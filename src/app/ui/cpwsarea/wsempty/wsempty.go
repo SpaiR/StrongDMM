@@ -214,19 +214,23 @@ func (ws *WsEmpty) showAvailableMaps() {
 		}.Build()
 
 		if imgui.BeginChild("available_maps") {
-			for _, recentMap := range availableMaps {
-				if !strings.Contains(strings.ToLower(recentMap), strings.ToLower(filter)) {
+			for _, availableMap := range availableMaps {
+				if !strings.Contains(strings.ToLower(availableMap), strings.ToLower(filter)) {
 					continue
 				}
 
 				if ws.isDoSelectAllMaps {
-					ws.addMapSelection(recentMap)
+					ws.addMapSelection(availableMap)
 				}
 
-				w.Selectable(sanitizeMapPath(ws.app.LoadedEnvironment().RootDir, recentMap)).
-					OnClick(func() { ws.toggleMapSelection(recentMap) }).
-					Selected(slice.StrContains(ws.selectedMaps, recentMap)).
+				w.Selectable(sanitizeMapPath(ws.app.LoadedEnvironment().RootDir, availableMap)).
+					OnClick(func() { ws.toggleMapSelection(availableMap) }).
+					Selected(slice.StrContains(ws.selectedMaps, availableMap)).
 					Build()
+
+				if imgui.IsItemClicked() && imgui.IsMouseDoubleClicked(imgui.MouseButtonLeft) {
+					ws.app.DoLoadResourceV(availableMap, ws.Root())
+				}
 			}
 		}
 		imgui.EndChild()
@@ -354,6 +358,7 @@ func availableMapsTooltip() w.Layout {
 	return w.Layout{
 		w.TextFrame("Enter"), w.SameLine(), w.Text("Open"),
 		w.TextFrame("Click"), w.SameLine(), w.Text("Select"),
+		w.TextFrame("Double Click"), w.SameLine(), w.Text("Open"),
 		w.TextFrame("Shift+Click"), w.SameLine(), w.Text("Select Range"),
 		w.TextFrame(platform.KeyModName() + "+Click"), w.SameLine(), w.Text("Add/Remove Selection"),
 		w.TextFrame(platform.KeyModName() + "+A"), w.SameLine(), w.Text("Select All"),
