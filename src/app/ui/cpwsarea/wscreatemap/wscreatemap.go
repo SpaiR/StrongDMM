@@ -1,4 +1,4 @@
-package wsnewmap
+package wscreatemap
 
 import (
 	"log"
@@ -26,7 +26,7 @@ type App interface {
 	DoLoadResourceV(string, *workspace.Workspace)
 }
 
-type WsNewMap struct {
+type WsCreateMap struct {
 	workspace.Content
 
 	app App
@@ -38,13 +38,13 @@ type WsNewMap struct {
 	format string
 }
 
-func New(app App) *WsNewMap {
+func New(app App) *WsCreateMap {
 	format := app.Prefs().Editor.SaveFormat
 	if format == prefs.SaveFormatInitial { // Enforce TGM usage.
 		format = prefs.SaveFormatTGM
 	}
 
-	return &WsNewMap{
+	return &WsCreateMap{
 		app: app,
 
 		mapWidth:  1,
@@ -55,15 +55,15 @@ func New(app App) *WsNewMap {
 	}
 }
 
-func (ws *WsNewMap) Name() string {
-	return "New Map"
+func (ws *WsCreateMap) Name() string {
+	return "Create Map"
 }
 
-func (ws *WsNewMap) Title() string {
+func (ws *WsCreateMap) Title() string {
 	return ws.Name()
 }
 
-func (ws *WsNewMap) Process() {
+func (ws *WsCreateMap) Process() {
 	ws.showInput("Width (X)", "The width of the map in tiles.", &ws.mapWidth)
 	imgui.NewLine()
 	ws.showInput("Height (Y)", "The height of the map in tiles.", &ws.mapHeight)
@@ -75,7 +75,7 @@ func (ws *WsNewMap) Process() {
 	ws.showSaveButton()
 }
 
-func (ws *WsNewMap) showInput(label, desc string, value *int) {
+func (ws *WsCreateMap) showInput(label, desc string, value *int) {
 	markdown.ShowHeader(label, window.FontH3)
 
 	imgui.PushTextWrapPos()
@@ -88,7 +88,7 @@ func (ws *WsNewMap) showInput(label, desc string, value *int) {
 	}
 }
 
-func (ws *WsNewMap) showFormatButton() {
+func (ws *WsCreateMap) showFormatButton() {
 	markdown.ShowHeader("Format", window.FontH3)
 
 	imgui.PushTextWrapPos()
@@ -110,14 +110,14 @@ DM - a default map format used by the DM map editor`)
 	}
 }
 
-func (ws *WsNewMap) showSaveButton() {
+func (ws *WsCreateMap) showSaveButton() {
 	w.Button("Create...", ws.tryCreateMap).
 		Style(style.ButtonGreen{}).
 		Icon(icon.Save).
 		Build()
 }
 
-func (ws *WsNewMap) dmmSaveLocation() (string, error) {
+func (ws *WsCreateMap) dmmSaveLocation() (string, error) {
 	log.Println("[wsnewmap] creating map file...")
 	return dialog.
 		File().
@@ -127,7 +127,7 @@ func (ws *WsNewMap) dmmSaveLocation() (string, error) {
 		Save()
 }
 
-func (ws *WsNewMap) tryCreateMap() {
+func (ws *WsCreateMap) tryCreateMap() {
 	log.Println("[wsnewmap] trying to create a new map with X:", ws.mapWidth, "| Y:", ws.mapHeight, "| Z:", ws.mapZDepth)
 
 	if file, err := ws.dmmSaveLocation(); err == nil {

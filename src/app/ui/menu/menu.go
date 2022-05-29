@@ -21,7 +21,6 @@ type app interface {
 	DoOpen()
 	DoLoadResource(path string)
 	DoClearRecentEnvironments()
-	DoNewMap()
 	DoClearRecentMaps()
 	DoClose()
 	DoCloseAll()
@@ -39,6 +38,7 @@ type app interface {
 	DoDelete()
 	DoSearch()
 	DoDeselect()
+	DoCreateMap()
 
 	// Options
 	DoAreaBorders()
@@ -146,10 +146,6 @@ func (m *Menu) Process() {
 				}),
 			}).IconEmpty().Enabled(len(m.app.RecentMaps()) != 0),
 			w.Separator(),
-			w.MenuItem("New Map", m.app.DoNewMap).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()),
-			w.Separator(),
 			w.MenuItem("Close", m.app.DoClose).
 				IconEmpty().
 				Shortcut(shortcut.KeyModName(), "W"),
@@ -205,6 +201,10 @@ func (m *Menu) Process() {
 				Icon(icon.Search).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(shortcut.KeyModName(), "F"),
+			w.Separator(),
+			w.MenuItem("Create Map", m.app.DoCreateMap).
+				IconEmpty().
+				Enabled(m.app.HasLoadedEnvironment()),
 		}),
 
 		w.Menu("Options", w.Layout{

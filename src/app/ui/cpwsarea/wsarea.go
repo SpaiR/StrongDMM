@@ -7,9 +7,9 @@ import (
 	"sdmm/app/config"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wschangelog"
+	"sdmm/app/ui/cpwsarea/wscreatemap"
 	"sdmm/app/ui/cpwsarea/wsempty"
 	"sdmm/app/ui/cpwsarea/wsmap"
-	"sdmm/app/ui/cpwsarea/wsnewmap"
 	"sdmm/app/ui/cpwsarea/wsprefs"
 	"sdmm/app/ui/dialog"
 	"sdmm/rsc"
@@ -22,7 +22,7 @@ import (
 type App interface {
 	wsempty.App
 	wsmap.App
-	wsnewmap.App
+	wscreatemap.App
 	wschangelog.App
 
 	DoClose()
@@ -80,15 +80,15 @@ func (w *WsArea) OpenChangelog() {
 	w.addWorkspace(workspace.New(wschangelog.New(w.app)))
 }
 
-func (w *WsArea) OpenNewMap() {
+func (w *WsArea) OpenCreateMap() {
 	for _, ws := range w.workspaces {
-		if _, ok := ws.Content().(*wsnewmap.WsNewMap); ok {
+		if _, ok := ws.Content().(*wscreatemap.WsCreateMap); ok {
 			ws.SetTriggerFocus(true)
 			return
 		}
 	}
 
-	wsCnt := wsnewmap.New(w.app)
+	wsCnt := wscreatemap.New(w.app)
 	ws := workspace.New(wsCnt)
 
 	w.addWorkspace(ws)
@@ -327,7 +327,7 @@ func (w *WsArea) findMapWorkspaces() []*workspace.Workspace {
 func (w *WsArea) findNewMapWorkspaces() []*workspace.Workspace {
 	var workspaces []*workspace.Workspace
 	for _, ws := range w.workspaces {
-		if _, ok := ws.Content().(*wsnewmap.WsNewMap); ok {
+		if _, ok := ws.Content().(*wscreatemap.WsCreateMap); ok {
 			workspaces = append(workspaces, ws)
 		}
 	}

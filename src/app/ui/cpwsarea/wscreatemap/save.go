@@ -1,4 +1,4 @@
-package wsnewmap
+package wscreatemap
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 	"sdmm/util"
 )
 
-func (ws *WsNewMap) save(newPath string) {
+func (ws *WsCreateMap) save(newPath string) {
 	log.Println("[wsnewmap] saving new map:", newPath)
 
 	// we assume the data is OK at this point

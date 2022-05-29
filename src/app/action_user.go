@@ -78,10 +78,10 @@ func (a *app) DoClearRecentEnvironments() {
 	a.projectConfig().ClearProjects()
 }
 
-// DoNewMap opens dialog window to create a new map file.
-func (a *app) DoNewMap() {
-	log.Println("[app] opening new map creator...")
-	a.layout.WsArea.OpenNewMap()
+// DoCreateMap opens dialog window to create a new map file.
+func (a *app) DoCreateMap() {
+	log.Println("[app] opening create map...")
+	a.layout.WsArea.OpenCreateMap()
 }
 
 // DoClearRecentMaps clears recently opened maps.
