@@ -107,6 +107,8 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
 		w.addWorkspace(workspace.New(wsCnt))
 	}
 
+	ws.SetTriggerFocus(true)
+
 	return true
 }
 
