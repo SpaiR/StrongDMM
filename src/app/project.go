@@ -12,6 +12,7 @@ import (
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/dialog"
 	"sdmm/dmapi/dm"
+	"sdmm/util/slice"
 
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmicon"
@@ -159,8 +160,14 @@ func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
 	elapsed := time.Since(start).Milliseconds()
 	log.Printf("[app] map [%s] parsed in [%d] ms", path, elapsed)
 
-	cfg := a.projectConfig()
-	cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
+	// Add map to the recent only if it is a part of the currently opened environment.
+	if slice.StrContains(a.AvailableMaps(), path) {
+		log.Println("[app] adding map path to the recent:", path)
+		cfg := a.projectConfig()
+		cfg.AddMapByProject(a.loadedEnvironment.RootFile, path)
+	} else {
+		log.Println("[app] ignoring map path add to the recent, since it's an outside resource")
+	}
 
 	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
 	if a.layout.WsArea.OpenMap(dmm, workspace) {

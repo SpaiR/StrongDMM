@@ -35,7 +35,7 @@ func (a *app) DoOpen() {
 }
 
 // DoOpenV opens environment, which user need to select in file dialog.
-// Verbose version which handle opening in a specific workspace. Helpful to open maps
+// Verbose version which handle opening in a specific workspace. Helpful to open maps/
 func (a *app) DoOpenV(ws *workspace.Workspace) {
 	log.Println("[app] selecting resource to load...")
 
@@ -51,7 +51,12 @@ func (a *app) DoOpenV(ws *workspace.Workspace) {
 		SetStartDir(startDir).
 		Load(); err == nil {
 		log.Println("[app] resource to load selected:", file)
-		a.DoLoadResourceV(file, ws)
+
+		if a.HasLoadedEnvironment() {
+			a.loadMapV(file, ws)
+		} else {
+			a.DoLoadResourceV(file, ws)
+		}
 	}
 }
 

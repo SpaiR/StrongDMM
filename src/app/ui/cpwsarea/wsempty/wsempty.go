@@ -70,9 +70,11 @@ func (ws *WsEmpty) showContent() {
 }
 
 func (ws *WsEmpty) showNoEnvControls() {
-	ws.showOpenButton("environment (.dme) or map (.dmm) file to proceed")
+	showOpenButton("environment (.dme) or map (.dmm) file to proceed", func() {
+		ws.app.DoOpenV(ws.Root())
+	})
 	imgui.NewLine()
-	ws.showFilter()
+	showFilter(&ws.filter)
 	imgui.NewLine()
 
 	recentEnvs := ws.app.RecentEnvironments()
@@ -119,9 +121,11 @@ func (ws *WsEmpty) showNoEnvControls() {
 }
 
 func (ws *WsEmpty) showNoMapControls() {
-	ws.showOpenButton("map (.dmm) file to proceed")
+	showOpenButton("map (.dmm) file to proceed", func() {
+		ws.app.DoOpenV(ws.Root())
+	})
 	imgui.NewLine()
-	ws.showFilter()
+	showFilter(&ws.filter)
 	imgui.NewLine()
 
 	recentMaps := ws.app.RecentMapsByLoadedEnvironment()
@@ -173,19 +177,18 @@ func (ws *WsEmpty) showNoMapControls() {
 	}
 }
 
-func (ws *WsEmpty) showOpenButton(help string) {
+func showOpenButton(help string, action func()) {
 	w.Layout{
 		w.AlignTextToFramePadding(),
-		w.Button("Open...", func() {
-			ws.app.DoOpenV(ws.Root())
-		}).Style(style.ButtonGreen{}),
+		w.Button("Open...", action).
+			Style(style.ButtonGreen{}),
 		w.SameLine(),
 		w.TextDisabled(help),
 	}.Build()
 }
 
-func (ws *WsEmpty) showFilter() {
-	w.InputTextWithHint("##filter", "Filter", &ws.filter).ButtonClear().Build()
+func showFilter(filter *string) {
+	w.InputTextWithHint("##filter", "Filter", filter).ButtonClear().Build()
 }
 
 func showHeaderRecent(disabled bool, label string, action func()) {
