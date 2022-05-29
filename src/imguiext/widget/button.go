@@ -14,6 +14,7 @@ type ButtonWidget struct {
 	tooltip     string
 	round       bool
 	small       bool
+	transparent bool
 	mouseCursor imgui.MouseCursorID
 	size        imgui.Vec2
 	textColor   imgui.Vec4
@@ -45,6 +46,11 @@ func (w *ButtonWidget) Round(round bool) *ButtonWidget {
 
 func (w *ButtonWidget) Small(small bool) *ButtonWidget {
 	w.small = small
+	return w
+}
+
+func (w *ButtonWidget) Transparent(transparent bool) *ButtonWidget {
+	w.transparent = transparent
 	return w
 }
 
@@ -99,44 +105,69 @@ func (w *ButtonWidget) Build() {
 		imgui.PushStyleVarFloat(imgui.StyleVarFrameRounding, 12)
 	}
 
-	var styleCounter int
-	var emptyVec4 imgui.Vec4
-	if w.textColor != emptyVec4 {
+	var (
+		styleCounter int
+		emptyColor   imgui.Vec4
+
+		normalColor = w.normalColor
+		activeColor = w.activeColor
+		hoverColor  = w.hoverColor
+	)
+
+	if w.transparent {
+		normalColor = emptyColor
+		activeColor = emptyColor
+		hoverColor = emptyColor
+	}
+
+	if w.textColor != bDefaultColor {
 		imgui.PushStyleColor(imgui.StyleColorText, w.textColor)
 		styleCounter++
 	}
-	if w.normalColor != emptyVec4 {
-		imgui.PushStyleColor(imgui.StyleColorButton, w.normalColor)
+	if normalColor != bDefaultColor {
+		imgui.PushStyleColor(imgui.StyleColorButton, normalColor)
 		styleCounter++
 	}
-	if w.activeColor != emptyVec4 {
-		imgui.PushStyleColor(imgui.StyleColorButtonActive, w.activeColor)
+	if activeColor != bDefaultColor {
+		imgui.PushStyleColor(imgui.StyleColorButtonActive, activeColor)
 		styleCounter++
 	}
-	if w.hoverColor != emptyVec4 {
-		imgui.PushStyleColor(imgui.StyleColorButtonHovered, w.hoverColor)
+	if hoverColor != bDefaultColor {
+		imgui.PushStyleColor(imgui.StyleColorButtonHovered, hoverColor)
 		styleCounter++
 	}
+	if w.transparent {
+		imgui.PushStyleColor(imgui.StyleColorBorder, emptyColor)
+		styleCounter++
+	}
+
 	var flag bool
 	if w.small {
 		flag = imgui.SmallButton(label)
 	} else {
 		flag = imgui.ButtonV(label, w.size)
 	}
+
 	if flag && w.onClick != nil {
 		w.onClick()
 	}
+
 	if w.tooltip != "" && imgui.IsItemHovered() {
 		imgui.SetTooltip(w.tooltip)
 	}
+
 	if imgui.IsItemHovered() {
 		imgui.SetMouseCursor(w.mouseCursor)
 	}
+
 	imgui.PopStyleColorV(styleCounter)
+
 	if w.round {
 		imgui.PopStyleVar()
 	}
 }
+
+var bDefaultColor = imgui.Vec4{X: -99, Y: -99, Z: -99, W: -99}
 
 func Button(label string, onClick func()) *ButtonWidget {
 	return &ButtonWidget{
@@ -145,6 +176,10 @@ func Button(label string, onClick func()) *ButtonWidget {
 		tooltip:     "",
 		size:        imgui.Vec2{},
 		mouseCursor: imgui.MouseCursorArrow,
+		textColor:   bDefaultColor,
+		normalColor: bDefaultColor,
+		activeColor: bDefaultColor,
+		hoverColor:  bDefaultColor,
 		onClick:     onClick,
 	}
 }

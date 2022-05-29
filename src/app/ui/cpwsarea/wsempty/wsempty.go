@@ -194,7 +194,7 @@ func showFilter(filter *string) {
 func showHeaderRecent(disabled bool, label string, action func()) {
 	w.Layout{
 		w.Disabled(disabled,
-			w.Button(icon.Delete+"###"+label, action).
+			w.Button(icon.Delete+"###clear_"+label, action).
 				Small(true).
 				Tooltip("Clear").
 				Style(style.ButtonRed{})),
@@ -206,12 +206,15 @@ func showHeaderRecent(disabled bool, label string, action func()) {
 
 func showRecent(label string, removeAction, openAction func()) {
 	w.Layout{
-		w.Button(icon.Clear+"###"+label, removeAction).
-			Tooltip("Remove").
+		w.Button(icon.Clear+"###remove_"+label, removeAction).
+			Transparent(true).
+			TextColor(style.ColorRed).
+			Mouse(imgui.MouseCursorHand).
 			Small(true),
 		w.SameLine(),
-		w.Button(label, openAction).
-			Small(true),
+		w.Selectable(label + "###open_" + label).
+			Mouse(imgui.MouseCursorHand).
+			OnClick(openAction),
 	}.Build()
 }
 
