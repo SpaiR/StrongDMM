@@ -21,9 +21,19 @@ import (
 	"sdmm/util"
 )
 
+func (a *app) loadResource(path string) {
+	a.loadResourceV(path, nil)
+}
+
 // Universal method to open any editor resource.
 // If it gets a map file, then the code will try to find an environment to open it.
-func (a *app) loadResource(path string, ws *workspace.Workspace) {
+func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
+	path, err := filepath.Abs(path)
+	if err != nil {
+		log.Println("[app] unable to get resource absolute path:", err)
+		return
+	}
+
 	if filepath.Ext(path) == ".dme" {
 		a.loadEnvironment(path)
 		return
@@ -36,7 +46,7 @@ func (a *app) loadResource(path string, ws *workspace.Workspace) {
 
 	environmentPath, err := findEnvironmentFileFromBase(path)
 
-	if a.HasLoadedEnvironment() && a.LoadedEnvironment().RootFile == environmentPath {
+	if a.HasLoadedEnvironment() {
 		a.loadMapV(path, ws)
 		return
 	}

@@ -130,6 +130,8 @@ func (a *app) initialize() {
 
 	a.UpdateTitle()
 
+	a.checkProgramArgs()
+
 	if a.preferencesConfig().Application.CheckForUpdates {
 		go a.checkForUpdates()
 	}

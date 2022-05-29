@@ -69,7 +69,7 @@ func (a *app) DoLoadResource(path string) {
 // Verbose version which handle opening in a specific workspace. Helpful to open maps
 func (a *app) DoLoadResourceV(path string, ws *workspace.Workspace) {
 	log.Println("[app] load resource by path:", path)
-	a.loadResource(path, ws)
+	a.loadResourceV(path, ws)
 }
 
 // DoClearRecentEnvironments clears recently opened environments.
