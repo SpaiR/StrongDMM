@@ -41,7 +41,7 @@ type app interface {
 	DoDeselect()
 	DoCreateMap()
 
-	// Options
+	// View
 	DoAreaBorders()
 	DoMultiZRendering()
 	DoMirrorCanvasCamera()
@@ -196,7 +196,7 @@ func (m *Menu) Process() {
 				Enabled(m.app.HasLoadedEnvironment()),
 		}),
 
-		w.Menu("Options", w.Layout{
+		w.Menu("View", w.Layout{
 			w.MenuItem("Show Area", m.doToggleArea).
 				IconEmpty().
 				Enabled(m.app.HasLoadedEnvironment()).
