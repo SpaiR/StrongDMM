@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 
+	"sdmm/app/window"
 	"sdmm/dmapi/dm"
 	"sdmm/platform"
 	"sdmm/third_party/sdmmparser"
@@ -27,7 +28,9 @@ type Dmi struct {
 }
 
 func (d *Dmi) free() {
-	gl.DeleteTextures(1, &d.Texture)
+	window.RunLater(func() {
+		gl.DeleteTextures(1, &d.Texture)
+	})
 }
 
 func (d *Dmi) State(state string) (*State, error) {
