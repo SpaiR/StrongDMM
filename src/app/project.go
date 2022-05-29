@@ -13,6 +13,7 @@ import (
 	"sdmm/app/ui/dialog"
 	"sdmm/app/window"
 	"sdmm/dmapi/dm"
+	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
 	"sdmm/util/slice"
 
@@ -51,13 +52,13 @@ func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
 	environmentPath, err := findEnvironmentFileFromBase(path)
 
 	if a.HasLoadedEnvironment() {
-		a.loadMapV(path, ws)
+		a.loadMap(path, ws)
 		return
 	}
 
 	if err == nil {
 		a.loadEnvironmentV(environmentPath, func() {
-			a.loadMapV(path, ws)
+			a.loadMap(path, ws)
 		})
 	} else {
 		log.Println("[app] unable to find environment from file:", path)
@@ -100,7 +101,7 @@ func (a *app) loadEnvironment(path string) {
 }
 
 func (a *app) loadEnvironmentV(path string, callback func()) {
-	a.closeEnvironmentV(func(closed bool) {
+	a.closeEnvironment(func(closed bool) {
 		if closed {
 			a.forceLoadEnvironment(path, callback)
 		}
@@ -174,7 +175,7 @@ func makeLoadingDialog(path string) dialog.Type {
 				textW := imgui.CalcTextSize(passed, false, 0).X
 
 				imgui.SetCursorPos(imgui.Vec2{X: (width - textW) * .5, Y: imgui.CursorPosY()})
-				imgui.Text(passed)
+				imgui.TextColored(style.ColorGold, passed)
 			}),
 		},
 	}
@@ -187,11 +188,7 @@ func newPathsFilter(env *dmenv.Dme) *dm.PathsFilter {
 	})
 }
 
-func (a *app) loadMap(path string) {
-	a.loadMapV(path, nil)
-}
-
-func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
+func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 	log.Printf("[app] opening map [%s]...", path)
 
 	start := time.Now()
@@ -241,10 +238,7 @@ func (a *app) loadMapV(path string, workspace *workspace.Workspace) {
 	log.Println("[app] map opened:", path)
 }
 
-func (a *app) closeEnvironment() {
-	a.closeEnvironmentV(nil)
-}
-func (a *app) closeEnvironmentV(callback func(bool)) {
+func (a *app) closeEnvironment(callback func(bool)) {
 	// NewMap workspaces depend on the opened environment, so we close them too.
 	a.layout.WsArea.CloseAllCreateMaps()
 	a.layout.WsArea.CloseAllMaps(func(closed bool) {

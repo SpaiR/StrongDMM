@@ -31,12 +31,12 @@ func (ws *Workspace) SetContent(cnt content) {
 		ws.content.Dispose()
 	}
 	ws.content = cnt
-	cnt.setRoot(ws)
+	cnt.SetRoot(ws)
 }
 
 func New(cnt content) *Workspace {
 	ws := &Workspace{content: cnt}
-	cnt.setRoot(ws)
+	cnt.SetRoot(ws)
 	return ws
 }
 

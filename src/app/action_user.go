@@ -53,7 +53,7 @@ func (a *app) DoOpenV(ws *workspace.Workspace) {
 		log.Println("[app] resource to load selected:", file)
 
 		if a.HasLoadedEnvironment() {
-			a.loadMapV(file, ws)
+			a.loadMap(file, ws)
 		} else {
 			a.DoLoadResourceV(file, ws)
 		}
@@ -81,7 +81,7 @@ func (a *app) DoClearRecentEnvironments() {
 // DoCloseEnvironment closes currently opened environment.
 func (a *app) DoCloseEnvironment() {
 	log.Println("[app] closing environment")
-	a.closeEnvironmentV(func(closed bool) {
+	a.closeEnvironment(func(closed bool) {
 		if closed {
 			a.freeEnvironmentResources()
 			a.layout.WsArea.AddEmptyWorkspaceIfNone()

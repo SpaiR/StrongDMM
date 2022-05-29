@@ -10,7 +10,7 @@ import (
 )
 
 type content interface {
-	setRoot(*Workspace) // Root will be installed by the Workspace when it's created.
+	SetRoot(*Workspace) // Root will be installed by the Workspace when it's created.
 	Root() *Workspace
 
 	Id() string
@@ -40,7 +40,7 @@ type Content struct {
 	closed bool
 }
 
-func (c *Content) setRoot(root *Workspace) {
+func (c *Content) SetRoot(root *Workspace) {
 	c.root = root
 }
 
