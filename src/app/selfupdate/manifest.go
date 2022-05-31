@@ -12,7 +12,6 @@ import (
 type Manifest struct {
 	Name          string        `json:"name"`
 	Version       string        `json:"version"`
-	ForceUpdate   bool          `json:"forceUpdate"`
 	Description   string        `json:"description"`
 	DownloadLinks DownloadLinks `json:"downloadLinks"`
 }

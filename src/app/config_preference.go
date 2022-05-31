@@ -59,6 +59,7 @@ func (a *app) loadPreferencesConfig() {
 			},
 			Application: prefs.Application{
 				CheckForUpdates: true,
+				AutoUpdate:      true,
 			},
 		},
 	}

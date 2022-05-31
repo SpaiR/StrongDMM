@@ -26,4 +26,5 @@ type Editor struct {
 
 type Application struct {
 	CheckForUpdates bool
+	AutoUpdate      bool
 }

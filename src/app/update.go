@@ -32,7 +32,7 @@ func (a *app) checkForUpdatesV(forceAvailable bool) {
 		return
 	}
 	if slice.StrContains(a.config().UpdateIgnore, manifest.Version) && !forceAvailable {
-		log.Println("[app] ignore update:", manifest.Version)
+		log.Println("[app] ignoring update:", manifest.Version)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (a *app) checkForUpdatesV(forceAvailable bool) {
 
 	// Do force update only if we're using a concrete editor version.
 	//goland:noinspection GoBoolExpressions
-	if remoteManifest.ForceUpdate && env.Version != env.Undefined {
+	if a.Prefs().Application.AutoUpdate && env.Version != env.Undefined {
 		a.selfUpdate()
 	}
 }

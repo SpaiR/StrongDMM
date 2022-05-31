@@ -90,6 +90,12 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				label: "##check_for_updates",
 				value: &prefs.Application.CheckForUpdates,
 			},
+			boolPrefPrefab{
+				name:  "Auto Update",
+				desc:  "Enables automatic self-update, when a new update is available.",
+				label: "##auto_update",
+				value: &prefs.Application.AutoUpdate,
+			},
 		},
 	}
 
