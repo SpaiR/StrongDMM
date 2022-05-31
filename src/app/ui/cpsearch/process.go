@@ -74,15 +74,18 @@ func (s *Search) doSearch() {
 }
 
 func (s *Search) showResultsControls() {
-	s.showFilterButton()
-	imgui.SameLine()
-	imgui.TextDisabled("|")
-	imgui.SameLine()
-	s.showJumpButtons()
-	imgui.SameLine()
-	imgui.TextDisabled("|")
-	imgui.SameLine()
-	imgui.Text(fmt.Sprintf("%d/%d", s.selectedResultIdx+1, len(s.results())))
+	w.Layout{
+		s.filterButton(),
+		w.SameLine(),
+		w.Layout{
+			w.AlignRight,
+			w.Text(fmt.Sprintf("%d/%d", s.selectedResultIdx+1, len(s.results()))),
+			w.SameLine(),
+			w.TextDisabled("|"),
+			w.SameLine(),
+			s.jumpButtons(),
+		},
+	}.Build()
 }
 
 const resultsTableFlags = imgui.TableFlagsBordersInner | imgui.TableFlagsResizable | imgui.TableFlagsNoSavedSettings
@@ -124,27 +127,29 @@ func (s *Search) showResults() {
 	}
 }
 
-func (s *Search) showFilterButton() {
-	w.Button(icon.FilterAlt, nil).
-		Round(true).
-		Tooltip("Filter").
-		Build()
+func (s *Search) filterButton() w.Layout {
+	return w.Layout{
+		w.Button(icon.FilterAlt, nil).
+			Round(true).
+			Tooltip("Filter"),
+		w.Custom(func() {
+			if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
+				imgui.Text("Bounds")
 
-	if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
-		imgui.Text("Bounds")
+				s.inputBound("X1:", &s.filterBoundX1)
+				imgui.SameLine()
+				s.inputBound("Y1:", &s.filterBoundY1)
+				s.inputBound("X2:", &s.filterBoundX2)
+				imgui.SameLine()
+				s.inputBound("Y2:", &s.filterBoundY2)
 
-		s.inputBound("X1:", &s.filterBoundX1)
-		imgui.SameLine()
-		s.inputBound("Y1:", &s.filterBoundY1)
-		s.inputBound("X2:", &s.filterBoundX2)
-		imgui.SameLine()
-		s.inputBound("Y2:", &s.filterBoundY2)
+				w.Button("Reset", s.doResetFilter).
+					Style(style.ButtonRed{}).
+					Build()
 
-		w.Button("Reset", s.doResetFilter).
-			Style(style.ButtonRed{}).
-			Build()
-
-		imgui.EndPopup()
+				imgui.EndPopup()
+			}
+		}),
 	}
 }
 
@@ -161,8 +166,8 @@ func (s *Search) inputBoundWidth() float32 {
 	return window.PointSize() * 75
 }
 
-func (s *Search) showJumpButtons() {
-	w.Layout{
+func (s *Search) jumpButtons() w.Layout {
+	return w.Layout{
 		w.Button(icon.ArrowUpward, s.jumpToUp).
 			Round(true).
 			Tooltip("Previous Result (Shift+F3)"),
@@ -170,7 +175,7 @@ func (s *Search) showJumpButtons() {
 		w.Button(icon.ArrowDownward, s.jumpToDown).
 			Round(true).
 			Tooltip("Next Result (F3)"),
-	}.Build()
+	}
 }
 
 func (s *Search) selectInstance(idx int) {
