@@ -196,6 +196,10 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 	data, err := dmmdata.New(path)
 	if err != nil {
 		log.Printf("[app] unable to open map by path [%s]: %v", path, err)
+		dialog.Open(dialog.TypeInformation{
+			Title:       "Error: Unable to open map",
+			Information: fmt.Sprintf("Error while parsing the map:\n - %s\n - %s", path, err),
+		})
 		return
 	}
 	elapsed := time.Since(start).Milliseconds()
