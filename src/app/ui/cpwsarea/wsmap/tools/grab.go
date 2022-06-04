@@ -47,6 +47,14 @@ func (ToolGrab) Name() string {
 	return TNGrab
 }
 
+func (t *ToolGrab) Bounds() util.Bounds {
+	return t.fillArea
+}
+
+func (t *ToolGrab) HasSelectedArea() bool {
+	return t.fillStart != util.Point{}
+}
+
 func (t *ToolGrab) Reset() {
 	t.fillStart = util.Point{}
 	t.fillAreaInit = util.Bounds{}

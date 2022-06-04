@@ -36,14 +36,21 @@ func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
 
 	if isQuickToolToggled() && !tools.Selected().AltBehaviour() {
 		if hoveredInstance := p.canvasState.HoveredInstance(); hoveredInstance != nil {
-			layout = append(layout, w.Layout{
-				w.SameLine(),
-				w.TextFrame(hoveredInstance.Prefab().Path()),
-			})
+			layout = append(layout, w.TextFrame(hoveredInstance.Prefab().Path()))
 		}
+	} else if tool, ok := tools.Selected().(*tools.ToolGrab); ok && tool.HasSelectedArea() {
+		bounds := tool.Bounds()
+		layout = append(layout,
+			w.TextFrame(fmt.Sprintf("W:%d H:%d", int(bounds.X2-bounds.X1), int(bounds.Y2-bounds.Y1))),
+			w.Tooltip(w.Text("Grab area size")),
+			w.TextFrame(bounds.String()),
+			w.Tooltip(w.Text("Grab area bounds")),
+		)
 	}
 
-	return layout
+	return w.Layout{
+		w.Line(layout...),
+	}
 }
 
 func isQuickToolToggled() bool {
