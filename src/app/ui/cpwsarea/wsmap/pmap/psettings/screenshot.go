@@ -11,6 +11,7 @@ import (
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/canvas"
 	appdialog "sdmm/app/ui/dialog"
 	"sdmm/dmapi/dmmap"
+	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
 	w "sdmm/imguiext/widget"
@@ -29,6 +30,8 @@ func (p *Panel) showScreenshot() {
 		if imgui.Button(icon.FolderOpen) {
 			p.selectScreenshotDir()
 		}
+
+		imguiext.SetItemHoveredTooltip("Create Folder")
 
 		imgui.SameLine()
 
