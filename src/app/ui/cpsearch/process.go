@@ -75,15 +75,19 @@ func (s *Search) doSearch() {
 
 func (s *Search) showResultsControls() {
 	w.Layout{
-		s.filterButton(),
+		w.Line(
+			s.filterButton(),
+			w.TextDisabled("|"),
+			s.modifyButtons(),
+		),
 		w.SameLine(),
 		w.Layout{
 			w.AlignRight,
-			w.Text(fmt.Sprintf("%d/%d", s.selectedResultIdx+1, len(s.results()))),
-			w.SameLine(),
-			w.TextDisabled("|"),
-			w.SameLine(),
-			s.jumpButtons(),
+			w.Line(
+				w.Text(fmt.Sprintf("%d/%d", s.selectedResultIdx+1, len(s.results()))),
+				w.TextDisabled("|"),
+				s.jumpButtons(),
+			),
 		},
 	}.Build()
 }
@@ -113,13 +117,20 @@ func (s *Search) showResults() {
 			imgui.TableNextColumn()
 
 			w.Layout{
-				w.Button(fmt.Sprint(icon.Search+"##jump_to_", instance.Id()), func() {
-					s.jumpTo(idx, false)
-				}).Round(true).Tooltip("Jump To"),
-				w.SameLine(),
-				w.Button(fmt.Sprint(icon.EyeDropper+"##select_", instance.Id()), func() {
-					s.selectInstance(idx)
-				}).Round(true).Tooltip("Select"),
+				w.Line(
+					w.Button(fmt.Sprint(icon.Search+"##jump_to_", instance.Id()), func() {
+						s.jumpTo(idx, false)
+					}).Round(true).Tooltip("Jump To"),
+					w.Button(fmt.Sprint(icon.EyeDropper+"##select_", instance.Id()), func() {
+						s.selectInstance(idx)
+					}).Round(true).Tooltip("Select"),
+					w.Button(fmt.Sprint(icon.Eraser+"##delete_", instance.Id()), func() {
+						s.deleteInstance(idx)
+					}).Round(true).Tooltip("Delete"),
+					w.Button(fmt.Sprint(icon.Repeat+"##replace_", instance.Id()), func() {
+						s.replaceInstance(idx)
+					}).Round(true).Tooltip("Replace with Selected"),
+				),
 			}.Build()
 		}
 
@@ -153,6 +164,39 @@ func (s *Search) filterButton() w.Layout {
 	}
 }
 
+func (s *Search) modifyButtons() w.Layout {
+	return w.Layout{
+		w.Line(
+			w.Button(icon.Eraser, s.doDeleteAll).
+				Round(true).
+				Tooltip("Delete All"),
+			w.Button(icon.Repeat, s.doReplaceAll).
+				Round(true).
+				Tooltip("Replace All with Selected"),
+		),
+	}
+}
+
+func (s *Search) doDeleteAll() {
+	log.Println("[cpsearch] do delete all")
+	for _, instance := range s.results() {
+		s.app.CurrentEditor().InstanceDelete(instance)
+	}
+	s.Sync()
+	s.app.CurrentEditor().CommitChanges("Delete All")
+}
+
+func (s *Search) doReplaceAll() {
+	log.Println("[cpsearch] do replace all")
+	if selectedPrefab, ok := s.app.CurrentEditor().SelectedPrefab(); ok {
+		for _, instance := range s.results() {
+			s.app.CurrentEditor().InstanceReplace(instance, selectedPrefab)
+		}
+		s.Sync()
+		s.app.CurrentEditor().CommitChanges("Replace All")
+	}
+}
+
 func (s *Search) inputBound(label string, v *int32) {
 	imgui.Text(label)
 	imgui.SameLine()
@@ -179,6 +223,7 @@ func (s *Search) jumpButtons() w.Layout {
 }
 
 func (s *Search) selectInstance(idx int) {
+	log.Println("[cpsearch] do select instance:", idx)
 	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
 	editor.OverlaySetTileFlick(instance.Coord())
@@ -186,6 +231,28 @@ func (s *Search) selectInstance(idx int) {
 	s.app.ShowLayout(lnode.NameVariables, true)
 	s.app.DoEditInstance(instance)
 	s.selectedResultIdx = idx
+}
+
+func (s *Search) deleteInstance(idx int) {
+	log.Println("[cpsearch] do delete instance:", idx)
+	instance := s.results()[idx]
+	editor := s.app.CurrentEditor()
+	editor.InstanceDelete(instance)
+	editor.CommitChanges("Delete Instance")
+	s.selectedResultIdx = -1
+	s.Sync()
+}
+
+func (s *Search) replaceInstance(idx int) {
+	log.Println("[cpsearch] do replace instance:", idx)
+	if selectedPrefab, ok := s.app.CurrentEditor().SelectedPrefab(); ok {
+		instance := s.results()[idx]
+		editor := s.app.CurrentEditor()
+		editor.InstanceReplace(instance, selectedPrefab)
+		editor.CommitChanges("Replace Instance")
+		s.selectedResultIdx = -1
+		s.Sync()
+	}
 }
 
 func (s *Search) jumpTo(idx int, focus bool) {
