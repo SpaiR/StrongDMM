@@ -36,7 +36,8 @@ var (
 				w.SameLine(),
 				w.TextFrame("1"),
 				w.Separator(),
-				w.Text("Place the selected object\nAlt: place the selected object with replace"),
+				w.Text("Place the selected object"),
+				w.Line(w.TextFrame("Hold Alt"), w.Text("Place the selected object with replace")),
 			},
 		},
 		tools.TNFill: {
@@ -47,7 +48,8 @@ var (
 				w.SameLine(),
 				w.TextFrame("2"),
 				w.Separator(),
-				w.Text("Fill the area with the selected object\nAlt: fill the selected area with the selected object with replace"),
+				w.Text("Fill the area with the selected object"),
+				w.Line(w.TextFrame("Hold Alt"), w.Text("Fill the selected area with the selected object with replace")),
 			},
 		},
 		tools.TNGrab: {
@@ -80,7 +82,8 @@ var (
 				w.SameLine(),
 				w.TextFrame("Hold D"),
 				w.Separator(),
-				w.Text("Delete the hovered instance\nAlt: delete the whole tile"),
+				w.Text("Delete the hovered instance"),
+				w.Line(w.TextFrame("+Alt"), w.Text("Delete the whole tile")),
 			},
 		},
 		tools.TNReplace: {
