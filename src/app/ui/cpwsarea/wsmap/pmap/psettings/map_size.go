@@ -61,6 +61,7 @@ func (p *Panel) showMapSize() {
 		imgui.Separator()
 
 		w.Button("Set", p.doSetMapSize).
+			Size(imgui.Vec2{X: -1}).
 			Style(style.ButtonGreen{}).
 			Build()
 	} else {
