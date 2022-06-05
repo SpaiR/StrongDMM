@@ -31,7 +31,7 @@ func (p *Panel) showScreenshot() {
 			p.selectScreenshotDir()
 		}
 
-		imguiext.SetItemHoveredTooltip("Create Folder")
+		imguiext.SetItemHoveredTooltip("Screenshot Folder")
 
 		imgui.SameLine()
 
@@ -42,7 +42,7 @@ func (p *Panel) showScreenshot() {
 		if p.sessionScreenshot.saving {
 			createBtnLabel = "Creating" + []string{".", "..", "...", "...."}[int(imgui.Time()/.25)&3] + "###create"
 		} else {
-			createBtnLabel = "Create###create"
+			createBtnLabel = icon.Save + "Create###create"
 		}
 
 		w.Layout{
