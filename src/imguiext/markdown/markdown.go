@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"sdmm/app/window"
+	"sdmm/imguiext/style"
 
 	"github.com/SpaiR/imgui-go"
 )
@@ -125,8 +126,12 @@ func ShowText(text string) {
 }
 
 func ShowHeader(text string, font imgui.Font) {
+	ShowHeaderV(text, font, style.ColorGold)
+}
+
+func ShowHeaderV(text string, font imgui.Font, col imgui.Vec4) {
 	imgui.PushFont(font)
-	imgui.TextWrapped(text)
+	imgui.TextColored(col, text)
 	imgui.PopFont()
 }
 

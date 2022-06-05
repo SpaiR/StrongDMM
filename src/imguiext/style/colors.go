@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	ColorWhite = imgui.Vec4{X: 1, Y: 1, Z: 1, W: 1}
 	ColorZero  = imgui.Vec4{}
 	ColorBlack = imgui.Vec4{X: 0, Y: 0, Z: 0, W: 1}
 

@@ -1,3 +1,44 @@
+# v2.6.0.alpha
+
+### New open flow!
+Since ancient times DreamMaker was teaching us that to open a map we need to open an environment first.<br>
+But things have changed...<br>
+Now there is no separate button to open either environment or a map. The "Open" button does all of that.<br>
+If there is no environment loaded, StrongDMM will try to find and open one. The search is recursive, bottom-up through the directories.<br>
+
+Referencing to the new open flow, now you can pass any .dme/.dmm files to StrongDMM as startup arguments.<br>
+If you have passed only .dmm files, it will do the same as it is said above: automatically find and open .dme file for it.
+
+### Improved access to recent environments and maps
+The whole startup workspace was redesigned to provide more useful information.<br>
+Now, by default, it contains recent environments and maps. But when you have opened environment it will show you all available maps for it.
+
+### Available maps
+StrongDMM v1 had a one called feature. And now it is fully back-ported to the v2.<br>
+The new version also is more robust than the previous one. It supports hotkeys to select a range of maps to open.<br>
+There were a bunch of requests to add an ability to open multiple maps at once, so now it is available.
+
+### Search with replace/delete
+Search functionality was missing a replace/delete feature.<br>
+Back-ported functionality is able to replace not only with prefabs by passing their pass, but with any selected instance.
+
+### Search filter
+Also, search filter was totally revamped. Now it is more intuitive to use and easier to understand.<br>
+Toggle a specific "Filter" button or use a hotkey when the search panel is focused: "F" key.
+
+### Other Improvements and Fixes
+ * "Options" menu renamed to "View";
+ * Renamed "New Map" button to "Create Map" and moved to the "Edit" menu;
+ * Removed "Recent Environments" menu button;
+ * Added "Close Environment" menu button;
+ * Environment tree will respect prefab "color" variable;
+ * Slightly improved "Grab" tool performance;
+ * Improved map parsing algorithm (now shows lines with an error); @d0sboots
+ * Added a preference option to enable/disable auto-updates (enabled by default);
+ * Added status indicators for the "Grab" tool: size and area bounds coordinates;
+ * Added information dialog when loading environment;
+ * Fixed invalid shortcuts handling with custom layout.
+
 # v2.5.4.alpha
 
 Fixed crashes when modifying maps with specific sizes. The issue was connected with internal chunks generation.<br>
@@ -78,8 +119,6 @@ Feel free to make any sort of donation. Your support will motivate further Stron
 This version is not a simple update, but a full rewrite from scratch. So, the "alpha" suffix means what it means.<br>
 Some features may be absent, some bugs may exist. Feel free to post founded issues on GitHub.
 
-## Major Improvements
-
 ### New GUI!
 A new user interface became more "classic". Panels are now docked and by default there are three parts of the screen.
  * Left: contains an environment tree;
@@ -105,7 +144,7 @@ There are separate tools to pick and to delete instances. They are a replacement
 For example, instead of doing "Shift+LMB" (select hovered instance) you just hold "S" key. Same for instance deletion: hold "D" key.<br>
 The new approach is simple and straightforward! Hover tools icons to see their tooltips.
 
-## Other Improvements
+### Other Improvements
  * Multi-Z rendering is a thing. If one map file contains multiple z-levels, you can see on the upper level what happens on the lower.
  * Auto-update is a part of the editor. This means, that sdmmlauncher is unneeded and deprecated.
  * Types filter has been integrated in the environment tree. To enable it uses the "eye" button or "F" hotkey, when the tree is focused.

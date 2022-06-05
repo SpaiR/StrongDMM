@@ -6,6 +6,7 @@ import (
 	"sdmm/imguiext"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/markdown"
+	"sdmm/imguiext/style"
 
 	"github.com/SpaiR/imgui-go"
 )
@@ -63,7 +64,7 @@ func (ws *WsPrefs) showContent() {
 }
 
 func showIntPref(pref IntPref) {
-	markdown.ShowHeader(pref.Name, window.FontH3)
+	markdown.ShowHeaderV(pref.Name, window.FontH3, style.ColorWhite)
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
@@ -83,7 +84,7 @@ func showBoolPref(pref BoolPref) {
 		pref.FSet(!pref.FGet())
 	}
 
-	markdown.ShowHeader(pref.Name, window.FontH3)
+	markdown.ShowHeaderV(pref.Name, window.FontH3, style.ColorWhite)
 
 	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, imgui.Vec2{X: window.PointSize(), Y: window.PointSize()})
 	v := pref.FGet()
@@ -109,7 +110,7 @@ func showBoolPref(pref BoolPref) {
 }
 
 func showOptionPref(pref OptionPref) {
-	markdown.ShowHeader(pref.Name, window.FontH3)
+	markdown.ShowHeaderV(pref.Name, window.FontH3, style.ColorWhite)
 
 	imgui.PushTextWrapPos()
 	imgui.TextDisabled(pref.Desc)
