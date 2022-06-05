@@ -29,3 +29,7 @@ func (b Bounds) ContainsV(bounds Bounds) bool {
 func (b Bounds) String() string {
 	return fmt.Sprintf("X1:%.0f, Y1:%.0f, X2:%.0f, Y2:%.0f", b.X1, b.Y1, b.X2, b.Y2)
 }
+
+func (b Bounds) IsEmpty() bool {
+	return b.X1 == 0 && b.Y1 == 0 && b.X2 == 0 && b.Y2 == 0
+}

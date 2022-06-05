@@ -19,4 +19,9 @@ func (s *Search) addShortcuts() {
 		FirstKey: glfw.KeyF3,
 		Action:   s.jumpToDown,
 	})
+	s.shortcuts.Add(shortcut.Shortcut{
+		Name:     "cpseaarch#doToggleFilter",
+		FirstKey: glfw.KeyF,
+		Action:   s.doToggleFilter,
+	})
 }

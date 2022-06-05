@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"sdmm/app/ui/layout/lnode"
-	"sdmm/app/window"
 	"sdmm/dmapi/dmmap"
 	"sdmm/imguiext/icon"
 	"sdmm/imguiext/style"
@@ -17,14 +16,24 @@ import (
 )
 
 func (s *Search) Process(int32) {
-	s.showControls()
-	imgui.Separator()
-
-	if len(s.results()) == 0 {
+	if s.app.CurrentEditor() == nil {
+		imgui.TextDisabled("No map opened")
 		return
 	}
 
+	s.showControls()
+
+	imgui.Separator()
+
 	s.showResultsControls()
+
+	imgui.Separator()
+
+	if s.filterActive {
+		s.showFilter()
+		imgui.Separator()
+	}
+
 	if imgui.BeginChild("results") {
 		s.showResults()
 	}
@@ -136,32 +145,6 @@ func (s *Search) showResults() {
 	}
 }
 
-func (s *Search) filterButton() w.Layout {
-	return w.Layout{
-		w.Button(icon.FilterAlt, nil).
-			Round(true).
-			Tooltip("Filter"),
-		w.Custom(func() {
-			if imgui.BeginPopupContextItemV("filter_menu", imgui.PopupFlagsMouseButtonLeft) {
-				imgui.Text("Bounds")
-
-				s.inputBound("X1:", &s.filterBoundX1)
-				imgui.SameLine()
-				s.inputBound("Y1:", &s.filterBoundY1)
-				s.inputBound("X2:", &s.filterBoundX2)
-				imgui.SameLine()
-				s.inputBound("Y2:", &s.filterBoundY2)
-
-				w.Button("Reset", s.doResetFilter).
-					Style(style.ButtonRed{}).
-					Build()
-
-				imgui.EndPopup()
-			}
-		}),
-	}
-}
-
 func (s *Search) modifyButtons() w.Layout {
 	return w.Layout{
 		w.Line(
@@ -193,19 +176,6 @@ func (s *Search) doReplaceAll() {
 		s.Sync()
 		s.app.CurrentEditor().CommitChanges("Replace All")
 	}
-}
-
-func (s *Search) inputBound(label string, v *int32) {
-	imgui.Text(label)
-	imgui.SameLine()
-	imgui.SetNextItemWidth(s.inputBoundWidth())
-	if imgui.InputInt("##"+label, v) {
-		s.updateFilteredResults()
-	}
-}
-
-func (s *Search) inputBoundWidth() float32 {
-	return window.PointSize() * 75
 }
 
 func (s *Search) jumpButtons() w.Layout {

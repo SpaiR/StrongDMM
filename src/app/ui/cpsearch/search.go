@@ -31,8 +31,8 @@ type Search struct {
 	focusedResultIdx     int
 	lastFocusedResultIdx int
 
-	filterBoundX1, filterBoundY1 int32
-	filterBoundX2, filterBoundY2 int32
+	filterActive bool
+	filterBound  util.Bounds
 
 	resultsAll      []*dmminstance.Instance
 	resultsFiltered []*dmminstance.Instance
@@ -75,32 +75,8 @@ func (s *Search) SearchByPath(path string) {
 	s.doSearch()
 }
 
-func (s *Search) doResetFilter() {
-	s.resultsFiltered = s.resultsFiltered[:0]
-	s.filterBoundX1 = 0
-	s.filterBoundY1 = 0
-	s.filterBoundX2 = 0
-	s.filterBoundY2 = 0
-	log.Println("[cpsearch] search filter reset")
-}
-
-func (s *Search) updateFilteredResults() {
-	s.resultsFiltered = s.resultsFiltered[:0]
-	bounds := util.Bounds{
-		X1: float32(s.filterBoundX1),
-		Y1: float32(s.filterBoundY1),
-		X2: float32(s.filterBoundX2),
-		Y2: float32(s.filterBoundY2),
-	}
-	for _, result := range s.resultsAll {
-		if bounds.Contains(float32(result.Coord().X), float32(result.Coord().Y)) {
-			s.resultsFiltered = append(s.resultsFiltered, result)
-		}
-	}
-}
-
 func (s *Search) results() []*dmminstance.Instance {
-	if len(s.resultsFiltered) > 0 {
+	if !s.filterBound.IsEmpty() {
 		return s.resultsFiltered
 	}
 	return s.resultsAll
