@@ -16,9 +16,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 )
 
-func (s *Search) Process() {
-	s.shortcuts.SetVisibleIfFocused()
-
+func (s *Search) Process(int32) {
 	s.showControls()
 	imgui.Separator()
 

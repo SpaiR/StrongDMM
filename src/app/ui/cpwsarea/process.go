@@ -6,12 +6,21 @@ import (
 	"github.com/SpaiR/imgui-go"
 )
 
-func (w *WsArea) Process(dockId int) {
+var tmpFocusedWs *workspace.Workspace
+
+func (w *WsArea) Process(dockId int32) {
 	if len(w.workspaces) == 0 {
 		w.switchActiveWorkspace(nil)
-		w.showAppLogo(dockId)
+		w.showAppLogo(int(dockId))
 	}
 
+	w.processWorkspaces(int(dockId))
+
+	w.switchFocusedWorkspace(tmpFocusedWs)
+	tmpFocusedWs = nil
+}
+
+func (w *WsArea) processWorkspaces(dockId int) {
 	var workspacesToClose []*workspace.Workspace
 	for _, ws := range w.workspaces {
 		ws.PreProcess()
@@ -29,8 +38,8 @@ func (w *WsArea) Process(dockId int) {
 	}
 }
 
-func (w *WsArea) showWorkspaceWindow(dockId int, ws *workspace.Workspace) bool {
-	open := true
+func (w *WsArea) showWorkspaceWindow(dockId int, ws *workspace.Workspace) (open bool) {
+	open = true
 	id := ws.Name() + "###" + ws.Id()
 
 	dockCondition := imgui.ConditionOnce
@@ -46,10 +55,13 @@ func (w *WsArea) showWorkspaceWindow(dockId int, ws *workspace.Workspace) bool {
 		imgui.PushStyleVarVec2(imgui.StyleVarWindowPadding, imgui.Vec2{})
 	}
 
-	if imgui.BeginV(id, &open, flags) {
+	visible := imgui.BeginV(id, &open, flags)
+
+	if visible {
 		if ws.Content().Ini().NoPadding {
 			imgui.PopStyleVar()
 		}
+
 		ws.Process()
 	} else if ws.Content().Ini().NoPadding {
 		imgui.PopStyleVar()
@@ -57,6 +69,7 @@ func (w *WsArea) showWorkspaceWindow(dockId int, ws *workspace.Workspace) bool {
 
 	if ws.Focused() {
 		w.switchActiveWorkspace(ws)
+		tmpFocusedWs = ws
 	} else if ws.TriggerFocus() {
 		ws.SetTriggerFocus(false)
 		imgui.SetWindowFocus()

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"sdmm/app/config"
+	"sdmm/app/ui/component"
 	"sdmm/app/ui/shortcut"
 	"sdmm/dmapi/dm"
 
@@ -31,6 +32,8 @@ type App interface {
 const newTreeNodesLimit = 25
 
 type Environment struct {
+	component.Component
+
 	app App
 
 	shortcuts shortcut.Shortcuts
@@ -53,9 +56,14 @@ type Environment struct {
 
 func (e *Environment) Init(app App) {
 	e.app = app
+	e.treeNodes = make(map[string]*treeNode)
+
 	e.addShortcuts()
 	e.loadConfig()
-	e.treeNodes = make(map[string]*treeNode)
+
+	e.AddOnFocused(func(focused bool) {
+		e.shortcuts.SetVisible(focused)
+	})
 }
 
 func (e *Environment) Free() {

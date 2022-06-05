@@ -13,9 +13,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 )
 
-func (e *Environment) Process() {
-	e.shortcuts.SetVisibleIfFocused()
-
+func (e *Environment) Process(int32) {
 	if e.app.LoadedEnvironment() == nil {
 		imgui.TextDisabled("No environment loaded")
 	} else {

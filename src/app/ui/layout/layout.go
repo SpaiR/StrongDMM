@@ -28,13 +28,19 @@ type app interface {
 	IsLayoutReset() bool
 }
 
-type Layout struct {
-	cpenvironment.Environment
-	cpprefabs.Prefabs
-	cpsearch.Search
-	cpwsarea.WsArea
-	cpvareditor.VarEditor
+type layoutNode interface {
+	PreProcess()
+	Process(dockId int32)
+	PostProcess()
 
+	Visible() bool
+	SetVisible(bool)
+
+	Focused() bool
+	SetFocused(bool)
+}
+
+type Layout struct {
 	app app
 
 	initialized bool
@@ -47,6 +53,12 @@ type Layout struct {
 	rightUpNodeId   int32
 	rightDownNodeId int32
 
+	Environment *cpenvironment.Environment
+	Prefabs     *cpprefabs.Prefabs
+	Search      *cpsearch.Search
+	WsArea      *cpwsarea.WsArea
+	VarEditor   *cpvareditor.VarEditor
+
 	tmpNextShowNode  []string
 	tmpNextFocusNode string
 }
@@ -54,11 +66,19 @@ type Layout struct {
 func New(app app) *Layout {
 	l := &Layout{app: app}
 	l.loadConfig()
+
+	l.Environment = new(cpenvironment.Environment)
+	l.Prefabs = new(cpprefabs.Prefabs)
+	l.Search = new(cpsearch.Search)
+	l.WsArea = new(cpwsarea.WsArea)
+	l.VarEditor = new(cpvareditor.VarEditor)
+
 	l.Environment.Init(app)
 	l.Prefabs.Init(app)
 	l.Search.Init(app)
 	l.WsArea.Init(app)
 	l.VarEditor.Init(app)
+
 	return l
 }
 
@@ -99,27 +119,25 @@ func (l *Layout) FocusNode(nodeName string) {
 }
 
 func (l *Layout) showEnvironmentNode() {
-	l.wrapNode(lnode.NameEnvironment, int(l.leftNodeId), l.Environment.Process)
+	l.wrapNode(lnode.NameEnvironment, l.leftNodeId, l.Environment)
 }
 
 func (l *Layout) showWorkspaceAreaNode() {
-	l.wrapNodeV(lnode.NameWorkspaceArea, int(l.centerNodeId), func() {
-		l.WsArea.Process(int(l.centerNodeId))
-	}, wrapCfg{
+	l.wrapNodeV(lnode.NameWorkspaceArea, l.centerNodeId, l.WsArea, wrapCfg{
 		noWindow: true,
 	})
 }
 
 func (l *Layout) showPrefabsNode() {
-	l.wrapNode(lnode.NamePrefabs, int(l.rightUpNodeId), l.Prefabs.Process)
+	l.wrapNode(lnode.NamePrefabs, l.rightUpNodeId, l.Prefabs)
 }
 
 func (l *Layout) showSearchNode() {
-	l.wrapNode(lnode.NameSearch, int(l.rightUpNodeId), l.Search.Process)
+	l.wrapNode(lnode.NameSearch, l.rightUpNodeId, l.Search)
 }
 
 func (l *Layout) showVariablesNode() {
-	l.wrapNode(lnode.NameVariables, int(l.rightDownNodeId), l.VarEditor.Process)
+	l.wrapNode(lnode.NameVariables, l.rightDownNodeId, l.VarEditor)
 }
 
 const (
@@ -154,8 +172,8 @@ func (l *Layout) updateNodes() {
 	imgui.DockBuilderFinish(dockSpaceId)
 }
 
-func (l *Layout) wrapNode(id string, nodeId int, content func()) {
-	l.wrapNodeV(id, nodeId, content, wrapCfg{})
+func (l *Layout) wrapNode(id string, dockId int32, node layoutNode) {
+	l.wrapNodeV(id, dockId, node, wrapCfg{})
 }
 
 const defaultWindowFlags = imgui.WindowFlagsNone
@@ -165,15 +183,20 @@ type wrapCfg struct {
 	noPadding bool
 }
 
-func (l *Layout) wrapNodeV(id string, nodeId int, content func(), cfg wrapCfg) {
+func (l *Layout) wrapNodeV(id string, dockId int32, node layoutNode, cfg wrapCfg) {
 	// Just show the content.
 	if cfg.noWindow {
-		content()
+		node.Process(dockId)
 		return
 	}
 
+	l.prepareNode(id, dockId, cfg)
+	l.processNode(id, dockId, node, cfg)
+}
+
+func (l *Layout) prepareNode(id string, dockId int32, cfg wrapCfg) {
 	if l.app.IsLayoutReset() {
-		imgui.DockBuilderDockWindow(id, nodeId)
+		imgui.DockBuilderDockWindow(id, int(dockId))
 	}
 
 	if cfg.noPadding {
@@ -186,19 +209,32 @@ func (l *Layout) wrapNodeV(id string, nodeId int, content func(), cfg wrapCfg) {
 	if id == l.tmpNextFocusNode {
 		imgui.SetNextWindowFocus()
 	}
+}
 
-	if imgui.BeginV(id, nil, defaultWindowFlags) {
+func (l *Layout) processNode(id string, dockId int32, node layoutNode, cfg wrapCfg) {
+	node.PreProcess()
+
+	visible := imgui.BeginV(id, nil, defaultWindowFlags)
+
+	node.SetVisible(visible)
+	node.SetFocused(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
+
+	if visible {
 		if cfg.noPadding {
 			imgui.PopStyleVar()
 		}
+
 		if imgui.IsWindowDocked() {
 			l.tweakWindowNode()
 		}
-		content()
+
+		node.Process(dockId)
 	} else if cfg.noPadding {
 		imgui.PopStyleVar()
 	}
 	imgui.End()
+
+	node.PostProcess()
 }
 
 // Tweak window node flags and nodes ordering.

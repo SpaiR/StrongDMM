@@ -17,9 +17,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 )
 
-func (v *VarEditor) Process() {
-	v.shortcuts.SetVisibleIfFocused()
-
+func (v *VarEditor) Process(int32) {
 	if len(v.variablesNames) == 0 {
 		imgui.TextDisabled("No instance/prefab selected")
 		return

@@ -2,8 +2,6 @@ package shortcut
 
 import (
 	"log"
-
-	"github.com/SpaiR/imgui-go"
 )
 
 var shortcutId uint64
@@ -34,10 +32,6 @@ func (s *Shortcuts) SetVisible(visible bool) {
 	for _, shortcut := range s.shortcuts {
 		shortcut.IsVisible = visible
 	}
-}
-
-func (s *Shortcuts) SetVisibleIfFocused() {
-	s.SetVisible(imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows))
 }
 
 func (s *Shortcuts) Dispose() {

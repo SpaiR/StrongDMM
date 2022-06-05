@@ -98,7 +98,6 @@ func (ws *WsEmpty) PreProcess() {
 }
 
 func (ws *WsEmpty) Process() {
-	ws.shortcuts.SetVisibleIfFocused()
 	ws.showContent()
 }
 
@@ -108,6 +107,10 @@ func (ws *WsEmpty) PostProcess() {
 
 func (ws *WsEmpty) Dispose() {
 	ws.shortcuts.Dispose()
+}
+
+func (ws *WsEmpty) OnFocusChange(focused bool) {
+	ws.shortcuts.SetVisible(focused)
 }
 
 func (ws *WsEmpty) showContent() {

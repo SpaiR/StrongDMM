@@ -8,7 +8,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 )
 
-func (p *Prefabs) Process() {
+func (p *Prefabs) Process(int32) {
 	if len(p.nodes) == 0 {
 		imgui.TextDisabled("No prefab selected")
 		return

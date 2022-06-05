@@ -4,6 +4,7 @@ import (
 	"log"
 	"strconv"
 
+	"sdmm/app/ui/component"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"sdmm/app/ui/shortcut"
@@ -18,6 +19,8 @@ type App interface {
 }
 
 type Search struct {
+	component.Component
+
 	app App
 
 	shortcuts shortcut.Shortcuts
@@ -36,11 +39,17 @@ type Search struct {
 }
 
 func (s *Search) Init(app App) {
-	s.addShortcuts()
 	s.app = app
+
 	s.selectedResultIdx = -1
 	s.focusedResultIdx = -1
 	s.lastFocusedResultIdx = -1
+
+	s.addShortcuts()
+
+	s.AddOnFocused(func(focused bool) {
+		s.shortcuts.SetVisible(focused)
+	})
 }
 
 func (s *Search) Free() {

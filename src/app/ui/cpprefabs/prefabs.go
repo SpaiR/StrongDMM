@@ -3,6 +3,7 @@ package cpprefabs
 import (
 	"log"
 
+	"sdmm/app/ui/component"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/app/window"
 
@@ -21,6 +22,8 @@ type App interface {
 }
 
 type Prefabs struct {
+	component.Component
+
 	app App
 
 	nodes      []*prefabNode

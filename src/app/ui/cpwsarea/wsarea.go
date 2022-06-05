@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"sdmm/app/config"
+	"sdmm/app/ui/component"
 	"sdmm/app/ui/cpwsarea/workspace"
 	"sdmm/app/ui/cpwsarea/wschangelog"
 	"sdmm/app/ui/cpwsarea/wscreatemap"
@@ -36,9 +37,12 @@ type App interface {
 }
 
 type WsArea struct {
+	component.Component
+
 	app App
 
-	activeWs *workspace.Workspace
+	activeWs  *workspace.Workspace
+	focusedWs *workspace.Workspace
 
 	activeWsContentId string
 
@@ -346,16 +350,32 @@ func (w *WsArea) findEmptyWorkspaceIdx() int {
 	return -1
 }
 
-func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
-	if w.activeWs != activeWs || (activeWs != nil && w.activeWsContentId != activeWs.Content().Id()) {
-		log.Println("[wsarea] switch active workspace:", activeWs)
+func (w *WsArea) switchFocusedWorkspace(focusedWs *workspace.Workspace) {
+	if w.focusedWs != focusedWs {
+		log.Println("[cpwsarea] switch focused workspace:", focusedWs)
 
-		if activeWs != nil {
-			log.Println("[wsarea] active workspace content:", activeWs.Content().Id())
+		if focusedWs != nil {
+			log.Println("[cpwsarea] focused workspace content:", focusedWs.Content().Id())
 		}
 
-		if w.activeWs != nil {
-			w.activeWs.OnFocusChange(false)
+		if w.focusedWs != nil {
+			w.focusedWs.OnFocusChange(false)
+		}
+
+		w.focusedWs = focusedWs
+
+		if w.focusedWs != nil {
+			w.focusedWs.OnFocusChange(true)
+		}
+	}
+}
+
+func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
+	if w.activeWs != activeWs || (activeWs != nil && w.activeWsContentId != activeWs.Content().Id()) {
+		log.Println("[cpwsarea] switch active workspace:", activeWs)
+
+		if activeWs != nil {
+			log.Println("[cpwsarea] active workspace content:", activeWs.Content().Id())
 		}
 
 		w.activeWs = activeWs
@@ -364,10 +384,6 @@ func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
 			w.activeWsContentId = activeWs.Content().Id()
 		} else {
 			w.activeWsContentId = ""
-		}
-
-		if w.activeWs != nil {
-			w.activeWs.OnFocusChange(true)
 		}
 
 		w.app.OnWorkspaceSwitched()

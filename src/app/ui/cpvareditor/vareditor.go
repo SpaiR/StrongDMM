@@ -3,6 +3,7 @@ package cpvareditor
 import (
 	"log"
 
+	"sdmm/app/ui/component"
 	"sdmm/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"sdmm/app/config"
@@ -42,6 +43,8 @@ const (
 )
 
 type VarEditor struct {
+	component.Component
+
 	app App
 
 	shortcuts shortcut.Shortcuts
@@ -63,8 +66,13 @@ type VarEditor struct {
 
 func (v *VarEditor) Init(app App) {
 	v.app = app
+
 	v.addShortcuts()
 	v.loadConfig()
+
+	v.AddOnFocused(func(focused bool) {
+		v.shortcuts.SetVisible(focused)
+	})
 }
 
 func (v *VarEditor) Free() {

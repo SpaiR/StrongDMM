@@ -151,7 +151,7 @@ func (a *app) DoSaveAll() {
 // DoOpenPreferences opens preferences tab.
 func (a *app) DoOpenPreferences() {
 	log.Println("[app] open preferences")
-	a.layout.OpenPreferences(prefs.Make(a, &a.preferencesConfig().Prefs))
+	a.layout.WsArea.OpenPreferences(prefs.Make(a, &a.preferencesConfig().Prefs))
 }
 
 // DoSelectPrefab globally selects provided prefab in the app.
