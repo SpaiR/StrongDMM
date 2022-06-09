@@ -212,7 +212,7 @@ func (ws *WsEmpty) showAvailableMaps() {
 			w.SameLine(),
 			w.TextColored("Available Maps", style.ColorGold),
 			w.SameLine(),
-			w.Disabled(len(ws.selectedMaps) == 0, ws.openSelectedMapsBtn()),
+			w.Disabled(len(ws.selectedMaps) == 0, ws.openSelectedMapsButton()),
 			w.Separator(),
 		}.Build()
 
@@ -240,7 +240,9 @@ func (ws *WsEmpty) showAvailableMaps() {
 	}
 }
 
-func (ws *WsEmpty) openSelectedMapsBtn() *w.ButtonWidget {
+const maxSelectedMapsInTooltip = 10
+
+func (ws *WsEmpty) openSelectedMapsButton() *w.ButtonWidget {
 	var label string
 	if len(ws.selectedMaps) == 0 {
 		label = "No maps selected"
@@ -248,8 +250,17 @@ func (ws *WsEmpty) openSelectedMapsBtn() *w.ButtonWidget {
 		label = fmt.Sprint("Open: ", len(ws.selectedMaps), "###open_selected_maps")
 	}
 
+	var tooltip string
+	if len(ws.selectedMaps) <= maxSelectedMapsInTooltip {
+		tooltip = strings.Join(ws.selectedMaps, "\n")
+	} else {
+		selectedMaps := ws.selectedMaps[:maxSelectedMapsInTooltip]
+		tooltip = strings.Join(selectedMaps, "\n")
+		tooltip += fmt.Sprintf("\n...and %d more", len(ws.selectedMaps)-maxSelectedMapsInTooltip)
+	}
+
 	return w.Button(label, ws.loadSelectedMaps).
-		Tooltip(strings.Join(ws.selectedMaps, "\n")).
+		Tooltip(tooltip).
 		Small(true)
 }
 
