@@ -1,3 +1,5 @@
+ * When selecting multiple maps to open in the available maps pane, open button will show in the tooltip only a part of those maps.
+
 # v2.6.0.alpha
 
 ### New open flow!
