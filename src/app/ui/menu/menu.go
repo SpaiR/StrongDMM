@@ -19,6 +19,7 @@ import (
 type app interface {
 	// File
 	DoNewWorkspace()
+	DoNewMap()
 	DoOpen()
 	DoLoadResource(path string)
 	DoClearRecentMaps()
@@ -39,7 +40,6 @@ type app interface {
 	DoDelete()
 	DoSearch()
 	DoDeselect()
-	DoCreateMap()
 
 	// View
 	DoAreaBorders()
@@ -113,6 +113,9 @@ func (m *Menu) Process() {
 			w.MenuItem("New Workspace", m.app.DoNewWorkspace).
 				Icon(icon.File).
 				Shortcut(platform.KeyModName(), "N"),
+			w.MenuItem("New Map", m.app.DoNewMap).
+				IconEmpty().
+				Enabled(m.app.HasLoadedEnvironment()),
 			w.Separator(),
 			w.MenuItem("Open...", m.app.DoOpen).
 				Icon(icon.FolderOpen).
@@ -190,10 +193,6 @@ func (m *Menu) Process() {
 				Icon(icon.Search).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(platform.KeyModName(), "F"),
-			w.Separator(),
-			w.MenuItem("Create Map", m.app.DoCreateMap).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()),
 		}),
 
 		w.Menu("View", w.Layout{

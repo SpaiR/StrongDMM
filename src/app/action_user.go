@@ -89,8 +89,8 @@ func (a *app) DoCloseEnvironment() {
 	})
 }
 
-// DoCreateMap opens dialog window to create a new map file.
-func (a *app) DoCreateMap() {
+// DoNewMap opens dialog window to create a new map file.
+func (a *app) DoNewMap() {
 	log.Println("[app] opening create map...")
 	a.layout.WsArea.OpenCreateMap()
 }

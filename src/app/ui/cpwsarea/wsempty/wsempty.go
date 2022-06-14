@@ -75,7 +75,7 @@ func New(app App) *WsEmpty {
 }
 
 func (ws *WsEmpty) Name() string {
-	return "Workspace"
+	return icon.File + " Workspace"
 }
 
 func (ws *WsEmpty) Title() string {

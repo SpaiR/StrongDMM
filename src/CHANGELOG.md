@@ -1,3 +1,6 @@
+# v2.6.1.alpha
+
+ * Revert: renamed "New Map" button to "Create Map" and moved to the "Edit" menu;
  * When selecting multiple maps to open in the available maps pane, open button will show in the tooltip only a part of those maps.
 
 # v2.6.0.alpha
