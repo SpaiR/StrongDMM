@@ -41,7 +41,7 @@ func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
 	} else if tool, ok := tools.Selected().(*tools.ToolGrab); ok && tool.HasSelectedArea() {
 		bounds := tool.Bounds()
 		layout = append(layout,
-			w.TextFrame(fmt.Sprintf("W:%d H:%d", int(bounds.X2-bounds.X1), int(bounds.Y2-bounds.Y1))),
+			w.TextFrame(fmt.Sprintf("W:%d H:%d", int(bounds.X2-bounds.X1)+1, int(bounds.Y2-bounds.Y1)+1)),
 			w.Tooltip(w.Text("Grab area size")),
 			w.TextFrame(bounds.String()),
 			w.Tooltip(w.Text("Grab area bounds")),

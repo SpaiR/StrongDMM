@@ -1,3 +1,6 @@
+# v2.6.2.alpha
+Fixed: area bounding size for the Grab tool was 1 less.
+
 # v2.6.1.alpha
 
  * Revert: renamed "New Map" button to "Create Map" and moved to the "Edit" menu;
