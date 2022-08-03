@@ -2,13 +2,13 @@
 
 <p align="center"><b>Download StrongDMM</b></p>
 <p align="center">
-  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-windows.zip">
+  <a href="https://bit.ly/sdmm-windows">
     <img src="https://img.shields.io/badge/WINDOWS-00A4EF?style=for-the-badge" alt="Windows download link"/>
   </a>
-  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-linux.zip">
+  <a href="https://bit.ly/sdmm-linux">
     <img src="https://img.shields.io/badge/⠀LINUX⠀-E95420?style=for-the-badge" alt="Linux download link"/>
   </a>
-  <a href="https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-macos.zip">
+  <a href="https://bit.ly/sdmm-macos">
     <img src="https://img.shields.io/badge/⠀MACOS⠀-555555?style=for-the-badge" alt="macOS download ink"/>
   </a>
 </p>
