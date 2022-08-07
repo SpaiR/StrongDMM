@@ -23,11 +23,9 @@ type namedReader interface {
 	Name() string
 }
 
-/**
-A slightly modified algorithm made on rust:
-https://raw.githubusercontent.com/SpaceManiac/SpacemanDMM/5e51421/src/tools/dmm/read.rs
-Unlike the original one, doesn't care about storing keys as base52 number and uses a simple string for that.
-*/
+// A slightly modified algorithm made on rust:
+// https://raw.githubusercontent.com/SpaceManiac/SpacemanDMM/5e51421/src/tools/dmm/read.rs
+// Unlike the original one, doesn't care about storing keys as base52 number and uses a simple string for that.
 func parse(file namedReader) (*DmmData, error) {
 	r := bufio.NewReader(file)
 

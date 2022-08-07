@@ -2,7 +2,7 @@ package req
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ func Get(url string) (body []byte, err error) {
 		return nil, fmt.Errorf("fail to get successfull response: code [%d]", resp.StatusCode)
 	}
 
-	if body, err = ioutil.ReadAll(resp.Body); err != nil {
+	if body, err = io.ReadAll(resp.Body); err != nil {
 		return nil, fmt.Errorf("fail to read remote data: %v", err)
 	}
 

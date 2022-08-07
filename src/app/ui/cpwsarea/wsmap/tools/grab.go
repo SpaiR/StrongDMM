@@ -22,6 +22,7 @@ const (
 // Tool works in two modes:
 //  1. Select the area
 //  2. Move the area
+//
 // The first one is available when no area selected or user selects the area outside the currently selected.
 // The second mode is activated automatically when dragging mouse on the currently selected area.
 //

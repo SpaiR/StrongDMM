@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 )
@@ -45,7 +44,7 @@ func LoadV(filepath string, cfg any) error {
 	defer f.Close()
 
 	var j []byte
-	if j, err = ioutil.ReadFile(filepath); err == nil {
+	if j, err = os.ReadFile(filepath); err == nil {
 		err = json.Unmarshal(j, cfg)
 	}
 

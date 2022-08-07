@@ -10,6 +10,7 @@ import (
 var chunkColors map[util.Bounds]util.Color //nolint:unused
 
 // Debug method to render chunks borders.
+//
 //nolint:unused
 func (r *Render) batchChunksVisuals() {
 	if chunkColors == nil {

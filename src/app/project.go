@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -80,7 +79,7 @@ func findEnvironmentFileFromBase(path string) (string, error) {
 			return "", fmt.Errorf("unable to find environment")
 		}
 
-		files, err := ioutil.ReadDir(dir)
+		files, err := os.ReadDir(dir)
 		if err != nil {
 			log.Println("[app] unable to read dir while looking for environment:", err)
 			return "", fmt.Errorf("unable to read dir: "+dir, err)
@@ -286,7 +285,7 @@ func (a *app) environmentName() string {
 }
 
 func (a *app) backupMap(path string) string {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Println("[app] unable to read map to backup:", path)
 		util.ShowErrorDialog("Unable to read map to backup: " + path)
@@ -302,7 +301,7 @@ func (a *app) backupMap(path string) string {
 
 	_ = os.MkdirAll(filepath.Dir(dst), os.ModePerm)
 
-	err = ioutil.WriteFile(dst, data, os.ModePerm)
+	err = os.WriteFile(dst, data, os.ModePerm)
 	if err != nil {
 		log.Println("[app] unable to write map backup to a file:", dst)
 		util.ShowErrorDialog("Unable to write map backup to a file: " + path)
