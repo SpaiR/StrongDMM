@@ -32,8 +32,9 @@ The editor provides a bunch of new features:
 * Smooth zoom-in/zoom-out;
 * Robust "Search";
 * Improved shortcuts;
- * Robust variables editor and variables preview;
- * Optional variables sanitizing;
+* Robust variables editor and variables preview;
+* Optional variables sanitizing;
+* Open with CLI.
 
 ...and a lot more...
 
@@ -53,6 +54,22 @@ You can download it by any of the provided link and start it right away.
 * [macOS](https://github.com/SpaiR/StrongDMM/releases/latest/download/strongdmm-macos.zip)
 
 [Release](https://github.com/SpaiR/StrongDMM/releases/latest) page contains all distributed files. It also has `sha256` hashes info for every executable for validation purposes.
+
+### CLI Usage
+
+StrongDMM do support CLI to quickly open maps . Just simply forward `.dme` or `.dmm` files as program arguments:
+
+###### With DME
+```
+strongdmm.exe path/to/environment.dme ./map1.dmm ../path/map2.dmm
+```
+
+###### Without DME
+```
+strongdmm.exe ./map1.dmm ../path/map2.dmm
+```
+
+When providing `.dmm` files without DME, a proper environment file will be found automatically.
 
 ## Support
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P5BF17Q)
