@@ -12,7 +12,7 @@ var (
 	SupportTxt string
 	//go:embed txt/changelog-header.txt
 	ChangelogHeaderTxt string
-
+	//go:embed txt/changelog-body.txt
 	ChangelogMd string
 )
 

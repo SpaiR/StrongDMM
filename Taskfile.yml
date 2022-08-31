@@ -31,12 +31,23 @@ tasks:
       - build-sdmmparser
     dir: src
     cmds:
+      - task: pre-process-resources
       - go build {{.BUILD_ARGS}} -o "{{.BIN_DST}}" .
+      - task: post-process-resources
 
   build-sdmmparser:
     dir: src/third_party/sdmmparser/src
     cmds:
       - cargo build --release
+
+  pre-process-resources:
+    cmds:
+      - mv src/rsc/txt/changelog-body.txt src/rsc/txt/changelog-body.txt.bk
+      - cp CHANGELOG.md src/rsc/txt/changelog-body.txt
+
+  post-process-resources:
+    cmds:
+      - mv src/rsc/txt/changelog-body.txt.bk src/rsc/txt/changelog-body.txt
 
   release-files-unzip:
     dir: dst
