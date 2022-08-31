@@ -9,14 +9,10 @@ import (
 	"runtime"
 	"time"
 
-	"sdmm/app/ui/dialog"
-	"sdmm/env"
-
-	"github.com/matishsiao/goInfo"
-
 	"sdmm/app/command"
 	"sdmm/app/config"
 	"sdmm/app/render/brush"
+	"sdmm/app/ui/dialog"
 	"sdmm/app/ui/layout"
 	"sdmm/app/ui/menu"
 	"sdmm/app/ui/shortcut"
@@ -24,8 +20,10 @@ import (
 	"sdmm/dmapi/dm"
 	"sdmm/dmapi/dmenv"
 	"sdmm/dmapi/dmmclip"
+	"sdmm/env"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/matishsiao/goInfo"
 )
 
 const (
@@ -259,14 +257,7 @@ func (a *app) resetLayout() {
 }
 
 func (a *app) deleteOldLogs() {
-	logsCount := 0
-	_ = filepath.Walk(a.logDir, func(path string, info os.FileInfo, _ error) error {
-		if time.Since(info.ModTime()).Hours()/24 > ttlDaysLogs {
-			_ = os.Remove(path)
-			logsCount++
-		}
-		return nil
-	})
+	logsCount := deleteOldFiles(a.logDir, ttlDaysLogs)
 	if logsCount > 0 {
 		log.Println("[app] old logs deleted:", logsCount)
 	} else {
@@ -275,17 +266,25 @@ func (a *app) deleteOldLogs() {
 }
 
 func (a *app) deleteOldBackups() {
-	backupsCount := 0
-	_ = filepath.Walk(a.backupDir, func(path string, info os.FileInfo, _ error) error {
-		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > ttlDaysBackups {
-			_ = os.Remove(path)
-			backupsCount++
-		}
-		return nil
-	})
+	backupsCount := deleteOldFiles(a.backupDir, ttlDaysBackups)
 	if backupsCount > 0 {
 		log.Println("[app] old backups deleted:", backupsCount)
 	} else {
 		log.Println("[app] no old backups to delete")
 	}
+}
+
+func deleteOldFiles(dir string, ttlDays float64) (deletedFiles int) {
+	_ = filepath.Walk(dir, func(path string, info os.FileInfo, _ error) error {
+		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > ttlDays {
+			if err := os.Remove(path); err == nil {
+				log.Println("[app] old file deleted:", path)
+				deletedFiles++
+			} else {
+				log.Printf("[app] unable to delete old file [%s]: %v", path, err)
+			}
+		}
+		return nil
+	})
+	return
 }
