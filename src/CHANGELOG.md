@@ -1,3 +1,5 @@
+* Renamed save format: "DM" to "DMM" since it is more correct in terms of terminology.
+
 # v2.6.2.alpha
 Fixed: area bounding size for the Grab tool was 1 less.
 

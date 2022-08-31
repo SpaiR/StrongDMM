@@ -18,7 +18,7 @@ func (ws *WsMap) Save() bool {
 		saveFormat = dmmsave.FormatInitial
 	case prefs.SaveFormatTGM:
 		saveFormat = dmmsave.FormatTGM
-	case prefs.SaveFormatDM:
+	case prefs.SaveFormatDMM:
 		saveFormat = dmmsave.FormatDM
 	}
 

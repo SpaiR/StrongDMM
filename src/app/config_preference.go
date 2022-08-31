@@ -9,7 +9,7 @@ import (
 
 const (
 	preferencesConfigName    = "preferences"
-	preferencesConfigVersion = 2
+	preferencesConfigVersion = 3
 )
 
 type preferencesConfig struct {
@@ -23,8 +23,9 @@ func (preferencesConfig) Name() string {
 
 func (preferencesConfig) TryMigrate(cfg map[string]any) (result map[string]any, migrated bool) {
 	result = cfg
+	version := uint(result["Version"].(float64))
 
-	if uint(result["Version"].(float64)) == 1 {
+	if version == 1 {
 		log.Println("[app] migrating [preferences] config:", 2)
 
 		result["Editor"] = result["Save"]
@@ -37,8 +38,21 @@ func (preferencesConfig) TryMigrate(cfg map[string]any) (result map[string]any, 
 		result["Version"] = 2
 		migrated = true
 	}
+	if version == 2 {
+		log.Println("[app] migrating [preferences] config:", 3)
 
-	return result, migrated
+		editorPrefs := result["Editor"].(map[string]any)
+		saveFormat := editorPrefs["SaveFormat"].(string)
+
+		if saveFormat == "DM" {
+			editorPrefs["SaveFormat"] = "DMM"
+		}
+
+		result["Version"] = 3
+		migrated = true
+	}
+
+	return
 }
 
 func (a *app) loadPreferencesConfig() {

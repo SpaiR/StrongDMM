@@ -103,8 +103,8 @@ DM - a default map format used by the DM map editor`)
 		if imgui.SelectableV(prefs.SaveFormatTGM, prefs.SaveFormatTGM == ws.format, imgui.SelectableFlagsNone, imgui.Vec2{}) {
 			ws.format = prefs.SaveFormatTGM
 		}
-		if imgui.SelectableV(prefs.SaveFormatDM, prefs.SaveFormatDM == ws.format, imgui.SelectableFlagsNone, imgui.Vec2{}) {
-			ws.format = prefs.SaveFormatDM
+		if imgui.SelectableV(prefs.SaveFormatDMM, prefs.SaveFormatDMM == ws.format, imgui.SelectableFlagsNone, imgui.Vec2{}) {
+			ws.format = prefs.SaveFormatDMM
 		}
 		imgui.EndCombo()
 	}
