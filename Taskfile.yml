@@ -11,7 +11,7 @@ vars:
   GIT_REV:
     sh: git rev-parse --short HEAD
   APP_NAME: StrongDMM
-  BIN_DST: ../dst/{{.APP_NAME}}{{exeExt}}
+  BIN_DST: '{{.APP_NAME}}{{exeExt}}'
   BUILD_VARS: -X sdmm/env.Version={{.GIT_VERSION}} -X sdmm/env.Revision={{.GIT_REV}}
   LD_FLAGS_WINDOWS:
     sh: echo '{{if eq OS "windows"}}-H windowsgui -extldflags=-static{{end}}'
@@ -19,6 +19,20 @@ vars:
   BUILD_ARGS: -trimpath -ldflags="{{.LD_FLAGS}}"
 
 tasks:
+  clean-sdmm:
+    cmds:
+      - rm -frd ./dst
+
+  clean-sdmmparser:
+    dir: src/third_party/sdmmparser/src
+    cmds:
+      - cargo clean
+
+  clean:
+    deps:
+      - clean-sdmmparser
+      - clean-sdmm
+
   run:
     deps:
       - build-sdmmparser
@@ -32,7 +46,7 @@ tasks:
     dir: src
     cmds:
       - task: pre-process-resources
-      - go build {{.BUILD_ARGS}} -o "{{.BIN_DST}}" .
+      - go build {{.BUILD_ARGS}} -o "../dst/{{.BIN_DST}}" .
       - task: post-process-resources
 
   build-sdmmparser:
