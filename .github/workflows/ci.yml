@@ -66,12 +66,10 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache Build Files
-        uses: actions/cache@v2
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            src/third_party/sdmmparser/src/target
-          key: build-files-${{ matrix.os }}
+          workspaces: src/third_party/sdmmparser/src
 
       - if: matrix.os == 'windows-latest'
         name: Pre Build (Windows)
