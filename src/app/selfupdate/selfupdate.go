@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/inconshreveable/go-update"
+	"github.com/minio/selfupdate"
 )
 
 func Update(build []byte) error {
-	if err := update.Apply(bytes.NewReader(build), update.Options{}); err != nil {
+	if err := selfupdate.Apply(bytes.NewReader(build), selfupdate.Options{}); err != nil {
 		return fmt.Errorf("unable to self-update: %v", err)
 	}
 	return nil
