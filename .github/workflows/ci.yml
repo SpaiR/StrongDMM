@@ -7,7 +7,7 @@ jobs:
     name: Lint
     runs-on: macos-latest
     env:
-      LINT_VERSION: v1.48.0
+      LINT_VERSION: v1.49.0
     steps:
       - name: Setup Golang
         uses: actions/setup-go@v2
