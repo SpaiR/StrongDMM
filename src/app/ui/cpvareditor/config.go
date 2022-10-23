@@ -13,6 +13,7 @@ type vareditorConfig struct {
 	ShowModified bool
 	ShowByType   bool
 	ShowPins     bool
+	ShowTmp      bool
 
 	PinnedVarNames []string
 }

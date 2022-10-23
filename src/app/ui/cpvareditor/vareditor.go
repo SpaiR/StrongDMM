@@ -227,3 +227,9 @@ func (v *VarEditor) doToggleShowPins() {
 	cfg.ShowPins = !cfg.ShowPins
 	log.Println("[cpvareditor] toggle 'showPins':", cfg.ShowPins)
 }
+
+func (v *VarEditor) doToggleShowTmp() {
+	cfg := v.config()
+	cfg.ShowTmp = !cfg.ShowTmp
+	log.Println("[cpvareditor] toggle 'showTmp':", cfg.ShowTmp)
+}

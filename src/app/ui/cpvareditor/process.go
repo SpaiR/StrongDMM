@@ -116,6 +116,10 @@ func (v *VarEditor) showControls() {
 				Selected(cfg.ShowPins).
 				Enabled(true).
 				Shortcut(platform.KeyModName(), "3"),
+			w.MenuItem("Show tmp, const, and static", v.doToggleShowTmp).
+				Selected(cfg.ShowTmp).
+				Enabled(true).
+				Shortcut(platform.KeyModName(), "4"),
 		}.Build()
 
 		imgui.EndPopup()
@@ -295,6 +299,10 @@ func (v *VarEditor) isFilteredVariable(varName string) bool {
 	}
 	// Show filtered by name only
 	if len(v.filterVarName) > 0 && !strings.Contains(varName, v.filterVarName) {
+		return true
+	}
+	// Hide tmp, const, and static
+	if !v.config().ShowTmp && v.app.LoadedEnvironment().Objects[v.prefab.Path()].Flags(varName).Any() {
 		return true
 	}
 	return false

@@ -9,6 +9,10 @@ type VarFlags struct {
 	ReadOnly bool
 }
 
+func (vf VarFlags) Any() bool {
+	return vf.Tmp || vf.ReadOnly
+}
+
 type Object struct {
 	env    *Dme
 	parent *Object
