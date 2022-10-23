@@ -5,12 +5,17 @@ import (
 )
 
 type VarFlags struct {
-	Tmp      bool
-	ReadOnly bool
+	Tmp    bool
+	Const  bool
+	Static bool
 }
 
 func (vf VarFlags) Any() bool {
-	return vf.Tmp || vf.ReadOnly
+	return vf.Tmp || vf.Const || vf.Static
+}
+
+func (vf VarFlags) ReadOnly() bool {
+	return vf.Const || vf.Static
 }
 
 type Object struct {

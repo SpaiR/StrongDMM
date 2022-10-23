@@ -72,7 +72,8 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, parent *O
 		if treeVar.Decl {
 			var flags VarFlags
 			flags.Tmp = treeVar.IsTmp
-			flags.ReadOnly = treeVar.IsConst || treeVar.IsStatic
+			flags.Const = treeVar.IsConst
+			flags.Static = treeVar.IsStatic
 			varFlags[treeVar.Name] = flags
 		}
 	}
