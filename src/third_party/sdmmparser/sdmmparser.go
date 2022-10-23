@@ -23,8 +23,12 @@ type ObjectTreeType struct {
 }
 
 type ObjectTreeVar struct {
-	Name  string
-	Value string
+	Name     string
+	Value    string
+	Decl     bool
+	IsTmp    bool `json:"is_tmp"`
+	IsConst  bool `json:"is_const"`
+	IsStatic bool `json:"is_static"`
 }
 
 func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {

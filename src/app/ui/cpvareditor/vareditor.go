@@ -202,6 +202,10 @@ func (v *VarEditor) initialVarValue(varName string) string {
 	return v.app.LoadedEnvironment().Objects[v.prefab.Path()].Vars.ValueV(varName, dmvars.NullValue)
 }
 
+func (v *VarEditor) isReadOnly(varName string) bool {
+	return v.app.LoadedEnvironment().Objects[v.prefab.Path()].Flags(varName).ReadOnly
+}
+
 func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
 }

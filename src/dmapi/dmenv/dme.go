@@ -53,6 +53,7 @@ func nameFromPath(path string, parentName string) string {
 
 func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, parent *Object, dme *Dme) {
 	variables := dmvars.MutableVariables{}
+	varFlags := make(map[string]VarFlags, len(root.Vars))
 	var name string
 
 	for _, treeVar := range root.Vars {
@@ -67,6 +68,13 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, parent *O
 		}
 
 		variables.Put(treeVar.Name, value)
+
+		if treeVar.Decl {
+			var flags VarFlags
+			flags.Tmp = treeVar.IsTmp
+			flags.ReadOnly = treeVar.IsConst || treeVar.IsStatic
+			varFlags[treeVar.Name] = flags
+		}
 	}
 
 	if _, ok := variables.Value("name"); !ok {
@@ -74,10 +82,11 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, parent *O
 	}
 
 	object := &Object{
-		env:    dme,
-		parent: parent,
-		Path:   root.Path,
-		Vars:   variables.ToImmutable(),
+		env:      dme,
+		parent:   parent,
+		Path:     root.Path,
+		Vars:     variables.ToImmutable(),
+		VarFlags: varFlags,
 	}
 
 	children := make([]string, 0, len(root.Children))
