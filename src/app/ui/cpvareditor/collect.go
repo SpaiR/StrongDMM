@@ -9,9 +9,10 @@ import (
 )
 
 var unmodifiableVars = []string{
-	"type", "parent_type", "vars", "x", "y", "z", "contents", "filters",
+	"type", "parent_type", "vars", "x", "y", "z", "filters",
 	"loc", "maptext", "maptext_width", "maptext_height", "maptext_x", "maptext_y",
-	"overlays", "underlays", "verbs", "appearance", "vis_locs",
+	"overlays", "underlays", "verbs", "appearance", "vis_locs", "vis_contents",
+	"vis_flags", "bounds", "particles", "render_source", "render_target",
 }
 
 func collectVariablesNames(vars *dmvars.Variables) (variablesNames []string) {
