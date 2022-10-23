@@ -214,9 +214,19 @@ func (v *VarEditor) showVariable(varName string) {
 		v.showVarPin(varName)
 		imgui.SameLine()
 	}
+
+	readonly := v.isReadOnly(varName)
+	if readonly {
+		imgui.BeginDisabled()
+	}
+
 	v.showVarName(varName)
 	imgui.TableNextColumn()
 	v.showVarInput(varName)
+
+	if readonly {
+		imgui.EndDisabled()
+	}
 }
 
 func (v *VarEditor) showVarPin(varName string) {
@@ -250,17 +260,12 @@ func (v *VarEditor) showVarInput(varName string) {
 	varValue := v.currentVars().ValueV(varName, dmvars.NullValue)
 	initialValue := v.initialVarValue(varName)
 	isModified := initialValue != varValue
-	readonly := v.isReadOnly(varName)
 
 	var resetBtn *w.ButtonWidget
 	if isModified {
 		resetBtn = w.Button(icon.Undo+"##"+varName, func() {
 			v.setCurrentVariable(varName, initialValue)
 		}).Tooltip(initialValue).Style(style.ButtonFrame{})
-	}
-
-	if readonly {
-		imgui.BeginDisabled()
 	}
 
 	w.InputText(fmt.Sprint("##", v.prefab.Id(), varName), &varValue).
@@ -271,10 +276,6 @@ func (v *VarEditor) showVarInput(varName string) {
 			v.setCurrentVariable(varName, varValue)
 		}).
 		Build()
-
-	if readonly {
-		imgui.EndDisabled()
-	}
 }
 
 func (v *VarEditor) setCurrentVariable(varName, varValue string) {
