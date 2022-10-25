@@ -15,6 +15,10 @@ struct ObjectTreeType {
 struct ObjectTreeVar {
     name: String,
     value: String,
+    decl: bool,
+    is_tmp: bool,
+    is_const: bool,
+    is_static: bool,
 }
 
 pub fn parse_environment(path: String) -> String {
@@ -50,7 +54,7 @@ fn parse(env_path: &str) -> Option<String> {
 fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
     let mut entry = ObjectTreeType {
         path: ty.path.to_owned(),
-        vars: Vec::new(),
+        vars: Vec::with_capacity(ty.vars.len()),
         children: Vec::new(),
     };
 
@@ -63,6 +67,10 @@ fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
                 .as_ref()
                 .unwrap_or(Constant::null())
                 .to_string(),
+            decl: var.declaration.is_some(),
+            is_tmp: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_tmp()),
+            is_const: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_const()),
+            is_static: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_static()),
         });
     }
 
