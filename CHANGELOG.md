@@ -1,6 +1,8 @@
 # UNRELEASED
 
- * Renamed save format: "DM" to "DMM" since it is more correct in terms of terminology.
+ * Renamed save format: "DM" to "DMM" since it is more correct in terms of terminology;
+ * Improved environment parsing: linking between parent type and children happens with a specific parent_type var; @SpaceManiac
+ * Implemented support for editing "tmp, const, and static" vars: works in the same manner as it's done in DreamMaker. @SpaceManiac
 
 # v2.6.2.alpha
 Fixed: area bounding size for the Grab tool was 1 less.
