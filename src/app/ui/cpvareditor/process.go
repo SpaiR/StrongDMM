@@ -215,18 +215,11 @@ func (v *VarEditor) showVariable(varName string) {
 		imgui.SameLine()
 	}
 
-	readonly := v.isReadOnly(varName)
-	if readonly {
-		imgui.BeginDisabled()
-	}
-
+	imgui.BeginDisabledV(v.isReadOnly(varName))
 	v.showVarName(varName)
 	imgui.TableNextColumn()
 	v.showVarInput(varName)
-
-	if readonly {
-		imgui.EndDisabled()
-	}
+	imgui.EndDisabled()
 }
 
 func (v *VarEditor) showVarPin(varName string) {
