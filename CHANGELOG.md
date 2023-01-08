@@ -1,4 +1,4 @@
-# UNRELEASED
+# v2.7.0.alpha
 
  * Renamed save format: "DM" to "DMM" since it is more correct in terms of terminology;
  * Improved environment parsing: linking between parent type and children happens with a specific parent_type var; @SpaceManiac
