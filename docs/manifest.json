@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.7.0.alpha",
+  "version": "v2.7.1.alpha",
   "forceUpdate": true,
-  "description": "* Minor improvements",
+  "description": "Fixes 'Find on Map' didn't respect Z-level",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
