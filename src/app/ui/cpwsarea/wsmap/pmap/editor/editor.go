@@ -143,4 +143,6 @@ func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 	camera := e.pMap.Canvas().Render().Camera
 	camera.ShiftX = e.pMap.Size().X/2/camera.Scale + float32(absPos.X)
 	camera.ShiftY = e.pMap.Size().Y/2/camera.Scale + float32(absPos.Y)
+
+	e.pMap.SetActiveLevel(relPos.Z)
 }

@@ -39,7 +39,7 @@ var (
 		"# ":   H1,
 		"## ":  H2,
 		"### ": H3,
-		" * ":  List,
+		"* ":   List,
 		"---":  Line,
 	}
 )
@@ -55,7 +55,7 @@ func Parse(text string) (markdown Markdown) {
 		var idx int
 		scanner := bufio.NewScanner(strings.NewReader(text))
 		for scanner.Scan() {
-			line := scanner.Text()
+			line := strings.TrimSpace(scanner.Text())
 
 			var parsed bool
 			for prefix, block := range blocks {
