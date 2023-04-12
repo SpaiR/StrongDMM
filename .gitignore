@@ -11,7 +11,7 @@ logs/
 .idea/
 
 # Binaries for programs and plugins
-/src/sdmm
+/internal/sdmm
 *.exe
 *.exe~
 *.dll
