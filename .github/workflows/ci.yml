@@ -5,7 +5,7 @@ jobs:
     name: Lint
     runs-on: macos-latest
     env:
-      LINT_VERSION: v1.49.0
+      LINT_VERSION: 1.52.2
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -17,7 +17,7 @@ jobs:
 
       - name: Install linter
         run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${{ env.LINT_VERSION }}
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v${{ env.LINT_VERSION }}
           golangci-lint --version
 
       - name: Run linter
