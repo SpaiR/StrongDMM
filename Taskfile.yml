@@ -24,7 +24,7 @@ tasks:
       - rm -frd ./dst
 
   clean-sdmmparser:
-    dir: src/third_party/sdmmparser/src
+    dir: internal/third_party/sdmmparser/src
     cmds:
       - cargo clean
 
@@ -36,32 +36,30 @@ tasks:
   run:
     deps:
       - build-sdmmparser
-    dir: src
     cmds:
       - go run {{.BUILD_ARGS}} .
 
   build:
     deps:
       - build-sdmmparser
-    dir: src
     cmds:
       - task: pre-process-resources
-      - go build {{.BUILD_ARGS}} -o "../dst/{{.BIN_DST}}" .
+      - go build {{.BUILD_ARGS}} -o "dst/{{.BIN_DST}}" .
       - task: post-process-resources
 
   build-sdmmparser:
-    dir: src/third_party/sdmmparser/src
+    dir: internal/third_party/sdmmparser/src
     cmds:
       - cargo build --release
 
   pre-process-resources:
     cmds:
-      - mv src/rsc/txt/changelog-body.txt src/rsc/txt/changelog-body.txt.bk
-      - cp CHANGELOG.md src/rsc/txt/changelog-body.txt
+      - mv internal/rsc/txt/changelog-body.txt internal/rsc/txt/changelog-body.txt.bk
+      - cp CHANGELOG.md internal/rsc/txt/changelog-body.txt
 
   post-process-resources:
     cmds:
-      - mv src/rsc/txt/changelog-body.txt.bk src/rsc/txt/changelog-body.txt
+      - mv internal/rsc/txt/changelog-body.txt.bk internal/rsc/txt/changelog-body.txt
 
   release-files-unzip:
     dir: dst

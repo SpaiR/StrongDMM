@@ -13,7 +13,7 @@ jobs:
       - name: Setup Golang
         uses: actions/setup-go@v3
         with:
-          go-version-file: src/go.mod
+          go-version-file: go.mod
 
       - name: Install linter
         run: |
@@ -21,7 +21,6 @@ jobs:
           golangci-lint --version
 
       - name: Run linter
-        working-directory: src/
         run: golangci-lint run -v --out-format=github-actions ./...
 
   build:
@@ -52,9 +51,8 @@ jobs:
       - name: Setup Golang
         uses: actions/setup-go@v3
         with:
-          go-version-file: src/go.mod
+          go-version-file: go.mod
           cache: true
-          cache-dependency-path: src/go.sum
 
       - name: Setup Rust
         run: |
@@ -69,7 +67,7 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: src/third_party/sdmmparser/src
+          workspaces: internal/third_party/sdmmparser/src
 
       - if: matrix.os == 'windows-latest'
         name: Pre Build (Windows)
