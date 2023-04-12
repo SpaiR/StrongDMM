@@ -12,8 +12,7 @@ var (
 	SupportTxt string
 	//go:embed txt/changelog-header.txt
 	ChangelogHeaderTxt string
-	//go:embed txt/changelog-body.txt
-	ChangelogMd string
+	ChangelogMd        string
 )
 
 func AboutTxt(version string) string {
