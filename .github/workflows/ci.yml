@@ -3,7 +3,7 @@ on: [ push, pull_request ]
 jobs:
   golangci:
     name: Lint
-    runs-on: macos-latest
+    runs-on: ubuntu-22.04
     env:
       LINT_VERSION: 1.52.2
     steps:
@@ -27,21 +27,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-22.04, windows-2019, macos-11 ]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             rust-target: stable-x86_64-unknown-linux-gnu
-          - os: windows-latest
+          - os: windows-2019
             rust-target: stable-x86_64-pc-windows-gnu
-          - os: macos-latest
+          - os: macos-11
             rust-target: stable-x86_64-apple-darwin
     runs-on: ${{ matrix.os }}
     name: Build - ${{ matrix.os }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-    
-      - if: matrix.os == 'ubuntu-latest'
+
+      - if: contains(matrix.os, 'ubuntu')
         name: Dependencies (Linux)
         run: |
           sudo apt clean
@@ -69,7 +69,7 @@ jobs:
         with:
           workspaces: internal/third_party/sdmmparser/src
 
-      - if: matrix.os == 'windows-latest'
+      - if: contains(matrix.os, 'windows')
         name: Pre Build (Windows)
         run: task task_win:gen_syso
 
@@ -85,7 +85,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build
     if: startsWith(github.ref, 'refs/tags/v') # if tag starts with "v"
     steps:
