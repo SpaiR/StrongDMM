@@ -1,27 +1,23 @@
 name: CI
 on: [ push, pull_request ]
 jobs:
-  golangci:
-    name: Lint
-    runs-on: ubuntu-22.04
-    env:
-      LINT_VERSION: 1.52.2
+  lint-source-code:
+    name: Lint Source Code
+    runs-on: macos-11 # use macOS to avoid installation of desktop deps
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-    
+
       - name: Setup Golang
         uses: actions/setup-go@v4
         with:
           go-version-file: go.mod
+          cache: false
 
-      - name: Install linter
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v${{ env.LINT_VERSION }}
-          golangci-lint --version
-
-      - name: Run linter
-        run: golangci-lint run -v --out-format=github-actions ./...
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52.2
 
   build:
     strategy:
