@@ -74,42 +74,45 @@ When providing `.dmm` files without `.dme`, a proper environment file will be fo
 ## Support
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P5BF17Q)
 
-StrongDMM developed without any monetization in mind. The main motivation is an enthusiasm to do a cool stuff.<br>
+StrongDMM developed without any monetization in mind. The main motivation is an enthusiasm to do a cool stuff.\
 Your support can show your gratefulness and will motivate the project further development.
 
-Also, if you want something specific to be implemented in the editor, it's possible to focus on your needs.<br>
+Also, if you want something specific to be implemented in the editor, it's possible to focus on your needs.\
 Feel free to reach me out with my public contacts to discuss details:
 * [E-Mail](mailto:despsolver@gmail.com)
 * [Discord](https://discordapp.com/users/153940096389742592)
 
 ## FAQ
 
-**Q.** My antivirus software detects something suspicious in the editor binaries. Is it ok?<br>
-**A.** Yes. It's a false positive reaction to the way how Golang (development language) creates binaries. Read more: https://go.dev/doc/faq#virus
+**Q.** My antivirus software detects something suspicious in the editor binaries. Is it ok?\
+**A.
+** Yes. It's a false positive reaction to the way how Golang (development language) creates binaries. Read more: https://go.dev/doc/faq#virus
 
-**Q.** How do I verify my executables?<br>
+**Q.** How do I verify my executables?\
 **A.** With `sha256` hashes available on the [release](https://github.com/SpaiR/StrongDMM/releases/latest) page.
 
-**Q.** But how can I trust executables on the release page?<br>
-**A.** Executables are built with the [CI](https://github.com/SpaiR/StrongDMM/actions/workflows/ci.yml) pipeline. You can verify the process by yourself or build executables manually from the source code.
+**Q.** But how can I trust executables on the release page?\
+**A.
+** Executables are built with the [CI](https://github.com/SpaiR/StrongDMM/actions/workflows/ci.yml) pipeline. You can verify the process by yourself or build executables manually from the source code.
 
-**Q.** How to uninstall the editor?<br>
-**A.** StrongDMM doesn't have any installation. Thus, no specific "uninstall" required as well. Delete the executable and, if you want to remove editor data, its directory on OS.
+**Q.** How to uninstall the editor?\
+**A.
+** StrongDMM doesn't have any installation. Thus, no specific "uninstall" required as well. Delete the executable and, if you want to remove editor data, its directory on OS.
 
-**Q.** Where do I find editor data?<br>
+**Q.** Where do I find editor data?\
 **A.** For Windows: `C:\Users\USER\AppData\Roaming\StrongDMM`, for Linux/macOS: `~/.strongdmm`.
 
-**Q.** How to move the map?<br>
+**Q.** How to move the map?\
 **A.** ~~Use zoom-in/zoom-out.~~ Drag the pan with the **middle mouse button**. Or by holding a **space key**.
 Alternatively you can use **arrow keys**.
 
-**Q.** How to zoom?<br>
+**Q.** How to zoom?\
 **A.** Scroll your mouse or use **+/- keys** on the keyboard.
 
-**Q.** How to change a save format?<br>
+**Q.** How to change a save format?\
 **A.** In the menu bar: `File->Preferences...` and change to the format you need.
 
-**Q.** The editor crushed. Where I can find logs?<br>
+**Q.** The editor crushed. Where I can find logs?\
 **A.** Menu button: `Help->Open Logs Folder`.
 
 ## How to Build
@@ -120,7 +123,7 @@ There are two steps to build the application:
 2. Build the editor.
 
 **sdmmparser** is a rust library based on [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser. It is
-compiled to a `staticlib`. You can find it by path: `src/third_party/sdmmparser/src`.
+compiled to a `staticlib`. You can find it by path: `internal/third_party/sdmmparser/src`.
 
 ### Pre-requests
 
@@ -153,17 +156,17 @@ With installed Task you can basically do:
 
 #### Manually
 
-1. The important part is to build **sdmmparser** library.<br>
-   Go to the `src/third_party/sdmmparser/src` directory and run the command: `cargo build --release`.<br>
+1. The important part is to build **sdmmparser** library.\
+   Go to the `internal/third_party/sdmmparser/src` directory and run the command: `cargo build --release`.\
    If you don't modify **sdmmparser** you can do that step only once.
-2. In the `src` dir you can do:
-    * `go build .`: to build the editor (executable will be in the `src` dir with the name `sdmm.exe`/`sdmm`)
+2. In the root you can do:
+    * `go build .`: to build the editor (executable will be in the root with the name `sdmm.exe`/`sdmm`)
     * `go run .`: to run the editor
 
 ## Credits
 
 StrongDMM uses [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser made
-by [SpaceManiac](https://github.com/SpaceManiac). <br>
+by [SpaceManiac](https://github.com/SpaceManiac). \
 The application icon is designed by [Clément "Topy"](https://github.com/clement-or).
 
 ## License
