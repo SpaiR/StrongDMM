@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sdmm/internal/util"
 	"time"
 
 	"sdmm/internal/app/command"
@@ -194,7 +195,7 @@ func initializeLogger(internalDir string) string {
 	_ = os.MkdirAll(logDir, os.ModePerm)
 
 	// Create log file for the current session.
-	formattedDate := time.Now().Format("2006.01.02-15.04.05")
+	formattedDate := time.Now().Format(util.TimeFormat)
 	logFile := logDir + "/" + formattedDate + ".log"
 	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
 	if err != nil {

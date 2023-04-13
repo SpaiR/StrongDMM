@@ -296,7 +296,7 @@ func (a *app) backupMap(path string) string {
 	dst := filepath.FromSlash(a.backupDir + "/" +
 		a.environmentName() + "/" +
 		filepath.Base(path) + "/" +
-		time.Now().Format("2006.01.02-15.04.05") + ".dmm",
+		time.Now().Format(util.TimeFormat) + ".dmm",
 	)
 
 	_ = os.MkdirAll(filepath.Dir(dst), os.ModePerm)

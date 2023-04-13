@@ -104,7 +104,7 @@ func saveScreenshot(pixels []byte, w, h int) error {
 		return err
 	}
 
-	out, _ := os.Create(cfg.ScreenshotDir + "/" + time.Now().Format("2006.01.02-15.04.05") + ".png")
+	out, _ := os.Create(cfg.ScreenshotDir + "/" + time.Now().Format(util.TimeFormat) + ".png")
 	defer out.Close()
 
 	return png.Encode(out, util.PixelsToRGBA(pixels, w, h))

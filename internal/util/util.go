@@ -7,6 +7,10 @@ import (
 	"github.com/sqweek/dialog"
 )
 
+// TimeFormat is const with format which need to be used everywhere we need to format time.Now()
+// Basically, just a time.DateTime with replaced ":" to ".".
+const TimeFormat = "2006-01-02 15.04.05"
+
 // Djb2 is hashing method implemented by spec: http://www.cse.yorku.ca/~oz/hash.html
 func Djb2(str string) uint64 {
 	var hash uint64 = 5381
