@@ -15,6 +15,7 @@ type AreaBorder struct {
 	Dirs  int
 }
 
+//nolint:gofmt
 var zoneDirs = map[util.Point]int{
 	util.Point{X: 1}:  dm.DirEast,
 	util.Point{X: -1}: dm.DirWest,

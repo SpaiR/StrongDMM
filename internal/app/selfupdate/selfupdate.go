@@ -9,7 +9,7 @@ import (
 
 func Update(build []byte) error {
 	if err := selfupdate.Apply(bytes.NewReader(build), selfupdate.Options{}); err != nil {
-		return fmt.Errorf("unable to self-update: %v", err)
+		return fmt.Errorf("unable to self-update: %w", err)
 	}
 	return nil
 }

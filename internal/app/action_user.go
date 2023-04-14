@@ -35,7 +35,7 @@ func (a *app) DoOpen() {
 }
 
 // DoOpenV opens environment, which user need to select in file dialog.
-// Verbose version which handle opening in a specific workspace. Helpful to open maps/
+// Verbose version which handle opening in a specific workspace. Helpful to open maps.
 func (a *app) DoOpenV(ws *workspace.Workspace) {
 	log.Println("[app] selecting resource to load...")
 
@@ -66,7 +66,7 @@ func (a *app) DoLoadResource(path string) {
 }
 
 // DoLoadResourceV opens environment by provided path.
-// Verbose version which handle opening in a specific workspace. Helpful to open maps
+// Verbose version which handle opening in a specific workspace. Helpful to open maps.
 func (a *app) DoLoadResourceV(path string, ws *workspace.Workspace) {
 	log.Println("[app] load resource by path:", path)
 	a.loadResourceV(path, ws)
@@ -101,7 +101,7 @@ func (a *app) DoClearRecentMaps() {
 	a.projectConfig().ClearMaps()
 }
 
-// DoRemoveRecentMaps removes specific recent maps
+// DoRemoveRecentMaps removes specific recent maps.
 func (a *app) DoRemoveRecentMaps(recentMaps []string) {
 	log.Println("[app] do remove recent maps:", recentMaps)
 	recentMaps = append(make([]string, 0, len(recentMaps)), recentMaps...)
