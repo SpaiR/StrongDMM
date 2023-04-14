@@ -244,7 +244,7 @@ no_ws=1;
 	assert.Equal("1", prefabs[2].Vars().ValueV("no_ws", ""))
 }
 
-// Table-based test to check failure edge cases
+// Table-based test to check failure edge cases.
 func TestFailure(t *testing.T) {
 	tests := []struct {
 		input string

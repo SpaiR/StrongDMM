@@ -70,7 +70,7 @@ func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
 	}
 }
 
-// Goes through all parents starting from the current file location and look for a ".dme" file
+// Goes through all parents starting from the current file location and look for a ".dme" file.
 func findEnvironmentFileFromBase(path string) (string, error) {
 	for {
 		dir := filepath.Dir(path)

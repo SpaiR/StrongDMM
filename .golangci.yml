@@ -2,7 +2,17 @@ run:
   timeout: 5m
 linters:
   enable:
+    - asasalint
+    - errchkjson
+    - errname
+    - errorlint
+    - exportloopref
+    - gocheckcompilerdirectives
+    - godot
+    - gofmt
     - goimports
+    - misspell
+    - nilnil
+    - unconvert
+    - unparam
     - whitespace
-  disable:
-    - typecheck

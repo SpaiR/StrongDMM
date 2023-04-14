@@ -2,6 +2,7 @@ package dmmdata
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -72,16 +73,16 @@ func parse(file namedReader) (*DmmData, error) {
 			currVar = currVar[:0]
 			currDatum = currDatum[:0]
 		}
-		lineErr = func(msg string, args ...any) (*DmmData, error) {
+		lineErr = func(msg string, args ...any) error {
 			args = append([]any{1}, args...)
 			args[0] = lineNo
-			return nil, fmt.Errorf("at line %d: "+msg, args...)
+			return fmt.Errorf("at line %d: "+msg, args...)
 		}
 	)
 
 	for {
 		if c, _, err := r.ReadRune(); err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			} else {
 				return nil, err
@@ -100,7 +101,7 @@ func parse(file namedReader) (*DmmData, error) {
 				continue
 			} else if c == ' ' || c == '\t' {
 				if commentTrigger {
-					return lineErr("expected comment or type, got whitespace")
+					return nil, lineErr("expected comment or type, got whitespace")
 				}
 				if inQuoteBlock {
 					if c == '\t' {
@@ -188,7 +189,7 @@ func parse(file namedReader) (*DmmData, error) {
 						if dmmData.KeyLength == 0 {
 							dmmData.KeyLength = len(currKey)
 						} else {
-							return lineErr("inconsistent key length: %d vs %d", dmmData.KeyLength, len(currKey))
+							return nil, lineErr("inconsistent key length: %d vs %d", dmmData.KeyLength, len(currKey))
 						}
 					}
 				} else {
@@ -196,7 +197,7 @@ func parse(file namedReader) (*DmmData, error) {
 				}
 			} else if c == '"' {
 				if !afterDataBlock {
-					return lineErr("failed to start a data block")
+					return nil, lineErr("failed to start a data block")
 				}
 				inKeyBlock = true
 				afterDataBlock = false
@@ -231,8 +232,7 @@ func parse(file namedReader) (*DmmData, error) {
 
 		finishLine = func() error {
 			if len(currKey) != 0 {
-				_, err := lineErr("extra characters at EOL [%s]", string(currKey))
-				return err
+				return lineErr("extra characters at EOL [%s]", string(currKey))
 			}
 			if currX != baseX {
 				currY++
@@ -245,7 +245,7 @@ func parse(file namedReader) (*DmmData, error) {
 
 	for {
 		if c, _, err := r.ReadRune(); err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			} else {
 				return nil, err
@@ -263,11 +263,11 @@ func parse(file namedReader) (*DmmData, error) {
 						currNum = 0
 						readingAxis = Z
 					} else {
-						return lineErr("incorrect number of axis [%d]", readingAxis)
+						return nil, lineErr("incorrect number of axis [%d]", readingAxis)
 					}
 				} else if c == ')' {
 					if readingAxis != Z {
-						return lineErr("incorrect reading axis [%d] (expected %d)", readingAxis, Z)
+						return nil, lineErr("incorrect reading axis [%d] (expected %d)", readingAxis, Z)
 					}
 					currZ = currNum
 					currNum = 0
@@ -277,7 +277,7 @@ func parse(file namedReader) (*DmmData, error) {
 				} else {
 					x, err := strconv.ParseInt(string(c), 10, 16)
 					if err != nil {
-						return lineErr("%w", err)
+						return nil, lineErr("%w", err)
 					}
 					currNum = 10*currNum + int(x)
 				}

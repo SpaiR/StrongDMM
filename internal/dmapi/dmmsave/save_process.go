@@ -1,6 +1,7 @@
 package dmmsave
 
 import (
+	"errors"
 	"log"
 
 	"sdmm/internal/dmapi/dmenv"
@@ -138,15 +139,15 @@ func (sp *saveProcess) handleLocationsWithoutKeys() error {
 
 	sp.tryToReuseKeysByTheirInitialLocation(locsWithoutKey)
 
-	switch sp.fillLocations(locsWithoutKey) {
-	case errorRegenerateKeys:
+	err := sp.fillLocations(locsWithoutKey)
+	if errors.Is(err, errRegenerateKeys) {
 		sp.keygen.DropKeysPool()
 		sp.output.Dictionary = make(dmmdata.DataDictionary)
 		sp.output.Grid = make(dmmdata.DataGrid)
 		sp.unusedKeys = nil
 		return sp.handleLocationsWithoutKeys()
-	case errorKeysLimitExceeded:
-		return errorKeysLimitExceeded
+	} else if errors.Is(err, errKeysLimitExceeded) {
+		return errKeysLimitExceeded
 	}
 
 	return nil
@@ -244,11 +245,11 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 			var newSize int
 			if key, newSize = sp.keygen.CreateKey(); newSize != 0 {
 				if newSize == -1 {
-					return errorKeysLimitExceeded
+					return errKeysLimitExceeded
 				}
 				sp.output.KeyLength = newSize
 				log.Println("[dmmsave] unable to create a key, changing key length:", newSize)
-				return errorRegenerateKeys
+				return errRegenerateKeys
 			}
 			createdKeys = append(createdKeys, key)
 		}

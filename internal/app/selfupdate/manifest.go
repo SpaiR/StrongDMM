@@ -47,6 +47,6 @@ func FetchRemoteManifest() (Manifest, error) {
 	if manifestData, err := req.Get(env.Manifest); err == nil {
 		return ParseManifest(manifestData)
 	} else {
-		return Manifest{}, fmt.Errorf("unable to get manifest data: %v", err)
+		return Manifest{}, fmt.Errorf("unable to get manifest data: %w", err)
 	}
 }
