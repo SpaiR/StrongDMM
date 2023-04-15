@@ -2,7 +2,6 @@ package tilemenu
 
 import (
 	"fmt"
-	"log"
 
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/dmapi/dm"
@@ -15,6 +14,7 @@ import (
 	"sdmm/internal/util"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (t *TileMenu) Process() {
@@ -138,7 +138,7 @@ func (t *TileMenu) showInstanceControls(i *dmminstance.Instance, idx int) w.Layo
 
 func (t *TileMenu) doMoveToTop(i *dmminstance.Instance) func() {
 	return func() {
-		log.Printf("[tilemenu] do move instance[%s] to top: %d", i.Prefab().Path(), i.Id())
+		log.Printf("do move instance[%s] to top: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceMoveToTop(i)
 		t.editor.CommitChanges("Move to Top")
 	}
@@ -146,7 +146,7 @@ func (t *TileMenu) doMoveToTop(i *dmminstance.Instance) func() {
 
 func (t *TileMenu) doMoveToBottom(i *dmminstance.Instance) func() {
 	return func() {
-		log.Printf("[tilemenu] do move instance[%s] to bottom: %d", i.Prefab().Path(), i.Id())
+		log.Printf("do move instance[%s] to bottom: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceMoveToBottom(i)
 		t.editor.CommitChanges("Move to Bottom")
 	}
@@ -154,14 +154,14 @@ func (t *TileMenu) doMoveToBottom(i *dmminstance.Instance) func() {
 
 func (t *TileMenu) doSelect(i *dmminstance.Instance) func() {
 	return func() {
-		log.Printf("[tilemenu] do select instance[%s]: %d", i.Prefab().Path(), i.Id())
+		log.Printf("do select instance[%s]: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceSelect(i)
 	}
 }
 
 func (t *TileMenu) doDelete(i *dmminstance.Instance) func() {
 	return func() {
-		log.Printf("[tilemenu] do delete instance[%s]: %d", i.Prefab().Path(), i.Id())
+		log.Printf("do delete instance[%s]: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceDelete(i)
 		t.editor.CommitChanges("Delete Instance")
 	}
@@ -170,7 +170,7 @@ func (t *TileMenu) doDelete(i *dmminstance.Instance) func() {
 func (t *TileMenu) doReplace(i *dmminstance.Instance) func() {
 	return func() {
 		if prefab, ok := t.app.SelectedPrefab(); ok {
-			log.Printf("[tilemenu] do replace instance[%s] with [%s]: %d", i.Prefab().Path(), prefab.Path(), i.Id())
+			log.Printf("do replace instance[%s] with [%s]: %d", i.Prefab().Path(), prefab.Path(), i.Id())
 			t.editor.InstanceReplace(i, prefab)
 			t.editor.CommitChanges("Replace Instance")
 		}
@@ -179,7 +179,7 @@ func (t *TileMenu) doReplace(i *dmminstance.Instance) func() {
 
 func (t *TileMenu) doResetToDefault(i *dmminstance.Instance) func() {
 	return func() {
-		log.Printf("[tilemenu] do reset instance[%s] to default: %d", i.Prefab().Path(), i.Id())
+		log.Printf("do reset instance[%s] to default: %d", i.Prefab().Path(), i.Id())
 		t.editor.InstanceReset(i)
 		t.editor.CommitChanges("Reset Instance")
 	}
@@ -187,7 +187,7 @@ func (t *TileMenu) doResetToDefault(i *dmminstance.Instance) func() {
 
 func (t *TileMenu) doSearchByType(i *dmminstance.Instance) func() {
 	return func() {
-		log.Println("[tilemenu] do search prefab by type:", i.Prefab().Path())
+		log.Print("do search prefab by type:", i.Prefab().Path())
 		t.app.ShowLayout(lnode.NameSearch, true)
 		t.app.DoSearchPrefabByPath(i.Prefab().Path())
 	}
@@ -195,7 +195,7 @@ func (t *TileMenu) doSearchByType(i *dmminstance.Instance) func() {
 
 func (t *TileMenu) doSearchByPrefabID(i *dmminstance.Instance) func() {
 	return func() {
-		log.Println("[tilemenu] do search prefab by ID:", i.Prefab().Id())
+		log.Print("do search prefab by ID:", i.Prefab().Id())
 		t.app.ShowLayout(lnode.NameSearch, true)
 		t.app.DoSearchPrefab(i.Prefab().Id())
 	}

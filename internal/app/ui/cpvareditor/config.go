@@ -1,6 +1,6 @@
 package cpvareditor
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 const (
 	configName    = "cpvareditor"
@@ -39,6 +39,6 @@ func (v *VarEditor) config() *vareditorConfig {
 	if cfg, ok := v.app.ConfigFind(configName).(*vareditorConfig); ok {
 		return cfg
 	}
-	log.Fatal("[cpvareditor] can't find config")
+	log.Fatal().Msg("can't find config")
 	return nil
 }

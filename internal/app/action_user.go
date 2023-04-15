@@ -1,8 +1,6 @@
 package app
 
 import (
-	"log"
-
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/render"
 	"sdmm/internal/app/ui/cpwsarea/workspace"
@@ -15,6 +13,7 @@ import (
 	"sdmm/internal/env"
 	"sdmm/internal/util/slice"
 
+	"github.com/rs/zerolog/log"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
 )
@@ -25,7 +24,7 @@ import (
 */
 
 func (a *app) DoNewWorkspace() {
-	log.Println("[app] new workspace...")
+	log.Print("new workspace...")
 	a.layout.WsArea.AddEmptyWorkspace()
 }
 
@@ -37,7 +36,7 @@ func (a *app) DoOpen() {
 // DoOpenV opens environment, which user need to select in file dialog.
 // Verbose version which handle opening in a specific workspace. Helpful to open maps.
 func (a *app) DoOpenV(ws *workspace.Workspace) {
-	log.Println("[app] selecting resource to load...")
+	log.Print("selecting resource to load...")
 
 	startDir := ""
 	if a.HasLoadedEnvironment() {
@@ -50,7 +49,7 @@ func (a *app) DoOpenV(ws *workspace.Workspace) {
 		Filter("Resource", "dme", "dmm").
 		SetStartDir(startDir).
 		Load(); err == nil {
-		log.Println("[app] resource to load selected:", file)
+		log.Print("resource to load selected:", file)
 
 		if a.HasLoadedEnvironment() {
 			a.loadMap(file, ws)
@@ -68,19 +67,19 @@ func (a *app) DoLoadResource(path string) {
 // DoLoadResourceV opens environment by provided path.
 // Verbose version which handle opening in a specific workspace. Helpful to open maps.
 func (a *app) DoLoadResourceV(path string, ws *workspace.Workspace) {
-	log.Println("[app] load resource by path:", path)
+	log.Print("load resource by path:", path)
 	a.loadResourceV(path, ws)
 }
 
 // DoClearRecentEnvironments clears recently opened environments.
 func (a *app) DoClearRecentEnvironments() {
-	log.Println("[app] clear recent environments")
+	log.Print("clear recent environments")
 	a.projectConfig().ClearProjects()
 }
 
 // DoCloseEnvironment closes currently opened environment.
 func (a *app) DoCloseEnvironment() {
-	log.Println("[app] closing environment")
+	log.Print("closing environment")
 	a.closeEnvironment(func(closed bool) {
 		if closed {
 			a.freeEnvironmentResources()
@@ -91,19 +90,19 @@ func (a *app) DoCloseEnvironment() {
 
 // DoNewMap opens dialog window to create a new map file.
 func (a *app) DoNewMap() {
-	log.Println("[app] opening create map...")
+	log.Print("opening create map...")
 	a.layout.WsArea.OpenCreateMap()
 }
 
 // DoClearRecentMaps clears recently opened maps.
 func (a *app) DoClearRecentMaps() {
-	log.Println("[app] clear recent maps")
+	log.Print("clear recent maps")
 	a.projectConfig().ClearMaps()
 }
 
 // DoRemoveRecentMaps removes specific recent maps.
 func (a *app) DoRemoveRecentMaps(recentMaps []string) {
-	log.Println("[app] do remove recent maps:", recentMaps)
+	log.Print("do remove recent maps:", recentMaps)
 	recentMaps = append(make([]string, 0, len(recentMaps)), recentMaps...)
 	for _, recentMap := range recentMaps {
 		a.projectConfig().RemoveMap(recentMap)
@@ -112,13 +111,13 @@ func (a *app) DoRemoveRecentMaps(recentMaps []string) {
 
 // DoRemoveRecentEnvironment removes specific recent environment.
 func (a *app) DoRemoveRecentEnvironment(envPath string) {
-	log.Println("[app] remove recent environment:", envPath)
+	log.Print("remove recent environment:", envPath)
 	a.projectConfig().RemoveEnvironment(envPath)
 }
 
 // DoRemoveRecentMap removes specific recent map.
 func (a *app) DoRemoveRecentMap(mapPath string) {
-	log.Println("[app] remove recent map:", mapPath)
+	log.Print("remove recent map:", mapPath)
 	a.projectConfig().RemoveMap(mapPath)
 }
 
@@ -134,7 +133,7 @@ func (a *app) DoCloseAll() {
 
 // DoSave saves current active map.
 func (a *app) DoSave() {
-	log.Println("[app] do save")
+	log.Print("do save")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Save()
 	}
@@ -142,7 +141,7 @@ func (a *app) DoSave() {
 
 // DoSaveAll saves all active maps.
 func (a *app) DoSaveAll() {
-	log.Println("[app] do save all")
+	log.Print("do save all")
 	for _, ws := range a.layout.WsArea.MapWorkspaces() {
 		ws.Save()
 	}
@@ -150,116 +149,116 @@ func (a *app) DoSaveAll() {
 
 // DoOpenPreferences opens preferences tab.
 func (a *app) DoOpenPreferences() {
-	log.Println("[app] open preferences")
+	log.Print("open preferences")
 	a.layout.WsArea.OpenPreferences(prefs.Make(a, &a.preferencesConfig().Prefs))
 }
 
 // DoSelectPrefab globally selects provided prefab in the app.
 func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
-	log.Printf("[app] select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
+	log.Printf("select prefab: path=[%s], id=[%d]", prefab.Path(), prefab.Id())
 	a.layout.Environment.SelectPath(prefab.Path())
 	a.layout.Prefabs.Select(prefab)
 }
 
 // DoSelectPrefabByPath globally selects a prefab with provided type path.
 func (a *app) DoSelectPrefabByPath(path string) {
-	log.Println("[app] select prefab by path:", path)
+	log.Print("select prefab by path:", path)
 	a.DoSelectPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
 // DoEditInstance enables an editing for the provided instance.
 func (a *app) DoEditInstance(instance *dmminstance.Instance) {
-	log.Println("[app] edit instance:", instance.Id())
+	log.Print("edit instance:", instance.Id())
 	a.layout.VarEditor.EditInstance(instance)
 }
 
 // DoEditPrefab enables an editing for the provided prefab.
 func (a *app) DoEditPrefab(prefab *dmmprefab.Prefab) {
-	log.Println("[app] edit prefab:", prefab.Id())
+	log.Print("edit prefab:", prefab.Id())
 	a.layout.VarEditor.EditPrefab(prefab)
 }
 
 // DoEditPrefabByPath enables an editing for the provided prefab by its path.
 func (a *app) DoEditPrefabByPath(path string) {
-	log.Println("[app] edit prefab by path:", path)
+	log.Print("edit prefab by path:", path)
 	a.DoEditPrefab(dmmap.PrefabStorage.Initial(path))
 }
 
 // DoSearchPrefab does a search of the provided prefab ID.
 func (a *app) DoSearchPrefab(prefabId uint64) {
-	log.Println("[app] search prefab id:", prefabId)
+	log.Print("search prefab id:", prefabId)
 	a.layout.Search.Search(prefabId)
 }
 
 // DoSearchPrefabByPath does a search of the provided prefab path.
 func (a *app) DoSearchPrefabByPath(path string) {
-	log.Println("[app] search prefab path:", path)
+	log.Print("search prefab path:", path)
 	a.layout.Search.SearchByPath(path)
 }
 
 // DoExit exits the app.
 func (a *app) DoExit() {
-	log.Println("[app] exit")
+	log.Print("exit")
 	a.tmpShouldClose = true
 }
 
 // DoUndo does undo of the latest command.
 func (a *app) DoUndo() {
-	log.Println("[app] undo")
+	log.Print("undo")
 	a.commandStorage.Undo()
 }
 
 // DoRedo does redo of the previous command.
 func (a *app) DoRedo() {
-	log.Println("[app] redo")
+	log.Print("redo")
 	a.commandStorage.Redo()
 }
 
 // DoResetLayout resets application windows to their initial positions.
 func (a *app) DoResetLayout() {
-	log.Println("[app] reset layout")
+	log.Print("reset layout")
 	a.resetLayout()
 }
 
 // DoOpenChangelog opens "changelog" workspace.
 func (a *app) DoOpenChangelog() {
-	log.Println("[app] open changelog")
+	log.Print("open changelog")
 	a.layout.WsArea.OpenChangelog()
 }
 
 // DoOpenAbout opens "about" window.
 func (a *app) DoOpenAbout() {
-	log.Println("[app] open about")
+	log.Print("open about")
 	a.openAboutWindow()
 }
 
 // DoOpenLogs opens the logs folder.
 func (a *app) DoOpenLogs() {
-	log.Println("[app] open logs dir:", a.logDir)
+	log.Print("open logs dir:", a.logDir)
 	if err := open.Run(a.logDir); err != nil {
-		log.Println("[app] unable to open log dir:", err)
+		log.Print("unable to open log dir:", err)
 	}
 }
 
 // DoOpenSourceCode opens GitHub with a source code for the editor.
 func (a *app) DoOpenSourceCode() {
-	log.Println("[app] open source code:", env.GitHub)
+	log.Print("open source code:", env.GitHub)
 	if err := open.Run(env.GitHub); err != nil {
-		log.Println("[app] unable to open GitHub:", err)
+		log.Print("unable to open GitHub:", err)
 	}
 }
 
 // DoOpenSupport opens support page.
 func (a *app) DoOpenSupport() {
-	log.Println("[app] open source code:", env.Support)
+	log.Print("open source code:", env.Support)
 	if err := open.Run(env.Support); err != nil {
-		log.Println("[app] unable to open support page:", err)
+		log.Print("unable to open support page:", err)
 	}
 }
 
 // DoCopy copies currently selected (hovered) tiles to the global clipboard.
 func (a *app) DoCopy() {
-	log.Println("[app] do copy")
+	log.Print("do copy")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().Editor().TileCopySelected()
 	}
@@ -267,7 +266,7 @@ func (a *app) DoCopy() {
 
 // DoPaste pastes tiles from the global clipboard on the currently hovered tile.
 func (a *app) DoPaste() {
-	log.Println("[app] do paste")
+	log.Print("do paste")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().Editor().TilePasteSelected()
 		ws.Map().Editor().CommitChanges("Paste Tile")
@@ -276,7 +275,7 @@ func (a *app) DoPaste() {
 
 // DoCut cuts currently selected (hovered) tiles to the global clipboard.
 func (a *app) DoCut() {
-	log.Println("[app] do cut")
+	log.Print("do cut")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().Editor().TileCutSelected()
 		ws.Map().Editor().CommitChanges("Cut Tile")
@@ -285,7 +284,7 @@ func (a *app) DoCut() {
 
 // DoDelete deletes tiles from the currently selected (hovered) tiles.
 func (a *app) DoDelete() {
-	log.Println("[app] do delete")
+	log.Print("do delete")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().Editor().TileDeleteSelected()
 		ws.Map().Editor().CommitChanges("Delete Tile")
@@ -294,7 +293,7 @@ func (a *app) DoDelete() {
 
 // DoDeselect deselects currently selected area.
 func (a *app) DoDeselect() {
-	log.Println("[app] do deselect")
+	log.Print("do deselect")
 	if ws, ok := a.activeWsMap(); ok {
 		ws.Map().DoDeselect()
 	}
@@ -302,7 +301,7 @@ func (a *app) DoDeselect() {
 
 // DoSearch searches for a currently selected prefab.
 func (a *app) DoSearch() {
-	log.Println("[app] do search")
+	log.Print("do search")
 	if prefabId := a.layout.Prefabs.SelectedPrefabId(); prefabId != dmmprefab.IdNone {
 		a.DoSearchPrefab(prefabId)
 	}
@@ -312,41 +311,41 @@ func (a *app) DoSearch() {
 // DoAreaBorders toggles area borders rendering.
 func (a *app) DoAreaBorders() {
 	pmap.AreaBordersRendering = !pmap.AreaBordersRendering
-	log.Println("[app] do area borders:", pmap.AreaBordersRendering)
+	log.Print("do area borders:", pmap.AreaBordersRendering)
 }
 
 // DoMultiZRendering toggles multi-z rendering.
 func (a *app) DoMultiZRendering() {
 	render.MultiZRendering = !render.MultiZRendering
-	log.Println("[app] do multiZ rendering:", render.MultiZRendering)
+	log.Print("do multiZ rendering:", render.MultiZRendering)
 }
 
 // DoMirrorCanvasCamera toggles mode of mirroring canvas camera.
 func (a *app) DoMirrorCanvasCamera() {
 	pmap.MirrorCanvasCamera = !pmap.MirrorCanvasCamera
-	log.Println("[app] do mirror canvas camera:", pmap.MirrorCanvasCamera)
+	log.Print("do mirror canvas camera:", pmap.MirrorCanvasCamera)
 }
 
 // DoSelfUpdate starts the process of a self update.
 func (a *app) DoSelfUpdate() {
-	log.Println("[app] do self update")
+	log.Print("do self update")
 	a.selfUpdate()
 }
 
 // DoRestart restarts the application.
 func (a *app) DoRestart() {
-	log.Println("[app] do restart")
+	log.Print("do restart")
 	window.Restart()
 }
 
 // DoIgnoreUpdate adds currently available update to to ignore list.
 func (a *app) DoIgnoreUpdate() {
-	log.Println("[app] do ignore update:", remoteManifest.Version)
+	log.Print("do ignore update:", remoteManifest.Version)
 	a.config().UpdateIgnore = slice.StrPushUnique(a.config().UpdateIgnore, remoteManifest.Version)
 }
 
 // DoCheckForUpdates checks for available update.
 func (a *app) DoCheckForUpdates() {
-	log.Println("[app] do check for updates")
+	log.Print("do check for updates")
 	a.checkForUpdatesV(true)
 }

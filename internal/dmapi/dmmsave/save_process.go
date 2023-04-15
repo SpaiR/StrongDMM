@@ -2,7 +2,6 @@ package dmmsave
 
 import (
 	"errors"
-	"log"
 
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
@@ -12,6 +11,8 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/dmapi/dmmsave/keygen"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 type saveProcess struct {
@@ -31,7 +32,7 @@ func makeSaveProcess(cfg Config, dme *dmenv.Dme, dmm *dmmap.Dmm, path string) (*
 
 	initial, err := dmmdata.New(dmm.Backup)
 	if err != nil {
-		log.Println("[dmmsave] unable to read map backup:", dmm.Backup)
+		log.Print("unable to read map backup:", dmm.Backup)
 		return nil, err
 	}
 
@@ -77,7 +78,7 @@ func detectIsTgm(saveFormat Format, isInitialTGM bool) bool {
 }
 
 func (sp *saveProcess) sanitizeVariables() {
-	log.Println("[dmmsave] sanitizing variables...")
+	log.Print("sanitizing variables...")
 
 	for _, tile := range sp.dmm.Tiles {
 		for _, instance := range tile.Instances() {
@@ -94,14 +95,14 @@ func (sp *saveProcess) sanitizeVariables() {
 				prefValue, _ := prefab.Vars().Value(varName)
 
 				if origValue == prefValue {
-					log.Println("[dmmsave] delete variable:", varName)
+					log.Print("delete variable:", varName)
 					vars = dmvars.Delete(vars, varName)
 				}
 			}
 
 			if prefab.Vars().Len() != vars.Len() {
 				instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, prefab.Path(), vars))
-				log.Printf("[dmmsave] instance sanitized: [%d#%s]", instance.Id(), prefab.Path())
+				log.Printf("instance sanitized: [%d#%s]", instance.Id(), prefab.Path())
 			}
 		}
 	}
@@ -109,7 +110,7 @@ func (sp *saveProcess) sanitizeVariables() {
 
 // Go through the dmm tiles and try to find a key in the initial map with the same content.
 func (sp *saveProcess) handleReusedKeys() {
-	log.Println("[dmmsave] handle reused keys...")
+	log.Print("handle reused keys...")
 
 	// Cache the initial content, since we know it won't change.
 	keyByPrefabs := make(map[uint64]dmmdata.Key, len(sp.initial.Dictionary))
@@ -125,17 +126,17 @@ func (sp *saveProcess) handleReusedKeys() {
 		}
 	}
 
-	log.Println("[dmmsave] remaining count of unused keys:", len(sp.unusedKeys))
+	log.Print("remaining count of unused keys:", len(sp.unusedKeys))
 }
 
 // Find all locations without keys and fill them with the content.
 func (sp *saveProcess) handleLocationsWithoutKeys() error {
-	log.Println("[dmmsave] handle locations without keys...")
-	log.Println("[dmmsave] collecting locations without keys...")
+	log.Print("handle locations without keys...")
+	log.Print("collecting locations without keys...")
 
 	locsWithoutKey := sp.findLocationsWithoutKey()
 
-	log.Println("[dmmsave] count of locations without keys:", len(locsWithoutKey))
+	log.Print("count of locations without keys:", len(locsWithoutKey))
 
 	sp.tryToReuseKeysByTheirInitialLocation(locsWithoutKey)
 
@@ -177,7 +178,7 @@ func (sp *saveProcess) tryToReuseKeysByTheirInitialLocation(locsWithoutKey map[u
 		return
 	}
 
-	log.Println("[dmmsave] trying to match unused keys with its previous location...")
+	log.Print("trying to match unused keys with its previous location...")
 
 	// Copy to modify the original map safely during its iteration.
 	unusedKeysCpy := make(map[dmmdata.Key]bool)
@@ -212,13 +213,13 @@ func (sp *saveProcess) tryToReuseKeysByTheirInitialLocation(locsWithoutKey map[u
 		}
 	}
 
-	log.Println("[dmmsave] remaining count of unused keys:", len(sp.unusedKeys))
-	log.Println("[dmmsave] count of locations without keys:", len(locsWithoutKey))
+	log.Print("remaining count of unused keys:", len(sp.unusedKeys))
+	log.Print("count of locations without keys:", len(locsWithoutKey))
 }
 
 // File all locations without keys with the key and the content.
 func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
-	log.Println("[dmmsave] handling remaining locations...")
+	log.Print("handling remaining locations...")
 
 	// For logs.
 	var (
@@ -248,7 +249,7 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 					return errKeysLimitExceeded
 				}
 				sp.output.KeyLength = newSize
-				log.Println("[dmmsave] unable to create a key, changing key length:", newSize)
+				log.Print("unable to create a key, changing key length:", newSize)
 				return errRegenerateKeys
 			}
 			createdKeys = append(createdKeys, key)
@@ -257,9 +258,9 @@ func (sp *saveProcess) fillLocations(locsWithoutKey map[util.Point]bool) error {
 		sp.setOutputKeyContent(loc, key, prefabs)
 	}
 
-	log.Println("[dmmsave] all tiles handled")
-	log.Println("[dmmsave] reused keys:", reusedKeys)
-	log.Println("[dmmsave] created keys:", createdKeys)
+	log.Print("all tiles handled")
+	log.Print("reused keys:", reusedKeys)
+	log.Print("created keys:", createdKeys)
 
 	return nil
 }

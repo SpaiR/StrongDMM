@@ -3,20 +3,21 @@ package dmmdata
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 // SaveDM writes DmmData in DM format to a file with the provided path.
 func (d DmmData) SaveDM(path string) {
-	log.Println("[dmmdata] saving dmm data in [DM] format...")
+	log.Print("saving dmm data in format...")
 
 	f, err := os.Create(path)
 	if err != nil {
-		log.Printf("[dmmdata] unable to save as [DM] [%s]: %v", d, err)
+		log.Printf("unable to save as [%s]: %v", d, err)
 		return
 	}
 	defer f.Close()
@@ -26,14 +27,14 @@ func (d DmmData) SaveDM(path string) {
 		_, _ = w.WriteString(str)
 	}
 
-	log.Println("[dmmdata] writing prefabs...")
+	log.Print("writing prefabs...")
 
 	for _, key := range d.Keys() {
 		write(toDMStr(key, d.Dictionary[key]))
 		write(d.LineBreak)
 	}
 
-	log.Println("[dmmdata] writing grid...")
+	log.Print("writing grid...")
 
 	for z := 1; z <= d.MaxZ; z++ {
 		write(d.LineBreak)
@@ -53,10 +54,10 @@ func (d DmmData) SaveDM(path string) {
 	write(d.LineBreak)
 
 	if err = w.Flush(); err != nil {
-		log.Printf("[dmmdata] unable to write to [%s]: %v", path, err)
+		log.Printf("unable to write to [%s]: %v", path, err)
 	}
 
-	log.Printf("[dmmdata] [%s] saved in [DM] format to: %s", d, path)
+	log.Printf("[%s] saved in format to: %s", d, path)
 }
 
 func toDMStr(key Key, prefabs Prefabs) string {

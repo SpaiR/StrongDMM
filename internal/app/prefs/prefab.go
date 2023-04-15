@@ -1,9 +1,9 @@
 package prefs
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/cpwsarea/wsprefs"
+
+	"github.com/rs/zerolog/log"
 )
 
 type prefPrefab interface {
@@ -32,7 +32,7 @@ func (p intPrefPrefab) make() any {
 		return *p.value
 	}
 	pref.FSet = func(value int) {
-		log.Printf("[app] preferences changing, [%s] to: %d", p.label, value)
+		log.Printf("preferences changing, [%s] to: %d", p.label, value)
 		*p.value = value
 		if p.post != nil {
 			p.post(value)
@@ -62,7 +62,7 @@ func (p optionPrefPrefab) make() any {
 		return *p.value
 	}
 	pref.FSet = func(value string) {
-		log.Printf("[app] preferences changing, [%s] to: %s", p.label, value)
+		log.Printf("preferences changing, [%s] to: %s", p.label, value)
 		*p.value = value
 		if p.post != nil {
 			p.post(value)
@@ -93,7 +93,7 @@ func (p boolPrefPrefab) make() any {
 		return *p.value
 	}
 	pref.FSet = func(value bool) {
-		log.Printf("[app] preferences changing, [%s] to: %t", p.label, value)
+		log.Printf("preferences changing, [%s] to: %t", p.label, value)
 		*p.value = value
 		if p.post != nil {
 			p.post(value)

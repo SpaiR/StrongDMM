@@ -1,13 +1,12 @@
 package app
 
 import (
-	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
-	"sdmm/internal/util"
 	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/config"
@@ -33,22 +32,21 @@ const (
 
 func Start() {
 	internalDir := getOrCreateInternalDir()
-	logDir := initializeLogger(internalDir)
+	logDir := initializeLogs(internalDir)
 
-	log.Printf("%s, %s", env.Title, env.Version)
+	log.Info().Msgf("%s, %s", env.Title, env.Version)
+	log.Info().Msgf("internal dir: %s", internalDir)
+	log.Info().Msgf("log dir: %s", logDir)
 
 	if osInfo, err := goInfo.GetInfo(); err == nil {
-		log.Println("Kernel:", osInfo.Kernel)
-		log.Println("Core:", osInfo.Core)
-		log.Println("Platform:", osInfo.Platform)
-		log.Println("OS:", osInfo.OS)
-		log.Println("CPUs:", osInfo.CPUs)
-		log.Println("Runtime:", runtime.Version())
+		log.Info().Msg("System info:")
+		log.Info().Msgf("  Kernel: %s", osInfo.Kernel)
+		log.Info().Msgf("  Core: %s", osInfo.Core)
+		log.Info().Msgf("  Platform: %s", osInfo.Platform)
+		log.Info().Msgf("  OS: %s", osInfo.OS)
+		log.Info().Msgf("  CPUs: %d", osInfo.CPUs)
+		log.Info().Msgf("  Runtime: %s", runtime.Version())
 	}
-
-	log.Println("[app] starting")
-	log.Println("[app] internal dir:", internalDir)
-	log.Println("[app] log dir:", logDir)
 
 	a := app{
 		internalDir: internalDir,
@@ -59,17 +57,17 @@ func Start() {
 
 	a.masterWindow = window.New(&a)
 
-	log.Println("[app] start phase: [initialize]")
+	log.Info().Msg("start phase: [initialize]")
 	a.initialize()
-	log.Println("[app] end phase: [initialize]")
+	log.Info().Msg("end phase: [initialize]")
 
-	log.Println("[app] start phase: [process]")
+	log.Info().Msg("start phase: [process]")
 	a.masterWindow.Process()
-	log.Println("[app] end phase: [process]")
+	log.Info().Msg("end phase: [process]")
 
-	log.Println("[app] start phase: [dispose]")
+	log.Info().Msg("start phase: [dispose]")
 	a.dispose()
-	log.Println("[app] end phase: [dispose]")
+	log.Info().Msg("end phase: [dispose]")
 }
 
 type app struct {
@@ -151,7 +149,7 @@ func (a *app) PostProcess() {
 }
 
 func (a *app) CloseCheck() {
-	log.Println("[app] run close check")
+	log.Print("run close check")
 	a.layout.WsArea.CloseAllMaps(func(closed bool) {
 		a.closed = closed
 	})
@@ -176,7 +174,7 @@ func getOrCreateInternalDir() string {
 
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal("[app] unable to find user home dir:", err)
+		panic("unable to find user home dir")
 	}
 
 	if runtime.GOOS == "windows" {
@@ -187,26 +185,6 @@ func getOrCreateInternalDir() string {
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 
 	return filepath.FromSlash(internalDir)
-}
-
-func initializeLogger(internalDir string) string {
-	// Configure logs directory.
-	logDir := internalDir + "/logs"
-	_ = os.MkdirAll(logDir, os.ModePerm)
-
-	// Create log file for the current session.
-	formattedDate := time.Now().Format(util.TimeFormat)
-	logFile := logDir + "/" + formattedDate + ".log"
-	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModePerm)
-	if err != nil {
-		log.Fatal("[app] unable to open log file")
-	}
-
-	// Attach logs output to the log file and an application terminal.
-	multiOut := io.MultiWriter(file, os.Stdout)
-	log.SetOutput(multiOut)
-
-	return filepath.FromSlash(logDir)
 }
 
 func (a *app) checkShouldClose() {
@@ -237,38 +215,38 @@ func (a *app) updateScale() {
 func (a *app) updateLayoutState() {
 	if a.layout.CheckLayoutState() {
 		a.layout.SyncLayoutState()
-		log.Println("[app] reset layout state")
+		log.Print("reset layout state")
 		a.resetLayout()
 	} else if _, err := os.Stat(a.LayoutIniPath()); os.IsNotExist(err) {
-		log.Println("[app] no layout was found, resetting...")
+		log.Print("no layout was found, resetting...")
 		a.resetLayout()
 	} else {
-		log.Println("[app] layout state is not changed")
+		log.Print("layout state is not changed")
 	}
 }
 
 func (a *app) resetLayout() {
 	_ = os.Remove(a.LayoutIniPath())
-	log.Println("[app] layout data deleted:", a.LayoutIniPath())
+	log.Print("layout data deleted:", a.LayoutIniPath())
 	a.tmpWindowCond = imgui.ConditionAlways
-	log.Println("[app] layout reset")
+	log.Print("layout reset")
 }
 
 func (a *app) deleteOldLogs() {
 	logsCount := deleteOldFiles(a.logDir, ttlDaysLogs)
 	if logsCount > 0 {
-		log.Println("[app] old logs deleted:", logsCount)
+		log.Print("old logs deleted:", logsCount)
 	} else {
-		log.Println("[app] no old logs to delete")
+		log.Print("no old logs to delete")
 	}
 }
 
 func (a *app) deleteOldBackups() {
 	backupsCount := deleteOldFiles(a.backupDir, ttlDaysBackups)
 	if backupsCount > 0 {
-		log.Println("[app] old backups deleted:", backupsCount)
+		log.Print("old backups deleted:", backupsCount)
 	} else {
-		log.Println("[app] no old backups to delete")
+		log.Print("no old backups to delete")
 	}
 }
 
@@ -276,10 +254,10 @@ func deleteOldFiles(dir string, ttlDays float64) (deletedFiles int) {
 	_ = filepath.Walk(dir, func(path string, info os.FileInfo, _ error) error {
 		if info != nil && !info.IsDir() && time.Since(info.ModTime()).Hours()/24 > ttlDays {
 			if err := os.Remove(path); err == nil {
-				log.Println("[app] old file deleted:", path)
+				log.Print("old file deleted:", path)
 				deletedFiles++
 			} else {
-				log.Printf("[app] unable to delete old file [%s]: %v", path, err)
+				log.Printf("unable to delete old file [%s]: %v", path, err)
 			}
 		}
 		return nil

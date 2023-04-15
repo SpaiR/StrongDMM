@@ -1,12 +1,12 @@
 package pmap
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/imguiext/icon"
 	"sdmm/internal/imguiext/style"
 	w "sdmm/internal/imguiext/widget"
+
+	"github.com/rs/zerolog/log"
 )
 
 type toolDesc struct {
@@ -160,21 +160,21 @@ func (p *PaneMap) panelToolsLayoutSettings() w.Layout {
 }
 
 func (p *PaneMap) doToggleSettings() {
-	log.Println("[pmap] toggle settings:")
+	log.Print("toggle settings:")
 	p.showSettings = !p.showSettings
 }
 
 func (p *PaneMap) doPreviousLevel() {
 	if p.hasPreviousLevel() {
 		p.activeLevel--
-		log.Println("[pmap] active level switched to previous:", p.activeLevel)
+		log.Print("active level switched to previous:", p.activeLevel)
 	}
 }
 
 func (p *PaneMap) doNextLevel() {
 	if p.hasNextLevel() {
 		p.activeLevel++
-		log.Println("[pmap] active level switched to next:", p.activeLevel)
+		log.Print("active level switched to next:", p.activeLevel)
 	}
 }
 

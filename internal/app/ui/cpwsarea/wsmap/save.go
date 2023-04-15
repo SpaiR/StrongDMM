@@ -1,14 +1,14 @@
 package wsmap
 
 import (
-	"log"
-
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/dmapi/dmmsave"
+
+	"github.com/rs/zerolog/log"
 )
 
 func (ws *WsMap) Save() bool {
-	log.Println("[wsmap] saving map workspace:", ws.CommandStackId())
+	log.Print("saving map workspace:", ws.CommandStackId())
 
 	editorPrefs := ws.app.Prefs().Editor
 

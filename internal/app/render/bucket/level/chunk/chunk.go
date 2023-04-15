@@ -1,11 +1,11 @@
 package chunk
 
 import (
-	"log"
-
 	"sdmm/internal/app/render/bucket/level/chunk/unit"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 // Size is a maximum number of tiles per axis for a single Chunk.
@@ -59,5 +59,5 @@ func (c *Chunk) Update(dmm *dmmap.Dmm, level int) {
 	}
 
 	c.UnitsByLayers = unitsByLayers
-	log.Printf("[bucket] chunk level [%d] updated: %v", level, c.MapBounds)
+	log.Printf("chunk level [%d] updated: %v", level, c.MapBounds)
 }

@@ -1,13 +1,14 @@
 package dmmclip
 
 import (
-	"log"
 	"sort"
 
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 type PasteData struct {
@@ -26,7 +27,7 @@ func New() *Clipboard {
 
 func (c *Clipboard) Free() {
 	c.pasteData = PasteData{}
-	log.Println("[dmmclip] clipboard free")
+	log.Print("clipboard free")
 }
 
 func (c *Clipboard) Copy(pathsFilter *dm.PathsFilter, dmm *dmmap.Dmm, tiles []util.Point) {
@@ -34,7 +35,7 @@ func (c *Clipboard) Copy(pathsFilter *dm.PathsFilter, dmm *dmmap.Dmm, tiles []ut
 		return
 	}
 
-	log.Printf("[dmmclip] copy tiles to the clipboard buffer: %v", tiles)
+	log.Printf("copy tiles to the clipboard buffer: %v", tiles)
 
 	c.pasteData.Filter = pathsFilter.Copy()
 	c.pasteData.Buffer = make([]dmmap.Tile, 0, len(tiles))

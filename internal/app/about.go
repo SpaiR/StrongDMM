@@ -2,13 +2,13 @@ package app
 
 import (
 	"fmt"
-	"log"
 
 	"sdmm/internal/app/ui/dialog"
 	"sdmm/internal/env"
 	w "sdmm/internal/imguiext/widget"
 	"sdmm/internal/rsc"
 
+	"github.com/rs/zerolog/log"
 	"github.com/skratchdot/open-golang/open"
 )
 
@@ -29,9 +29,9 @@ func (a *app) openAboutWindow() {
 			w.SameLine(),
 			w.Button(env.Revision, func() {
 				link := fmt.Sprintf("%s/tree/%s", env.GitHub, env.Revision)
-				log.Println("[app] do open revision link:", link)
+				log.Print("do open revision link:", link)
 				if err := open.Run(link); err != nil {
-					log.Println("[app] unable to open revision link:", err)
+					log.Print("unable to open revision link:", err)
 				}
 			}).Small(true),
 		},

@@ -1,11 +1,11 @@
 package platform
 
 import (
-	"log"
 	"unsafe"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/rs/zerolog/log"
 )
 
 // FloatSize shows the number of bytes in float32 value.
@@ -189,7 +189,7 @@ void main() {
 
 	var err error
 	if gShaderHandle, err = NewShaderProgram(vertShaderSource, fragShaderSource); err != nil {
-		log.Fatal("[platform] unable to create shader:", err)
+		log.Fatal().Msgf("unable to create shader: %v", err)
 	}
 }
 

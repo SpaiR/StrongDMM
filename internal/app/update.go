@@ -1,13 +1,14 @@
 package app
 
 import (
-	"log"
 	"runtime"
 
 	"sdmm/internal/app/selfupdate"
 	"sdmm/internal/env"
 	"sdmm/internal/req"
 	"sdmm/internal/util/slice"
+
+	"github.com/rs/zerolog/log"
 )
 
 var remoteManifest selfupdate.Manifest
@@ -17,26 +18,26 @@ func (a *app) checkForUpdates() {
 }
 
 func (a *app) checkForUpdatesV(forceAvailable bool) {
-	log.Println("[app] checking for self updates...")
+	log.Print("checking for self updates...")
 
 	manifest, err := selfupdate.FetchRemoteManifest()
 	if err != nil {
-		log.Printf("[app] unable to fetch remote manifest: %v", err)
+		log.Printf("unable to fetch remote manifest: %v", err)
 		return
 	}
 
 	remoteManifest = manifest
 
 	if manifest.Version == env.Version {
-		log.Println("[app] application is up to date!")
+		log.Print("application is up to date!")
 		return
 	}
 	if slice.StrContains(a.config().UpdateIgnore, manifest.Version) && !forceAvailable {
-		log.Println("[app] ignoring update:", manifest.Version)
+		log.Print("ignoring update:", manifest.Version)
 		return
 	}
 
-	log.Println("[app] new update available:", manifest.Version)
+	log.Print("new update available:", manifest.Version)
 
 	a.menu.SetUpdateAvailable(manifest.Version, manifest.Description)
 
@@ -61,24 +62,24 @@ func (a *app) selfUpdate() {
 		updateDownloadLink = remoteManifest.DownloadLinks.MacOS
 	}
 
-	log.Println("[app] updating with:", updateDownloadLink)
+	log.Print("updating with:", updateDownloadLink)
 
 	go func() {
 		latestUpdate, err := req.Get(updateDownloadLink)
 		if err != nil {
-			log.Println("[app] unable to get latest update:", err)
+			log.Print("unable to get latest update:", err)
 			a.menu.SetUpdateError()
 			return
 		}
 
 		if err = selfupdate.Update(latestUpdate); err != nil {
-			log.Println("[app] unable to complete self update:", err)
+			log.Print("unable to complete self update:", err)
 			a.menu.SetUpdateError()
 			return
 		}
 
 		a.menu.SetUpdated()
 
-		log.Println("[app] self update completed successfully!")
+		log.Print("self update completed successfully!")
 	}()
 }

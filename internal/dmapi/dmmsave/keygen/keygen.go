@@ -1,11 +1,12 @@
 package keygen
 
 import (
-	"log"
 	"math"
 	"math/rand"
 
 	"sdmm/internal/dmapi/dmmap/dmmdata"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -86,7 +87,7 @@ func New(data *dmmdata.DmmData) *KeyGen {
 
 func (k *KeyGen) DropKeysPool() {
 	k.keysPool = nil
-	log.Println("[keygen] keys pool dropped")
+	log.Print("keys pool dropped")
 }
 
 // CreateKey generates a random key.
@@ -136,9 +137,9 @@ func createKeysPool(data *dmmdata.DmmData) (keysPool []int, freeKeys int) {
 		}
 	}
 
-	log.Println("[keygen] keys pool created")
-	log.Println("[keygen] keys pool size:", len(keysPool))
-	log.Println("[keygen] free keys tier:", freeKeys)
+	log.Print("keys pool created")
+	log.Print("keys pool size:", len(keysPool))
+	log.Print("free keys tier:", freeKeys)
 
 	return keysPool, freeKeys
 }

@@ -1,8 +1,9 @@
 package psettings
 
 import (
-	"log"
 	"os/user"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -28,7 +29,7 @@ func (psettingsConfig) TryMigrate(_ map[string]any) (result map[string]any, migr
 func loadConfig(app App) *psettingsConfig {
 	u, err := user.Current()
 	if err != nil {
-		log.Fatal("[psettings] unable to find user:", err)
+		log.Fatal().Msgf("unable to find user: %v", err)
 	}
 
 	cfg := &psettingsConfig{

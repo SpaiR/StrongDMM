@@ -2,12 +2,12 @@ package shortcut
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/rs/zerolog/log"
 )
 
 type Shortcut struct {
@@ -77,12 +77,12 @@ func (s Shortcut) isPressed() bool {
 var shortcuts []*Shortcut
 
 func add(shortcut *Shortcut) {
-	log.Println("[shortcut] added:", shortcut)
+	log.Print("added:", shortcut)
 	shortcuts = append(shortcuts, shortcut)
 }
 
 func remove(shortcut *Shortcut) {
-	log.Println("[shortcut] removed:", shortcut)
+	log.Print("removed:", shortcut)
 	for idx, s := range shortcuts {
 		if s.id == shortcut.id {
 			shortcuts = append(shortcuts[:idx], shortcuts[idx+1:]...)
@@ -111,7 +111,7 @@ func Process() {
 		})
 
 		if shortcut := pressedShortcuts[0]; shortcut.IsEnabled == nil || shortcut.IsEnabled() {
-			log.Println("[shortcut] triggered:", shortcut)
+			log.Print("triggered:", shortcut)
 			shortcut.Action()
 		}
 	}

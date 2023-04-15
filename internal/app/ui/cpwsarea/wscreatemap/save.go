@@ -1,16 +1,16 @@
 package wscreatemap
 
 import (
-	"log"
-
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 func (ws *WsCreateMap) save(newPath string) {
-	log.Println("[wsnewmap] saving new map:", newPath)
+	log.Print("saving new map:", newPath)
 
 	// we assume the data is OK at this point
 	var data = &dmmdata.DmmData{

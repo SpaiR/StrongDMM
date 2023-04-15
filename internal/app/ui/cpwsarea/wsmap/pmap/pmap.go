@@ -1,8 +1,6 @@
 package pmap
 
 import (
-	"log"
-
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/render"
@@ -23,6 +21,7 @@ import (
 	"sdmm/internal/imguiext/style"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -243,11 +242,11 @@ func (p *PaneMap) Dispose() {
 	p.tileMenu.Dispose()
 	p.shortcuts.Dispose()
 
-	log.Println("[pmap] disposed")
+	log.Print("disposed")
 }
 
 func (p *PaneMap) prepareTools() {
-	log.Println("[pmap] preparing tools:", p.dmm.Name)
+	log.Print("preparing tools:", p.dmm.Name)
 	tools.SetEditor(p.editor)
 	tools.SetCanvasState(p.canvasState)
 	tools.SetCanvasControl(p.canvasControl)
@@ -273,7 +272,7 @@ func (p *PaneMap) mouseChangeCallback(x, y uint) {
 
 func (p *PaneMap) openTileMenu() {
 	if !p.canvasState.HoverOutOfBounds() {
-		log.Println("[pmap] open tile menu:", p.canvasState.HoveredTile())
+		log.Print("open tile menu:", p.canvasState.HoveredTile())
 		p.tileMenu.Open(p.canvasState.HoveredTile())
 	}
 }
@@ -290,7 +289,7 @@ func (p *PaneMap) updateShortcutsState() {
 }
 
 func (p *PaneMap) OnActivate() {
-	log.Println("[pmap] pane activated:", p.dmm.Name)
+	log.Print("pane activated:", p.dmm.Name)
 	activeCamera = p.canvas.Render().Camera
 	activePane = p
 	lastActivePane = p
@@ -305,20 +304,20 @@ func (p *PaneMap) OnDeactivate() {
 	tools.Selected().OnDeselect()
 	p.syncActiveCamera()
 	p.syncActivePane()
-	log.Println("[pmap] pane deactivated:", p.dmm.Name)
+	log.Print("pane deactivated:", p.dmm.Name)
 }
 
 func (p *PaneMap) syncActiveCamera() {
 	if activeCamera == p.canvas.Render().Camera {
 		activeCamera = nil
-		log.Println("[pmap] active camera cleared:", p.dmm.Name)
+		log.Print("active camera cleared:", p.dmm.Name)
 	}
 }
 
 func (p *PaneMap) syncActivePane() {
 	if activePane == p {
 		activePane = nil
-		log.Println("[pmap] active pane cleared:", p.dmm.Name)
+		log.Print("active pane cleared:", p.dmm.Name)
 	}
 }
 

@@ -2,7 +2,6 @@ package psettings
 
 import (
 	"fmt"
-	"log"
 	"math"
 
 	"sdmm/internal/imguiext"
@@ -10,6 +9,7 @@ import (
 	w "sdmm/internal/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -70,7 +70,7 @@ func (p *Panel) showMapSize() {
 }
 
 func (p *Panel) doSetMapSize() {
-	log.Printf("[psettings] do set map size [%s]: %v", p.editor.Dmm().Name, p.sessionMapSize)
+	log.Printf("do set map size [%s]: %v", p.editor.Dmm().Name, p.sessionMapSize)
 	oldMaxX, oldMaxY, oldMaxZ := p.editor.Dmm().MaxX, p.editor.Dmm().MaxY, p.editor.Dmm().MaxZ
 	p.editor.Dmm().SetMapSize(int(p.sessionMapSize.maxX), int(p.sessionMapSize.maxY), int(p.sessionMapSize.maxZ))
 	p.editor.CommitMapSizeChange(oldMaxX, oldMaxY, oldMaxZ)

@@ -1,8 +1,9 @@
 package dm
 
 import (
-	"log"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type PathsFilter struct {
@@ -57,7 +58,7 @@ func (p *PathsFilter) HasHiddenChildPath(path string) bool {
 
 func (p *PathsFilter) TogglePath(path string) {
 	p.togglePath(path, p.IsVisiblePath(path))
-	log.Printf("[dm] toggle [%s] path: [%t]", path, p.IsVisiblePath(path))
+	log.Printf("toggle [%s] path: [%t]", path, p.IsVisiblePath(path))
 }
 
 func (p *PathsFilter) togglePath(path string, isFilteredOut bool) {

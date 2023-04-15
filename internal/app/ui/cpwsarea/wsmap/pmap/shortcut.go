@@ -1,13 +1,12 @@
 package pmap
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/platform"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/rs/zerolog/log"
 )
 
 func (p *PaneMap) addShortcuts() {
@@ -127,52 +126,52 @@ func (p *PaneMap) addShortcuts() {
 }
 
 func (p *PaneMap) doToggleArea() {
-	log.Println("[pmap] do toggle /area")
+	log.Print("do toggle /area")
 	p.app.PathsFilter().TogglePath("/area")
 }
 
 func (p *PaneMap) doToggleTurf() {
-	log.Println("[pmap] do toggle /turf")
+	log.Print("do toggle /turf")
 	p.app.PathsFilter().TogglePath("/turf")
 }
 
 func (p *PaneMap) doToggleObject() {
-	log.Println("[pmap] do toggle /obj")
+	log.Print("do toggle /obj")
 	p.app.PathsFilter().TogglePath("/obj")
 }
 
 func (p *PaneMap) doToggleMob() {
-	log.Println("[pmap] do toggle /mob")
+	log.Print("do toggle /mob")
 	p.app.PathsFilter().TogglePath("/mob")
 }
 
 func (p *PaneMap) DoDeselect() {
-	log.Println("[pmap] do deselect")
+	log.Print("do deselect")
 	tools.Tools()[tools.TNGrab].OnDeselect()
 }
 
 func (p *PaneMap) doMoveCameraUp() {
-	log.Println("[pmap] do move camera up")
+	log.Print("do move camera up")
 	p.translateCanvas(0, p.calcManualCanvasTranslateShift())
 }
 
 func (p *PaneMap) doMoveCameraDown() {
-	log.Println("[pmap] do move camera down")
+	log.Print("do move camera down")
 	p.translateCanvas(0, -p.calcManualCanvasTranslateShift())
 }
 
 func (p *PaneMap) doMoveCameraLeft() {
-	log.Println("[pmap] do move camera left")
+	log.Print("do move camera left")
 	p.translateCanvas(p.calcManualCanvasTranslateShift(), 0)
 }
 
 func (p *PaneMap) doMoveCameraRight() {
-	log.Println("[pmap] do move camera right")
+	log.Print("do move camera right")
 	p.translateCanvas(-p.calcManualCanvasTranslateShift(), 0)
 }
 
 func (p *PaneMap) doZoomIn() {
-	log.Println("[pmap] do zoom in")
+	log.Print("do zoom in")
 
 	camera := p.canvas.Render().Camera
 
@@ -186,7 +185,7 @@ func (p *PaneMap) doZoomIn() {
 }
 
 func (p *PaneMap) doZoomOut() {
-	log.Println("[pmap] do zoom out")
+	log.Print("do zoom out")
 
 	camera := p.canvas.Render().Camera
 

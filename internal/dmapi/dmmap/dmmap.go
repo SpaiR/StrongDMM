@@ -1,10 +1,10 @@
 package dmmap
 
 import (
-	"log"
-
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
+
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -30,9 +30,9 @@ func Init(dme *dmenv.Dme) {
 	BaseArea = PrefabStorage.Initial(baseAreaPath)
 	BaseTurf = PrefabStorage.Initial(baseTurfPath)
 
-	log.Println("[dmmap] initialized with:", dme.RootFile)
-	log.Println("[dmmap] base area:", baseAreaPath)
-	log.Println("[dmmap] base turf:", baseTurfPath)
+	log.Print("initialized with:", dme.RootFile)
+	log.Print("base area:", baseAreaPath)
+	log.Print("base turf:", baseTurfPath)
 }
 
 func Free() {

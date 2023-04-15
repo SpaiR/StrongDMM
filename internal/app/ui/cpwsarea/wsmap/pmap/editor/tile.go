@@ -1,13 +1,13 @@
 package editor
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 // TileCopySelected copies currently selected tiles.
@@ -27,7 +27,7 @@ func (e *Editor) TilePasteSelected() {
 		return
 	}
 
-	log.Printf("[pmap] paste tiles from the clipboard buffer on the map: %v", pasteCoord)
+	log.Printf("paste tiles from the clipboard buffer on the map: %v", pasteCoord)
 
 	// Fill copied tiles from the bottom-left tile.
 	anchor := pastedData.Buffer[0].Coord

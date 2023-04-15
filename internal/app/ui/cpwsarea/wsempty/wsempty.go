@@ -2,7 +2,6 @@ package wsempty
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"strings"
 
@@ -19,6 +18,7 @@ import (
 	"sdmm/internal/util/slice"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -275,14 +275,14 @@ func (ws *WsEmpty) selectAllMaps() {
 }
 
 func (ws *WsEmpty) dropSelectedMaps() {
-	log.Println("[wsempty] dropping selected maps")
+	log.Print("dropping selected maps")
 	ws.selectedMaps = nil
 }
 
 func (ws *WsEmpty) addMapSelection(mapPath string) {
 	if !slice.StrContains(ws.selectedMaps, mapPath) {
 		ws.selectedMaps = append(ws.selectedMaps, mapPath)
-		log.Println("[wsempty] map selection added:", mapPath)
+		log.Print("map selection added:", mapPath)
 	}
 }
 
@@ -322,7 +322,7 @@ func (ws *WsEmpty) selectMapRange(mapPath string) {
 }
 
 func (ws *WsEmpty) selectMapSingle(mapPath string) {
-	log.Println("[wsempty] selecting map:", mapPath)
+	log.Print("selecting map:", mapPath)
 	ws.dropSelectedMaps()
 	ws.addMapSelection(mapPath)
 }

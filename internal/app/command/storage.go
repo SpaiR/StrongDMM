@@ -1,6 +1,6 @@
 package command
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 // NullSpaceStackId is for a stack which won't hold any command and will be always empty.
 const NullSpaceStackId = "__NULL_SPACE__"
@@ -20,7 +20,7 @@ func NewStorage() *Storage {
 func (s *Storage) Free() {
 	s.commandStacks = make(map[string]*commandStack, len(s.commandStacks))
 	s.SetStack(NullSpaceStackId)
-	log.Println("[command] storage free")
+	log.Print("storage free")
 }
 
 func (s *Storage) SetStack(id string) {
@@ -28,22 +28,22 @@ func (s *Storage) SetStack(id string) {
 		return
 	}
 
-	log.Println("[command] changing stack to:", id)
+	log.Print("changing stack to:", id)
 
 	s.currentStackId = id
 	if _, ok := s.commandStacks[id]; !ok {
 		s.commandStacks[id] = &commandStack{id: id}
-		log.Println("[command] created stack:", id)
+		log.Print("created stack:", id)
 	}
 }
 
 func (s *Storage) DisposeStack(id string) {
 	if id == NullSpaceStackId {
-		log.Println("[command] skip disposing for:", id)
+		log.Print("skip disposing for:", id)
 		return
 	}
 
-	log.Println("[command] disposing stack:", id)
+	log.Print("disposing stack:", id)
 	delete(s.commandStacks, id)
 	if s.currentStackId == id {
 		s.SetStack(NullSpaceStackId)
@@ -52,7 +52,7 @@ func (s *Storage) DisposeStack(id string) {
 
 func (s *Storage) Push(command Command) {
 	if s.currentStackId == NullSpaceStackId {
-		log.Println("[command] skip pushing for:", s.currentStackId)
+		log.Print("skip pushing for:", s.currentStackId)
 		return
 	}
 
@@ -75,7 +75,7 @@ func (s *Storage) UndoV(id string) {
 		logStackAction(stack, "undo")
 
 		if len(stack.undo) == 0 {
-			log.Println("[command] unable to undo empty stack")
+			log.Print("unable to undo empty stack")
 			return
 		}
 
@@ -101,7 +101,7 @@ func (s *Storage) RedoV(id string) {
 		logStackAction(stack, "redo")
 
 		if len(stack.redo) == 0 {
-			log.Println("[command] unable to read empty stack")
+			log.Print("unable to read empty stack")
 			return
 		}
 
@@ -149,7 +149,7 @@ func (s *Storage) IsModified(id string) bool {
 
 func (s *Storage) ForceBalance(id string) {
 	if id == NullSpaceStackId {
-		log.Println("[command] skipping force balance for:", id)
+		log.Print("skipping force balance for:", id)
 		return
 	}
 
@@ -162,7 +162,7 @@ func (s *Storage) ForceBalance(id string) {
 
 func (s *Storage) Balance(id string) {
 	if id == NullSpaceStackId {
-		log.Println("[command] skipping balance for:", id)
+		log.Print("skipping balance for:", id)
 		return
 	}
 
@@ -182,11 +182,11 @@ func (s *Storage) Balance(id string) {
 }
 
 func logNoStackAvailable(action string) {
-	log.Println("[command] invalid action, no stack available at the moment:", action)
+	log.Print("invalid action, no stack available at the moment:", action)
 }
 
 func logStackAction(stack *commandStack, action string) {
-	log.Printf("[command] stack action [%s] on [%s]", action, stack.id)
+	log.Printf("stack action [%s] on [%s]", action, stack.id)
 }
 
 type commandStack struct {

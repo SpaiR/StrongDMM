@@ -2,8 +2,9 @@ package config
 
 import (
 	"encoding/json"
-	"log"
 	"os"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Config interface {
@@ -16,10 +17,10 @@ func Save(filepath string, cfg Config) {
 }
 
 func SaveV(filepath string, cfg any) {
-	log.Println("[config] saving:", filepath)
+	log.Print("saving:", filepath)
 	f, err := os.Create(filepath)
 	if err != nil {
-		log.Println("[config] unable to create file by path:", filepath)
+		log.Print("unable to create file by path:", filepath)
 		return
 	}
 	defer f.Close()
@@ -27,7 +28,7 @@ func SaveV(filepath string, cfg any) {
 	if j, err := json.Marshal(cfg); err == nil {
 		_, _ = f.Write(j)
 	} else {
-		log.Println("[config] unable to save data by path:", filepath)
+		log.Print("unable to save data by path:", filepath)
 	}
 }
 
@@ -36,7 +37,7 @@ func Load(filepath string, cfg Config) error {
 }
 
 func LoadV(filepath string, cfg any) error {
-	log.Println("[config] reading:", filepath)
+	log.Print("reading:", filepath)
 	f, err := os.Open(filepath)
 	if err != nil {
 		return err

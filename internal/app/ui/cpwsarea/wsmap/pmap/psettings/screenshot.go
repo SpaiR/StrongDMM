@@ -3,7 +3,6 @@ package psettings
 import (
 	"fmt"
 	"image/png"
-	"log"
 	"os"
 	"time"
 
@@ -18,6 +17,7 @@ import (
 	"sdmm/internal/util"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 	"github.com/sqweek/dialog"
 )
 
@@ -89,7 +89,7 @@ func (p *Panel) selectScreenshotDir() {
 		Title("Screenshot Directory").
 		SetStartDir(cfg.ScreenshotDir).
 		Browse(); err == nil {
-		log.Println("[psettings] screenshot directory selected:", dir)
+		log.Print("screenshot directory selected:", dir)
 		cfg.ScreenshotDir = dir
 	}
 }
@@ -100,7 +100,7 @@ func (p *Panel) ProcessUnit(u unit.Unit) bool {
 
 func saveScreenshot(pixels []byte, w, h int) error {
 	if err := os.MkdirAll(cfg.ScreenshotDir, os.ModeDir); err != nil {
-		log.Println("[psettings] unable to create screenshot directory:", err)
+		log.Print("unable to create screenshot directory:", err)
 		return err
 	}
 

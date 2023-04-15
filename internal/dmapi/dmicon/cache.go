@@ -3,9 +3,10 @@ package dmicon
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"sdmm/internal/dmapi/dm"
+
+	"github.com/rs/zerolog/log"
 )
 
 var Cache = &IconsCache{icons: make(map[string]*Dmi)}
@@ -19,14 +20,14 @@ func (i *IconsCache) Free() {
 	for _, dmi := range i.icons {
 		dmi.free()
 	}
-	log.Printf("[dmicon] cache free; [%d] icons disposed", len(i.icons))
+	log.Printf("cache free; [%d] icons disposed", len(i.icons))
 	i.rootDirPath = ""
 	i.icons = make(map[string]*Dmi)
 }
 
 func (i *IconsCache) SetRootDirPath(rootDirPath string) {
 	i.rootDirPath = rootDirPath
-	log.Println("[dmicon] cache root dir:", rootDirPath)
+	log.Print("cache root dir:", rootDirPath)
 }
 
 func (i *IconsCache) Get(icon string) (*Dmi, error) {

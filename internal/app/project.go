@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -23,6 +22,7 @@ import (
 	"sdmm/internal/util"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (a *app) loadResource(path string) {
@@ -34,7 +34,7 @@ func (a *app) loadResource(path string) {
 func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
 	path, err := filepath.Abs(path)
 	if err != nil {
-		log.Println("[app] unable to get resource absolute path:", err)
+		log.Print("unable to get resource absolute path:", err)
 		return
 	}
 
@@ -44,7 +44,7 @@ func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
 	}
 
 	if filepath.Ext(path) != ".dmm" {
-		log.Println("[app] invalid resource to load:", path)
+		log.Print("invalid resource to load:", path)
 		return
 	}
 
@@ -60,7 +60,7 @@ func (a *app) loadResourceV(path string, ws *workspace.Workspace) {
 			a.loadMap(path, ws)
 		})
 	} else {
-		log.Println("[app] unable to find environment from file:", path)
+		log.Print("unable to find environment from file:", path)
 		dialog.Open(dialog.TypeInformation{
 			Title: "No dme found!",
 			Information: "Can't find an environment file.\n" +
@@ -81,7 +81,7 @@ func findEnvironmentFileFromBase(path string) (string, error) {
 
 		files, err := os.ReadDir(dir)
 		if err != nil {
-			log.Println("[app] unable to read dir while looking for environment:", err)
+			log.Print("unable to read dir while looking for environment:", err)
 			return "", fmt.Errorf("unable to read dir: "+dir, err)
 		}
 
@@ -108,7 +108,7 @@ func (a *app) loadEnvironmentV(path string, callback func()) {
 }
 
 func (a *app) forceLoadEnvironment(path string, callback func()) {
-	log.Printf("[app] opening environment [%s]...", path)
+	log.Printf("opening environment [%s]...", path)
 
 	afterLoad := func(env *dmenv.Dme) {
 		a.freeEnvironmentResources()
@@ -125,7 +125,7 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 
 		runtime.GC()
 
-		log.Println("[app] environment opened:", path)
+		log.Print("environment opened:", path)
 
 		if callback != nil {
 			callback()
@@ -137,12 +137,12 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 		dialog.Open(dlg)
 
 		start := time.Now()
-		log.Printf("[app] parsing environment: [%s]...", path)
+		log.Printf("parsing environment: [%s]...", path)
 
 		env, err := dmenv.New(path)
 
 		if err != nil {
-			log.Println("[app] unable to open environment:", err)
+			log.Print("unable to open environment:", err)
 			dialog.Close(dlg)
 			dialog.Open(dialog.TypeInformation{
 				Title:       "Error!",
@@ -151,7 +151,7 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 			return
 		}
 
-		log.Printf("[app] environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
+		log.Printf("environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
 
 		dialog.Close(dlg)
 
@@ -188,13 +188,13 @@ func newPathsFilter(env *dmenv.Dme) *dm.PathsFilter {
 }
 
 func (a *app) loadMap(path string, workspace *workspace.Workspace) {
-	log.Printf("[app] opening map [%s]...", path)
+	log.Printf("opening map [%s]...", path)
 
 	start := time.Now()
-	log.Printf("[app] parsing map: [%s]...", path)
+	log.Printf("parsing map: [%s]...", path)
 	data, err := dmmdata.New(path)
 	if err != nil {
-		log.Printf("[app] unable to open map by path [%s]: %v", path, err)
+		log.Printf("unable to open map by path [%s]: %v", path, err)
 		dialog.Open(dialog.TypeInformation{
 			Title:       "Error: Unable to open map",
 			Information: fmt.Sprintf("Error while parsing the map:\n - %s\n - %s", path, err),
@@ -202,15 +202,15 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 		return
 	}
 	elapsed := time.Since(start).Milliseconds()
-	log.Printf("[app] map [%s] parsed in [%d] ms", path, elapsed)
+	log.Printf("map [%s] parsed in [%d] ms", path, elapsed)
 
 	// Add map to the recent only if it is a part of the currently opened environment.
 	if slice.StrContains(a.AvailableMaps(), path) {
-		log.Println("[app] adding map path to the recent:", path)
+		log.Print("adding map path to the recent:", path)
 		cfg := a.projectConfig()
 		cfg.AddMap(path)
 	} else {
-		log.Println("[app] ignoring map path add to the recent, since it's an outside resource")
+		log.Print("ignoring map path add to the recent, since it's an outside resource")
 	}
 
 	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
@@ -238,7 +238,7 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 
 	runtime.GC()
 
-	log.Println("[app] map opened:", path)
+	log.Print("map opened:", path)
 }
 
 func (a *app) closeEnvironment(callback func(bool)) {
@@ -253,7 +253,7 @@ func (a *app) closeEnvironment(callback func(bool)) {
 
 // Frees all resources connected with opened environment.
 func (a *app) freeEnvironmentResources() {
-	log.Println("[app] free environment resources...")
+	log.Print("free environment resources...")
 
 	a.pathsFilter = dm.NewPathsFilterEmpty()
 
@@ -274,7 +274,7 @@ func (a *app) freeEnvironmentResources() {
 
 	a.UpdateTitle()
 
-	log.Println("[app] environment resources free!")
+	log.Print("environment resources free!")
 }
 
 func (a *app) environmentName() string {
@@ -287,7 +287,7 @@ func (a *app) environmentName() string {
 func (a *app) backupMap(path string) string {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Println("[app] unable to read map to backup:", path)
+		log.Print("unable to read map to backup:", path)
 		util.ShowErrorDialog("Unable to read map to backup: " + path)
 		os.Exit(1)
 	}
@@ -303,11 +303,11 @@ func (a *app) backupMap(path string) string {
 
 	err = os.WriteFile(dst, data, os.ModePerm)
 	if err != nil {
-		log.Println("[app] unable to write map backup to a file:", dst)
+		log.Print("unable to write map backup to a file:", dst)
 		util.ShowErrorDialog("Unable to write map backup to a file: " + path)
 		os.Exit(1)
 	}
-	log.Println("[app] map backup created:", dst)
+	log.Print("map backup created:", dst)
 
 	return dst
 }

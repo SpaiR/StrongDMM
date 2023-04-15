@@ -2,7 +2,6 @@ package cpprefabs
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"sdmm/internal/app/ui/layout/lnode"
@@ -14,6 +13,7 @@ import (
 	"sdmm/internal/platform"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (p *Prefabs) showContextMenu(node *prefabNode) {
@@ -47,21 +47,21 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 
 func (*Prefabs) doCopyId(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do copy prefab id:", node.orig.Id())
+		log.Print("do copy prefab id:", node.orig.Id())
 		platform.SetClipboard(strconv.FormatUint(node.orig.Id(), 10))
 	}
 }
 
 func (*Prefabs) doCopyType(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do copy prefab type:", node.orig.Path())
+		log.Print("do copy prefab type:", node.orig.Path())
 		platform.SetClipboard(node.orig.Path())
 	}
 }
 
 func (p *Prefabs) doSearchByTypeOnMap(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do search prefab by type on map:", node.orig.Path())
+		log.Print("do search prefab by type on map:", node.orig.Path())
 		p.app.ShowLayout(lnode.NameSearch, true)
 		p.app.DoSearchPrefabByPath(node.orig.Path())
 	}
@@ -69,7 +69,7 @@ func (p *Prefabs) doSearchByTypeOnMap(node *prefabNode) func() {
 
 func (p *Prefabs) doSearchByIdOnMap(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do search prefab by ID on map:", node.orig.Id())
+		log.Print("do search prefab by ID on map:", node.orig.Id())
 		p.app.ShowLayout(lnode.NameSearch, true)
 		p.app.DoSearchPrefab(node.orig.Id())
 	}
@@ -77,7 +77,7 @@ func (p *Prefabs) doSearchByIdOnMap(node *prefabNode) func() {
 
 func (p *Prefabs) doNew(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do new prefab:", node.orig.Id())
+		log.Print("do new prefab:", node.orig.Id())
 		prefab := node.orig.Stage()
 		p.app.DoSelectPrefab(&prefab)
 		p.app.DoEditPrefab(&prefab)
@@ -86,7 +86,7 @@ func (p *Prefabs) doNew(node *prefabNode) func() {
 
 func (p *Prefabs) doDelete(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do delete prefab:", node.orig.Id())
+		log.Print("do delete prefab:", node.orig.Id())
 		p.app.CurrentEditor().InstancesDeleteByPrefab(node.orig)
 		p.app.CurrentEditor().CommitChanges("Delete Instances")
 
@@ -101,7 +101,7 @@ func (p *Prefabs) doDelete(node *prefabNode) func() {
 
 func (p *Prefabs) doGenerateIconStates(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do generate prefabs from icon states:", node.orig.Id())
+		log.Print("do generate prefabs from icon states:", node.orig.Id())
 
 		dmi := node.sprite.Dmi()
 		for name := range dmi.States {
@@ -118,7 +118,7 @@ func (p *Prefabs) doGenerateIconStates(node *prefabNode) func() {
 
 func (p *Prefabs) doGenerateDirections(node *prefabNode) func() {
 	return func() {
-		log.Println("[cpprefabs] do generate prefabs from directions:", node.orig.Id())
+		log.Print("do generate prefabs from directions:", node.orig.Id())
 
 		initialDir := node.orig.Vars().IntV("dir", dm.DirDefault)
 		dmi := node.sprite.Dmi()

@@ -2,10 +2,11 @@ package app
 
 import (
 	"errors"
-	"log"
 	"os"
 
 	"sdmm/internal/util/slice"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -28,7 +29,7 @@ func (projectConfig) TryMigrate(cfg map[string]any) (result map[string]any, migr
 	result = cfg
 
 	if uint(result["Version"].(float64)) == 1 {
-		log.Println("[app] migrating [project] config:", 2)
+		log.Print("migrating [project] config:", 2)
 
 		mapsByProject := result["MapsByProject"].(map[string]any)
 		var maps []string
@@ -49,22 +50,22 @@ func (projectConfig) TryMigrate(cfg map[string]any) (result map[string]any, migr
 
 func (cfg *projectConfig) AddProject(projectPath string) {
 	cfg.Projects = slice.StrPushUnique(cfg.Projects, projectPath)
-	log.Println("[app] added project:", projectPath)
+	log.Print("added project:", projectPath)
 }
 
 func (cfg *projectConfig) ClearProjects() {
 	cfg.Projects = nil
-	log.Println("[app] cleared projects")
+	log.Print("cleared projects")
 }
 
 func (cfg *projectConfig) AddMap(mapPath string) {
 	cfg.Maps = slice.StrPushUnique(cfg.Maps, mapPath)
-	log.Println("[app] added map:", mapPath)
+	log.Print("added map:", mapPath)
 }
 
 func (cfg *projectConfig) ClearMaps() {
 	cfg.Maps = nil
-	log.Println("[app] cleared maps")
+	log.Print("cleared maps")
 }
 
 func (cfg *projectConfig) RemoveEnvironment(envPath string) {
@@ -73,7 +74,7 @@ func (cfg *projectConfig) RemoveEnvironment(envPath string) {
 
 func (cfg *projectConfig) RemoveMap(mapPath string) {
 	cfg.Maps = slice.StrRemove(cfg.Maps, mapPath)
-	log.Println("[app] removed map:", mapPath)
+	log.Print("removed map:", mapPath)
 }
 
 func (a *app) loadProjectConfig() {
@@ -92,7 +93,7 @@ func (a *app) loadProjectConfig() {
 	}
 	for _, path := range pathsToRemove {
 		config.Projects = slice.StrRemove(config.Projects, path)
-		log.Println("[app] config cleanup, removed project path:", path)
+		log.Print("config cleanup, removed project path:", path)
 	}
 
 	// Cleanup maps paths
@@ -103,7 +104,7 @@ func (a *app) loadProjectConfig() {
 		}
 		for _, path := range pathsToRemove {
 			config.Maps = slice.StrRemove(config.Maps, path)
-			log.Println("[app] config cleanup, removed map path:", path)
+			log.Print("config cleanup, removed map path:", path)
 		}
 	}
 }
@@ -112,6 +113,6 @@ func (a *app) projectConfig() *projectConfig {
 	if cfg, ok := a.ConfigFind(projectConfigName).(*projectConfig); ok {
 		return cfg
 	}
-	log.Fatal("[app] can't find project config")
+	log.Fatal().Msg("can't find project config")
 	return nil
 }

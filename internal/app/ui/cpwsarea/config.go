@@ -1,8 +1,6 @@
 package cpwsarea
 
-import (
-	"log"
-)
+import "github.com/rs/zerolog/log"
 
 const (
 	configName    = "cpwsarea"
@@ -34,6 +32,6 @@ func (w *WsArea) config() *cpwsareaConfig {
 	if cfg, ok := w.app.ConfigFind(configName).(*cpwsareaConfig); ok {
 		return cfg
 	}
-	log.Fatal("[cpwsarea] can't find config")
+	log.Fatal().Msg("can't find config")
 	return nil
 }

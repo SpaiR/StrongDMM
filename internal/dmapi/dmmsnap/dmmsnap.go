@@ -1,12 +1,13 @@
 package dmmsnap
 
 import (
-	"log"
 	"strings"
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 type dmmPatch []tilePatch
@@ -46,7 +47,7 @@ func (d *DmmSnap) Current() *dmmap.Dmm {
 // Commit creates a patch with the map changes between two snapshot states.
 // stateId is an integer value, which can be used in the future to iterate snapshot to the specific state.
 func (d *DmmSnap) Commit() (int, []util.Point) {
-	log.Println("[snapshot] committing snapshot state...")
+	log.Print("committing snapshot state...")
 
 	var tilePatches []tilePatch
 
@@ -80,7 +81,7 @@ func (d *DmmSnap) Commit() (int, []util.Point) {
 
 	// Add new patches and sync map states.
 	if len(tilePatches) != 0 {
-		log.Println("[snapshot] collected snapshot patches count:", len(tilePatches))
+		log.Print("collected snapshot patches count:", len(tilePatches))
 
 		// Drop all patches, if their stateId is more than the current one.
 		d.patches = append(d.patches[:d.stateId], tilePatches)
@@ -96,14 +97,14 @@ func (d *DmmSnap) Commit() (int, []util.Point) {
 		}
 	}
 
-	log.Println("[snapshot] snapshot state committed")
+	log.Print("snapshot state committed")
 
 	return d.stateId, tilesToUpdate
 }
 
 // GoTo will update DmmSnap state by applying patches.
 func (d *DmmSnap) GoTo(stateId int) {
-	log.Println("[snapshot] changing snapshot state to:", stateId)
+	log.Print("changing snapshot state to:", stateId)
 	d.goTo(stateId, patchFull)
 }
 
@@ -143,7 +144,7 @@ func (p patchType) String() string {
 }
 
 func (d *DmmSnap) patchState(stateId int, isForward bool, patchType patchType) {
-	log.Printf("[snapshot] patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
+	log.Printf("patching:[%d], forward:[%t], type:[%s]", stateId, isForward, patchType)
 	for _, patch := range d.patches[stateId] {
 		var prefabs dmmdata.Prefabs
 		if isForward {
@@ -166,7 +167,7 @@ func (d *DmmSnap) patchState(stateId int, isForward bool, patchType patchType) {
 
 // Basically, does a full copy of the current state to the initial one.
 func (d *DmmSnap) syncInitialWithCurrent() {
-	log.Println("[snapshot] syncing initial state with the current...")
+	log.Print("syncing initial state with the current...")
 
 	d.initial = &dmmap.Dmm{
 		Name: d.current.Name,
@@ -183,7 +184,7 @@ func (d *DmmSnap) syncInitialWithCurrent() {
 		d.initial.Tiles = append(d.initial.Tiles, &tileCopy)
 	}
 
-	log.Println("[snapshot] initial state synced with the current")
+	log.Print("initial state synced with the current")
 }
 
 type tilePatch struct {

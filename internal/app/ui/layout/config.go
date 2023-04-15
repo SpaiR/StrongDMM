@@ -1,6 +1,6 @@
 package layout
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 const (
 	configName    = "layout"
@@ -33,6 +33,6 @@ func (l *Layout) config() *layoutConfig {
 	if cfg, ok := l.app.ConfigFind(configName).(*layoutConfig); ok {
 		return cfg
 	}
-	log.Fatal("[layout] can't find config")
+	log.Fatal().Msg("can't find config")
 	return nil
 }

@@ -1,8 +1,6 @@
 package cpvareditor
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/component"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
 
@@ -14,6 +12,8 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util/slice"
+
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -77,7 +77,7 @@ func (v *VarEditor) Init(app App) {
 
 func (v *VarEditor) Free() {
 	v.resetSession()
-	log.Println("[cpvareditor] vareditor free")
+	log.Print("vareditor free")
 }
 
 // Sync does the check if we edit an instance which is exists.
@@ -91,7 +91,7 @@ func (v *VarEditor) Sync() {
 		v.instance = nil
 		v.sessionEditMode = emPrefab
 	}
-	log.Println("[cpvareditor] synced, editMode:", v.sessionEditMode)
+	log.Print("synced, editMode:", v.sessionEditMode)
 }
 
 func (v *VarEditor) EditInstance(instance *dmminstance.Instance) {
@@ -125,7 +125,7 @@ func (v *VarEditor) setup(prefab *dmmprefab.Prefab) {
 		v.variablesNames = slice.StrRemove(v.variablesNames, pinnedVarName)
 	}
 
-	log.Printf("[cpvareditor] setup finished: [%s], variablesNames: [%d], variablesPaths: [%d], pinnedVarNames: [%d]",
+	log.Printf("setup finished: [%s], variablesNames: [%d], variablesPaths: [%d], pinnedVarNames: [%d]",
 		prefab.Path(), len(v.variablesNames), len(v.variablesPaths), len(v.config().PinnedVarNames))
 }
 
@@ -160,7 +160,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 
 	v.prefab = newPrefab
 
-	log.Printf("[cpvareditor] instance [%d] variable set; name: [%s], value: [%s]", v.instance.Id(), varName, varValue)
+	log.Printf("instance [%d] variable set; name: [%s], value: [%s]", v.instance.Id(), varName, varValue)
 }
 
 func (v *VarEditor) setPrefabVariable(varName, varValue string) {
@@ -184,7 +184,7 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 
 	v.prefab = newPrefab
 
-	log.Printf("[cpvareditor] prefab [%d] variable set; name: [%s], value: [%s]", v.prefab.Id(), varName, varValue)
+	log.Printf("prefab [%d] variable set; name: [%s], value: [%s]", v.prefab.Id(), varName, varValue)
 }
 
 func (v *VarEditor) resetSession() {
@@ -195,7 +195,7 @@ func (v *VarEditor) resetSession() {
 	v.sessionEditMode = emPrefab
 	v.instance = nil
 	v.prefab = nil
-	log.Println("[cpvareditor] session reset")
+	log.Print("session reset")
 }
 
 func (v *VarEditor) initialVarValue(varName string) string {
@@ -213,23 +213,23 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 func (v *VarEditor) doToggleShowModified() {
 	cfg := v.config()
 	cfg.ShowModified = !cfg.ShowModified
-	log.Println("[cpvareditor] toggle 'showModified':", cfg.ShowModified)
+	log.Print("toggle 'showModified':", cfg.ShowModified)
 }
 
 func (v *VarEditor) doToggleShowByType() {
 	cfg := v.config()
 	cfg.ShowByType = !cfg.ShowByType
-	log.Println("[cpvareditor] toggle 'showByType':", cfg.ShowByType)
+	log.Print("toggle 'showByType':", cfg.ShowByType)
 }
 
 func (v *VarEditor) doToggleShowPins() {
 	cfg := v.config()
 	cfg.ShowPins = !cfg.ShowPins
-	log.Println("[cpvareditor] toggle 'showPins':", cfg.ShowPins)
+	log.Print("toggle 'showPins':", cfg.ShowPins)
 }
 
 func (v *VarEditor) doToggleShowTmp() {
 	cfg := v.config()
 	cfg.ShowTmp = !cfg.ShowTmp
-	log.Println("[cpvareditor] toggle 'showTmp':", cfg.ShowTmp)
+	log.Print("toggle 'showTmp':", cfg.ShowTmp)
 }

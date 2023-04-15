@@ -2,7 +2,6 @@ package window
 
 import (
 	"image"
-	"log"
 	"runtime"
 
 	"sdmm/internal/rsc"
@@ -12,6 +11,7 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -45,18 +45,18 @@ func (w *Window) Handle() *glfw.Window {
 }
 
 func New(application application) *Window {
-	log.Println("[window] creating native window")
+	log.Print("creating native window")
 
 	w := Window{application: application}
 	w.mouseChangeCallbacks = make(map[int]func(uint, uint))
 
-	log.Println("[window] setting up glfw")
+	log.Print("setting up glfw")
 	w.setupGlfw()
 
-	log.Println("[window] setting up Dear ImGui")
+	log.Print("setting up Dear ImGui")
 	w.setupImGui()
 
-	log.Println("[window] initializing platform")
+	log.Print("initializing platform")
 	platform.InitImGuiGLFW()
 	platform.InitImGuiGL()
 	platform.MouseChangeCallback = w.mouseChangeCallback
@@ -95,7 +95,7 @@ func SetPointSize(ps float32) {
 }
 
 func SetFps(value int) {
-	log.Println("[window] set fps:", value)
+	log.Print("set fps:", value)
 	ticker = newTicker(value)
 }
 
@@ -103,7 +103,7 @@ func (w *Window) setupGlfw() {
 	runtime.LockOSThread()
 
 	if err := glfw.Init(); err != nil {
-		log.Fatal("[window] unable to initialize gfw:", err)
+		log.Fatal().Msgf("unable to initialize gfw: %v", err)
 	}
 
 	glfw.WindowHint(glfw.Visible, glfw.False)
@@ -114,16 +114,16 @@ func (w *Window) setupGlfw() {
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 	glfw.WindowHint(glfw.Maximized, glfw.True)
 
-	log.Println("[window] glfw initialized")
-	log.Println("[window] using opengl 3.3, core profile")
+	log.Print("glfw initialized")
+	log.Print("using opengl 3.3, core profile")
 
 	window, err := glfw.CreateWindow(1280, 768, "", nil, nil)
 
 	if err != nil {
-		log.Fatal("[window] unable to create window:", err)
+		log.Fatal().Msgf("unable to create window: %v", err)
 	}
 
-	log.Println("[window] native window created")
+	log.Print("native window created")
 
 	window.SetIcon([]image.Image{rsc.EditorIcon().RGBA()})
 	window.MakeContextCurrent()
@@ -131,7 +131,7 @@ func (w *Window) setupGlfw() {
 	glfw.SwapInterval(glfw.True)
 
 	if err := gl.Init(); err != nil {
-		log.Fatal("[window] unable to initialize opengl:", err)
+		log.Fatal().Msgf("unable to initialize opengl: %v", err)
 	}
 
 	window.SetSizeCallback(w.resizeCallback)
@@ -143,7 +143,7 @@ func (w *Window) setupGlfw() {
 		window.RequestAttention()
 	})
 
-	log.Println("[window] opengl initialized")
+	log.Print("opengl initialized")
 
 	w.handle = window
 }
