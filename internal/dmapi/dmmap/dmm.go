@@ -1,7 +1,6 @@
 package dmmap
 
 import (
-	"log"
 	"path/filepath"
 
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
@@ -9,6 +8,8 @@ import (
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 // Dmm stores information about the map.
@@ -129,7 +130,7 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknow
 						}
 						tile.InstancesAdd(PrefabStorage.Put(prefab))
 					} else {
-						log.Println("[dmmap] unknown prefab:", prefab.Path())
+						log.Print("unknown prefab:", prefab.Path())
 						unknownPrefabs[prefab.Path()] = prefab
 					}
 				}
@@ -159,7 +160,7 @@ type DmmPath struct {
 func newDmmPath(rootDir string, data *dmmdata.DmmData) DmmPath {
 	readable, err := filepath.Rel(rootDir, data.Filepath)
 	if err != nil {
-		log.Println("[dmmap] unable to get relative path of the map:", data.Filepath)
+		log.Print("unable to get relative path of the map:", data.Filepath)
 		readable = data.Filepath
 	}
 	return DmmPath{

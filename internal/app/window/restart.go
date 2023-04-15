@@ -1,11 +1,12 @@
 package window
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"syscall"
+
+	"github.com/rs/zerolog/log"
 )
 
 // Path to the current exe file. Required to do a correct restart after self update applied.
@@ -21,7 +22,7 @@ func init() {
 
 func Restart() {
 	if err := restartSelf(); err != nil {
-		log.Println("[window], unable to restart gracefully:", err)
+		log.Print("unable to restart gracefully:", err)
 		panic("unable to restart gracefully: " + err.Error())
 	}
 }

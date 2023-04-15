@@ -1,6 +1,6 @@
 package cpenvironment
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 const (
 	configName    = "cpenvironment"
@@ -34,6 +34,6 @@ func (e *Environment) config() *cpenvironmentConfig {
 	if cfg, ok := e.app.ConfigFind(configName).(*cpenvironmentConfig); ok {
 		return cfg
 	}
-	log.Fatal("[cpenvironment] can't find config")
+	log.Fatal().Msg("can't find config")
 	return nil
 }

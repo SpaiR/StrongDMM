@@ -1,13 +1,12 @@
 package canvas
 
 import (
-	"log"
-
 	"sdmm/internal/app/render"
 	"sdmm/internal/app/window"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/rs/zerolog/log"
 )
 
 type Color struct {
@@ -45,10 +44,10 @@ func (c *Canvas) Dispose() {
 	// Run later, so it will be cleared in the next frame.
 	// Otherwise, we will see graphics artifacts.
 	window.RunLater(func() {
-		log.Println("[canvas] disposing...")
+		log.Print("disposing...")
 		gl.DeleteFramebuffers(1, &c.frameBuffer)
 		gl.DeleteTextures(1, &c.texture)
-		log.Println("[canvas] disposed")
+		log.Print("disposed")
 	})
 }
 

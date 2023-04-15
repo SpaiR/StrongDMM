@@ -1,6 +1,6 @@
 package dmmsave
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 //nolint:errname
 type saveErrorCode int
@@ -17,6 +17,6 @@ func (s saveErrorCode) Error() string {
 	case errKeysLimitExceeded:
 		return "keys limit exceeded error"
 	}
-	log.Panic("[dmmsave] unknown error code!")
+	log.Panic().Msg("unknown error code")
 	return "" // unreachable
 }

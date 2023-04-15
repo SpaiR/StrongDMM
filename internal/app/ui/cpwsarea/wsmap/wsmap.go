@@ -2,7 +2,6 @@ package wsmap
 
 import (
 	"fmt"
-	"log"
 
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/prefs"
@@ -12,6 +11,7 @@ import (
 	"sdmm/internal/dmapi/dmmap"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -79,7 +79,7 @@ func (ws *WsMap) Process() {
 
 func (ws *WsMap) Dispose() {
 	ws.paneMap.Dispose()
-	log.Println("[wsmap] map workspace disposed:", ws.Name())
+	log.Print("map workspace disposed:", ws.Name())
 }
 
 func (ws *WsMap) Focused() bool {

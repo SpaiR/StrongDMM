@@ -1,10 +1,9 @@
 package platform
 
 import (
-	"log"
-
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -48,7 +47,7 @@ func InitImGuiGLFW() {
 	io.SetClipboard(c)
 	io.SetBackendFlags(imgui.BackendFlagsHasMouseCursors | imgui.BackendFlagsHasSetMousePos)
 
-	log.Println("[platform] clipboard initialized")
+	log.Print("clipboard initialized")
 
 	io.KeyMap(imgui.KeyTab, int(glfw.KeyTab))
 	io.KeyMap(imgui.KeyLeftArrow, int(glfw.KeyLeft))
@@ -73,7 +72,7 @@ func InitImGuiGLFW() {
 	io.KeyMap(imgui.KeyY, int(glfw.KeyY))
 	io.KeyMap(imgui.KeyZ, int(glfw.KeyZ))
 
-	log.Println("[platform] key map initialized")
+	log.Print("key map initialized")
 
 	mouseCursors[imgui.MouseCursorArrow] = glfw.CreateStandardCursor(glfw.ArrowCursor)
 	mouseCursors[imgui.MouseCursorTextInput] = glfw.CreateStandardCursor(glfw.IBeamCursor)
@@ -85,7 +84,7 @@ func InitImGuiGLFW() {
 	mouseCursors[imgui.MouseCursorHand] = glfw.CreateStandardCursor(glfw.HandCursor)
 	//mouseCursors[imgui.MouseCursorNotAllowed] = glfw.CreateStandardCursor(glfw.ArrowCursor)
 
-	log.Println("[platform] mouse cursors initialized")
+	log.Print("mouse cursors initialized")
 
 	window.SetMouseButtonCallback(mouseButtonCallback)
 	window.SetScrollCallback(mouseScrollCallback)
@@ -93,7 +92,7 @@ func InitImGuiGLFW() {
 	window.SetCharCallback(charCallback)
 	window.SetCursorPosCallback(cursorPosCallback)
 
-	log.Println("[platform] callbacks initialized")
+	log.Print("callbacks initialized")
 }
 
 func NewImGuiGLFWFrame() {

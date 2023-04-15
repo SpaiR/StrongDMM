@@ -1,13 +1,12 @@
 package pmap
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/window"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/rs/zerolog/log"
 )
 
 func init() {
@@ -33,7 +32,7 @@ func processTempToolsMode() {
 	inMode = inMode || processTempToolMode(int(glfw.KeyR), -1, tools.TNReplace)
 
 	if tmpToolIsInTemporalMode && !inMode {
-		log.Println("[pmap] select before-tmp tool:", tmpToolLastSelectedName)
+		log.Print("select before-tmp tool:", tmpToolLastSelectedName)
 		tools.SetSelected(tmpToolLastSelectedName)
 		tmpToolLastSelectedName = ""
 		tmpToolIsInTemporalMode = false
@@ -60,13 +59,13 @@ func processTempToolMode(key, altKey int, modeName string) bool {
 	isSelected := tools.IsSelected(modeName)
 
 	if isKeyPressed && !isSelected {
-		log.Println("[pmap] selecting tmp tool:", modeName)
+		log.Print("selecting tmp tool:", modeName)
 		tmpToolPrevSelectedName = tools.Selected().Name()
 		tmpToolIsInTemporalMode = true
 		tools.SetSelected(modeName)
 	} else if isKeyReleased && len(tmpToolPrevSelectedName) != 0 {
 		if isSelected {
-			log.Println("[pmap] selecting prev-tmp tool:", tmpToolPrevSelectedName)
+			log.Print("selecting prev-tmp tool:", tmpToolPrevSelectedName)
 			tools.SetSelected(tmpToolPrevSelectedName)
 		}
 		tmpToolPrevSelectedName = modeName

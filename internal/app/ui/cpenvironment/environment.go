@@ -1,7 +1,6 @@
 package cpenvironment
 
 import (
-	"log"
 	"strings"
 
 	"sdmm/internal/app/config"
@@ -10,6 +9,7 @@ import (
 	"sdmm/internal/dmapi/dm"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 
 	"sdmm/internal/dmapi/dmenv"
 )
@@ -72,7 +72,7 @@ func (e *Environment) Free() {
 	e.filteredTreeNodes = nil
 	e.filter = ""
 	e.selectedPath = ""
-	log.Println("[cpenvironment] environment panel free")
+	log.Print("environment panel free")
 }
 
 func (e *Environment) process() {
@@ -89,7 +89,7 @@ func (e *Environment) postProcess() {
 
 func (e *Environment) SelectPath(path string) {
 	if path != e.selectedPath {
-		log.Printf("[cpenvironment] environment path selected: [%s]", path)
+		log.Printf("environment path selected: [%s]", path)
 		e.selectedPath = path
 		e.tmpDoSelectPath = true
 	}
@@ -135,11 +135,11 @@ func (e *Environment) iconSize() float32 {
 }
 
 func (e *Environment) doCollapseAll() {
-	log.Println("[cpenvironment] do collapse all")
+	log.Print("do collapse all")
 	e.tmpDoCollapseAll = true
 }
 
 func (e *Environment) doToggleTypesFilter() {
 	e.typesFilterEnabled = !e.typesFilterEnabled
-	log.Println("[cpenvironment] do toggle types filter:", e.typesFilterEnabled)
+	log.Print("do toggle types filter:", e.typesFilterEnabled)
 }

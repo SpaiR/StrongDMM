@@ -1,7 +1,6 @@
 package cpsearch
 
 import (
-	"log"
 	"math"
 
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
@@ -12,6 +11,7 @@ import (
 	"sdmm/internal/util"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *Search) filterButton() w.Layout {
@@ -72,7 +72,7 @@ func (s *Search) showFilter() {
 func (s *Search) doToggleFilter() {
 	s.filterActive = !s.filterActive
 
-	log.Println("[cpsearch] filter toggled:", s.filterActive)
+	log.Print("filter toggled:", s.filterActive)
 
 	if !s.filterActive {
 		s.doResetFilter()
@@ -99,7 +99,7 @@ func (s *Search) fetchGrabToolFilterBounds() {
 func (s *Search) doResetFilter() {
 	s.resultsFiltered = s.resultsFiltered[:0]
 	s.filterBound = util.Bounds{}
-	log.Println("[cpsearch] search filter reset")
+	log.Print("search filter reset")
 }
 
 func (s *Search) updateFilteredResults() {

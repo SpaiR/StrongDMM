@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,6 +22,7 @@ import (
 	"sdmm/internal/dmapi/dmmclip"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 /*
@@ -109,7 +109,7 @@ func (a *app) AvailableMaps() (availableMaps []string) {
 	})
 
 	if err != nil {
-		log.Println("[app] unable to find available maps:", err)
+		log.Print("unable to find available maps:", err)
 	}
 
 	return availableMaps
@@ -151,7 +151,7 @@ func (a *app) UpdateTitle() {
 	}
 
 	a.masterWindow.Handle().SetTitle(title)
-	log.Println("[app] title updated:", title)
+	log.Print("title updated:", title)
 }
 
 // UpdateScale updates scale of the application.

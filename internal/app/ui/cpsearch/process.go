@@ -2,7 +2,6 @@ package cpsearch
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -13,6 +12,7 @@ import (
 	w "sdmm/internal/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *Search) Process(int32) {
@@ -63,7 +63,7 @@ func (s *Search) doSearch() {
 
 	s.Free()
 
-	log.Println("[cpsearch] searching for:", s.prefabId)
+	log.Print("searching for:", s.prefabId)
 
 	if strings.HasPrefix(s.prefabId, "/") {
 		for _, prefab := range dmmap.PrefabStorage.GetAllByPath(s.prefabId) {
@@ -77,7 +77,7 @@ func (s *Search) doSearch() {
 		s.resultsAll = s.app.CurrentEditor().InstancesFindByPrefabId(prefabId)
 	}
 
-	log.Println("[cpsearch] found search results:", len(s.resultsAll))
+	log.Print("found search results:", len(s.resultsAll))
 }
 
 func (s *Search) showResultsControls() {
@@ -159,7 +159,7 @@ func (s *Search) modifyButtons() w.Layout {
 }
 
 func (s *Search) doDeleteAll() {
-	log.Println("[cpsearch] do delete all")
+	log.Print("do delete all")
 	for _, instance := range s.results() {
 		s.app.CurrentEditor().InstanceDelete(instance)
 	}
@@ -168,7 +168,7 @@ func (s *Search) doDeleteAll() {
 }
 
 func (s *Search) doReplaceAll() {
-	log.Println("[cpsearch] do replace all")
+	log.Print("do replace all")
 	if selectedPrefab, ok := s.app.CurrentEditor().SelectedPrefab(); ok {
 		for _, instance := range s.results() {
 			s.app.CurrentEditor().InstanceReplace(instance, selectedPrefab)
@@ -191,7 +191,7 @@ func (s *Search) jumpButtons() w.Layout {
 }
 
 func (s *Search) selectInstance(idx int) {
-	log.Println("[cpsearch] do select instance:", idx)
+	log.Print("do select instance:", idx)
 	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
 	editor.OverlaySetTileFlick(instance.Coord())
@@ -202,7 +202,7 @@ func (s *Search) selectInstance(idx int) {
 }
 
 func (s *Search) deleteInstance(idx int) {
-	log.Println("[cpsearch] do delete instance:", idx)
+	log.Print("do delete instance:", idx)
 	instance := s.results()[idx]
 	editor := s.app.CurrentEditor()
 	editor.InstanceDelete(instance)
@@ -212,7 +212,7 @@ func (s *Search) deleteInstance(idx int) {
 }
 
 func (s *Search) replaceInstance(idx int) {
-	log.Println("[cpsearch] do replace instance:", idx)
+	log.Print("do replace instance:", idx)
 	if selectedPrefab, ok := s.app.CurrentEditor().SelectedPrefab(); ok {
 		instance := s.results()[idx]
 		editor := s.app.CurrentEditor()

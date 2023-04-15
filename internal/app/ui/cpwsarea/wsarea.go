@@ -2,7 +2,6 @@ package cpwsarea
 
 import (
 	"fmt"
-	"log"
 
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/ui/component"
@@ -18,6 +17,8 @@ import (
 
 	"sdmm/internal/app/command"
 	"sdmm/internal/dmapi/dmmap"
+
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -61,7 +62,7 @@ func (w *WsArea) Init(app App) {
 func (w *WsArea) Free() {
 	w.closeWorkspaces(w.findMapWorkspaces())
 	w.closeWorkspaces(w.findCreateMapWorkspaces()) // close new map creation as well
-	log.Println("[cpwsarea] workspace area free")
+	log.Print("workspace area free")
 }
 
 func (w *WsArea) OpenPreferences(prefsView wsprefs.Prefs) {
@@ -127,12 +128,12 @@ func (w *WsArea) CloseAll() {
 }
 
 func (w *WsArea) CloseAllMaps(callback func(closed bool)) {
-	log.Println("[cpwsarea] closing all maps...")
+	log.Print("closing all maps...")
 	w.closeWorkspacesGentlyV(w.findMapWorkspaces(), callback)
 }
 
 func (w *WsArea) CloseAllCreateMaps() {
-	log.Println("[cpwsarea] closing all new maps...")
+	log.Print("closing all new maps...")
 	w.closeWorkspaces(w.findCreateMapWorkspaces())
 }
 
@@ -158,7 +159,7 @@ func (w *WsArea) addWorkspace(ws *workspace.Workspace) {
 func (w *WsArea) addWorkspaceV(ws *workspace.Workspace, idx int) {
 	ws.Initialize()
 	w.workspaces = append(w.workspaces[:idx], append([]*workspace.Workspace{ws}, w.workspaces[idx:]...)...)
-	log.Printf("[cpwsarea] workspace opened in index [%d]: %s", idx, ws.Name())
+	log.Printf("workspace opened in index [%d]: %s", idx, ws.Name())
 }
 
 func (w *WsArea) closeWorkspacesGently(wsToClose []*workspace.Workspace) {
@@ -285,7 +286,7 @@ func (w *WsArea) closeWorkspaceByIdx(idx int) {
 	ws := w.workspaces[idx]
 	w.workspaces = append(w.workspaces[:idx], w.workspaces[idx+1:]...)
 	ws.Dispose()
-	log.Printf("[cpwsarea] workspace closed in idx [%d]: %s", idx, ws.Name())
+	log.Printf("workspace closed in idx [%d]: %s", idx, ws.Name())
 	w.app.CommandStorage().DisposeStack(ws.CommandStackId())
 }
 
@@ -352,10 +353,10 @@ func (w *WsArea) findEmptyWorkspaceIdx() int {
 
 func (w *WsArea) switchFocusedWorkspace(focusedWs *workspace.Workspace) {
 	if w.focusedWs != focusedWs {
-		log.Println("[cpwsarea] switch focused workspace:", focusedWs)
+		log.Print("switch focused workspace:", focusedWs)
 
 		if focusedWs != nil {
-			log.Println("[cpwsarea] focused workspace content:", focusedWs.Content().Id())
+			log.Print("focused workspace content:", focusedWs.Content().Id())
 		}
 
 		if w.focusedWs != nil {
@@ -372,10 +373,10 @@ func (w *WsArea) switchFocusedWorkspace(focusedWs *workspace.Workspace) {
 
 func (w *WsArea) switchActiveWorkspace(activeWs *workspace.Workspace) {
 	if w.activeWs != activeWs || (activeWs != nil && w.activeWsContentId != activeWs.Content().Id()) {
-		log.Println("[cpwsarea] switch active workspace:", activeWs)
+		log.Print("switch active workspace:", activeWs)
 
 		if activeWs != nil {
-			log.Println("[cpwsarea] active workspace content:", activeWs.Content().Id())
+			log.Print("active workspace content:", activeWs.Content().Id())
 		}
 
 		w.activeWs = activeWs

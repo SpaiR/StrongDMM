@@ -1,8 +1,6 @@
 package shortcut
 
-import (
-	"log"
-)
+import "github.com/rs/zerolog/log"
 
 var shortcutId uint64
 
@@ -12,7 +10,7 @@ type Shortcuts struct {
 
 func (s *Shortcuts) Add(shortcut Shortcut) {
 	shortcut.id = shortcutId
-	log.Println("[shortcut] adding shortcut to shortcuts:", shortcut)
+	log.Print("adding shortcut to shortcuts:", shortcut)
 	pShortcut := &shortcut
 	s.shortcuts = append(s.shortcuts, pShortcut)
 	add(pShortcut)
@@ -35,10 +33,10 @@ func (s *Shortcuts) SetVisible(visible bool) {
 }
 
 func (s *Shortcuts) Dispose() {
-	log.Println("[shortcut] disposing shortcuts...")
+	log.Print("disposing shortcuts...")
 	for _, shortcut := range s.shortcuts {
 		remove(shortcut)
 	}
 	s.shortcuts = nil
-	log.Println("[shortcut] shortcuts disposed")
+	log.Print("shortcuts disposed")
 }

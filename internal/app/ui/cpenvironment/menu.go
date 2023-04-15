@@ -2,7 +2,6 @@ package cpenvironment
 
 import (
 	"fmt"
-	"log"
 
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/dmapi/dmmap"
@@ -10,6 +9,7 @@ import (
 	w "sdmm/internal/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (e *Environment) showNodeMenu(n *treeNode) {
@@ -26,7 +26,7 @@ func (e *Environment) showNodeMenu(n *treeNode) {
 func (e *Environment) doFindOnMap(n *treeNode) func() {
 	return func() {
 		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
-		log.Println("[cpenvironment] do find object on map:", prefab.Path())
+		log.Print("do find object on map:", prefab.Path())
 		e.app.ShowLayout(lnode.NameSearch, true)
 		e.app.DoSearchPrefab(prefab.Id())
 	}

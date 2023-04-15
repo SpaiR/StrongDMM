@@ -1,10 +1,10 @@
 package app
 
 import (
-	"log"
-
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/window"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -26,7 +26,7 @@ func (preferencesConfig) TryMigrate(cfg map[string]any) (result map[string]any, 
 	version := uint(result["Version"].(float64))
 
 	if version == 1 {
-		log.Println("[app] migrating [preferences] config:", 2)
+		log.Print("migrating [preferences] config:", 2)
 
 		result["Editor"] = result["Save"]
 		delete(result, "Save")
@@ -39,7 +39,7 @@ func (preferencesConfig) TryMigrate(cfg map[string]any) (result map[string]any, 
 		migrated = true
 	}
 	if version == 2 {
-		log.Println("[app] migrating [preferences] config:", 3)
+		log.Print("migrating [preferences] config:", 3)
 
 		editorPrefs := result["Editor"].(map[string]any)
 		saveFormat := editorPrefs["SaveFormat"].(string)
@@ -87,6 +87,6 @@ func (a *app) preferencesConfig() *preferencesConfig {
 	if cfg, ok := a.ConfigFind(preferencesConfigName).(*preferencesConfig); ok {
 		return cfg
 	}
-	log.Fatal("[app] can't find project config")
+	log.Fatal().Msg("can't find project config")
 	return nil
 }

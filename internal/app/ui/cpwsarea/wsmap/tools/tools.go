@@ -1,8 +1,6 @@
 package tools
 
 import (
-	"log"
-
 	"sdmm/internal/app/window"
 	"sdmm/internal/imguiext"
 
@@ -11,6 +9,8 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -85,7 +85,7 @@ var (
 
 func SetSelected(toolName string) Tool {
 	if selectedToolName != toolName {
-		log.Println("[tools] selecting:", toolName)
+		log.Print("selecting:", toolName)
 		tools[selectedToolName].OnDeselect()
 		selectedToolName = toolName
 	}

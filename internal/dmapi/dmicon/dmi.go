@@ -5,7 +5,6 @@ import (
 	"image"
 	"image/draw"
 	_ "image/png"
-	"log"
 	"os"
 
 	"sdmm/internal/app/window"
@@ -14,6 +13,7 @@ import (
 	"sdmm/internal/third_party/sdmmparser"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/rs/zerolog/log"
 )
 
 type Dmi struct {
@@ -44,17 +44,17 @@ func (d *Dmi) State(state string) (*State, error) {
 }
 
 func New(path string) (*Dmi, error) {
-	log.Printf("[dmicon] creating new: [%s]...", path)
+	log.Printf("creating new: [%s]...", path)
 
 	iconMetadata, err := sdmmparser.ParseIconMetadata(path)
 	if err != nil {
-		log.Printf("[dmicon] unable to parse icon metadata [%s]: %s", path, err)
+		log.Printf("unable to parse icon metadata [%s]: %s", path, err)
 		return nil, err
 	}
 
 	rgba, err := loadRgbaImage(path)
 	if err != nil {
-		log.Printf("[dmicon] unable to load rgba image [%s]: %s", path, err)
+		log.Printf("unable to load rgba image [%s]: %s", path, err)
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func New(path string) (*Dmi, error) {
 		dmi.States[state.Name] = dmiState
 	}
 
-	log.Printf("[dmicon] created: [%s]", path)
+	log.Printf("created: [%s]", path)
 
 	return dmi, nil
 }
@@ -97,21 +97,21 @@ func New(path string) (*Dmi, error) {
 func loadRgbaImage(path string) (*image.NRGBA, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Printf("[dmicon] unable to open image file [%s]: %s", path, err)
+		log.Printf("unable to open image file [%s]: %s", path, err)
 		return nil, err
 	}
 	defer f.Close()
 
 	imgOs, _, err := image.Decode(f)
 	if err != nil {
-		log.Printf("[dmicon] unable to decode image file [%s]: %s", path, err)
+		log.Printf("unable to decode image file [%s]: %s", path, err)
 		return nil, err
 	}
 
 	rgba := image.NewNRGBA(imgOs.Bounds())
 	draw.Draw(rgba, rgba.Bounds(), imgOs, image.Pt(0, 0), draw.Src)
 	if rgba.Stride != rgba.Rect.Size().X*4 {
-		return nil, fmt.Errorf("[dmicon] unable to convert image to NRGBA")
+		return nil, fmt.Errorf("unable to convert image to NRGBA")
 	}
 
 	return rgba, nil

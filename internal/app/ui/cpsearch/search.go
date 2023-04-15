@@ -1,7 +1,6 @@
 package cpsearch
 
 import (
-	"log"
 	"strconv"
 
 	"sdmm/internal/app/ui/component"
@@ -10,6 +9,8 @@ import (
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -58,7 +59,7 @@ func (s *Search) Free() {
 	s.focusedResultIdx = -1
 	s.lastFocusedResultIdx = -1
 	s.doResetFilter()
-	log.Println("[cpsearch] search free")
+	log.Print("search free")
 }
 
 func (s *Search) Sync() {

@@ -1,10 +1,11 @@
 package dmvars
 
 import (
-	"log"
 	"strconv"
 
 	"sdmm/internal/util/slice"
+
+	"github.com/rs/zerolog/log"
 )
 
 const NullValue = "null"
@@ -92,7 +93,7 @@ func (v *Variables) Parent() *Variables {
 
 func (v *Variables) LinkParent(parent *Variables) {
 	if v.parent != nil {
-		log.Panic("[dmvars] linking of a parent to an occupied variables is prohibited!") // Just to ensure
+		log.Panic().Msg("linking of a parent to an occupied variables is prohibited!") // Just to ensure
 	}
 	v.parent = parent
 }

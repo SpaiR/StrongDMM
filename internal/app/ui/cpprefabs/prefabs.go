@@ -1,14 +1,14 @@
 package cpprefabs
 
 import (
-	"log"
-
 	"sdmm/internal/app/ui/component"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/internal/app/window"
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
+
+	"github.com/rs/zerolog/log"
 )
 
 type App interface {
@@ -51,7 +51,7 @@ func (p *Prefabs) Select(prefab *dmmprefab.Prefab) {
 
 	p.selectedId = prefab.Id()
 	p.tmpDoScrollToPrefab = true
-	log.Println("[cpprefabs] selected prefab id:", p.selectedId)
+	log.Print("selected prefab id:", p.selectedId)
 }
 
 func (p *Prefabs) Sync() {

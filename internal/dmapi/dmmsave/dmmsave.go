@@ -1,12 +1,12 @@
 package dmmsave
 
 import (
-	"log"
-
 	"sdmm/internal/dmapi/dmenv"
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 func Save(dme *dmenv.Dme, dmm *dmmap.Dmm, cfg Config) {
@@ -14,11 +14,11 @@ func Save(dme *dmenv.Dme, dmm *dmmap.Dmm, cfg Config) {
 }
 
 func SaveV(dme *dmenv.Dme, dmm *dmmap.Dmm, path string, cfg Config) {
-	log.Printf("[dmmsave] save started [%s]...", path)
+	log.Printf("save started [%s]...", path)
 
 	sp, err := makeSaveProcess(cfg, dme, dmm, path)
 	if err != nil {
-		log.Println("[dmmsave] unable to start save process")
+		log.Print("unable to start save process")
 		util.ShowErrorDialog("Unable to start save process")
 		return
 	}
@@ -29,11 +29,11 @@ func SaveV(dme *dmenv.Dme, dmm *dmmap.Dmm, path string, cfg Config) {
 
 	sp.handleReusedKeys()
 	if err = sp.handleLocationsWithoutKeys(); err != nil {
-		log.Println("[dmmsave] unable to handle locations without keys:", err)
+		log.Print("unable to handle locations without keys:", err)
 		util.ShowErrorDialog("Unable to save the map: " + err.Error())
 		return
 	}
 	sp.output.Save()
 
-	log.Println("[dmmsave] save finished")
+	log.Print("save finished")
 }

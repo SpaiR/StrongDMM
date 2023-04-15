@@ -1,11 +1,10 @@
 package brush
 
 import (
-	"log"
-
 	"sdmm/internal/platform"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -27,7 +26,7 @@ func TryInit() {
 	if !initialized {
 		initialized = true
 
-		log.Println("[brush] initializing...")
+		log.Print("initializing...")
 
 		attrsList.addAttribute(attribute{
 			size:       2,
@@ -52,23 +51,23 @@ func TryInit() {
 		initBuffers()
 		initAttributes()
 
-		log.Println("[brush] initialized")
+		log.Print("initialized")
 	}
 }
 
 func Dispose() {
-	log.Println("[brush] disposing...")
+	log.Print("disposing...")
 	gl.DeleteVertexArrays(1, &vao)
 	gl.DeleteBuffers(1, &vbo)
 	gl.DeleteBuffers(1, &ebo)
-	log.Println("[brush] disposed")
+	log.Print("disposed")
 }
 
 func initShader(vertex, fragment string) {
-	log.Println("[brush] initializing shader...")
+	log.Print("initializing shader...")
 	var err error
 	if program, err = platform.NewShaderProgram(vertex, fragment); err != nil {
-		log.Fatal("[brush] unable to create shader:", err)
+		log.Fatal().Msgf("unable to create shader: %v", err)
 	}
 
 	uniformIndices := [2]uint32{}
@@ -78,15 +77,15 @@ func initShader(vertex, fragment string) {
 	uniformLocationTransform = int32(uniformIndices[0])
 	uniformLocationHasTexture = int32(uniformIndices[1])
 
-	log.Println("[brush] shader initialized")
+	log.Print("shader initialized")
 }
 
 func initBuffers() {
-	log.Println("[brush] initializing buffers...")
+	log.Print("initializing buffers...")
 	gl.GenVertexArrays(1, &vao)
 	gl.GenBuffers(1, &vbo)
 	gl.GenBuffers(1, &ebo)
-	log.Println("[brush] buffers initialized")
+	log.Print("buffers initialized")
 }
 
 func initAttributes() {

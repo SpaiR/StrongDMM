@@ -1,7 +1,6 @@
 package tools
 
 import (
-	"log"
 	"math"
 
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/overlay"
@@ -9,6 +8,8 @@ import (
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 type tSelectMode int
@@ -64,7 +65,7 @@ func (t *ToolGrab) Reset() {
 	t.initTiles = nil
 	t.prevTiles = nil
 
-	log.Println("[tools] grab tools reset")
+	log.Print("grab tools reset")
 }
 
 func newGrab() *ToolGrab {

@@ -2,7 +2,6 @@ package cpvareditor
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 
@@ -15,6 +14,7 @@ import (
 	"sdmm/internal/util/slice"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 func (v *VarEditor) Process(int32) {
@@ -65,7 +65,7 @@ func (v *VarEditor) showInstanceModeButton() {
 
 	w.Button("Instance", func() {
 		v.sessionEditMode = emInstance
-		log.Println("[cpvareditor] set instance mode")
+		log.Print("set instance mode")
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 
@@ -79,7 +79,7 @@ func (v *VarEditor) showPrefabModeButton() {
 
 	w.Button("Prefab", func() {
 		v.sessionEditMode = emPrefab
-		log.Println("[cpvareditor] set prefab mode")
+		log.Print("set prefab mode")
 	}).Style(buttonStyle).Size(imgui.Vec2{X: -1}).Build()
 }
 
@@ -229,11 +229,11 @@ func (v *VarEditor) showVarPin(varName string) {
 		if pinned {
 			cfg.PinnedVarNames = slice.StrRemove(cfg.PinnedVarNames, varName)
 			v.variablesNames = append(v.variablesNames, varName)
-			log.Println("[cpvareditor] variable unpinned:", varName)
+			log.Print("variable unpinned:", varName)
 		} else {
 			cfg.PinnedVarNames = append(cfg.PinnedVarNames, varName)
 			v.variablesNames = slice.StrRemove(v.variablesNames, varName)
-			log.Println("[cpvareditor] variable pinned:", varName)
+			log.Print("variable pinned:", varName)
 		}
 
 		sort.Strings(cfg.PinnedVarNames)

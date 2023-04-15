@@ -1,6 +1,6 @@
 package app
 
-import "log"
+import "github.com/rs/zerolog/log"
 
 const (
 	configName    = "app"
@@ -32,6 +32,6 @@ func (a *app) config() *appConfig {
 	if cfg, ok := a.ConfigFind(configName).(*appConfig); ok {
 		return cfg
 	}
-	log.Fatal("[app] can't find config")
+	log.Fatal().Msg("can't find config")
 	return nil
 }

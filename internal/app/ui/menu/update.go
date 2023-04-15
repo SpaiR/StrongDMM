@@ -1,14 +1,13 @@
 package menu
 
 import (
-	"log"
-
 	"sdmm/internal/imguiext"
 	"sdmm/internal/imguiext/icon"
 	"sdmm/internal/imguiext/style"
 	w "sdmm/internal/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 var loadingDotTypes = []string{".", "..", "...", "...."}
@@ -61,12 +60,12 @@ func (m *Menu) showUpdateLayout() {
 }
 
 func (m *Menu) doHideUpdateButton() {
-	log.Println("[menu] do hide update")
+	log.Print("do hide update")
 	m.updateStatus = upStatusNone
 }
 
 func (m *Menu) doIgnoreUpdate() {
-	log.Println("[menu] do ignore update")
+	log.Print("do ignore update")
 	m.doHideUpdateButton()
 	m.app.DoIgnoreUpdate()
 }

@@ -1,7 +1,6 @@
 package wscreatemap
 
 import (
-	"log"
 	"math"
 	"path/filepath"
 
@@ -16,6 +15,7 @@ import (
 	w "sdmm/internal/imguiext/widget"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 	"github.com/sqweek/dialog"
 )
 
@@ -118,7 +118,7 @@ func (ws *WsCreateMap) showSaveButton() {
 }
 
 func (ws *WsCreateMap) dmmSaveLocation() (string, error) {
-	log.Println("[wsnewmap] creating map file...")
+	log.Print("creating map file...")
 	return dialog.
 		File().
 		Title("New Map").
@@ -128,7 +128,7 @@ func (ws *WsCreateMap) dmmSaveLocation() (string, error) {
 }
 
 func (ws *WsCreateMap) tryCreateMap() {
-	log.Println("[wsnewmap] trying to create a new map with X:", ws.mapWidth, "| Y:", ws.mapHeight, "| Z:", ws.mapZDepth)
+	log.Print("trying to create a new map with X:", ws.mapWidth, "| Y:", ws.mapHeight, "| Z:", ws.mapZDepth)
 
 	if file, err := ws.dmmSaveLocation(); err == nil {
 		ws.app.FocusApplicationWindow() // After a system dialog has been opened we need to return the focus.
@@ -137,11 +137,11 @@ func (ws *WsCreateMap) tryCreateMap() {
 			file = file + ".dmm"
 		}
 
-		log.Println("[wsnewmap] saving new map to:", file)
+		log.Print("saving new map to:", file)
 
 		ws.save(file)
 		ws.app.DoLoadResourceV(file, ws.Root())
 	} else {
-		log.Println("[wsnewmap] unable to get new map save location:", err)
+		log.Print("unable to get new map save location:", err)
 	}
 }

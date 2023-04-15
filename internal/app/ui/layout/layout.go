@@ -1,8 +1,6 @@
 package layout
 
 import (
-	"log"
-
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/ui/cpenvironment"
 	"sdmm/internal/app/ui/cpprefabs"
@@ -13,6 +11,7 @@ import (
 	"sdmm/internal/util/slice"
 
 	"github.com/SpaiR/imgui-go"
+	"github.com/rs/zerolog/log"
 )
 
 type app interface {
@@ -106,7 +105,7 @@ func (l *Layout) CheckLayoutState() bool {
 func (l *Layout) SyncLayoutState() {
 	cfg := l.config()
 	cfg.State = configState
-	log.Println("[layout] layout state updated:", configState)
+	log.Print("layout state updated:", configState)
 }
 
 func (l *Layout) ShowNode(nodeName string) {

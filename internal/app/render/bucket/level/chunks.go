@@ -1,11 +1,12 @@
 package level
 
 import (
-	"log"
 	"math"
 
 	"sdmm/internal/app/render/bucket/level/chunk"
 	"sdmm/internal/util"
+
+	"github.com/rs/zerolog/log"
 )
 
 // generateChunks creates a map with util.Point's as a key, and a chunk.Chunk's as a value.
@@ -61,7 +62,7 @@ func generateChunks(maxX, maxY, iconSize int) map[util.Point]*chunk.Chunk {
 		generateAxis(maxX, maxX-nextX)
 	}
 
-	log.Printf("[level] generated chunks number: [%d]", len(chunks))
+	log.Printf("generated chunks number: [%d]", len(chunks))
 
 	return chunks
 }

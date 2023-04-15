@@ -1,10 +1,10 @@
 package dmmap
 
 import (
-	"log"
-
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmvars"
+
+	"github.com/rs/zerolog/log"
 )
 
 var PrefabStorage = &prefabStorage{prefabs: make(map[uint64]*dmmprefab.Prefab)}
@@ -15,7 +15,7 @@ type prefabStorage struct {
 }
 
 func (s *prefabStorage) Free() {
-	log.Printf("[dmmap] cache free; [%d] prefabs disposed", len(s.prefabs))
+	log.Printf("cache free; [%d] prefabs disposed", len(s.prefabs))
 	s.prefabs = make(map[uint64]*dmmprefab.Prefab)
 	s.prefabsByPath = make(map[string][]*dmmprefab.Prefab)
 }
