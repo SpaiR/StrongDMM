@@ -63,7 +63,7 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: internal/third_party/sdmmparser/src
+          workspaces: third_party/sdmmparser/src
 
       - if: contains(matrix.os, 'windows')
         name: Pre Build (Windows)

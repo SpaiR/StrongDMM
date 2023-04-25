@@ -24,7 +24,7 @@ tasks:
       - rm -frd ./dst
 
   clean-sdmmparser:
-    dir: internal/third_party/sdmmparser/src
+    dir: third_party/sdmmparser/src
     cmds:
       - cargo clean
 
@@ -46,7 +46,7 @@ tasks:
       - go build {{.BUILD_ARGS}} -o "dst/{{.BIN_DST}}" .
 
   build-sdmmparser:
-    dir: internal/third_party/sdmmparser/src
+    dir: third_party/sdmmparser/src
     cmds:
       - cargo build --release
 

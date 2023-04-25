@@ -6,11 +6,11 @@ import (
 	"image/draw"
 	_ "image/png"
 	"os"
+	"sdmm/third_party/sdmmparser"
 
 	"sdmm/internal/app/window"
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/platform"
-	"sdmm/internal/third_party/sdmmparser"
 
 	"github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/rs/zerolog/log"

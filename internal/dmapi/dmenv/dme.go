@@ -3,11 +3,11 @@ package dmenv
 import (
 	"fmt"
 	"path/filepath"
+	"sdmm/third_party/sdmmparser"
 	"strings"
 
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmvars"
-	"sdmm/internal/third_party/sdmmparser"
 )
 
 type Dme struct {
