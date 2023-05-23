@@ -24,7 +24,7 @@ func (p *PaneMap) processCameraMove() {
 }
 
 func (p *PaneMap) processCameraZoom() {
-	if !p.canvasControl.Zoomed() {
+	if !p.canvasControl.Zoomed() || !p.canvasControl.Active() {
 		return
 	}
 
