@@ -1,3 +1,8 @@
+# v2.7.2.alpha
+
+* Fix infinite scrolling when the canvas is exited during a scroll; @itsmeow
+* Fix deletion processing out of bounds tiles. @itsmeow
+
 # v2.7.1.alpha
 
 Fixed: respecting of Z-level when searching object with a "Find on Map".
