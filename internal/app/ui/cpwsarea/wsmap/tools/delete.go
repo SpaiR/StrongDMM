@@ -13,8 +13,8 @@ type ToolDelete struct {
 	deletedTiles map[util.Point]bool
 }
 
-func (ToolDelete) IgnoreBounds() bool {
-	return true
+func (t ToolDelete) IgnoreBounds() bool {
+	return !t.AltBehaviour()
 }
 
 func (ToolDelete) Name() string {
