@@ -159,11 +159,11 @@ func parse(file namedReader) (*DmmData, error) {
 							}
 							inVarEditBlock = false
 						} else if c == '(' && !inVarDataBlock { //list() parsing
-							inVarDataBlock = true;
-							currDatum = append(currDatum, c);
+							inVarDataBlock = true
+							currDatum = append(currDatum, c)
 						} else if c == ')' && inVarDataBlock {
-							inVarDataBlock = false;
-							currDatum = append(currDatum, c);
+							inVarDataBlock = false
+							currDatum = append(currDatum, c)
 						} else {
 							currDatum = append(currDatum, c)
 						}
