@@ -213,7 +213,10 @@ no_ws=1;
   space  =  "\"	2 \\"  ;  
 	tab	=	3	;	
 } 	, 	/obj/foo2 	, 	
- 	/obj/foo1 	{no_ws=1} 	) 	
+ 	/obj/foo1 	{no_ws=1} 	,
+	/obj/foo3{
+		liz = list("a" = 2, "c" = 3)
+	}) 	
 
 // Comment line that shouldn't flag TGM format
 
@@ -228,7 +231,7 @@ no_ws=1;
 
 	require.Len(t, dmm.Dictionary, 1)
 	prefabs := dmm.Dictionary["aaa"]
-	require.Len(t, prefabs, 3)
+	require.Len(t, prefabs, 4)
 
 	assert.Equal("/obj/foo1", prefabs[0].Path())
 	assert.ElementsMatch(prefabs[0].Vars().Iterate(), []string{"no_ws", "space", "tab"})
@@ -242,6 +245,10 @@ no_ws=1;
 	assert.Equal("/obj/foo1", prefabs[2].Path())
 	assert.ElementsMatch(prefabs[2].Vars().Iterate(), []string{"no_ws"})
 	assert.Equal("1", prefabs[2].Vars().ValueV("no_ws", ""))
+
+	assert.Equal("/obj/foo3", prefabs[3].Path())
+	assert.ElementsMatch(prefabs[3].Vars().Iterate(), []string{"liz"})
+	assert.Equal("list(\"a\" = 2, \"c\" = 3)", prefabs[3].Vars().ValueV("liz", ""))
 }
 
 // Table-based test to check failure edge cases.
