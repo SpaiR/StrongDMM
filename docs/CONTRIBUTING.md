@@ -90,7 +90,8 @@ fixes #0
 - **feature:** adding of massive functionality;
 - **fix:** fixing and resolving bugs and problems;
 - **refactor:** improves code without changing functionality;
-- **tweak:** small improvements to the existing functionality, ex. wording changes, buttons movement etc.
+- **tweak:** small improvements to the existing functionality, ex. wording changes, buttons movement etc;
+- **up:** when bumping dependencies.
 
 ## License
 
