@@ -128,7 +128,7 @@ compiled to a `staticlib`. You can find it by path: `internal/third_party/sdmmpa
 ### Pre-requests
 
 * [Go](https://go.dev/): version **1.20** or higher
-* [Rust](https://www.rust-lang.org/): version **1.56.0** or higher
+* [Rust](https://www.rust-lang.org/): version **1.69.0**
 * (Optional) [Task](https://taskfile.dev): to run build scripts
 
 #### For Windows
