@@ -1,7 +1,7 @@
 [package]
 name = "sdmmparser"
 version = "2.0.0"
-rust-version = "1.56.0"
+vrust-version = "1.70.0"
 
 [lib]
 name = "sdmmparser"
@@ -16,7 +16,7 @@ png = "0.17.5"
 
 [dependencies.dreammaker]
 git = "https://github.com/SpaiR/SpacemanDMM"
-rev = "6f26e074de887da5bbf70bbdea4ef2395250b206"
+rev = "1f9b4416b38c26acd7a6ff77fdaa6e7693952e47"
 package = "dreammaker"
 
 [profile.release]
