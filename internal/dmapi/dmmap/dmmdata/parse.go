@@ -44,6 +44,7 @@ func parse(file namedReader) (*DmmData, error) {
 		inCommentLine  bool
 		commentTrigger bool
 		inQuoteBlock   bool
+		inVarDataBlock bool
 		inKeyBlock     bool
 		inDataBlock    bool
 		inVarEditBlock bool
@@ -110,6 +111,9 @@ func parse(file namedReader) (*DmmData, error) {
 						currDatum = append(currDatum, c)
 					}
 				}
+				if inVarDataBlock { // retain any whitespace in the data block
+					currDatum = append(currDatum, c)
+				}
 				continue
 			}
 
@@ -154,6 +158,12 @@ func parse(file namedReader) (*DmmData, error) {
 								flushCurrVariable()
 							}
 							inVarEditBlock = false
+						} else if c == '(' && !inVarDataBlock { //list() parsing
+							inVarDataBlock = true
+							currDatum = append(currDatum, c)
+						} else if c == ')' && inVarDataBlock {
+							inVarDataBlock = false
+							currDatum = append(currDatum, c)
 						} else {
 							currDatum = append(currDatum, c)
 						}
