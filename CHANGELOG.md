@@ -1,3 +1,7 @@
+# v2.7.3.alpha
+
+Fixed: list whitespace parsing. @itsmeow
+
 # v2.7.2.alpha
 
 * Fix infinite scrolling when the canvas is exited during a scroll; @itsmeow
