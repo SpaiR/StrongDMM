@@ -111,7 +111,7 @@ func parse(file namedReader) (*DmmData, error) {
 						currDatum = append(currDatum, c)
 					}
 				}
-				if inVarDataBlock { // retain any whitespace in the data block
+				else if inVarDataBlock { // retain any whitespace in the data block
 					currDatum = append(currDatum, c)
 				}
 				continue

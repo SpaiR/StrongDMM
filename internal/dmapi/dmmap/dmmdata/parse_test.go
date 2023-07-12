@@ -215,7 +215,7 @@ no_ws=1;
 } 	, 	/obj/foo2 	, 	
  	/obj/foo1 	{no_ws=1} 	,
 	/obj/foo3{
-		liz =   	list("a" 	= 2, "c" = 		3)  	
+		liz =   	list("a" 	= 2, "c" = 		3, "long bit of text  " = "other	long bit 	of		text")  	
 	}) 	
 
 // Comment line that shouldn't flag TGM format
@@ -248,7 +248,7 @@ no_ws=1;
 
 	assert.Equal("/obj/foo3", prefabs[3].Path())
 	assert.ElementsMatch(prefabs[3].Vars().Iterate(), []string{"liz"})
-	assert.Equal("list(\"a\" 	= 2, \"c\" = 		3)", prefabs[3].Vars().ValueV("liz", ""))
+	assert.Equal("list(\"a\" 	= 2, \"c\" = 		3, \"long bit of text  \" = \"other	long bit 	of		text\")", prefabs[3].Vars().ValueV("liz", ""))
 }
 
 // Table-based test to check failure edge cases.
