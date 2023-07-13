@@ -1,3 +1,7 @@
+# v2.7.4.alpha
+
+Fixed: whitespace duplication while parsing lists. @LemonInTheDark
+
 # v2.7.3.alpha
 
 Fixed: list whitespace parsing. @itsmeow
