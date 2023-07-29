@@ -5,10 +5,10 @@ import (
 	"image/png"
 	"os"
 	"time"
-	
-	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
+
 	"sdmm/internal/app/render/bucket/level/chunk/unit"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
+	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	appdialog "sdmm/internal/app/ui/dialog"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/imguiext"
@@ -23,7 +23,7 @@ import (
 )
 
 type sessionScreenshot struct {
-	saving bool
+	saving      bool
 	inselection bool
 }
 
@@ -39,7 +39,7 @@ func (p *Panel) showScreenshot() {
 
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
-		
+
 		imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inselection)
 
 		var createBtnLabel string
@@ -66,11 +66,11 @@ func (p *Panel) createScreenshot() {
 	var width, height int
 	if p.sessionScreenshot.inselection && toolSelect.HasSelectedArea() {
 		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-	} else if p.sessionScreenshot.inselection && !toolSelect.HasSelectedArea()  {
+	} else if p.sessionScreenshot.inselection && !toolSelect.HasSelectedArea() {
 		appdialog.Open(appdialog.TypeInformation{
-				Title: "Nothing selected!",
-				Information: "Screenshot in Selection is on, but you have nothing selected.",
-			})
+			Title:       "Nothing selected!",
+			Information: "Screenshot in Selection is on, but you have nothing selected.",
+		})
 		p.sessionScreenshot.saving = false
 		return
 	} else {
@@ -81,7 +81,7 @@ func (p *Panel) createScreenshot() {
 	c.ClearColor = canvas.Color{} // Empty clear color with no alpha
 	c.Render().Camera.Level = p.editor.ActiveLevel()
 	if p.sessionScreenshot.inselection {
-		c.Render().Camera.Translate(-float32((int(bounds.X1) - 1) *dmmap.WorldIconSize), -float32((int(bounds.Y1) - 1)	*dmmap.WorldIconSize))
+		c.Render().Camera.Translate(-float32((int(bounds.X1)-1)*dmmap.WorldIconSize), -float32((int(bounds.Y1)-1)*dmmap.WorldIconSize))
 	}
 	c.Render().SetUnitProcessor(p)
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
