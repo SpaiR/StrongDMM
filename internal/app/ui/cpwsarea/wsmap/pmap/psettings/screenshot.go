@@ -5,7 +5,8 @@ import (
 	"image/png"
 	"os"
 	"time"
-
+	
+	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/render/bucket/level/chunk/unit"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
 	appdialog "sdmm/internal/app/ui/dialog"
@@ -23,6 +24,7 @@ import (
 
 type sessionScreenshot struct {
 	saving bool
+	inselection bool
 }
 
 func (p *Panel) showScreenshot() {
@@ -37,6 +39,8 @@ func (p *Panel) showScreenshot() {
 
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
+		
+		imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inselection)
 
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
@@ -57,12 +61,28 @@ func (p *Panel) showScreenshot() {
 
 func (p *Panel) createScreenshot() {
 	p.sessionScreenshot.saving = true
-
-	width, height := p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
+	toolSelect := tools.SetSelected(tools.TNGrab).(*tools.ToolGrab)
+	bounds := toolSelect.Bounds()
+	var width, height int
+	if p.sessionScreenshot.inselection && toolSelect.HasSelectedArea() {
+		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
+	} else if p.sessionScreenshot.inselection && !toolSelect.HasSelectedArea()  {
+		appdialog.Open(appdialog.TypeInformation{
+				Title: "Nothing selected!",
+				Information: "Screenshot in Selection is on, but you have nothing selected.",
+			})
+		p.sessionScreenshot.saving = false
+		return
+	} else {
+		width, height = p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
+	}
 
 	c := canvas.New()
 	c.ClearColor = canvas.Color{} // Empty clear color with no alpha
 	c.Render().Camera.Level = p.editor.ActiveLevel()
+	if p.sessionScreenshot.inselection {
+		c.Render().Camera.Translate(-float32((int(bounds.X1) - 1) *dmmap.WorldIconSize), -float32((int(bounds.Y1) - 1)	*dmmap.WorldIconSize))
+	}
 	c.Render().SetUnitProcessor(p)
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
 		c.Render().UpdateBucket(p.editor.Dmm(), level) // Prepare for render all available levels
