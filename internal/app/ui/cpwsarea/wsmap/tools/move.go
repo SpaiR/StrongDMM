@@ -7,13 +7,6 @@ import (
 	"sdmm/internal/util"
 )
 
-type tMoveMode int
-
-const (
-	tMoveModeSelectObject tSelectMode = iota
-	tMoveModeMoveObject
-)
-
 // ToolPick can be used move a single object.
 type ToolMove struct {
 	tool
