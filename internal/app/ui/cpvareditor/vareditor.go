@@ -5,7 +5,6 @@ import (
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"sdmm/internal/app/config"
-	"sdmm/internal/app/ui/dialog"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap"
@@ -136,9 +135,8 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 		varValue = dmvars.NullValue
 	}
 
-	if v.checkForVarIssue(varName, varValue) {
-		return
-	}
+	//correct any issues related to unenclosed stuff
+	varValue = v.correctVarIssue(varValue)
 
 	origPrefab := v.instance.Prefab()
 
@@ -174,9 +172,8 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 		varValue = dmvars.NullValue
 	}
 
-	if v.checkForVarIssue(varName, varValue) {
-		return
-	}
+	//correct any issues related to unenclosed stuff
+	varValue = v.correctVarIssue(varValue)
 
 	var newVars *dmvars.Variables
 	if v.initialVarValue(varName) == varValue {
@@ -220,27 +217,25 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
 }
 
-func (v *VarEditor) checkForVarIssue(varName, varValue string) bool {
+func (v *VarEditor) correctVarIssue(varValue string) string {
 	isList, isString := strings.HasPrefix(varValue, "list("), strings.HasPrefix(varValue, `"`)
-	variableBad := false
-	enclosingCharacter := "This shouldnt be empty"
+	enclosingCharacter := ""
+	hasIssue := false
 	if isString {
 		//we start and end with a quotation mark so we probably shouldnt break
 		enclosingCharacter = `"`
-		variableBad = !strings.HasSuffix(varValue, enclosingCharacter)
+		hasIssue = !strings.HasSuffix(varValue, enclosingCharacter)
 	} else if isList {
 		//if list is enclosed
 		enclosingCharacter = `)`
-		variableBad = !strings.HasSuffix(varValue, enclosingCharacter)
+		hasIssue = !strings.HasSuffix(varValue, enclosingCharacter)
 	}
 
-	if variableBad {
-		dialog.Open(dialog.TypeInformation{
-			Title:       "Variable Error!",
-			Information: "Variable " + varName + ", of value\n" + varValue + "\nis not enclosed with a " + enclosingCharacter + " !",
-		})
+	if hasIssue {
+		varValue = varValue + enclosingCharacter
 	}
-	return variableBad
+
+	return varValue
 }
 
 func (v *VarEditor) doToggleShowModified() {
