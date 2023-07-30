@@ -65,13 +65,13 @@ func (p *Panel) createScreenshot() {
 	p.sessionScreenshot.saving = true
 	selectedTool := tools.Selected()
 	grabCurrentlySelected := selectedTool.Name() == tools.TNGrab
-	bounds := util.Bounds{X1: 0, Y1: 0, X2: 0, Y2: 0}
+	boundX, boundY := float32(0), float32(0)
 	var width, height int
 	if p.sessionScreenshot.inSelectionMode && grabCurrentlySelected && selectedTool.(*tools.ToolGrab).HasSelectedArea() {
-		bounds = selectedTool.(*tools.ToolGrab).Bounds() //set us to the bounds of the select tool so we can calculate width and height
+		bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds so we can calculate boundX and boundY
 		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-		bounds.X1 = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
-		bounds.Y1 = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
+		boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+		boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
 	} else if p.sessionScreenshot.inSelectionMode && !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
 		appdialog.Open(appdialog.TypeInformation{
 			Title:       "Nothing selected!",
@@ -86,7 +86,7 @@ func (p *Panel) createScreenshot() {
 	c := canvas.New()
 	c.ClearColor = canvas.Color{} // Empty clear color with no alpha
 	c.Render().Camera.Level = p.editor.ActiveLevel()
-	c.Render().Camera.Translate(bounds.X1, bounds.Y1)
+	c.Render().Camera.Translate(boundX, boundY)
 	c.Render().SetUnitProcessor(p)
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
 		c.Render().UpdateBucket(p.editor.Dmm(), level) // Prepare for render all available levels
