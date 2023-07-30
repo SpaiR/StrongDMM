@@ -85,3 +85,7 @@ func selectFillTool() {
 func selectSelectTool() {
 	tools.SetSelected(tools.TNGrab)
 }
+
+func selectMoveTool() {
+	tools.SetSelected(tools.TNMove)
+}

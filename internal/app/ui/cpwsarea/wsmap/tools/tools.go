@@ -17,6 +17,7 @@ const (
 	TNAdd     = "Add"
 	TNFill    = "Fill"
 	TNGrab    = "Grab"
+	TNMove    = "Move"
 	TNPick    = "Pick"
 	TNDelete  = "Delete"
 	TNReplace = "Replace"
@@ -73,6 +74,7 @@ var (
 		TNAdd:     newAdd(),
 		TNFill:    newFill(),
 		TNGrab:    newGrab(),
+		TNMove:    newMove(),
 		TNPick:    newPick(),
 		TNDelete:  newDelete(),
 		TNReplace: newReplace(),

@@ -49,6 +49,8 @@ func (p *PaneMap) processCanvasOverlayTools() {
 		colTileBorder = overlay.ColorToolSelectTileBorder
 	case tools.TNPick:
 		colInstance = overlay.ColorToolPickInstance
+	case tools.TNMove:
+		colInstance = overlay.ColorToolPickInstance
 	case tools.TNDelete:
 		if !tools.Selected().AltBehaviour() {
 			colInstance = overlay.ColorToolDeleteInstance
