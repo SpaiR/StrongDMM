@@ -24,7 +24,7 @@ import (
 
 type sessionScreenshot struct {
 	saving      bool
-	inselection bool
+	inSelectionMode bool
 }
 
 func (p *Panel) showScreenshot() {
@@ -40,7 +40,9 @@ func (p *Panel) showScreenshot() {
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
 
-		imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inselection)
+		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
+			tools.SetSelected(tools.TNGrab)
+		}
 
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
@@ -61,15 +63,19 @@ func (p *Panel) showScreenshot() {
 
 func (p *Panel) createScreenshot() {
 	p.sessionScreenshot.saving = true
-	toolSelect := tools.SetSelected(tools.TNGrab).(*tools.ToolGrab)
-	bounds := toolSelect.Bounds()
+	selectedTool := tools.Selected()
+	grabCurrentlySelected := selectedTool.Name() == tools.TNGrab
+	bounds := util.Bounds{X1: 0, Y1: 0, X2: 0, Y2: 0}
 	var width, height int
-	if p.sessionScreenshot.inselection && toolSelect.HasSelectedArea() {
+	if p.sessionScreenshot.inSelectionMode && grabCurrentlySelected && selectedTool.(*tools.ToolGrab).HasSelectedArea() {
+		bounds = selectedTool.(*tools.ToolGrab).Bounds() //set us to the bounds of the select tool so we can calculate width and height
 		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-	} else if p.sessionScreenshot.inselection && !toolSelect.HasSelectedArea() {
+		bounds.X1 = -float32((int(bounds.X1)-1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+		bounds.Y1 = -float32((int(bounds.Y1)-1) * dmmap.WorldIconSize)
+	} else if p.sessionScreenshot.inSelectionMode && !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
 		appdialog.Open(appdialog.TypeInformation{
 			Title:       "Nothing selected!",
-			Information: "Screenshot in Selection is on, but you have nothing selected.",
+			Information: "Screenshot in Selection is on, but you have nothing selected. Use the grab tool!",
 		})
 		p.sessionScreenshot.saving = false
 		return
@@ -80,9 +86,7 @@ func (p *Panel) createScreenshot() {
 	c := canvas.New()
 	c.ClearColor = canvas.Color{} // Empty clear color with no alpha
 	c.Render().Camera.Level = p.editor.ActiveLevel()
-	if p.sessionScreenshot.inselection {
-		c.Render().Camera.Translate(-float32((int(bounds.X1)-1)*dmmap.WorldIconSize), -float32((int(bounds.Y1)-1)*dmmap.WorldIconSize))
-	}
+	c.Render().Camera.Translate(bounds.X1, bounds.Y1)
 	c.Render().SetUnitProcessor(p)
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
 		c.Render().UpdateBucket(p.editor.Dmm(), level) // Prepare for render all available levels
