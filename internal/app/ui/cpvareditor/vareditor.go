@@ -135,7 +135,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 	if len(varValue) == 0 {
 		varValue = dmvars.NullValue
 	}
-	
+
 	if v.checkForVarIssue(varName, varValue) {
 		return
 	}
@@ -173,7 +173,7 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	if len(varValue) == 0 {
 		varValue = dmvars.NullValue
 	}
-	
+
 	if v.checkForVarIssue(varName, varValue) {
 		return
 	}
@@ -221,9 +221,9 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 }
 
 func (v *VarEditor) checkForVarIssue(varName, varValue string) bool {
-	is_list, is_string := strings.HasPrefix(varValue, "list(") , strings.HasPrefix(varValue, `"`)
+	is_list, is_string := strings.HasPrefix(varValue, "list("), strings.HasPrefix(varValue, `"`)
 	variable_bad := false
-	enclosing_c := "This shouldnt be empty" 
+	enclosing_c := "This shouldnt be empty"
 	if is_string {
 		//we start and end with a quotation mark so we probably shouldnt break
 		enclosing_c = `"`
@@ -233,7 +233,7 @@ func (v *VarEditor) checkForVarIssue(varName, varValue string) bool {
 		enclosing_c = `)`
 		variable_bad = !strings.HasSuffix(varValue, enclosing_c)
 	}
-	
+
 	if variable_bad {
 		dialog.Open(dialog.TypeInformation{
 			Title:       "Variable Error!",
