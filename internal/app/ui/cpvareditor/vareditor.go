@@ -5,6 +5,7 @@ import (
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
 
 	"sdmm/internal/app/config"
+	"sdmm/internal/app/ui/dialog"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap"
@@ -12,6 +13,7 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util/slice"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 )
@@ -133,6 +135,10 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 	if len(varValue) == 0 {
 		varValue = dmvars.NullValue
 	}
+	
+	if v.checkForVarIssue(varName, varValue) {
+		return
+	}
 
 	origPrefab := v.instance.Prefab()
 
@@ -166,6 +172,10 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	if len(varValue) == 0 {
 		varValue = dmvars.NullValue
+	}
+	
+	if v.checkForVarIssue(varName, varValue) {
+		return
 	}
 
 	var newVars *dmvars.Variables
@@ -208,6 +218,29 @@ func (v *VarEditor) isReadOnly(varName string) bool {
 
 func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
+}
+
+func (v *VarEditor) checkForVarIssue(varName, varValue string) bool {
+	is_list, is_string := strings.HasPrefix(varValue, "list(") , strings.HasPrefix(varValue, `"`)
+	variable_bad := false
+	enclosing_c := "This shouldnt be empty" 
+	if is_string {
+		//we start and end with a quotation mark so we probably shouldnt break
+		enclosing_c = `"`
+		variable_bad = !strings.HasSuffix(varValue, `"`)
+	} else if is_list {
+		//if list is enclosed
+		enclosing_c = `)`
+		variable_bad = !strings.HasSuffix(varValue, enclosing_c)
+	}
+	
+	if variable_bad {
+		dialog.Open(dialog.TypeInformation{
+			Title:       "Variable Error!",
+			Information: "Variable " + varName + ", of value\n" + varValue + "\nis not enclosed with a " + enclosing_c + " !",
+		})
+	}
+	return variable_bad
 }
 
 func (v *VarEditor) doToggleShowModified() {
