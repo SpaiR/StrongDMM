@@ -50,6 +50,7 @@ var (
 				w.Separator(),
 				w.Text("Fill the area with the selected object"),
 				w.Line(w.TextFrame("Hold Alt"), w.Text("Fill the selected area with the selected object with replace")),
+				w.Line(w.TextFrame("Hold Ctrl"), w.Text("Fill the area with the selected, borders only")),
 			},
 		},
 		tools.TNGrab: {
