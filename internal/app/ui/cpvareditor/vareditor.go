@@ -221,26 +221,26 @@ func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 }
 
 func (v *VarEditor) checkForVarIssue(varName, varValue string) bool {
-	is_list, is_string := strings.HasPrefix(varValue, "list("), strings.HasPrefix(varValue, `"`)
-	variable_bad := false
-	enclosing_c := "This shouldnt be empty"
-	if is_string {
+	isList, isString := strings.HasPrefix(varValue, "list("), strings.HasPrefix(varValue, `"`)
+	variableBad := false
+	enclosingCharacter := "This shouldnt be empty"
+	if isString {
 		//we start and end with a quotation mark so we probably shouldnt break
-		enclosing_c = `"`
-		variable_bad = !strings.HasSuffix(varValue, `"`)
-	} else if is_list {
+		enclosingCharacter = `"`
+		variableBad = !strings.HasSuffix(varValue, enclosingCharacter)
+	} else if isList {
 		//if list is enclosed
-		enclosing_c = `)`
-		variable_bad = !strings.HasSuffix(varValue, enclosing_c)
+		enclosingCharacter = `)`
+		variableBad = !strings.HasSuffix(varValue, enclosingCharacter)
 	}
 
-	if variable_bad {
+	if variableBad {
 		dialog.Open(dialog.TypeInformation{
 			Title:       "Variable Error!",
-			Information: "Variable " + varName + ", of value\n" + varValue + "\nis not enclosed with a " + enclosing_c + " !",
+			Information: "Variable " + varName + ", of value\n" + varValue + "\nis not enclosed with a " + enclosingCharacter + " !",
 		})
 	}
-	return variable_bad
+	return variableBad
 }
 
 func (v *VarEditor) doToggleShowModified() {
