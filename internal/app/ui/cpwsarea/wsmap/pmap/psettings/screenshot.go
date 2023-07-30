@@ -23,7 +23,7 @@ import (
 )
 
 type sessionScreenshot struct {
-	saving      bool
+	saving          bool
 	inSelectionMode bool
 }
 
@@ -70,8 +70,8 @@ func (p *Panel) createScreenshot() {
 	if p.sessionScreenshot.inSelectionMode && grabCurrentlySelected && selectedTool.(*tools.ToolGrab).HasSelectedArea() {
 		bounds = selectedTool.(*tools.ToolGrab).Bounds() //set us to the bounds of the select tool so we can calculate width and height
 		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-		bounds.X1 = -float32((int(bounds.X1)-1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
-		bounds.Y1 = -float32((int(bounds.Y1)-1) * dmmap.WorldIconSize)
+		bounds.X1 = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+		bounds.Y1 = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
 	} else if p.sessionScreenshot.inSelectionMode && !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
 		appdialog.Open(appdialog.TypeInformation{
 			Title:       "Nothing selected!",
