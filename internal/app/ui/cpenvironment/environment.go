@@ -18,7 +18,7 @@ type App interface {
 	LoadedEnvironment() *dmenv.Dme
 	DoSelectPrefabByPath(string)
 	DoEditPrefabByPath(string)
-	DoSearchPrefab(prefabId uint64)
+	DoSearchPrefabByPath(path string)
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
 	PathsFilter() *dm.PathsFilter

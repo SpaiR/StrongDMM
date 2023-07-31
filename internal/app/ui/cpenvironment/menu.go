@@ -28,6 +28,6 @@ func (e *Environment) doFindOnMap(n *treeNode) func() {
 		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
 		log.Print("do find object on map:", prefab.Path())
 		e.app.ShowLayout(lnode.NameSearch, true)
-		e.app.DoSearchPrefab(prefab.Id())
+		e.app.DoSearchPrefabByPath(prefab.Path())
 	}
 }
