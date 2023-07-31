@@ -5,6 +5,7 @@ import (
 
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/overlay"
 
+	"sdmm/internal/imguiext"
 	"sdmm/internal/util"
 )
 
@@ -71,11 +72,29 @@ func (t *ToolFill) onStop(util.Point) {
 
 	// Fill the area.
 	if prefab, ok := ed.SelectedPrefab(); ok {
-		for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
+		fillTile := func(x, y int) {
+			coord := util.Point{X: x, Y: y, Z: t.start.Z}
+			tile := ed.Dmm().GetTile(coord)
+			t.basicPrefabAdd(tile, prefab)
+		}
+		if imguiext.IsCtrlDown() {
+			rows := []float32{t.fillArea.Y1, t.fillArea.Y2}
+			columns := []float32{t.fillArea.X1, t.fillArea.X2}
+			for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
+				for _, coordinate := range rows {
+					fillTile(int(x), int(coordinate))
+				}
+			}
 			for y := t.fillArea.Y1; y <= t.fillArea.Y2; y++ {
-				coord := util.Point{X: int(x), Y: int(y), Z: t.start.Z}
-				tile := ed.Dmm().GetTile(coord)
-				t.basicPrefabAdd(tile, prefab)
+				for _, coordinate := range columns {
+					fillTile(int(coordinate), int(y))
+				}
+			}
+		} else {
+			for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
+				for y := t.fillArea.Y1; y <= t.fillArea.Y2; y++ {
+					fillTile(int(x), int(y))
+				}
 			}
 		}
 
