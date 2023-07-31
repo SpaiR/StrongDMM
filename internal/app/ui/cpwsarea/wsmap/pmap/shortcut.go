@@ -28,6 +28,12 @@ func (p *PaneMap) addShortcuts() {
 		FirstKeyAlt: glfw.KeyKP3,
 		Action:      selectSelectTool,
 	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:        "pmap#selectMoveTool",
+		FirstKey:    glfw.Key4,
+		FirstKeyAlt: glfw.KeyKP4,
+		Action:      selectMoveTool,
+	})
 
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:        "pmap#doDeselectAll",

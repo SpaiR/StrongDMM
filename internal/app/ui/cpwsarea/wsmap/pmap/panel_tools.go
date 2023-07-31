@@ -21,6 +21,7 @@ var (
 		tools.TNAdd,
 		tools.TNFill,
 		tools.TNGrab,
+		tools.TNMove,
 		tSeparator,
 		tools.TNPick,
 		tools.TNDelete,
@@ -61,6 +62,17 @@ var (
 				w.TextFrame("3"),
 				w.Separator(),
 				w.Text("Select the area / Move the selection with visible objects inside"),
+			},
+		},
+		tools.TNMove: {
+			btnIcon: icon.Shrink,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNMove),
+				w.SameLine(),
+				w.TextFrame("4"),
+				w.Separator(),
+				w.Text("Move a singular object"),
 			},
 		},
 		tools.TNPick: {

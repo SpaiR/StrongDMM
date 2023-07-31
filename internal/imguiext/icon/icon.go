@@ -38,4 +38,5 @@ const (
 	KoFi              = "\ue91d"
 	Repeat            = "\ue91e"
 	AccessTime        = "\ue91f"
+	Shrink            = "\ue98a"
 )
