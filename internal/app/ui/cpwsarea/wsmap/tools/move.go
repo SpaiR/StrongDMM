@@ -60,10 +60,12 @@ func (t *ToolMove) onMove(coord util.Point) {
 func (t *ToolMove) onStop(util.Point) {
 	if t.instance != nil {
 		//remove other turfs if we moved a turf
-		if dm.IsPath(t.instance.Prefab().Path(), "/turf") {
-			for _, found := range t.lastTile.Instances() {
-				if dm.IsPath(found.Prefab().Path(), "/turf") && found != t.instance {
-					ed.InstanceDelete(found)
+		if t.lastTile != nil {
+			if dm.IsPath(t.instance.Prefab().Path(), "/turf") {
+				for _, found := range t.lastTile.Instances() {
+					if dm.IsPath(found.Prefab().Path(), "/turf") && found != t.instance {
+						ed.InstanceDelete(found)
+					}
 				}
 			}
 		}
