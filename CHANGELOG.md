@@ -1,3 +1,7 @@
+# v2.8.1.alpha
+
+Fixed crash in the recent "Move Tool".
+
 # v2.8.0.alpha
 
 * Added border-fill mode for the Fill Tool, accessible by holding CTRL. @mc-oofert
