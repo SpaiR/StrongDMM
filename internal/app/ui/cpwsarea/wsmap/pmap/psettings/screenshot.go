@@ -67,18 +67,20 @@ func (p *Panel) createScreenshot() {
 	grabCurrentlySelected := selectedTool.Name() == tools.TNGrab
 	boundX, boundY := float32(0), float32(0)
 	var width, height int
-	if p.sessionScreenshot.inSelectionMode && grabCurrentlySelected && selectedTool.(*tools.ToolGrab).HasSelectedArea() {
-		bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds so we can calculate boundX and boundY
-		width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-		boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
-		boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
-	} else if p.sessionScreenshot.inSelectionMode && !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
-		appdialog.Open(appdialog.TypeInformation{
-			Title:       "Nothing selected!",
-			Information: "Screenshot in Selection is on, but you have nothing selected. Use the grab tool!",
-		})
-		p.sessionScreenshot.saving = false
-		return
+	if p.sessionScreenshot.inSelectionMode {
+		if !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
+			appdialog.Open(appdialog.TypeInformation{
+				Title:       "Nothing selected!",
+				Information: "Screenshot in Selection is on, but you have nothing selected. Use the grab tool!",
+			})
+			p.sessionScreenshot.saving = false
+			return
+		} else {
+			bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds so we can calculate boundX and boundY
+			width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
+			boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+			boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
+		}
 	} else {
 		width, height = p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
 	}
