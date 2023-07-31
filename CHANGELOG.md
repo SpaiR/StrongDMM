@@ -1,10 +1,10 @@
 # v2.8.0.alpha
 
-* Added border-fill mode for the Fill Tool, accessible by holding CTRL.
-* Find On Map, now starts a search by path.
-* Added the Move Tool, which allows you to move a singular object.
-* Added a basic autocorrect function to variable editing, which automatically encloses strings and lists
-* Added a "Screenshot in Selection" checkbox to the Screenshot utility, which allows you to only screenshot the selected area by the Grab Tool.
+* Added border-fill mode for the Fill Tool, accessible by holding CTRL. @mc-oofert
+* Find On Map, now starts a search by path. @mc-oofert
+* Added the Move Tool, which allows you to move a singular object. @mc-oofert
+* Added a basic autocorrect function to variable editing, which automatically encloses strings and lists @mc-oofert
+* Added a "Screenshot in Selection" checkbox to the Screenshot utility, which allows you to only screenshot the selected area by the Grab Tool. @mc-oofert
 
 # v2.7.4.alpha
 
