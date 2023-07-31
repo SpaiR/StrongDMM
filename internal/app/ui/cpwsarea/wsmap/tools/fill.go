@@ -70,7 +70,6 @@ func (t *ToolFill) onStop(util.Point) {
 		return
 	}
 
-	bordersOnly := imguiext.IsCtrlDown()
 	// Fill the area.
 	if prefab, ok := ed.SelectedPrefab(); ok {
 		fillTile := func(x, y int) {
@@ -78,7 +77,7 @@ func (t *ToolFill) onStop(util.Point) {
 			tile := ed.Dmm().GetTile(coord)
 			t.basicPrefabAdd(tile, prefab)
 		}
-		if bordersOnly {
+		if imguiext.IsCtrlDown() {
 			rows := []float32{t.fillArea.Y1, t.fillArea.Y2}
 			columns := []float32{t.fillArea.X1, t.fillArea.X2}
 			for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
