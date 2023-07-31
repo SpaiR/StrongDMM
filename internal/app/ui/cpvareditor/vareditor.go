@@ -12,6 +12,7 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util/slice"
+	"strings"
 
 	"github.com/rs/zerolog/log"
 )
@@ -134,6 +135,9 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 		varValue = dmvars.NullValue
 	}
 
+	//correct any issues related to unenclosed stuff
+	varValue = v.correctVarIssue(varValue)
+
 	origPrefab := v.instance.Prefab()
 
 	var newVars *dmvars.Variables
@@ -167,6 +171,9 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 	if len(varValue) == 0 {
 		varValue = dmvars.NullValue
 	}
+
+	//correct any issues related to unenclosed stuff
+	varValue = v.correctVarIssue(varValue)
 
 	var newVars *dmvars.Variables
 	if v.initialVarValue(varName) == varValue {
@@ -208,6 +215,27 @@ func (v *VarEditor) isReadOnly(varName string) bool {
 
 func (v *VarEditor) isCurrentVarInitial(varName string) bool {
 	return v.currentVars().ValueV(varName, dmvars.NullValue) == v.initialVarValue(varName)
+}
+
+func (v *VarEditor) correctVarIssue(varValue string) string {
+	isList, isString := strings.HasPrefix(varValue, "list("), strings.HasPrefix(varValue, `"`)
+	enclosingCharacter := ""
+	hasIssue := false
+	if isString {
+		//we start and end with a quotation mark so we probably shouldnt break
+		enclosingCharacter = `"`
+		hasIssue = !strings.HasSuffix(varValue, enclosingCharacter)
+	} else if isList {
+		//if list is enclosed
+		enclosingCharacter = `)`
+		hasIssue = !strings.HasSuffix(varValue, enclosingCharacter)
+	}
+
+	if hasIssue {
+		varValue = varValue + enclosingCharacter
+	}
+
+	return varValue
 }
 
 func (v *VarEditor) doToggleShowModified() {
