@@ -8,6 +8,7 @@ import (
 
 	"sdmm/internal/app/render/bucket/level/chunk/unit"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
+	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	appdialog "sdmm/internal/app/ui/dialog"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/imguiext"
@@ -22,7 +23,8 @@ import (
 )
 
 type sessionScreenshot struct {
-	saving bool
+	saving          bool
+	inSelectionMode bool
 }
 
 func (p *Panel) showScreenshot() {
@@ -37,6 +39,10 @@ func (p *Panel) showScreenshot() {
 
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
+
+		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
+			tools.SetSelected(tools.TNGrab)
+		}
 
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
@@ -57,12 +63,32 @@ func (p *Panel) showScreenshot() {
 
 func (p *Panel) createScreenshot() {
 	p.sessionScreenshot.saving = true
-
-	width, height := p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
+	selectedTool := tools.Selected()
+	grabCurrentlySelected := selectedTool.Name() == tools.TNGrab
+	boundX, boundY := float32(0), float32(0)
+	var width, height int
+	if p.sessionScreenshot.inSelectionMode {
+		if !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
+			appdialog.Open(appdialog.TypeInformation{
+				Title:       "Nothing selected!",
+				Information: "Screenshot in Selection is on, but you have nothing selected. Use the grab tool!",
+			})
+			p.sessionScreenshot.saving = false
+			return
+		} else {
+			bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds so we can calculate boundX and boundY
+			width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
+			boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+			boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
+		}
+	} else {
+		width, height = p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
+	}
 
 	c := canvas.New()
 	c.ClearColor = canvas.Color{} // Empty clear color with no alpha
 	c.Render().Camera.Level = p.editor.ActiveLevel()
+	c.Render().Camera.Translate(boundX, boundY)
 	c.Render().SetUnitProcessor(p)
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
 		c.Render().UpdateBucket(p.editor.Dmm(), level) // Prepare for render all available levels
