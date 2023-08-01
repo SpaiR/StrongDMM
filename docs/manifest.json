@@ -1,6 +1,6 @@
 {
   "name": "StrongDMM",
-  "version": "v2.8.0.alpha",
+  "version": "v2.8.1.alpha",
   "forceUpdate": true,
   "description": "* New 'Move Tool' to move singe object\n* Screeenshot in selection option\n* Other improvements",
   "downloadLinks": {
