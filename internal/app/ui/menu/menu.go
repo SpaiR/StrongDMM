@@ -40,6 +40,7 @@ type app interface {
 	DoDelete()
 	DoSearch()
 	DoDeselect()
+	DoOpenJumpWindow()
 
 	// View
 	DoAreaBorders()
@@ -193,6 +194,10 @@ func (m *Menu) Process() {
 				Icon(icon.Search).
 				Enabled(m.app.HasActiveMap()).
 				Shortcut(platform.KeyModName(), "F"),
+			w.MenuItem("Go to Coords", m.app.DoOpenJumpWindow).
+				Icon(icon.Shrink).
+				Enabled(m.app.HasActiveMap()).
+				Shortcut(platform.KeyModName(), "G"),
 		}),
 
 		w.Menu("View", w.Layout{
