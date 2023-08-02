@@ -16,7 +16,7 @@ import (
 	w "sdmm/internal/imguiext/widget"
 	"sdmm/internal/util"
 	"sdmm/internal/util/slice"
-	
+
 	dial "sdmm/internal/app/ui/dialog"
 
 	"github.com/SpaiR/imgui-go"
