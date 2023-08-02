@@ -130,6 +130,14 @@ func (m *Menu) addShortcuts() {
 		Action:      m.app.DoSearch,
 		IsEnabled:   m.app.HasActiveMap,
 	})
+	m.shortcuts.Add(shortcut.Shortcut{
+		Name:        "menu#DoOpenJumpWindow",
+		FirstKey:    platform.KeyModLeft(),
+		FirstKeyAlt: platform.KeyModRight(),
+		SecondKey:   glfw.KeyG,
+		Action:      m.app.DoOpenJumpWindow,
+		IsEnabled:   m.app.HasActiveMap,
+	})
 
 	m.shortcuts.Add(shortcut.Shortcut{
 		Name:         "menu#DoMultiZRendering",

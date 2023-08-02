@@ -147,7 +147,7 @@ func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 	e.pMap.SetActiveLevel(relPos.Z)
 }
 
-// FocusPosition centers the camera on given coordinates
+// FocusCameraOnPosition centers the camera on given coordinates.
 func (e *Editor) FocusCameraOnPosition(coord util.Point) {
 	absPos := util.Point{X: (coord.X - 1) * -dmmap.WorldIconSize, Y: (coord.Y - 1) * -dmmap.WorldIconSize, Z: coord.Z}
 

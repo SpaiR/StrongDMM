@@ -9,18 +9,18 @@ import (
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/app/window"
-	"sdmm/internal/util"
-	w "sdmm/internal/imguiext/widget"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/env"
+	w "sdmm/internal/imguiext/widget"
+	"sdmm/internal/util"
 	"sdmm/internal/util/slice"
 
+	"github.com/SpaiR/imgui-go"
 	"github.com/rs/zerolog/log"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/sqweek/dialog"
-	"github.com/SpaiR/imgui-go"
 	dial "sdmm/internal/app/ui/dialog"
 )
 
@@ -356,7 +356,7 @@ func (a *app) DoCheckForUpdates() {
 	a.checkForUpdatesV(true)
 }
 
-// DoSearch searches for a currently selected prefab.
+// DoOpenJumpWindow opens a window where the user can jump to the inputted coordinates.
 func (a *app) DoOpenJumpWindow() {
 	log.Print("do jump")
 	var x,y,z string
