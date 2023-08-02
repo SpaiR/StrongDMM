@@ -359,7 +359,7 @@ func (a *app) DoCheckForUpdates() {
 // DoOpenJumpWindow opens a window where the user can jump to the inputted coordinates.
 func (a *app) DoOpenJumpWindow() {
 	log.Print("do jump")
-	var x,y,z string
+	var x, y, z string
 	z = strconv.Itoa(a.CurrentEditor().ActiveLevel())
 	dial.Open(dial.TypeCustom{
 		Title:       "Jump/Go To Coordinate",
@@ -368,14 +368,14 @@ func (a *app) DoOpenJumpWindow() {
 			w.AlignTextToFramePadding(),
 			w.InputTextWithHint("##x", "X", &x),
 			w.InputTextWithHint("##y", "Y", &y),
-			w.InputTextWithHint("##z","Z", &z),
+			w.InputTextWithHint("##z", "Z", &z),
 			w.Button("Jump!", func() {
 				intX, errX := strconv.Atoi(x)
 				intY, errY := strconv.Atoi(y)
 				intZ, errZ := strconv.Atoi(z)
 				if errX == nil && errY == nil && errZ == nil {
 					e := a.CurrentEditor()
-					e.FocusCameraOnPosition(util.Point{X: intX,Y: intY,Z: intZ})
+					e.FocusCameraOnPosition(util.Point{X: intX, Y: intY, Z: intZ})
 					imgui.CloseCurrentPopup()
 				}
 			}),
