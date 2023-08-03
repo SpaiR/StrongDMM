@@ -146,3 +146,15 @@ func (e *Editor) FocusCamera(i *dmminstance.Instance) {
 
 	e.pMap.SetActiveLevel(relPos.Z)
 }
+
+// FocusCameraOnPosition centers the camera on given coordinates.
+func (e *Editor) FocusCameraOnPosition(coord util.Point) {
+	absPos := util.Point{X: (coord.X - 1) * -dmmap.WorldIconSize, Y: (coord.Y - 1) * -dmmap.WorldIconSize, Z: coord.Z}
+
+	camera := e.pMap.Canvas().Render().Camera
+	camera.ShiftX = e.pMap.Size().X/2/camera.Scale + float32(absPos.X)
+	camera.ShiftY = e.pMap.Size().Y/2/camera.Scale + float32(absPos.Y)
+
+	e.pMap.SetActiveLevel(coord.Z)
+	e.OverlaySetTileFlick(coord)
+}
