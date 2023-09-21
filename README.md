@@ -78,9 +78,7 @@ StrongDMM developed without any monetization in mind. The main motivation is an 
 Your support can show your gratefulness and will motivate the project further development.
 
 Also, if you want something specific to be implemented in the editor, it's possible to focus on your needs.\
-Feel free to reach me out with my public contacts to discuss details:
-* [E-Mail](mailto:despsolver@gmail.com)
-* [Discord](https://discordapp.com/users/153940096389742592)
+Feel free to reach me out with my public contacts to discuss details: [E-Mail](mailto:despsolver@gmail.com)
 
 ## FAQ
 

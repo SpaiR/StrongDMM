@@ -1,3 +1,8 @@
+# v2.9.0.alpha
+
+* Fixed map rendering for AMD GPUs.
+* Added "Go to Coords" functionality. Use "Ctrl+G" ("Cmd+G" for macOS) or "Edit->Go to Coords". @mc-oofert
+
 # v2.8.1.alpha
 
 Fixed crash in the recent "Move Tool".
