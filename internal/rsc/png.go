@@ -20,7 +20,7 @@ var (
 // EditorTextureAtlas returns a sprite atlas with all textures used by the editor.
 func EditorTextureAtlas() TextureAtlas {
 	return TextureAtlas{
-		Width:  32,
+		Width:  64,
 		Height: 32,
 		data:   editorSpriteAtlas,
 	}
