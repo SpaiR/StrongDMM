@@ -7,6 +7,7 @@ import (
 
 var (
 	spritePlaceholder *Sprite
+	whiteRect         *Sprite
 )
 
 func initEditorSprites() {
@@ -14,17 +15,18 @@ func initEditorSprites() {
 	img := atlas.RGBA()
 
 	dmi := &Dmi{
-		IconWidth:     32,
+		IconWidth:     64,
 		IconHeight:    32,
 		TextureWidth:  atlas.Width,
 		TextureHeight: atlas.Height,
-		Cols:          1,
+		Cols:          2,
 		Rows:          1,
 		Image:         img,
 		Texture:       platform.CreateTexture(img),
 	}
 
 	spritePlaceholder = newDmiSprite(dmi, 0)
+	whiteRect = newDmiSprite(dmi, 1)
 }
 
 func SpritePlaceholder() *Sprite {
@@ -32,4 +34,11 @@ func SpritePlaceholder() *Sprite {
 		initEditorSprites()
 	}
 	return spritePlaceholder
+}
+
+func WhiteRect() *Sprite {
+	if whiteRect == nil {
+		initEditorSprites()
+	}
+	return whiteRect
 }

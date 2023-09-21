@@ -1,6 +1,9 @@
 package brush
 
-import "sdmm/internal/util"
+import (
+	"sdmm/internal/dmapi/dmicon"
+	"sdmm/internal/util"
+)
 
 const (
 	rectVerticesLen = 4 // Rect contains of 4 vertices.
@@ -43,7 +46,8 @@ func RectFilled(x1, y1, x2, y2 float32, col util.Color) {
 }
 
 func RectFilledV(x1, y1, x2, y2, r, g, b, a float32) {
-	RectTexturedV(x1, y1, x2, y2, r, g, b, a, 0, 0, 0, 0, 0)
+	s := dmicon.WhiteRect()
+	RectTexturedV(x1, y1, x2, y2, r, g, b, a, s.Texture(), s.U1, s.V1, s.U2, s.V2)
 }
 
 func Rect(x1, y1, x2, y2 float32, col util.Color) {

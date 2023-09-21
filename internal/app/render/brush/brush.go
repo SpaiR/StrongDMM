@@ -70,12 +70,8 @@ func initShader(vertex, fragment string) {
 		log.Fatal().Msgf("unable to create shader: %v", err)
 	}
 
-	uniformIndices := [2]uint32{}
-	uniformNames, freeUniformNames := gl.Strs("Transform\x00", "HasTexture\x00")
-	gl.GetUniformIndices(program, 2, uniformNames, &uniformIndices[0])
-	freeUniformNames()
-	uniformLocationTransform = int32(uniformIndices[0])
-	uniformLocationHasTexture = int32(uniformIndices[1])
+	uniformLocationTransform = gl.GetUniformLocation(program, gl.Str("Transform\x00"))
+	uniformLocationHasTexture = gl.GetUniformLocation(program, gl.Str("HasTexture\x00"))
 
 	log.Print("shader initialized")
 }
