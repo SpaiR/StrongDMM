@@ -1,3 +1,8 @@
+# v2.10.0.alpha
+
+* Bumped SpaceManiac/SpacemanDMM BYOND parser.
+* Added "Copy Type" action for environment tree context menu (click RMB on the item). @mc-oofert
+
 # v2.9.0.alpha
 
 * Fixed map rendering for AMD GPUs.
