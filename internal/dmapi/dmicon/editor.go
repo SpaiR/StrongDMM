@@ -15,7 +15,7 @@ func initEditorSprites() {
 	img := atlas.RGBA()
 
 	dmi := &Dmi{
-		IconWidth:     64,
+		IconWidth:     32,
 		IconHeight:    32,
 		TextureWidth:  atlas.Width,
 		TextureHeight: atlas.Height,
