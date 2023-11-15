@@ -45,7 +45,7 @@ func (p *Panel) showScreenshot() {
 		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
 			tools.SetSelected(tools.TNGrab)
 		}
-		
+
 		imgui.Checkbox("To Clipboard", &p.sessionScreenshot.toClipboardMode)
 
 		var createBtnLabel string
@@ -143,16 +143,16 @@ func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
 	return png.Encode(out, util.PixelsToRGBA(pixels, w, h))
 }
 
-func fileToClipboardAndDelete(filename string) error {
+func fileToClipboardAndDelete(filename string) {
 	if err := clipboard.Init(); err != nil {
 		log.Print("unable to init clipboard:", err)
-		return err
+		return
 	}
 	contents, err := os.ReadFile(filename)
 	if err != nil {
 		log.Print("unable to read resulting screenshot file:", err)
-		return err
+		return
 	}
 	clipboard.Write(clipboard.FmtImage, contents)
-	return os.Remove(filename)
+	os.Remove(filename)
 }
