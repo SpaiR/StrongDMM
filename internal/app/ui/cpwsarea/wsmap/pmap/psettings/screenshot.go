@@ -23,11 +23,6 @@ import (
 	"golang.design/x/clipboard"
 )
 
-const (
-	SaveClipboard = "To Clipboard"
-	SaveFile  = "To File"
-)
-
 type sessionScreenshot struct {
 	saving          bool
 	inSelectionMode bool
@@ -155,7 +150,7 @@ func fileToClipboardAndDelete(filename string) error {
 	}
 	contents, err := os.ReadFile(filename)
 	if err != nil {
-		log.Print("unable to create screenshot directory:", err)
+		log.Print("unable to read resulting screenshot file:", err)
 		return err
 	}
 	clipboard.Write(clipboard.FmtImage, contents)
