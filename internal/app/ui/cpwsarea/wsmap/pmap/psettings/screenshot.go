@@ -20,11 +20,18 @@ import (
 	"github.com/SpaiR/imgui-go"
 	"github.com/rs/zerolog/log"
 	"github.com/sqweek/dialog"
+	"golang.design/x/clipboard"
+)
+
+const (
+	SaveClipboard = "To Clipboard"
+	SaveFile  = "To File"
 )
 
 type sessionScreenshot struct {
 	saving          bool
 	inSelectionMode bool
+	toClipboardMode bool
 }
 
 func (p *Panel) showScreenshot() {
@@ -43,6 +50,8 @@ func (p *Panel) showScreenshot() {
 		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
 			tools.SetSelected(tools.TNGrab)
 		}
+		
+		imgui.Checkbox("To Clipboard", &p.sessionScreenshot.toClipboardMode)
 
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
@@ -99,7 +108,7 @@ func (p *Panel) createScreenshot() {
 	var pixels = c.ReadPixels()
 
 	go func() {
-		if err := saveScreenshot(pixels, width, height); err != nil {
+		if err := p.saveScreenshot(pixels, width, height); err != nil {
 			appdialog.Open(appdialog.TypeInformation{
 				Title:       "Error: Screenshot Creation",
 				Information: fmt.Sprint("Unable to create screenshot:", err),
@@ -124,14 +133,31 @@ func (p *Panel) ProcessUnit(u unit.Unit) bool {
 	return p.app.PathsFilter().IsVisiblePath(u.Instance().Prefab().Path())
 }
 
-func saveScreenshot(pixels []byte, w, h int) error {
+func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
 	if err := os.MkdirAll(cfg.ScreenshotDir, os.ModeDir); err != nil {
 		log.Print("unable to create screenshot directory:", err)
 		return err
 	}
 
 	out, _ := os.Create(cfg.ScreenshotDir + "/" + time.Now().Format(util.TimeFormat) + ".png")
+	if p.sessionScreenshot.toClipboardMode {
+		defer fileToClipboardAndDelete(out.Name())
+	}
 	defer out.Close()
 
 	return png.Encode(out, util.PixelsToRGBA(pixels, w, h))
+}
+
+func fileToClipboardAndDelete(filename string) error {
+	if err := clipboard.Init(); err != nil {
+		log.Print("unable to init clipboard:", err)
+		return err
+	}
+	contents, err := os.ReadFile(filename)
+	if err != nil {
+		log.Print("unable to create screenshot directory:", err)
+		return err
+	}
+	clipboard.Write(clipboard.FmtImage, contents)
+	return os.Remove(filename)
 }
