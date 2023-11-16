@@ -40,7 +40,9 @@ func (p *Panel) showScreenshot() {
 		imgui.SameLine()
 
 		imgui.SetNextItemWidth(-1)
+		imgui.BeginDisabledV(p.sessionScreenshot.toClipboardMode)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
+		imgui.EndDisabled()
 
 		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
 			tools.SetSelected(tools.TNGrab)
@@ -129,30 +131,39 @@ func (p *Panel) ProcessUnit(u unit.Unit) bool {
 }
 
 func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
-	if err := os.MkdirAll(cfg.ScreenshotDir, os.ModeDir); err != nil {
-		log.Print("unable to create screenshot directory:", err)
-		return err
+	if !p.sessionScreenshot.toClipboardMode {
+		if err := os.MkdirAll(cfg.ScreenshotDir, os.ModeDir); err != nil {
+			log.Print("unable to create screenshot directory:", err)
+			return err
+		}
 	}
 
-	out, _ := os.Create(cfg.ScreenshotDir + "/" + time.Now().Format(util.TimeFormat) + ".png")
+	var directory string
 	if p.sessionScreenshot.toClipboardMode {
-		defer fileToClipboardAndDelete(out.Name())
+		directory = os.TempDir()
+	} else {
+		directory = cfg.ScreenshotDir
 	}
-	defer out.Close()
 
-	return png.Encode(out, util.PixelsToRGBA(pixels, w, h))
-}
+	out, _ := os.Create(directory + "/" + time.Now().Format(util.TimeFormat) + ".png")
+	filename := out.Name()
+	encode_error := png.Encode(out, util.PixelsToRGBA(pixels, w, h))
+	out.Close()
 
-func fileToClipboardAndDelete(filename string) {
+	if !p.sessionScreenshot.toClipboardMode || encode_error != nil {
+		return encode_error // past here we start handling clipboard stuff so this also returns if there is no error but clipboard isnt on
+	}
+
 	if err := clipboard.Init(); err != nil {
 		log.Print("unable to init clipboard:", err)
-		return
+		return err
 	}
 	contents, err := os.ReadFile(filename)
 	if err != nil {
 		log.Print("unable to read resulting screenshot file:", err)
-		return
+		return err
 	}
 	clipboard.Write(clipboard.FmtImage, contents)
-	os.Remove(filename)
+
+	return os.Remove(filename)
 }
