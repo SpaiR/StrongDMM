@@ -24,31 +24,29 @@ import (
 )
 
 type sessionScreenshot struct {
-	saving          bool
-	inSelectionMode bool
-	toClipboardMode bool
+	saving bool
 }
 
 func (p *Panel) showScreenshot() {
 	if imgui.CollapsingHeader("Screenshot") {
+		imgui.BeginDisabledV(cfg.ToClipboardMode)
+
 		if imgui.Button(icon.FolderOpen) {
 			p.selectScreenshotDir()
 		}
 
 		imguiext.SetItemHoveredTooltip("Screenshot Folder")
-
 		imgui.SameLine()
-
 		imgui.SetNextItemWidth(-1)
-		imgui.BeginDisabledV(p.sessionScreenshot.toClipboardMode)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
+
 		imgui.EndDisabled()
 
-		if imgui.Checkbox("Screenshot in Selection", &p.sessionScreenshot.inSelectionMode) {
+		if imgui.Checkbox("Screenshot in Selection", &cfg.InSelectionMode) {
 			tools.SetSelected(tools.TNGrab)
 		}
 
-		imgui.Checkbox("To Clipboard", &p.sessionScreenshot.toClipboardMode)
+		imgui.Checkbox("To Clipboard", &cfg.ToClipboardMode)
 
 		var createBtnLabel string
 		if p.sessionScreenshot.saving {
@@ -70,22 +68,24 @@ func (p *Panel) showScreenshot() {
 func (p *Panel) createScreenshot() {
 	p.sessionScreenshot.saving = true
 	selectedTool := tools.Selected()
-	grabCurrentlySelected := selectedTool.Name() == tools.TNGrab
+
 	boundX, boundY := float32(0), float32(0)
+
 	var width, height int
-	if p.sessionScreenshot.inSelectionMode {
-		if !grabCurrentlySelected || !selectedTool.(*tools.ToolGrab).HasSelectedArea() {
+	if cfg.InSelectionMode {
+		hasSelectedArea := selectedTool.Name() == tools.TNGrab && selectedTool.(*tools.ToolGrab).HasSelectedArea()
+		if hasSelectedArea {
+			bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds, so we can calculate boundX and boundY
+			width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
+			boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
+			boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
+		} else {
 			appdialog.Open(appdialog.TypeInformation{
 				Title:       "Nothing selected!",
 				Information: "Screenshot in Selection is on, but you have nothing selected. Use the grab tool!",
 			})
 			p.sessionScreenshot.saving = false
 			return
-		} else {
-			bounds := selectedTool.(*tools.ToolGrab).Bounds() //get grab tool bounds so we can calculate boundX and boundY
-			width, height = (int(bounds.X2-bounds.X1)+1)*dmmap.WorldIconSize, (int(bounds.Y2-bounds.Y1)+1)*dmmap.WorldIconSize
-			boundX = -float32((int(bounds.X1) - 1) * dmmap.WorldIconSize) //now change bounds so we can use them in Translate
-			boundY = -float32((int(bounds.Y1) - 1) * dmmap.WorldIconSize)
 		}
 	} else {
 		width, height = p.editor.Dmm().MaxX*dmmap.WorldIconSize, p.editor.Dmm().MaxY*dmmap.WorldIconSize
@@ -131,7 +131,7 @@ func (p *Panel) ProcessUnit(u unit.Unit) bool {
 }
 
 func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
-	if !p.sessionScreenshot.toClipboardMode {
+	if !cfg.ToClipboardMode {
 		if err := os.MkdirAll(cfg.ScreenshotDir, os.ModeDir); err != nil {
 			log.Print("unable to create screenshot directory:", err)
 			return err
@@ -139,31 +139,56 @@ func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
 	}
 
 	var directory string
-	if p.sessionScreenshot.toClipboardMode {
+	if cfg.ToClipboardMode {
 		directory = os.TempDir()
 	} else {
 		directory = cfg.ScreenshotDir
 	}
 
-	out, _ := os.Create(directory + "/" + time.Now().Format(util.TimeFormat) + ".png")
-	filename := out.Name()
-	encode_error := png.Encode(out, util.PixelsToRGBA(pixels, w, h))
-	out.Close()
+	dstFilePath := directory + "/StrongDMM-" + time.Now().Format(util.TimeFormat) + ".png"
 
-	if !p.sessionScreenshot.toClipboardMode || encode_error != nil {
-		return encode_error // past here we start handling clipboard stuff so this also returns if there is no error but clipboard isnt on
+	if err := saveScreenshotToFile(dstFilePath, pixels, w, h); err != nil {
+		log.Print("unable to save screenshot to file:", err)
+		return err
 	}
 
+	if cfg.ToClipboardMode {
+		if err := saveScreenshotToClipboard(dstFilePath); err != nil {
+			log.Print("unable to save screenshot to clipboard:", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func saveScreenshotToFile(dstFilePath string, pixels []byte, w, h int) error {
+	var err error
+	if out, err := os.Create(dstFilePath); err == nil {
+		err = png.Encode(out, util.PixelsToRGBA(pixels, w, h))
+		defer out.Close()
+	}
+	return err
+}
+
+func saveScreenshotToClipboard(srcFilePath string) error {
 	if err := clipboard.Init(); err != nil {
 		log.Print("unable to init clipboard:", err)
 		return err
 	}
-	contents, err := os.ReadFile(filename)
+
+	contents, err := os.ReadFile(srcFilePath)
 	if err != nil {
 		log.Print("unable to read resulting screenshot file:", err)
 		return err
 	}
+
 	clipboard.Write(clipboard.FmtImage, contents)
 
-	return os.Remove(filename)
+	if err := os.Remove(srcFilePath); err != nil {
+		log.Print("unable to delete clipboard screenshot file:", err)
+		return err
+	}
+
+	return nil
 }
