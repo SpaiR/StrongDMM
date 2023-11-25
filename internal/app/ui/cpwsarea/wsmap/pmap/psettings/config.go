@@ -15,6 +15,9 @@ type psettingsConfig struct {
 	Version uint
 
 	ScreenshotDir string
+
+	InSelectionMode bool
+	ToClipboardMode bool
 }
 
 func (psettingsConfig) Name() string {
@@ -35,7 +38,8 @@ func loadConfig(app App) *psettingsConfig {
 	cfg := &psettingsConfig{
 		Version: configVersion,
 
-		ScreenshotDir: u.HomeDir,
+		ScreenshotDir:   u.HomeDir,
+		ToClipboardMode: true,
 	}
 	app.ConfigRegister(cfg)
 	return cfg
