@@ -34,11 +34,13 @@ func (p *Panel) showScreenshot() {
 		if imgui.Button(icon.FolderOpen) {
 			p.selectScreenshotDir()
 		}
-
 		imguiext.SetItemHoveredTooltip("Screenshot Folder")
+
 		imgui.SameLine()
+
 		imgui.SetNextItemWidth(-1)
 		imgui.InputText("##screenshot_dir", &cfg.ScreenshotDir)
+		imguiext.SetItemHoveredTooltip(cfg.ScreenshotDir)
 
 		imgui.EndDisabled()
 
@@ -163,11 +165,14 @@ func (p *Panel) saveScreenshot(pixels []byte, w, h int) error {
 }
 
 func saveScreenshotToFile(dstFilePath string, pixels []byte, w, h int) error {
-	var err error
-	if out, err := os.Create(dstFilePath); err == nil {
-		err = png.Encode(out, util.PixelsToRGBA(pixels, w, h))
-		defer out.Close()
+	out, err := os.Create(dstFilePath)
+	if err != nil {
+		log.Print("unable to create screenshot file:", dstFilePath, err)
+		return err
 	}
+
+	err = png.Encode(out, util.PixelsToRGBA(pixels, w, h))
+	defer out.Close()
 	return err
 }
 
