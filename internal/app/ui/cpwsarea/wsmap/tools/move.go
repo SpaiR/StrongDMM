@@ -17,10 +17,10 @@ import (
 // ToolMove can be used move a single object.
 type ToolMove struct {
 	tool
-	instance *dmminstance.Instance
-	lastTile *dmmap.Tile
+	instance        *dmminstance.Instance
+	lastTile        *dmmap.Tile
 	lastMouseCoords imgui.Vec2
-	lastOffsets [2]int
+	lastOffsets     [2]int
 }
 
 func (ToolMove) Name() string {
@@ -65,18 +65,18 @@ func (t *ToolMove) process() {
 	}
 	origPrefab := t.instance.Prefab()
 	mouseCoords := imgui.MousePos()
-	offsetX :=  (mouseCoords.X - t.lastMouseCoords.X) / ed.ZoomLevel()
-	offsetY :=  (t.lastMouseCoords.Y - mouseCoords.Y) / ed.ZoomLevel()
+	offsetX := (mouseCoords.X - t.lastMouseCoords.X) / ed.ZoomLevel()
+	offsetY := (t.lastMouseCoords.Y - mouseCoords.Y) / ed.ZoomLevel()
 
-	newVars := dmvars.Set(origPrefab.Vars(), xAxis, strconv.Itoa(t.lastOffsets[0] + int(offsetX)))
-	newVars = dmvars.Set(newVars, yAxis, strconv.Itoa(t.lastOffsets[1] + int(offsetY)))
+	newVars := dmvars.Set(origPrefab.Vars(), xAxis, strconv.Itoa(t.lastOffsets[0]+int(offsetX)))
+	newVars = dmvars.Set(newVars, yAxis, strconv.Itoa(t.lastOffsets[1]+int(offsetY)))
 	t.instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars))
 
 	ed.UpdateCanvasByCoords([]util.Point{t.instance.Coord()})
 }
 
 func (t *ToolMove) onMove(coord util.Point) {
-	if(t.instance == nil || imguiext.IsShiftDown()) {
+	if t.instance == nil || imguiext.IsShiftDown() {
 		return
 	}
 
