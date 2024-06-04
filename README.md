@@ -151,7 +151,7 @@ With Task installed:
 #### Manually
 
 1. First, build the **sdmmparser** library.\
-   Navigate to `internal/third_party/sdmmparser/src` and run `cargo build --release`.\
+   Navigate to `third_party/sdmmparser/src` and run `cargo build --release`.\
    This step is needed only once unless **sdmmparser** is modified.
 2. In the root directory:
     * `go build .`: Builds the editor (executable named `sdmm.exe`/`sdmm` in the root).
