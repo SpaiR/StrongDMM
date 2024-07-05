@@ -3,10 +3,16 @@ on: [ push, pull_request ]
 jobs:
   lint-source-code:
     name: Lint Source Code
-    runs-on: macos-11 # use macOS to avoid installation of desktop deps
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          sudo apt clean
+          sudo apt update
+          sudo apt install xorg-dev libgtk-3-dev
 
       - name: Setup Golang
         uses: actions/setup-go@v5
@@ -23,14 +29,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-22.04, windows-2019, macos-11 ]
+        os: [ ubuntu-latest, windows-2019, macos-latest ]
         include:
-          - os: ubuntu-22.04
-            rust-target: 1.69-x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            rust-target: 1.79-x86_64-unknown-linux-gnu
           - os: windows-2019
-            rust-target: 1.69-x86_64-pc-windows-gnu
-          - os: macos-11
-            rust-target: 1.69-x86_64-apple-darwin
+            rust-target: 1.79-x86_64-pc-windows-gnu
+          - os: macos-latest
+            rust-target: 1.79-x86_64-apple-darwin
     runs-on: ${{ matrix.os }}
     name: Build - ${{ matrix.os }}
     steps:
@@ -48,6 +54,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          architecture: x64
           cache: true
 
       - name: Setup Rust
@@ -81,7 +88,7 @@ jobs:
 
   release:
     name: Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: build
     if: startsWith(github.ref, 'refs/tags/v') # if tag starts with "v"
     steps:

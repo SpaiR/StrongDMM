@@ -123,7 +123,7 @@ It can be found at `internal/third_party/sdmmparser/src`.
 ### Prerequisites
 
 * [Go](https://go.dev/): version **1.20** or higher.
-* [Rust](https://www.rust-lang.org/): version **1.69.0**.
+* [Rust](https://www.rust-lang.org/): version **1.79.0**.
 * (Optional) [Task](https://taskfile.dev): for running build scripts.
 
 #### For Windows
