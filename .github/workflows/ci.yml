@@ -12,6 +12,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          architecture: x64
           cache: false
 
       - name: Lint
@@ -27,7 +28,7 @@ jobs:
         include:
           - os: ubuntu-latest
             rust-target: 1.79-x86_64-unknown-linux-gnu
-          - os: windows-2019
+          - os: windows-latest
             rust-target: 1.79-x86_64-pc-windows-gnu
           - os: macos-latest
             rust-target: 1.79-x86_64-apple-darwin
@@ -48,6 +49,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          architecture: x64
           cache: true
 
       - name: Setup Rust
