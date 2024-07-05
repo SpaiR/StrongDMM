@@ -74,6 +74,7 @@ var (
 				w.TextFrame("4"),
 				w.Separator(),
 				w.Text("Move a singular object"),
+				w.Line(w.TextFrame("Hold Shift"), w.Text("Pixel/Step offset the selected object via dragging")),
 			},
 		},
 		tools.TNPick: {

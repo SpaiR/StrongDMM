@@ -2,6 +2,7 @@ package editor
 
 import (
 	"sdmm/internal/app/command"
+	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/internal/dmapi/dm"
@@ -65,6 +66,8 @@ type app interface {
 
 	SyncPrefabs()
 	SyncVarEditor()
+
+	Prefs() prefs.Prefs
 }
 
 type attachedMap interface {
@@ -157,4 +160,12 @@ func (e *Editor) FocusCameraOnPosition(coord util.Point) {
 
 	e.pMap.SetActiveLevel(coord.Z)
 	e.OverlaySetTileFlick(coord)
+}
+
+func (e *Editor) ZoomLevel() float32 {
+	return e.pMap.Canvas().Render().Camera.Scale
+}
+
+func (e *Editor) Prefs() prefs.Prefs {
+	return e.app.Prefs()
 }

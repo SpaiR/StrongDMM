@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/window"
 	"sdmm/internal/imguiext"
 
@@ -60,6 +61,8 @@ type editor interface {
 	TileDeleteSelected()
 	TileDelete(util.Point)
 	HoveredInstance() *dmminstance.Instance
+	ZoomLevel() float32
+	Prefs() prefs.Prefs
 }
 
 var (
