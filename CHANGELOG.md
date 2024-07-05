@@ -1,3 +1,9 @@
+# v2.12.0.alpha
+
+* Holding Shift while dragging with the Move Tool now drags offsets instead. @mc-oofert
+* Removed effect layers to prevent issues with existing multipliers and layering defines. @LemonInTheDark
+* Updated the version of Rust and SpacemanDMM library used to latest.
+
 # v2.11.0.alpha
 
 * Fixed the overly wide missed icon placeholder. @out-of-phaze
