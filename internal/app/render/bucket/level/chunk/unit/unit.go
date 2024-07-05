@@ -91,7 +91,10 @@ func countLayer(p *dmmprefab.Prefab) float32 {
 	plane, _ := p.Vars().Float("plane")
 	layer, _ := p.Vars().Float("layer")
 
-	layer = plane*10_000 + layer*1000
+	// Way larger then the "logical" max of (max normal layer value) + (max effect layer value) -> (4999) + (20000)
+	const layer_max = 100000
+	
+	layer = plane * (layer_max + 1) + layer*1000
 
 	// When mobs are on the same Layer with object they are always rendered above them (BYOND specific stuff).
 	if dm.IsPath(p.Path(), "/obj") {
