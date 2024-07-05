@@ -1,7 +1,7 @@
 [package]
 name = "sdmmparser"
 version = "2.0.0"
-rust-version = "1.69.0"
+rust-version = "1.79.0"
 
 [lib]
 name = "sdmmparser"
@@ -9,14 +9,14 @@ path = "lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-serde = "1.0.197"
-serde_derive = "1.0.137"
-serde_json = "1.0.109"
-png = "0.17.9"
+serde = "1.0.203"
+serde_derive = "1.0.203"
+serde_json = "1.0.120"
+png = "0.17.13"
 
 [dependencies.dreammaker]
 git = "https://github.com/SpaiR/SpacemanDMM"
-rev = "7dc22d522bdda6370516c8de9092d446fe5017a5"
+rev = "367bcdd75f736a91ab046d616ce56f61fb835a94"
 package = "dreammaker"
 
 [profile.release]

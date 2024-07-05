@@ -31,7 +31,7 @@ pub extern fn SdmmParseIconMetadata(native_path: *const c_char) -> *const c_char
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern fn SdmmFreeStr(native_str: *mut c_char) {
-    unsafe { CString::from_raw(native_str) };
+    unsafe { let _ = CString::from_raw(native_str); };
 }
 
 /// Convert a native string to a Rust string

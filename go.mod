@@ -1,18 +1,18 @@
 module sdmm
 
-go 1.20
+go 1.22
 
 require (
 	github.com/SpaiR/imgui-go v1.12.1-0.20220214190844-a0bad21e1c5d
-	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6
-	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20221017161538-93cebf72946b
+	github.com/go-gl/gl v0.0.0-20231021071112-07e5d0ea2e71
+	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240506104042-037f3cc74f2a
 	github.com/go-gl/mathgl v1.1.0
 	github.com/matishsiao/goInfo v0.0.0-20210923090445-da2e3fa8d45f
 	github.com/mazznoer/csscolorparser v0.1.3
 	github.com/minio/selfupdate v0.6.0
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
-	github.com/sqweek/dialog v0.0.0-20220809060634-e981b270ebbf
+	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627
 	github.com/stretchr/testify v1.9.0
 	golang.design/x/clipboard v0.7.0
 )
