@@ -63,7 +63,7 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 [[package]]
 name = "builtins-proc-macro"
 version = "0.0.0"
-source = "git+https://github.com/SpaiR/SpacemanDMM?rev=7dc22d522bdda6370516c8de9092d446fe5017a5#7dc22d522bdda6370516c8de9092d446fe5017a5"
+source = "git+https://github.com/SpaiR/SpacemanDMM?rev=367bcdd75f736a91ab046d616ce56f61fb835a94#367bcdd75f736a91ab046d616ce56f61fb835a94"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -128,7 +128,7 @@ dependencies = [
 [[package]]
 name = "dreammaker"
 version = "0.1.0"
-source = "git+https://github.com/SpaiR/SpacemanDMM?rev=7dc22d522bdda6370516c8de9092d446fe5017a5#7dc22d522bdda6370516c8de9092d446fe5017a5"
+source = "git+https://github.com/SpaiR/SpacemanDMM?rev=367bcdd75f736a91ab046d616ce56f61fb835a94#367bcdd75f736a91ab046d616ce56f61fb835a94"
 dependencies = [
  "ahash",
  "bitflags",
@@ -159,9 +159,9 @@ dependencies = [
 
 [[package]]
 name = "fdeflate"
-version = "0.3.0"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d329bdeac514ee06249dabc27877490f17f5d371ec693360768b838e19f3ae10"
+checksum = "4f9bfee30e4dedf0ab8b422f03af778d9612b63f502710fc500a334ebe2de645"
 dependencies = [
  "simd-adler32",
 ]
@@ -238,7 +238,7 @@ checksum = "71dd52191aae121e8611f1e8dc3e324dd0dd1dee1e6dd91d10ee07a3cfb4d9d8"
 [[package]]
 name = "interval-tree"
 version = "0.8.0"
-source = "git+https://github.com/SpaiR/SpacemanDMM?rev=7dc22d522bdda6370516c8de9092d446fe5017a5#7dc22d522bdda6370516c8de9092d446fe5017a5"
+source = "git+https://github.com/SpaiR/SpacemanDMM?rev=367bcdd75f736a91ab046d616ce56f61fb835a94#367bcdd75f736a91ab046d616ce56f61fb835a94"
 
 [[package]]
 name = "itoa"
@@ -343,9 +343,9 @@ dependencies = [
 
 [[package]]
 name = "png"
-version = "0.17.9"
+version = "0.17.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59871cc5b6cce7eaccca5a802b4173377a1c2ba90654246789a8fa2334426d11"
+checksum = "06e4b0d3d1312775e782c86c91a111aa1f910cbb65e1337f9975b5f9a554b5e1"
 dependencies = [
  "bitflags",
  "crc32fast",
@@ -473,18 +473,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.197"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fb1c873e1b9b056a4dc4c0c198b24c3ffa059243875552b2bd0933b1aee4ce2"
+checksum = "7253ab4de971e72fb7be983802300c30b5a7f0c2e56fab8abfc6a214307c0094"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.197"
+version = "1.0.203"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7eb0b34b42edc17f6b7cac84a52a1c5f0e1bb2227e997ca9011ea3dd34e8610b"
+checksum = "500cbc0ebeb6f46627f50f3f5811ccf6bf00643be300b4c3eabc0ef55dc5b5ba"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -493,9 +493,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.109"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb0652c533506ad7a2e353cce269330d6afd8bdfb6d75e0ace5b35aacbd7b9e9"
+checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
 dependencies = [
  "itoa",
  "ryu",
