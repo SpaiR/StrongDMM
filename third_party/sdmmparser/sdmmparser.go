@@ -3,7 +3,7 @@ package sdmmparser
 /*
 #cgo CFLAGS: -I./lib
 #cgo LDFLAGS: -L./src/target/release -lsdmmparser
-#cgo windows LDFLAGS: -lbcrypt
+#cgo windows LDFLAGS: -lbcrypt -lntdll
 #cgo linux LDFLAGS: -ldl -lm
 #include <stdlib.h>
 #include "lib/sdmmparser.h"
