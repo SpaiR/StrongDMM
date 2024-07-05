@@ -3,16 +3,21 @@ on: [ push, pull_request ]
 jobs:
   lint-source-code:
     name: Lint Source Code
-    runs-on: macos-latest # use macOS to avoid installation of desktop deps
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          sudo apt clean
+          sudo apt update
+          sudo apt install xorg-dev libgtk-3-dev
 
       - name: Setup Golang
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-          architecture: x64
           cache: false
 
       - name: Lint
