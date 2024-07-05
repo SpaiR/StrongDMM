@@ -92,7 +92,7 @@ func countLayer(p *dmmprefab.Prefab) float32 {
 	layer, _ := p.Vars().Float("layer")
 
 	// Way larger then the "logical" max of (max normal layer value) + (max effect layer value) -> (4999) + (20000)
-	const layer_max = 100000
+	const layer_max = 40000
 	
 	layer = plane * (layer_max + 1) + layer*1000
 
