@@ -8,7 +8,7 @@ require (
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240506104042-037f3cc74f2a
 	github.com/go-gl/mathgl v1.1.0
 	github.com/matishsiao/goInfo v0.0.0-20210923090445-da2e3fa8d45f
-	github.com/mazznoer/csscolorparser v0.1.4
+	github.com/mazznoer/csscolorparser v0.1.5
 	github.com/minio/selfupdate v0.6.0
 	github.com/rs/zerolog v1.33.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
