@@ -9,7 +9,7 @@ path = "lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-serde = "1.0.204"
+serde = "1.0.208"
 serde_derive = "1.0.203"
 serde_json = "1.0.122"
 png = "0.17.13"
