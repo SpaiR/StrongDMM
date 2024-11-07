@@ -15,6 +15,7 @@ type treeNode struct {
 	orig   *dmenv.Object
 	sprite *dmicon.Sprite
 	color  imgui.Vec4
+	dir    int
 }
 
 func (e *Environment) newTreeNode(object *dmenv.Object) (*treeNode, bool) {
@@ -31,6 +32,7 @@ func (e *Environment) newTreeNode(object *dmenv.Object) (*treeNode, bool) {
 	icon, _ := object.Vars.Text("icon")
 	iconState, _ := object.Vars.Text("icon_state")
 	color := imgui.Vec4{X: 1, Y: 1, Z: 1, W: 1}
+	dir, _ := object.Vars.Int("dir")
 
 	if col, _ := object.Vars.Text("color"); col != "" {
 		r, g, b, _ := util.ParseColor(col).RGBA()
@@ -40,8 +42,9 @@ func (e *Environment) newTreeNode(object *dmenv.Object) (*treeNode, bool) {
 	node := &treeNode{
 		name:   object.Path[strings.LastIndex(object.Path, "/")+1:],
 		orig:   object,
-		sprite: dmicon.Cache.GetSpriteOrPlaceholder(icon, iconState),
+		sprite: dmicon.Cache.GetSpriteOrPlaceholderV(icon, iconState, dir),
 		color:  color,
+		dir:    dir,
 	}
 
 	e.treeNodes[object.Path] = node
