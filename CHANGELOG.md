@@ -1,3 +1,7 @@
+# v2.13.0.alpha
+
+* Tree nodes will respect the atom's dir var when rendering a preview.
+
 # v2.12.0.alpha
 
 * Holding Shift while dragging with the Move Tool now drags offsets instead. @mc-oofert
