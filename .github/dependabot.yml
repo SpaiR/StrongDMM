@@ -4,13 +4,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    labels:
+      - deps
 
   - package-ecosystem: gomod
     directory: /
     schedule:
       interval: weekly
+    labels:
+      - deps
 
   - package-ecosystem: cargo
     directory: ./third_party/sdmmparser/src
     schedule:
       interval: weekly
+    labels:
+      - deps
