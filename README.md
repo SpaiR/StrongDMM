@@ -118,28 +118,49 @@ Building the application involves two steps:
 2. Build the editor.
 
 **sdmmparser** is a Rust library based on the [SpacemanDMM](https://github.com/SpaceManiac/SpacemanDMM) parser and is compiled to a `staticlib`.
-It can be found at `internal/third_party/sdmmparser/src`.
+It can be found at `/third_party/sdmmparser/src`.
 
 ### Prerequisites
 
-* [Go](https://go.dev/): version **1.20** or higher.
-* [Rust](https://www.rust-lang.org/): version **1.79.0**.
-* (Optional) [Task](https://taskfile.dev): for running build scripts.
+* [Go](https://go.dev/): version **1.23** or higher.
+* [Rust](https://www.rust-lang.org/): version **1.82.0** or higher.
+* [Task](https://taskfile.dev): for running build scripts. (Optional, but recommended)
 
 #### For Windows
 
-Ensure your Rust is configured to use the `stable-x86_64-pc-windows-gnu` toolchain, as Go can't use MSVC for builds and requires GNU.
-The easiest way to get the GNU compiler is to install MinGW through chocolatey, msys2, etc.
+* [MinGW-w64](https://www.mingw-w64.org/)
 
-After installing MinGW, ensure that the path to its bin folder is added to the PATH environment variable.
+##### How to install
+
+MinGW can be installed through package managers like choco (Chocolatey) or downloaded and installed directly from the MinGW website. 
+After installation, make sure the bin directory of MinGW (which contains gcc.exe) is in your system's PATH.
+
+##### Why to use MinGW
+
+MinGW, short for Minimalist GNU for Windows, is a lightweight development environment providing essential tools like a C compiler for Windows. 
+It is required as the application uses `cgo` to integrate C libraries, enabling the build and compilation of `cgo` code and ensuring all dependencies are handled properly. 
+
+Unlike MSVC (Microsoft Visual C++), which uses different conventions and linkers incompatible with `cgo`, 
+MinGW is designed to work seamlessly with Go's build system, making it the preferred choice for compiling `cgo` code on Windows.
+
+Alternatively, you can use WSL (Windows Subsystem for Linux) to provide a Linux-like environment that supports cgo and C compilers compatible with Go.
+In that case look [for linux](#for-linux) dependencies.
 
 #### For Linux
 
-You may need to install dependencies for building GUI apps: `sudo apt install xorg-dev libgtk-3-dev`.
+You may need to install dependencies for building GUI apps:
+
+- **`apt` (Debian, Ubuntu):** `sudo apt install xorg-dev libgtk-3-dev`
+- **`yum` (Red Hat, CentOS, Fedora):** `sudo yum install xorg-x11-server-devel gtk3-devel`
+- **`dnf` (Fedora, newer Red Hat and CentOS):** `sudo dnf install xorg-x11-server-devel gtk3-devel`
+- **`pacman` (Arch Linux):** `sudo pacman -S xorg-server-devel gtk3`
+- **`zypper` (openSUSE):** `sudo zypper install xorg-x11-server-devel gtk3-devel`
+- **`dnf` or `yum` (Amazon Linux):** `sudo dnf install xorg-x11-server-devel gtk3-devel`
+- **`apk` (Alpine Linux):** `sudo apk add xorg-server-dev gtk+3.0-dev`
 
 ### Steps
 
-#### Using Task
+#### Using Task (Recommended)
 
 Task is a cross-platform Make alternative with scripts in `Taskfile.yml`.
 
@@ -150,12 +171,24 @@ With Task installed:
 
 #### Manually
 
-1. First, build the **sdmmparser** library.\
-   Navigate to `third_party/sdmmparser/src` and run `cargo build --release`.\
-   This step is needed only once unless **sdmmparser** is modified.
+1. Build the **sdmmparser** library:
+   * Navigate to `third_party/sdmmparser/src`
+   * Run command:
+     * **Windows:** `RUSTUP_TOOLCHAIN=stable-x86_64-pc-windows-gnu cargo build --release` 
+     * **Linux:** `RUSTUP_TOOLCHAIN=stable-x86_64-unknown-linux-gnu cargo build --release` 
+     * **macOS:** `RUSTUP_TOOLCHAIN=stable-x86_64-apple-darwin cargo build --release`
 2. In the root directory:
     * `go build .`: Builds the editor (executable named `sdmm.exe`/`sdmm` in the root).
     * `go run .`: Runs the editor.
+
+Step #1 is required only when the **sdmmparser** is modified.
+
+##### Why Use a Custom RUSTUP_TOOLCHAIN
+
+The **sdmmparser** library is compiled into a `staticlib` that is linked into the final Go binary.\
+The MSVC toolchain is not compatible with Go, as Go relies on the GNU toolchain for CGO (the mechanism that compiles C code natively within Go).
+Using a custom `RUSTUP_TOOLCHAIN` ensures that the Rust library is compiled in a way that aligns with Go's requirements, 
+avoiding compatibility issues and ensuring smooth integration.
 
 ## Credits
 
