@@ -17,38 +17,57 @@ vars:
     sh: echo '{{if eq OS "windows"}}-H windowsgui -extldflags=-static{{end}}'
   LD_FLAGS: -s -w {{.BUILD_VARS}} {{.LD_FLAGS_WINDOWS}}
   BUILD_ARGS: -trimpath -ldflags="{{.LD_FLAGS}}"
+  RUSTUP_TOOLCHAIN:
+    sh: |
+      if [ "$OS" = "Windows_NT" ]; then
+        echo "stable-x86_64-pc-windows-gnu"
+      elif [ "$OS" = "Darwin" ]; then
+        echo "stable-x86_64-apple-darwin"
+      elif [ "$OS" = "Linux" ]; then
+        echo "stable-x86_64-unknown-linux-gnu"
+      else
+        echo "stable"
+      fi
 
 tasks:
-  clean-sdmm:
+  default:
     cmds:
-      - rm -frd ./dst
+      - task: clean
+      - task: build
 
-  clean-sdmmparser:
+  clean-parser:
     dir: third_party/sdmmparser/src
     cmds:
       - cargo clean
 
+  clean-editor:
+    cmds:
+      - '{{if eq OS "windows"}}cmd /C "if exist dst (rmdir /S /Q dst)"{{else}}rm -frd ./dst{{end}}'
+
   clean:
     deps:
-      - clean-sdmmparser
-      - clean-sdmm
+      - clean-parser
+      - clean-editor
 
-  run:
-    deps:
-      - build-sdmmparser
+  build-parser:
+    dir: third_party/sdmmparser/src
     cmds:
-      - go run {{.BUILD_ARGS}} .
+      - RUSTUP_TOOLCHAIN={{.RUSTUP_TOOLCHAIN}} cargo build --release
 
-  build:
-    deps:
-      - build-sdmmparser
+  build-editor:
     cmds:
       - go build {{.BUILD_ARGS}} -o "dst/{{.BIN_DST}}" .
 
-  build-sdmmparser:
-    dir: third_party/sdmmparser/src
+  build:
     cmds:
-      - cargo build --release
+      - task: build-parser
+      - task: build-editor
+
+  run:
+    deps:
+      - build-parser
+    cmds:
+      - go run {{.BUILD_ARGS}} .
 
   release-files-unzip:
     dir: dst
