@@ -85,13 +85,10 @@ fixes #0
 
 #### Tags
 
-- **ci:** everything connected with CI stuff;
-- **doc:** all about the project documentation;
-- **feature:** adding of massive functionality;
-- **fix:** fixing and resolving bugs and problems;
-- **refactor:** improves code without changing functionality;
-- **tweak:** small improvements to the existing functionality, ex. wording changes, buttons movement etc;
-- **up:** when bumping dependencies.
+* **feat**: A new feature
+* **fix**: A bug fix
+* **chore**: Routine tasks, refactoring, updates, minor improvements
+* **docs**: Documentation only changes
 
 ## License
 
