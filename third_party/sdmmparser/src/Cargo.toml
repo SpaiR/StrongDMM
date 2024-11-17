@@ -1,7 +1,8 @@
 [package]
 name = "sdmmparser"
 version = "2.0.0"
-rust-version = "1.79.0"
+rust-version = "1.82.0"
+edition = "2021"
 
 [lib]
 name = "sdmmparser"
