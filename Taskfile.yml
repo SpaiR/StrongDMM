@@ -21,12 +21,15 @@ vars:
     sh: |
       if [ "$OS" = "Windows_NT" ]; then
         echo "stable-x86_64-pc-windows-gnu"
-      elif [ "$OS" = "Darwin" ]; then
-        echo "stable-x86_64-apple-darwin"
-      elif [ "$OS" = "Linux" ]; then
-        echo "stable-x86_64-unknown-linux-gnu"
       else
-        echo "stable"
+        OS_NAME=$(uname -s)
+        if [ "$OS_NAME" = "Darwin" ]; then
+          echo "stable-x86_64-apple-darwin"
+        elif [ "$OS_NAME" = "Linux" ]; then
+          echo "stable-x86_64-unknown-linux-gnu"
+        else
+          echo "stable"
+        fi
       fi
 
 tasks:
