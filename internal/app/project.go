@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sdmm/third_party/sdmmparser"
 	"time"
 
 	"sdmm/internal/app/ui/cpwsarea/workspace"
@@ -135,6 +136,7 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 	go func() {
 		dlg := makeLoadingDialog(path)
 		dialog.Open(dlg)
+		defer dialog.Close(dlg)
 
 		start := time.Now()
 		log.Printf("parsing environment: [%s]...", path)
@@ -142,18 +144,28 @@ func (a *app) forceLoadEnvironment(path string, callback func()) {
 		env, err := dmenv.New(path)
 
 		if err != nil {
-			log.Print("unable to open environment:", err)
-			dialog.Close(dlg)
-			dialog.Open(dialog.TypeInformation{
-				Title:       "Error!",
-				Information: "Unable to open environment: " + path,
-			})
+			log.Print("unable to open environment by path:", path, err)
+
+			if sdmmparser.IsParserError(err) {
+				dialog.Open(dialog.TypeCustom{
+					Title:       "Parser Error!",
+					CloseButton: true,
+					Layout: w.Layout{
+						w.Text("Unable to open environment: " + path),
+						w.Separator(),
+						w.Text(err.Error()),
+					},
+				})
+			} else {
+				dialog.Open(dialog.TypeInformation{
+					Title:       "Error!",
+					Information: "Unable to open environment: " + path,
+				})
+			}
 			return
 		}
 
 		log.Printf("environment [%s] parsed in [%d] ms", path, time.Since(start).Milliseconds())
-
-		dialog.Close(dlg)
 
 		window.RunLater(func() {
 			afterLoad(env)

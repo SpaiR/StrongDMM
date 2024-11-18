@@ -1,7 +1,6 @@
 package dmenv
 
 import (
-	"fmt"
 	"path/filepath"
 	"sdmm/third_party/sdmmparser"
 	"strings"
@@ -27,7 +26,7 @@ func New(path string) (*Dme, error) {
 
 	objectTreeType, err := sdmmparser.ParseEnvironment(path)
 	if err != nil {
-		return nil, fmt.Errorf("[dmenv] unable to create dme by path [%s]: %w", path, err)
+		return nil, err
 	}
 
 	traverseTree0(objectTreeType, "", nil, &dme)

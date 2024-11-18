@@ -17,11 +17,9 @@ struct IconState {
 }
 
 pub fn parse_icon_metadata(path: String) -> String {
-    match panic::catch_unwind(|| {
-        match parse(&path) {
-            Some(json) => json,
-            None => format!("error: unable to parse icon metadata {}", path)
-        }
+    match panic::catch_unwind(|| match parse(&path) {
+        Some(json) => json,
+        None => format!("error: unable to parse icon metadata {}", path),
     }) {
         Ok(result) => result,
         Err(e) => {
@@ -40,9 +38,8 @@ fn parse(path: &str) -> Option<String> {
             for text_chunk in &reader.info().compressed_latin1_text {
                 if text_chunk.keyword.eq("Description") {
                     return text_chunk.get_text().map_or(None, |info| {
-                        Metadata::meta_from_str(info.as_str()).map_or(None, |metadata| {
-                            Some(meta2json(metadata))
-                        })
+                        Metadata::meta_from_str(info.as_str())
+                            .map_or(None, |metadata| Some(meta2json(metadata)))
                     });
                 }
             }

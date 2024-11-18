@@ -11,6 +11,7 @@ package sdmmparser
 import "C"
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"unsafe"
@@ -31,6 +32,20 @@ type ObjectTreeVar struct {
 	IsStatic bool `json:"is_static"`
 }
 
+type parserError struct {
+	msg string
+}
+
+func (e *parserError) Error() string {
+	return e.msg
+}
+
+func IsParserError(err error) bool {
+	var e *parserError
+	ok := errors.As(err, &e)
+	return ok
+}
+
 func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {
 	nativePath := C.CString(environmentPath)
 	defer C.free(unsafe.Pointer(nativePath))
@@ -39,6 +54,9 @@ func ParseEnvironment(environmentPath string) (*ObjectTreeType, error) {
 	defer C.SdmmFreeStr(nativeStr)
 
 	str := C.GoString(nativeStr)
+	if strings.HasPrefix(str, "parser error") {
+		return nil, &parserError{msg: str}
+	}
 	if strings.HasPrefix(str, "error") {
 		return nil, fmt.Errorf(str)
 	}

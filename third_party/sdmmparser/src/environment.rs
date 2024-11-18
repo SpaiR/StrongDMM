@@ -1,8 +1,8 @@
 use std::panic;
 
 use dm::constants::Constant;
-use dm::Context;
 use dm::objtree::TypeRef;
+use dm::Context;
 
 #[derive(Serialize)]
 struct ObjectTreeType {
@@ -22,11 +22,9 @@ struct ObjectTreeVar {
 }
 
 pub fn parse_environment(path: String) -> String {
-    match panic::catch_unwind(|| {
-        match parse(&path) {
-            Some(json) => json,
-            None => format!("error: unable to parse environment {}", path)
-        }
+    match panic::catch_unwind(|| match parse(&path) {
+        Some(json) => json,
+        None => format!("parser error: unable to parse environment {}", path),
     }) {
         Ok(result) => result,
         Err(e) => {
@@ -40,15 +38,45 @@ pub fn parse_environment(path: String) -> String {
 }
 
 fn parse(env_path: &str) -> Option<String> {
-    let objtree = match Context::default().parse_environment(env_path.as_ref()) {
-        Ok(t) => t,
-        Err(_e) => return None,
-    };
+    let ctx = Context::default();
+    let objtree = ctx.parse_environment(env_path.as_ref()).ok()?;
+
+    if let Some(m) = errors_message(&ctx) {
+        return Some(m);
+    }
 
     let root = recurse_objtree(objtree.root());
-    let json = serde_json::to_string(&root).unwrap();
+    serde_json::to_string(&root).ok()
+}
 
-    return Some(json);
+fn errors_message(ctx: &Context) -> Option<String> {
+    let ctx_e = ctx.errors();
+    let errors: Vec<_> = ctx_e
+        .iter()
+        .filter(|e| e.severity() <= dm::Severity::Info)
+        .collect();
+
+    if errors.is_empty() {
+        return None;
+    }
+
+    let msg = errors
+        .iter()
+        .filter_map(|e| {
+            ctx.file_path(e.location().file).to_str().map(|file_path| {
+                format!(
+                    "  {} - [{}:{}] | {}",
+                    file_path,
+                    e.location().line,
+                    e.location().column,
+                    e.description(),
+                )
+            })
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    Some(format!("parser error: compilation errors\n{}", msg))
 }
 
 fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
@@ -68,9 +96,18 @@ fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
                 .unwrap_or(Constant::null())
                 .to_string(),
             decl: var.declaration.is_some(),
-            is_tmp: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_tmp()),
-            is_const: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_const()),
-            is_static: var.declaration.as_ref().map_or(false, |d| d.var_type.flags.is_static()),
+            is_tmp: var
+                .declaration
+                .as_ref()
+                .map_or(false, |d| d.var_type.flags.is_tmp()),
+            is_const: var
+                .declaration
+                .as_ref()
+                .map_or(false, |d| d.var_type.flags.is_const()),
+            is_static: var
+                .declaration
+                .as_ref()
+                .map_or(false, |d| d.var_type.flags.is_static()),
         });
     }
 
