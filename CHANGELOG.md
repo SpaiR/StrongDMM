@@ -1,6 +1,11 @@
+# v2.14.0.alpha
+
+* Bumped SpaceManiac/SpacemanDMM BYOND parser to the latest.
+* The editor now properly handles parsing issues detected by SpacemanDMM and will no longer crash silently. If a compilation-breaking issue is found during parsing, the editor will display a dialog box indicating the error location.
+
 # v2.13.0.alpha
 
-* Tree nodes will respect the atom's dir var when rendering a preview.
+* Tree nodes will respect the atom's dir var when rendering a preview. @Drulikar
 
 # v2.12.0.alpha
 
