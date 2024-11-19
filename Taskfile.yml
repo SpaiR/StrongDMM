@@ -17,20 +17,6 @@ vars:
     sh: echo '{{if eq OS "windows"}}-H windowsgui -extldflags=-static{{end}}'
   LD_FLAGS: -s -w {{.BUILD_VARS}} {{.LD_FLAGS_WINDOWS}}
   BUILD_ARGS: -trimpath -ldflags="{{.LD_FLAGS}}"
-  RUSTUP_TOOLCHAIN:
-    sh: |
-      if [ "$OS" = "Windows_NT" ]; then
-        echo "stable-x86_64-pc-windows-gnu"
-      else
-        OS_NAME=$(uname -s)
-        if [ "$OS_NAME" = "Darwin" ]; then
-          echo "stable-x86_64-apple-darwin"
-        elif [ "$OS_NAME" = "Linux" ]; then
-          echo "stable-x86_64-unknown-linux-gnu"
-        else
-          echo "stable"
-        fi
-      fi
 
 tasks:
   default:
@@ -54,6 +40,9 @@ tasks:
 
   build-parser:
     dir: third_party/sdmmparser/src
+    vars:
+      RUST_TARGET_DYN: "{{if eq .OS \"Windows_NT\"}}stable-x86_64-pc-windows-gnu{{else}}stable{{end}}"
+      RUSTUP_TOOLCHAIN: "{{.RUST_TARGET | default .RUST_TARGET_DYN}}"
     cmds:
       - RUSTUP_TOOLCHAIN={{.RUSTUP_TOOLCHAIN}} cargo build --release
 
