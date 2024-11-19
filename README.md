@@ -172,11 +172,10 @@ With Task installed:
 #### Manually
 
 1. Build the **sdmmparser** library:
-   * Navigate to `third_party/sdmmparser/src`
-   * Run command:
-     * **Windows:** `RUSTUP_TOOLCHAIN=stable-x86_64-pc-windows-gnu cargo build --release` 
-     * **Linux:** `RUSTUP_TOOLCHAIN=stable-x86_64-unknown-linux-gnu cargo build --release` 
-     * **macOS:** `RUSTUP_TOOLCHAIN=stable-x86_64-apple-darwin cargo build --release`
+    1. Navigate to `third_party/sdmmparser/src`
+    2. Run command:
+        * **Windows:** `set RUSTUP_TOOLCHAIN=stable-x86_64-pc-windows-gnu && cargo build --release`
+        * **Linux / macOS:** `cargo build --release`
 2. In the root directory:
     * `go build .`: Builds the editor (executable named `sdmm.exe`/`sdmm` in the root).
     * `go run .`: Runs the editor.
