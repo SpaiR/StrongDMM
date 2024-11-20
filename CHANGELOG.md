@@ -1,3 +1,7 @@
+# v2.14.1.alpha
+
+* Fixed an issue where the editor would not open projects with minor warnings.
+
 # v2.14.0.alpha
 
 * Bumped SpaceManiac/SpacemanDMM BYOND parser to the latest.

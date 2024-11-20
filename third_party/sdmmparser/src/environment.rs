@@ -53,7 +53,7 @@ fn errors_message(ctx: &Context) -> Option<String> {
     let ctx_e = ctx.errors();
     let errors: Vec<_> = ctx_e
         .iter()
-        .filter(|e| e.severity() <= dm::Severity::Info)
+        .filter(|e| e.severity() == dm::Severity::Error)
         .collect();
 
     if errors.is_empty() {
