@@ -1,6 +1,6 @@
 {
   "name": "StrongDMM",
-  "version": "v2.14.0.alpha",
+  "version": "v2.14.1.alpha",
   "forceUpdate": true,
   "description": "Handling for the parser errors",
   "downloadLinks": {
