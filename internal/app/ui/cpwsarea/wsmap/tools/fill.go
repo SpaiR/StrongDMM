@@ -78,16 +78,12 @@ func (t *ToolFill) onStop(util.Point) {
 			t.basicPrefabAdd(tile, prefab)
 		}
 		if imguiext.IsCtrlDown() {
-			rows := []float32{t.fillArea.Y1, t.fillArea.Y2}
-			columns := []float32{t.fillArea.X1, t.fillArea.X2}
 			for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
-				for _, coordinate := range rows {
-					fillTile(int(x), int(coordinate))
-				}
-			}
-			for y := t.fillArea.Y1; y <= t.fillArea.Y2; y++ {
-				for _, coordinate := range columns {
-					fillTile(int(coordinate), int(y))
+				for y := t.fillArea.Y1; y <= t.fillArea.Y2; y++ {
+					if y > t.fillArea.Y1 && y < t.fillArea.Y2 && x > t.fillArea.X1 && x < t.fillArea.X2 {
+						continue
+					}
+					fillTile(int(x), int(y))
 				}
 			}
 		} else {
