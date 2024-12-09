@@ -1,3 +1,7 @@
+# v2.14.2.alpha
+
+* Updated the Fill Tool's border mode to prevent double placement on corners. @mc-oofert
+
 # v2.14.1.alpha
 
 * Fixed an issue where the editor would not open projects with minor warnings.
