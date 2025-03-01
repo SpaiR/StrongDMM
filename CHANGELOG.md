@@ -1,10 +1,14 @@
+# v2.15.0.alpha
+
+Added support for modifying the "pixel_z" and "pixel_w" variables. @Drulikar
+
 # v2.14.2.alpha
 
-* Updated the Fill Tool's border mode to prevent double placement on corners. @mc-oofert
+Updated the Fill Tool's border mode to prevent double placement on corners. @mc-oofert
 
 # v2.14.1.alpha
 
-* Fixed an issue where the editor would not open projects with minor warnings.
+Fixed an issue where the editor would not open projects with minor warnings.
 
 # v2.14.0.alpha
 
@@ -13,7 +17,7 @@
 
 # v2.13.0.alpha
 
-* Tree nodes will respect the atom's dir var when rendering a preview. @Drulikar
+Tree nodes will respect the atom's dir var when rendering a preview. @Drulikar
 
 # v2.12.0.alpha
 
