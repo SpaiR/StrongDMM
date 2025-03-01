@@ -64,17 +64,24 @@ func (p *Panel) ProcessV(instance *dmminstance.Instance) {
 
 func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {
 	var nudgeVarName string
-	if p.app.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixel {
+	switch p.app.Prefs().Editor.NudgeMode {
+	case prefs.SaveNudgeModePixel:
 		if xAxis {
 			nudgeVarName = "pixel_x"
 		} else {
 			nudgeVarName = "pixel_y"
 		}
-	} else {
+	case prefs.SaveNudgeModeStep:
 		if xAxis {
 			nudgeVarName = "step_x"
 		} else {
 			nudgeVarName = "step_y"
+		}
+	case prefs.SaveNudgeModePixelAlt:
+		if xAxis {
+			nudgeVarName = "pixel_w"
+		} else {
+			nudgeVarName = "pixel_z"
 		}
 	}
 
