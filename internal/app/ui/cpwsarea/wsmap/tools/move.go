@@ -45,10 +45,13 @@ func (t *ToolMove) onStart(util.Point) {
 		t.instance = hoveredInstance
 		t.lastMouseCoords = imgui.MousePos()
 		vars := t.instance.Prefab().Vars()
-		if ed.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixel {
+		switch ed.Prefs().Editor.NudgeMode {
+		case prefs.SaveNudgeModePixel:
 			t.lastOffsets = [2]int{vars.IntV("pixel_x", 0), vars.IntV("pixel_y", 0)}
-		} else {
+		case prefs.SaveNudgeModeStep:
 			t.lastOffsets = [2]int{vars.IntV("step_x", 0), vars.IntV("step_y", 0)}
+		case prefs.SaveNudgeModePixelAlt:
+			t.lastOffsets = [2]int{vars.IntV("pixel_w", 0), vars.IntV("pixel_z", 0)}
 		}
 	}
 }
@@ -62,6 +65,9 @@ func (t *ToolMove) process() {
 	if ed.Prefs().Editor.NudgeMode == prefs.SaveNudgeModeStep {
 		xAxis = "step_x"
 		yAxis = "step_y"
+	} else if ed.Prefs().Editor.NudgeMode == prefs.SaveNudgeModePixelAlt {
+		xAxis = "pixel_w"
+		yAxis = "pixel_z"
 	}
 	origPrefab := t.instance.Prefab()
 	mouseCoords := imgui.MousePos()

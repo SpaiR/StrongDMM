@@ -18,11 +18,13 @@ var SaveFormats = []string{
 }
 
 const (
-	SaveNudgeModePixel = "pixel_x/pixel_y"
-	SaveNudgeModeStep  = "step_x/step_y"
+	SaveNudgeModePixel    = "pixel_x/pixel_y"
+	SaveNudgeModeStep     = "step_x/step_y"
+	SaveNudgeModePixelAlt = "pixel_w/pixel_z"
 )
 
 var SaveNudgeModes = []string{
 	SaveNudgeModePixel,
 	SaveNudgeModeStep,
+	SaveNudgeModePixelAlt,
 }
