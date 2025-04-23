@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/imguiext/icon"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/rs/zerolog/log"
+	"github.com/skratchdot/open-golang/open"
 )
 
 func (e *Environment) showNodeMenu(n *treeNode) {
@@ -23,7 +25,7 @@ func (e *Environment) showNodeMenu(n *treeNode) {
 				Enabled(e.app.HasActiveMap()),
 			w.MenuItem("Copy Type", e.doCopyType(n)).
 				Icon(icon.ContentCopy),
-			w.MenuItem("Go to Definition", e.doGotoDefinition(n)).
+			w.MenuItem("Go to Definition", e.doGoToDefinition(n)).
 				Icon(icon.FolderOpen),
 		}.Build()
 		imgui.EndPopup()
@@ -46,16 +48,35 @@ func (e *Environment) doCopyType(n *treeNode) func() {
 	}
 }
 
-func (e *Environment) doGotoDefinition(n *treeNode) func() {
+func (e *Environment) doGoToDefinition(n *treeNode) func() {
 	return func() {
 		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
-		log.Print("do goto definition:", prefab.Path())
+		log.Print("do go to definition:", prefab.Path())
 
 		location := prefab.Location()
 		path := filepath.FromSlash(e.app.LoadedEnvironment().RootDir + "/" + location.File)
-		argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
-		command := exec.Command("code", "-g", argument)
-		if err := command.Run(); err != nil {
+		editorPrefs := e.app.Prefs().Editor
+		var command *exec.Cmd
+
+		switch editorPrefs.CodeEditor {
+		case prefs.CodeEditorVSC:
+			argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
+			command = exec.Command(prefs.CodeEditorVSCActual, "-g", argument)
+		case prefs.CodeEditorDM:
+			// No line/col support until https://www.byond.com/forum/post/2970625
+			command = exec.Command(prefs.CodeEditorDMActual, path)
+		case prefs.CodeEditorNPP:
+			lineArg := "-n" + fmt.Sprint(location.Line)
+			colArg := "-c" + fmt.Sprint(location.Column)
+			command = exec.Command(prefs.CodeEditorNPPActual, path, lineArg, colArg)
+		case prefs.CodeEditorDefault:
+			if err := open.Start(path); err != nil {
+				log.Print("unable to open definition file: ", err)
+			}
+			return
+		}
+
+		if err := command.Start(); err != nil {
 			log.Print("unable to open definition file: ", err)
 		}
 	}
