@@ -26,7 +26,7 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 			},
 			optionPrefPrefab{
 				name:    "Code Editor",
-				desc:    "Controls what code editor is opened when using Go to Defintion.",
+				desc:    "Controls what code editor is opened when using Go to Definition.",
 				label:   "##code_editor",
 				value:   &prefs.Editor.CodeEditor,
 				options: CodeEditors,
