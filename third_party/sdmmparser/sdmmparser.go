@@ -18,9 +18,16 @@ import (
 )
 
 type ObjectTreeType struct {
+	Location Location
 	Path     string
 	Vars     []ObjectTreeVar
 	Children []ObjectTreeType
+}
+
+type Location struct {
+	File   string
+	Line   uint32
+	Column uint16
 }
 
 type ObjectTreeVar struct {

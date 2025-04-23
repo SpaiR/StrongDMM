@@ -4,6 +4,7 @@ import (
 	"sdmm/internal/app/ui/component"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
 	"sdmm/internal/app/window"
+	"sdmm/internal/dmapi/dmenv"
 
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
@@ -19,6 +20,7 @@ type App interface {
 	HasActiveMap() bool
 	ShowLayout(name string, focus bool)
 	CurrentEditor() *editor.Editor
+	LoadedEnvironment() *dmenv.Dme
 }
 
 type Prefabs struct {

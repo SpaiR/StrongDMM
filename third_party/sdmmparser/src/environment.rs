@@ -6,9 +6,17 @@ use dm::Context;
 
 #[derive(Serialize)]
 struct ObjectTreeType {
+    location: Location,
     path: String,
     vars: Vec<ObjectTreeVar>,
     children: Vec<ObjectTreeType>,
+}
+
+#[derive(Serialize)]
+pub struct Location {
+    pub file: String,
+    pub line: u32,
+    pub column: u16,
 }
 
 #[derive(Serialize)]
@@ -45,7 +53,7 @@ fn parse(env_path: &str) -> Option<String> {
         return Some(m);
     }
 
-    let root = recurse_objtree(objtree.root());
+    let root = recurse_objtree(&ctx, objtree.root());
     serde_json::to_string(&root).ok()
 }
 
@@ -79,8 +87,13 @@ fn errors_message(ctx: &Context) -> Option<String> {
     Some(format!("parser error: compilation errors\n{}", msg))
 }
 
-fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
+fn recurse_objtree(ctx: &Context, ty: TypeRef) -> ObjectTreeType {
     let mut entry = ObjectTreeType {
+        location: Location {
+            file: ctx.file_path(ty.location.file).to_str().unwrap_or("").to_owned(),
+            line: ty.location.line,
+            column: ty.location.column,
+        },
         path: ty.path.to_owned(),
         vars: Vec::with_capacity(ty.vars.len()),
         children: Vec::new(),
@@ -112,7 +125,7 @@ fn recurse_objtree(ty: TypeRef) -> ObjectTreeType {
     }
 
     for child in ty.children() {
-        entry.children.push(recurse_objtree(child));
+        entry.children.push(recurse_objtree(ctx, child));
     }
 
     entry
