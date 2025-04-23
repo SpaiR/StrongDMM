@@ -2,6 +2,8 @@ package cpenvironment
 
 import (
 	"fmt"
+	"os/exec"
+	"path/filepath"
 
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/dmapi/dmmap"
@@ -21,6 +23,8 @@ func (e *Environment) showNodeMenu(n *treeNode) {
 				Enabled(e.app.HasActiveMap()),
 			w.MenuItem("Copy Type", e.doCopyType(n)).
 				Icon(icon.ContentCopy),
+			w.MenuItem("Go to Definition", e.doGotoDefinition(n)).
+				Icon(icon.FolderOpen),
 		}.Build()
 		imgui.EndPopup()
 	}
@@ -39,5 +43,20 @@ func (e *Environment) doCopyType(n *treeNode) func() {
 	return func() {
 		log.Print("do copy type:", n.orig.Path)
 		platform.SetClipboard(n.orig.Path)
+	}
+}
+
+func (e *Environment) doGotoDefinition(n *treeNode) func() {
+	return func() {
+		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
+		log.Print("do goto definition:", prefab.Path())
+
+		location := prefab.Location()
+		path := filepath.FromSlash(e.app.LoadedEnvironment().RootDir + "/" + location.File)
+		argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
+		command := exec.Command("code", "-g", argument)
+		if err := command.Run(); err != nil {
+			log.Print("unable to open definition file: ", err)
+		}
 	}
 }
