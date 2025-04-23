@@ -147,7 +147,7 @@ func (v *VarEditor) setInstanceVariable(varName, varValue string) {
 		newVars = dmvars.Set(origPrefab.Vars(), varName, varValue)
 	}
 
-	newPrefab, isNew := dmmap.PrefabStorage.GetV(origPrefab.Path(), newVars)
+	newPrefab, isNew := dmmap.PrefabStorage.GetV(origPrefab.Path(), newVars, origPrefab.Location())
 
 	// Newly created prefabs are sort of temporal objects, which need to exist only during the edit session.
 	// So if we modified a variable of the instance and that creates a new prefab, the previous one will be deleted.
@@ -182,7 +182,7 @@ func (v *VarEditor) setPrefabVariable(varName, varValue string) {
 		newVars = dmvars.Set(v.prefab.Vars(), varName, varValue)
 	}
 
-	newPrefab := dmmap.PrefabStorage.Get(v.prefab.Path(), newVars)
+	newPrefab := dmmap.PrefabStorage.Get(v.prefab.Path(), newVars, v.prefab.Location())
 
 	v.app.CurrentEditor().ReplacePrefab(v.prefab, newPrefab)
 	v.app.CurrentEditor().CommitChanges("Replace Prefab")

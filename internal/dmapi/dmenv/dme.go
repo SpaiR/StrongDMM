@@ -87,6 +87,7 @@ func traverseTree0(root *sdmmparser.ObjectTreeType, parentName string, parent *O
 		Path:     root.Path,
 		Vars:     variables.ToImmutable(),
 		VarFlags: varFlags,
+		Location: root.Location,
 	}
 
 	children := make([]string, 0, len(root.Children))

@@ -2,6 +2,7 @@ package dmenv
 
 import (
 	"sdmm/internal/dmapi/dmvars"
+	"sdmm/third_party/sdmmparser"
 )
 
 type VarFlags struct {
@@ -26,6 +27,7 @@ type Object struct {
 	VarFlags       map[string]VarFlags
 	Path           string
 	DirectChildren []string
+	Location       sdmmparser.Location
 }
 
 func (o *Object) Parent() *Object {

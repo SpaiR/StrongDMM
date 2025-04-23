@@ -10,6 +10,7 @@ import (
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util"
+	"sdmm/third_party/sdmmparser"
 )
 
 func max(a, b int) int {
@@ -61,7 +62,7 @@ func parse(file namedReader) (*DmmData, error) {
 
 		// Functions:
 		flushCurrPrefab = func() {
-			currData = append(currData, dmmprefab.New(dmmprefab.IdNone, currPath, currVariables.ToImmutable()))
+			currData = append(currData, dmmprefab.New(dmmprefab.IdNone, currPath, currVariables.ToImmutable(), sdmmparser.Location{}))
 			currPath = ""
 			currVariables = &dmvars.MutableVariables{}
 		}

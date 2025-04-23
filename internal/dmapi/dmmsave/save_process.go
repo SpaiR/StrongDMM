@@ -101,7 +101,7 @@ func (sp *saveProcess) sanitizeVariables() {
 			}
 
 			if prefab.Vars().Len() != vars.Len() {
-				instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, prefab.Path(), vars))
+				instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, prefab.Path(), vars, prefab.Location()))
 				log.Printf("instance sanitized: [%d#%s]", instance.Id(), prefab.Path())
 			}
 		}
