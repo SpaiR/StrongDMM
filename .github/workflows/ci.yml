@@ -21,9 +21,9 @@ jobs:
           cache: false
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.62.0
+          version: v2.1.5
 
   build:
     strategy:
