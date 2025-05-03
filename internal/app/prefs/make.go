@@ -24,6 +24,14 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				options: SaveFormats,
 				help:    SaveFormatHelp,
 			},
+			optionPrefPrefab{
+				name:    "Code Editor",
+				desc:    "Controls what code editor is opened when using Go to Definition.",
+				label:   "##code_editor",
+				value:   &prefs.Editor.CodeEditor,
+				options: CodeEditors,
+				help:    CodeEditorHelp,
+			},
 			boolPrefPrefab{
 				name:  "Sanitize Variables",
 				desc:  "Enables sanitizing for variables which are declared on the map, but has the same value as initial.",

@@ -20,6 +20,7 @@ type Controls struct {
 
 type Editor struct {
 	SaveFormat        string
+	CodeEditor        string
 	NudgeMode         string
 	SanitizeVariables bool
 }

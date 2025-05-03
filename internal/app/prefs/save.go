@@ -18,6 +18,27 @@ var SaveFormats = []string{
 }
 
 const (
+	CodeEditorVSC     = "Visual Studio Code"
+	CodeEditorDM      = "Dreammaker"
+	CodeEditorNPP     = "Notepad++"
+	CodeEditorDefault = "Default App"
+
+	CodeEditorVSCActual = "code"
+	CodeEditorDMActual  = "dreammaker"
+	CodeEditorNPPActual = "notepad++"
+
+	CodeEditorHelp = `These programs must be present in your system PATH to work when using Go to Definition on a prefab.
+Default App and currently Dreammaker can only open to the relevant file, not the specific line number.`
+)
+
+var CodeEditors = []string{
+	CodeEditorVSC,
+	CodeEditorDM,
+	CodeEditorNPP,
+	CodeEditorDefault,
+}
+
+const (
 	SaveNudgeModePixel    = "pixel_x/pixel_y"
 	SaveNudgeModeStep     = "step_x/step_y"
 	SaveNudgeModePixelAlt = "pixel_w/pixel_z"

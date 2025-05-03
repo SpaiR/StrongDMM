@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "third_party/sdmmparser/src/Cargo.toml"
+    ]
+}
