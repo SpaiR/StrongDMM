@@ -2,7 +2,6 @@ package app
 
 import (
 	"os/exec"
-	"sdmm/internal/app/config"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/window"
 
@@ -82,11 +81,13 @@ func (a *app) loadPreferencesConfig() {
 	}
 
 	a.ConfigRegister(cfg)
+	a.validateCodeEditor(cfg)
 
 	window.SetFps(cfg.Prefs.Interface.Fps)
+}
 
-	// Ensure code editor is possible otherwise default
-	configFilePath := configFilePath(a.configDir, cfg.Name())
+// Ensure code editor is in PATH otherwise default
+func (a *app) validateCodeEditor(cfg *preferencesConfig) {
 	switch cfg.Prefs.Editor.CodeEditor {
 	case prefs.CodeEditorVSC:
 		if _, err := exec.LookPath(prefs.CodeEditorVSCActual); err != nil {
@@ -101,7 +102,6 @@ func (a *app) loadPreferencesConfig() {
 				cfg.Editor.CodeEditor = prefs.CodeEditorDefault
 			}
 			log.Print(prefs.CodeEditorVSCActual + " could not be found in PATH. Code Editor pref changed to " + cfg.Editor.CodeEditor)
-			config.SaveV(configFilePath, cfg)
 		}
 	case prefs.CodeEditorDM:
 		if _, err := exec.LookPath(prefs.CodeEditorDMActual); err != nil {
@@ -116,7 +116,6 @@ func (a *app) loadPreferencesConfig() {
 				cfg.Editor.CodeEditor = prefs.CodeEditorDefault
 			}
 			log.Print(prefs.CodeEditorDMActual + " could not be found in PATH. Code Editor pref changed to " + cfg.Editor.CodeEditor)
-			config.SaveV(configFilePath, cfg)
 		}
 	case prefs.CodeEditorNPP:
 		if _, err := exec.LookPath(prefs.CodeEditorNPPActual); err != nil {
@@ -131,7 +130,6 @@ func (a *app) loadPreferencesConfig() {
 				cfg.Editor.CodeEditor = prefs.CodeEditorDefault
 			}
 			log.Print(prefs.CodeEditorNPPActual + " could not be found in PATH. Code Editor pref changed to " + cfg.Editor.CodeEditor)
-			config.SaveV(configFilePath, cfg)
 		}
 	}
 }
