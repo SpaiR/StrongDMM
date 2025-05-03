@@ -1,8 +1,8 @@
 {
   "name": "StrongDMM",
-  "version": "v2.15.0.alpha",
+  "version": "v2.16.0.alpha",
   "forceUpdate": true,
-  "description": "Added support for pixel_z/pixel_w variables",
+  "description": "Added 'Go to Definition support' to the 'Environment' tree",
   "downloadLinks": {
     "windows": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-pc-windows-gnu.exe",
     "linux": "https://github.com/SpaiR/StrongDMM/releases/download/%VERSION%/strongdmm-%VERSION%-x86_64-unknown-linux-gnu",
