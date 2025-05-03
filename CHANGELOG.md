@@ -1,3 +1,8 @@
+# v2.16.0.alpha
+
+* Added "Go to Definition" feature, enabling navigation to symbol definitions within the code editor. Accessible via the context menu on an object in the "Environment" tree. @Drulikar
+* Introduced customizable "Code Editor Preference" for personalized editor settings. @Drulikar
+
 # v2.15.0.alpha
 
 Added support for modifying the "pixel_z" and "pixel_w" variables. @Drulikar
