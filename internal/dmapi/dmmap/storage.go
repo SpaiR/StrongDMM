@@ -3,7 +3,6 @@ package dmmap
 import (
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmvars"
-	"sdmm/third_party/sdmmparser"
 
 	"github.com/rs/zerolog/log"
 )
@@ -34,23 +33,23 @@ func (s *prefabStorage) Put(prefab *dmmprefab.Prefab) *dmmprefab.Prefab {
 
 // Initial returns a prefab with an initial state (initial prefabs).
 func (s *prefabStorage) Initial(path string) *dmmprefab.Prefab {
-	return s.Get(path, dmvars.FromParent(environment.Objects[path].Vars), environment.Objects[path].Location)
+	return s.Get(path, dmvars.FromParent(environment.Objects[path].Vars))
 }
 
 // Get returns a prefab for the provided path and variables.
-func (s *prefabStorage) Get(path string, vars *dmvars.Variables, location sdmmparser.Location) *dmmprefab.Prefab {
-	p, _ := s.GetV(path, vars, location)
+func (s *prefabStorage) Get(path string, vars *dmvars.Variables) *dmmprefab.Prefab {
+	p, _ := s.GetV(path, vars)
 	return p
 }
 
 // GetV returns a prefab for the provided path and variables.
 // Same as Get but has the second argument which shows if the prefab was created.
-func (s *prefabStorage) GetV(path string, vars *dmvars.Variables, location sdmmparser.Location) (*dmmprefab.Prefab, bool) {
+func (s *prefabStorage) GetV(path string, vars *dmvars.Variables) (*dmmprefab.Prefab, bool) {
 	id := dmmprefab.Id(path, vars)
 	if prefab, ok := s.prefabs[id]; ok {
 		return prefab, false
 	}
-	prefab := dmmprefab.New(id, path, vars, location)
+	prefab := dmmprefab.New(id, path, vars)
 	s.persist(prefab)
 	return prefab, true
 }

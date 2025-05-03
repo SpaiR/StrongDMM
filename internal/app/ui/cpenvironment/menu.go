@@ -53,7 +53,7 @@ func (e *Environment) doGoToDefinition(n *treeNode) func() {
 		prefab := dmmap.PrefabStorage.Initial(n.orig.Path)
 		log.Print("do go to definition:", prefab.Path())
 
-		location := prefab.Location()
+		location := n.orig.Location
 		path := filepath.FromSlash(e.app.LoadedEnvironment().RootDir + "/" + location.File)
 		editorPrefs := e.app.Prefs().Editor
 		var command *exec.Cmd

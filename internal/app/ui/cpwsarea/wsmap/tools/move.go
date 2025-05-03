@@ -76,7 +76,7 @@ func (t *ToolMove) process() {
 
 	newVars := dmvars.Set(origPrefab.Vars(), xAxis, strconv.Itoa(t.lastOffsets[0]+int(offsetX)))
 	newVars = dmvars.Set(newVars, yAxis, strconv.Itoa(t.lastOffsets[1]+int(offsetY)))
-	t.instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars, origPrefab.Location()))
+	t.instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars))
 
 	ed.UpdateCanvasByCoords([]util.Point{t.instance.Coord()})
 }

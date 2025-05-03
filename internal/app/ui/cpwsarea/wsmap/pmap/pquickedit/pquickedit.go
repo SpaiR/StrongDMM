@@ -92,7 +92,7 @@ func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.
 		origPrefab := instance.Prefab()
 
 		newVars := dmvars.Set(origPrefab.Vars(), nudgeVarName, strconv.Itoa(int(value)))
-		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars, origPrefab.Location())
+		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
 		instance.SetPrefab(newPrefab)
 
 		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
@@ -169,7 +169,7 @@ func (p *Panel) showDirOption(instance *dmminstance.Instance) {
 
 		newDir := strconv.Itoa(_relativeIndexToDir[value])
 		newVars := dmvars.Set(origPrefab.Vars(), "dir", newDir)
-		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars, origPrefab.Location())
+		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
 		instance.SetPrefab(newPrefab)
 
 		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
@@ -222,7 +222,7 @@ func (p *Panel) sanitizeInstanceVar(instance *dmminstance.Instance, varName, def
 	vars := instance.Prefab().Vars()
 	if p.initialVarValue(instance.Prefab().Path(), varName) == vars.ValueV(varName, defaultValue) {
 		vars = dmvars.Delete(vars, varName)
-		instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, instance.Prefab().Path(), vars, instance.Prefab().Location()))
+		instance.SetPrefab(dmmprefab.New(dmmprefab.IdNone, instance.Prefab().Path(), vars))
 	}
 }
 

@@ -3,7 +3,6 @@ package dmmprefab
 import (
 	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util"
-	"sdmm/third_party/sdmmparser"
 )
 
 const (
@@ -12,14 +11,13 @@ const (
 )
 
 type Prefab struct {
-	id       uint64
-	path     string
-	vars     *dmvars.Variables
-	location sdmmparser.Location
+	id   uint64
+	path string
+	vars *dmvars.Variables
 }
 
-func New(id uint64, path string, vars *dmvars.Variables, location sdmmparser.Location) *Prefab {
-	return &Prefab{id, path, vars, location}
+func New(id uint64, path string, vars *dmvars.Variables) *Prefab {
+	return &Prefab{id, path, vars}
 }
 
 func (p Prefab) Id() uint64 {
@@ -37,18 +35,13 @@ func (p Prefab) Vars() *dmvars.Variables {
 	return p.vars
 }
 
-func (p Prefab) Location() sdmmparser.Location {
-	return p.location
-}
-
 // Stage returns a copy of the prefab with the ID equals to IdStage. Staged prefabs are temporal.
 // They are needed when creating/modifying existing prefab, without persisting of the temporal object.
 func (p Prefab) Stage() Prefab {
 	return Prefab{
-		id:       IdStage,
-		path:     p.path,
-		vars:     p.vars,
-		location: p.location,
+		id:   IdStage,
+		path: p.path,
+		vars: p.vars,
 	}
 }
 
