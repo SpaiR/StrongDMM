@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"sdmm/third_party/sdmmparser"
 	"time"
+	"sort"
 
 	"sdmm/internal/app/ui/cpwsarea/workspace"
 	"sdmm/internal/app/ui/dialog"
@@ -231,8 +232,18 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 
 		// TODO: processing for unknown prefabs
 		if len(unknownPrefabs) != 0 {
-			var prefabsNames string
+			// Collect keys
+			var prefabPaths []string
 			for path := range unknownPrefabs {
+				prefabPaths = append(prefabPaths, path)
+			}
+
+			// Sort them alphabetically
+			sort.Strings(prefabPaths)
+
+			// Build the string
+			var prefabsNames string
+			for _, path := range prefabPaths {
 				prefabsNames += " - " + path + "\n"
 			}
 
