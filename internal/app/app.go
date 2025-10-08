@@ -177,7 +177,11 @@ func getOrCreateInternalDir() string {
 		panic("unable to find user config dir")
 	}
 
-	internalDir = UserConfigDir + "/StrongDMM"
+	if runtime.GOOS == "windows" {
+		internalDir = UserConfigDir + "/Roaming/StrongDMM"
+	} else {
+		internalDir = UserConfigDir + "/StrongDMM"
+	}
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 
 	return filepath.FromSlash(internalDir)
