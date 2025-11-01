@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Dependencies
         run: |
@@ -41,7 +41,7 @@ jobs:
     name: Build - ${{ matrix.os }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - if: contains(matrix.os, 'ubuntu')
         name: Dependencies (Linux)
@@ -90,7 +90,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') # if tag starts with "v"
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Task
         uses: arduino/setup-task@v2
