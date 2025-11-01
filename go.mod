@@ -1,6 +1,6 @@
 module sdmm
 
-go 1.23
+go 1.24
 
 require (
 	github.com/SpaiR/imgui-go v1.12.1-0.20220214190844-a0bad21e1c5d
@@ -14,7 +14,7 @@ require (
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627
 	github.com/stretchr/testify v1.10.0
-	golang.design/x/clipboard v0.7.0
+	golang.design/x/clipboard v0.7.1
 )
 
 require (
@@ -26,8 +26,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20190731235908-ec7cb31e5a56 // indirect
-	golang.org/x/image v0.6.0 // indirect
-	golang.org/x/mobile v0.0.0-20230301163155-e0f57694e12c // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/image v0.28.0 // indirect
+	golang.org/x/mobile v0.0.0-20250606033058-a2a15c67f36f // indirect
+	golang.org/x/sys v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
