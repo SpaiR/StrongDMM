@@ -1,5 +1,5 @@
 name: CI
-on: [ push, pull_request ]
+on: [push, pull_request]
 jobs:
   lint-source-code:
     name: Lint Source Code
@@ -29,11 +29,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-2019, macos-latest ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             rust-target: 1.82-x86_64-unknown-linux-gnu
-          - os: windows-2019
+          - os: windows-latest
             rust-target: 1.82-x86_64-pc-windows-gnu
           - os: macos-latest
             rust-target: 1.82-x86_64-apple-darwin
@@ -91,7 +91,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-    
+
       - name: Setup Task
         uses: arduino/setup-task@v2
         with:
