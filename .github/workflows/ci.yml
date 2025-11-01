@@ -99,7 +99,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Release Files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: dst/
 
