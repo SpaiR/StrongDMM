@@ -10,14 +10,14 @@ path = "lib.rs"
 crate-type = ["staticlib"]
 
 [dependencies]
-serde = "1.0.215"
-serde_derive = "1.0.215"
-serde_json = "1.0.133"
-png = "0.17.14"
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+png = "0.18"
 
 [dependencies.dreammaker]
-git = "https://github.com/SpaiR/SpacemanDMM"
-rev = "d19602a6f081e6877bb5de291b160000fdbd2aaa"
+git = "https://github.com/SpaceManiac/SpacemanDMM"
+tag = "suite-1.11"
 package = "dreammaker"
 
 [profile.release]

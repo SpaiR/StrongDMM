@@ -44,7 +44,7 @@ tasks:
       RUST_TARGET_DYN: "{{if eq .OS \"Windows_NT\"}}stable-x86_64-pc-windows-gnu{{else}}stable{{end}}"
       RUSTUP_TOOLCHAIN: "{{.RUST_TARGET | default .RUST_TARGET_DYN}}"
     cmds:
-      - RUSTUP_TOOLCHAIN={{.RUSTUP_TOOLCHAIN}} cargo build --release
+      - RUSTUP_TOOLCHAIN={{.RUSTUP_TOOLCHAIN}} cargo build --release --locked
 
   build-editor:
     cmds:

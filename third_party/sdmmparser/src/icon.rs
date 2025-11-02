@@ -1,4 +1,4 @@
-use std::{fs, panic};
+use std::{fs, io::BufReader, panic};
 
 use dm::dmi::*;
 
@@ -33,7 +33,7 @@ pub fn parse_icon_metadata(path: String) -> String {
 }
 
 fn parse(path: &str) -> Option<String> {
-    fs::File::open(path).map_or(None, |f| {
+    fs::File::open(path).map(BufReader::new).map_or(None, |f| {
         png::Decoder::new(f).read_info().map_or(None, |reader| {
             for text_chunk in &reader.info().compressed_latin1_text {
                 if text_chunk.keyword.eq("Description") {
