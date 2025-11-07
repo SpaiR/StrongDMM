@@ -1,3 +1,8 @@
+# v2.17.0.alpha
+
+* Bumped sdmmparser dependencies. Updates the BYOND parser and related libraries to pick up parser fixes and compatibility improvements. @Absolucy
+* Sorted unknown types list. Unknown types reported after parsing are now shown in a stable alphabetical order for easier inspection. @FalloutFalcon
+
 # v2.16.0.alpha
 
 * Added "Go to Definition" feature, enabling navigation to symbol definitions within the code editor. Accessible via the context menu on an object in the "Environment" tree. @Drulikar
