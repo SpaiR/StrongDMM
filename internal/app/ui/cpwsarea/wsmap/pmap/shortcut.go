@@ -121,12 +121,17 @@ func (p *PaneMap) addShortcuts() {
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:     "pmap#doZoomIn",
-		FirstKey: glfw.KeyKPEqual,
+		FirstKey: glfw.KeyKPAdd,
 		Action:   p.doZoomIn,
 	})
 	p.shortcuts.Add(shortcut.Shortcut{
 		Name:     "pmap#doZoomOut",
 		FirstKey: glfw.KeyMinus,
+		Action:   p.doZoomOut,
+	})
+	p.shortcuts.Add(shortcut.Shortcut{
+		Name:     "pmap#doZoomOut",
+		FirstKey: glfw.KeyKPSubtract,
 		Action:   p.doZoomOut,
 	})
 }
