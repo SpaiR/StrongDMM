@@ -1,6 +1,7 @@
 package pmap
 
 import (
+	"math"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/imguiext"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-const scaleFactor float32 = 1.5
+const scaleFactor float32 = math.Sqrt2
 
 func (p *PaneMap) processCanvasCamera() {
 	p.processCameraMove()
