@@ -60,8 +60,9 @@ func (e *Environment) doGoToDefinition(n *treeNode) func() {
 
 		switch editorPrefs.CodeEditor {
 		case prefs.CodeEditorVSC:
+			root := filepath.FromSlash(e.app.LoadedEnvironment().RootDir)
 			argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
-			command = exec.Command(prefs.CodeEditorVSCActual, "-g", argument)
+			command = exec.Command(prefs.CodeEditorVSCActual, root, "-g", argument)
 		case prefs.CodeEditorDM:
 			// No line/col support until https://www.byond.com/forum/post/2970625
 			command = exec.Command(prefs.CodeEditorDMActual, path)
