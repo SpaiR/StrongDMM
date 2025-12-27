@@ -101,6 +101,7 @@ type PaneMap struct {
 	pos, size imgui.Vec2
 	focused   bool
 	active    bool
+	centered  bool
 
 	panelTopSize         imgui.Vec2
 	panelRightTopSize    imgui.Vec2
@@ -206,6 +207,12 @@ func (p *PaneMap) Process() {
 	p.pos = imgui.WindowPos().Plus(imgui.WindowContentRegionMin())
 	p.size = imgui.WindowSize()
 	p.focused = imgui.IsWindowFocusedV(imgui.FocusedFlagsRootAndChildWindows)
+
+	if !p.centered {
+		// On first load, set the camera to the center of the map, taking UI size into account.
+		p.canvas.Render().Camera.Translate(float32((int(p.size.X)-p.dmm.MaxX*dmmap.WorldIconSize)/2), float32((int(p.size.Y)-p.dmm.MaxY*dmmap.WorldIconSize)/2))
+		p.centered = true
+	}
 
 	p.canvas.Render().SetActiveLevel(p.dmm, p.activeLevel)
 
