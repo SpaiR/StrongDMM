@@ -38,7 +38,7 @@ func restartSelf() error {
 		cmd.Stderr = os.Stderr
 		cmd.Stdin = os.Stdin
 		cmd.Env = env
-		err := cmd.Run()
+		err := cmd.Start()
 		if err == nil {
 			os.Exit(0)
 		}
