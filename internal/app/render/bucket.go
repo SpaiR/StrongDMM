@@ -35,6 +35,9 @@ func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 
 func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight bool) {
 	visibleLevel := r.bucket.Level(level)
+	if visibleLevel == nil {
+		return
+	}
 
 	// Iterate through every layer to render.
 	for _, layer := range visibleLevel.Layers {
