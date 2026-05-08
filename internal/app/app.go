@@ -172,15 +172,15 @@ func (a *app) dispose() {
 func getOrCreateInternalDir() string {
 	var internalDir string
 
-	userHomeDir, err := os.UserHomeDir()
+	UserConfigDir, err := os.UserConfigDir()
 	if err != nil {
-		panic("unable to find user home dir")
+		panic("unable to find user config dir")
 	}
 
 	if runtime.GOOS == "windows" {
-		internalDir = userHomeDir + "/AppData/Roaming/StrongDMM"
+		internalDir = UserConfigDir + "/Roaming/StrongDMM"
 	} else {
-		internalDir = userHomeDir + "/.strongdmm"
+		internalDir = UserConfigDir + "/StrongDMM"
 	}
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 
