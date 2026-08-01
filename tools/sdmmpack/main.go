@@ -7,7 +7,9 @@ import (
 	"flag"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 type manifest struct {
@@ -15,9 +17,10 @@ type manifest struct {
 }
 
 func main() {
-	source := flag.String("source", ".", "directory containing extension commands")
+	source := flag.String("source", ".", "extension source directory")
 	manifestPath := flag.String("manifest", "extension.json", "extension manifest")
 	output := flag.String("output", "extension.sdmmext", "output package")
+	build := flag.Bool("build", false, "build commands declared by the manifest before packaging")
 	flag.Parse()
 	data, err := os.ReadFile(*manifestPath)
 	if err != nil {
@@ -26,6 +29,29 @@ func main() {
 	var extension manifest
 	if err = json.Unmarshal(data, &extension); err != nil {
 		panic(err)
+	}
+	if *build {
+		for platform, command := range extension.Commands {
+			goos, goarch, ok := strings.Cut(platform, "-")
+			if !ok || goos == "" || goarch == "" {
+				panic("invalid platform " + platform)
+			}
+			if command == "" || filepath.IsAbs(command) || filepath.Dir(command) == "." {
+				panic("invalid command for " + platform)
+			}
+			path := filepath.Join(*source, command)
+			if err = os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+				panic(err)
+			}
+			buildCommand := exec.Command("go", "build", "-o", path, ".")
+			buildCommand.Dir = *source
+			buildCommand.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
+			buildCommand.Stdout = os.Stdout
+			buildCommand.Stderr = os.Stderr
+			if err = buildCommand.Run(); err != nil {
+				panic(err)
+			}
+		}
 	}
 	stage, err := os.MkdirTemp("", "sdmmpack-")
 	if err != nil {

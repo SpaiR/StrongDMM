@@ -1,8 +1,6 @@
 # StrongDMM extensions
 
-Extensions are Go executables managed by StrongDMM through HashiCorp
-go-plugin's versioned net/rpc transport. They run out of process, so an
-extension failure cannot mangle the editor.
+Extensions are Go executables via go-plugin to extend the editor in different ways.
 
 ```json
 {

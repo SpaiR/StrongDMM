@@ -63,6 +63,14 @@ tasks:
     cmds:
       - go run . -source "{{.EXTENSION_DIR}}" -manifest "{{.EXTENSION_DIR}}/extension.json" -output "{{.EXTENSION_OUTPUT}}"
 
+  build-extension:
+    desc: Build every command declared by an extension manifest and package it
+    dir: tools/sdmmpack
+    requires:
+      vars: [EXTENSION_DIR, EXTENSION_OUTPUT]
+    cmds:
+      - go run . -build -source "{{.EXTENSION_DIR}}" -manifest "{{.EXTENSION_DIR}}/extension.json" -output "{{.EXTENSION_OUTPUT}}"
+
   run:
     deps:
       - build-parser
