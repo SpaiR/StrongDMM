@@ -261,9 +261,7 @@ func (p *PaneMap) Dispose() {
 	log.Print("disposed")
 }
 
-// RefreshExtensions updates this map after extension settings or map contents
-// change. It is intentionally small so other extension render layers can use
-// the same host hook later.
+// RefreshExtensions updates this map after extension settings or map contents change
 func (p *PaneMap) RefreshExtensions() {
 	if manager := p.app.Extensions(); manager != nil {
 		manager.RefreshRender(p.canvas.Render(), p.dmm)
