@@ -14,12 +14,6 @@ Extensions are Go executables via go-plugin to extend the editor in different wa
 }
 ```
 
-Build each command for its target platform:
-
-```text
-go build -o bin/windows-amd64/example.exe .
-```
-
 Implement `extensionapi.Extension` and call `plugin.Serve` with
 `extensionapi.HandshakeConfig` and an `extensionapi.Plugin`. The API exposes
 versioned `Request` values and request-shaped responses. Rendering receives map
@@ -40,12 +34,14 @@ cycles are logged. `mesh` commands support RGBA vertex colors; `bilinear`
 commands are intentionally opaque and support normal, multiply, or additive
 blending.
 
-Package prebuilt commands with:
+Build and package an extension with StrongDMM's generic Task:
 
 ```text
-cd tools/sdmmpack
-go run . -source path/to/commands -manifest extension.json -output example.sdmmext
+task --taskfile path/to/StrongDMM/Taskfile.yml build-extension EXTENSION_DIR=path/to/extension EXTENSION_OUTPUT=path/to/extension/dist/extension.sdmmext
 ```
+
+The task cross-builds every command declared in `extension.json` and packages
+the resulting `.sdmmext` archive.
 
 Extension API versions must match the host. Build and package extensions only
 from trusted source.

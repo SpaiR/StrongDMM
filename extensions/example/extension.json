@@ -2,10 +2,11 @@
   "id": "example.extension",
   "name": "Example Extension",
   "apiVersion": 1,
+  "capabilities": ["render"],
   "commands": {
-    "windows-amd64": ["bin/windows-amd64/example-extension.exe"],
-    "linux-amd64": ["bin/linux-amd64/example-extension"],
-    "darwin-arm64": ["bin/darwin-arm64/example-extension"]
+    "windows-amd64": "bin/windows-amd64/example-extension.exe",
+    "linux-amd64": "bin/linux-amd64/example-extension",
+    "darwin-arm64": "bin/darwin-arm64/example-extension"
   },
   "actions": [
     {"id": "enabled", "menu": "Extensions", "label": "Enable Example Extension", "kind": "toggle-enabled"}
