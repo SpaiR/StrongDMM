@@ -86,6 +86,8 @@ type attachedMap interface {
 	PushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color)
 
 	OnMapSizeChange()
+	NotifyExtensions([]util.Point)
+	ResetExtensions()
 }
 
 func New(app app, attachedMap attachedMap, dmm *dmmap.Dmm) *Editor {

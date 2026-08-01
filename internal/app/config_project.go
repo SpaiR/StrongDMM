@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/util/slice"
 
 	"github.com/rs/zerolog/log"
@@ -11,14 +12,15 @@ import (
 
 const (
 	projectConfigName    = "project"
-	projectConfigVersion = 2
+	projectConfigVersion = 3
 )
 
 type projectConfig struct {
 	Version uint
 
-	Projects []string
-	Maps     []string
+	Projects       []string
+	Maps           []string
+	ExtensionState *extensions.State
 }
 
 func (projectConfig) Name() string {
@@ -44,7 +46,11 @@ func (projectConfig) TryMigrate(cfg map[string]any) (result map[string]any, migr
 		result["Version"] = 2
 		migrated = true
 	}
-
+	if uint(result["Version"].(float64)) == 2 {
+		result["ExtensionState"] = map[string]any{}
+		result["Version"] = 3
+		migrated = true
+	}
 	return result, migrated
 }
 
@@ -79,10 +85,14 @@ func (cfg *projectConfig) RemoveMap(mapPath string) {
 
 func (a *app) loadProjectConfig() {
 	config := &projectConfig{
-		Version: projectConfigVersion,
+		Version:        projectConfigVersion,
+		ExtensionState: &extensions.State{},
 	}
 
 	a.ConfigRegister(config)
+	if config.ExtensionState == nil {
+		config.ExtensionState = &extensions.State{}
+	}
 
 	// Cleanup projects paths
 	var pathsToRemove []string

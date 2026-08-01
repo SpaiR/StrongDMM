@@ -55,6 +55,14 @@ tasks:
       - task: build-parser
       - task: build-editor
 
+  package-extension:
+    desc: Package prebuilt extension commands into a .sdmmext archive
+    dir: tools/sdmmpack
+    requires:
+      vars: [EXTENSION_DIR, EXTENSION_OUTPUT]
+    cmds:
+      - go run . -source "{{.EXTENSION_DIR}}" -manifest "{{.EXTENSION_DIR}}/extension.json" -output "{{.EXTENSION_OUTPUT}}"
+
   run:
     deps:
       - build-parser

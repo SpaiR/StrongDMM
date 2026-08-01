@@ -2,6 +2,7 @@ package menu
 
 import (
 	"sdmm/internal/app/command"
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmenv"
@@ -46,6 +47,7 @@ type app interface {
 	DoAreaBorders()
 	DoMultiZRendering()
 	DoMirrorCanvasCamera()
+	DoExtensionMenuAction(id string)
 
 	// Window
 	DoResetLayout()
@@ -80,6 +82,7 @@ type app interface {
 	AreaBordersRendering() bool
 	MultiZRendering() bool
 	MirrorCanvasCamera() bool
+	ExtensionMenuActions() []extensions.MenuAction
 }
 
 type upStatus int
@@ -108,7 +111,46 @@ func New(app app) *Menu {
 	return m
 }
 
+func (m *Menu) viewMenu() w.Layout {
+	items := w.Layout{
+		w.MenuItem("Show Area", m.doToggleArea).IconEmpty().Enabled(m.app.HasLoadedEnvironment()).Selected(m.isAreaToggled()).Shortcut(platform.KeyModName(), "1"),
+		w.MenuItem("Show Turf", m.doToggleTurf).IconEmpty().Enabled(m.app.HasLoadedEnvironment()).Selected(m.isTurfToggled()).Shortcut(platform.KeyModName(), "2"),
+		w.MenuItem("Show Object", m.doToggleObject).IconEmpty().Enabled(m.app.HasLoadedEnvironment()).Selected(m.isObjectToggled()).Shortcut(platform.KeyModName(), "3"),
+		w.MenuItem("Show Mob", m.doToggleMob).IconEmpty().Enabled(m.app.HasLoadedEnvironment()).Selected(m.isMobToggled()).Shortcut(platform.KeyModName(), "4"),
+		w.MenuItem("Show All", m.doShowAll).IconEmpty().Enabled(m.app.HasLoadedEnvironment()),
+		w.Separator(),
+		w.MenuItem("Area Borders", m.app.DoAreaBorders).IconEmpty().Selected(m.app.AreaBordersRendering()),
+		w.MenuItem("Multi-Z Rendering", m.app.DoMultiZRendering).IconEmpty().Selected(m.app.MultiZRendering()).Shortcut(platform.KeyModName(), "0"),
+		w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).IconEmpty().Selected(m.app.MirrorCanvasCamera()),
+	}
+	for _, action := range m.app.ExtensionMenuActions() {
+		if action.Menu != "View" {
+			continue
+		}
+		action := action
+		items = append(items, w.MenuItem(action.Label, func() { m.app.DoExtensionMenuAction(action.ID) }).IconEmpty().Enabled(action.Enabled).Selected(action.Selected))
+	}
+	return items
+}
+
+func (m *Menu) extensionsMenu() w.Layout {
+	items := w.Layout{}
+	for _, action := range m.app.ExtensionMenuActions() {
+		if action.Menu != "Extensions" {
+			continue
+		}
+		action := action
+		items = append(items, w.MenuItem(action.Label, func() { m.app.DoExtensionMenuAction(action.ID) }).IconEmpty().Enabled(action.Enabled).Selected(action.Selected))
+	}
+	if len(items) == 0 {
+		items = append(items, w.MenuItem("No extensions found", func() {}).IconEmpty().Enabled(false))
+	}
+	return items
+}
+
 func (m *Menu) Process() {
+	viewMenu := m.viewMenu()
+	extensionsMenu := m.extensionsMenu()
 	w.MainMenuBar(w.Layout{
 		w.Menu("File", w.Layout{
 			w.MenuItem("New Workspace", m.app.DoNewWorkspace).
@@ -200,42 +242,9 @@ func (m *Menu) Process() {
 				Shortcut(platform.KeyModName(), "G"),
 		}),
 
-		w.Menu("View", w.Layout{
-			w.MenuItem("Show Area", m.doToggleArea).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()).
-				Selected(m.isAreaToggled()).
-				Shortcut(platform.KeyModName(), "1"),
-			w.MenuItem("Show Turf", m.doToggleTurf).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()).
-				Selected(m.isTurfToggled()).
-				Shortcut(platform.KeyModName(), "2"),
-			w.MenuItem("Show Object", m.doToggleObject).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()).
-				Selected(m.isObjectToggled()).
-				Shortcut(platform.KeyModName(), "3"),
-			w.MenuItem("Show Mob", m.doToggleMob).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()).
-				Selected(m.isMobToggled()).
-				Shortcut(platform.KeyModName(), "4"),
-			w.MenuItem("Show All", m.doShowAll).
-				IconEmpty().
-				Enabled(m.app.HasLoadedEnvironment()),
-			w.Separator(),
-			w.MenuItem("Area Borders", m.app.DoAreaBorders).
-				IconEmpty().
-				Selected(m.app.AreaBordersRendering()),
-			w.MenuItem("Multi-Z Rendering", m.app.DoMultiZRendering).
-				IconEmpty().
-				Selected(m.app.MultiZRendering()).
-				Shortcut(platform.KeyModName(), "0"),
-			w.MenuItem("Mirror Canvas Camera", m.app.DoMirrorCanvasCamera).
-				IconEmpty().
-				Selected(m.app.MirrorCanvasCamera()),
-		}),
+		w.Menu("View", viewMenu),
+
+		w.Menu("Extensions", extensionsMenu),
 
 		w.Menu("Window", w.Layout{
 			w.MenuItem("Reset Layout", m.app.DoResetLayout).Shortcut("F5").

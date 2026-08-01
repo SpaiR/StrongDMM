@@ -50,6 +50,29 @@ func RectFilledV(x1, y1, x2, y2, r, g, b, a float32) {
 	RectTexturedV(x1, y1, x2, y2, r, g, b, a, s.Texture(), s.U1, s.V1, s.U2, s.V2)
 }
 
+// ColoredTriangles appends a vertex-coloured triangle mesh.
+func ColoredTriangles(vertices []Vertex, indices []uint32) {
+	if len(vertices) == 0 || len(indices) == 0 {
+		return
+	}
+	s := dmicon.WhiteRect()
+	if batching.mode != mtRect || batching.texture != s.Texture() {
+		batching.flush()
+	}
+	batching.texture, batching.mode = s.Texture(), mtRect
+	for _, vertex := range vertices {
+		batching.data = append(batching.data, vertex.X, vertex.Y, vertex.R, vertex.G, vertex.B, vertex.A, s.U1, s.V1)
+	}
+	for _, index := range indices {
+		if index >= uint32(len(vertices)) {
+			continue
+		}
+		batching.indices = append(batching.indices, batching.idx+index)
+		batching.len++
+	}
+	batching.idx += uint32(len(vertices))
+}
+
 func Rect(x1, y1, x2, y2 float32, col util.Color) {
 	RectV(x1, y1, x2, y2, col.R(), col.G(), col.B(), col.A())
 }

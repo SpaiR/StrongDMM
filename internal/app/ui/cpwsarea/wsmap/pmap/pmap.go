@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"sdmm/internal/app/command"
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/render"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
@@ -19,6 +20,7 @@ import (
 	"sdmm/internal/dmapi/dmmclip"
 	"sdmm/internal/dmapi/dmmsnap"
 	"sdmm/internal/imguiext/style"
+	"sdmm/internal/util"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/rs/zerolog/log"
@@ -30,6 +32,7 @@ type App interface {
 	psettings.App
 
 	Prefs() prefs.Prefs
+	Extensions() *extensions.Manager
 
 	LoadedEnvironment() *dmenv.Dme
 
@@ -187,6 +190,9 @@ func New(app App, dmm *dmmap.Dmm) *PaneMap {
 
 	p.canvas.Render().SetOverlay(p.canvasOverlay)
 	p.canvas.Render().SetUnitProcessor(p)
+	if manager := app.Extensions(); manager != nil {
+		manager.ConfigureRender(p.canvas.Render(), dmm)
+	}
 	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
 
 	p.mouseChangeCbId = app.AddMouseChangeCallback(p.mouseChangeCallback)
@@ -238,6 +244,9 @@ func (p *PaneMap) Process() {
 }
 
 func (p *PaneMap) Dispose() {
+	if manager := p.app.Extensions(); manager != nil {
+		manager.ReleaseRender(p.canvas.Render(), p.dmm)
+	}
 	if p == lastActivePane {
 		lastActivePane = nil
 	}
@@ -250,6 +259,27 @@ func (p *PaneMap) Dispose() {
 	p.shortcuts.Dispose()
 
 	log.Print("disposed")
+}
+
+// RefreshExtensions updates this map after extension settings or map contents
+// change. It is intentionally small so other extension render layers can use
+// the same host hook later.
+func (p *PaneMap) RefreshExtensions() {
+	if manager := p.app.Extensions(); manager != nil {
+		manager.RefreshRender(p.canvas.Render(), p.dmm)
+	}
+}
+
+func (p *PaneMap) NotifyExtensions(points []util.Point) {
+	if manager := p.app.Extensions(); manager != nil {
+		manager.NotifyChanged(p.dmm, points)
+	}
+}
+
+func (p *PaneMap) ResetExtensions() {
+	if manager := p.app.Extensions(); manager != nil {
+		manager.NotifyResize(p.dmm)
+	}
 }
 
 func (p *PaneMap) prepareTools() {
@@ -331,11 +361,15 @@ func (p *PaneMap) syncActivePane() {
 // Fully reloads a canvas for the current pane. Does a full re-initialization of the renderer.
 // Needed when changing global parts of the map, like the map size etc.
 func (p *PaneMap) reloadCanvas() {
-	oldCamera := p.canvas.Render().Camera // To keep current camera position
+	previousRenderer := p.canvas.Render()
+	oldCamera := previousRenderer.Camera // To keep current camera position
 	p.canvas = canvas.New()
 	p.canvas.Render().Camera = oldCamera
 	p.canvas.Render().SetOverlay(p.canvasOverlay)
 	p.canvas.Render().SetUnitProcessor(p)
+	if manager := p.app.Extensions(); manager != nil {
+		manager.ReplaceRender(previousRenderer, p.canvas.Render(), p.dmm)
+	}
 	p.canvas.Render().UpdateBucket(p.dmm, p.activeLevel)
 	p.canvasState.SetMaxX(p.dmm.MaxX)
 	p.canvasState.SetMaxY(p.dmm.MaxY)

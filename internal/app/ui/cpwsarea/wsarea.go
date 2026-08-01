@@ -117,6 +117,15 @@ func (w *WsArea) OpenMap(dmm *dmmap.Dmm, ws *workspace.Workspace) bool {
 	return true
 }
 
+// RefreshExtensions asks every open map pane to rebuild its extension layers.
+func (w *WsArea) RefreshExtensions() {
+	for _, ws := range w.workspaces {
+		if mapWs, ok := ws.Content().(*wsmap.WsMap); ok {
+			mapWs.Map().RefreshExtensions()
+		}
+	}
+}
+
 func (w *WsArea) Close() {
 	if w.activeWs != nil {
 		w.closeWorkspaceGently(w.activeWs)

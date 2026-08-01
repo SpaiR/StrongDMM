@@ -29,6 +29,7 @@ func (e *Editor) onMapSizeChange(maxZ int) {
 	}
 	e.pMap.Snapshot().Sync() // Do a full snapshots sync.
 	e.pMap.OnMapSizeChange()
+	e.pMap.ResetExtensions()
 	e.updateAreasZones()
 }
 
@@ -75,5 +76,6 @@ func (e *Editor) commitChanges(commitMsg string) {
 func (e *Editor) updateBucket(activeLevel int, tilesToUpdate []util.Point) {
 	window.RunLater(func() {
 		e.pMap.Canvas().Render().UpdateBucketV(e.dmm, activeLevel, tilesToUpdate)
+		e.pMap.NotifyExtensions(tilesToUpdate)
 	})
 }

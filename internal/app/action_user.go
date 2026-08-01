@@ -333,6 +333,16 @@ func (a *app) DoMirrorCanvasCamera() {
 	log.Print("do mirror canvas camera:", pmap.MirrorCanvasCamera)
 }
 
+// DoExtensionMenuAction executes a extensions menu action (defined by the extension)
+func (a *app) DoExtensionMenuAction(id string) {
+	if a.extensions == nil {
+		return
+	}
+	a.extensions.ExecuteMenuAction(id)
+	a.layout.WsArea.RefreshExtensions()
+	log.Print("do extension action:", id)
+}
+
 // DoSelfUpdate starts the process of a self update.
 func (a *app) DoSelfUpdate() {
 	log.Print("do self update")

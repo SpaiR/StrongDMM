@@ -19,21 +19,41 @@ type unitProcessor interface {
 func (r *Render) batchBucketUnits(viewBounds util.Bounds) {
 	if MultiZRendering && r.Camera.Level > 1 {
 		for level := 1; level < r.Camera.Level; level++ {
-			r.batchLevel(level, viewBounds, false) // Draw everything below.
+			r.batchLevel(level, viewBounds) // Draw everything below.
 		}
 
 		// Draw a "shadow" overlay to visually separate different levels.
 		brush.RectFilled(viewBounds.X1, viewBounds.Y1, viewBounds.X2, viewBounds.Y2, multiZShadow)
 	}
 
-	r.batchLevel(r.Camera.Level, viewBounds, true) // Draw currently visible level.
-
-	if r.overlay != nil {
-		r.overlay.FlushUnits()
-	}
+	r.batchLevel(r.Camera.Level, viewBounds) // Draw currently visible level.
 }
 
-func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight bool) {
+// batchUnitHighlights batches the active level's selected-unit highlights.
+func (r *Render) batchUnitHighlights(viewBounds util.Bounds) {
+	if r.overlay == nil {
+		return
+	}
+	visibleLevel := r.bucket.Level(r.Camera.Level)
+	if visibleLevel == nil {
+		return
+	}
+	for _, layer := range visibleLevel.Layers {
+		for _, chunk := range visibleLevel.ChunksByLayers[layer] {
+			if !chunk.ViewBounds.ContainsV(viewBounds) {
+				continue
+			}
+			for _, u := range chunk.UnitsByLayers[layer] {
+				if u.ViewBounds().ContainsV(viewBounds) {
+					r.batchUnitHighlight(u)
+				}
+			}
+		}
+	}
+	r.overlay.FlushUnits()
+}
+
+func (r *Render) batchLevel(level int, viewBounds util.Bounds) {
 	visibleLevel := r.bucket.Level(level)
 	if visibleLevel == nil {
 		return
@@ -66,9 +86,6 @@ func (r *Render) batchLevel(level int, viewBounds util.Bounds, withUnitHighlight
 					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
 				)
 
-				if withUnitHighlight {
-					r.batchUnitHighlight(u)
-				}
 			}
 		}
 	}

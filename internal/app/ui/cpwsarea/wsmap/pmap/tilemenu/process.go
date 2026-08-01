@@ -62,12 +62,30 @@ func (t *TileMenu) showControls() {
 			Icon(icon.Eraser).
 			Shortcut("Delete"),
 		w.Separator(),
+		w.Custom(t.showExtensionActions),
 		w.Custom(func() {
 			for idx, instance := range t.tile.Instances().Sorted() {
 				t.showInstance(instance, idx)
 			}
 		}),
 	}.Build()
+}
+
+func (t *TileMenu) showExtensionActions() {
+	if len(t.extensionActions) == 0 {
+		return
+	}
+	manager := t.app.Extensions()
+	if manager == nil {
+		return
+	}
+	imgui.Separator()
+	for _, action := range t.extensionActions {
+		action := action
+		w.MenuItem(action.Label+"##extension_"+action.ID, func() {
+			manager.ExecuteContextMenuAction(t.editor.Dmm(), t.tile.Coord, action.ID)
+		}).IconEmpty().Enabled(action.Enabled).Build()
+	}
 }
 
 func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {

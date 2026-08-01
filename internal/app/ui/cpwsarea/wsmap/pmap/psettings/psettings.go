@@ -2,6 +2,7 @@ package psettings
 
 import (
 	"sdmm/internal/app/config"
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/window"
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmmap"
@@ -11,6 +12,7 @@ import (
 
 type App interface {
 	PathsFilter() *dm.PathsFilter
+	Extensions() *extensions.Manager
 
 	ConfigRegister(config.Config)
 }

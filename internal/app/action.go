@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/render"
 	"sdmm/internal/app/ui/cpwsarea/wsmap"
@@ -234,6 +235,16 @@ func (a *app) MirrorCanvasCamera() bool {
 // Prefs returns current application preferences.
 func (a *app) Prefs() prefs.Prefs {
 	return a.preferencesConfig().Prefs
+}
+
+// Extensions returns the manager for installed extensions.
+func (a *app) Extensions() *extensions.Manager { return a.extensions }
+
+func (a *app) ExtensionMenuActions() []extensions.MenuAction {
+	if a.extensions == nil {
+		return nil
+	}
+	return a.extensions.MenuActions()
 }
 
 // FocusApplicationWindow explicitly moves an OS focus to the current application window.
