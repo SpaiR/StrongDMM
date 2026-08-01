@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -61,7 +60,7 @@ func newPackageClient(packagePath, cacheRoot string) *client {
 	process := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig:  api.HandshakeConfig,
 		Plugins:          plugin.PluginSet{api.PluginName: &api.Plugin{}},
-		Cmd:              exec.Command(binary),
+		Cmd:              extensionCommand(binary),
 		AllowedProtocols: []plugin.Protocol{plugin.ProtocolNetRPC},
 		Logger:           hclog.New(&hclog.LoggerOptions{Name: manifest.ID, Output: os.Stderr}),
 	})
