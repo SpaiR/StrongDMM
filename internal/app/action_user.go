@@ -339,7 +339,6 @@ func (a *app) DoExtensionMenuAction(id string) {
 		return
 	}
 	a.extensions.ExecuteMenuAction(id)
-	a.layout.WsArea.RefreshExtensions()
 	log.Print("do extension action:", id)
 }
 

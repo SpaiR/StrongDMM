@@ -22,10 +22,13 @@ type ExtensionState struct {
 	Disabled bool
 	Preview  bool
 	Settings map[string]bool
+	Values   map[string]int
 }
 type MenuAction struct {
 	ID, Menu, Label   string
 	Enabled, Selected bool
+	Kind              string
+	Value, Min, Max   int
 }
 type ContextMenuAction struct {
 	ID, Label string
@@ -80,6 +83,13 @@ func (m *Manager) settings(client *client) map[string]bool {
 	}
 	return settings
 }
+func (m *Manager) values(client *client) map[string]float64 {
+	values := make(map[string]float64)
+	for id, value := range m.stateFor(client).Values {
+		values[id] = float64(value)
+	}
+	return values
+}
 
 func (m *Manager) MenuActions() []MenuAction {
 	actions := make([]MenuAction, 0)
@@ -93,13 +103,48 @@ func (m *Manager) MenuActions() []MenuAction {
 				selected, enabled = m.preview(client), m.enabled(client)
 			case "toggle":
 				selected, enabled = m.stateFor(client).Settings[action.ID], m.enabled(client)
+			case "slider":
+				enabled = m.enabled(client)
 			default:
 				continue
 			}
-			actions = append(actions, MenuAction{ID: client.manifest.ID + ":" + action.ID, Menu: action.Menu, Label: action.Label, Enabled: enabled, Selected: selected})
+			value := m.stateFor(client).Values[action.ID]
+			if value == 0 && action.Default != 0 {
+				value = action.Default
+			}
+			actions = append(actions, MenuAction{ID: client.manifest.ID + ":" + action.ID, Menu: action.Menu, Label: action.Label, Enabled: enabled, Selected: selected, Kind: action.Kind, Value: value, Min: action.Min, Max: action.Max})
 		}
 	}
 	return actions
+}
+func (m *Manager) SetMenuValue(id string, value int) {
+	for _, client := range m.clients {
+		for _, action := range client.manifest.Actions {
+			if action.Kind != "slider" || id != client.manifest.ID+":"+action.ID {
+				continue
+			}
+			if value < action.Min {
+				value = action.Min
+			}
+			if value > action.Max {
+				value = action.Max
+			}
+			state := m.stateFor(client)
+			if state.Values == nil {
+				state.Values = make(map[string]int)
+			}
+			state.Values[action.ID] = value
+			if action.RenderPass != "" && action.RenderProperty != "" {
+				for _, doc := range m.documents {
+					m.applyRenderSetting(client, doc)
+					m.render(doc)
+				}
+				return
+			}
+			m.refreshClient(client)
+			return
+		}
+	}
 }
 
 func (m *Manager) ExecuteMenuAction(id string) {
@@ -114,6 +159,10 @@ func (m *Manager) ExecuteMenuAction(id string) {
 				state.Disabled = !state.Disabled
 			case "toggle-preview":
 				state.Preview = !state.Preview
+				for _, doc := range m.documents {
+					m.render(doc)
+				}
+				return
 			case "toggle":
 				if state.Settings == nil {
 					state.Settings = make(map[string]bool)
@@ -216,8 +265,8 @@ func (m *Manager) NotifyChanged(dmm *dmmap.Dmm, points []util.Point) {
 	doc.revision++
 	update := m.update(doc, dmm, points)
 	for _, client := range m.clients {
-		if m.enabled(client) && m.preview(client) && client.usesMap() {
-			client.queue(work{message: api.Request{Version: api.ProtocolVersion, Type: "map.update", MapID: doc.id, Revision: doc.revision, Update: &update}})
+		if m.enabled(client) && client.usesMap() {
+			client.queue(work{message: api.Request{Version: api.ProtocolVersion, Type: "map.update", MapID: doc.id, Revision: doc.revision, Values: m.values(client), Update: &update}})
 		}
 	}
 }
@@ -270,21 +319,27 @@ func (m *Manager) queueOpen(doc *document, dmm *dmmap.Dmm) {
 	doc.opened = true
 	mapData := m.mapData(doc, dmm, nil)
 	for _, client := range m.clients {
-		if m.enabled(client) && m.preview(client) && client.usesMap() {
-			client.queue(work{immediate: true, message: api.Request{Version: api.ProtocolVersion, Type: "map.open", MapID: doc.id, Revision: doc.revision, Settings: m.settings(client), Map: &mapData}})
+		if m.enabled(client) && client.usesMap() {
+			client.queue(work{immediate: true, message: api.Request{Version: api.ProtocolVersion, Type: "map.open", MapID: doc.id, Revision: doc.revision, Settings: m.settings(client), Values: m.values(client), Map: &mapData}})
 		}
 	}
 }
 
 func (m *Manager) refreshClient(client *client) {
 	for dmm, doc := range m.documents {
-		if !m.enabled(client) || !m.preview(client) || !client.usesMap() {
+		if !m.enabled(client) || !client.usesMap() {
 			delete(doc.outputs, client)
+			delete(doc.applied, client)
 			m.render(doc)
 			continue
 		}
+		m.render(doc)
+		if _, tracked := doc.applied[client]; tracked {
+			client.queue(work{immediate: true, message: api.Request{Version: api.ProtocolVersion, Type: "settings.update", MapID: doc.id, Revision: doc.revision, Settings: m.settings(client), Values: m.values(client)}})
+			continue
+		}
 		mapData := m.mapData(doc, dmm, nil)
-		client.queue(work{immediate: true, message: api.Request{Version: api.ProtocolVersion, Type: "map.open", MapID: doc.id, Revision: doc.revision, Settings: m.settings(client), Map: &mapData}})
+		client.queue(work{immediate: true, message: api.Request{Version: api.ProtocolVersion, Type: "map.open", MapID: doc.id, Revision: doc.revision, Settings: m.settings(client), Values: m.values(client), Map: &mapData}})
 	}
 }
 
@@ -325,6 +380,9 @@ func (m *Manager) apply(client *client, result workerResult) {
 		for _, pass := range message.Render.Replace {
 			passes[pass.ID] = pass
 		}
+		for _, pass := range message.Render.UpsertPasses {
+			passes[pass.ID] = pass
+		}
 		doc.outputs[client] = passes
 	}
 	for _, passID := range message.Render.RemovePasses {
@@ -352,8 +410,30 @@ func (m *Manager) apply(client *client, result workerResult) {
 		sort.Slice(pass.Commands, func(i, j int) bool { return pass.Commands[i].ID < pass.Commands[j].ID })
 		passes[pass.ID] = pass
 	}
+	m.applyRenderSetting(client, doc)
 	doc.applied[client] = message.Revision
 	m.render(doc)
+}
+func (m *Manager) applyRenderSetting(client *client, doc *document) {
+	passes := doc.outputs[client]
+	for _, action := range client.manifest.Actions {
+		if action.Kind != "slider" || action.RenderPass == "" {
+			continue
+		}
+		pass, exists := passes[action.RenderPass]
+		if !exists {
+			continue
+		}
+		value := m.stateFor(client).Values[action.ID]
+		if value == 0 && action.Default != 0 {
+			value = action.Default
+		}
+		switch action.RenderProperty {
+		case "color_floor":
+			pass.ColorFloor = float32(value) / 100
+		}
+		passes[pass.ID] = pass
+	}
 }
 
 func (m *Manager) render(doc *document) {
@@ -370,6 +450,9 @@ func (m *Manager) extensionPasses(doc *document) []api.RenderPass {
 	passes := make([]api.RenderPass, 0)
 	seen := make(map[string]struct{})
 	for _, client := range m.clients {
+		if !m.preview(client) {
+			continue
+		}
 		clientPasses := doc.outputs[client]
 		ids := make([]string, 0, len(clientPasses))
 		for id := range clientPasses {
@@ -484,7 +567,11 @@ type manifest struct {
 	Capabilities []string          `json:"capabilities"`
 	Actions      []manifestAction  `json:"actions"`
 }
-type manifestAction struct{ ID, Menu, Label, Kind string }
+type manifestAction struct {
+	ID, Menu, Label, Kind      string
+	RenderPass, RenderProperty string
+	Min, Max, Default          int
+}
 type work struct {
 	message   api.Request
 	immediate bool

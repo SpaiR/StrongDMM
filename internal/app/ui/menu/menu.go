@@ -48,6 +48,7 @@ type app interface {
 	DoMultiZRendering()
 	DoMirrorCanvasCamera()
 	DoExtensionMenuAction(id string)
+	SetExtensionMenuValue(id string, value int)
 
 	// Window
 	DoResetLayout()
@@ -128,9 +129,25 @@ func (m *Menu) viewMenu() w.Layout {
 			continue
 		}
 		action := action
+		if action.Kind == "slider" {
+			items = append(items, extensionSlider{action: action, set: m.app.SetExtensionMenuValue})
+			continue
+		}
 		items = append(items, w.MenuItem(action.Label, func() { m.app.DoExtensionMenuAction(action.ID) }).IconEmpty().Enabled(action.Enabled).Selected(action.Selected))
 	}
 	return items
+}
+
+type extensionSlider struct {
+	action extensions.MenuAction
+	set    func(string, int)
+}
+
+func (s extensionSlider) Build() {
+	value := int32(s.action.Value)
+	if imgui.SliderInt(s.action.Label+"##"+s.action.ID, &value, int32(s.action.Min), int32(s.action.Max)) {
+		s.set(s.action.ID, int(value))
+	}
 }
 
 func (m *Menu) extensionsMenu() w.Layout {

@@ -136,7 +136,7 @@ func (r *Render) drawExtensionPass(pass api.RenderPass, width, height float32) {
 			for _, quad := range command.Mesh.Quads {
 				quads = append(quads, brush.BilinearQuad{X1: quad.X1, Y1: quad.Y1, X2: quad.X2, Y2: quad.Y2, SouthWest: brush.Color(quad.SouthWest), SouthEast: brush.Color(quad.SouthEast), NorthWest: brush.Color(quad.NorthWest), NorthEast: brush.Color(quad.NorthEast)})
 			}
-			brush.BilinearQuads(quads, width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+			brush.BilinearQuads(quads, width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale, pass.ColorFloor)
 		}
 	}
 	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)

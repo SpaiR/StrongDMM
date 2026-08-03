@@ -22,6 +22,7 @@ var (
 	uniformLocationTransform  int32
 	uniformLocationHasTexture int32
 	bilinearTransform         int32
+	bilinearColorFloor        int32
 	bilinearVAO               uint32
 	bilinearVBO               uint32
 	bilinearEBO               uint32
@@ -78,6 +79,7 @@ func initBilinear() {
 		log.Fatal().Msgf("unable to create bilinear shader: %v", err)
 	}
 	bilinearTransform = gl.GetUniformLocation(bilinearProgram, gl.Str("Transform\x00"))
+	bilinearColorFloor = gl.GetUniformLocation(bilinearProgram, gl.Str("ColorFloor\x00"))
 	gl.GenVertexArrays(1, &bilinearVAO)
 	gl.GenBuffers(1, &bilinearVBO)
 	gl.GenBuffers(1, &bilinearEBO)

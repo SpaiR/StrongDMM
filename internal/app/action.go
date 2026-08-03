@@ -247,6 +247,13 @@ func (a *app) ExtensionMenuActions() []extensions.MenuAction {
 	return a.extensions.MenuActions()
 }
 
+func (a *app) SetExtensionMenuValue(id string, value int) {
+	if a.extensions == nil {
+		return
+	}
+	a.extensions.SetMenuValue(id, value)
+}
+
 // FocusApplicationWindow explicitly moves an OS focus to the current application window.
 func (a *app) FocusApplicationWindow() {
 	a.masterWindow.Handle().Focus()

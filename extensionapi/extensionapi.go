@@ -52,6 +52,7 @@ type RenderPass struct {
 	ID            string
 	After, Before []string
 	Blend         string
+	ColorFloor    float32
 	Commands      []RenderCommand
 }
 type RenderPatch struct {
@@ -61,6 +62,7 @@ type RenderPatch struct {
 }
 type RenderUpdate struct {
 	Replace      []RenderPass
+	UpsertPasses []RenderPass
 	Patches      []RenderPatch
 	RemovePasses []string
 }
@@ -92,6 +94,7 @@ type Request struct {
 	MapID       string
 	Revision    uint64
 	Settings    map[string]bool
+	Values      map[string]float64
 	Map         *Map
 	Update      *MapUpdate
 	Render      *RenderUpdate

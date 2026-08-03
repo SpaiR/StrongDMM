@@ -72,6 +72,7 @@ void main() {
 func bilinearFragmentShader() string {
 	return `
 #version 330 core
+uniform float ColorFloor;
 flat in vec3 south_west;
 flat in vec3 south_east;
 flat in vec3 north_west;
@@ -81,7 +82,8 @@ out vec4 outputColor;
 void main() {
 	vec3 south = mix(south_west, south_east, uv.x);
 	vec3 north = mix(north_west, north_east, uv.x);
-	outputColor = vec4(mix(south, north, uv.y), 1.0);
+	vec3 color = mix(south, north, uv.y);
+	outputColor = vec4(vec3(ColorFloor) + color * (1.0 - ColorFloor), 1.0);
 }
 ` + "\x00"
 }

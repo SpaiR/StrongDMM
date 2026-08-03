@@ -13,7 +13,7 @@ type BilinearQuad struct {
 	SouthWest, SouthEast, NorthWest, NorthEast Color
 }
 
-func BilinearQuads(quads []BilinearQuad, w, h, x, y, z float32) {
+func BilinearQuads(quads []BilinearQuad, w, h, x, y, z, colorFloor float32) {
 	if len(quads) == 0 {
 		return
 	}
@@ -35,6 +35,7 @@ func BilinearQuads(quads []BilinearQuad, w, h, x, y, z float32) {
 	gl.BindVertexArray(bilinearVAO)
 	mtx := transformationMatrix(w, h, x, y, z)
 	gl.UniformMatrix4fv(bilinearTransform, 1, false, &mtx[0])
+	gl.Uniform1f(bilinearColorFloor, colorFloor)
 	gl.BindBuffer(gl.ARRAY_BUFFER, bilinearVBO)
 	gl.BufferData(gl.ARRAY_BUFFER, len(data)*platform.FloatSize, gl.Ptr(data), gl.STREAM_DRAW)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, bilinearEBO)
