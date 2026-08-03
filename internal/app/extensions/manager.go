@@ -380,10 +380,10 @@ func (m *Manager) apply(client *client, result workerResult) {
 		for _, pass := range message.Render.Replace {
 			passes[pass.ID] = pass
 		}
-		for _, pass := range message.Render.UpsertPasses {
-			passes[pass.ID] = pass
-		}
 		doc.outputs[client] = passes
+	}
+	for _, pass := range message.Render.UpsertPasses {
+		passes[pass.ID] = pass
 	}
 	for _, passID := range message.Render.RemovePasses {
 		delete(passes, passID)
