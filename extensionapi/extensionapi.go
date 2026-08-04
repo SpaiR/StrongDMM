@@ -16,6 +16,7 @@ const (
 
 	CapabilityRender      = "render"
 	CapabilityContextMenu = "context-menu"
+	CapabilityAppearance  = "appearance"
 )
 
 type Color struct{ R, G, B float32 }
@@ -24,9 +25,16 @@ type AtomDefinition struct {
 	Path string
 	Vars map[string]string
 }
+
+// AtomInstance identifies one map atom. DefinitionID describes its resolved
+// prefab while ID remains stable for the lifetime of the editor instance.
+type AtomInstance struct {
+	ID           uint64
+	DefinitionID uint32
+}
 type Tile struct {
 	X, Y, Z int
-	Atoms   []uint32
+	Atoms   []AtomInstance
 }
 type Map struct {
 	Width, Height, Levels int
@@ -66,6 +74,28 @@ type RenderUpdate struct {
 	Patches      []RenderPatch
 	RemovePasses []string
 }
+
+// Appearance is a partial visual appearance. Nil pointers mean that the field
+// is left unchanged, allowing several extensions to compose their patches.
+type Appearance struct {
+	Icon, IconState *string
+	Dir             *int
+	Color           *string
+	Alpha           *float32
+	PixelX, PixelY  *int
+	PixelW, PixelZ  *int
+	Visible         *bool
+}
+type AppearancePatch struct {
+	AtomID     uint64
+	Appearance Appearance
+	Underlays  []Appearance
+}
+type AppearanceUpdate struct {
+	Reset  bool
+	Upsert []AppearancePatch
+	Remove []uint64
+}
 type MapUpdate struct {
 	Width, Height, Levels int
 	Definitions           []AtomDefinition
@@ -98,6 +128,7 @@ type Request struct {
 	Map         *Map
 	Update      *MapUpdate
 	Render      *RenderUpdate
+	Appearance  *AppearanceUpdate
 	Context     *ContextMenuRequest
 	Action      *ActionRequest
 	ContextMenu *ContextMenuResponse

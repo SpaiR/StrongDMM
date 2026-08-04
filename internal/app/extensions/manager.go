@@ -50,6 +50,7 @@ type document struct {
 	nextDefinition uint32
 	renderers      map[*render.Render]struct{}
 	outputs        map[*client]map[string]api.RenderPass
+	appearances    map[*client]map[uint64]api.AppearancePatch
 	applied        map[*client]uint64
 	newDefinitions []api.AtomDefinition
 }
@@ -214,7 +215,7 @@ func (m *Manager) ExecuteContextMenuAction(dmm *dmmap.Dmm, point util.Point, id 
 			log.Warn().Err(err).Str("extension", client.manifest.ID).Msg("extension context action failed")
 			return
 		}
-		m.apply(client, workerResult{message: api.Request{Version: response.Version, Type: response.Type, MapID: response.MapID, Revision: response.Revision, Render: response.Render}})
+		m.apply(client, workerResult{message: api.Request{Version: response.Version, Type: response.Type, MapID: response.MapID, Revision: response.Revision, Render: response.Render, Appearance: response.Appearance}})
 		return
 	}
 }
@@ -223,6 +224,7 @@ func (m *Manager) ConfigureRender(renderer *render.Render, dmm *dmmap.Dmm) {
 	doc := m.document(dmm)
 	doc.renderers[renderer] = struct{}{}
 	renderer.SetExtensionPasses(m.extensionPasses(doc))
+	renderer.SetAppearancePatches(m.extensionAppearances(doc))
 	if !doc.opened {
 		m.queueOpen(doc, dmm)
 	}
@@ -258,6 +260,7 @@ func (m *Manager) ReplaceRender(previous, next *render.Render, dmm *dmmap.Dmm) {
 	delete(doc.renderers, previous)
 	doc.renderers[next] = struct{}{}
 	next.SetExtensionPasses(m.extensionPasses(doc))
+	next.SetAppearancePatches(m.extensionAppearances(doc))
 }
 
 func (m *Manager) NotifyChanged(dmm *dmmap.Dmm, points []util.Point) {
@@ -307,7 +310,7 @@ func (m *Manager) document(dmm *dmmap.Dmm) *document {
 	if doc := m.documents[dmm]; doc != nil {
 		return doc
 	}
-	doc := &document{id: fmt.Sprintf("map-%p", dmm), definitions: make(map[string]uint32), atoms: make(map[uint32]api.AtomDefinition), nextDefinition: 1, renderers: make(map[*render.Render]struct{}), outputs: make(map[*client]map[string]api.RenderPass), applied: make(map[*client]uint64)}
+	doc := &document{id: fmt.Sprintf("map-%p", dmm), definitions: make(map[string]uint32), atoms: make(map[uint32]api.AtomDefinition), nextDefinition: 1, renderers: make(map[*render.Render]struct{}), outputs: make(map[*client]map[string]api.RenderPass), appearances: make(map[*client]map[uint64]api.AppearancePatch), applied: make(map[*client]uint64)}
 	m.documents[dmm] = doc
 	return doc
 }
@@ -329,6 +332,7 @@ func (m *Manager) refreshClient(client *client) {
 	for dmm, doc := range m.documents {
 		if !m.enabled(client) || !client.usesMap() {
 			delete(doc.outputs, client)
+			delete(doc.appearances, client)
 			delete(doc.applied, client)
 			m.render(doc)
 			continue
@@ -367,7 +371,27 @@ func (m *Manager) apply(client *client, result workerResult) {
 			}
 		}
 	}
-	if message.Type != "render.update" || message.Render == nil || message.Revision < doc.applied[client] {
+	if (message.Type != "render.update" && message.Type != "appearance.update") || message.Revision < doc.applied[client] {
+		return
+	}
+	if message.Appearance != nil {
+		patches := doc.appearances[client]
+		if message.Appearance.Reset || patches == nil {
+			patches = make(map[uint64]api.AppearancePatch)
+			doc.appearances[client] = patches
+		}
+		for _, id := range message.Appearance.Remove {
+			delete(patches, id)
+		}
+		for _, patch := range message.Appearance.Upsert {
+			if patch.AtomID != 0 {
+				patches[patch.AtomID] = patch
+			}
+		}
+	}
+	if message.Render == nil {
+		doc.applied[client] = message.Revision
+		m.render(doc)
 		return
 	}
 	passes := doc.outputs[client]
@@ -438,9 +462,62 @@ func (m *Manager) applyRenderSetting(client *client, doc *document) {
 
 func (m *Manager) render(doc *document) {
 	passes := m.extensionPasses(doc)
+	appearances := m.extensionAppearances(doc)
 	for renderer := range doc.renderers {
 		renderer.SetExtensionPasses(passes)
+		renderer.SetAppearancePatches(appearances)
 	}
+}
+
+func (m *Manager) extensionAppearances(doc *document) map[uint64]api.AppearancePatch {
+	result := make(map[uint64]api.AppearancePatch)
+	for _, client := range m.clients {
+		if !m.preview(client) {
+			continue
+		}
+		for id, patch := range doc.appearances[client] {
+			previous := result[id]
+			previous.AtomID = id
+			previous.Appearance = mergeAppearance(previous.Appearance, patch.Appearance)
+			previous.Underlays = append(previous.Underlays, patch.Underlays...)
+			result[id] = previous
+		}
+	}
+	return result
+}
+
+func mergeAppearance(base, patch api.Appearance) api.Appearance {
+	if patch.Icon != nil {
+		base.Icon = patch.Icon
+	}
+	if patch.IconState != nil {
+		base.IconState = patch.IconState
+	}
+	if patch.Dir != nil {
+		base.Dir = patch.Dir
+	}
+	if patch.Color != nil {
+		base.Color = patch.Color
+	}
+	if patch.Alpha != nil {
+		base.Alpha = patch.Alpha
+	}
+	if patch.PixelX != nil {
+		base.PixelX = patch.PixelX
+	}
+	if patch.PixelY != nil {
+		base.PixelY = patch.PixelY
+	}
+	if patch.PixelW != nil {
+		base.PixelW = patch.PixelW
+	}
+	if patch.PixelZ != nil {
+		base.PixelZ = patch.PixelZ
+	}
+	if patch.Visible != nil {
+		base.Visible = patch.Visible
+	}
+	return base
 }
 
 // extensionPasses produces a stable global pass list. Client discovery is
@@ -523,10 +600,10 @@ func (m *Manager) tile(doc *document, tile *dmmap.Tile) api.Tile {
 			atom := api.AtomDefinition{ID: id, Path: instance.Prefab().Path(), Vars: vars}
 			doc.atoms[id] = atom
 			doc.newDefinitions = append(doc.newDefinitions, atom)
-			out.Atoms = append(out.Atoms, id)
+			out.Atoms = append(out.Atoms, api.AtomInstance{ID: instance.Id(), DefinitionID: id})
 			continue
 		}
-		out.Atoms = append(out.Atoms, id)
+		out.Atoms = append(out.Atoms, api.AtomInstance{ID: instance.Id(), DefinitionID: id})
 	}
 	return out
 }
@@ -598,7 +675,7 @@ func (c *client) hasCapability(capability string) bool {
 	return false
 }
 func (c *client) usesMap() bool {
-	return c.hasCapability(api.CapabilityRender) || c.hasCapability(api.CapabilityContextMenu)
+	return c.hasCapability(api.CapabilityRender) || c.hasCapability(api.CapabilityContextMenu) || c.hasCapability(api.CapabilityAppearance)
 }
 
 func (c *client) startWorker() {
@@ -680,7 +757,7 @@ func (c *client) execute(work work) {
 }
 func (c *client) request(message api.Request) (api.Request, error) {
 	response, err := c.extension.Handle(message)
-	return api.Request{Version: response.Version, Type: response.Type, MapID: response.MapID, Revision: response.Revision, Render: response.Render, Reason: response.Reason}, err
+	return api.Request{Version: response.Version, Type: response.Type, MapID: response.MapID, Revision: response.Revision, Render: response.Render, Appearance: response.Appearance, Reason: response.Reason}, err
 }
 
 func discover(root string) []*client {

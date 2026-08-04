@@ -74,16 +74,23 @@ func (r *Render) batchLevel(level int, viewBounds util.Bounds) {
 				if !u.ViewBounds().ContainsV(viewBounds) {
 					continue
 				}
-				// Process unit
-				if r.unitProcessor != nil && !r.unitProcessor.ProcessUnit(u) {
+				effective, underlays, visible := r.appearanceUnit(u)
+				if !visible {
 					continue
+				}
+				// Process the effective unit so we get the same one
+				if r.unitProcessor != nil && !r.unitProcessor.ProcessUnit(effective) {
+					continue
+				}
+				for _, underlay := range underlays {
+					brush.RectTexturedV(underlay.ViewBounds().X1, underlay.ViewBounds().Y1, underlay.ViewBounds().X2, underlay.ViewBounds().Y2, underlay.R(), underlay.G(), underlay.B(), underlay.A(), underlay.Sprite().Texture(), underlay.Sprite().U1, underlay.Sprite().V1, underlay.Sprite().U2, underlay.Sprite().V2)
 				}
 
 				brush.RectTexturedV(
-					u.ViewBounds().X1, u.ViewBounds().Y1, u.ViewBounds().X2, u.ViewBounds().Y2,
-					u.R(), u.G(), u.B(), u.A(),
-					u.Sprite().Texture(),
-					u.Sprite().U1, u.Sprite().V1, u.Sprite().U2, u.Sprite().V2,
+					effective.ViewBounds().X1, effective.ViewBounds().Y1, effective.ViewBounds().X2, effective.ViewBounds().Y2,
+					effective.R(), effective.G(), effective.B(), effective.A(),
+					effective.Sprite().Texture(),
+					effective.Sprite().U1, effective.Sprite().V1, effective.Sprite().U2, effective.Sprite().V2,
 				)
 
 			}

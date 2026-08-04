@@ -12,11 +12,28 @@ import (
 type Unit struct {
 	sprite   *dmicon.Sprite
 	instance *dmminstance.Instance
+	x, y     int
+	iconSize int
 
 	layer      float32
 	viewBounds util.Bounds
 
 	r, g, b, a float32
+}
+
+// WithSprite returns a copy with a replacement appearance while retaining the
+// same map instance. It is used by extension appearance patches for extension-driven updates :D
+func (u Unit) WithSprite(sprite *dmicon.Sprite, pixelX, pixelY, stepX, stepY, pixelW, pixelZ int) Unit {
+	u.sprite = sprite
+	x1 := float32((u.x-1)*u.iconSize + pixelX + stepX + pixelW)
+	y1 := float32((u.y-1)*u.iconSize + pixelY + stepY + pixelZ)
+	u.viewBounds = util.Bounds{X1: x1, Y1: y1, X2: x1 + float32(sprite.IconWidth()), Y2: y1 + float32(sprite.IconHeight())}
+	return u
+}
+
+func (u Unit) WithColor(r, g, b, a float32) Unit {
+	u.r, u.g, u.b, u.a = r, g, b, a
+	return u
 }
 
 func (u Unit) Sprite() *dmicon.Sprite {
@@ -71,7 +88,7 @@ func Make(x, y int, i *dmminstance.Instance, iconSize int) Unit {
 	r, g, b, a := parseColor(i.Prefab())
 
 	return Unit{
-		sp, i, countLayer(i.Prefab()),
+		sp, i, x, y, iconSize, countLayer(i.Prefab()),
 		util.Bounds{X1: x1, Y1: y1, X2: x2, Y2: y2},
 		r, g, b, a,
 	}

@@ -17,6 +17,7 @@ type Render struct {
 	overlay       overlay
 	unitProcessor unitProcessor
 	renderGraph   []graphNode
+	appearances   map[uint64]resolvedAppearance
 }
 
 func New() *Render {
@@ -25,6 +26,7 @@ func New() *Render {
 		Camera:      newCamera(),
 		bucket:      bucket.New(),
 		renderGraph: compileRenderGraph(nil),
+		appearances: make(map[uint64]resolvedAppearance),
 	}
 }
 
