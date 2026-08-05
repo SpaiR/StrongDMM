@@ -21,9 +21,10 @@ const (
 
 type Color struct{ R, G, B float32 }
 type AtomDefinition struct {
-	ID   uint32
-	Path string
-	Vars map[string]string
+	ID           uint32
+	Path         string
+	Vars         map[string]string
+	ResolvedVars map[string]string
 }
 
 // AtomInstance identifies one map atom. DefinitionID describes its resolved
@@ -52,9 +53,10 @@ type Mesh struct {
 	Quads    []BilinearQuad
 }
 type RenderCommand struct {
-	ID   string
-	Kind string
-	Mesh Mesh
+	ID    string
+	Kind  string
+	Level int // 0 renders on every level; otherwise only this map Z level.
+	Mesh  Mesh
 }
 type RenderPass struct {
 	ID            string
@@ -90,6 +92,7 @@ type AppearancePatch struct {
 	AtomID     uint64
 	Appearance Appearance
 	Underlays  []Appearance
+	Overlays   []Appearance
 }
 type AppearanceUpdate struct {
 	Reset  bool

@@ -18,6 +18,7 @@ type Render struct {
 	unitProcessor unitProcessor
 	renderGraph   []graphNode
 	appearances   map[uint64]resolvedAppearance
+	levelTarget   levelTarget
 }
 
 func New() *Render {
@@ -78,8 +79,7 @@ func (r *Render) draw(width, height float32) {
 	for _, node := range r.renderGraph {
 		switch node.id {
 		case coreMap:
-			r.batchBucketUnits(view)
-			brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+			r.drawBucketLevels(view, width, height)
 		case coreSelection:
 			r.batchUnitHighlights(view)
 			brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)

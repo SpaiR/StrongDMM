@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	api "github.com/SpaiR/StrongDMM-extension-api"
@@ -179,7 +180,7 @@ func (m *Manager) ExecuteMenuAction(id string) {
 // ContextMenuActions returns dynamic actions contributed for one turf.
 func (m *Manager) ContextMenuActions(dmm *dmmap.Dmm, point util.Point) []ContextMenuAction {
 	doc := m.document(dmm)
-	turf := m.contextTurf(dmm.GetTile(point))
+	turf := m.contextTurf(dmm, dmm.GetTile(point))
 	actions := make([]ContextMenuAction, 0)
 	for _, client := range m.clients {
 		if !m.enabled(client) || !client.hasCapability(api.CapabilityContextMenu) {
@@ -210,7 +211,7 @@ func (m *Manager) ExecuteContextMenuAction(dmm *dmmap.Dmm, point util.Point, id 
 		if !m.enabled(client) || !client.hasCapability(api.CapabilityContextMenu) || len(id) <= len(prefix) || id[:len(prefix)] != prefix {
 			continue
 		}
-		response, err := client.extension.Handle(api.Request{Version: api.ProtocolVersion, Type: "context.action", MapID: doc.id, Revision: doc.revision, Action: &api.ActionRequest{ID: id[len(prefix):], Turf: m.contextTurf(dmm.GetTile(point))}})
+		response, err := client.extension.Handle(api.Request{Version: api.ProtocolVersion, Type: "context.action", MapID: doc.id, Revision: doc.revision, Action: &api.ActionRequest{ID: id[len(prefix):], Turf: m.contextTurf(dmm, dmm.GetTile(point))}})
 		if err != nil {
 			log.Warn().Err(err).Str("extension", client.manifest.ID).Msg("extension context action failed")
 			return
@@ -480,6 +481,7 @@ func (m *Manager) extensionAppearances(doc *document) map[uint64]api.AppearanceP
 			previous.AtomID = id
 			previous.Appearance = mergeAppearance(previous.Appearance, patch.Appearance)
 			previous.Underlays = append(previous.Underlays, patch.Underlays...)
+			previous.Overlays = append(previous.Overlays, patch.Overlays...)
 			result[id] = previous
 		}
 	}
@@ -560,7 +562,7 @@ func (m *Manager) mapData(doc *document, dmm *dmmap.Dmm, points []util.Point) ap
 		}
 	}
 	for _, point := range points {
-		mapData.Tiles = append(mapData.Tiles, m.tile(doc, dmm.GetTile(point)))
+		mapData.Tiles = append(mapData.Tiles, m.tile(doc, dmm, dmm.GetTile(point)))
 	}
 	if full {
 		for _, atom := range doc.atoms {
@@ -576,16 +578,20 @@ func (m *Manager) update(doc *document, dmm *dmmap.Dmm, points []util.Point) api
 	mapData := m.mapData(doc, dmm, points)
 	return api.MapUpdate{Width: mapData.Width, Height: mapData.Height, Levels: mapData.Levels, Definitions: mapData.Definitions, Tiles: mapData.Tiles}
 }
-func (m *Manager) tile(doc *document, tile *dmmap.Tile) api.Tile {
+func (m *Manager) tile(doc *document, dmm *dmmap.Dmm, tile *dmmap.Tile) api.Tile {
 	out := api.Tile{X: tile.Coord.X, Y: tile.Coord.Y, Z: tile.Coord.Z}
 	for _, instance := range tile.Instances() {
 		vars := make(map[string]string)
+		resolvedVars := make(map[string]string)
 		prefabVars := instance.Prefab().Vars()
 		keys := resolvedVariableNames(prefabVars)
 		sort.Strings(keys)
 		for _, key := range keys {
 			if value, ok := prefabVars.Value(key); ok {
 				vars[key] = value
+				if resolved := resolveTypeVariable(dmm, value); resolved != value {
+					resolvedVars[key] = resolved
+				}
 			}
 		}
 		key := instance.Prefab().Path()
@@ -597,7 +603,7 @@ func (m *Manager) tile(doc *document, tile *dmmap.Tile) api.Tile {
 			id = doc.nextDefinition
 			doc.nextDefinition++
 			doc.definitions[key] = id
-			atom := api.AtomDefinition{ID: id, Path: instance.Prefab().Path(), Vars: vars}
+			atom := api.AtomDefinition{ID: id, Path: instance.Prefab().Path(), Vars: vars, ResolvedVars: resolvedVars}
 			doc.atoms[id] = atom
 			doc.newDefinitions = append(doc.newDefinitions, atom)
 			out.Atoms = append(out.Atoms, api.AtomInstance{ID: instance.Id(), DefinitionID: id})
@@ -607,19 +613,39 @@ func (m *Manager) tile(doc *document, tile *dmmap.Tile) api.Tile {
 	}
 	return out
 }
-func (m *Manager) contextTurf(tile *dmmap.Tile) api.ContextTurf {
+func (m *Manager) contextTurf(dmm *dmmap.Dmm, tile *dmmap.Tile) api.ContextTurf {
 	turf := api.ContextTurf{X: tile.Coord.X, Y: tile.Coord.Y, Z: tile.Coord.Z}
 	for _, instance := range tile.Instances() {
 		vars := make(map[string]string)
+		resolvedVars := make(map[string]string)
 		prefabVars := instance.Prefab().Vars()
 		for _, key := range resolvedVariableNames(prefabVars) {
 			if value, ok := prefabVars.Value(key); ok {
 				vars[key] = value
+				if resolved := resolveTypeVariable(dmm, value); resolved != value {
+					resolvedVars[key] = resolved
+				}
 			}
 		}
-		turf.Atoms = append(turf.Atoms, api.AtomDefinition{Path: instance.Prefab().Path(), Vars: vars})
+		turf.Atoms = append(turf.Atoms, api.AtomDefinition{Path: instance.Prefab().Path(), Vars: vars, ResolvedVars: resolvedVars})
 	}
 	return turf
+}
+
+// resolveTypeVariable follows a DM /type::variable reference for extension metadata.
+func resolveTypeVariable(dmm *dmmap.Dmm, value string) string {
+	typePath, variableName, found := strings.Cut(value, "::")
+	if !found || dmm.Environment == nil {
+		return value
+	}
+	object := dmm.Environment.Objects[typePath]
+	if object == nil {
+		return value
+	}
+	if resolved, exists := object.Vars.Value(variableName); exists {
+		return resolved
+	}
+	return value
 }
 
 func resolvedVariableNames(vars *dmvars.Variables) []string {

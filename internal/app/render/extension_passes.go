@@ -114,6 +114,20 @@ func fallbackRenderGraph(nodes []graphNode) []graphNode {
 }
 
 func (r *Render) drawExtensionPass(pass api.RenderPass, width, height float32) {
+	r.drawExtensionPassLevel(pass, 0, width, height)
+}
+
+// drawLevelExtensionPasses draws commands whose Level matches one map Z level.
+func (r *Render) drawLevelExtensionPasses(level int, width, height float32) {
+	for _, node := range r.renderGraph {
+		if node.pass != nil {
+			r.drawExtensionPassLevel(*node.pass, level, width, height)
+		}
+	}
+}
+
+// drawExtensionPassLevel draws either global commands (level 0) or one scoped Z level.
+func (r *Render) drawExtensionPassLevel(pass api.RenderPass, level int, width, height float32) {
 	switch pass.Blend {
 	case "multiply":
 		r.setMultiplyBlend()
@@ -123,6 +137,9 @@ func (r *Render) drawExtensionPass(pass api.RenderPass, width, height float32) {
 		r.setNormalBlend()
 	}
 	for _, command := range pass.Commands {
+		if command.Level != level {
+			continue
+		}
 		switch command.Kind {
 		case "mesh":
 			vertices := make([]brush.Vertex, 0, len(command.Mesh.Vertices))

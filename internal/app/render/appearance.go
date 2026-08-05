@@ -18,6 +18,13 @@ type resolvedAppearance struct {
 	r, g, b, a                     float32
 	colorSet                       bool
 	underlays                      []*dmicon.Sprite
+	overlays                       []resolvedSprite
+}
+
+// resolvedSprite is a cached extension contribution positioned relative to its atom.
+type resolvedSprite struct {
+	sprite                         *dmicon.Sprite
+	pixelX, pixelY, pixelW, pixelZ int
 }
 
 func (r *Render) SetAppearancePatches(patches map[uint64]api.AppearancePatch) {
@@ -27,17 +34,17 @@ func (r *Render) SetAppearancePatches(patches map[uint64]api.AppearancePatch) {
 	}
 }
 
-func (r *Render) appearanceUnit(u unit.Unit) (unit.Unit, []unit.Unit, bool) {
+func (r *Render) appearanceUnit(u unit.Unit) (unit.Unit, []unit.Unit, []unit.Unit, bool) {
 	patch, ok := r.appearances[u.Instance().Id()]
 	if !ok {
-		return u, nil, true
+		return u, nil, nil, true
 	}
 	if !patch.compiled {
 		patch = compileAppearance(u, patch)
 		r.appearances[u.Instance().Id()] = patch
 	}
 	if !patch.visible {
-		return u, nil, false
+		return u, nil, nil, false
 	}
 	main := u
 	if patch.sprite != nil {
@@ -50,7 +57,11 @@ func (r *Render) appearanceUnit(u unit.Unit) (unit.Unit, []unit.Unit, bool) {
 	for _, sprite := range patch.underlays {
 		underlays = append(underlays, u.WithSprite(sprite, patch.pixelX, patch.pixelY, 0, 0, patch.pixelW, patch.pixelZ))
 	}
-	return main, underlays, true
+	overlays := make([]unit.Unit, 0, len(patch.overlays))
+	for _, overlay := range patch.overlays {
+		overlays = append(overlays, u.WithSprite(overlay.sprite, overlay.pixelX, overlay.pixelY, 0, 0, overlay.pixelW, overlay.pixelZ))
+	}
+	return main, underlays, overlays, true
 }
 
 func compileAppearance(u unit.Unit, patch resolvedAppearance) resolvedAppearance {
@@ -123,6 +134,38 @@ func compileAppearance(u unit.Unit, patch resolvedAppearance) resolvedAppearance
 		}
 		if sprite, err := dmicon.Cache.GetSpriteV(underIcon, underState, underDir); err == nil {
 			patch.underlays = append(patch.underlays, sprite)
+		}
+	}
+	patch.overlays = make([]resolvedSprite, 0, len(patch.appearance.Overlays))
+	for _, overlay := range patch.appearance.Overlays {
+		overlayIcon, overlayState, overlayDir := icon, state, dir
+		overlayPixelX, overlayPixelY, overlayPixelW, overlayPixelZ := pixelX, pixelY, pixelW, pixelZ
+		if overlay.Icon != nil {
+			overlayIcon = *overlay.Icon
+		}
+		if overlay.IconState != nil {
+			overlayState = *overlay.IconState
+		}
+		if overlay.Dir != nil {
+			overlayDir = *overlay.Dir
+		}
+		if overlay.PixelX != nil {
+			overlayPixelX = *overlay.PixelX
+		}
+		if overlay.PixelY != nil {
+			overlayPixelY = *overlay.PixelY
+		}
+		if overlay.PixelW != nil {
+			overlayPixelW = *overlay.PixelW
+		}
+		if overlay.PixelZ != nil {
+			overlayPixelZ = *overlay.PixelZ
+		}
+		if overlay.Visible != nil && !*overlay.Visible {
+			continue
+		}
+		if sprite, err := dmicon.Cache.GetSpriteV(overlayIcon, overlayState, overlayDir); err == nil {
+			patch.overlays = append(patch.overlays, resolvedSprite{sprite: sprite, pixelX: overlayPixelX + stepX, pixelY: overlayPixelY + stepY, pixelW: overlayPixelW, pixelZ: overlayPixelZ})
 		}
 	}
 	return patch
