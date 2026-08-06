@@ -44,6 +44,7 @@ type editor interface {
 	Dmm() *dmmap.Dmm
 
 	CommitChanges(commitMsg string)
+	NotifyExtensions([]util.Point)
 
 	UpdateCanvasByCoords([]util.Point)
 	UpdateCanvasByTiles([]dmmap.Tile)

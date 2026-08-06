@@ -115,6 +115,11 @@ func (e *Editor) UpdateCanvasByCoords(coords []util.Point) {
 	e.pMap.Canvas().Render().UpdateBucketV(e.dmm, e.pMap.ActiveLevel(), coords)
 }
 
+// NotifyExtensions forwards visual changes that do not change prefab contents, such as replacing an instance with another instance of the same prefab.
+func (e *Editor) NotifyExtensions(coords []util.Point) {
+	e.pMap.NotifyExtensions(coords)
+}
+
 // UpdateCanvasByTiles updates the canvas for the provided tiles.
 func (e *Editor) UpdateCanvasByTiles(tiles []dmmap.Tile) {
 	coords := make([]util.Point, 0, len(tiles))
