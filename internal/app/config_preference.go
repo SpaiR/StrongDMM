@@ -91,7 +91,10 @@ func (a *app) validateCodeEditor(cfg *preferencesConfig) {
 	switch cfg.Prefs.Editor.CodeEditor {
 	case prefs.CodeEditorVSC:
 		if _, err := exec.LookPath(prefs.CodeEditorVSCActual); err != nil {
-			if _, err := exec.LookPath(prefs.CodeEditorDMActual); err == nil {
+			if _, err := exec.LookPath(prefs.CodeEditorVSCodiumActual); err == nil {
+				// VSC invalid but VSCodium valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorVSCodium
+			} else if _, err := exec.LookPath(prefs.CodeEditorDMActual); err == nil {
 				// VSC invalid but DM valid
 				cfg.Editor.CodeEditor = prefs.CodeEditorDM
 			} else if _, err := exec.LookPath(prefs.CodeEditorNPPActual); err == nil {
@@ -103,11 +106,31 @@ func (a *app) validateCodeEditor(cfg *preferencesConfig) {
 			}
 			log.Print(prefs.CodeEditorVSCActual + " could not be found in PATH. Code Editor pref changed to " + cfg.Editor.CodeEditor)
 		}
+	case prefs.CodeEditorVSCodium:
+		if _, err := exec.LookPath(prefs.CodeEditorVSCodiumActual); err != nil {
+			if _, err := exec.LookPath(prefs.CodeEditorVSCActual); err == nil {
+				// VSCodium invalid but VSC valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorVSC
+			} else if _, err := exec.LookPath(prefs.CodeEditorDMActual); err == nil {
+				// VSCodium invalid but DM valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorDM
+			} else if _, err := exec.LookPath(prefs.CodeEditorNPPActual); err == nil {
+				// VSCodium invalid but NPP valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorNPP
+			} else {
+				// All invalid just default
+				cfg.Editor.CodeEditor = prefs.CodeEditorDefault
+			}
+			log.Print(prefs.CodeEditorVSCodiumActual + " could not be found in PATH. Code Editor pref changed to " + cfg.Editor.CodeEditor)
+		}
 	case prefs.CodeEditorDM:
 		if _, err := exec.LookPath(prefs.CodeEditorDMActual); err != nil {
 			if _, err := exec.LookPath(prefs.CodeEditorVSCActual); err == nil {
 				// DM invalid but VSC valid
 				cfg.Editor.CodeEditor = prefs.CodeEditorVSC
+			} else if _, err := exec.LookPath(prefs.CodeEditorVSCodiumActual); err == nil {
+				// DM invalid but VSCodium valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorVSCodium
 			} else if _, err := exec.LookPath(prefs.CodeEditorNPPActual); err == nil {
 				// DM invalid but NPP valid
 				cfg.Editor.CodeEditor = prefs.CodeEditorNPP
@@ -122,6 +145,9 @@ func (a *app) validateCodeEditor(cfg *preferencesConfig) {
 			if _, err := exec.LookPath(prefs.CodeEditorVSCActual); err == nil {
 				// NPP invalid but VSC valid
 				cfg.Editor.CodeEditor = prefs.CodeEditorVSC
+			} else if _, err := exec.LookPath(prefs.CodeEditorVSCodiumActual); err == nil {
+				// NPP invalid but VSCodium valid
+				cfg.Editor.CodeEditor = prefs.CodeEditorVSCodium
 			} else if _, err := exec.LookPath(prefs.CodeEditorDMActual); err == nil {
 				// NPP invalid but DM valid
 				cfg.Editor.CodeEditor = prefs.CodeEditorDM
