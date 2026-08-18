@@ -40,7 +40,7 @@ func BilinearQuads(quads []BilinearQuad, w, h, x, y, z, colorFloor float32) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(data)*platform.FloatSize, gl.Ptr(data), gl.STREAM_DRAW)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, bilinearEBO)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STREAM_DRAW)
-	gl.DrawElements(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, gl.PtrOffset(0))
+	gl.DrawElementsWithOffset(gl.TRIANGLES, int32(len(indices)), gl.UNSIGNED_INT, 0)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, 0)
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 	gl.BindVertexArray(0)
