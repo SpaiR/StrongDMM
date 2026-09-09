@@ -54,7 +54,12 @@ func (t *ToolAdd) onMove(coord util.Point) {
 
 func (t *ToolAdd) onStop(util.Point) {
 	if len(t.editedTiles) != 0 {
+		editedPoints := make([]util.Point, 0, len(t.editedTiles))
+		for coord := range t.editedTiles {
+			editedPoints = append(editedPoints, coord)
+		}
 		t.editedTiles = make(map[util.Point]bool, len(t.editedTiles))
+		ed.NotifyExtensions(editedPoints)
 		go ed.CommitChanges("Add Atoms")
 	}
 }

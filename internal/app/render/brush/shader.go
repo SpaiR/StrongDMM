@@ -42,3 +42,48 @@ void main() {
 }
 ` + "\x00"
 }
+
+func bilinearVertexShader() string {
+	return `
+#version 330 core
+uniform mat4 Transform;
+layout (location = 0) in vec2 in_pos;
+layout (location = 1) in vec3 in_south_west;
+layout (location = 2) in vec3 in_south_east;
+layout (location = 3) in vec3 in_north_west;
+layout (location = 4) in vec3 in_north_east;
+layout (location = 5) in vec2 in_uv;
+flat out vec3 south_west;
+flat out vec3 south_east;
+flat out vec3 north_west;
+flat out vec3 north_east;
+out vec2 uv;
+void main() {
+	south_west = in_south_west;
+	south_east = in_south_east;
+	north_west = in_north_west;
+	north_east = in_north_east;
+	uv = in_uv;
+	gl_Position = Transform * vec4(in_pos, 1, 1);
+}
+` + "\x00"
+}
+
+func bilinearFragmentShader() string {
+	return `
+#version 330 core
+uniform float ColorFloor;
+flat in vec3 south_west;
+flat in vec3 south_east;
+flat in vec3 north_west;
+flat in vec3 north_east;
+in vec2 uv;
+out vec4 outputColor;
+void main() {
+	vec3 south = mix(south_west, south_east, uv.x);
+	vec3 north = mix(north_west, north_east, uv.x);
+	vec3 color = mix(south, north, uv.y);
+	outputColor = vec4(vec3(ColorFloor) + color * (1.0 - ColorFloor), 1.0);
+}
+` + "\x00"
+}

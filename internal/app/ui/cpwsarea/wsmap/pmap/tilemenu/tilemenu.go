@@ -2,6 +2,7 @@ package tilemenu
 
 import (
 	"sdmm/internal/app/command"
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/pquickedit"
 	"sdmm/internal/app/ui/shortcut"
@@ -39,6 +40,7 @@ type App interface {
 
 	Prefs() prefs.Prefs
 	LoadedEnvironment() *dmenv.Dme
+	Extensions() *extensions.Manager
 }
 
 type editor interface {
@@ -64,7 +66,8 @@ type TileMenu struct {
 
 	opened bool
 
-	tile *dmmap.Tile
+	tile             *dmmap.Tile
+	extensionActions []extensions.ContextMenuAction
 
 	pQuickEdit *pquickedit.Panel
 }
@@ -83,6 +86,9 @@ func (t *TileMenu) Dispose() {
 func (t *TileMenu) Open(coord util.Point) {
 	if t.editor.Dmm().HasTile(coord) {
 		t.tile = t.editor.Dmm().GetTile(coord)
+		if manager := t.app.Extensions(); manager != nil {
+			t.extensionActions = manager.ContextMenuActions(t.editor.Dmm(), coord)
+		}
 		t.opened = true
 		imgui.OpenPopup("tileMenu")
 	}
@@ -91,4 +97,5 @@ func (t *TileMenu) Open(coord util.Point) {
 func (t *TileMenu) close() {
 	t.opened = false
 	t.tile = nil
+	t.extensionActions = nil
 }

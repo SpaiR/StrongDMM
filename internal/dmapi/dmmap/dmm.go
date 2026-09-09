@@ -15,8 +15,9 @@ import (
 // Dmm stores information about the map.
 // Unlike the dmmdata.DmmData this information is needed mostly for the editor usages.
 type Dmm struct {
-	Name string
-	Path DmmPath
+	Name        string
+	Path        DmmPath
+	Environment *dmenv.Dme
 
 	Tiles []*Tile
 
@@ -29,6 +30,7 @@ func (d *Dmm) Copy() Dmm {
 	dmm := Dmm{}
 	dmm.Name = d.Name
 	dmm.Path = d.Path
+	dmm.Environment = d.Environment
 	dmm.MaxX = d.MaxX
 	dmm.MaxY = d.MaxY
 	dmm.MaxZ = d.MaxZ
@@ -107,12 +109,13 @@ func tileIndex(maxX, maxY, x, y, z int) int {
 func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
 	unknownPrefabs = make(map[string]*dmmprefab.Prefab)
 	dmm = &Dmm{
-		Name:  filepath.Base(data.Filepath),
-		Path:  newDmmPath(dme.RootDir, data),
-		Tiles: make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
-		MaxX:  data.MaxX,
-		MaxY:  data.MaxY,
-		MaxZ:  data.MaxZ,
+		Name:        filepath.Base(data.Filepath),
+		Path:        newDmmPath(dme.RootDir, data),
+		Environment: dme,
+		Tiles:       make([]*Tile, data.MaxX*data.MaxY*data.MaxZ),
+		MaxX:        data.MaxX,
+		MaxY:        data.MaxY,
+		MaxZ:        data.MaxZ,
 
 		Backup: backup,
 	}

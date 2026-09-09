@@ -72,10 +72,12 @@ func (t *ToolFill) onStop(util.Point) {
 
 	// Fill the area.
 	if prefab, ok := ed.SelectedPrefab(); ok {
+		var filledPoints []util.Point
 		fillTile := func(x, y int) {
 			coord := util.Point{X: x, Y: y, Z: t.start.Z}
 			tile := ed.Dmm().GetTile(coord)
 			t.basicPrefabAdd(tile, prefab)
+			filledPoints = append(filledPoints, coord)
 		}
 		if imguiext.IsCtrlDown() {
 			for x := t.fillArea.X1; x <= t.fillArea.X2; x++ {
@@ -94,6 +96,7 @@ func (t *ToolFill) onStop(util.Point) {
 			}
 		}
 
+		ed.NotifyExtensions(filledPoints)
 		go ed.CommitChanges("Fill Atoms")
 	}
 

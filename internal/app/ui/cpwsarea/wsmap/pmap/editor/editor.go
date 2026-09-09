@@ -86,6 +86,8 @@ type attachedMap interface {
 	PushAreaHover(bounds util.Bounds, fillColor, borderColor util.Color)
 
 	OnMapSizeChange()
+	NotifyExtensions([]util.Point)
+	ResetExtensions()
 }
 
 func New(app app, attachedMap attachedMap, dmm *dmmap.Dmm) *Editor {
@@ -111,6 +113,11 @@ func (e *Editor) HoveredInstance() *dmminstance.Instance {
 // UpdateCanvasByCoords updates the canvas for the provided coords.
 func (e *Editor) UpdateCanvasByCoords(coords []util.Point) {
 	e.pMap.Canvas().Render().UpdateBucketV(e.dmm, e.pMap.ActiveLevel(), coords)
+}
+
+// NotifyExtensions forwards visual changes that do not change prefab contents, such as replacing an instance with another instance of the same prefab.
+func (e *Editor) NotifyExtensions(coords []util.Point) {
+	e.pMap.NotifyExtensions(coords)
 }
 
 // UpdateCanvasByTiles updates the canvas for the provided tiles.

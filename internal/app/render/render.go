@@ -16,13 +16,18 @@ type Render struct {
 
 	overlay       overlay
 	unitProcessor unitProcessor
+	renderGraph   []graphNode
+	appearances   map[uint64]resolvedAppearance
+	levelTarget   levelTarget
 }
 
 func New() *Render {
 	brush.TryInit()
 	return &Render{
-		Camera: newCamera(),
-		bucket: bucket.New(),
+		Camera:      newCamera(),
+		bucket:      bucket.New(),
+		renderGraph: compileRenderGraph(nil),
+		appearances: make(map[uint64]resolvedAppearance),
 	}
 }
 
@@ -65,12 +70,30 @@ func (r *Render) prepare() {
 	gl.ActiveTexture(gl.TEXTURE0)
 }
 
+func (r *Render) setNormalBlend()   { gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA) }
+func (r *Render) setMultiplyBlend() { gl.BlendFunc(gl.DST_COLOR, gl.ZERO) }
+func (r *Render) setAddBlend()      { gl.BlendFunc(gl.SRC_ALPHA, gl.ONE) }
+
 func (r *Render) draw(width, height float32) {
-	r.batchBucketUnits(r.viewportBounds(width, height))
-	//r.batchChunksVisuals()
-	r.batchOverlayAreasBorders()
-	r.batchOverlayAreas()
-	brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+	view := r.viewportBounds(width, height)
+	for _, node := range r.renderGraph {
+		switch node.id {
+		case coreMap:
+			r.drawBucketLevels(view, width, height)
+		case coreSelection:
+			r.batchUnitHighlights(view)
+			brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+		case coreOverlays:
+			//r.batchChunksVisuals()
+			r.batchOverlayAreasBorders()
+			r.batchOverlayAreas()
+			brush.Draw(width, height, r.Camera.ShiftX, r.Camera.ShiftY, r.Camera.Scale)
+		default:
+			if node.pass != nil {
+				r.drawExtensionPass(*node.pass, width, height)
+			}
+		}
+	}
 }
 
 // Clean OpenGL state after rendering.

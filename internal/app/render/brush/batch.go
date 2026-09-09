@@ -21,6 +21,9 @@ type Batching struct {
 	offset  int
 }
 
+// Vertex is the internal representation of generic untextured mesh data.
+type Vertex struct{ X, Y, R, G, B, A float32 }
+
 func (b *Batching) flush() {
 	if b.len != 0 && len(b.indices) > 0 {
 		b.calls = append(b.calls, batchCall{

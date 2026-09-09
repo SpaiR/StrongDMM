@@ -12,7 +12,8 @@ var (
 
 	attrsList attributesList
 
-	program uint32
+	program         uint32
+	bilinearProgram uint32
 
 	vao uint32
 	vbo uint32
@@ -20,6 +21,11 @@ var (
 
 	uniformLocationTransform  int32
 	uniformLocationHasTexture int32
+	bilinearTransform         int32
+	bilinearColorFloor        int32
+	bilinearVAO               uint32
+	bilinearVBO               uint32
+	bilinearEBO               uint32
 )
 
 func TryInit() {
@@ -50,6 +56,7 @@ func TryInit() {
 		initShader(vertexShader(), fragmentShader())
 		initBuffers()
 		initAttributes()
+		initBilinear()
 
 		log.Print("initialized")
 	}
@@ -60,7 +67,35 @@ func Dispose() {
 	gl.DeleteVertexArrays(1, &vao)
 	gl.DeleteBuffers(1, &vbo)
 	gl.DeleteBuffers(1, &ebo)
+	gl.DeleteVertexArrays(1, &bilinearVAO)
+	gl.DeleteBuffers(1, &bilinearVBO)
+	gl.DeleteBuffers(1, &bilinearEBO)
 	log.Print("disposed")
+}
+
+func initBilinear() {
+	var err error
+	if bilinearProgram, err = platform.NewShaderProgram(bilinearVertexShader(), bilinearFragmentShader()); err != nil {
+		log.Fatal().Msgf("unable to create bilinear shader: %v", err)
+	}
+	bilinearTransform = gl.GetUniformLocation(bilinearProgram, gl.Str("Transform\x00"))
+	bilinearColorFloor = gl.GetUniformLocation(bilinearProgram, gl.Str("ColorFloor\x00"))
+	gl.GenVertexArrays(1, &bilinearVAO)
+	gl.GenBuffers(1, &bilinearVBO)
+	gl.GenBuffers(1, &bilinearEBO)
+	gl.BindVertexArray(bilinearVAO)
+	gl.BindBuffer(gl.ARRAY_BUFFER, bilinearVBO)
+	const stride = 16 * platform.FloatSize
+	for index, offset := range []int32{0, 2, 5, 8, 11, 14} {
+		size := int32(3)
+		if index == 0 || index == 5 {
+			size = 2
+		}
+		gl.EnableVertexAttribArray(uint32(index))
+		gl.VertexAttribPointerWithOffset(uint32(index), size, gl.FLOAT, false, stride, uintptr(offset*platform.FloatSize))
+	}
+	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
+	gl.BindVertexArray(0)
 }
 
 func initShader(vertex, fragment string) {

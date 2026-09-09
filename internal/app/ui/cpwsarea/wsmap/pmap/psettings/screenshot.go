@@ -98,10 +98,16 @@ func (p *Panel) createScreenshot() {
 	c.Render().Camera.Level = p.editor.ActiveLevel()
 	c.Render().Camera.Translate(boundX, boundY)
 	c.Render().SetUnitProcessor(p)
+	if manager := p.app.Extensions(); manager != nil {
+		manager.ConfigureRender(c.Render(), p.editor.Dmm())
+	}
 	for level := 1; level <= p.editor.ActiveLevel(); level++ {
 		c.Render().UpdateBucket(p.editor.Dmm(), level) // Prepare for render all available levels
 	}
 	c.Process(imgui.Vec2{X: float32(width), Y: float32(height)})
+	if manager := p.app.Extensions(); manager != nil {
+		manager.ReleaseRender(c.Render(), p.editor.Dmm())
+	}
 	c.Dispose()
 
 	var pixels = c.ReadPixels()

@@ -10,6 +10,7 @@ import (
 
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/config"
+	"sdmm/internal/app/extensions"
 	"sdmm/internal/app/render/brush"
 	"sdmm/internal/app/ui/dialog"
 	"sdmm/internal/app/ui/layout"
@@ -49,11 +50,13 @@ func Start() {
 	}
 
 	a := app{
-		internalDir: internalDir,
-		logDir:      logDir,
-		backupDir:   filepath.FromSlash(internalDir + "/backup"),
-		configDir:   filepath.FromSlash(internalDir + "/config"),
+		internalDir:   internalDir,
+		logDir:        logDir,
+		backupDir:     filepath.FromSlash(internalDir + "/backup"),
+		configDir:     filepath.FromSlash(internalDir + "/config"),
+		extensionsDir: filepath.FromSlash(internalDir + "/extensions"),
 	}
+	_ = os.MkdirAll(a.extensionsDir, os.ModePerm)
 
 	a.masterWindow = window.New(&a)
 
@@ -73,10 +76,11 @@ func Start() {
 type app struct {
 	masterWindow *window.Window
 
-	internalDir string
-	logDir      string
-	backupDir   string
-	configDir   string
+	internalDir   string
+	logDir        string
+	backupDir     string
+	configDir     string
+	extensionsDir string
 
 	tmpShouldClose bool
 	tmpWindowCond  imgui.Condition
@@ -96,8 +100,9 @@ type app struct {
 	commandStorage *command.Storage
 	clipboard      *dmmclip.Clipboard
 
-	menu   *menu.Menu
-	layout *layout.Layout
+	menu       *menu.Menu
+	layout     *layout.Layout
+	extensions *extensions.Manager
 }
 
 func (a *app) initialize() {
@@ -106,6 +111,7 @@ func (a *app) initialize() {
 
 	a.loadConfig()
 	a.loadProjectConfig()
+	a.extensions = extensions.New(a.projectConfig().ExtensionState, a.extensionsDir)
 	a.loadPreferencesConfig()
 
 	a.runBackgroundConfigSave()
@@ -132,6 +138,9 @@ func (a *app) initialize() {
 }
 
 func (a *app) Process() {
+	if a.extensions != nil {
+		a.extensions.Process()
+	}
 	if a.shortcutsEnabled {
 		shortcut.Process()
 	}
@@ -164,6 +173,9 @@ func (a *app) LayoutIniPath() string {
 }
 
 func (a *app) dispose() {
+	if a.extensions != nil {
+		a.extensions.Dispose()
+	}
 	brush.Dispose()
 	a.configSave()
 	a.masterWindow.Dispose()
