@@ -18,14 +18,16 @@ var SaveFormats = []string{
 }
 
 const (
-	CodeEditorVSC     = "Visual Studio Code"
-	CodeEditorDM      = "Dreammaker"
-	CodeEditorNPP     = "Notepad++"
-	CodeEditorDefault = "Default App"
+	CodeEditorVSC      = "Visual Studio Code"
+	CodeEditorVSCodium = "VSCodium"
+	CodeEditorDM       = "Dreammaker"
+	CodeEditorNPP      = "Notepad++"
+	CodeEditorDefault  = "Default App"
 
-	CodeEditorVSCActual = "code"
-	CodeEditorDMActual  = "dreammaker"
-	CodeEditorNPPActual = "notepad++"
+	CodeEditorVSCActual      = "code"
+	CodeEditorVSCodiumActual = "codium"
+	CodeEditorDMActual       = "dreammaker"
+	CodeEditorNPPActual      = "notepad++"
 
 	CodeEditorHelp = `These programs must be present in your system PATH to work when using Go to Definition on a prefab.
 Default App and currently Dreammaker can only open to the relevant file, not the specific line number.`
@@ -33,6 +35,7 @@ Default App and currently Dreammaker can only open to the relevant file, not the
 
 var CodeEditors = []string{
 	CodeEditorVSC,
+	CodeEditorVSCodium,
 	CodeEditorDM,
 	CodeEditorNPP,
 	CodeEditorDefault,

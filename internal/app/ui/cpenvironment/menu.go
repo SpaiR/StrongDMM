@@ -63,6 +63,10 @@ func (e *Environment) doGoToDefinition(n *treeNode) func() {
 			root := filepath.FromSlash(e.app.LoadedEnvironment().RootDir)
 			argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
 			command = exec.Command(prefs.CodeEditorVSCActual, root, "-g", argument)
+		case prefs.CodeEditorVSCodium:
+			root := filepath.FromSlash(e.app.LoadedEnvironment().RootDir)
+			argument := path + ":" + fmt.Sprint(location.Line) + ":" + fmt.Sprint(location.Column)
+			command = exec.Command(prefs.CodeEditorVSCodiumActual, root, "-g", argument)
 		case prefs.CodeEditorDM:
 			// No line/col support until https://www.byond.com/forum/post/2970625
 			command = exec.Command(prefs.CodeEditorDMActual, path)
