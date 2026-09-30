@@ -19,10 +19,11 @@ type Controls struct {
 }
 
 type Editor struct {
-	SaveFormat        string
-	CodeEditor        string
-	NudgeMode         string
-	SanitizeVariables bool
+	SaveFormat           string
+	CodeEditor           string
+	NudgeMode            string
+	SanitizeVariables    bool
+	MirrorCanvasCrossApp bool
 }
 
 type Application struct {

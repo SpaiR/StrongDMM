@@ -38,6 +38,12 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				label: "##sanitize_variables",
 				value: &prefs.Editor.SanitizeVariables,
 			},
+			boolPrefPrefab{
+				name:  "Mirror Canvas Across SDMM Applications",
+				desc:  "Makes Mirror Canvas Camera behavior sync with any other running SDMM instances, provided Mirror Canvas Camera is toggled on each.",
+				label: "##mirror_canvas_cross_app",
+				value: &prefs.Editor.MirrorCanvasCrossApp,
+			},
 			optionPrefPrefab{
 				name:    "Nudge Mode",
 				desc:    "Controls which variables will be changed during the nudge.",
