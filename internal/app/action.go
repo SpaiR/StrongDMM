@@ -169,7 +169,10 @@ func (a *app) OnWorkspaceSwitched() {
 	} else {
 		a.layout.Search.Free()
 	}
-
+	//specific to each map
+	if len(a.layout.Missing.WorkSpaceVars) != 0 && a.HasActiveMap() {
+		a.layout.Missing.UndefinedVars = a.layout.Missing.WorkSpaceVars[a.CurrentEditor().Dmm().Name]
+	}
 	a.SyncVarEditor()
 }
 

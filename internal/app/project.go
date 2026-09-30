@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"sdmm/third_party/sdmmparser"
-	"time"
 	"sort"
+	"time"
 
 	"sdmm/internal/app/ui/cpwsarea/workspace"
 	"sdmm/internal/app/ui/dialog"
@@ -244,17 +244,41 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 			// Build the string
 			var prefabsNames string
 			for _, path := range prefabPaths {
-				prefabsNames += " - " + path + "\n"
+				prefabsNames += path + "\n"
 			}
 
 			dialog.Open(dialog.TypeInformation{
-				Title: "Unknown Types [WIP]",
+				Title: "Unknown Types",
 				Information: fmt.Sprintf(
 					"There are unknown types on the map: %s\n"+
-						"Types below will be discarded on save:\n"+
+						"Types below will be discarded on save:\n\n"+
 						"%s", dmm.Name, prefabsNames,
 				),
+				AllowCopy: true,
 			})
+			UndefinedVars := make(map[int][]dmmap.UndefinedVar)
+
+			for _, prefabLoc := range unknownPrefabs {
+				// Assuming 'key' is the int map key you want to group by (e.g., 0 or a specific ID)
+				key := 0
+
+				UndefinedVars[key] = append(UndefinedVars[key], dmmap.UndefinedVar{
+					Path:       prefabLoc.Prefab.Path(),
+					VarName:    "MISSINGPREFAB",
+					VarValue:   "MISSINGPREFAB",
+					X:          prefabLoc.X,
+					Y:          prefabLoc.Y,
+					Z:          prefabLoc.Z,
+					PrefabInfo: uint64(prefabLoc.Prefab.Id()),
+					MapName:    dmm.Name,
+				})
+			}
+			if a.layout.Missing.WorkSpaceVars == nil {
+				a.layout.Missing.WorkSpaceVars = make(map[string][]dmmap.UndefinedVar)
+			}
+			a.layout.Missing.UndefinedVars = UndefinedVars[0]
+			a.layout.Missing.WorkSpaceVars[dmm.Name] = UndefinedVars[0]
+
 		}
 	}
 	a.layout.Search.Free()

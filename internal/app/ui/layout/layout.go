@@ -3,6 +3,7 @@ package layout
 import (
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/ui/cpenvironment"
+	"sdmm/internal/app/ui/cpmissing"
 	"sdmm/internal/app/ui/cpprefabs"
 	"sdmm/internal/app/ui/cpsearch"
 	"sdmm/internal/app/ui/cpvareditor"
@@ -20,7 +21,7 @@ type app interface {
 	cpsearch.App
 	cpwsarea.App
 	cpvareditor.App
-
+	cpmissing.App
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
 
@@ -57,6 +58,7 @@ type Layout struct {
 	Search      *cpsearch.Search
 	WsArea      *cpwsarea.WsArea
 	VarEditor   *cpvareditor.VarEditor
+	Missing     *cpmissing.Missing
 
 	tmpNextShowNode  []string
 	tmpNextFocusNode string
@@ -71,12 +73,13 @@ func New(app app) *Layout {
 	l.Search = new(cpsearch.Search)
 	l.WsArea = new(cpwsarea.WsArea)
 	l.VarEditor = new(cpvareditor.VarEditor)
-
+	l.Missing = new(cpmissing.Missing)
 	l.Environment.Init(app)
 	l.Prefabs.Init(app)
 	l.Search.Init(app)
 	l.WsArea.Init(app)
 	l.VarEditor.Init(app)
+	l.Missing.Init(app)
 
 	return l
 }
@@ -88,6 +91,9 @@ func (l *Layout) Process() {
 	l.showPrefabsNode()
 	l.showSearchNode()
 	l.showVariablesNode()
+	if len(l.Missing.UndefinedVars) != 0 {
+		l.ShowMissingNode()
+	}
 	l.showWorkspaceAreaNode() // The latest node will have a focus by default
 
 	l.initialized = true
@@ -137,6 +143,10 @@ func (l *Layout) showSearchNode() {
 
 func (l *Layout) showVariablesNode() {
 	l.wrapNode(lnode.NameVariables, l.rightDownNodeId, l.VarEditor)
+}
+
+func (l *Layout) ShowMissingNode() {
+	l.wrapNode(lnode.NameMissing, l.rightDownNodeId, l.Missing)
 }
 
 const (

@@ -9,6 +9,7 @@ import (
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/app/window"
+
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
@@ -225,6 +226,14 @@ func (a *app) DoRedo() {
 func (a *app) DoResetLayout() {
 	log.Print("reset layout")
 	a.resetLayout()
+}
+
+// DoResetLayout resets application windows to their initial positions.
+func (a *app) DoUndefinedWindow() {
+	a.layout.Missing.UndefinedVars = a.layout.Missing.LookForUndefinedVariables(a.loadedEnvironment, a.CurrentEditor().Dmm())
+	if len(a.layout.Missing.UndefinedVars) == 0 {
+		a.layout.Missing.OpenNothingMissingWindow()
+	}
 }
 
 // DoOpenChangelog opens "changelog" workspace.

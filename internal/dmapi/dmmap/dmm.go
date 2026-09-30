@@ -3,10 +3,9 @@ package dmmap
 import (
 	"path/filepath"
 
-	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
-
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
+	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/util"
 
 	"github.com/rs/zerolog/log"
@@ -104,8 +103,27 @@ func tileIndex(maxX, maxY, x, y, z int) int {
 	return maxX*maxY*(z-1) + maxX*(y-1) + (x - 1)
 }
 
-func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
-	unknownPrefabs = make(map[string]*dmmprefab.Prefab)
+type UndefinedVar struct {
+	Path       string
+	VarName    string
+	VarValue   string
+	X, Y, Z    int
+	PrefabInfo uint64
+	MapName    string
+}
+
+type PrefabAndLocation struct {
+	Prefab  *dmmprefab.Prefab
+	X, Y, Z int
+}
+
+type UnknownType struct {
+	Path    string
+	X, Y, Z int
+}
+
+func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*PrefabAndLocation) {
+	unknownPrefabs = make(map[string]*PrefabAndLocation)
 	dmm = &Dmm{
 		Name:  filepath.Base(data.Filepath),
 		Path:  newDmmPath(dme.RootDir, data),
@@ -116,12 +134,10 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknow
 
 		Backup: backup,
 	}
-
 	for z := 1; z <= data.MaxZ; z++ {
 		for y := 1; y <= data.MaxY; y++ {
 			for x := 1; x <= data.MaxX; x++ {
 				tile := Tile{Coord: util.Point{X: x, Y: y, Z: z}}
-
 				for _, prefab := range data.Dictionary[data.Grid[tile.Coord]] {
 					if obj, ok := dme.Objects[prefab.Path()]; ok {
 						// Prefabs from the dmmdata don't know about environment objects.
@@ -131,7 +147,14 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknow
 						tile.InstancesAdd(PrefabStorage.Put(prefab))
 					} else {
 						log.Print("unknown prefab:", prefab.Path())
-						unknownPrefabs[prefab.Path()] = prefab
+						// Construct the struct and store its pointer in the map directly
+						unknownPrefabs[prefab.Path()] = &PrefabAndLocation{
+							Prefab: prefab,
+							X:      tile.Coord.X,
+							Y:      tile.Coord.Y,
+							Z:      tile.Coord.Z,
+						}
+
 					}
 				}
 
